@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { listFaces } from '../faces';
+import { listFaceNames } from '../faces';
 import { findGenerated, facePaths } from './build-pkjs';
 import type { FacePaths } from './build-pkjs';
 
@@ -48,8 +48,8 @@ describe('findGenerated', () => {
   });
 });
 
-// every real face the mounting repo holds, as the bare names facePaths takes
-const FACE_NAMES = listFaces().map((rel) => path.basename(rel));
+// every real face the mounting repo holds, by the name facePaths takes
+const FACE_NAMES = listFaceNames();
 
 describe.skipIf(FACE_NAMES.length === 0)('findGenerated on every face', () => {
   FACE_NAMES.forEach((face) => {

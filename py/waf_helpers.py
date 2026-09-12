@@ -72,7 +72,7 @@ def stage_shared_sources(ctx):
     face = _source_face(ctx)
     face_root = _face_root(repo_root, face)
     if not face_root:
-        ctx.fatal('No source for face "{}" under watchfaces/.'.format(face))
+        ctx.fatal('No source for face "{}" at the repo root or under watchfaces/.'.format(face))
 
     sources = {
         'src': os.path.join(face_root, 'src'),
@@ -100,11 +100,22 @@ def _face_root(repo_root, face):
     """
     A face's source directory, by name.
 
-    Faces sit either straight under watchfaces/ or one deeper inside a family folder that also
-    holds the code those faces share. A face is a directory carrying config/pebble.appinfo.json,
-    which is what keeps a family's core/ from being taken for one.
+    A face sits at the repo root in a repo of one, straight under watchfaces/, or one deeper inside
+    a family folder that also holds the code those faces share. A face is a directory carrying
+    config/pebble.appinfo.json, which is what keeps a family's core/ from being taken for one.
     """
+    # a face at the root is named by its appinfo, because the root folder is named after wherever
+    # the repo was cloned
+    root_appinfo = os.path.join(repo_root, 'config', 'pebble.appinfo.json')
+    if os.path.isfile(root_appinfo):
+        with open(root_appinfo, 'r') as appinfo_file:
+            if json.load(appinfo_file).get('name') == face:
+                return repo_root
+
     watchfaces = os.path.join(repo_root, 'watchfaces')
+    if not os.path.isdir(watchfaces):
+        return None
+
     for candidate in (os.path.join(watchfaces, face),
                       *(os.path.join(watchfaces, group, face)
                         for group in sorted(os.listdir(watchfaces))
@@ -119,9 +130,13 @@ def _face_family(repo_root, face_root):
     """
     The family a face belongs to, which is simply the folder it sits in.
 
-    Nothing declares it: a face nested beside a core/ is in that family, and one straight under
-    watchfaces/ is in none. Positional rather than configured, so the two can never disagree.
+    Nothing declares it: a face nested beside a core/ is in that family, and one at the repo root
+    or straight under watchfaces/ is in none. Positional rather than configured, so the two can
+    never disagree.
     """
+    if os.path.samefile(face_root, repo_root):
+        return None
+
     parent = os.path.dirname(face_root)
     if os.path.samefile(parent, os.path.join(repo_root, 'watchfaces')):
         return None
@@ -307,7 +322,9 @@ def build_face(ctx, extra_cflags=None):
     # folder deep for a face of its own, two for one inside a family, and under the source face
     # rather than the sandbox when a face feeds several targets. found rather than assumed, so
     # none of that has to be worked out twice
-    entries = ctx.path.ant_glob('emit/watchfaces/**/src/pkjs/index.js')
+    # a face at the repo root has no watchfaces/ segment, so its entry sits at emit/src/pkjs/
+    entries = (ctx.path.ant_glob('emit/watchfaces/**/src/pkjs/index.js')
+               or ctx.path.ant_glob('emit/src/pkjs/index.js'))
     if not entries:
         ctx.fatal('No pkjs entry in emit/: did build:pkjs run for this face?')
     js_entry = entries[0].path_from(ctx.path)

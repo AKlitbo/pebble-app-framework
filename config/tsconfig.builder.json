@@ -7,6 +7,6 @@
     "lib": ["ES2020", "DOM"],
     "noEmit": true
   },
-  "include": ["../../watchfaces/**/pkjs/clay/builder/**/*.ts", "../ts/clay/builder/**/*.ts"],
+  "include": ["../../src/pkjs/clay/builder/**/*.ts", "../../watchfaces/**/pkjs/clay/builder/**/*.ts", "../ts/clay/builder/**/*.ts"],
   "exclude": ["../../node_modules", "../../**/*.spec.ts", "../../**/*.manifest.ts"]
 }

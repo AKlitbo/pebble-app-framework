@@ -49,6 +49,7 @@ export default defineConfig({
       include: [
         'ts/**', 'tools/**',
         'lib/ts/**', 'lib/tools/**',
+        'src/pkjs/**', 'src/tools/**',
         'watchfaces/**/src/pkjs/**', 'watchfaces/**/src/tools/**',
       ],
       exclude: [

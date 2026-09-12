@@ -28,19 +28,28 @@ version="$2"
 mode="${3:-body}"
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
-changelog=$(find "$here/watchfaces" -mindepth 2 -maxdepth 3 -path "*/$face/CHANGELOG.md" | head -1)
 
-[[ -f "$changelog" ]] || die "Error: No changelog at watchfaces/$face/CHANGELOG.md"
+# a repo of one keeps its face, and so its changelog, at the root. otherwise the changelog sits in
+# the face's folder under watchfaces/
+changelog=""
+if [[ -f "$here/config/pebble.appinfo.json" ]] && [[ "$(node -p "require(process.argv[1]).name" "$here/config/pebble.appinfo.json")" == "$face" ]]; then
+  changelog="$here/CHANGELOG.md"
+elif [[ -d "$here/watchfaces" ]]; then
+  changelog=$(find "$here/watchfaces" -mindepth 2 -maxdepth 3 -path "*/$face/CHANGELOG.md" | head -1)
+fi
+where="${changelog#"$here"/}"
+
+[[ -f "$changelog" ]] || die "Error: No changelog for $face"
 
 # "## [1.4.0] - 2026-07-03" -> everything after the " - "
 header=$(grep -m1 -F "## [$version]" "$changelog" || true)
 
-[[ -n "$header" ]] || die "Error: No [$version] section in watchfaces/$face/CHANGELOG.md"
+[[ -n "$header" ]] || die "Error: No [$version] section in $where"
 
 release_date="${header#*] - }"
 
 if [[ "$release_date" == "Unreleased" ]]; then
-  die "Error: watchfaces/$face/CHANGELOG.md still has [$version] as Unreleased: date it before releasing"
+  die "Error: $where still has [$version] as Unreleased: date it before releasing"
 fi
 
 if [[ "$mode" == "--date" ]]; then
@@ -68,7 +77,7 @@ body=$(awk -v header="## [$version]" '
 ' "$changelog")
 
 if [[ -z "$body" ]]; then
-  die "Error: The [$version] section in watchfaces/$face/CHANGELOG.md is empty: write it before releasing"
+  die "Error: The [$version] section in $where is empty: write it before releasing"
 fi
 
 printf '%s\n' "$body"

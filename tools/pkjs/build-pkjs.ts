@@ -18,8 +18,9 @@
  *
  * emit/ is written straight into the face's waf staging sandbox (targets/<face>/) so the
  * native build never has to stage it. tsc roots at the repo root (lib/ts sits outside any
- * one face), so the tree keeps its source shape: emit/watchfaces/<face>/src/pkjs/index.js
- * beside emit/lib/ts/**. waf_helpers.build_face computes the js entry from the face to match.
+ * one face), so the tree keeps its source shape: emit/watchfaces/<face>/src/pkjs/index.js, or
+ * emit/src/pkjs/index.js for a face at the repo root, beside emit/lib/ts/**. waf_helpers.build_face
+ * finds the js entry in either place.
  *
  * Run via `npm run build:pkjs -- <face>`, and by build.sh before every Pebble build.
  */
@@ -61,14 +62,14 @@ export function facePaths(target: string, sourceFace: string = target): FacePath
   // the sandbox is named after the target, but the sources are the source face's, and that face
   // may sit one level deeper inside a family folder, so its real path is looked up
   const rel = faceRelative(sourceFace);
-  const faceSrc = path.join(ROOT, 'watchfaces', rel, 'src', 'pkjs');
+  const faceSrc = path.join(ROOT, rel, 'src', 'pkjs');
   const sandbox = path.join(ROOT, 'targets', target);
   const emit = path.join(sandbox, 'emit');
   return {
     faceSrc,
     sandbox,
     emit,
-    emitPkjs: path.join(emit, 'watchfaces', ...rel.split('/'), 'src', 'pkjs'),
+    emitPkjs: path.join(emit, ...rel.split('/'), 'src', 'pkjs'),
     icaljsTo: path.join(emit, 'lib', 'ts', 'calendar', 'icaljs.js'),
     tsconfig: path.join(sandbox, 'tsconfig.pkjs.json'),
     skipDir: path.join(faceSrc, 'clay', 'builder'),
@@ -93,12 +94,12 @@ export function writeTsconfig(sourceFace: string, p: FacePaths): void {
   const tsconfig = {
     extends: path.relative(p.sandbox, PKJS_BASE_TSCONFIG).split(path.sep).join('/'),
     compilerOptions: { rootDir: '../..', outDir: 'emit' },
-    include: [`../../watchfaces/${rel}/src/pkjs/**/*.ts`, '../../lib/ts/**/*.ts'],
+    include: [path.posix.join('../..', rel, 'src/pkjs/**/*.ts'), '../../lib/ts/**/*.ts'],
     // builder pieces are bundled into the committed *.g.js so compiling them here
     // would ship them a second time as loose modules against the 65535 byte cap
     // lib's are excluded for every face even the ones carrying no Clay builder
     exclude: [
-      `../../watchfaces/${rel}/src/pkjs/clay/builder/**`,
+      path.posix.join('../..', rel, 'src/pkjs/clay/builder/**'),
       '../../lib/ts/clay/builder/**',
       '../../**/*.spec.ts',
     ],

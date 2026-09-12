@@ -12,10 +12,11 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true
   },
-  "include": ["../watchfaces/**/src/pkjs/**/*.ts", "ts/**/*.ts"],
+  "include": ["../src/pkjs/**/*.ts", "../watchfaces/**/src/pkjs/**/*.ts", "ts/**/*.ts"],
   "exclude": [
     "../node_modules",
     "../targets",
+    "../src/pkjs/clay/builder/**",
     "../watchfaces/**/src/pkjs/clay/builder/**",
     "ts/clay/builder/**",
     "../**/*.spec.ts"

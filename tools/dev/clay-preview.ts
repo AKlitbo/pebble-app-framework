@@ -84,7 +84,7 @@ if (typeof host.localStorage === 'undefined') {
 
 // the watch build aliases "message_keys" to a generated file which does not exist under plain
 // node, so stand in a map built from the appinfo. the real ids do not matter for rendering
-const appinfo = path.join(ROOT, 'watchfaces', rel, 'config', 'pebble.appinfo.json');
+const appinfo = path.join(ROOT, rel, 'config', 'pebble.appinfo.json');
 const declared: string[] = JSON.parse(fs.readFileSync(appinfo, 'utf8')).messageKeys || [];
 const messageKeysStub: Record<string, number> = {};
 declared.forEach((name, i) => { messageKeysStub[name] = 10000 + i; });
@@ -148,7 +148,7 @@ function components(emit: string): unknown[] {
     }
   }
 
-  collect(path.join(emit, 'watchfaces', ...rel.split('/'), 'src', 'pkjs', 'clay'), '.g.js');
+  collect(path.join(emit, ...rel.split('/'), 'src', 'pkjs', 'clay'), '.g.js');
   collect(path.join(emit, 'lib', 'ts', 'clay'), '-component.js');
 
   return found;
@@ -158,7 +158,7 @@ function components(emit: string): unknown[] {
 function build(): void {
   // required per build so each pass picks up the freshly compiled emit/ tree. at module scope they
   // would stay bound to the first load and dropping the require cache would not budge them
-  const configPath = path.join(paths.emit, 'watchfaces', ...rel.split('/'), 'src', 'pkjs', 'config.js');
+  const configPath = path.join(paths.emit, ...rel.split('/'), 'src', 'pkjs', 'config.js');
   const configModule = requireHost(configPath) as { default?: unknown; customClay?: unknown };
 
   // a face that runs code inside its own config page exports it beside the rows, so the preview
@@ -194,7 +194,7 @@ build();
 
 if (process.argv.indexOf('--watch') !== -1) {
   const watched = [
-    path.join(ROOT, 'watchfaces', rel, 'src', 'pkjs'),
+    path.join(ROOT, rel, 'src', 'pkjs'),
     path.join(ROOT, 'lib', 'ts', 'clay'),
   ].filter((dir) => fs.existsSync(dir));
 

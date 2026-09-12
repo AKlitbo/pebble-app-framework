@@ -4,7 +4,7 @@
 #
 # Waf build rules for one watchface. This sandbox is named after the face
 # (targets/<face>/), and waf_helpers reads that name to find the face's sources
-# under watchfaces/<face>/.
+# at the repo root or under watchfaces/<face>/.
 #
 # Stage the face's sources plus the shared lib/ into this folder, then hand the
 # build (sources, per-platform compile, bundle, .pbw archive) to

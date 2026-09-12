@@ -1,4 +1,4 @@
-# Third-party notices
+# Third-Party Notices
 
 The engine is dual-licensed under the AGPL-3.0-or-later or the PolyForm Noncommercial License 1.0.0,
 see [LICENSE](LICENSE). It bundles the third-party work below, which keeps its own licence.

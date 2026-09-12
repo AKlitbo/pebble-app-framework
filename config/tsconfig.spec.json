@@ -10,12 +10,14 @@
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },
-  // the engine's own specs, then the faces of a repo mounting it at lib/
+  // the engine's own specs, then the faces of a repo mounting it at lib/, at its root or under watchfaces/
   // the two .d.ts files declare globals the specs use without importing them
   "include": [
     "../**/*.spec.ts",
+    "../../src/**/*.spec.ts",
     "../../watchfaces/**/*.spec.ts",
     "../ts/pkjs/pebble.d.ts",
+    "../../src/pkjs/generated.d.ts",
     "../../watchfaces/**/src/pkjs/generated.d.ts"
   ],
   "exclude": [

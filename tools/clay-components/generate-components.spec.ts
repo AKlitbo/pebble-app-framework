@@ -15,7 +15,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { describe, test, expect } from 'vitest';
-import { listFaces, faceDir } from '../faces';
+import { listFaceNames, faceDir } from '../faces';
 import { ENGINE } from '../paths';
 import {
   rootsFor,
@@ -134,8 +134,7 @@ function hasCommittedComponent(face: string): boolean {
   return fs.existsSync(clayDir) && fs.readdirSync(clayDir).some((name) => name.endsWith('-component.g.js'));
 }
 
-// listFaces yields a family-relative path (mosaic/gridlock) but the generator is handed a bare name
-const FACE_NAMES = listFaces().map((rel) => path.basename(rel));
+const FACE_NAMES = listFaceNames();
 
 /**
  * Every face that ships a Clay builder, with the manifests it builds.

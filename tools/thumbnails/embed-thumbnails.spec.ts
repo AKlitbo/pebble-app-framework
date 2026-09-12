@@ -11,17 +11,14 @@
 import { describe, test, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { listFaces, faceDir } from '../faces';
+import { listFaceNames, faceDir } from '../faces';
 import { indexBySlug, classify, buildSource, missingSlugs, encodeThumbnails, outFile } from './embed-thumbnails';
 
 /**
  * Every face that ships thumbnails, found by looking for the folder rather than by a list here,
  * so a new face is guarded the day it lands.
- *
- * listFaces yields a family-relative path (mosaic/gridlock) but the generator is handed a bare name.
  */
-const THUMB_FACES = listFaces()
-  .map((rel) => path.basename(rel))
+const THUMB_FACES = listFaceNames()
   .filter((face) => fs.existsSync(path.join(faceDir(face), 'resources', 'thumbnails')));
 
 const bySlug = {
@@ -137,8 +134,7 @@ describe('missingSlugs', () => {
 });
 
 /** The faces that commit a thumbnail asset, found by output so they can check the discovery above. */
-const COMMITTING_FACES = listFaces()
-  .map((rel) => path.basename(rel))
+const COMMITTING_FACES = listFaceNames()
   .filter((face) => fs.existsSync(outFile(face)));
 
 describe.skipIf(COMMITTING_FACES.length === 0)('generated asset', () => {

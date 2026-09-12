@@ -13,9 +13,9 @@ The shared engine behind a family of Pebble watchfaces. It holds the device C, t
 * **`config/`**: the shared tsconfig, eslint and vitest setup.
 * **`build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
 
-## Using it
+## Using It
 
-The engine does not build on its own. It is mounted as a git submodule at `lib/` inside a watchfaces repo, which holds the faces under `watchfaces/` and lists `lib` as an npm workspace so the engine's dependencies install once.
+The engine does not build on its own. It is mounted as a git submodule at `lib/` inside a repo of faces, which lists `lib` as an npm workspace so the engine's dependencies install once. A repo holding one face keeps it at the root, laid out like a plain Pebble project with `config/`, `src/` and `resources/`. A repo of several keeps each at `watchfaces/<face>/`, or at `watchfaces/<family>/<face>/` beside the code the family shares.
 
 ```sh
 git submodule add https://github.com/AKlitbo/pebble-watchface-engine.git lib
