@@ -34,6 +34,7 @@ import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
 import type { MediaEntry } from '../manifest/build-manifests.ts';
 import { faceDir as resolveFaceDir } from '../faces.ts';
+import { WORKSPACE } from '../paths.ts';
 
 /** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */
 export type IconSpec = { svg: string; size: [number, number]; trim?: boolean };
@@ -41,7 +42,7 @@ export type IconSpec = { svg: string; size: [number, number]; trim?: boolean };
 /** resources/icons.json, keyed by icon name (the file basename). */
 export type IconManifest = Record<string, IconSpec>;
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
+const ROOT = WORKSPACE;
 const VENDOR = path.resolve(ROOT, 'vendor');
 
 /** watchfaces/<face>/ — the face owns its resources/ and config/pebble.appinfo.json. */

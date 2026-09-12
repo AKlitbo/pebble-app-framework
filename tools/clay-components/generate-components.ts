@@ -23,12 +23,13 @@ import path from 'node:path';
 import esbuild from 'esbuild';
 import { createRequire } from 'node:module';
 import { faceDir, familyCoreDir } from '../faces.ts';
+import { ENGINE, WORKSPACE } from '../paths.ts';
 
 // the manifests are loaded by path at runtime which an import specifier cannot do
 // require(esm) hands back the namespace so the manifest lands on .default
 const requireManifest = createRequire(import.meta.url);
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
+const ROOT = WORKSPACE;
 
 /** Where a root keeps its builder pieces, relative to the root itself. */
 const FACE_BUILDER_REL = path.join('pkjs', 'clay', 'builder');
@@ -54,7 +55,7 @@ function rootsFor(face: string): Roots {
   return {
     face: { base: path.join(faceDir(face), 'src'), builder: FACE_BUILDER_REL },
     core: core ? { base: core, builder: FACE_BUILDER_REL } : null,
-    lib: { base: path.join(ROOT, 'lib', 'ts'), builder: LIB_BUILDER_REL },
+    lib: { base: path.join(ENGINE, 'ts'), builder: LIB_BUILDER_REL },
     faceRoot: faceDir(face),
   };
 }

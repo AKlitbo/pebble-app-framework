@@ -3,16 +3,20 @@
  *
  * The generator bundles each component's pieces into one initialize the Clay
  * webview can run on its own, so the checks here pin the entry it hands esbuild,
- * the CSS squeeze, and the finished wrapper. The staleness check regenerates
- * every component and compares it to the committed file, so an edited piece
- * cannot ship without `npm run gen:clay`.
+ * the CSS squeeze, and the finished wrapper. Those run against a small recipe
+ * under fixtures/, so they need no face.
+ *
+ * The staleness checks regenerate every component a face commits and compare it
+ * to the committed file, so an edited piece cannot ship without `npm run gen:clay`.
+ * They run where the engine is mounted beside faces that commit components.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { describe, test, expect } from 'vitest';
-import { listFaces } from '../faces';
+import { listFaces, faceDir } from '../faces';
+import { ENGINE } from '../paths';
 import {
   rootsFor,
   findManifests,
@@ -25,33 +29,36 @@ import {
 // the manifests are loaded by path, the same way the generator does it
 const requireManifest = createRequire(import.meta.url);
 
-// the helper tests only need one real recipe to work against. gridlock is the reference
-const ROOTS = rootsFor('gridlock');
+// a face-shaped folder holding one small recipe, laid out the way the generator reads a face
+const FIXTURE_FACE = path.join(import.meta.dirname, 'fixtures', 'face');
 
-/**
- * Every face that ships a Clay builder, with the manifests it builds.
- *
- * Discovered rather than listed, so a new face carrying a builder is guarded the day it lands
- * instead of the day someone remembers to add it here. A face with no builder yields no
- * manifests and contributes no tests.
- */
-// listFaces yields a family-relative path (mosaic/gridlock) but the generator is handed a bare name
-const BUILDER_FACES = listFaces()
-  .map((rel) => path.basename(rel))
-  .map((face) => ({ face, roots: rootsFor(face) }))
-  .map((entry) => ({ ...entry, manifests: findManifests(entry.roots) }))
-  .filter((entry) => entry.manifests.length > 0);
+/** The fixture's builder roots, shaped the way rootsFor builds them for a face in no family. */
+const FIXTURE_ROOTS = {
+  face: { base: path.join(FIXTURE_FACE, 'src'), builder: path.join('pkjs', 'clay', 'builder') },
+  core: null,
+  lib: { base: path.join(ENGINE, 'ts'), builder: path.join('clay', 'builder') },
+  faceRoot: FIXTURE_FACE,
+};
 
-/** The first manifest and its directory, a real recipe to exercise the helpers against. */
-function firstManifest() {
-  const manifestPath = findManifests(ROOTS)[0];
-  return { manifest: requireManifest(manifestPath).default, dir: path.dirname(manifestPath) };
+/** The fixture manifest, its path and its directory. */
+function fixtureManifest() {
+  const manifestPath = findManifests(FIXTURE_ROOTS)[0];
+  return { manifestPath, manifest: requireManifest(manifestPath).default, dir: path.dirname(manifestPath) };
 }
+
+describe('findManifests', () => {
+  /** A recipe the lookup misses is never generated, so its component would quietly go stale. */
+  test('finds the recipe under the face builder dir', () => {
+    const result = findManifests(FIXTURE_ROOTS).map((manifestPath) => path.basename(manifestPath));
+
+    expect(result).toEqual(['sample.manifest.ts']);
+  });
+});
 
 describe('findInitPiece', () => {
   /** Without the init piece the bundle would have no entry to call, so a missing one must throw. */
   test('finds the manifest piece named init', () => {
-    const { manifest } = firstManifest();
+    const { manifest } = fixtureManifest();
 
     const result = findInitPiece(manifest);
 
@@ -94,27 +101,67 @@ describe('minifyCss', () => {
 describe('buildComponentSource', () => {
   /** The manipulator calls init with the component as this, so the call has to survive into the wrapper. */
   test('wraps the bundle and calls init with the component this', async () => {
-    const manifestPath = findManifests(ROOTS)[0];
+    const { manifestPath } = fixtureManifest();
 
-    const result = await buildComponentSource(manifestPath, ROOTS);
+    const result = await buildComponentSource(manifestPath, FIXTURE_ROOTS);
 
     expect(result.source).toContain('__clayComponent.init.call(this);');
   });
+
+  /** Clay injects the template and style as strings, so both have to arrive flattened and squeezed. */
+  test('inlines the flattened template and the minified style', async () => {
+    const { manifestPath } = fixtureManifest();
+
+    const result = await buildComponentSource(manifestPath, FIXTURE_ROOTS);
+
+    expect(result.source).toContain(`template: ${JSON.stringify('<div class="sample"><span class="sample-label"></span></div>')}`);
+    expect(result.source).toContain(`style: ${JSON.stringify('.sample{color:#fff}')}`);
+  });
+
+  /** The pkjs build copies components out of the face, so one landing anywhere else never ships. */
+  test('lands the component in the face at the manifest output', async () => {
+    const { manifestPath } = fixtureManifest();
+
+    const result = await buildComponentSource(manifestPath, FIXTURE_ROOTS);
+
+    expect(result.output).toBe(path.join(FIXTURE_FACE, 'src', 'pkjs', 'clay', 'sample-component.g.js'));
+  });
 });
 
-describe('generated components', () => {
+/** Whether a face commits a bundled component, found by its output rather than its manifests. */
+function hasCommittedComponent(face: string): boolean {
+  const clayDir = path.join(faceDir(face), 'src', 'pkjs', 'clay');
+  return fs.existsSync(clayDir) && fs.readdirSync(clayDir).some((name) => name.endsWith('-component.g.js'));
+}
+
+// listFaces yields a family-relative path (mosaic/gridlock) but the generator is handed a bare name
+const FACE_NAMES = listFaces().map((rel) => path.basename(rel));
+
+/**
+ * Every face that ships a Clay builder, with the manifests it builds.
+ *
+ * Discovered rather than listed, so a new face carrying a builder is guarded the day it lands
+ * instead of the day someone remembers to add it here. A face with no builder yields no
+ * manifests and contributes no tests.
+ */
+const BUILDER_FACES = FACE_NAMES
+  .map((face) => ({ face, roots: rootsFor(face) }))
+  .map((entry) => ({ ...entry, manifests: findManifests(entry.roots) }))
+  .filter((entry) => entry.manifests.length > 0);
+
+/** The faces that commit a component, found by output so they can check the discovery above. */
+const COMMITTING_FACES = FACE_NAMES.filter((face) => hasCommittedComponent(face));
+
+describe.skipIf(COMMITTING_FACES.length === 0)('generated components', () => {
   /**
    * The staleness checks below are generated from what the discovery found, so a discovery that
-   * quietly returned nothing would leave this suite green with nothing in it. Three faces ship a
-   * builder today, and losing one has to fail here rather than pass silently.
+   * quietly returned nothing would leave this suite green with nothing in it. Every face that
+   * commits a component has to be found here, and losing one has to fail rather than pass silently.
    */
-  test('every face carrying a builder is covered', () => {
+  test('every face committing a component is covered', () => {
     const result = BUILDER_FACES.map((entry) => entry.face);
 
-    expect(result.length).toBeGreaterThanOrEqual(3);
-    expect(result).toContain('gridlock');
-    expect(result).toContain('sidereel');
-    expect(result).toContain('lcars-stardate');
+    expect(result).toEqual(COMMITTING_FACES);
   });
 
   BUILDER_FACES.forEach(({ face, roots, manifests }) => {

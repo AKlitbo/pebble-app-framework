@@ -58,7 +58,7 @@ if [[ "$DO_INSTALL" == "1" ]]; then
     # a face that ships several targets builds them all under its own name, so build.sh wants the
     # face while the .pbw is named after the target
     echo ">> building + installing $TARGET on $EMULATOR"
-    ./build.sh "${FACE:-$TARGET}"
+    lib/build.sh "${FACE:-$TARGET}"
     pebble install --emulator "$EMULATOR" "$PBW"
     sleep 2
 fi

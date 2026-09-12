@@ -9,10 +9,9 @@
   },
   "include": [
     "../tools/**/*.ts",
-    "../lib/tools/**/*.ts",
     "../config/**/*.ts",
-    "../watchfaces/**/tools/**/*.ts",
-    "../watchfaces/**/pkjs/clay/builder/*.manifest.ts"
+    "../../watchfaces/**/tools/**/*.ts",
+    "../../watchfaces/**/pkjs/clay/builder/*.manifest.ts"
   ],
-  "exclude": ["../node_modules", "../targets", "../**/*.spec.ts"]
+  "exclude": ["../../node_modules", "../../targets", "../../**/*.spec.ts"]
 }

@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import { firefox } from 'playwright';
 import sharp from 'sharp';
 import { faceDir } from '../faces.ts';
+import { WORKSPACE } from '../paths.ts';
 
 /** Native screen size per Pebble platform (px). */
 interface Dims {
@@ -33,7 +34,7 @@ export const PLATFORM_DIMS: Record<string, Dims> = {
   flint: { w: 144, h: 168 },
 };
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
+const ROOT = WORKSPACE;
 
 /**
  * The per-face render knobs, loaded from watchfaces/<face>/frame/frame.config.json.

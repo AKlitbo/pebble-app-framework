@@ -1,0 +1,20 @@
+# build output, including the host C test binaries under c/spec/build/
+build/
+
+# Python
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+npm-debug.log*
+
+# editor / OS cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# the local Clay settings preview, rebuilt by tools/dev/clay-preview.ts on demand
+clay-preview.html

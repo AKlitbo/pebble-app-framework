@@ -17,13 +17,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { faceDir } from '../faces.ts';
+import { ENGINE, WORKSPACE } from '../paths.ts';
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
+const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
 // every face's wscript is identical (waf_helpers keys off the sandbox dir name), so it is
 // generated from one template rather than committed per face - a face missing its wscript
 // makes `pebble build` report "This project is very outdated" instead of anything useful
-const WSCRIPT_TEMPLATE = path.join(ROOT, 'tools', 'waf', 'wscript.template');
+const WSCRIPT_TEMPLATE = path.join(ENGINE, 'tools', 'waf', 'wscript.template');
 
 /** watchfaces/<face>/config/pebble.appinfo.json for a face. */
 function appinfoPath(face: string): string {

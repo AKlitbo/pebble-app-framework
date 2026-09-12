@@ -136,18 +136,22 @@ describe('missingSlugs', () => {
   });
 });
 
-describe('generated asset', () => {
+/** The faces that commit a thumbnail asset, found by output so they can check the discovery above. */
+const COMMITTING_FACES = listFaces()
+  .map((rel) => path.basename(rel))
+  .filter((face) => fs.existsSync(outFile(face)));
+
+describe.skipIf(COMMITTING_FACES.length === 0)('generated asset', () => {
   /**
    * The per-face checks below come from what the discovery found, so a discovery that quietly
-   * returned nothing would leave this suite green with nothing in it.
+   * returned nothing would leave this suite green with nothing in it. Every face that commits the
+   * asset has to be found by its thumbnails folder. They run where the engine is mounted beside
+   * faces that commit the asset.
    */
-  test('every face shipping thumbnails is covered', () => {
+  test('every face committing a thumbnail asset is covered', () => {
     const result = THUMB_FACES;
 
-    expect(result.length).toBeGreaterThanOrEqual(3);
-    expect(result).toContain('gridlock');
-    expect(result).toContain('sidereel');
-    expect(result).toContain('lcars-stardate');
+    expect(result).toEqual(COMMITTING_FACES);
   });
 
   THUMB_FACES.forEach((face) => {

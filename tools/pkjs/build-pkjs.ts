@@ -28,11 +28,12 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { faceRelative } from '../faces.ts';
+import { ENGINE, WORKSPACE } from '../paths.ts';
 
 const requireHost = createRequire(import.meta.url);
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
-const PKJS_BASE_TSCONFIG = path.join(ROOT, 'config', 'tsconfig.pkjs.json');
+const ROOT = WORKSPACE;
+const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'config', 'tsconfig.pkjs.json');
 
 // the package is ESM behind an `exports` map and the SDK bundles with webpack 1, which reads
 // neither, so asking for it by name would resolve its ESM build and break. the package ships a

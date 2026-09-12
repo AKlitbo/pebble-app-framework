@@ -25,10 +25,11 @@ import Module from 'node:module';
 import { createRequire } from 'node:module';
 import { facePaths, compile, copyGenerated, writeTsconfig } from '../pkjs/build-pkjs.ts';
 import { faceRelative } from '../faces.ts';
+import { WORKSPACE } from '../paths.ts';
 
 const requireHost = createRequire(import.meta.url);
 
-const ROOT = path.resolve(import.meta.dirname, '..', '..');
+const ROOT = WORKSPACE;
 const OUT = path.join(import.meta.dirname, 'clay-preview.html');
 
 const face = process.argv[2];

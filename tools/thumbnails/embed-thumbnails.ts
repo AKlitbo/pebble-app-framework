@@ -22,8 +22,8 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { faceDir } from '../faces.ts';
 // the builders read the emitted asset so generate to the types they consume
-import type { ModuleMeta } from '../../lib/ts/clay/types.ts';
-import type { Thumbs } from '../../lib/ts/clay/builder/ts/types.ts';
+import type { ModuleMeta } from '../../ts/clay/types.ts';
+import type { Thumbs } from '../../ts/clay/builder/ts/types.ts';
 
 // every path this touches hangs off the face it is handed
 // the PNGs and that face's module list and the asset it writes

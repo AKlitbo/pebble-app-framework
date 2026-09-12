@@ -11,9 +11,9 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { WORKSPACE } from './paths.ts';
 
-const ROOT = path.resolve(import.meta.dirname, '..');
-const WATCHFACES = path.join(ROOT, 'watchfaces');
+const WATCHFACES = path.join(WORKSPACE, 'watchfaces');
 const APPINFO = path.join('config', 'pebble.appinfo.json');
 
 /** Whether a directory is a face rather than, say, a family's shared core. */
@@ -27,6 +27,11 @@ function isFace(dir: string): boolean {
  */
 export function listFaces(): string[] {
   const found: string[] = [];
+
+  // a standalone engine checkout has no watchfaces/ of its own, so it holds no faces
+  if (!fs.existsSync(WATCHFACES)) {
+    return found;
+  }
 
   for (const entry of fs.readdirSync(WATCHFACES, { withFileTypes: true })) {
     if (!entry.isDirectory()) {

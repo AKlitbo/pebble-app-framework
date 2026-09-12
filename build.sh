@@ -3,15 +3,17 @@
 # or one deeper inside a family folder. Run from WSL.
 # Regenerates the manifest from watchfaces/<face>/config/pebble.appinfo.json and compiles
 # the TypeScript pkjs into targets/<face>/emit/, then runs pebble build in that sandbox.
-#   ./build.sh <face>            build a face (e.g. ./build.sh lcars-stardate)
-#   ./build.sh all               build every face under watchfaces/
-#   ./build.sh <face> --clean    pebble clean first (needed after a messageKey change)
-# Any other args forward to pebble build (e.g. ./build.sh lcars-stardate --debug).
+#   lib/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
+#   lib/build.sh all               build every face under watchfaces/
+#   lib/build.sh <face> --clean    pebble clean first (needed after a messageKey change)
+# Any other args forward to pebble build (e.g. lib/build.sh lcars-stardate --debug).
 set -euo pipefail
-here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+engine="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# the engine is mounted at <workspace>/lib/, and the faces and build sandboxes live in the workspace
+here="$(cd "$engine/.." && pwd)"
 
 if [[ $# -lt 1 || "$1" == -* ]]; then
-  echo "usage: ./build.sh <face|all> [--clean] [pebble build args...]" >&2
+  echo "usage: lib/build.sh <face|all> [--clean] [pebble build args...]" >&2
   exit 1
 fi
 face="$1"
@@ -30,12 +32,12 @@ done
 build_face() {
   local face="$1"
 
-  node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$here/tools/manifest/build-manifests.ts" "$face"
+  node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$engine/tools/manifest/build-manifests.ts" "$face"
 
   # a face usually builds one target (the face itself), but can declare several (a watchface
   # and a watchapp from one source). the manifest step wrote a sandbox per target; ask it which
   local targets
-  targets=$(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$here/tools/manifest/build-manifests.ts" --targets "$face")
+  targets=$(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$engine/tools/manifest/build-manifests.ts" --targets "$face")
 
   for target in $targets; do
     # compile the TypeScript pkjs runtime (watchfaces/<face>/src/pkjs + lib/ts) into
