@@ -17,9 +17,8 @@ const OM = 'open-meteo.com/v1/forecast';
 /**
  * Stub `request` that routes by URL substring and records calls in order.
  *
- * @param {!Object<string, {err?: string, body?: string}>} byPath substring -> response
- * @param {!Array<string>} calls sink for requested URLs, in order
- * @return {Function}
+ * byPath maps a URL substring to the error or body to hand back for it, and
+ * calls collects every requested URL in the order the provider asked for them.
  */
 function routing(byPath: Record<string, { err?: string | null; body?: string }>, calls: string[]): RequestFn {
   return (url, callback) => {
@@ -47,7 +46,7 @@ const WX_OK = JSON.stringify({ cod: 200, name: 'WeatherCity', main: { temp: 13.4
 
 describe('owm provider', () => {
   describe('guard clauses', () => {
-    /** A missing key must short-circuit before any network call. */
+    /** A missing key must return immediately, before any network call. */
     test('reports a missing key without making a request', () => {
       const calls: string[] = [];
 
@@ -95,7 +94,7 @@ describe('owm provider', () => {
   });
 
   describe('request order', () => {
-    /** The old parallel join could strand done(), so OWM must lead and Open-Meteo follow it. */
+    /** OWM must resolve before Open-Meteo is asked for the extras, or a callback waiting on both can be left hanging and the reading never reaches the watch. */
     test('requests OWM before the Open-Meteo extras', () => {
       const calls: string[] = [];
 
@@ -383,8 +382,13 @@ describe('owm provider', () => {
     });
   });
 
-  // live integration against the real OpenWeatherMap API. opt-in via RUN_LIVE_WEATHER=1
-  // plus OWM_KEY. catches the upstream changing response shape
+  /**
+   * Runs only with RUN_LIVE_WEATHER=1 and an OWM_KEY, against the real OpenWeatherMap API.
+   *
+   * OpenWeatherMap renaming or dropping a field would still parse without error here,
+   * just into the wrong value, and this live check is the only thing that would
+   * catch it before a wearer sees a blank or wrong reading on the watch.
+   */
   describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1' || !process.env.OWM_KEY)('live', () => {
     const KEY = process.env.OWM_KEY;
     const live = (opts: WeatherOpts) => new Promise<WeatherResult>((resolve) => owm.fetch(opts, fetchRequest, resolve));

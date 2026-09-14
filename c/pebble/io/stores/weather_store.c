@@ -2,6 +2,8 @@
  * @file weather_store.c
  * @brief The active weather store: holds the readings, owns the appmessage weather channels,
  * and asks the phone for more whenever its turn on the face's cadence finds a poll due.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/weather_store.h"
 
@@ -14,51 +16,69 @@
 #include "io/stores/store_persist.h"
 #include "io/stores/store_poll.h"
 
-// a short first fetch after launch (fires from the event loop so appmessage is open by then)
-// then the recurring poll runs at the configured interval
+/**
+ * @brief Delay before the first fetch after launch, in ms.
+ *
+ * It fires from the event loop so appmessage is open by then. The recurring poll then runs at the
+ * configured interval.
+ */
 #define WEATHER_FIRST_POLL_MS 500
 
-// the phone JS can take several seconds to come up on a cold launch, so a first request that lands
-// before it is ready would leave the face blank until the next full poll (30 min). until the first
-// reading arrives, keep asking on this short cadence for a bounded number of tries, then settle
-#define WEATHER_BOOT_RETRY_MS 3000
-#define WEATHER_BOOT_RETRIES 8
+/**
+ * @name Cold boot re-asks
+ *
+ * The phone JS can take several seconds to come up on a cold launch, so a first request that lands
+ * before it is ready would leave the face blank until the next full poll (30 min). Until the first
+ * reading arrives the store keeps asking on this short cadence, for a bounded number of tries, then
+ * settles.
+ * @{
+ */
+#define WEATHER_BOOT_RETRY_MS 3000 ///< Gap between the short re-asks, in ms
+#define WEATHER_BOOT_RETRIES 8     ///< How many short re-asks a cold launch gets before settling
+/** @} */
 
+/**
+ * @var s_state
+ * @brief Every reading the store holds, laid out as the blob that gets persisted.
+ */
 static struct
 {
-    uint8_t tag;          // STORE_TAG_WEATHER, so a restore can tell this blob from another shape
-    int16_t temp;         // current temperature in the user's unit (WEATHER_NO_TEMP when none)
-    char   cond[32];
-    char   location_name[32];
-    int    humidity;
-    int    wind_kmh;
-    char   wind_dir[4];
-    char   sunrise[8];
-    char   sunset[8];
-    int    uv;            // uv index (-1 when none)
-    int    temp_max;      // today's high (WEATHER_NO_TEMP when none)
-    int    temp_min;      // today's low (WEATHER_NO_TEMP when none)
-    int    precip_chance; // percent chance of precip (-1 when none)
-    int    feels_like;    // apparent temperature (WEATHER_NO_TEMP when none)
-    int    pressure;      // surface pressure in hPa (-1 when none)
-    int    dew_point;     // dew point temperature (WEATHER_NO_TEMP when none)
-    WeatherHourly hourly; // the hourly forecast strip (count 0 when none)
-    WeatherDaily  daily;  // the 7-day forecast strip (count 0 when none)
-    time_t last_sync;
+    uint8_t tag;          ///< STORE_TAG_WEATHER, so a restore can tell this blob from another shape
+    int16_t temp;         ///< Current temperature in the user's unit (WEATHER_NO_TEMP when none)
+    char   cond[32];      ///< Short word for the sky, such as "SUNNY"
+    char   location_name[32]; ///< The location name, such as "Toronto"
+    int    humidity;      ///< Percent humidity, -1 when none
+    int    wind_kmh;      ///< Wind speed in km/h, -1 when none
+    char   wind_dir[4];   ///< Wind direction like "NW"
+    char   sunrise[8];    ///< Sunrise time like "06:30"
+    char   sunset[8];     ///< Sunset time like "21:30"
+    int    uv;            ///< UV index (-1 when none)
+    int    temp_max;      ///< Today's high (WEATHER_NO_TEMP when none)
+    int    temp_min;      ///< Today's low (WEATHER_NO_TEMP when none)
+    int    precip_chance; ///< Percent chance of precip (-1 when none)
+    int    feels_like;    ///< Apparent temperature (WEATHER_NO_TEMP when none)
+    int    pressure;      ///< Surface pressure in hPa (-1 when none)
+    int    dew_point;     ///< Dew point temperature (WEATHER_NO_TEMP when none)
+    WeatherHourly hourly; ///< The hourly forecast strip (`count` 0 when none)
+    WeatherDaily  daily;  ///< The 7-day forecast strip (`count` 0 when none)
+    time_t last_sync;     ///< When the last reading landed, or 0 for never
 } s_state;
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "weather state must fit one persist key");
 
-static void (*s_cb)(void);
-static AppTimer *s_timer;  // the short boot re-ask only. the recurring poll rides the cadence
-static int s_poll_min;
-static time_t s_next_poll; // wall-clock second the next recurring poll is due
-static int s_boot_retries; // short cold-boot re-asks used so far, until the first reading lands
-static bool s_live;  // true = a live face, so the cache is worth reading and writing
-static uint32_t s_persist_key; // the slot the face handed us for the saved reading
-static bool s_dirty; // a channel touched the state this inbox, so persist_flush writes it once
+static void (*s_cb)(void);     ///< Called whenever a reading changes, so the face can redraw
+static AppTimer *s_timer;      ///< The short boot re-ask only. The recurring poll rides the cadence
+static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
+static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
+static int s_boot_retries;     ///< Short cold-boot re-asks used so far, until the first reading lands
+static bool s_live;            ///< True once the store is enabled on a live face, so the cache is worth reading and writing and the cadence turn runs
+static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved reading
+static bool s_dirty;           ///< A channel touched the state this inbox, so persist_flush writes it once
 
 // --- state writers (internal: only the channel handlers + the seed touch these) ---
 
+/**
+ * @brief Clear the reading back to no-data for every field.
+ */
 static void reset_state(void)
 {
     s_state.temp = WEATHER_NO_TEMP;
@@ -81,16 +101,25 @@ static void reset_state(void)
     s_state.last_sync = 0;
 }
 
-// mark the reading as needing a save. a combined weather push fires several channel handlers
-// in one inbox, so rather than each writing the whole struct to flash we just flag it dirty
-// and persist_flush does one write when the inbox is fully dispatched (one poll = one write)
+/**
+ * @brief Mark the reading as needing a save.
+ *
+ * A combined weather push fires several channel handlers in one inbox, so rather than each
+ * writing the whole struct to flash, each just flags it dirty and `persist_flush` does one
+ * write when the inbox is fully dispatched, which is one write per poll instead of one per
+ * channel.
+ */
 static void mark_dirty(void)
 {
     s_dirty = true;
 }
 
-// the shared tail every channel handler runs after it writes: stamp the sync time, flag the cache
-// dirty, and repaint. keeps the six handlers from each spelling it out
+/**
+ * @brief The shared tail every channel handler runs after it writes.
+ *
+ * Stamps the sync time, flags the cache dirty, and repaints, which keeps the six handlers from
+ * each spelling it out.
+ */
 static void mark_synced(void)
 {
     s_state.last_sync = time(NULL);
@@ -98,8 +127,12 @@ static void mark_synced(void)
     if (s_cb) s_cb();
 }
 
-// the coalesced write, run once per inbox via the transport's inbox-complete hook. only a live
-// face writes, and never from clear() so a failed fetch can't stomp the last good reading
+/**
+ * @brief The coalesced write, run once per inbox via the transport's inbox-complete hook.
+ *
+ * Only a live face writes, and this never runs from `reset_state`, so a failed fetch can't
+ * stomp the last good reading.
+ */
 static void persist_flush(void)
 {
     if (!s_dirty)
@@ -117,6 +150,12 @@ static void persist_flush(void)
     s_dirty = !store_save(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_WEATHER);
 }
 
+/**
+ * @brief Save the current temperature and condition, and mark the reading synced.
+ *
+ * @param temp The temperature in the user's unit.
+ * @param cond The condition token, or NULL for "--".
+ */
 static void set_current(int temp, const char *cond)
 {
     s_state.temp = (int16_t)temp;
@@ -124,8 +163,15 @@ static void set_current(int temp, const char *cond)
     mark_synced();
 }
 
-// prefill the whole store from a seed (dev/screenshots). copies the extras too so a seeded
-// face shows full weather not just temp and cond. s_cb is NULL at init so no redraw fires here
+/**
+ * @brief Prefill the whole store from a seed, for dev builds and screenshots.
+ *
+ * Copies the extra readings too, so a seeded face shows full weather rather than just the
+ * temperature and condition. `s_cb` is still NULL at the point init calls this, so no redraw
+ * fires here.
+ *
+ * @param seed The prefill to apply.
+ */
 static void apply_seed(const WeatherSeed *seed)
 {
     s_state.temp = seed->temp;
@@ -277,6 +323,9 @@ static void boot_fire(void *data)
     s_timer = app_timer_register(WEATHER_BOOT_RETRY_MS, boot_fire, NULL);
 }
 
+/**
+ * @brief Cancel the boot re-ask timer, if one is armed.
+ */
 static void stop_polling(void)
 {
     if (s_timer)

@@ -41,7 +41,7 @@ typedef struct
 typedef struct
 {
     uint8_t   count;                 ///< How many slots are filled (0 means none yet)
-    StockSlot slot[STOCK_MAX_SLOTS];
+    StockSlot slot[STOCK_MAX_SLOTS]; ///< The quote slots, filled up to count
 } StockStrip;
 
 /**
@@ -55,7 +55,7 @@ typedef struct
  *
  * @param buf The raw wire bytes.
  * @param len How many bytes there are.
- * @param out Receives the watchlist. Untouched unless this returns true.
+ * @param[out] out Receives the watchlist. Untouched unless this returns true.
  * @return Whether the run read clean.
  */
 bool stock_wire_decode(const uint8_t *buf, uint16_t len, StockStrip *out);

@@ -47,10 +47,15 @@ void test_beats_one_beat_in_is_one(void)
     TEST_ASSERT_EQUAL_INT(1, result);
 }
 
-/** @brief A negative offset (clock not set yet) must clamp to 0 rather than read garbage. */
+/**
+ * @brief A negative offset (clock not set yet) must clamp to 0 rather than read garbage.
+ *
+ * A little over a beat below zero reads -1 without the clamp. A few milliseconds below would round
+ * to 0 either way and prove nothing.
+ */
 void test_beats_negative_clamps_to_zero(void)
 {
-    int result = beats_from_ms(-5);
+    int result = beats_from_ms(-90000);
 
     TEST_ASSERT_EQUAL_INT(0, result);
 }

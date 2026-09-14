@@ -20,7 +20,7 @@ const STOCK_MAX_SLOTS = 4;
 const CALENDAR_MAX_SLOTS = 6;
 const CALENDAR_TITLE_MAX = 24;
 const CALENDAR_LOC_MAX = 16;
-// a forecast column with no reading ships this sentinel so the watch draws a placeholder
+// a forecast column with no reading ships this marker value so the watch draws a placeholder
 const FORECAST_NO_TEMP = -1000;
 
 /**
@@ -41,7 +41,7 @@ function clampInt(value: number, bits: number): number {
 
 /**
  * Encodes a signed value as two little-endian bytes. A missing reading rides as
- * the FORECAST_NO_TEMP sentinel so the watch draws a placeholder. The reading is clamped
+ * the FORECAST_NO_TEMP marker so the watch draws a placeholder. The reading is clamped
  * because a provider handing back something wild would otherwise wrap to a plausible
  * looking wrong temperature rather than saturate.
  */
@@ -79,6 +79,9 @@ function leBytes(value: number, byteCount: number): number[] {
 /**
  * Packs the hourly forecast strip into the wire bytes the watch decodes.
  * Layout: [count][baseHour][stepHours] then per column [code][tempLow][tempHigh].
+ *
+ * @param hourly The parsed hourly forecast, or null or undefined when there is none.
+ * @return The packed wire bytes, or null when there is nothing to pack.
  */
 function packForecastHourly(hourly: HourlyStrip | null | undefined): number[] | null {
   if (!hourly || !hourly.cols || !hourly.cols.length) {
@@ -96,6 +99,9 @@ function packForecastHourly(hourly: HourlyStrip | null | undefined): number[] | 
 /**
  * Packs the 7-day forecast strip into the wire bytes the watch decodes.
  * Layout: [count][baseWeekday] then per column [code][maxLow][maxHigh][minLow][minHigh].
+ *
+ * @param daily The parsed daily forecast, or null or undefined when there is none.
+ * @return The packed wire bytes, or null when there is nothing to pack.
  */
 function packForecastDaily(daily: DailyStrip | null | undefined): number[] | null {
   if (!daily || !daily.cols || !daily.cols.length) {
@@ -114,6 +120,9 @@ function packForecastDaily(daily: DailyStrip | null | undefined): number[] | nul
  * Packs the watchlist quotes into the wire bytes the watch decodes.
  * Layout: [count] then per slot [ok][price int32 LE cents][pct int16 LE
  * hundredths][symLen][sym bytes]. A failed slot carries its short status text.
+ *
+ * @param results The quotes to pack, in slot order, or null when there are none.
+ * @return The packed wire bytes, or null when there is nothing to pack.
  */
 function packStockStrip(results: Array<Pick<StockQuote, 'ok' | 'price' | 'changePercent' | 'symbol' | 'status'>> | null): number[] | null {
   if (!results || !results.length) {
@@ -149,6 +158,9 @@ function packStockStrip(results: Array<Pick<StockQuote, 'ok' | 'price' | 'change
  * Packs upcoming calendar events into the wire bytes the watch decodes.
  * Layout: [count] then per event [startEpoch int32 LE][endEpoch int32 LE][flags bit0=allDay]
  * [titleLen][title bytes][locLen][loc bytes]. Absolute epochs so the watch keeps it fresh.
+ *
+ * @param events The upcoming events to pack, in slot order, or null when there are none.
+ * @return The packed wire bytes, or null when there is nothing to pack.
  */
 function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
   if (!events || !events.length) {
@@ -179,6 +191,10 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
 /**
  * True when two packed strips are byte-for-byte identical, so a redundant push
  * to the watch can be skipped. Two nulls count as equal.
+ *
+ * @param left One packed strip, or null.
+ * @param right The other packed strip, or null.
+ * @return True when the two are the same length and hold the same bytes.
  */
 function bytesEqual(left: number[] | null, right: number[] | null): boolean {
   if (left === right) {

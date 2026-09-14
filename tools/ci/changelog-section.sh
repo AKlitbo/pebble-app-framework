@@ -2,7 +2,7 @@
 # Pull one version's section out of a face's CHANGELOG.md, for use as GitHub release notes.
 #
 # The changelogs are Keep a Changelog format, so every release is already written up under a
-# "## [X.Y.Z] - YYYY-MM-DD" header. Release notes are that section verbatim - there is no second
+# "## [X.Y.Z] - YYYY-MM-DD" header. Release notes are that section verbatim. There is no second
 # place to keep them in sync.
 #
 # Also the release gate: an entry still dated "Unreleased" means the changelog was never finished,

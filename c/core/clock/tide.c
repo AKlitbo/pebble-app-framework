@@ -1,11 +1,20 @@
 /**
  * @file tide.c
  * @brief The rise and fall of a semidiurnal tide, from a plain running minute count.
+ *
+ * @ingroup lib_core
  */
 #include "clock/tide.h"
 
-// where in the cycle a minute count lands, 0 to TIDE_PERIOD_MIN - 1. C truncates a negative
-// division towards zero, which leaves a negative remainder, so it is pulled back up by hand
+/**
+ * @brief Where in the cycle a minute count lands.
+ *
+ * C truncates a negative division towards zero, which leaves a negative remainder, so this
+ * pulls it back up by hand.
+ *
+ * @param minutes A running minute count, on the same base as tide_level.
+ * @return The phase within the cycle, 0 to TIDE_PERIOD_MIN - 1.
+ */
 static int32_t phase(int32_t minutes)
 {
     int32_t within = minutes % TIDE_PERIOD_MIN;

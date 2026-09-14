@@ -7,10 +7,29 @@
 //     Edit the source vocabulary and run `npm run build:conditions` instead.
 // </auto-generated>
 //------------------------------------------------------------------------------
+/**
+ * @file labels_table.g.h
+ * @brief Condition token to short and long display label lookups.
+ *
+ * Generated from `lib/ts/weather/conditions.ts`, so the phone and the watch read the same list.
+ *
+ * @ingroup lib_ui
+ */
 #pragma once
 
 #include <string.h>
 
+/**
+ * @brief Finds the short display label for a condition token.
+ *
+ * A `_NIGHT` token reads the same as its day form, so the suffix is dropped before the lookup.
+ * An unknown token, or a NULL one, reads "UNKNOWN".
+ *
+ * @param condition The condition token from the phone, such as `RAIN` or `RAIN_NIGHT`. May be NULL.
+ * @return The label, a string literal that stays valid for the life of the app.
+ *
+ * @ingroup lib_ui
+ */
 static const char *wx_label_short_for_table(const char *condition)
 {
     if (!condition)
@@ -95,6 +114,17 @@ static const char *wx_label_short_for_table(const char *condition)
     return "UNKNOWN";
 }
 
+/**
+ * @brief Finds the long display label for a condition token.
+ *
+ * A `_NIGHT` token reads the same as its day form, so the suffix is dropped before the lookup.
+ * An unknown token, or a NULL one, reads "Unknown".
+ *
+ * @param condition The condition token from the phone, such as `RAIN` or `RAIN_NIGHT`. May be NULL.
+ * @return The label, a string literal that stays valid for the life of the app.
+ *
+ * @ingroup lib_ui
+ */
 static const char *wx_label_long_for_table(const char *condition)
 {
     if (!condition)

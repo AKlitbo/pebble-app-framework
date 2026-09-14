@@ -26,6 +26,7 @@ void setUp(void)
 
 void tearDown(void) {}
 
+// a plain cadence callback, counting its own calls and noting its turn for the ordering test
 static void bump_first(void)
 {
     s_first_calls++;
@@ -35,6 +36,7 @@ static void bump_first(void)
     }
 }
 
+// a second callback, so the order and non-displacement tests have two registrations to work with
 static void bump_second(void)
 {
     s_second_calls++;

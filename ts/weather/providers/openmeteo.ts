@@ -59,7 +59,7 @@ export interface OpenMeteoResponse {
  * Rounds a value to a whole number, or null when it isn't a real number.
  *
  * A forecast column with no temperature ships null so the packer can swap in the
- * no-reading sentinel instead of a bogus zero.
+ * no-reading marker instead of a bogus zero.
  */
 function roundOrNull(value: unknown): number | null {
   // null/undefined/'' all coerce to 0 through Number() so reject them first
@@ -142,7 +142,7 @@ function parseHourly(json: OpenMeteoResponse | null): HourlyStrip | null {
   }
 
   // a base we can't read would ship a bogus hour the watch labels the whole strip
-  // with so drop the strip instead of sending a wrong sentinel
+  // with so drop the strip instead of sending a wrong marker
   const baseHour = hourOfIso(times[start]);
   if (baseHour < 0) {
     return null;
@@ -196,6 +196,9 @@ function parseDaily(json: OpenMeteoResponse | null): DailyStrip | null {
  * Shared like parseExtras: the openmeteo provider parses it from its own
  * response, while owm/weatherapi feed a supplemental Open-Meteo response
  * through the same parser so every face gets the same forecast shape.
+ *
+ * @param json The Open-Meteo response to read the strips from, or null when there is none.
+ * @return The hourly and daily forecast strips, each null on its own when the response has nothing usable.
  */
 function parseForecast(json: OpenMeteoResponse | null): ForecastCols {
   return { hourly: parseHourly(json), daily: parseDaily(json) };
@@ -228,6 +231,9 @@ function forecastUrl(opts: WeatherOpts): string {
  * free endpoint lacks all of this, instead of OWM hand-maintaining its own copy.
  * When opts.wantForecast is set the same call also brings back the hourly and daily
  * strips, so OWM fills its forecast row from this one request instead of a second one.
+ *
+ * @param opts The weather request options, read for the coordinates, the unit, and whether a forecast is wanted.
+ * @return The Open-Meteo URL to fetch.
  */
 function extrasUrl(opts: WeatherOpts): string {
   const unit = opts.fahrenheit ? 'fahrenheit' : 'celsius';
@@ -253,6 +259,10 @@ function extrasUrl(opts: WeatherOpts): string {
 /**
  * Fetches just the forecast strips from Open-Meteo, for a provider that can't
  * supply its own. Any failure yields null so the caller keeps its reading.
+ *
+ * @param opts The weather request options, read for the coordinates.
+ * @param request The function that performs the actual network request.
+ * @param done Called with the forecast strips, or null on any failure.
  */
 function fetchForecast(opts: WeatherOpts, request: RequestFn, done: (forecast: ForecastCols | null) => void): void {
   if (!opts || !opts.coords) {
@@ -275,6 +285,9 @@ function fetchForecast(opts: WeatherOpts, request: RequestFn, done: (forecast: F
  * Shared with the OWM provider: OWM's free endpoint lacks these, so it steals
  * them from a parallel Open-Meteo call. Keeping the field mapping here means the
  * Open-Meteo paths live in one place instead of drifting across two providers.
+ *
+ * @param json The Open-Meteo response to read the extras from, or null when there is none.
+ * @return The raw extra fields, keyed to match what attachExtras expects.
  */
 function parseExtras(json: OpenMeteoResponse | null): Record<string, unknown> {
   const cur = json?.current;
@@ -292,7 +305,13 @@ function parseExtras(json: OpenMeteoResponse | null): Record<string, unknown> {
   };
 }
 
-/** Fetches current weather from Open-Meteo for the supplied coordinates. */
+/**
+ * Fetches current weather from Open-Meteo for the supplied coordinates.
+ *
+ * @param opts The weather request options, read for the coordinates, the unit, and whether a forecast is wanted.
+ * @param request The function that performs the actual network request.
+ * @param done Called with the weather result.
+ */
 function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   if (!opts.coords) {
     return done(util.status('No Location'));

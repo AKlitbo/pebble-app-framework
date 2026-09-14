@@ -15,7 +15,7 @@ make
 
 Specs sit next to their source (like `*.spec.ts`) and never reach the watch: `lib/py/waf_helpers.py` drops `**/*.spec.c` and `spec/` from the firmware glob. Adding one needs no Makefile entry: drop `foo.spec.c` beside `foo.c` and it is found, built and run.
 
-## What is not here
+## What Is Not Here
 
 The line is not `core` versus `pebble`, it is whether a unit decides something on its own. `lib/c/core` is all decision: plain arithmetic that needs nothing but a compiler, so a test is cheap and a wrong answer is invisible in review and obvious on the wrist. A one degree error in the moon maths or an off-by-one in the ISO week reads as a bug on someone's watch weeks later.
 

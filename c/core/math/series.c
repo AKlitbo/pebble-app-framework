@@ -1,6 +1,8 @@
 /**
  * @file series.c
  * @brief Reducing a run of samples to the few numbers a chart draws from.
+ *
+ * @ingroup lib_core
  */
 #include "math/series.h"
 

@@ -115,7 +115,7 @@ describe('the gate surviving a restart', () => {
   /**
    * The reason the cache exists. The phone kills this JS whenever it likes, and a throttle that
    * forgets when it last fetched lets every restart spend another four calls out of the 25 a day
-   * Alpha Vantage allows. Half a dozen restarts in one evening used to be enough to run it dry
+   * Alpha Vantage allows. Half a dozen restarts in one evening would be enough to run it dry
    * and leave every slot reading RATE LIMIT.
    */
   test('a poll straight after a restart is still throttled', () => {
@@ -131,8 +131,8 @@ describe('the gate surviving a restart', () => {
 
   /**
    * The other half of the same bug. Once it holds a trading day there is nothing new to fetch
-   * until tomorrow, but a restart used to forget which day it held and start chasing a close it
-   * already had.
+   * until tomorrow, but forgetting which day it held across a restart would start chasing a
+   * close it already has.
    */
   test('a restart still knows it is holding today\'s close', () => {
     const storage = fakeStorage();

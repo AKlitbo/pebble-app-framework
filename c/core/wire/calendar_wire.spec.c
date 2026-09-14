@@ -16,6 +16,7 @@
 void setUp(void) {}
 void tearDown(void) {}
 
+// packs a little-endian int32 into the buffer and returns the offset just past it
 static uint16_t put_u32(uint8_t *buffer, uint16_t offset, int32_t value)
 {
     buffer[offset++] = value & 0xFF;
@@ -166,9 +167,10 @@ void test_refuses_a_location_past_the_message(void)
 /**
  * @brief A refused message must leave the caller's agenda untouched.
  *
- * This is what lets the store keep its last good reading. Half filling the caller's strip and then
- * refusing would blank the panel on a bad message, which is the thing the whole build-then-commit
- * shape exists to stop.
+ * This is what lets the store keep its last good reading. The message holds one whole event and
+ * then stops inside the second, so a reader that filled the caller's strip as it went would already
+ * have written over the live agenda by the time it refused. The build-then-commit shape exists to
+ * stop exactly that.
  */
 void test_leaves_the_agenda_alone_when_it_refuses(void)
 {
@@ -176,8 +178,14 @@ void test_leaves_the_agenda_alone_when_it_refuses(void)
     out.count = 3;
     strcpy(out.event[0].title, "Keep me");
 
-    uint8_t buffer[6] = { 2, 0x00, 0x11, 0x22, 0x33, 0x44 };
-    bool result = calendar_wire_decode(buffer, sizeof(buffer), &out);
+    uint8_t buffer[64];
+    uint16_t len = 0;
+    buffer[len++] = 2;
+    len = put_event(buffer, len, 1700000000, 1700003600, false, "Standup", "Room 4");
+    buffer[len++] = 0x00; // the second event stops inside its start time
+    buffer[len++] = 0x11;
+
+    bool result = calendar_wire_decode(buffer, len, &out);
 
     TEST_ASSERT_FALSE(result);
     TEST_ASSERT_EQUAL_UINT8(3, out.count);
@@ -223,6 +231,31 @@ void test_refuses_an_empty_message(void)
     TEST_ASSERT_FALSE(result);
 }
 
+/**
+ * @brief A message ending straight after its title is refused rather than read as having no location.
+ *
+ * The location length always follows the title in the layout, even for an event with no location,
+ * so a message with nothing after the title was cut short. This pins the refusal. The bounds check
+ * in front of the length byte only stops a one byte read past the end, which no return value shows.
+ */
+void test_refuses_a_message_that_stops_after_the_title(void)
+{
+    uint8_t buffer[32];
+    uint16_t len = 0;
+    buffer[len++] = 1;
+    len = put_u32(buffer, len, 1700000000);
+    len = put_u32(buffer, len, 1700003600);
+    buffer[len++] = 0;   // flags
+    buffer[len++] = 2;   // titleLen
+    buffer[len++] = 'H';
+    buffer[len++] = 'i'; // and nothing after it
+
+    CalendarStrip out;
+    bool result = calendar_wire_decode(buffer, len, &out);
+
+    TEST_ASSERT_FALSE(result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -232,6 +265,7 @@ int main(void)
     RUN_TEST(test_pins_a_count_past_the_array);
     RUN_TEST(test_refuses_a_message_that_stops_mid_event);
     RUN_TEST(test_refuses_a_title_past_the_message);
+    RUN_TEST(test_refuses_a_message_that_stops_after_the_title);
     RUN_TEST(test_refuses_a_location_past_the_message);
     RUN_TEST(test_leaves_the_agenda_alone_when_it_refuses);
     RUN_TEST(test_truncates_an_overlong_title);

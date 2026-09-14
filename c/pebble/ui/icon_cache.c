@@ -3,30 +3,43 @@
  * @brief Icon store. A small cache that maps a resource id to its picture and is shared
  * across a face, so each icon loads once and is freed in one place. Also carries the
  * palette tint and the auto-trim margin scan.
+ *
+ * @ingroup lib_ui
  */
 #include "ui/icon_cache.h"
 #include <string.h>
 
-// how many distinct icons the cache holds at once. a face's reachable set runs well past this
-// (the moon panel alone rotates 28 small and 28 large glyphs through a lunar month, and the
-// forecast strip adds a day and night glyph per condition), so the cache drops its coldest entry
-// to make room rather than filling up and turning every later icon into a blank
+/**
+ * @brief How many distinct icons the cache holds at once.
+ *
+ * A face's reachable set runs well past this. The moon panel alone rotates 28 small and 28 large
+ * glyphs through a lunar month, and the forecast strip adds a day and night glyph per condition. So
+ * the cache drops its coldest entry to make room rather than filling up and turning every later
+ * icon into a blank.
+ */
 #define ICON_CACHE_MAX 64
 
+/**
+ * @brief One cached icon. Its resource id, the loaded picture, and the extra state `icon_tint`
+ * and the auto-trim scan keep between calls.
+ */
 typedef struct
 {
-    uint32_t    res;
-    GBitmap    *bmp;
-    IconMargins margin; ///< Measured once when the icon is first cached
-    GColor      tint;   ///< Last colour written into the palette
-    bool        tinted; ///< False until the first tint so the first draw always writes
-    uint32_t    used;   ///< Stamp of the last time anything asked for this icon
+    uint32_t    res;     ///< The resource id this entry was loaded for
+    GBitmap    *bmp;     ///< The loaded picture
+    IconMargins margin;  ///< Measured once when the icon is first cached
+    GColor      tint;    ///< Last colour written into the palette
+    bool        tinted;  ///< False until the first tint so the first draw always writes
+    uint32_t    used;    ///< Stamp of the last time anything asked for this icon
 } IconEntry;
 
-static IconEntry s_cache[ICON_CACHE_MAX];
-static uint8_t   s_cache_count;
-// ticks once per lookup and gets stamped onto whichever entry was touched, so the entry holding
-// the lowest stamp is the one nothing has wanted for the longest
+static IconEntry s_cache[ICON_CACHE_MAX]; ///< The cached icons
+static uint8_t   s_cache_count;           ///< How many cache entries are in use
+/**
+ * @brief Ticks once per lookup and gets stamped onto whichever entry was touched.
+ *
+ * The entry holding the lowest stamp is the one nothing has wanted for the longest.
+ */
 static uint32_t  s_use_clock;
 
 // paints an icon the given colour while keeping its see-through bits see-through so the
@@ -81,9 +94,19 @@ void icon_tint(GBitmap *bmp, GColor color)
     }
 }
 
-// alpha 0 to 3 of a single pixel across the bitmap formats emery actually produces. a
-// GColor8 keeps alpha in the top 2 bits and colour-table pixels index a GColor8 palette.
-// colour-table pixels pack MSB first so the leftmost pixel sits in the high-order bits
+/**
+ * @brief Alpha of a single pixel, 0 to 3, across the bitmap formats Emery actually produces.
+ *
+ * A `GColor8` keeps alpha in its top 2 bits, and colour-table pixels index a `GColor8`
+ * palette. Colour-table pixels pack MSB first, so the leftmost pixel sits in the high-order
+ * bits.
+ *
+ * @param fmt The bitmap's pixel format.
+ * @param data The row's raw pixel bytes.
+ * @param palette The bitmap's colour palette, for a colour-table format.
+ * @param x The pixel's column within the row.
+ * @return The pixel's alpha, 0 (fully see-through) to 3 (fully opaque).
+ */
 static uint8_t px_alpha(GBitmapFormat fmt, const uint8_t *data, const GColor *palette, int x)
 {
     switch (fmt)
@@ -150,9 +173,16 @@ IconMargins icon_margins_of(GBitmap *bmp)
     return m;
 }
 
-// find-or-load the cache entry for res, or NULL when it can't be cached. one scan feeds
-// icon_get/icon_margins/icon_size so callers don't each re-scan the same icon on every panel
-// repaint (without it icon_margins would scan twice, icon_visible_width three times)
+/**
+ * @brief Finds or loads the cache entry for a resource id.
+ *
+ * One scan feeds `icon_get`, `icon_margins`, and `icon_size`, so callers don't each re-scan the
+ * same icon on every panel repaint. Without it, `icon_margins` would scan twice and a face's own
+ * `icon_visible_width` three times.
+ *
+ * @param res The resource id.
+ * @return The cache entry, or NULL when the icon can't be cached.
+ */
 static IconEntry *icon_entry(uint32_t res)
 {
     for (uint8_t i = 0; i < s_cache_count; i++)

@@ -10,7 +10,7 @@
  * comes round. Containment cannot get stuck: it is right again on the very next minute.
  *
  * Every reading comes in as minutes past midnight, and -1 means there is no reading. The caller
- * gathers them; nothing here touches a watch, which is what keeps it host-testable.
+ * gathers them. Nothing here touches a watch, which is what keeps it host-testable.
  *
  * @ingroup lib_core
  */

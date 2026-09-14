@@ -2,7 +2,7 @@
  * Specs for the AppMessage wire packing.
  *
  * These byte layouts are a contract with the C decoders, so the field order, the
- * little-endian widths, the no-reading sentinel, and the store-buffer caps are
+ * little-endian widths, the no-reading marker value, and the store-buffer caps are
  * pinned here: a swapped or dropped byte reads the wrong value on the watch.
  */
 
@@ -40,7 +40,7 @@ describe('packForecastHourly', () => {
     expect(bytes.slice(3)).toEqual([0, 0xfb, 0xff]);
   });
 
-  /** A missing reading must ride as the -1000 sentinel so the watch shows a gap, not a 0. */
+  /** A missing reading must ride as the -1000 marker value so the watch shows a gap, not a 0. */
   test('packs a null temp as the no-reading sentinel', () => {
     const bytes = wire.packForecastHourly({
       baseHour: 0, stepHours: 2, cols: [{ code: 0, temp: null }],

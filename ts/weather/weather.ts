@@ -23,7 +23,13 @@ const PROVIDERS: Record<string, WeatherProvider> = {
   weatherapi: weatherApi,
 };
 
-/** Looks up current weather using the configured provider and location. */
+/**
+ * Looks up current weather using the configured provider and location.
+ *
+ * @param opts The weather request options, read for the provider name and passed through to it.
+ * @param request The function that performs the actual network request.
+ * @param done Called with the weather result.
+ */
 function fetchWeather(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   const key = String(opts.provider || '').toLowerCase();
   const provider = PROVIDERS[key];

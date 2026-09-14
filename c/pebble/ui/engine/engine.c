@@ -1,19 +1,21 @@
 /**
  * @file engine.c
- * @brief The skin-neutral slot engine: build one layer per slot and repaint them all on a
+ * @brief The skin-neutral slot engine. Builds one layer per slot and repaints them all on a
  * store change.
+ *
+ * @ingroup lib_ui
  */
 #include "ui/engine/engine.h"
 
 #include <string.h>
 
-static Window     *s_window;
-static EngineBuild s_build;
-static EngineSlot  s_slots[ENGINE_MAX_SLOTS];
-static Layer      *s_layers[ENGINE_MAX_SLOTS];      // draw-slots (NULL for text-slots)
-static TextLayer  *s_text_layers[ENGINE_MAX_SLOTS]; // text-slots (NULL for draw-slots)
-static char        s_last_text[ENGINE_MAX_SLOTS][24]; // last string set so we skip an unchanged re-fit
-static uint8_t     s_count;
+static Window     *s_window;                          ///< The window the slots are built in
+static EngineBuild s_build;                           ///< What the face passed to the engine at init
+static EngineSlot  s_slots[ENGINE_MAX_SLOTS];         ///< The slots as the face defined them
+static Layer      *s_layers[ENGINE_MAX_SLOTS];        ///< Draw-slot layers, NULL for text-slots
+static TextLayer  *s_text_layers[ENGINE_MAX_SLOTS];   ///< Text-slot layers, NULL for draw-slots
+static char        s_last_text[ENGINE_MAX_SLOTS][24]; ///< The last string set on each slot, so an unchanged one skips the re-fit
+static uint8_t     s_count;                           ///< How many slots are in use
 
 /**
  * @brief Draw-slot update proc: hand the module its own bounds.

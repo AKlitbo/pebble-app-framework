@@ -40,7 +40,7 @@ const QUOTE_OK = JSON.stringify({
 
 describe('alphavantage provider', () => {
   describe('guard clauses', () => {
-    /** A missing key must short-circuit before any network call. */
+    /** A missing key must return immediately rather than firing off a network call. */
     test('reports a missing key without making a request', () => {
       const calls: string[] = [];
 
@@ -134,8 +134,12 @@ describe('alphavantage provider', () => {
     });
   });
 
-  // live integration against the real Alpha Vantage API. opt-in via RUN_LIVE_STOCK=1
-  // plus ALPHAVANTAGE_KEY. the free tier is 25 calls a day so keep this to one
+  /**
+   * Runs against the real Alpha Vantage API instead of a stub, so it catches Alpha Vantage
+   * changing its response shape in a way the deterministic specs above cannot see. Opt in with
+   * RUN_LIVE_STOCK=1 and ALPHAVANTAGE_KEY. The free tier is 25 calls a day, so this only spends
+   * one.
+   */
   describe.skipIf(process.env.RUN_LIVE_STOCK !== '1' || !process.env.ALPHAVANTAGE_KEY)('live', () => {
     const KEY = process.env.ALPHAVANTAGE_KEY;
     const live = (opts: StockOpts) => new Promise<StockQuote>((resolve) => alphavantage.fetch(opts, fetchRequest, resolve));

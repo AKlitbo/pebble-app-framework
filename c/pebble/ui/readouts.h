@@ -21,7 +21,7 @@
 /**
  * @brief Format the clock per the Time Format setting: 24h, 12h, system, or .beats.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_time(char *out, size_t n);
@@ -29,7 +29,7 @@ void readout_time(char *out, size_t n);
 /**
  * @brief Format the AM/PM marker, or empty on a 24-hour or .beats clock.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_meridiem(char *out, size_t n);
@@ -40,7 +40,7 @@ void readout_meridiem(char *out, size_t n);
  * A format carrying the .beats token gets a reading written into it, so the date line can end
  * in one (`0618.672`) alongside a normal clock.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_date(char *out, size_t n);
@@ -58,7 +58,7 @@ bool readout_date_shows_beats(void);
 /**
  * @brief Format the heart rate, or "--" when there is no reading.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_hr(char *out, size_t n);
@@ -66,7 +66,7 @@ void readout_hr(char *out, size_t n);
 /**
  * @brief Format the step count, or the distance walked per the Steps Mode setting.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_steps(char *out, size_t n);
@@ -74,7 +74,7 @@ void readout_steps(char *out, size_t n);
 /**
  * @brief Format the temperature with its unit letter, or "--" when there is no reading.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_weather_temp(char *out, size_t n);
@@ -85,7 +85,7 @@ void readout_weather_temp(char *out, size_t n);
  * The night marker is trimmed, so "CLEAR_NIGHT" reads as "CLEAR". The glyph still uses
  * the full token.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_weather_cond(char *out, size_t n);
@@ -93,7 +93,7 @@ void readout_weather_cond(char *out, size_t n);
 /**
  * @brief Format the latitude string, or "--" when there is no fix.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_lat(char *out, size_t n);
@@ -101,7 +101,7 @@ void readout_lat(char *out, size_t n);
 /**
  * @brief Format the longitude string, or "--" when there is no fix.
  *
- * @param out Output buffer.
+ * @param[out] out Output buffer.
  * @param n Buffer size.
  */
 void readout_lon(char *out, size_t n);

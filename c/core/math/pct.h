@@ -21,7 +21,7 @@
  * @param goal What is being aimed at.
  * @return The progress from 0 to 100.
  *
- * @note A value below zero is the readouts' no-data sentinel, and this answers 0 for it, same as
+ * @note A value below zero is the readouts' no-data marker, and this answers 0 for it, same as
  *   it does for a real zero. A caller that needs to tell "nothing yet" apart from "none of it
  *   done" has to check before it asks.
  */

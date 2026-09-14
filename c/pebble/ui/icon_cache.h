@@ -28,10 +28,10 @@
  */
 typedef struct
 {
-    int8_t n;
-    int8_t e;
-    int8_t s;
-    int8_t w;
+    int8_t n; ///< Transparent margin on the north (top) side, in pixels
+    int8_t e; ///< Transparent margin on the east (right) side, in pixels
+    int8_t s; ///< Transparent margin on the south (bottom) side, in pixels
+    int8_t w; ///< Transparent margin on the west (left) side, in pixels
 } IconMargins;
 
 /**
@@ -88,8 +88,8 @@ void icon_tint(GBitmap *bmp, GColor color);
  *
  * @param align The anchor the icon is pinned at.
  * @param margins The icon's transparent margins.
- * @param trim_dx Output for the sideways offset.
- * @param trim_dy Output for the up and down offset.
+ * @param[out] trim_dx Output for the sideways offset.
+ * @param[out] trim_dy Output for the up and down offset.
  */
 void icon_align_trim(GAlign align, IconMargins margins, int *trim_dx, int *trim_dy);
 

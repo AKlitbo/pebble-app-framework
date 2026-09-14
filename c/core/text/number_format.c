@@ -1,6 +1,8 @@
 /**
  * @file number_format.c
- * @brief Pure number formatting
+ * @brief Pure number and string formatting, no SDK behind it.
+ *
+ * @ingroup lib_core
  */
 #include "text/number_format.h"
 

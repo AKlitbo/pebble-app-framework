@@ -1,6 +1,6 @@
 /**
  * @file wind.h
- * @brief Pure wind-speed conversions + unit labels (no SDK)
+ * @brief Pure wind-speed conversions and unit labels, no SDK behind them.
  *
  * @ingroup lib_core
  */
@@ -19,11 +19,11 @@
  */
 typedef enum
 {
-    WIND_UNIT_KMH = 0,
-    WIND_UNIT_MPH,
-    WIND_UNIT_KTS,
-    WIND_UNIT_MS,
-    WIND_UNIT_COUNT
+    WIND_UNIT_KMH = 0,  ///< kilometres per hour
+    WIND_UNIT_MPH,      ///< miles per hour
+    WIND_UNIT_KTS,      ///< knots
+    WIND_UNIT_MS,       ///< metres per second
+    WIND_UNIT_COUNT     ///< how many units there are, not a unit itself
 } WindUnit;
 
 /**

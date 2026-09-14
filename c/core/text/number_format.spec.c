@@ -35,7 +35,7 @@ void test_number_group_below_thousand_has_no_separator(void)
 }
 
 /** @brief Exactly one thousand is the first place a separator belongs, so "1'000" must round trip. */
-void test_number_group_exact_thousand(void)
+void test_number_group_separates_exactly_one_thousand(void)
 {
     char buffer[24];
 
@@ -369,7 +369,7 @@ int main(void)
 
     RUN_TEST(test_number_group_inserts_separators);
     RUN_TEST(test_number_group_below_thousand_has_no_separator);
-    RUN_TEST(test_number_group_exact_thousand);
+    RUN_TEST(test_number_group_separates_exactly_one_thousand);
     RUN_TEST(test_number_group_keeps_negative_sign);
     RUN_TEST(test_number_group_multiple_groups);
     RUN_TEST(test_number_group_handles_int_min);

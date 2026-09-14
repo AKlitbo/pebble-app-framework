@@ -85,17 +85,21 @@ const vibeOptions = [
  *   heading, intro        page title and lead paragraph (both optional)
  *
  * Section objects (each section is customised through its own fields):
- *   theme    { label?, description?, options }   options is the theme list (required)
  *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section
  *   clockItems      [ClayConfigItem]            extra controls inside the Clock section
  *   bluetooth { description? }                   always shown
  *   date     { label?, description?, default?, beats?, options? }
- *   steps    { label?, description? }
+ *   steps    { label?, description?, capabilities? }
  *
  * Optional sections (present = included, omitted = excluded):
- *   location    { gpsDefault? }
+ *   theme       { label?, description?, options? }  the theme picker. options is the theme list,
+ *                                                   and a picker given none has nothing to offer
+ *   location    { gpsDefault?, timeZone? }
  *   weather     {}                               marker, adds the provider picker to the Weather section
  *   temperature {}                               marker, adds the unit dropdown to the Weather section
+ *
+ * @param options The per-section description to build the page from.
+ * @return The assembled Clay config array, ready to hand to Clay.
  */
 function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
   const theme = options.theme || {};

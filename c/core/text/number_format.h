@@ -1,6 +1,6 @@
 /**
  * @file number_format.h
- * @brief Pure number and string formatting (no SDK)
+ * @brief Pure number and string formatting, no SDK behind it.
  *
  * @ingroup lib_core
  */
@@ -20,7 +20,7 @@
  * Negative values keep their leading sign. The Swiss-style apostrophe keeps big
  * counts readable on the small display.
  *
- * @param buffer Output buffer.
+ * @param[out] buffer Output buffer.
  * @param size Buffer size.
  * @param value The value to format.
  */
@@ -29,10 +29,10 @@ void number_group(char *buffer, size_t size, int value);
 /**
  * @brief Format an integer, or "--" when there is no reading yet.
  *
- * A negative value is the no-data sentinel the readouts share, so this is the one place that turns
+ * A negative value is the no-data marker the readouts share, so this is the one place that turns
  * "I have nothing" into something to draw. The format takes exactly one int, so "%d" or "%d%%".
  *
- * @param buffer Output buffer.
+ * @param[out] buffer Output buffer.
  * @param size Buffer size.
  * @param value The reading, or a negative number for no data yet.
  * @param fmt The printf format applied when the value is there.
@@ -46,7 +46,7 @@ void fmt_int_or_dash(char *buffer, size_t size, int value, const char *fmt);
  * written out front rather than left to the whole part, which is what makes -50 read as "-0.50"
  * instead of losing its minus to a whole part of zero.
  *
- * @param buffer Output buffer.
+ * @param[out] buffer Output buffer.
  * @param size Buffer size.
  * @param value The number times 100.
  */
@@ -59,7 +59,7 @@ void fmt_hundredths(char *buffer, size_t size, int value);
  * writing the sign out front: a change under one percent has a whole part of zero and would lose
  * it otherwise.
  *
- * @param buffer Output buffer.
+ * @param[out] buffer Output buffer.
  * @param size Buffer size.
  * @param value The percent times 100, signed.
  */
@@ -71,7 +71,7 @@ void fmt_pct_signed(char *buffer, size_t size, int value);
  * For the length-prefixed text the phone sends, where the length is the phone's word and the room
  * is ours. What does not fit is dropped rather than written past the end.
  *
- * @param dst Where to write. Always ends terminated.
+ * @param[out] dst Where to write. Always ends terminated.
  * @param cap How much room dst has, terminator included. Must be at least 1: a buffer with no room
  *   for even a terminator has nothing this can do with it.
  * @param src The bytes to copy.

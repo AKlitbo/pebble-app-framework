@@ -1,6 +1,8 @@
 /**
  * @file text_case.c
- * @brief Pure ascii case helpers implementation
+ * @brief Pure ascii case helpers, no SDK behind them.
+ *
+ * @ingroup lib_core
  */
 #include "text/text_case.h"
 

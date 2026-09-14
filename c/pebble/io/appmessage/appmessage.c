@@ -3,6 +3,8 @@
  * @brief AppMessage transport: weather requests out, settings + readings in. Decodes
  * the wire format and hands results to the app through handlers, so it never
  * reaches into the UI itself.
+ *
+ * @ingroup lib_io
  */
 #include "io/appmessage/appmessage.h"
 
@@ -10,23 +12,26 @@
 #include "system/settings/settings.h"
 #include <limits.h>
 
-// registered channel handlers. each stays NULL until a consumer opts in
+/**
+ * @var s_handlers
+ * @brief The registered channel handlers. Each one stays NULL until a consumer opts in.
+ */
 static struct
 {
-    WeatherHandler              on_weather;
-    CoordsHandler               on_coords;
-    SettingsChangedHandler      on_settings_changed;
-    WeatherExtraHandler         on_weather_extra;
-    WeatherForecastHandler      on_weather_forecast;
-    WeatherAirHandler           on_weather_air;
-    WeatherForecastStripHandler on_forecast_hourly;
-    WeatherForecastStripHandler on_forecast_daily;
-    LocationNameHandler         on_location_name;
-    StockStripHandler           on_stock_strip;
-    CalendarStripHandler        on_calendar_strip;
-    CustomColorsHandler         on_custom_colors;
-    CustomColorsProvider        custom_colors_provider;
-    InboxCompleteHandler        on_inbox_complete;
+    WeatherHandler              on_weather;             ///< Current conditions arrived
+    CoordsHandler               on_coords;              ///< The phone's coordinates arrived
+    SettingsChangedHandler      on_settings_changed;    ///< A settings push was applied
+    WeatherExtraHandler         on_weather_extra;       ///< The extra weather readings arrived
+    WeatherForecastHandler      on_weather_forecast;    ///< Today's forecast readings arrived
+    WeatherAirHandler           on_weather_air;         ///< The air readings arrived
+    WeatherForecastStripHandler on_forecast_hourly;     ///< The hourly forecast strip arrived
+    WeatherForecastStripHandler on_forecast_daily;      ///< The daily forecast strip arrived
+    LocationNameHandler         on_location_name;       ///< The location name arrived
+    StockStripHandler           on_stock_strip;         ///< The stock strip arrived
+    CalendarStripHandler        on_calendar_strip;      ///< The calendar strip arrived
+    CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
+    CustomColorsProvider        custom_colors_provider; ///< Supplies the face's custom colours for the settings reply
+    InboxCompleteHandler        on_inbox_complete;      ///< Every channel in one inbound message has been handled
 } s_handlers;
 
 void appmessage_on_weather(WeatherHandler cb)                  { s_handlers.on_weather = cb; }
@@ -44,49 +49,73 @@ void appmessage_on_custom_colors(CustomColorsHandler cb)      { s_handlers.on_cu
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb) { s_handlers.custom_colors_provider = cb; }
 void appmessage_on_inbox_complete(InboxCompleteHandler cb)    { s_handlers.on_inbox_complete = cb; }
 
-// only one AppMessage send can be in flight at a time, so every outbound message (the weather,
-// stock and calendar requests plus the settings reply) goes through one queue: send the head, wait
-// for its sent/failed callback, then send the next. the queue drains a pass at a time. a request
-// the phone nacks (its pkjs was asleep, and that first send is usually what wakes it) is held in a
-// failed set and retried on a later pass, so a whole poll is not lost to one asleep-phone nack and
-// left stale until the next interval
-#define REQUEST_RETRY_MAX 3
-#define REQUEST_RETRY_DELAY_MS 5000
-#define OUTBOX_QUEUE_MAX 6
+/**
+ * @name Outbox queue limits
+ *
+ * Only one AppMessage send can be in flight at a time, so every outbound message (the weather,
+ * stock and calendar requests plus the settings reply) goes through one queue. It sends the head,
+ * waits for its sent or failed callback, then sends the next, and drains a pass at a time.
+ *
+ * A request the phone nacks is held in a failed set and retried on a later pass. Its pkjs was
+ * usually asleep, and that first send is often what wakes it. Holding it back means a whole poll is
+ * not lost to one asleep-phone nack and left stale until the next interval.
+ * @{
+ */
+#define REQUEST_RETRY_MAX 3          ///< Retry passes a nacked request gets before it is dropped
+#define REQUEST_RETRY_DELAY_MS 5000  ///< Delay before the next retry pass, in ms
+#define OUTBOX_QUEUE_MAX 6           ///< Most jobs the queue or the failed set holds at once
+/** @} */
 
+/**
+ * @brief What an outbox job sends.
+ */
 typedef enum
 {
-    OUTBOX_NONE,
-    OUTBOX_WEATHER,
-    OUTBOX_SETTINGS,
-    OUTBOX_STOCK,
-    OUTBOX_CALENDAR
+    OUTBOX_NONE,     ///< The zero value, so a default-initialized job slot reads as nothing rather than a real request
+    OUTBOX_WEATHER,  ///< A weather request
+    OUTBOX_SETTINGS, ///< The settings reply
+    OUTBOX_STOCK,    ///< A stock request
+    OUTBOX_CALENDAR  ///< A calendar request
 } OutboxKind;
 
+/**
+ * @brief One job waiting to go out, or already in flight.
+ */
 typedef struct
 {
-    OutboxKind kind;
+    OutboxKind kind;         ///< What this job sends
     int        retries_left; ///< Retry passes left after a failed send (0 for the settings reply)
 } OutboxJob;
 
-static OutboxJob s_queue[OUTBOX_QUEUE_MAX];  // this pass's work queue
-static int       s_queue_len;
-static OutboxJob s_failed[OUTBOX_QUEUE_MAX]; // requests that nacked this pass, held for the next
-static int       s_failed_len;
-static bool      s_sending;                  // a send is out, waiting on its sent/failed callback
-static OutboxJob s_inflight;                 // the job in flight, valid while s_sending
-static AppTimer *s_retry_timer;              // delay before the next retry pass
+static OutboxJob s_queue[OUTBOX_QUEUE_MAX];  ///< This pass's work queue
+static int       s_queue_len;                ///< How many jobs are in s_queue
+static OutboxJob s_failed[OUTBOX_QUEUE_MAX]; ///< Requests that nacked this pass, held for the next
+static int       s_failed_len;               ///< How many jobs are in s_failed
+static bool      s_sending;                  ///< A send is out, waiting on its sent or failed callback
+static OutboxJob s_inflight;                 ///< The job in flight, valid while s_sending is set
+static AppTimer *s_retry_timer;              ///< Delay before the next retry pass
 
 static void pump(void);
 static void write_settings(DictionaryIterator *iter);
 
-// true for the phone-data requests. the settings reply is not one, so it never retries
+/**
+ * @brief Whether @p kind is one of the phone-data requests. The settings reply is not one, so
+ * it never retries.
+ *
+ * @param kind The job kind to check.
+ * @return True for a weather, stock, or calendar request.
+ */
 static bool is_request_kind(OutboxKind kind)
 {
     return kind == OUTBOX_WEATHER || kind == OUTBOX_STOCK || kind == OUTBOX_CALENDAR;
 }
 
-// build the message for a kind and hand it to the outbox. returns false if the outbox refused it
+/**
+ * @brief Build the message for @p kind and hand it to the outbox.
+ *
+ * @param kind The job kind to send.
+ * @return False if the outbox refused it or a face does not declare the key for @p kind.
+ */
 static bool send_job(OutboxKind kind)
 {
     DictionaryIterator *iter;
@@ -120,7 +149,12 @@ static bool send_job(OutboxKind kind)
     return app_message_outbox_send() == APP_MSG_OK;
 }
 
-// true when a kind already sits in flight, in the work queue, or in the failed set
+/**
+ * @brief Whether @p kind already sits in flight, in the work queue, or in the failed set.
+ *
+ * @param kind The job kind to check.
+ * @return True when a job of this kind is already pending somewhere.
+ */
 static bool kind_pending(OutboxKind kind)
 {
     if (s_sending && s_inflight.kind == kind)
@@ -144,7 +178,12 @@ static bool kind_pending(OutboxKind kind)
     return false;
 }
 
-// add a job to the work queue unless its kind is already pending, then pump
+/**
+ * @brief Add a job to the work queue unless its kind is already pending, then pump.
+ *
+ * @param kind The job kind to send.
+ * @param retries Retry passes left if the first send nacks (0 for the settings reply).
+ */
 static void enqueue(OutboxKind kind, int retries)
 {
     if (kind_pending(kind))
@@ -160,7 +199,9 @@ static void enqueue(OutboxKind kind, int retries)
     pump();
 }
 
-// drop the front job off the work queue
+/**
+ * @brief Drop the front job off the work queue, shifting the rest forward.
+ */
 static void queue_pop_front(void)
 {
     for (int i = 1; i < s_queue_len; i++)
@@ -170,7 +211,11 @@ static void queue_pop_front(void)
     s_queue_len--;
 }
 
-// hold a nacked request for the next pass, if it still has retries and is a real request
+/**
+ * @brief Hold a nacked request for the next pass, if it still has retries and is a real request.
+ *
+ * @param job The job that just nacked.
+ */
 static void hold_failed(OutboxJob job)
 {
     if (!is_request_kind(job.kind) || job.retries_left <= 0)
@@ -185,11 +230,15 @@ static void hold_failed(OutboxJob job)
     }
 }
 
+/**
+ * @brief Move the whole failed set back into the work queue for another pass, then pump.
+ *
+ * @param data The timer context (unused).
+ */
 static void retry_pass(void *data)
 {
     s_retry_timer = NULL;
 
-    // move the whole failed set back into the work queue for another pass
     while (s_failed_len > 0 && s_queue_len < OUTBOX_QUEUE_MAX)
     {
         s_queue[s_queue_len++] = s_failed[0];
@@ -203,7 +252,9 @@ static void retry_pass(void *data)
     pump();
 }
 
-// send the head job when the outbox is free, once the phone is there
+/**
+ * @brief Send the head job when the outbox is free, once the phone is there.
+ */
 static void pump(void)
 {
     if (s_sending)
@@ -309,9 +360,17 @@ static void send_settings(void)
     enqueue(OUTBOX_SETTINGS, 0);
 }
 
-// the forecast/stock/calendar strips all ride as packed byte arrays through a same-signature
-// handler, so one dispatcher covers them: guard on the handler, find the tuple, type-check, pass
-// the raw bytes on. the handler comes in as an argument (not a table) so it stays out of .data
+/**
+ * @brief Find a byte array tuple by key and hand its bytes to a handler.
+ *
+ * The forecast, stock, and calendar strips all ride as packed byte arrays through a
+ * same-signature handler, so one dispatcher covers them. The handler comes in as an argument
+ * rather than a table, so it stays out of the binary's .data section.
+ *
+ * @param iter The dictionary iterator to search.
+ * @param key The message key to look up.
+ * @param cb The handler to call with the raw bytes, or NULL to do nothing.
+ */
 static void dispatch_bytes(DictionaryIterator *iter, uint32_t key,
                            void (*cb)(const uint8_t *data, uint16_t len))
 {

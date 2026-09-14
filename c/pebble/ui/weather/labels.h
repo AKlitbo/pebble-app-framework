@@ -1,10 +1,10 @@
 /**
  * @file labels.h
- * @brief Condition-string to display-label lookup
+ * @brief Condition-string to display-label lookup.
  *
- * Two widths: a compact label for tiny faces / small slots and a full readable
- * label for roomy faces. Both accept the wire token (including the "_NIGHT"
- * forms) and return a string literal, so callers never strip the night marker.
+ * Two widths, a compact label for tiny faces and small slots, and a full readable label for
+ * roomy faces. Both accept the wire token, including the "_NIGHT" forms, and return a string
+ * literal, so callers never strip the night marker.
  *
  * @ingroup lib_ui
  */

@@ -61,6 +61,10 @@ interface WeatherApiResponse {
  *
  * Kept separate from the network flow so the parsing is easy to exercise on its own.
  * Returns a status result for an error or missing-data response, or a full reading.
+ *
+ * @param json The WeatherAPI response to read.
+ * @param opts The weather request options, read for the unit and the label to prefer.
+ * @return A status result on error or missing data, or the parsed weather result.
  */
 function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResult {
   // WeatherAPI signals failures with an error object carrying a numeric code
@@ -135,7 +139,13 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
   );
 }
 
-/** Fetches current weather from WeatherAPI.com. */
+/**
+ * Fetches current weather from WeatherAPI.com.
+ *
+ * @param opts The weather request options, read for the key, the place or coordinates, and whether a forecast is wanted.
+ * @param request The function that performs the actual network request.
+ * @param done Called with the weather result.
+ */
 function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   if (!opts.key) {
     return done(util.status('No API Key'));

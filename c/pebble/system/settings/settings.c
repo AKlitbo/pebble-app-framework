@@ -1,6 +1,8 @@
 /**
  * @file settings.c
- * @brief Persist API implementation
+ * @brief The persist API implementation.
+ *
+ * @ingroup lib_settings
  */
 #include "system/settings/settings.h"
 
@@ -11,14 +13,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-// head of the schema chain registered by settings_init (primary plus any companions)
+/// Head of the schema chain registered by settings_init, the primary plus any companions
 static const SettingsSchema *s_primary;
-// true when the primary key had no saved blob at init, i.e. storage was wiped (a fresh install
-// or an update). lets the phone know to push its own config back instead of seeding from defaults
+/**
+ * @brief True when the primary key had no saved blob at init.
+ *
+ * That means storage was wiped by a fresh install or an update. It tells the phone to push its own
+ * config back rather than the watch seeding from defaults.
+ */
 static bool s_was_fresh;
-// known fields indexed by id for typed reads, drawn from every schema in the chain
+/// Known fields indexed by id for typed reads, drawn from every schema in the chain
 static const SettingField *s_by_id[SETTING_COUNT];
-// the schema that owns each indexed field, so a typed read hits the right blob
+/// The schema that owns each indexed field, so a typed read hits the right blob
 static const SettingsSchema *s_owner_by_id[SETTING_COUNT];
 
 /**

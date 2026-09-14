@@ -1,10 +1,16 @@
 /**
  * @file step_hours.c
  * @brief The hour arithmetic behind the step chart's buckets.
+ *
+ * @ingroup lib_core
  */
 #include "health/step_hours.h"
 
-// spelled out here rather than taken from the SDK, since core builds on the host for the specs too
+/**
+ * @brief Seconds in one hour of the step chart.
+ *
+ * Spelled out here rather than taken from the SDK, since core builds on the host for the specs too.
+ */
 #define SECONDS_PER_STEP_HOUR 3600
 
 int step_hours_settled(int cur_hour, int cur_min)

@@ -2,6 +2,8 @@
  * @file calendar_store.c
  * @brief The active calendar store: holds the agenda, owns the appmessage calendar channel, and
  * asks the phone for more whenever its turn on the face's cadence finds a poll due.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/calendar_store.h"
 
@@ -12,47 +14,68 @@
 #include "io/stores/store_persist.h"
 #include "io/stores/store_poll.h"
 
-// a short first fetch after launch (fires from the event loop so appmessage is open by then),
-// staggered a touch past weather/stock so the outbox is not contended at boot. then the
-// recurring poll runs at the configured interval
+/**
+ * @brief Delay before the first fetch after launch, in ms.
+ *
+ * It fires from the event loop so appmessage is open by then, and lands a touch after the weather
+ * and stock first fetches so they are not fighting over the outbox at boot. The recurring poll then
+ * runs at the configured interval.
+ */
 #define CALENDAR_FIRST_POLL_MS 1100
 
+/**
+ * @var s_state
+ * @brief The agenda the store holds right now.
+ */
 static struct
 {
-    CalendarStrip strip;
-    time_t        last_sync;
+    CalendarStrip strip;     ///< The agenda as the phone last sent it
+    time_t        last_sync; ///< When that agenda arrived
 } s_state;
 
-// the full strip (6 fat events) is too big to persist: it blows past the 256 byte persist key
-// ceiling so the save just fails. a relaunch instead saves a trimmed snapshot of the first few
-// events plus the sync time, enough to paint the agenda right away before the first poll after
-// launch refreshes the full strip
+/**
+ * @brief How many events the saved snapshot keeps.
+ *
+ * The full strip of 6 events is too big to persist. It blows past the 256 byte persist key ceiling
+ * and the save just fails. A relaunch saves the first few events plus the sync time instead, which
+ * is enough to paint the agenda straight away before the first poll after launch refreshes the full
+ * strip.
+ */
 #define CALENDAR_PERSIST_SLOTS 4
+
+/**
+ * @brief The trimmed snapshot saved to flash. Holds only the first few events, not the whole strip.
+ */
 typedef struct
 {
-    uint8_t       tag; // STORE_TAG_CALENDAR, so a restore can tell this blob from another shape
-    uint8_t       count;
-    CalendarEvent event[CALENDAR_PERSIST_SLOTS];
-    time_t        last_sync;
+    uint8_t       tag;   ///< STORE_TAG_CALENDAR, so a restore can tell this blob from another shape
+    uint8_t       count; ///< How many of the event slots hold a real event
+    CalendarEvent event[CALENDAR_PERSIST_SLOTS]; ///< The first few events off the full strip
+    time_t        last_sync; ///< When the saved snapshot was fetched
 } CalendarPersist;
 _Static_assert(sizeof(CalendarPersist) <= PERSIST_DATA_MAX_LENGTH, "calendar snapshot must fit one persist key");
 
-static void (*s_cb)(void);
-static AppTimer *s_timer;  // the catch-up fetch only. the recurring poll rides the cadence
-static int s_poll_min;
-static time_t s_next_poll; // wall-clock second the next recurring poll is due
-static bool s_live;
-static uint32_t s_persist_key; // the slot the face handed us for the saved strip
+static void (*s_cb)(void);     ///< Called whenever the agenda changes, so the face can redraw
+static AppTimer *s_timer;      ///< The catch-up fetch only. The recurring poll rides the cadence
+static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
+static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
+static bool s_live;            ///< True once the store is enabled on a live face. It gates the cadence turn
+static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved strip
 
 // --- state writers (internal: only the channel handler + the seed touch these) ---
 
+/**
+ * @brief Clear the agenda back to empty.
+ */
 static void reset_state(void)
 {
     s_state.strip.count = 0;
     s_state.last_sync = 0;
 }
 
-// stash a trimmed snapshot so a relaunch can restore it. only a live face writes
+/**
+ * @brief Stash a trimmed snapshot so a relaunch can restore it. Only a live face writes.
+ */
 static void persist_save(void)
 {
     if (!s_live)
@@ -71,7 +94,13 @@ static void persist_save(void)
     store_save(s_persist_key, &snap, sizeof(snap), STORE_TAG_CALENDAR);
 }
 
-// prefill the store from a seed (dev/screenshots). s_cb is NULL at init so no redraw here
+/**
+ * @brief Prefill the store from a seed, for dev builds and screenshots.
+ *
+ * `s_cb` is still NULL at the point init calls this, so no redraw fires here.
+ *
+ * @param seed The prefill to apply.
+ */
 static void apply_seed(const CalendarSeed *seed)
 {
     if (seed->strip)
@@ -120,6 +149,9 @@ static void catch_up_fire(void *data)
     appmessage_request_calendar();
 }
 
+/**
+ * @brief Cancel the catch-up fetch timer, if one is armed.
+ */
 static void stop_polling(void)
 {
     if (s_timer)

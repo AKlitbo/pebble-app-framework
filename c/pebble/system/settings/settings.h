@@ -1,8 +1,8 @@
 /**
  * @file settings.h
- * @brief Persist API: a per-face SettingField table drives versioned load/save,
- * sanitize, the typed reads, and the appmessage round-trip, so shared code never
- * names or hardcodes a field
+ * @brief The persist API. A per-face `SettingField` table drives versioned load and save,
+ * sanitizing, the typed reads, and the AppMessage round trip, so the shared code never
+ * names or hardcodes a single field.
  *
  * @ingroup lib_settings
  */
@@ -22,20 +22,20 @@
  */
 typedef enum
 {
-    SETTING_TEMPERATURE_UNIT,
-    SETTING_DATE_FORMAT,
-    SETTING_THEME,
-    SETTING_STEPS_MODE,
-    SETTING_DISTANCE_UNIT,
-    SETTING_TIME_FORMAT,
-    SETTING_BLUETOOTH_ICON,
-    SETTING_QUIET_TIME_ICON,
-    SETTING_BLUETOOTH_VIBE_CONNECT,
-    SETTING_BLUETOOTH_VIBE_DISCONNECT,
-    SETTING_HOURLY_VIBE,
-    SETTING_BATTERY_DISPLAY,
-    SETTING_HEADER_FONT,
-    SETTING_COUNT
+    SETTING_TEMPERATURE_UNIT,          ///< Celsius or Fahrenheit
+    SETTING_DATE_FORMAT,               ///< The date line's format string
+    SETTING_THEME,                     ///< Which theme is active
+    SETTING_STEPS_MODE,                ///< Steps, miles, or km on the steps readout
+    SETTING_DISTANCE_UNIT,             ///< Km or miles on the standalone Distance panel
+    SETTING_TIME_FORMAT,               ///< Which TimeFormat the clock uses
+    SETTING_BLUETOOTH_ICON,            ///< Whether the bluetooth icon shows
+    SETTING_QUIET_TIME_ICON,           ///< Whether the Quiet Time mark shows
+    SETTING_BLUETOOTH_VIBE_CONNECT,    ///< Vibe pattern to fire when the phone connects
+    SETTING_BLUETOOTH_VIBE_DISCONNECT, ///< Vibe pattern to fire when the phone drops
+    SETTING_HOURLY_VIBE,               ///< Vibe pattern to fire on the hour
+    SETTING_BATTERY_DISPLAY,           ///< What the battery readout shows
+    SETTING_HEADER_FONT,               ///< Which font the panel header labels use, as an index into the face's header font table
+    SETTING_COUNT                      ///< How many known settings there are
 } SettingId;
 
 /**
@@ -43,10 +43,10 @@ typedef enum
  */
 typedef enum
 {
-    SETTING_BOOL,     /**< Sent as a byte 0 or 1. default_num holds the default */
-    SETTING_ENUM_U8,  /**< Sent as text holding the number (Clay sends selects as strings) */
-    SETTING_CSTRING,  /**< Sent as text copied into a fixed buffer */
-    SETTING_COLOR     /**< Sent as a 0xRRGGBB number, stored as one opaque GColor byte */
+    SETTING_BOOL,     ///< Sent as a byte, 0 or 1. `default_num` holds the default
+    SETTING_ENUM_U8,  ///< Sent as text holding the number, since Clay sends selects as strings
+    SETTING_CSTRING,  ///< Sent as text, copied into a fixed buffer
+    SETTING_COLOR     ///< Sent as a 0xRRGGBB number, stored as one opaque GColor byte
 } SettingType;
 
 /**
@@ -54,16 +54,16 @@ typedef enum
  */
 typedef struct
 {
-    SettingId   id;               /**< Known id for typed reads. SETTING_COUNT or higher means face-only */
-    const uint32_t *message_key;  /**< The MESSAGE_KEY_* this field rides on (the SDK keys are filled in at runtime) */
-    SettingType type;             /**< Drives both the wire encoding and the cleanup pass */
-    uint16_t    offset;           /**< Where this field sits in the owning face's struct */
-    uint16_t    size;             /**< Buffer size (SETTING_CSTRING only) */
-    uint8_t     enum_count;       /**< Highest allowed value (SETTING_ENUM_U8 only) */
-    uint32_t    default_num;      /**< Default on a fresh install for BOOL and ENUM_U8, and the 0xRRGGBB colour for COLOR */
-    const char *default_str;      /**< Default on a fresh install for CSTRING */
-    bool        affects_layout;   /**< A change re-renders the clock (date and time formats) */
-    bool        affects_weather;  /**< A change asks for fresh weather (temperature unit) */
+    SettingId   id;               ///< Known id for typed reads. SETTING_COUNT or higher means face-only
+    const uint32_t *message_key;  ///< The `MESSAGE_KEY_*` this field rides on, filled in by the SDK at runtime
+    SettingType type;             ///< Drives both the wire encoding and the cleanup pass
+    uint16_t    offset;           ///< Where this field sits in the owning face's struct
+    uint16_t    size;             ///< Buffer size, for SETTING_CSTRING only
+    uint8_t     enum_count;       ///< Highest allowed value, for SETTING_ENUM_U8 only
+    uint32_t    default_num;      ///< Default on a fresh install for BOOL and ENUM_U8, and the 0xRRGGBB colour for COLOR
+    const char *default_str;      ///< Default on a fresh install for CSTRING
+    bool        affects_layout;   ///< A change re-renders the clock, for the date and time formats
+    bool        affects_weather;  ///< A change asks for fresh weather, for the temperature unit
 } SettingField;
 
 /**
@@ -84,15 +84,15 @@ typedef struct
  */
 typedef struct SettingsSchema
 {
-    uint32_t key;                     /**< Storage key for this face's blob */
-    uint8_t version;                  /**< This face's current schema version */
-    uint16_t min_versioned_size;      /**< Smallest versioned blob we accept (the frozen v1 size) */
-    void *blob;                       /**< The face's settings struct (version byte first) */
-    uint16_t blob_size;               /**< Size of that struct */
-    const SettingField *fields;       /**< The face's field table */
-    uint8_t field_count;              /**< How many entries are in fields */
-    bool (*migrate)(int stored_size); /**< Lifts an old blob from before versioning (true if handled). NULL when none */
-    const struct SettingsSchema *companion; /**< Next schema in the chain, or NULL */
+    uint32_t key;                     ///< Storage key for this face's blob
+    uint8_t version;                  ///< This face's current schema version
+    uint16_t min_versioned_size;      ///< Smallest versioned blob accepted, the frozen v1 size
+    void *blob;                       ///< The face's settings struct, version byte first
+    uint16_t blob_size;               ///< Size of that struct
+    const SettingField *fields;       ///< The face's field table
+    uint8_t field_count;              ///< How many entries are in `fields`
+    bool (*migrate)(int stored_size); ///< Lifts an old blob from before versioning, true if handled. NULL when none
+    const struct SettingsSchema *companion; ///< Next schema in the chain, or NULL
 } SettingsSchema;
 
 /**
@@ -100,9 +100,9 @@ typedef struct SettingsSchema
  */
 typedef struct
 {
-    bool changed;         /**< Any field was updated (save and repaint) */
-    bool layout_changed;  /**< A date or time format changed (re-render the clock) */
-    bool weather_changed; /**< The temperature unit changed (ask for fresh weather) */
+    bool changed;         ///< Any field was updated, so save and repaint
+    bool layout_changed;  ///< A date or time format changed, so re-render the clock
+    bool weather_changed; ///< The temperature unit changed, so ask for fresh weather
 } SettingsInbound;
 
 /**
@@ -115,10 +115,11 @@ typedef struct
 void settings_init(const SettingsSchema *schema);
 
 /**
- * @brief Whether the watch booted with no saved settings (storage wiped by a fresh install or an
- * update). Lets the phone tell it should push its own config back rather than the watch's defaults.
+ * @brief Whether the watch booted with no saved settings, because storage was wiped by a fresh
+ * install or an update. Lets the phone know it should push its own config back rather than
+ * trust the watch's defaults.
  *
- * @return true when the primary key had no blob at settings_init.
+ * @return true when the primary key had no blob at `settings_init`.
  */
 bool settings_was_fresh(void);
 
@@ -144,10 +145,10 @@ uint8_t settings_u8(SettingId id);
 const char *settings_str(SettingId id);
 
 /**
- * @brief Write a known uint8/enum setting by id (in-memory only, does not persist).
+ * @brief Write a known uint8 or enum setting by id. In memory only, does not persist.
  *
- * Mirror of settings_u8. A no-op if the active face didn't subscribe to the id. Used by the
- * dev theme walk to force a theme without touching persistence.
+ * The write-side mirror of `settings_u8`. Does nothing if the active face isn't subscribed to
+ * the id. Used by the dev theme walk to force a theme without touching persistence.
  *
  * @param id The known setting to write.
  * @param value The value to store.

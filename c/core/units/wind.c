@@ -1,6 +1,8 @@
 /**
  * @file wind.c
- * @brief Pure wind-speed maths implementation
+ * @brief Pure wind-speed conversions and unit labels, no SDK behind them.
+ *
+ * @ingroup lib_core
  */
 #include "units/wind.h"
 

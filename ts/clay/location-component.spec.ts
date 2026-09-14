@@ -51,12 +51,9 @@ function mount(config?: ClayComponentContext['config']) {
 }
 
 /**
- * Captures every XMLHttpRequest the component opens.
- *
- * So a spec can inspect the url and hand back a canned geocoder
- * response without touching the network.
- *
- * @return {Array}
+ * Captures every XMLHttpRequest the component opens, so a spec can inspect the url and hand
+ * back a canned geocoder response without touching the network. Returns the list of requests
+ * sent so far, in the order they were opened.
  */
 function installFakeXhr() {
   const sent: FakeXhr[] = [];
@@ -354,7 +351,7 @@ describe('initialize', () => {
     expect(mounted.list.classList.contains('show')).toBe(false);
   });
 
-  /** Clicking outside the component must dismiss the dropdown, else a stale suggestion list lingers over the rest of the formounted. */
+  /** Clicking outside the component must dismiss the dropdown, else a stale suggestion list lingers over the rest of the config webview. */
   test('dismisses the dropdown when clicking outside the component', () => {
     const mounted = mount();
     mounted.ctx.initialize();

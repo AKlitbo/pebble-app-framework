@@ -2,25 +2,34 @@
  * @file system_store.c
  * @brief The active system store: holds the battery + bluetooth state and subscribes to the
  * battery and connection services itself. The alarm is read through on demand.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/system_store.h"
 
+/**
+ * @var s_state
+ * @brief The battery and bluetooth readings the store holds.
+ */
 static struct
 {
-    int  battery_level;
-    bool charging;
-    bool bluetooth_connected;
+    int  battery_level;       ///< Battery charge, in percent
+    bool charging;            ///< Whether the watch is charging
+    bool bluetooth_connected; ///< Whether the phone is connected
 } s_state;
 
-static bool s_bt_initialized;   // the first bluetooth reading only seeds. later changes can buzz
-static bool s_live;             // false pins the seeded values so screenshots stay put
-static time_t s_seed_alarm;     // the pinned alarm used while not live
-static void (*s_cb)(void);
-static BtVibePolicy s_vibe;
-static void (*s_reconnect)(void); // fired on a real disconnected -> connected transition
+static bool s_bt_initialized;     ///< The first bluetooth reading only seeds. Later changes can buzz
+static bool s_live;               ///< False pins the seeded values so screenshots stay put
+static time_t s_seed_alarm;       ///< The pinned alarm used while not live
+static void (*s_cb)(void);        ///< Called whenever a reading changes, so the face can redraw
+static BtVibePolicy s_vibe;       ///< What to buzz when the phone connects or drops
+static void (*s_reconnect)(void); ///< Fired on a real change from disconnected to connected
 
 /**
  * @brief Save the battery reading and notify.
+ *
+ * @param level Battery level from 0 to 100.
+ * @param charging True when plugged in.
  */
 static void set_battery(int level, bool charging)
 {
@@ -31,6 +40,8 @@ static void set_battery(int level, bool charging)
 
 /**
  * @brief Save the bluetooth state, buzzing the face's policy on a real transition, and notify.
+ *
+ * @param connected True when the phone link is up.
  */
 static void set_bluetooth(bool connected)
 {
@@ -56,11 +67,21 @@ static void set_bluetooth(bool connected)
 
 // --- service handlers ---
 
+/**
+ * @brief Battery service handler: unpack the reading and save it.
+ *
+ * @param state The battery reading the service handed over.
+ */
 static void on_battery(BatteryChargeState state)
 {
     set_battery(state.charge_percent, state.is_charging);
 }
 
+/**
+ * @brief Connection service handler: save the phone link state.
+ *
+ * @param connected True when the phone link just came up.
+ */
 static void on_connection(bool connected)
 {
     set_bluetooth(connected);

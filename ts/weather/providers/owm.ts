@@ -31,7 +31,13 @@ interface OwmResponse {
   clouds?: { all?: number };
 }
 
-/** Fetches current weather from OpenWeatherMap for the supplied coordinates. */
+/**
+ * Fetches current weather from OpenWeatherMap for the supplied coordinates.
+ *
+ * @param opts The weather request options, read for the key, the coordinates, and the unit.
+ * @param request The function that performs the actual network request.
+ * @param done Called with the weather result.
+ */
 function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   if (!opts.key) {
     return done(util.status('No API Key'));

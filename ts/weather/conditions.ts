@@ -80,6 +80,9 @@ const conditions: ConditionEntry[] = [
  * a single byte: its index in the conditions array. The night marker is dropped
  * first (the forecast shows day glyphs) and anything unrecognized becomes
  * UNKNOWN_CODE so the watch draws WEATHER_NOW_NA.
+ *
+ * @param token The condition token to look up, with or without its night marker.
+ * @return The token's index in the conditions array, or UNKNOWN_CODE when it isn't recognized.
  */
 function codeFor(token: string): number {
   if (!token) {

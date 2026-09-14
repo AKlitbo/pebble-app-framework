@@ -1,6 +1,8 @@
 /**
  * @file timeband.c
  * @brief The window sums: build one, place a moment on it, and clip a span to it.
+ *
+ * @ingroup lib_core
  */
 #include "clock/timeband.h"
 

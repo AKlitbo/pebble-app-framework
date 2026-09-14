@@ -12,7 +12,7 @@
  * seedConfigFromWatch takes its message-key map as an argument.
  */
 
-import { describe, test, expect, beforeEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import app from './app';
 import type { StockQuote } from '../stock/util';
 
@@ -22,8 +22,8 @@ const messageKeys = new Proxy({}, { get: (_target, prop) => prop });
 
 /**
  * Captures every XMLHttpRequest the code opens and lets a spec drive the
- * response, an error, or a timeout.
- * @return {Array}
+ * response, an error, or a timeout. Returns the list of requests sent so
+ * far, in the order they were opened.
  */
 function installFakeXhr() {
   const sent: FakeXhr[] = [];
@@ -412,63 +412,91 @@ describe('runStockRound', () => {
     expect(sendStocks).toHaveBeenCalledTimes(1);
   });
 
-  /** If a provider never calls back the watchdog must clear the in-flight flag, otherwise every future fetch is dropped at the in-flight guard. */
-  test('clears the in-flight flag via the watchdog when a quote never calls back', () => {
-    vi.useFakeTimers();
-    const state = freshState();
-    const sendStocks = vi.fn();
-    const deps = {
-      fetchQuote: () => {}, // never invokes onQuote
-      sendStocks, now: () => 100, timeoutMs: 1000,
-    };
+  describe('while a round is in flight', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
 
-    app.runStockRound(state, ['AAPL'], false, deps);
-    expect(state.inFlight).toBe(true);
-    vi.advanceTimersByTime(1000);
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
-    expect(state.inFlight).toBe(false);
-    expect(sendStocks).toHaveBeenCalledTimes(1);
-    vi.useRealTimers();
-  });
+    /** If a provider never calls back the watchdog must clear the in-flight flag, otherwise every future fetch is dropped at the in-flight guard. */
+    test('clears the in-flight flag via the watchdog when a quote never calls back', () => {
+      const state = freshState();
+      const sendStocks = vi.fn();
+      const deps = {
+        fetchQuote: () => {}, // never invokes onQuote
+        sendStocks, now: () => 100, timeoutMs: 1000,
+      };
 
-  /** A second unforced trigger mid-round (ready plus the watch's STOCK_REQUEST) must be dropped, or the round double-spends the provider quota. */
-  test('ignores a second unforced round while one is in flight', () => {
-    vi.useFakeTimers();
-    const state = freshState();
-    const started: Array<(q: StockQuote) => void> = [];
-    const deps = {
-      fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => started.push(onQuote), // hold the callbacks open
-      sendStocks: vi.fn(), now: () => 100, timeoutMs: 1000,
-    };
+      app.runStockRound(state, ['AAPL'], false, deps);
+      expect(state.inFlight).toBe(true);
+      vi.advanceTimersByTime(1000);
 
-    app.runStockRound(state, ['AAPL'], false, deps);
-    app.runStockRound(state, ['AAPL'], false, deps);
+      expect(state.inFlight).toBe(false);
+      expect(sendStocks).toHaveBeenCalledTimes(1);
+    });
 
-    expect(started).toHaveLength(1);
-    vi.useRealTimers();
-  });
+    /** A second unforced trigger mid-round (ready plus the watch's STOCK_REQUEST) must be dropped, or the round double-spends the provider quota. */
+    test('ignores a second unforced round while one is in flight', () => {
+      const state = freshState();
+      const started: Array<(q: StockQuote) => void> = [];
+      const deps = {
+        fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => started.push(onQuote), // hold the callbacks open
+        sendStocks: vi.fn(), now: () => 100, timeoutMs: 1000,
+      };
 
-  /** A forced fetch after a settings change must take over a running round, and the old round's late callback must not send stale symbols to the watch. */
-  test('lets a forced round take over one still running and ignores the stale callback', () => {
-    vi.useFakeTimers();
-    const state = freshState();
-    const sendStocks = vi.fn();
-    const callbacks: Array<(q: StockQuote) => void> = [];
-    const deps = {
-      fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => callbacks.push(onQuote),
-      sendStocks, now: () => 100, timeoutMs: 1000,
-    };
+      app.runStockRound(state, ['AAPL'], false, deps);
+      app.runStockRound(state, ['AAPL'], false, deps);
 
-    app.runStockRound(state, ['AAPL'], false, deps);
-    app.runStockRound(state, ['AAPL'], true, deps);
-    callbacks[0]({ ok: true, symbol: 'AAPL', price: 1, change: 0, changePercent: 0, asOf: '' });
-    const supersededSend = sendStocks.mock.calls.length;
-    callbacks[1]({ ok: true, symbol: 'AAPL', price: 2, change: 0, changePercent: 0, asOf: '' });
+      expect(started).toHaveLength(1);
+    });
 
-    expect(supersededSend).toBe(0);
-    expect(sendStocks).toHaveBeenCalledTimes(1);
-    expect(state.inFlight).toBe(false);
-    vi.useRealTimers();
+    /** A forced fetch after a settings change must take over a running round, and the old round's late callback must not send stale symbols to the watch. */
+    test('lets a forced round take over one still running and ignores the stale callback', () => {
+      const state = freshState();
+      const sendStocks = vi.fn();
+      const callbacks: Array<(q: StockQuote) => void> = [];
+      const deps = {
+        fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => callbacks.push(onQuote),
+        sendStocks, now: () => 100, timeoutMs: 1000,
+      };
+
+      app.runStockRound(state, ['AAPL'], false, deps);
+      app.runStockRound(state, ['AAPL'], true, deps);
+      callbacks[0]({ ok: true, symbol: 'AAPL', price: 1, change: 0, changePercent: 0, asOf: '' });
+      const supersededSend = sendStocks.mock.calls.length;
+      callbacks[1]({ ok: true, symbol: 'AAPL', price: 2, change: 0, changePercent: 0, asOf: '' });
+
+      expect(supersededSend).toBe(0);
+      expect(sendStocks).toHaveBeenCalledTimes(1);
+      expect(state.inFlight).toBe(false);
+    });
+
+    /**
+     * The watchdog of a round a forced round took over must not close the new round when it fires.
+     *
+     * The old round's timer is still armed when the forced round starts. If it closed the round
+     * anyway, the watch would get a strip of ERR quotes straight away, the new round's quotes
+     * would be thrown away, and the new round's own timer would send a second strip.
+     */
+    test('keeps the forced round open when the round it took over times out', () => {
+      const state = freshState();
+      const sendStocks = vi.fn();
+      const deps = {
+        fetchQuote: () => {}, // never invokes onQuote
+        sendStocks, now: () => 100, timeoutMs: 1000,
+      };
+      app.runStockRound(state, ['AAPL'], false, deps);
+      vi.advanceTimersByTime(500);
+      app.runStockRound(state, ['AAPL'], true, deps);
+
+      vi.advanceTimersByTime(500);
+
+      expect(state.inFlight).toBe(true);
+      expect(sendStocks).not.toHaveBeenCalled();
+    });
   });
 
   /** The throttle time is set from the first good quote, so a later poll knows data was already captured and does not spend quota again. */

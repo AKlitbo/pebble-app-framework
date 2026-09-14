@@ -96,6 +96,7 @@ export function createDrag<TPayload, TTarget>(
   // a drag actually under way
   let active: { payload: TPayload; ghost: HTMLElement } | null = null;
 
+  /** Puts the ghost at the given point, anchored by its corner or centred under it, per the spec. */
   function place(ghost: HTMLElement, x: number, y: number): void {
     if (spec.anchor === 'pointer') {
       ghost.style.left = x + 'px';
@@ -108,6 +109,7 @@ export function createDrag<TPayload, TTarget>(
     ghost.style.top = y - box.height / 2 + 'px';
   }
 
+  /** Starts an active drag: builds the ghost, drops it onto the page, and places it at the pointer. */
   function begin(payload: TPayload, x: number, y: number): void {
     const ghost = spec.ghost(payload);
     doc.body.appendChild(ghost);
@@ -129,6 +131,7 @@ export function createDrag<TPayload, TTarget>(
     spec.highlight(active.payload, target, allowed);
   }
 
+  /** Ends whatever drag is active, removing the ghost and clearing the highlight. */
   function end(): void {
     if (active) {
       active.ghost.remove();

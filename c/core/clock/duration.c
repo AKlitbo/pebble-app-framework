@@ -1,6 +1,8 @@
 /**
  * @file duration.c
  * @brief A minute count turned into a short human duration.
+ *
+ * @ingroup lib_core
  */
 #include "clock/duration.h"
 

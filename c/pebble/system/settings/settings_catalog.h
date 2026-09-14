@@ -1,7 +1,7 @@
 /**
  * @file settings_catalog.h
- * @brief The shared catalog of known settings: a KNOWN_* macro per setting that bakes
- * in its neutral wire key, encoding, bounds, default, and side effects
+ * @brief The shared catalog of known settings. A `KNOWN_*` macro per setting bakes in its
+ * neutral wire key, encoding, bounds, default, and side effects.
  *
  * A face subscribes to a known setting by placing its KNOWN_* entry in the face's
  * field table at the offset of the matching struct member, and by declaring the

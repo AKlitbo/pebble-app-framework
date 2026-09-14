@@ -22,7 +22,7 @@
  * The hour is one or two digits and the minute is exactly the two after the colon. Anything past
  * those is ignored, so "06:30" and "06:30:00" both read as half six.
  *
- * @param src The string to read. Must not be NULL.
+ * @param src The string to read, or NULL, which reads as not a real time.
  * @param hour_out Receives the hour (0-23) on success, untouched otherwise.
  * @param minute_out Receives the minute (0-59) on success, untouched otherwise.
  * @return Whether it read as a real time.
@@ -35,7 +35,7 @@ bool clockstr_parse(const char *src, int *hour_out, int *minute_out);
  * The same parse as clockstr_parse, folded into the one number a day-progress or countdown
  * actually wants. "06:30" is 390.
  *
- * @param src The string to read. Must not be NULL.
+ * @param src The string to read, or NULL, which reads as not a real time.
  * @return Minutes past midnight (0-1439), or -1 when it does not read as a real time.
  */
 int clockstr_minutes(const char *src);

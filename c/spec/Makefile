@@ -10,8 +10,10 @@
 # Anything under lib/c/pebble talks to the SDK and is left to the device.
 
 CC      ?= cc
-# -Wno-unused-parameter keeps the SDK callback signatures (void *data and friends) quiet
-CFLAGS  ?= -std=c11 -Wall -Wextra -Wno-unused-parameter -O2
+# -Wno-unused-parameter keeps the SDK callback signatures (void *data and the like) quiet
+# -fwrapv makes a signed overflow wrap rather than be undefined, so -O2 cannot quietly hide an
+# overflow a spec is there to catch
+CFLAGS  ?= -std=c11 -Wall -Wextra -Wno-unused-parameter -fwrapv -O2
 # host/ holds the stub pebble.h that lets the pure lib/c/pebble sources compile off the watch
 INCLUDES = -I../core -I../pebble -Ihost -Iunity
 

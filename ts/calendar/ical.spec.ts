@@ -605,10 +605,12 @@ describe('parseIcal bad input', () => {
   });
 });
 
-// live integration against a real iCal feed. opt-in via RUN_LIVE_CALENDAR=1 plus a
-// CALENDAR_ICS_URL in .env (your Google "Secret address in iCal format"). fetches and parses
-// your real feed and prints the next few events so the fetch/parse path can be eyeballed end
-// to end and a feed shape the parser mishandles shows up here
+/**
+ * Runs the real fetch and parse path against your own calendar feed instead of a stub, so it
+ * catches a feed shape the parser mishandles before it ever reaches the watch. Opt in with
+ * RUN_LIVE_CALENDAR=1 and CALENDAR_ICS_URL in .env, your Google "Secret address in iCal
+ * format".
+ */
 describe.skipIf(process.env.RUN_LIVE_CALENDAR !== '1' || !process.env.CALENDAR_ICS_URL)('live', () => {
   const url = process.env.CALENDAR_ICS_URL;
   const live = () => new Promise<{ error: string | null; body?: string }>((resolve) => fetchRequest(url, (error, body) => resolve({ error: error, body: body })));

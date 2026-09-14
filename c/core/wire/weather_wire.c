@@ -1,6 +1,8 @@
 /**
  * @file weather_wire.c
  * @brief The forecast strips as the phone packs them, and the readers that unpack them.
+ *
+ * @ingroup lib_core
  */
 #include "wire/weather_wire.h"
 

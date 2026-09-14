@@ -1,9 +1,11 @@
 /**
  * @file labels.c
- * @brief Condition-string to display-label lookup implementation
+ * @brief Condition-string to display-label lookup implementation.
  *
- * The token-to-label tables live in labels_table.g.h, generated from the shared
- * vocabulary in lib/js/weather/conditions.js (see lib/tools/build-conditions.js).
+ * The token-to-label tables live in `labels_table.g.h`, generated from the shared
+ * vocabulary in `lib/js/weather/conditions.js` (see `lib/tools/build-conditions.js`).
+ *
+ * @ingroup lib_ui
  */
 #include "ui/weather/labels.h"
 

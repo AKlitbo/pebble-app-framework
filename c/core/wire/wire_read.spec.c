@@ -8,7 +8,7 @@
  * had one, and picking up whatever was packed behind it.
  *
  * So every width is pinned at both signs, and so is the refusal of a width no sender may use. The
- * buffers below carry a sentinel behind the value on purpose: a reader that overruns lands on it,
+ * buffers below carry a marker behind the value on purpose: a reader that overruns lands on it,
  * which is exactly what the watch would do to the next value along.
  */
 #include "unity.h"

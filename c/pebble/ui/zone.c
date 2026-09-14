@@ -1,6 +1,8 @@
 /**
  * @file zone.c
- * @brief Layout primitives implementation
+ * @brief Layout primitives implementation.
+ *
+ * @ingroup lib_ui
  */
 #include "ui/zone.h"
 
@@ -20,7 +22,16 @@ TextLayer *zone_make_layer(Layer *parent, const Zone *zone)
     return layer;
 }
 
-// rendered single-line width of text in font (height is irrelevant for the fit test)
+/**
+ * @brief The rendered single-line width of text in a font. Height is irrelevant for the fit
+ * test, so this only measures the width.
+ *
+ * @param text The text to measure.
+ * @param font The font to measure it in.
+ * @param align The text alignment, which the layout call needs even though it does not change
+ * the measured width.
+ * @return The width, in pixels.
+ */
 static int text_width(const char *text, GFont font, GTextAlignment align)
 {
     GSize sz = graphics_text_layout_get_content_size(text, font, GRect(0, 0, 1000, 100),

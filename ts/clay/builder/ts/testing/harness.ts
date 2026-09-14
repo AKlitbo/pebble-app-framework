@@ -41,7 +41,13 @@ export interface Mounted {
   [key: string]: unknown;
 }
 
-/** Mounts a component and returns the bound context plus its root element. */
+/**
+ * Mounts a component and returns the bound context plus its root element.
+ *
+ * @param component The component definition to mount, the way its generated .g.js exports it.
+ * @param config The page item's own config to bind the component's methods to, if it needs one.
+ * @return The bound context and root element, ready for a spec to drive.
+ */
 export function mount(component: ClayComponentDefinition, config?: Record<string, unknown>): Mounted {
   const holder = document.createElement('div');
   holder.innerHTML = component.template;

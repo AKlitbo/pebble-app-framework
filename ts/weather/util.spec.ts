@@ -242,7 +242,7 @@ describe('hmFromUnix', () => {
 
   /** A negative offset must roll the clock back into the previous hours. */
   test('applies a negative offset', () => {
-    // one day past the epoch (00:00 UTC) - 7h = 17:00 the day before
+    // one day past the epoch (00:00 UTC), seven hours back lands at 17:00 the day before
     const result = util.hmFromUnix(24 * 3600, -7 * 3600);
 
     expect(result).toBe('17:00');
@@ -437,7 +437,7 @@ describe('ok', () => {
     expect(result.precipTotal).toBe(425); // 4.25mm -> hundredths
   });
 
-  /** A genuine zero reading (0% cloud, calm wind) must ship - a truthy check would wrongly drop it. */
+  /** A genuine zero reading (0% cloud, calm wind) must ship. A truthy check would wrongly drop it. */
   test('keeps zero-valued numeric extras instead of dropping them', () => {
     const result = util.ok(10, 'Clear', 'Town', undefined, undefined, { cloud: 0, windKmh: 0 });
 

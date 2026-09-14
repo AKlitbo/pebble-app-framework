@@ -11,13 +11,7 @@ import twelvedata from './twelvedata';
 import { fetchRequest } from '../../../testing/fetch-request';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
 
-/**
- * Stub `request` that records the requested url and replies with a canned body.
- *
- * @param {string} body The response body to feed back.
- * @param {!Array<string>} calls Sink for requested urls, in order.
- * @return {Function}
- */
+/** Stub `request` that records the requested url and replies with a canned body. */
 function replying(body: string, calls: string[]): RequestFn {
   return (url, callback) => {
     calls.push(url);
@@ -46,7 +40,7 @@ const QUOTE_OK = JSON.stringify({
 
 describe('twelvedata provider', () => {
   describe('guard clauses', () => {
-    /** A missing key must short-circuit before any network call. */
+    /** A missing key must return immediately rather than firing off a network call. */
     test('reports a missing key without making a request', () => {
       const calls: string[] = [];
 
@@ -139,8 +133,12 @@ describe('twelvedata provider', () => {
     });
   });
 
-  // live integration against the real Twelve Data API. opt-in via RUN_LIVE_STOCK=1
-  // plus TWELVEDATA_KEY. the free tier is 800 calls a day so keep this to one
+  /**
+   * Runs against the real Twelve Data API instead of a stub, so it catches Twelve Data changing
+   * its response shape in a way the deterministic specs above cannot see. Opt in with
+   * RUN_LIVE_STOCK=1 and TWELVEDATA_KEY. The free tier is 800 calls a day, so this only spends
+   * one.
+   */
   describe.skipIf(process.env.RUN_LIVE_STOCK !== '1' || !process.env.TWELVEDATA_KEY)('live', () => {
     const KEY = process.env.TWELVEDATA_KEY;
     const live = (opts: StockOpts) => new Promise<StockQuote>((resolve) => twelvedata.fetch(opts, fetchRequest, resolve));

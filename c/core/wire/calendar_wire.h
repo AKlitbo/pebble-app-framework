@@ -47,7 +47,7 @@ typedef struct
 typedef struct
 {
     uint8_t       count;                   ///< How many events are filled (0 means none yet)
-    CalendarEvent event[CALENDAR_MAX_SLOTS];
+    CalendarEvent event[CALENDAR_MAX_SLOTS]; ///< The event slots, filled up to count
 } CalendarStrip;
 
 /**
@@ -62,7 +62,7 @@ typedef struct
  *
  * @param buf The raw wire bytes.
  * @param len How many bytes there are.
- * @param out Receives the agenda. Untouched unless this returns true.
+ * @param[out] out Receives the agenda. Untouched unless this returns true.
  * @return Whether the run read clean.
  */
 bool calendar_wire_decode(const uint8_t *buf, uint16_t len, CalendarStrip *out);

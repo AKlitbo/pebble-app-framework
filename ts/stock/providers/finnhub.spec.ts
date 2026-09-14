@@ -12,14 +12,7 @@ import finnhub from './finnhub';
 import { fetchRequest } from '../../../testing/fetch-request';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
 
-/**
- * Stub `request` that records the requested url and replies with a canned
- * response.
- *
- * @param {{err?: ?string, body?: string}} response The error and body to feed back.
- * @param {!Array<string>} calls Sink for requested urls, in order.
- * @return {Function}
- */
+/** Stub `request` that records the requested url and replies with a canned error and body. */
 function replying(response: { err?: string | null; body?: string }, calls: string[]): RequestFn {
   return (url, callback) => {
     calls.push(url);
@@ -39,7 +32,7 @@ const QUOTE_OK = JSON.stringify({ c: 261.74, d: 1.24, dp: 0.4744, pc: 260.50, t:
 
 describe('finnhub provider', () => {
   describe('guard clauses', () => {
-    /** A missing key must short-circuit before any network call. */
+    /** A missing key must return immediately rather than firing off a network call. */
     test('reports a missing key without making a request', () => {
       const calls: string[] = [];
 
@@ -155,8 +148,11 @@ describe('finnhub provider', () => {
     });
   });
 
-  // live integration against the real Finnhub API. opt-in via RUN_LIVE_STOCK=1 plus
-  // FINNHUB_KEY. catches the upstream changing its response shape
+  /**
+   * Runs against the real Finnhub API instead of a stub, so it catches Finnhub changing its
+   * response shape in a way the deterministic specs above cannot see. Opt in with
+   * RUN_LIVE_STOCK=1 and FINNHUB_KEY.
+   */
   describe.skipIf(process.env.RUN_LIVE_STOCK !== '1' || !process.env.FINNHUB_KEY)('live', () => {
     const KEY = process.env.FINNHUB_KEY;
     const live = (opts: StockOpts) => new Promise<StockQuote>((resolve) => finnhub.fetch(opts, fetchRequest, resolve));

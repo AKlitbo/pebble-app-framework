@@ -57,7 +57,7 @@ void calendar_store_reconfigure(CalendarConfig cfg);
 /** @brief Hand it the function to call when the agenda changes (the screen redraw). */
 void calendar_store_subscribe(void (*cb)(void));
 
-/** @brief The whole agenda strip. count is 0 until a reading lands. */
+/** @brief The whole agenda strip. `count` is 0 until a reading lands. */
 const CalendarStrip *calendar_store_strip(void);
 
 /**

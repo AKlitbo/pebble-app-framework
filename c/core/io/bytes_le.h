@@ -17,13 +17,23 @@
  * @{
  */
 
-/** @brief Reads a little-endian signed 16-bit value out of a byte pair. */
+/**
+ * @brief Reads a little-endian signed 16-bit value out of a byte pair.
+ *
+ * @param p The first of the two bytes.
+ * @return The value the pair encodes.
+ */
 static inline int16_t read_i16_le(const uint8_t *p)
 {
     return (int16_t)(p[0] | (p[1] << 8));
 }
 
-/** @brief Reads a little-endian signed 32-bit value out of four bytes. */
+/**
+ * @brief Reads a little-endian signed 32-bit value out of four bytes.
+ *
+ * @param p The first of the four bytes.
+ * @return The value the four bytes encode.
+ */
 static inline int32_t read_i32_le(const uint8_t *p)
 {
     return (int32_t)((uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24));

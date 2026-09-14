@@ -1,12 +1,12 @@
 /**
- * generate-frame.ts - bake this face's LCARS HTML chrome into a background bitmap.
+ * Bakes this face's LCARS HTML chrome into a background bitmap.
  *
  * Renders frame/<name>.html in Firefox at a supersampled deviceScaleFactor, strips the
  * live readouts (the app draws those at runtime), then resizes to the platform's native
  * screen size with a lanczos3 kernel and writes a PNG. Firefox (not Chromium) because
  * Chromium clips the LCARS elbow carve-outs that use z-index:-1 pseudo-elements.
  *
- * The build does not bake frames; the PNGs under resources/images/ are committed. Run this
+ * The build does not bake frames. The PNGs under resources/images/ are committed. Run this
  * by hand to re-bake one during design:
  *   npm run gen:frame -- lower-decks
  *   npm run gen:frame -- classic --scale 4 --out resources/images/background.png
@@ -73,6 +73,7 @@ interface FaceDirs {
   config: string;
 }
 
+/** Builds a face's FaceDirs by joining its face directory onto the fixed subpaths. */
 function faceDirs(face: string): FaceDirs {
   const base = faceDir(face);
   return {
@@ -84,11 +85,17 @@ function faceDirs(face: string): FaceDirs {
   };
 }
 
+/** Reads and parses a face's frame.config.json. */
 function loadFaceConfig(dirs: FaceDirs): FaceConfig {
   return JSON.parse(fs.readFileSync(dirs.config, 'utf8'));
 }
 
-/** Resolve the native screen size from the appinfo's first target platform (emery default). */
+/**
+ * Resolves the native screen size from the appinfo's first target platform (emery default).
+ *
+ * @param appinfoPath The face's pebble.appinfo.json path.
+ * @return The screen size in pixels for the face's first target platform.
+ */
 export function faceScreenSize(appinfoPath: string): Dims {
   try {
     const appinfo = JSON.parse(fs.readFileSync(appinfoPath, 'utf8'));
@@ -97,7 +104,7 @@ export function faceScreenSize(appinfoPath: string): Dims {
       return PLATFORM_DIMS[platform];
     }
   } catch {
-    // no appinfo yet - fall through to the default
+    // no appinfo yet, so fall through to the default
   }
 
   return PLATFORM_DIMS.emery;
@@ -118,12 +125,13 @@ function bucketKey(red: number, green: number, blue: number, alpha: number): num
     (alpha >= 128 ? 255 : 0)) >>> 0;
 }
 
+/** Splits a bucket key back into its four channel bytes. */
 function bucketChannels(key: number): number[] {
   return [(key >>> 24) & 255, (key >>> 16) & 255, (key >>> 8) & 255, key & 255];
 }
 
 /**
- * @brief Fold a bake down to at most `limit` Pebble-64 colours.
+ * Folds a bake down to at most `limit` Pebble-64 colours.
  *
  * A 16-colour bitmap packs at four bits per pixel and a 17-colour one at eight, so one stray
  * colour doubles the heap the watch needs to hold the frame. A full-screen frame is big enough
@@ -223,6 +231,13 @@ interface Options {
   outOverride: string | null;
 }
 
+/**
+ * Parses the command-line arguments generate-frame is run with.
+ *
+ * @param argv The arguments after the script name, in order.
+ * @param face The face's config, used for its default frame and default scale.
+ * @return The parsed frame, scale, theme, and out-path override.
+ */
 export function parseArgs(argv: string[], face: FaceConfig): Options {
   let outOverride: string | null = null;
   let scale = face.defaultScale;
@@ -249,7 +264,16 @@ export function parseArgs(argv: string[], face: FaceConfig): Options {
   return { frame, scale, theme, outOverride };
 }
 
-/** Where a given theme's PNG lands. */
+/**
+ * Where a given theme's PNG lands.
+ *
+ * @param opts The parsed command-line options.
+ * @param themeName The theme being baked, or null for a face with no themes.
+ * @param themeCount How many themes are being baked in this run.
+ * @param face The face's config, used for its bare background base name.
+ * @param imagesDir The face's resources/images directory.
+ * @return The absolute path the PNG should be written to.
+ */
 export function outFor(
   opts: Options,
   themeName: string | null,
@@ -274,6 +298,7 @@ export function outFor(
   return path.join(imagesDir, name);
 }
 
+/** Bakes one or more theme PNGs for a face, from the command-line arguments. */
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const face = argv[0];

@@ -20,7 +20,13 @@ interface FinnhubQuote {
   t?: number;
 }
 
-/** Fetches a quote from Finnhub for the supplied symbol. */
+/**
+ * Fetches a quote from Finnhub for the supplied symbol.
+ *
+ * @param opts The lookup options, must carry an API key.
+ * @param request The HTTP GET function to use.
+ * @param done Called once with the finished quote result.
+ */
 function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const start = util.begin(opts, true);
   if (start.error) {

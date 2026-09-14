@@ -2,6 +2,8 @@
  * @file stock_store.c
  * @brief The active stock store: holds the quotes, owns the appmessage stock channel, and
  * asks the phone for more whenever its turn on the face's cadence finds a poll due.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/stock_store.h"
 
@@ -12,34 +14,47 @@
 #include "io/stores/store_persist.h"
 #include "io/stores/store_poll.h"
 
-// a short first fetch after launch (fires from the event loop so appmessage is open by then)
-// then the recurring poll runs at the configured interval
+/**
+ * @brief Delay before the first fetch after launch, in ms.
+ *
+ * It fires from the event loop so appmessage is open by then. The recurring poll then runs at the
+ * configured interval.
+ */
 #define STOCK_FIRST_POLL_MS 700
 
+/**
+ * @var s_state
+ * @brief The quotes the store holds, laid out as the blob that gets persisted.
+ */
 static struct
 {
-    uint8_t    tag;  // STORE_TAG_STOCK, so a restore can tell this blob from another shape
-    StockStrip strip;
-    time_t     last_sync;
+    uint8_t    tag;       ///< STORE_TAG_STOCK, so a restore can tell this blob from another shape
+    StockStrip strip;     ///< The quotes as the phone last sent them
+    time_t     last_sync; ///< When those quotes arrived
 } s_state;
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "stock state must fit one persist key");
 
-static void (*s_cb)(void);
-static AppTimer *s_timer;  // the catch-up fetch only. the recurring poll rides the cadence
-static int s_poll_min;
-static time_t s_next_poll; // wall-clock second the next recurring poll is due
-static bool s_live;
-static uint32_t s_persist_key; // the slot the face handed us for the saved strip
+static void (*s_cb)(void);     ///< Called whenever the quotes change, so the face can redraw
+static AppTimer *s_timer;      ///< The catch-up fetch only. The recurring poll rides the cadence
+static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
+static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
+static bool s_live;            ///< True once the store is enabled on a live face. It gates the cadence turn
+static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved strip
 
 // --- state writers (internal: only the channel handler + the seed touch these) ---
 
+/**
+ * @brief Clear the watchlist back to empty.
+ */
 static void reset_state(void)
 {
     s_state.strip.count = 0;
     s_state.last_sync = 0;
 }
 
-// stash the whole state so a relaunch can restore it. only a live face writes
+/**
+ * @brief Stash the whole state so a relaunch can restore it. Only a live face writes.
+ */
 static void persist_save(void)
 {
     if (s_live)
@@ -48,7 +63,13 @@ static void persist_save(void)
     }
 }
 
-// prefill the store from a seed (dev/screenshots). s_cb is NULL at init so no redraw here
+/**
+ * @brief Prefill the store from a seed, for dev builds and screenshots.
+ *
+ * `s_cb` is still NULL at the point init calls this, so no redraw fires here.
+ *
+ * @param seed The prefill to apply.
+ */
 static void apply_seed(const StockSeed *seed)
 {
     if (seed->strip)
@@ -97,6 +118,9 @@ static void catch_up_fire(void *data)
     appmessage_request_stock();
 }
 
+/**
+ * @brief Cancel the catch-up fetch timer, if one is armed.
+ */
 static void stop_polling(void)
 {
     if (s_timer)

@@ -1,6 +1,8 @@
 /**
  * @file moon.c
- * @brief Pure moon-phase math, host-testable off-device
+ * @brief Pure moon-phase math, host-testable off-device.
+ *
+ * @ingroup lib_core
  */
 #include "clock/moon.h"
 

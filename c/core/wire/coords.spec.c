@@ -90,6 +90,14 @@ void test_a_missing_string_is_not_a_place(void)
     TEST_ASSERT_FALSE(result);
 }
 
+/** @brief A missing longitude is not a place either, or a fix with no second half gets saved. */
+void test_a_missing_longitude_is_not_a_place(void)
+{
+    bool result = coords_look_real("43.7", NULL);
+
+    TEST_ASSERT_FALSE(result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -103,6 +111,7 @@ int main(void)
     RUN_TEST(test_zero_is_a_real_coordinate);
     RUN_TEST(test_a_negative_pair_is_real);
     RUN_TEST(test_a_missing_string_is_not_a_place);
+    RUN_TEST(test_a_missing_longitude_is_not_a_place);
 
     return UNITY_END();
 }

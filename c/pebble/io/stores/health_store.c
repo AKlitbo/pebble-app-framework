@@ -2,6 +2,8 @@
  * @file health_store.c
  * @brief The active health store: reads the watch's health service and holds the numbers.
  * It owns the service accessors too so it is the single point of truth for health.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/health_store.h"
 #include "io/stores/store_cadence.h"
@@ -13,58 +15,98 @@
 #include <string.h>
 #include <time.h>
 
-// how many minutes of heart rate the graph shows. nothing to do with an hour having 60 minutes
-// even though it lands on the same number
+/**
+ * @brief How many minutes of heart rate the graph shows.
+ *
+ * It has nothing to do with an hour having 60 minutes, even though it lands on the same number.
+ */
 #define HR_HISTORY_MINUTES 60
 // HOURS_PER_DAY (24) and MINUTES_PER_HOUR (60) come from the Pebble SDK. the bucket maths lives in
 // core so it can be tested on the host, so the two have to agree on how long a day is
 _Static_assert(HOURS_PER_DAY == STEP_HOURS_PER_DAY, "core and the SDK must agree on the day");
 
+/**
+ * @var s_state
+ * @brief Every health number the store holds.
+ */
 static struct
 {
-    int      hr;
-    uint8_t  hr_history[HR_HISTORY_MINUTES];
-    time_t   hr_last_min; // wall-clock minute of the last history write, so the window can slide
-    int      steps;
-    int      calories;
-    int      sleep_min;
-    int      active_min;
-    int      distance_m;
-    uint16_t step_hourly[HOURS_PER_DAY]; // steps in each hour of today, midnight first
-    int      step_hours;                 // how many of those hours are real (0 to 24)
+    int      hr;                             ///< The latest heart rate reading
+    uint8_t  hr_history[HR_HISTORY_MINUTES]; ///< The rolling heart rate window, one reading a minute
+    time_t   hr_last_min;                    ///< Wall-clock minute of the last history write, so the window can slide
+    int      steps;                          ///< Step count
+    int      calories;                       ///< Calorie count
+    int      sleep_min;                      ///< Minutes slept
+    int      active_min;                     ///< Active minutes
+    int      distance_m;                     ///< Distance walked, in metres
+    uint16_t step_hourly[HOURS_PER_DAY];     ///< Steps in each hour of today, midnight first
+    int      step_hours;                     ///< How many of those hours are real (0 to 24)
 } s_state;
 
-// the only part worth keeping across a relaunch. every other number is read back off the health
-// service before the first paint, but the watch logs heart rate too rarely to rebuild the graph
+/**
+ * @brief The only part worth keeping across a relaunch.
+ *
+ * Every other number is read back off the health service before the first paint, but the watch
+ * logs heart rate too rarely to rebuild the graph, so the rolling window is saved instead.
+ */
 typedef struct
 {
-    uint8_t tag; // STORE_TAG_HEALTH, so a restore can tell this blob from another shape
-    uint8_t hr_history[HR_HISTORY_MINUTES];
-    time_t  hr_last_min;
+    uint8_t tag;                            ///< STORE_TAG_HEALTH, so a restore can tell this blob from another shape
+    uint8_t hr_history[HR_HISTORY_MINUTES]; ///< The saved rolling heart rate window
+    time_t  hr_last_min;                    ///< Wall-clock minute the window last slid to
 } HealthSaved;
 _Static_assert(sizeof(HealthSaved) <= PERSIST_DATA_MAX_LENGTH, "health blob must fit one persist key");
 
-static void (*s_cb)(void);
-static bool s_live; // true once subscribed to the live health service, so the minute poll is a no-op in seed mode
-// the two history series cost real work, so only a face that graphs one asks for it. the current
-// readings are cheap and every face shows one, so those are always tracked
-static bool s_hr_history;
-static bool s_step_history;
-// these three cost a flash read every time they are asked for, so only a face that shows one pays
-static bool s_sleep;
-static bool s_active;
-static bool s_calories;
-// finished hours can never gain another step, so they are read once and kept. these live out here
-// because init clears the buckets, and stale beliefs about them would strand the cleared ones
-static time_t s_cached_day;
-static int s_settled_hours;
-// true between init and the first bucket read, which is held back until the face has painted
-static bool s_steps_pending;
-static uint32_t s_persist_key; // the slot the face handed us for the saved history
+static void (*s_cb)(void); ///< Called whenever a reading changes, so the face can redraw
+static bool s_live;        ///< True once subscribed to the live health service, so the minute poll does nothing in seed mode
+
+/**
+ * @name History series
+ *
+ * The two history series cost real work, so only a face that graphs one asks for it. The current
+ * readings are cheap and every face shows one, so those are always tracked.
+ * @{
+ */
+static bool s_hr_history;   ///< Whether the face graphs heart rate history
+static bool s_step_history; ///< Whether the face graphs steps by the hour
+/** @} */
+
+/**
+ * @name Costly readings
+ *
+ * These three cost a flash read every time they are asked for, so only a face that shows one pays.
+ * @{
+ */
+static bool s_sleep;    ///< Whether the face shows sleep
+static bool s_active;   ///< Whether the face shows active minutes
+static bool s_calories; ///< Whether the face shows calories
+/** @} */
+
+/**
+ * @name Settled step hours
+ *
+ * Finished hours can never gain another step, so they are read once and kept. These live out here
+ * because init clears the buckets, and stale beliefs about them would strand the cleared ones.
+ * @{
+ */
+static time_t s_cached_day; ///< The day the kept hours belong to
+static int s_settled_hours; ///< How many finished hours are already read and kept
+/** @} */
+
+static bool s_steps_pending;   ///< True between init and the first bucket read, which is held back until the face has painted
+static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved history
 
 // --- health service reads (no-op stubs without PBL_HEALTH) ---
 
 #if defined(PBL_HEALTH)
+/**
+ * @brief Whether the watch actually has a reading for a metric over a time span.
+ *
+ * @param metric The health metric to check.
+ * @param start Start of the span to check.
+ * @param end End of the span to check.
+ * @return True when the watch reports the metric available over that span.
+ */
 static bool metric_available(HealthMetric metric, time_t start, time_t end)
 {
     HealthServiceAccessibilityMask access = health_service_metric_accessible(metric, start, end);
@@ -72,6 +114,11 @@ static bool metric_available(HealthMetric metric, time_t start, time_t end)
 }
 #endif
 
+/**
+ * @brief Peek the current heart rate.
+ *
+ * @return The reading in beats per minute, or 0 when there is none.
+ */
 static int read_hr(void)
 {
 #if defined(PBL_HEALTH)
@@ -84,9 +131,16 @@ static int read_hr(void)
     return 0;
 }
 
-// sums a metric over today, or returns the fallback when it is unavailable. steps and distance
-// pass 0 (a real zero reads fine), the rest pass -1 so a panel can tell "no data yet" apart
-// from a real zero and show a placeholder
+/**
+ * @brief Sum a metric over today, or return the fallback when it is unavailable.
+ *
+ * Steps and distance pass 0 as their fallback, since a real zero reads fine. The rest pass -1
+ * so a panel can tell "no data yet" apart from a real zero and show a placeholder.
+ *
+ * @param metric The health metric to sum.
+ * @param fallback Returned when the metric is unavailable.
+ * @return The sum for today, or @p fallback.
+ */
 static int read_sum_today(HealthMetric metric, int fallback)
 {
 #if defined(PBL_HEALTH)
@@ -102,18 +156,37 @@ static int read_sum_today(HealthMetric metric, int fallback)
 }
 
 #if defined(PBL_HEALTH)
-// how many hours the catch-up asks for at a time. a read costs the same whatever window it asks
-// for, so a wider one is most of a day's catch-up done in four goes instead of twenty-four
+/**
+ * @brief How many hours the catch-up asks for at a time.
+ *
+ * A read costs the same whatever window it asks for, so a wider one gets most of a day's catch-up
+ * done in four goes instead of twenty-four.
+ */
 #define STEP_CATCHUP_HOURS 6
 
-// off the heap for the length of the read rather than sitting in the app's fixed footprint. what
-// a pebble app runs out of first is its image, and the heap does not count towards that
+/**
+ * @brief Allocate scratch room for a minute-history read, off the heap for the length of the
+ * read rather than sitting in the app's fixed footprint.
+ *
+ * What a Pebble app runs out of first is its image, and the heap does not count towards that.
+ *
+ * @param records How many minute records to make room for.
+ * @return The scratch buffer, or NULL if the allocation failed.
+ */
 static HealthMinuteData *scratch_take(int records)
 {
     return malloc(sizeof(HealthMinuteData) * records);
 }
 #endif
 
+/**
+ * @brief Fill the rolling heart rate window by reading the watch's own minute log.
+ *
+ * Used once at launch to backfill the window from whatever the watch already logged.
+ *
+ * @param[out] history_out The window to fill, oldest reading first. Left untouched if NULL.
+ * @param max_records How many slots @p history_out holds, capped to HR_HISTORY_MINUTES.
+ */
 static void read_hr_history(uint8_t *history_out, int max_records)
 {
 #if defined(PBL_HEALTH)
@@ -160,7 +233,12 @@ static void read_hr_history(uint8_t *history_out, int max_records)
 }
 
 #if defined(PBL_HEALTH)
-// squeezes a health sum into a bucket, keeping it in the 0 to 65535 a uint16 can hold
+/**
+ * @brief Squeeze a health sum into a bucket, keeping it in the 0 to 65535 a `uint16_t` can hold.
+ *
+ * @param value The sum to clamp.
+ * @return @p value clamped to 0 to 65535.
+ */
 static uint16_t clamp_u16(int value)
 {
     if (value < 0) return 0;
@@ -168,12 +246,16 @@ static uint16_t clamp_u16(int value)
 }
 #endif
 
-// fills the per-hour step buckets from midnight up to the current hour. step_hours records how
-// many are real so the chart can tell a quiet hour from one that has not happened yet
-//
-// an hour is read as it rolls over and once more the minute after, then never again. the hour in
-// progress is today's total less the settled ones, which is free. each real read blocks on a scan
-// of the watch's whole minute log, so they stay off the minute path
+/**
+ * @brief Fill the per-hour step buckets from midnight up to the current hour.
+ *
+ * `step_hours` records how many buckets are real so the chart can tell a quiet hour from one
+ * that has not happened yet.
+ *
+ * An hour is read as it rolls over and once more the minute after, then never again. The hour in
+ * progress is today's total less the settled ones, which is free. Each real read blocks on a
+ * scan of the watch's whole minute log, so they stay off the minute path.
+ */
 static void read_step_hourly(void)
 {
 #if defined(PBL_HEALTH)
@@ -280,9 +362,13 @@ static void read_step_hourly(void)
 
 // --- state + poller ---
 
-// stash the graph so a relaunch can restore it. only a live face writes, so seed mode never
-// touches storage. a burst can land a reading a second and a flash write blocks, so the saves
-// are held to one a minute, which is all the graph gains anyway
+/**
+ * @brief Stash the heart rate graph so a relaunch can restore it.
+ *
+ * Only a live face writes, so seed mode never touches storage. A burst can land a reading a
+ * second and a flash write blocks, so the saves are held to one a minute, which is all the graph
+ * gains anyway.
+ */
 static void persist_save(void)
 {
     static time_t s_saved_min = 0;

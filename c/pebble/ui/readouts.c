@@ -1,6 +1,8 @@
 /**
  * @file readouts.c
  * @brief Text formatters shared by the faces, bound to the engine's text-slots.
+ *
+ * @ingroup lib_ui
  */
 #include "ui/readouts.h"
 

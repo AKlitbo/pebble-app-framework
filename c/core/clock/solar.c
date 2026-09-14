@@ -1,13 +1,22 @@
 /**
  * @file solar.c
  * @brief How the day's light is going, worked out from three plain clock readings.
+ *
+ * @ingroup lib_core
  */
 #include "clock/solar.h"
 
-// a day's worth of minutes, for wrapping the night span across midnight
+/// A day's worth of minutes, for wrapping the night span across midnight
 #define MINUTES_PER_DAY 1440
 
-// whether all three readings are real, so the maths below is not run on a missing time
+/**
+ * @brief Whether all three readings are real, so the maths below is not run on a missing time.
+ *
+ * @param rise Sunrise, minutes past midnight, or -1 for no data.
+ * @param set Sunset, minutes past midnight, or -1 for no data.
+ * @param now The clock, minutes past midnight, or -1 for no data.
+ * @return True when all three are real readings.
+ */
 static bool have_all(int rise, int set, int now)
 {
     return rise >= 0 && set >= 0 && now >= 0;

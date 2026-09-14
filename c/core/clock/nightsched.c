@@ -6,11 +6,6 @@
  */
 #include "nightsched.h"
 
-/**
- * @addtogroup lib_core
- * @{
- */
-
 /// Minutes in a day, which is the only range any of these readings may sit in
 #define DAY_MINUTES 1440
 
@@ -66,5 +61,3 @@ bool night_schedule_active(int mode, int now, int rise, int set,
 
     return false;
 }
-
-/** @} */

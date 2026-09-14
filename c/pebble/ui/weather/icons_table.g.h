@@ -7,9 +7,27 @@
 //     Edit the source vocabulary and run `npm run build:conditions` instead.
 // </auto-generated>
 //------------------------------------------------------------------------------
+/**
+ * @file icons_table.g.h
+ * @brief Condition token to weather icon resource lookup.
+ *
+ * Generated from `lib/ts/weather/conditions.ts`, so the phone and the watch read the same list.
+ *
+ * @ingroup lib_ui
+ */
 #pragma once
 
-// resolves a condition token to its icon resource, falling back to WEATHER_NOW_NA
+/**
+ * @brief Finds the icon resource for a condition token.
+ *
+ * A token ending in `_NIGHT` gets its night glyph where the condition has one.
+ * An unknown token, or a NULL one, gets the `WEATHER_NOW_NA` icon.
+ *
+ * @param condition The condition token from the phone, such as `RAIN` or `RAIN_NIGHT`. May be NULL.
+ * @return The `RESOURCE_ID_ICON_*` resource to load.
+ *
+ * @ingroup lib_ui
+ */
 static uint32_t wx_resource_for_table(const char *condition)
 {
     if (!condition)

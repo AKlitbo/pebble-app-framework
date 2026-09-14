@@ -43,7 +43,7 @@ function etParts(now: number): { weekday: number; hour: number; minute: number; 
 
   // hour comes back as "24" at midnight in some engines so fold it to 0
   const hour = Number(lookup.hour) % 24;
-  // derive the weekday from the ET calendar day itself not a locale short-name string
+  // work out the weekday from the ET calendar day itself not a locale short-name string
   // (some engines spell it differently and a bad match would read undefined and let a
   // weekend fall through as an open trading day and over-poll paid providers)
   const weekday = new Date(Date.UTC(Number(lookup.year), Number(lookup.month) - 1, Number(lookup.day))).getUTCDay();
@@ -59,6 +59,9 @@ function etParts(now: number): { weekday: number; hour: number; minute: number; 
 /**
  * The trading phase of the US market at the given instant: 'open' (Mon-Fri
  * 09:30-16:00 ET), 'postclose' (Mon-Fri 16:00-22:00 ET), or 'closed'.
+ *
+ * @param now The instant to check, as epoch milliseconds.
+ * @return The trading phase, 'open', 'postclose', or 'closed'.
  */
 function marketPhase(now: number): string {
   const et = etParts(now);
@@ -84,6 +87,13 @@ function marketPhase(now: number): string {
  *
  * The two Alpha Vantage stamps only bound anything if they outlive a restart, so they are read
  * back off the phone (see cache.ts) rather than starting empty on every run.
+ *
+ * @param provider The stock provider's id, such as 'alphavantage' or 'finnhub'.
+ * @param force True to skip the throttle and always allow the fetch.
+ * @param lastFetchMs When the provider was last polled, as epoch milliseconds.
+ * @param lastAsOf The trading day of the last Alpha Vantage close held, as "YYYY-MM-DD".
+ * @param now The instant to check, as epoch milliseconds.
+ * @return True if the poll should be skipped.
  */
 function shouldThrottleStockFetch(provider: string, force: boolean, lastFetchMs: number, lastAsOf: string, now: number): boolean {
   if (force) {

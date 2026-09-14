@@ -2,8 +2,8 @@
  * Specs for the shared stock helpers.
  *
  * ok() and status() are the normalized shape every provider returns, and
- * requestJson() is the seam that decides whether a body reaches the provider or
- * short-circuits to an error. A drift here breaks every provider at once.
+ * requestJson() is the seam that decides whether a body reaches the provider or an error
+ * returns immediately instead. A drift here breaks every provider at once.
  */
 
 import { describe, test, expect } from 'vitest';
@@ -56,7 +56,7 @@ describe('stock util status', () => {
 });
 
 describe('stock util begin', () => {
-  /** A key-required provider must short-circuit before building a URL, or it fires a keyless request that 401s. */
+  /** A key-required provider must return immediately rather than build a URL, or it fires a keyless request that 401s. */
   test('reports No API Key when a key is required but missing', () => {
     const result = util.begin({ key: '', symbol: 'AAPL' }, true);
 
@@ -71,7 +71,7 @@ describe('stock util begin', () => {
     expect(result.symbol).toBe('AAPL');
   });
 
-  /** A missing symbol must short-circuit, or the provider queries the API with an empty ticker. */
+  /** A missing symbol must return immediately, or the provider queries the API with an empty ticker. */
   test('reports No Symbol when the symbol is missing', () => {
     const result = util.begin({ key: 'k' }, true);
 
@@ -104,7 +104,7 @@ describe('stock util isoDateFromUnix', () => {
 });
 
 describe('stock util requestJson', () => {
-  /** A bodyless http error (an empty or non-JSON 401/429) must still reach the provider so it can read the status, not short-circuit to Net Error. */
+  /** A bodyless http error (an empty or non-JSON 401/429) must still reach the provider so it can read the status, rather than return immediately with Net Error. */
   test('hands a bodyless http error to onJson with a null body', () => {
     let seenErr;
     let seenJson;

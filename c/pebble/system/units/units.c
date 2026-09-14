@@ -1,16 +1,24 @@
 /**
  * @file units.c
- * @brief SDK-facing units facade: reads the clock for .beats, forwards the rest to
- * the pure lib cores (clock/beats, units/distance)
+ * @brief The SDK-facing units facade. Reads the clock for .beats and forwards the rest
+ * to the pure lib cores, `clock/beats` and `units/distance`.
+ *
+ * @ingroup lib_system
  */
 #include "system/units/units.h"
 
 #include "clock/beats.h"
 #include "units/distance.h"
 
-// read the clock, break it apart, and hand the pieces to the maths. reading and breaking apart are
-// the parts that need the SDK: gmtime and struct tm are pebble.h's here rather than time.h's, so
-// they stay on this side of the fence and the sum lives next door in core
+/**
+ * @brief Milliseconds into the current Biel Mean Time day, read straight off the watch's clock.
+ *
+ * Reads the clock, breaks it apart, and hands the pieces to the maths. Reading and breaking
+ * apart are the parts that need the SDK. `gmtime` and `struct tm` are `pebble.h`'s here rather
+ * than `time.h`'s, so they stay on this side of the fence and the sum lives next door in core.
+ *
+ * @return Milliseconds into the current BMT day.
+ */
 static int32_t ms_into_bmt_day(void)
 {
     time_t now;

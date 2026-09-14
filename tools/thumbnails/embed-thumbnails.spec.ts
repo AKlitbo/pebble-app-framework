@@ -144,7 +144,7 @@ describe.skipIf(COMMITTING_FACES.length === 0)('generated asset', () => {
    * asset has to be found by its thumbnails folder. They run where the engine is mounted beside
    * faces that commit the asset.
    */
-  test('every face committing a thumbnail asset is covered', () => {
+  test('covers every face that commits a thumbnail asset', () => {
     const result = THUMB_FACES;
 
     expect(result).toEqual(COMMITTING_FACES);

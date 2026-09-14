@@ -1,6 +1,8 @@
 /**
  * @file wind_dir.c
  * @brief The compass direction a wind is blowing from, as a bearing and as a sideways component.
+ *
+ * @ingroup lib_core
  */
 #include "weather/wind_dir.h"
 
@@ -8,9 +10,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+/// How many compass points a direction can name, from N through NNW
 #define POINT_COUNT 16
 
-/** @brief Whether two compass abbreviations are the same, ignoring case. */
+/**
+ * @brief Whether two compass abbreviations are the same, ignoring case.
+ *
+ * @param a The first abbreviation.
+ * @param b The second abbreviation.
+ * @return Whether they match, case insensitive.
+ */
 static bool same_point(const char *a, const char *b)
 {
     while (*a && *b)
@@ -33,6 +42,10 @@ static bool same_point(const char *a, const char *b)
  * maths in for one component would cost more than the table does. Straight lines between
  * fifteen-degree stops land within a percent of a real sine, which is finer than a caller
  * working in whole pixels or whole percent can use.
+ *
+ * @param degrees The angle to take the sine of. Wrapped into 0 to 359 first, negative values
+ *   included.
+ * @return The sine of the angle, times 1000.
  */
 static int sin_milli(int degrees)
 {

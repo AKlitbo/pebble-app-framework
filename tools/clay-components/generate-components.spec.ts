@@ -7,7 +7,7 @@
  * under fixtures/, so they need no face.
  *
  * The staleness checks regenerate every component a face commits and compare it
- * to the committed file, so an edited piece cannot ship without `npm run gen:clay`.
+ * to the committed file, so an edited piece cannot ship without its `npm run gen:<face>:clay`.
  * They run where the engine is mounted beside faces that commit components.
  */
 
@@ -157,7 +157,7 @@ describe.skipIf(COMMITTING_FACES.length === 0)('generated components', () => {
    * quietly returned nothing would leave this suite green with nothing in it. Every face that
    * commits a component has to be found here, and losing one has to fail rather than pass silently.
    */
-  test('every face committing a component is covered', () => {
+  test('covers every face that commits a component', () => {
     const result = BUILDER_FACES.map((entry) => entry.face);
 
     expect(result).toEqual(COMMITTING_FACES);
@@ -167,7 +167,7 @@ describe.skipIf(COMMITTING_FACES.length === 0)('generated components', () => {
     manifests.forEach((manifestPath) => {
       const name = manifestPath.replace(/\\/g, '/').split('/').pop();
 
-      /** A piece edit without gen:clay would ship a config page that ignores the change. */
+      /** A piece edit without its gen:<face>:clay run would ship a config page that ignores the change. */
       test(`${face}: ${name} output is not stale`, async () => {
         const built = await buildComponentSource(manifestPath, roots);
 

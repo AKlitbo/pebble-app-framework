@@ -63,10 +63,14 @@ describe('marketPhase', () => {
     expect(result).toBe('closed');
   });
 
-  /** The weekday is derived from the ET date parts, not the locale weekday name: an engine that spells the short weekday differently would miss the old lookup table, read undefined, and let a weekend fall through as an open session that over-polls paid providers. */
+  /**
+   * The weekday comes from the ET date parts, not the locale weekday name. An engine that
+   * spells the short weekday differently would read undefined and let a weekend fall through
+   * as an open session that over-polls paid providers.
+   */
   test('reads a weekend as closed even when the engine spells the weekday differently', () => {
-    // a Sunday (2026-07-05) whose short weekday is a non-English spelling the old
-    // { Sun..Sat } table would not contain
+    // a Sunday (2026-07-05) whose short weekday is a non-English spelling
+    // a table keyed by English weekday names would not contain it
     vi.stubGlobal('Intl', {
       DateTimeFormat: function () {
         return {

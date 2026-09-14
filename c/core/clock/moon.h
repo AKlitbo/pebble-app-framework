@@ -31,7 +31,7 @@ int32_t moon_age_sec(time_t utc);
  *
  * @param utc The time to read, as a UTC timestamp.
  * @param count How many phase icons there are.
- * @return The icon to show (0 means new moon).
+ * @return The icon to show (0 means new moon, or when @p count is not positive).
  */
 int moon_glyph_index(time_t utc, int count);
 

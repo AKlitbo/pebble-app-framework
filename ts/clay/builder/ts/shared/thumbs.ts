@@ -8,7 +8,14 @@
 
 import type { Thumbs } from '../types';
 
-/** The screenshot for a label at one size, or null when there is none. */
+/**
+ * The screenshot for a label at one size, or null when there is none.
+ *
+ * @param thumbs The screenshots, keyed by label then by size.
+ * @param label The module's label.
+ * @param size The size to look up.
+ * @return The screenshot for that label and size, or null when there is none.
+ */
 export function thumbByLabel(thumbs: Thumbs, label: string, size: string): string | null {
   const byModule = thumbs[label];
   return (byModule && byModule[size]) || null;

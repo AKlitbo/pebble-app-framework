@@ -1,13 +1,9 @@
 /**
  * @file zone.h
- * @brief Layout primitives: defines paintable areas and text alignments
+ * @brief Layout primitives. Defines paintable areas and their text alignments.
  *
  * @ingroup lib_ui
  */
-// a Zone is everything needed to present one text slot: where it sits and which
-// registered font + alignment + colour to use plus up to two smaller font/rect
-// tiers to step down to when the text would overflow. a face declares a static
-// const table of these and the engine loops it to build the text layers
 #pragma once
 #include <pebble.h>
 
@@ -19,14 +15,19 @@
  */
 
 /**
- * @brief Defines a paintable area, including geometry and styling.
+ * @brief Everything needed to present one text slot. Where it sits, and which registered font,
+ * alignment, and colour to use, plus up to two smaller font and rect tiers to step down to when
+ * the text would overflow.
+ *
+ * A face declares a static const table of these, and the engine loops it to build the text
+ * layers.
  */
 typedef struct
 {
-    GRect          rect;
-    FontId         font_id;
-    GTextAlignment align;
-    GColor         color;
+    GRect          rect;              ///< Area for the main font
+    FontId         font_id;           ///< The main font to try first
+    GTextAlignment align;             ///< Text alignment, used at every tier
+    GColor         color;             ///< Text colour, used at every tier
     FontId         font_id_fallback;  ///< First smaller font to try when the text overflows the main one
     GRect          rect_fallback;     ///< Area for the first smaller font
     FontId         font_id_fallback2; ///< Second smaller font for the widest strings
@@ -36,7 +37,7 @@ typedef struct
 } Zone;
 
 /**
- * @brief Create transparent text layer for a zone and attach to parent.
+ * @brief Creates a transparent text layer for a zone and attaches it to the parent layer.
  *
  * @param parent The parent layer.
  * @param zone The zone properties.
@@ -46,10 +47,16 @@ typedef struct
 TextLayer *zone_make_layer(Layer *parent, const Zone *zone);
 
 /**
- * @brief Set text, shrinking to fallback if overflow.
+ * @brief Sets a text layer's text, stepping down through the zone's font tiers to find one
+ * the text fits in.
+ *
+ * It tries the main tier first, then each fallback tier in order, and uses the largest one
+ * whose text fits. A face skips a tier by leaving its rect zero-sized, since a zero-filled
+ * struct already reads that way. The main tier always exists. If the text fits nowhere, the
+ * smallest defined tier wins and the text layer trails an ellipsis as a last resort.
  *
  * @param layer The text layer.
- * @param zone The zone specifying the fallback font/rect.
+ * @param zone The zone specifying the fallback fonts and rects.
  * @param text The text to set.
  */
 void zone_set_text_fit(TextLayer *layer, const Zone *zone, const char *text);

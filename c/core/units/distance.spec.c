@@ -30,13 +30,29 @@ void test_distance_unit_labels_metric(void)
 }
 
 /** @brief A mile is 1609.344 m, so an exact thousand miles worth of metres must read back as 1000.0. */
-void test_distance_format_value_thousand_miles_exact(void)
+void test_distance_format_value_reads_a_thousand_miles_exactly(void)
 {
     char buffer[12];
 
     distance_format_value(buffer, sizeof(buffer), 1609344, true);
 
     TEST_ASSERT_EQUAL_STRING("1000.0", buffer);
+}
+
+/**
+ * @brief A run near the top of the safe range still converts to the right number of miles.
+ *
+ * The miles maths multiplies the metres before it divides, and the factor is picked so that
+ * product stays inside 32 bits up to about 3400 km. A bigger factor overflows long before that
+ * and the distance comes out negative or wildly wrong. 3400 km is 2112.66 miles.
+ */
+void test_distance_format_value_converts_a_long_run_in_miles(void)
+{
+    char buffer[12];
+
+    distance_format_value(buffer, sizeof(buffer), 3400000, true);
+
+    TEST_ASSERT_EQUAL_STRING("2112.7", buffer);
 }
 
 /** @brief The tenth rounding must carry, so 4960 m (4.96 km) has to read "5.0" not "4.9". */
@@ -54,7 +70,7 @@ void test_distance_format_value_clamps_negative(void)
 {
     char buffer[12];
 
-    distance_format_value(buffer, sizeof(buffer), -100, false);
+    distance_format_value(buffer, sizeof(buffer), -1000, false);
 
     TEST_ASSERT_EQUAL_STRING("0.0", buffer);
 }
@@ -85,7 +101,8 @@ int main(void)
 
     RUN_TEST(test_distance_unit_labels_imperial);
     RUN_TEST(test_distance_unit_labels_metric);
-    RUN_TEST(test_distance_format_value_thousand_miles_exact);
+    RUN_TEST(test_distance_format_value_reads_a_thousand_miles_exactly);
+    RUN_TEST(test_distance_format_value_converts_a_long_run_in_miles);
     RUN_TEST(test_distance_format_value_rounds_up_with_carry);
     RUN_TEST(test_distance_format_value_clamps_negative);
     RUN_TEST(test_distance_format_appends_unit);

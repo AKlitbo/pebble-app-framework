@@ -95,7 +95,8 @@ for tap in $(seq 1 "$MAX_TAPS"); do
     hash="$(grab)"
 
     if [[ "$hash" == "$first_hash" ]]; then
-        # wrapped back to the start, we're done
+        # wrapped back to the start
+        # we're done
         rm -f "$CANDIDATE"
         echo ">> wrapped back to start after $tap taps"
         echo ">> $unique unique states captured in $OUT_DIR/"
@@ -103,7 +104,8 @@ for tap in $(seq 1 "$MAX_TAPS"); do
     fi
 
     if [[ -n "${seen[$hash]:-}" ]]; then
-        # a tap that renders the same as a state we already have, skip it
+        # a tap that renders the same as a state we already have
+        # skip it
         rm -f "$CANDIDATE"
         printf '   tap %-3d   %s  (dup, skipped)\n' "$tap" "$hash"
         continue

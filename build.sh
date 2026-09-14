@@ -35,7 +35,7 @@ build_face() {
   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$engine/tools/manifest/build-manifests.ts" "$face"
 
   # a face usually builds one target (the face itself), but can declare several (a watchface
-  # and a watchapp from one source). the manifest step wrote a sandbox per target; ask it which
+  # and a watchapp from one source). the manifest step wrote a sandbox per target. ask it which
   local targets
   targets=$(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$engine/tools/manifest/build-manifests.ts" --targets "$face")
 

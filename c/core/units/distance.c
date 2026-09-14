@@ -1,6 +1,8 @@
 /**
  * @file distance.c
- * @brief Pure distance math implementation
+ * @brief Pure distance conversions and formatting, no SDK behind them.
+ *
+ * @ingroup lib_core
  */
 #include "units/distance.h"
 

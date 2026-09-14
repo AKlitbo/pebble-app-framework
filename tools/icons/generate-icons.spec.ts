@@ -26,7 +26,7 @@ describe('whiten', () => {
     expect(result).not.toContain(`fill="${color}"`);
   });
 
-  /** Stroke-styled glyphs set their color on stroke, not fill - a missed stroke comes through black. */
+  /** Stroke-styled glyphs set their color on stroke, not fill. A missed stroke comes through black. */
   test('recolors a hard-coded stroke to white', () => {
     const result = whiten('<svg><path stroke="#000" d="M0 0"/></svg>');
 
@@ -90,7 +90,7 @@ describe('buildMedia', () => {
     ]);
   });
 
-  /** A re-gen must replace the old icon block wholesale, not stack a second copy beside it. */
+  /** A re-gen must replace the existing icon block wholesale, not stack a second copy beside it. */
   test('replaces existing icon entries instead of appending', () => {
     const media = [
       { type: 'bitmap', name: 'ICON_WI_CLEAR', file: '../../../lib/resources/icons/wi-clear.png' },

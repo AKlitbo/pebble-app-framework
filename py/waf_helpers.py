@@ -1,3 +1,10 @@
+"""
+The helpers every face's wscript shares. A face's wscript is generated from
+tools/waf/wscript.template and imports this module directly, calling stage_shared_sources,
+build_conditions and build_face as its build and configure steps. waf runs the wscript as part of
+bash build.sh, once per sandbox under targets/<target>/.
+"""
+
 import os
 import shutil
 import json
@@ -55,7 +62,7 @@ def stage_shared_sources(ctx):
     Mirror this face's src/ and resources/ plus the shared lib/ into this build folder
     (targets/<target>/) so the SDK sees a normal, self-contained project. The source face
     comes from _source_face (the sandbox name, or the .source-face marker when a face feeds
-    several targets); its src/ and resources/ live under watchfaces/<face>/, while lib/ is
+    several targets). Its src/ and resources/ live under watchfaces/<face>/, while lib/ is
     shared at the repo root and comes along for the C.
 
     emit/ is not staged: build:pkjs writes it straight into this sandbox (targets/<face>/emit)

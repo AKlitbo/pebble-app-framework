@@ -36,7 +36,7 @@ static inline time_t store_poll_next(int poll_min, time_t now)
  * deadline more than an interval ahead, so that case is pulled back in.
  *
  * @param poll_min Minutes between polls. 0 or less means polling is off and this is never due.
- * @param next The store's deadline, read and updated in place.
+ * @param[in,out] next The store's deadline, read and updated in place.
  * @param now The current wall-clock time.
  * @return Whether a poll should go out now.
  */

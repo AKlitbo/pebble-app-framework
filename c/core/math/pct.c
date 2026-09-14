@@ -1,6 +1,8 @@
 /**
  * @file pct.c
  * @brief Progress towards a goal, as a percent.
+ *
+ * @ingroup lib_core
  */
 #include "math/pct.h"
 

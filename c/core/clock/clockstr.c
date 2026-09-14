@@ -1,15 +1,20 @@
 /**
  * @file clockstr.c
  * @brief Reads the "HH:MM" clock strings the phone sends.
+ *
+ * @ingroup lib_core
  */
 #include "clock/clockstr.h"
 
 #include <string.h>
 
-// an hour is one or two digits and never more
-// the bound is what keeps h from running away: without it a long enough run of digits overflows
-// the int before the 0-23 test below ever gets to refuse it, and a signed overflow is undefined
-// rather than merely wrong
+/**
+ * @brief Most digits an hour can have. An hour is one or two digits and never more.
+ *
+ * The bound is what keeps the hour from running away. Without it a long enough run of digits
+ * overflows the int before the 0 to 23 check ever gets to refuse it, and a signed overflow is
+ * undefined rather than merely wrong.
+ */
 #define HOUR_DIGITS_MAX 2
 
 bool clockstr_parse(const char *src, int *hour_out, int *minute_out)

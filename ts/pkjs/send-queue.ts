@@ -35,11 +35,15 @@ interface QueueItem {
  * Builds a queueSend that pushes through `send` one message at a time.
  *
  * Each queue is independent, so a face gets one and every send it makes shares that single slot.
+ *
+ * @param send How a queued dict actually reaches the watch, and how the ack or nack comes back.
+ * @return A queueSend function. Each call queues one message, calling onOk or onFail once it settles.
  */
 export function createSendQueue(send: SendFn): QueueSendFn {
   const items: QueueItem[] = [];
   let sending = false;
 
+  /** Sends the next queued item, if the queue is free and something is waiting. */
   function pump(): void {
     if (sending || items.length === 0) {
       return;
@@ -50,6 +54,12 @@ export function createSendQueue(send: SendFn): QueueSendFn {
     // resolve each send exactly once. a lost ack/nack (neither callback ever fires) would otherwise
     // leave sending true forever and wedge the whole queue, so a watchdog counts as a failure
     let settled = false;
+    /**
+     * Settles the send in flight, whichever way it finishes.
+     *
+     * A success shifts the item off the queue and starts the next one. A failure retries the
+     * same item until it runs out of tries, then drops it and moves on.
+     */
     const settle = (ok: boolean): void => {
       if (settled) {
         return;
@@ -85,6 +95,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
     send(item.dict, () => settle(true), () => settle(false));
   }
 
+  /** Adds one message to the queue and kicks off sending if nothing else is in flight. */
   return function queueSend(dict, onOk, onFail) {
     items.push({ dict: dict, onOk: onOk, onFail: onFail, tries: 0 });
     pump();

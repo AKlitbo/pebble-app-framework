@@ -1,12 +1,18 @@
 /**
  * @file fonts.c
- * @brief Font registry implementation: a flat id-indexed table of loaded handles
+ * @brief Font registry implementation. A flat id-indexed table of loaded handles.
+ *
+ * @ingroup lib_ui
  */
 #include "ui/fonts.h"
 
-static GFont s_fonts[FONT_SLOTS_MAX]; // loaded font handles
-// whether the app loaded the handle in that slot and so has to free it. a system font is parked
-// with fonts_register_system and stays false, because unloading one the firmware owns faults
+static GFont s_fonts[FONT_SLOTS_MAX]; ///< Loaded font handles, indexed by FontId
+/**
+ * @brief Whether the app loaded the handle in each slot and so has to free it.
+ *
+ * A system font is parked with fonts_register_system and stays false, because unloading one the
+ * firmware owns faults.
+ */
 static bool s_owned[FONT_SLOTS_MAX];
 
 void fonts_register(FontId id, GFont handle)

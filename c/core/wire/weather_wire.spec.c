@@ -241,11 +241,17 @@ void test_refuses_a_daily_strip_that_is_short(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** @brief A refused daily message must leave the caller's strip untouched, same as the hourly. */
+/**
+ * @brief A refused daily message must leave the caller's strip untouched, same as the hourly.
+ *
+ * The count and the weekday both sit in the header, so this also catches a reader that writes the
+ * header onto the live row before it checks the message is long enough.
+ */
 void test_leaves_the_daily_strip_alone_when_it_refuses(void)
 {
     WeatherDaily out = {0};
     out.count = 7;
+    out.base_weekday = 2;
     out.col[0].temp_max = 30;
 
     uint8_t buffer[8];
@@ -258,6 +264,7 @@ void test_leaves_the_daily_strip_alone_when_it_refuses(void)
 
     TEST_ASSERT_FALSE(result);
     TEST_ASSERT_EQUAL_UINT8(7, out.count);
+    TEST_ASSERT_EQUAL_UINT8(2, out.base_weekday);
     TEST_ASSERT_EQUAL_INT16(30, out.col[0].temp_max);
 }
 

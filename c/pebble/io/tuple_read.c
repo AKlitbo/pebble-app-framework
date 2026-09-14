@@ -1,6 +1,8 @@
 /**
  * @file tuple_read.c
  * @brief Reads a value out of an inbound message tuple.
+ *
+ * @ingroup lib_io
  */
 #include "io/tuple_read.h"
 

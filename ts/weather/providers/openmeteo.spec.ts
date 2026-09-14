@@ -17,9 +17,8 @@ const FC = '/v1/forecast';
 /**
  * Stub `request` that routes by URL substring and records calls in order.
  *
- * @param {!Object<string, {err?: string, body?: string}>} byPath substring -> response
- * @param {!Array<string>} calls sink for requested URLs, in order
- * @return {Function}
+ * byPath maps a URL substring to the error or body to hand back for it, and
+ * calls collects every requested URL in the order the provider asked for them.
  */
 function routing(byPath: Record<string, { err?: string | null; body?: string }>, calls: string[]): RequestFn {
   return (url, callback) => {
@@ -221,7 +220,7 @@ describe('parseForecast', () => {
     expect(result.daily.cols[1]).toEqual({ code: conditions.codeFor('RAIN'), tempMax: 22, tempMin: 13 });
   });
 
-  /** The 2x4 stacks two rows of four, so the daily strip must fill eight columns not the old six. */
+  /** The 2x4 layout stacks two rows of four, so the daily strip must fill all eight columns, or the second row on the watch stays blank. */
   test('fills up to eight daily columns', () => {
     const days = Array.from({ length: 10 }, (unused, day) => `2026-07-${String(4 + day).padStart(2, '0')}`);
     const json = {
@@ -563,8 +562,13 @@ describe('openmeteo provider', () => {
     });
   });
 
-  // live integration against the real Open-Meteo API. opt-in via RUN_LIVE_WEATHER=1
-  // catches the upstream changing response shape
+  /**
+   * Runs only with RUN_LIVE_WEATHER=1, against the real Open-Meteo API.
+   *
+   * Open-Meteo renaming or dropping a field would still parse without error here,
+   * just into the wrong value, and this live check is the only thing that would
+   * catch it before a wearer sees a blank or wrong reading on the watch.
+   */
   describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1')('live', () => {
     const live = (opts: WeatherOpts) => new Promise<WeatherResult>((resolve) => openmeteo.fetch(opts, fetchRequest, resolve));
 

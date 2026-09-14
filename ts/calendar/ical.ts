@@ -136,8 +136,12 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
 }
 
 /**
- * Parses a .ics feed into upcoming events, soonest first. nowEpoch is injectable
- * so tests stay deterministic. It defaults to now.
+ * Parses a .ics feed into upcoming events, soonest first.
+ *
+ * @param text The feed's raw .ics text.
+ * @param nowEpoch The instant to treat as now, as epoch seconds. Injectable so tests stay
+ * deterministic. Defaults to the real now.
+ * @return The upcoming events in the window, soonest first.
  */
 function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] {
   const now = nowEpoch || Math.floor(Date.now() / 1000);

@@ -10,6 +10,9 @@
 /**
  * Performs an HTTP GET, shaped like request() in lib/ts/pkjs/app.ts so the
  * providers can be exercised against the real upstream APIs.
+ *
+ * @param url The address to fetch.
+ * @param callback Called with an error and no body on failure, or null and the body on success.
  */
 export function fetchRequest(url: string, callback: (err: string | null, body?: string) => void): void {
   fetch(url)

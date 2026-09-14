@@ -94,7 +94,12 @@ const NIGHT_TOKENS = new Set<string>(
   conditions.conditions.filter((entry) => entry.nightResource).map((entry) => entry.token)
 );
 
-/** Maps an Open-Meteo WMO weather code to a short condition string. */
+/**
+ * Maps an Open-Meteo WMO weather code to a short condition string.
+ *
+ * @param code The WMO weather code Open-Meteo reports.
+ * @return The matching short condition string.
+ */
 function wmoToCondition(code: number): string {
   if (code === 0) { return 'CLEAR'; }
   if (code === 1 || code === 2) { return 'PCLDY'; }
@@ -121,6 +126,10 @@ function wmoToCondition(code: number): string {
  * WeatherAPI pass phrases/aliases that must be resolved to a token before the night
  * check. Conditions without a night glyph (and unrecognized ones) are returned
  * as their resolved token, unchanged by day or night.
+ *
+ * @param condition A condition token or phrase from the provider.
+ * @param isDay Whether it is currently daytime.
+ * @return The resolved token, promoted to its night form when it is night and one exists.
  */
 function applyNight(condition: string, isDay: boolean): string {
   const token = shorten(condition);
@@ -154,7 +163,12 @@ const CONDITION_ALIASES: Record<string, string> = {
   'SMOKE': 'FOGGY',
 };
 
-/** Shortens a condition string so it fits beside the temperature. */
+/**
+ * Shortens a condition string so it fits beside the temperature.
+ *
+ * @param text A condition phrase or token from a provider.
+ * @return The shortened token, or 'UNKNOWN' when nothing matches.
+ */
 function shorten(text: string): string {
   if (!text) {
     return 'UNKNOWN';
@@ -178,7 +192,12 @@ function shorten(text: string): string {
 const COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
   'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
 
-/** Turns a wind bearing in degrees into a short compass label, or '' when not a number. */
+/**
+ * Turns a wind bearing in degrees into a short compass label, or '' when not a number.
+ *
+ * @param degrees The wind bearing in degrees, from whatever the provider sent.
+ * @return The compass label, such as 'NNE', or '' when degrees is not a usable number.
+ */
 function degToCompass(degrees: unknown): string {
   // null/undefined/'' all coerce to 0 ("N") so reject them before Number()
   if (degrees === null || degrees === undefined || degrees === '') {
@@ -199,6 +218,9 @@ function degToCompass(degrees: unknown): string {
  *
  * Open-Meteo returns local times when the request asks for timezone=auto, so
  * the clock portion can be shown as-is.
+ *
+ * @param iso An ISO timestamp such as "2026-06-26T06:30".
+ * @return The "HH:MM" clock portion, or '' when none is found.
  */
 function hmFromIso(iso: unknown): string {
   const match = /T(\d{2}:\d{2})/.exec(String(iso || ''));
@@ -210,6 +232,10 @@ function hmFromIso(iso: unknown): string {
  *
  * OpenWeatherMap reports sunrise/sunset as UTC unix seconds plus a `timezone`
  * offset (also seconds), so the local clock is the two added together.
+ *
+ * @param unixSeconds A UTC unix time in seconds.
+ * @param offsetSeconds The timezone offset to add, in seconds.
+ * @return The local "HH:MM" time, or '' when either value is not a usable number.
  */
 function hmFromUnix(unixSeconds: unknown, offsetSeconds: unknown): string {
   const unix = Number(unixSeconds);
@@ -224,7 +250,12 @@ function hmFromUnix(unixSeconds: unknown, offsetSeconds: unknown): string {
   return `${hours}:${minutes}`;
 }
 
-/** Parses a 12-hour time string like "05:42 AM" into "HH:MM", or '' if unparseable. */
+/**
+ * Parses a 12-hour time string like "05:42 AM" into "HH:MM", or '' if unparseable.
+ *
+ * @param timeStr A 12-hour time string, such as "05:42 AM".
+ * @return The "HH:MM" 24-hour time, or '' when it cannot be parsed.
+ */
 function hmFrom12Hour(timeStr: unknown): string {
   const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(String(timeStr || '').trim());
   if (!match) {
@@ -247,6 +278,9 @@ function hmFrom12Hour(timeStr: unknown): string {
 /**
  * Copies the optional weather extras onto a result, skipping missing values so
  * the watch keeps showing a placeholder rather than a phantom reading.
+ *
+ * @param result The weather result to add the extras onto.
+ * @param extra The provider's extra fields, in whatever loose shape it sent them.
  */
 function attachExtras(result: WeatherResult, extra: Record<string, unknown> | null | undefined): void {
   if (!extra) {
@@ -287,7 +321,7 @@ function attachExtras(result: WeatherResult, extra: Record<string, unknown> | nu
     result.precip = Math.round(precip * 100);
   }
 
-  // scalars already normalized by each provider (feels-like in the user's unit
+  // plain numbers already normalized by each provider (feels-like in the user's unit
   // and pressure in hPa and cloud % and gust km/h). finite-guarded so a genuine
   // zero (0% cloud or calm wind) still ships while a missing field drops out
   const feelsLike = Number(extra.feelsLike);
@@ -346,6 +380,9 @@ function attachExtras(result: WeatherResult, extra: Record<string, unknown> | nu
 /**
  * Copies the parsed forecast strips onto a result, skipping missing ones so a
  * provider that can't supply a forecast just leaves the row blank.
+ *
+ * @param result The weather result to add the forecast strips onto.
+ * @param forecast The parsed hourly and daily strips, either of which may be missing.
  */
 function attachForecast(result: WeatherResult, forecast: ForecastCols | null | undefined): void {
   if (!forecast) {
@@ -361,8 +398,13 @@ function attachForecast(result: WeatherResult, forecast: ForecastCols | null | u
   }
 }
 
-/** Parses a JSON string, returning null on failure. The result is the raw
- * unknown JSON, so a provider casts it to its own response shape. */
+/**
+ * Parses a JSON string, returning null on failure. The result is the raw
+ * unknown JSON, so a provider casts it to its own response shape.
+ *
+ * @param body The raw response body to parse.
+ * @return The parsed JSON, or null when the body is not valid JSON.
+ */
 function safeParse(body: string): unknown {
   try {
     return JSON.parse(body);
@@ -378,6 +420,11 @@ function safeParse(body: string): unknown {
  * JSON (e.g. an 'Invalid Key' on a 4xx). If the body does not parse, finish with
  * 'NET ERROR' when the request failed, else 'BAD WX DATA'. The provider declares
  * the response shape it expects via the type parameter.
+ *
+ * @param url The URL to fetch.
+ * @param request The GET function to call, usually PebbleKit JS's xhrRequest wrapper.
+ * @param done Called with a status result when the request or the parse fails.
+ * @param onJson Called with the parsed body when it parses.
  */
 function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn, onJson: (json: T) => void): void {
   // cachebust
@@ -403,6 +450,14 @@ function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn,
  *
  * The temperature is already in the unit the user selected, so the watch
  * displays it without converting.
+ *
+ * @param temperature The current temperature, in the user's chosen unit.
+ * @param condition The provider's condition phrase or token.
+ * @param location The resolved place name to show.
+ * @param lat The resolved latitude, when known.
+ * @param lon The resolved longitude, when known.
+ * @param extra The provider's extra fields, passed through to attachExtras.
+ * @return The finished weather result, or a status result if temperature is not a usable number.
  */
 function ok(
   temperature: unknown,
@@ -438,7 +493,12 @@ function ok(
   return result;
 }
 
-/** Builds a status/error result that carries no live reading. */
+/**
+ * Builds a status/error result that carries no live reading.
+ *
+ * @param text The status or error text to show in place of a reading.
+ * @return A weather result with ok set to false.
+ */
 function status(text: string): WeatherResult {
   return {
     temperature: 0,

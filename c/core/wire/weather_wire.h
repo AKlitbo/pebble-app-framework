@@ -48,7 +48,7 @@ typedef struct
     uint8_t        count;       ///< How many columns are filled (0 means none yet)
     uint8_t        base_hour;   ///< Hour of day of the first column (0 to 23)
     uint8_t        step_hours;  ///< Hours between columns
-    WeatherHourCol col[WEATHER_FORECAST_COLS];
+    WeatherHourCol col[WEATHER_FORECAST_COLS]; ///< The hourly columns, filled up to count
 } WeatherHourly;
 
 /** @brief The 7-day strip. count is 0 until a reading lands. */
@@ -56,7 +56,7 @@ typedef struct
 {
     uint8_t       count;         ///< How many columns are filled (0 means none yet)
     uint8_t       base_weekday;  ///< Weekday of the first column (0 means Sunday)
-    WeatherDayCol col[WEATHER_FORECAST_COLS];
+    WeatherDayCol col[WEATHER_FORECAST_COLS]; ///< The daily columns, filled up to count
 } WeatherDaily;
 
 /**
@@ -67,8 +67,8 @@ typedef struct
  *
  * @param buf The raw wire bytes.
  * @param len How many bytes there are.
- * @param out Receives the strip. Untouched unless this returns true: everything that can turn a
- *   message away is settled before the first byte of it is written.
+ * @param[out] out Receives the strip. Untouched unless this returns true: everything that can turn
+ *   a message away is settled before the first byte of it is written.
  * @return Whether the run read clean.
  */
 bool weather_hourly_decode(const uint8_t *buf, uint16_t len, WeatherHourly *out);
@@ -81,8 +81,8 @@ bool weather_hourly_decode(const uint8_t *buf, uint16_t len, WeatherHourly *out)
  *
  * @param buf The raw wire bytes.
  * @param len How many bytes there are.
- * @param out Receives the strip. Untouched unless this returns true: everything that can turn a
- *   message away is settled before the first byte of it is written.
+ * @param[out] out Receives the strip. Untouched unless this returns true: everything that can turn
+ *   a message away is settled before the first byte of it is written.
  * @return Whether the run read clean.
  */
 bool weather_daily_decode(const uint8_t *buf, uint16_t len, WeatherDaily *out);

@@ -1,6 +1,8 @@
 /**
  * @file weekday.c
- * @brief Weekday names, host-testable off-device
+ * @brief Weekday names, host-testable off-device.
+ *
+ * @ingroup lib_core
  */
 #include "clock/weekday.h"
 

@@ -1,6 +1,6 @@
 /**
  * @file vibe.h
- * @brief Haptic feedback wrapper
+ * @brief The haptic feedback wrapper.
  *
  * @ingroup lib_system
  */
@@ -17,9 +17,9 @@
  */
 typedef enum
 {
-    VibePulseShort,
-    VibePulseLong,
-    VibePulseDouble,
+    VibePulseShort,  ///< A single short pulse
+    VibePulseLong,   ///< A single long pulse
+    VibePulseDouble, ///< Two short pulses
 } VibePulse;
 
 /**

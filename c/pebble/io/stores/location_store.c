@@ -2,6 +2,8 @@
  * @file location_store.c
  * @brief The active location store: holds the phone's coordinates and owns the appmessage
  * coords channel.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/location_store.h"
 #include "io/stores/store_persist.h"
@@ -12,24 +14,36 @@
 #include "io/appmessage/appmessage.h"
 #include "wire/coords.h"
 
-// persist slot for the last good fix so a relaunch (e.g. after the timeline) shows the coords
-// straight away instead of blanking to "--". own key clear of the weather store (255) the
-// stock store (254) and the settings keys which sit in a low band (1 to 8)
+/**
+ * @brief Persist slot for the last good fix.
+ *
+ * A relaunch, such as coming back from the timeline, shows the coords straight away rather than
+ * blanking to "--". The key sits clear of the weather store (255), the stock store (254), and the
+ * settings keys, which sit in a low band (1 to 8).
+ */
 #define LOCATION_STORE_PERSIST_KEY 253
 
+/**
+ * @var s_state
+ * @brief The last fix, laid out as the blob that gets persisted.
+ */
 static struct
 {
-    uint8_t tag; // STORE_TAG_LOCATION, so a restore can tell this blob from another shape
-    char lat[20];
-    char lon[20];
+    uint8_t tag;  ///< STORE_TAG_LOCATION, so a restore can tell this blob from another shape
+    char lat[20]; ///< Latitude as text, as the phone sent it
+    char lon[20]; ///< Longitude as text, as the phone sent it
 } s_state;
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "location state must fit one persist key");
 
-static void (*s_cb)(void);
-static bool s_live;  // true = a live face, so the cache is worth reading and writing
+static void (*s_cb)(void); ///< Called whenever the coords change, so the face can redraw
+static bool s_live;        ///< True on a live face, so the cache is worth reading and writing
 
-// stash the coords so a relaunch can restore them. only a live face writes, and only a real fix,
-// so a dropped one can't stomp the last good location
+/**
+ * @brief Stash the coords so a relaunch can restore them.
+ *
+ * Only a live face writes, and only a real fix, so a dropped one can't stomp the last good
+ * location.
+ */
 static void persist_save(void)
 {
     if (s_live && coords_look_real(s_state.lat, s_state.lon))

@@ -23,6 +23,9 @@ export interface IoPanelOpts {
  * for a moment. Apply hands the textarea text to onApply, which is where the
  * caller parses it and closes the panel. The primary Apply button gets
  * css.button plus " primary".
+ *
+ * @param panel The empty element to fill with the title, textarea, and buttons.
+ * @param opts The classes to use and what to do on Apply.
  */
 export function buildIoPanel(panel: HTMLElement, opts: IoPanelOpts): void {
   const title = document.createElement('div');

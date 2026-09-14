@@ -21,12 +21,12 @@
  */
 typedef enum
 {
-    TIME_FORMAT_SYSTEM      = 0,
+    TIME_FORMAT_SYSTEM      = 0,  ///< Follows the watch's own 12 or 24 hour setting
     TIME_FORMAT_12H         = 1,  ///< 12 hour with a leading zero like 06:30
-    TIME_FORMAT_24H         = 2,
+    TIME_FORMAT_24H         = 2,  ///< 24 hour clock
     TIME_FORMAT_BEATS       = 3,  ///< Kept for the wire format. Not offered in the config
     TIME_FORMAT_12H_NO_LEAD = 4,  ///< 12 hour without a leading zero like 6:30
-    TIME_FORMAT_COUNT
+    TIME_FORMAT_COUNT             ///< How many choices this setting has
 } TimeFormat;
 
 /**
@@ -34,10 +34,10 @@ typedef enum
  */
 typedef enum
 {
-    STEPS_MODE_STEPS = 0,
-    STEPS_MODE_MILES = 1,
-    STEPS_MODE_KM    = 2,
-    STEPS_MODE_COUNT
+    STEPS_MODE_STEPS = 0,  ///< Shows the raw step count
+    STEPS_MODE_MILES = 1,  ///< Shows the distance walked, in miles
+    STEPS_MODE_KM    = 2,  ///< Shows the distance walked, in kilometres
+    STEPS_MODE_COUNT       ///< How many choices this setting has
 } StepsMode;
 
 /**
@@ -46,9 +46,9 @@ typedef enum
  */
 typedef enum
 {
-    DISTANCE_UNIT_KM    = 0,
-    DISTANCE_UNIT_MILES = 1,
-    DISTANCE_UNIT_COUNT
+    DISTANCE_UNIT_KM    = 0,  ///< Kilometres
+    DISTANCE_UNIT_MILES = 1,  ///< Miles
+    DISTANCE_UNIT_COUNT       ///< How many choices this setting has
 } DistanceUnit;
 
 /**
@@ -56,11 +56,11 @@ typedef enum
  */
 typedef enum
 {
-    VIBE_NONE   = 0,
-    VIBE_SHORT  = 1,
-    VIBE_LONG   = 2,
-    VIBE_DOUBLE = 3,
-    VIBE_COUNT
+    VIBE_NONE   = 0,  ///< No vibration
+    VIBE_SHORT  = 1,  ///< A single short pulse
+    VIBE_LONG   = 2,  ///< A single long pulse
+    VIBE_DOUBLE = 3,  ///< Two short pulses
+    VIBE_COUNT        ///< How many choices this setting has
 } VibeChoice;
 
 /**
@@ -71,7 +71,7 @@ typedef enum
     BATTERY_DISPLAY_BOTH    = 0,  ///< Icon and percent
     BATTERY_DISPLAY_ICON    = 1,  ///< Icon only
     BATTERY_DISPLAY_PERCENT = 2,  ///< Percent only
-    BATTERY_DISPLAY_COUNT
+    BATTERY_DISPLAY_COUNT         ///< How many choices this setting has
 } BatteryDisplay;
 
 /** @} */

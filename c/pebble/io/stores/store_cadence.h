@@ -12,7 +12,7 @@
  * @{
  */
 
-// room for one entry per store that wants the cadence
+/// Room for one entry per store that wants the cadence
 #define STORE_CADENCE_MAX 8
 
 /**

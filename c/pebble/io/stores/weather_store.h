@@ -134,10 +134,10 @@ int         weather_store_temp_min(void);
 /** @brief The chance of rain in percent, or -1 if we have not got one yet. */
 int         weather_store_precip_chance(void);
 
-/** @brief The hourly forecast strip. count is 0 until a reading lands. */
+/** @brief The hourly forecast strip. `count` is 0 until a reading lands. */
 const WeatherHourly *weather_store_forecast_hourly(void);
 
-/** @brief The 7-day forecast strip. count is 0 until a reading lands. */
+/** @brief The 7-day forecast strip. `count` is 0 until a reading lands. */
 const WeatherDaily *weather_store_forecast_daily(void);
 
 /** @brief How many seconds since the last reading turned up, or -1 if we have none. */

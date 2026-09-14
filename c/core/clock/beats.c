@@ -1,6 +1,8 @@
 /**
  * @file beats.c
- * @brief Pure swatch .beats math, host-testable off-device
+ * @brief Pure swatch .beats math, host-testable off-device.
+ *
+ * @ingroup lib_core
  */
 #include "clock/beats.h"
 

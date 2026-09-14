@@ -78,7 +78,7 @@ bool system_store_bluetooth(void);
  * Read through to the alarm service on every call, since there is nothing to subscribe to. A
  * platform without the alarm API always reads as no alarm.
  *
- * @param out Set to the alarm's UTC time, or 0 when there is none. Never NULL.
+ * @param[out] out Set to the alarm's UTC time, or 0 when there is none. Never NULL.
  * @return True when an enabled alarm is scheduled.
  */
 bool system_store_next_alarm(time_t *out);

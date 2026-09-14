@@ -31,8 +31,10 @@ interface GeoPlace {
 }
 
 export default {
+  /** The component type name, matched by a Clay config item's own `type: 'locationsearch'`. */
   name: 'locationsearch',
 
+  /** The markup this component renders for its config row. */
   template: [
     '<div class="component component-input loc-search">',
     '  <label class="tap-highlight">',
@@ -47,6 +49,7 @@ export default {
     '</div>',
   ].join(''),
 
+  /** The CSS this component needs, scoped to its own class names. */
   style: [
     '.loc-search .input { position: relative; }',
     '.loc-search .loc-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 10; list-style: none; margin: 0; padding: 0; background: #fff; color: #000; border: 1px solid #ccc; border-radius: 0 0 4px 4px; max-height: 180px; overflow-y: auto; }',
@@ -57,7 +60,12 @@ export default {
   ].join(''),
 
   manipulator: {
-    /** Restores a saved selection: shows the place label and keeps the raw stored value. */
+    /**
+     * Restores a saved selection: shows the place label and keeps the raw stored value.
+     *
+     * @param value The persisted string Clay hands back, JSON for a location or "offset,label"
+     * for a timezone, or empty when nothing is saved yet.
+     */
     set: function(this: ClayComponentContext, value: string) {
       const root = this.$element[0];
       let label = '';
@@ -88,6 +96,8 @@ export default {
     /**
      * Returns the value to persist. A timezone field emits "offset,label" for the
      * watch, any other location field keeps the raw JSON blob.
+     *
+     * @return The string Clay should persist, or an empty string when nothing is picked yet.
      */
     get: function(this: ClayComponentContext) {
       const val = (this.$element[0].querySelector('.loc-value') as HTMLInputElement).value || '';

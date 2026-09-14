@@ -11,7 +11,7 @@
 #   * heap, out of 128 KB. Nothing here is close to it.
 #
 # The heap figures are printed during the link, and only then, so this wants a clean build (CI
-# always is). Neither size is in the log; both come off the binary's PebbleProcessInfo header.
+# always is). Neither size is in the log. Both come off the binary's PebbleProcessInfo header.
 #
 # Reporting only. It never fails a build for being large, because the SDK already does that at the
 # only threshold that matters, and a softer limit here would just get raised whenever it fired.
@@ -36,7 +36,7 @@ grep -q "APP MEMORY USAGE" "$log" \
   || die "Error: No memory report in $log. Either the build did not link, or it was incremental and had nothing to relink (try --clean)."
 
 # the target name only arrives on the "Leaving directory .../targets/<target>/build" line, one per
-# sandbox, so blocks are buffered and flushed there — a target building two platforms has two
+# sandbox, so blocks are buffered and flushed there. a target building two platforms has two
 # blocks but one such line. the platform comes off the block header ("EMERY APP MEMORY USAGE").
 # counts sit immediately before the literal "bytes", steadier than counting in from either end
 targets=$(awk '
@@ -69,7 +69,7 @@ rows=""
 while IFS=$'\t' read -r target platform res ram free; do
   [[ -n "$target" ]] || continue
 
-  # image is the file size; virtual_size is bytes 128..129 of PebbleProcessInfo. a missing binary
+  # image is the file size. virtual_size is bytes 128..129 of PebbleProcessInfo. a missing binary
   # reports 0 rather than skipping the target, so the row still shows and the gap is obvious
   image=0
   virtual=0

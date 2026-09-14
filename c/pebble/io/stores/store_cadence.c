@@ -1,11 +1,13 @@
 /**
  * @file store_cadence.c
  * @brief Holds the list of work the stores want run on the face's cadence.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/store_cadence.h"
 
-static void (*s_entries[STORE_CADENCE_MAX])(void);
-static int s_count;
+static void (*s_entries[STORE_CADENCE_MAX])(void); ///< The registered work, in the order it was registered
+static int s_count;                                 ///< How many entries are in use
 
 void store_cadence_register(void (*cb)(void))
 {

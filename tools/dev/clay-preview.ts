@@ -3,9 +3,9 @@
  *
  * Builds a face's real settings page (the same @rebble/clay the watch build uses, with its own
  * custom components and every normal item) into a plain HTML file you can open in a browser. Lets
- * you click around the config UI without loading it onto the watch after every change, and — the
- * reason it earns its keep — shows you the console error when the page refuses to render, which on
- * the watch just looks like a settings screen that never appears.
+ * you click around the config UI without loading it onto the watch after every change. It also
+ * shows you the console error when the page refuses to render, which on the watch just looks like
+ * a settings screen that never appears. That is the real reason it earns its keep.
  *
  * Run once:   node tools/dev/clay-preview.ts <face>
  * Keep fresh: node tools/dev/clay-preview.ts <face> --watch   (then refresh the browser)
@@ -67,7 +67,7 @@ if (typeof host.Pebble === 'undefined') {
     },
   };
 }
-// clay reads the values it seeds the page with straight out of localStorage under this key, so
+// Clay reads the values it seeds the page with straight out of localStorage under this key, so
 // pre-loading it is all "open the settings again later" takes
 const seed = process.argv.slice(3).find((arg) => arg.startsWith('--settings='));
 
@@ -139,7 +139,7 @@ function components(emit: string): unknown[] {
       if (!name.endsWith(suffix)) {
         continue;
       }
-      // the generated .g.js builders are plain CommonJS; the TS ones land on .default
+      // the generated .g.js builders are plain CommonJS. the TS ones land on .default
       const mod = requireHost(path.join(dir, name)) as { default?: unknown };
       const candidate = mod.default || mod;
       if (isComponent(candidate)) {

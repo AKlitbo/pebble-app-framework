@@ -11,14 +11,7 @@ import yahoo from './yahoo';
 import { fetchRequest } from '../../../testing/fetch-request';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
 
-/**
- * Stub `request` that records the requested url and replies with a canned
- * response.
- *
- * @param {{err?: ?string, body?: string}} response The error and body to feed back.
- * @param {!Array<string>} calls Sink for requested urls, in order.
- * @return {Function}
- */
+/** Stub `request` that records the requested url and replies with a canned error and body. */
 function replying(response: { err?: string | null; body?: string }, calls: string[]): RequestFn {
   return (url, callback) => {
     calls.push(url);
@@ -134,9 +127,11 @@ describe('yahoo provider', () => {
     });
   });
 
-  // live integration against the real Yahoo endpoint. opt-in via RUN_LIVE_STOCK=1.
-  // no key is needed so this only guards on the live flag. catches Yahoo changing
-  // its response shape or adding auth
+  /**
+   * Runs against the real Yahoo endpoint instead of a stub, so it catches Yahoo changing its
+   * response shape or adding an auth requirement in a way the deterministic specs above cannot
+   * see. Opt in with RUN_LIVE_STOCK=1. No key is needed, so this only guards on the flag.
+   */
   describe.skipIf(process.env.RUN_LIVE_STOCK !== '1')('live', () => {
     const live = (opts: StockOpts) => new Promise<StockQuote>((resolve) => yahoo.fetch(opts, fetchRequest, resolve));
 

@@ -1,7 +1,10 @@
 /**
  * @file dev_walk.c
- * @brief The shared frame-face dev harness: fixture-as-store-seeds plus the theme walk.
- * Always compiled and gc-dropped from any face that never calls it (release builds).
+ * @brief The shared frame-face dev harness. It seeds the stores from a fixed fixture and
+ * drives the theme walk. Always compiled, but the linker drops it from any face that never
+ * calls it, which is every release build.
+ *
+ * @ingroup lib_dev
  */
 #include "dev/dev_walk.h"
 
@@ -21,20 +24,21 @@
  */
 typedef struct
 {
-    int16_t temp;
-    const char *cond;
-    int hr;
-    int steps;
-    int calories;
-    int sleep_min;
-    int active_min;
-    int distance_m;
-    int battery;
-    bool bluetooth;
-    const char *lat; // LCARS dash style e.g. "33-44"
-    const char *lon;
+    int16_t temp;     ///< Temperature reading
+    const char *cond; ///< Weather condition code, such as `PCLDY`
+    int hr;           ///< Heart rate reading
+    int steps;        ///< Step count
+    int calories;     ///< Calorie count
+    int sleep_min;    ///< Minutes slept
+    int active_min;   ///< Active minutes
+    int distance_m;   ///< Distance walked, in metres
+    int battery;      ///< Battery percentage
+    bool bluetooth;   ///< Whether the phone is connected
+    const char *lat;  ///< Latitude, in LCARS dash style, such as "33-44"
+    const char *lon;  ///< Longitude, in the same LCARS dash style
 } DevFixture;
 
+/** @brief The default fixture every store is seeded from. */
 static const DevFixture s_default = {
     .temp = 21, .cond = "PCLDY",
     .hr = 72, .steps = 8431, .calories = 420, .sleep_min = 431, .active_min = 52, .distance_m = 5300,
@@ -53,19 +57,23 @@ static const DevFixture s_default = {
  */
 typedef struct
 {
-    int16_t     temp;
-    const char *cond;
-    int         hr;
-    int         steps;
-    int         battery;
-    bool        bluetooth;
-    bool        quiet_icon;
-    uint8_t     minute;
+    int16_t     temp;       ///< Temperature reading
+    const char *cond;       ///< Weather condition code, such as `PCLDY`
+    int         hr;         ///< Heart rate reading
+    int         steps;      ///< Step count
+    int         battery;    ///< Battery percentage
+    bool        bluetooth;  ///< Whether the phone is connected
+    bool        quiet_icon; ///< Whether the Quiet Time mark is up
+    uint8_t     minute;     ///< The minute the pinned clock sits on
 } DevShot;
 
-// spread deliberately rather than at random: a flat battery and a full one, a dropped phone,
-// the Quiet Time mark up and down, and a range of weather so the scene is not drawing the same
-// sky eight times
+/**
+ * @brief The shots a theme walk steps through.
+ *
+ * Spread on purpose rather than at random: a flat battery and a full one, a dropped phone, the
+ * Quiet Time mark up and down, and a range of weather so the scene is not drawing the same sky
+ * eight times.
+ */
 static const DevShot s_shots[] = {
     {.temp = 21, .cond = "PCLDY", .hr = 72, .steps = 8431,  .battery = 64,  .bluetooth = true,  .quiet_icon = false, .minute = 42},
     {.temp = 3,  .cond = "SNOW",  .hr = 58, .steps = 12045, .battery = 92,  .bluetooth = true,  .quiet_icon = true,  .minute = 18},
@@ -77,11 +85,14 @@ static const DevShot s_shots[] = {
     {.temp = 35, .cond = "PCLDY", .hr = 91, .steps = 11250, .battery = 53,  .bluetooth = true,  .quiet_icon = true,  .minute = 48},
 };
 
-static DevWalkMode s_mode;
-static void (*s_apply_theme)(void);
-static uint8_t s_theme;
-// the daylight the walk was started in, so a shot moves the minute without moving the hour and
-// dragging a night sweep into daytime
+static DevWalkMode s_mode;          ///< Which walk is running
+static void (*s_apply_theme)(void); ///< The face's theme-apply hook, run before the engine rebuilds
+static uint8_t s_theme;             ///< The theme the walk is on
+/**
+ * @brief The hour the walk was started in.
+ *
+ * A shot moves the minute without moving the hour, so it never drags a night sweep into daytime.
+ */
 static int s_hour;
 
 /**
@@ -117,8 +128,8 @@ static void apply_shot(uint8_t index)
     SystemSeed system = {.battery = shot->battery, .charging = false, .bluetooth = shot->bluetooth};
     system_store_init((SystemConfig){.enabled = true, .live = false, .vibe = NULL}, &system);
 
-    // a no-op on a face that never subscribed to the id, which is what we want: it only moves
-    // for the faces that actually draw the mark
+    // this does nothing on a face that never subscribed to the id
+    // that is fine, since it only moves for the faces that actually draw the mark
     settings_set_u8(SETTING_QUIET_TIME_ICON, shot->quiet_icon ? 1 : 0);
 }
 

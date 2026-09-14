@@ -25,7 +25,6 @@ const ENDPOINT = {
 /**
  * Stub request that records the requested url, then feeds back an empty body so
  * the routed provider finishes without a network call.
- *
  */
 function routing(calls: string[]): RequestFn {
   return (url, callback) => {

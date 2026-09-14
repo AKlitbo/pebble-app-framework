@@ -1,6 +1,8 @@
 /**
  * @file vibe.c
- * @brief Haptic feedback wrapper implementation
+ * @brief The haptic feedback wrapper implementation.
+ *
+ * @ingroup lib_system
  */
 #include "system/vibe/vibe.h"
 

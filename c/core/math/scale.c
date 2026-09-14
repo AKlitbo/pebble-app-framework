@@ -1,6 +1,8 @@
 /**
  * @file scale.c
  * @brief The clamp and segment maths a bar or gauge is built from.
+ *
+ * @ingroup lib_core
  */
 #include "math/scale.h"
 

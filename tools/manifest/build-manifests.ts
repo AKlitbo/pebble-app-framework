@@ -1,18 +1,19 @@
 /**
- * Generate targets/<face>/package.json from watchfaces/<face>/config/pebble.appinfo.json.
+ * Generate targets/<target>/package.json from watchfaces/<face>/config/pebble.appinfo.json.
  *
  * pebble.appinfo.json holds the Pebble appinfo (uuid, messageKeys, the whole resource
  * list) plus the per-face build identity: the release name, the watchface flag, and (for
  * an app) which bundled icon is the launcher menu icon. The author/version come from the
  * root package.json, so there is one place for each fact.
  *
- * Each face builds to its own staging sandbox targets/<face>/, so there is one manifest
- * per face (the watchface/watchapp target-type split collapsed into the face name). The
- * manifest is a gitignored build input written as plain JSON — nobody reads it by hand.
+ * A face can declare either one build target inline or a `targets` map naming several, so
+ * one source face can produce more than one .pbw. Each target builds to its own staging
+ * sandbox targets/<target name>/, so there is one manifest per target rather than per face.
+ * The manifest is a gitignored build input written as plain JSON. Nobody reads it by hand.
  * `pebble build` needs package.json to exist before it runs, so each build regenerates it
  * via build.sh.
  *
- * Usage: node tools/manifest/build-manifests.ts <face>
+ * Usage: node tools/manifest/build-manifests.ts [--targets] <face>
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -22,7 +23,7 @@ import { ENGINE, WORKSPACE } from '../paths.ts';
 const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
 // every face's wscript is identical (waf_helpers keys off the sandbox dir name), so it is
-// generated from one template rather than committed per face - a face missing its wscript
+// generated from one template rather than committed per face. a face missing its wscript
 // makes `pebble build` report "This project is very outdated" instead of anything useful
 const WSCRIPT_TEMPLATE = path.join(ENGINE, 'tools', 'waf', 'wscript.template');
 
@@ -41,9 +42,9 @@ export type MediaEntry = { type: string; name: string; file?: string; menuIcon?:
 type Target = { name: string; watchface: boolean; menuIcon?: string };
 
 /**
- * The shared Pebble fields common to every face — what building a manifest reads. The
- * per-face build identity (name/watchface/menuIcon) rides alongside these in the file but
- * is split out into a Target before buildManifest sees it.
+ * The shared Pebble fields common to every face. This is what building a manifest reads.
+ * The per-face build identity (name/watchface/menuIcon) rides alongside these in the file
+ * but is split out into a Target before buildManifest sees it.
  */
 export type SharedAppinfo = {
   displayName: string;
@@ -58,7 +59,7 @@ export type SharedAppinfo = {
 
 /**
  * A face's build identity is either a single target inlined at the top level (the common case:
- * one .pbw per face) or a targets map naming several — Gridlock ships a watchface and a watchapp
+ * one .pbw per face) or a targets map naming several. Gridlock ships a watchface and a watchapp
  * from one source, so it lists both here.
  */
 type TargetsMap = Record<string, Target>;
@@ -72,9 +73,12 @@ type TargetsMap = Record<string, Target>;
 type Appinfo = SharedAppinfo & Partial<Target> & { version?: string; targets?: TargetsMap };
 
 /**
- * The build targets a face declares, as a flat list. A `targets` map wins; otherwise the inline
+ * The build targets a face declares, as a flat list. A `targets` map wins. Otherwise the inline
  * single target is the whole list. One source face (watchfaces/<face>/) can produce several .pbw
  * targets, each with its own sandbox under targets/<target name>/.
+ *
+ * @param config The parsed appinfo to read the target or targets from.
+ * @return Every build target this face declares.
  */
 export function resolveTargets(config: Appinfo): Target[] {
   if (config.targets) {
@@ -89,7 +93,13 @@ export function resolveTargets(config: Appinfo): Target[] {
 /** The facts each manifest copies out of the root package.json. */
 type RootPkg = { author: string; version: string };
 
-/** Builds one target's media list, marking its menu icon if it declares one. */
+/**
+ * Builds one target's media list, marking its menu icon if it declares one.
+ *
+ * @param config The shared appinfo fields, including the media list to copy.
+ * @param target The build target, checked for a menuIcon to mark.
+ * @return The target's own copy of the media list.
+ */
 export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] {
   const media: MediaEntry[] = JSON.parse(JSON.stringify(config.resources.media));
   if (target.menuIcon) {
@@ -102,7 +112,14 @@ export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] 
   return media;
 }
 
-/** Builds one target's whole package.json manifest from the shared config and the root package. */
+/**
+ * Builds one target's whole package.json manifest from the shared config and the root package.
+ *
+ * @param config The shared appinfo fields.
+ * @param rootPkg The author and version to copy in from the root package.json.
+ * @param target The build target this manifest is for.
+ * @return The finished manifest, ready to write out as package.json.
+ */
 export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target) {
   return {
     name: target.name,

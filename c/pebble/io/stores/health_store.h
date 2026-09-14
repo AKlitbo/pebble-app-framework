@@ -23,7 +23,7 @@ typedef struct
     bool     live;         ///< True subscribes the health service and false just keeps the fake data for screenshots
     bool     hr_history;   ///< Keep the rolling minute by minute heart rate window, for a face that graphs it
     bool     step_history; ///< Keep the hour by hour step buckets, for a face that graphs them
-    // the heart rate, steps and distance are read for every face, they are either cached by the
+    // the heart rate, steps and distance are read for every face. they are either cached by the
     // watch or free. these three are not, so each is only read for a face that shows it, and the
     // getter for one left off keeps returning the -1 that means no reading
     bool     sleep;        ///< Read the sleep total
@@ -76,7 +76,7 @@ const uint16_t *health_store_step_hourly(void);
 
 /**
  * @brief How many of the hourly step buckets hold a real value (0 to 24). Steps count 0 as a
- * real reading (a quiet hour), so a chart needs the count rather than a no-data sentinel.
+ * real reading (a quiet hour), so a chart needs the count rather than a no-data marker.
  */
 int health_store_step_hours(void);
 

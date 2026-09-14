@@ -33,7 +33,7 @@ void test_text_to_upper_leaves_non_letters(void)
 }
 
 /** @brief An empty string must stay empty rather than walk off the end of the buffer. */
-void test_text_to_upper_empty_string_is_noop(void)
+void test_text_to_upper_leaves_an_empty_string_empty(void)
 {
     char text[] = "";
 
@@ -48,7 +48,7 @@ int main(void)
 
     RUN_TEST(test_text_to_upper_uppercases_lowercase);
     RUN_TEST(test_text_to_upper_leaves_non_letters);
-    RUN_TEST(test_text_to_upper_empty_string_is_noop);
+    RUN_TEST(test_text_to_upper_leaves_an_empty_string_empty);
 
     return UNITY_END();
 }

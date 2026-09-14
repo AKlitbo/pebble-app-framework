@@ -14,7 +14,7 @@
  * initialize followed by `init.call(this)` so the manipulator's this still binds
  * the Clay component.
  *
- * Run with `npm run gen:clay`. Outputs are committed, and the spec fails when
+ * Run with `npm run gen:<face>:clay`. Outputs are committed, and the spec fails when
  * they drift from the pieces.
  */
 
@@ -50,6 +50,13 @@ type Root = { base: string; builder: string };
  */
 type Roots = { face: Root; core: Root | null; lib: Root; faceRoot: string };
 
+/**
+ * Builds the three builder roots this face pulls pieces from: its own src, its family core if
+ * it has one, and lib.
+ *
+ * @param face The face to look up.
+ * @return The face's roots, in precedence order.
+ */
 function rootsFor(face: string): Roots {
   const core = familyCoreDir(face);
   return {
@@ -65,12 +72,23 @@ function rootList(roots: Roots): Root[] {
   return [roots.face, roots.core, roots.lib].filter(Boolean) as Root[];
 }
 
-/** A root's builder directory. */
+/**
+ * A root's builder directory.
+ *
+ * @param root The root to resolve.
+ * @return The root's builder directory.
+ */
 function builderDir(root: Root): string {
   return path.join(root.base, root.builder);
 }
 
-/** The first root whose builder dir actually holds this relative path, or null. */
+/**
+ * The first root whose builder dir actually holds this relative path, or null.
+ *
+ * @param roots The roots to search, in precedence order.
+ * @param rel The path to look for, relative to a root's builder directory.
+ * @return The matching file's full path, or null when none of the roots have it.
+ */
 function resolveIn(roots: Roots, rel: string): string | null {
   for (const root of rootList(roots)) {
     const full = path.join(builderDir(root), rel);
@@ -87,6 +105,10 @@ function resolveIn(roots: Roots, rel: string): string | null {
  *
  * Returns candidates rather than one path, because with three roots a miss under the face can be
  * satisfied by either the family or lib.
+ *
+ * @param roots The roots to swap between.
+ * @param full The full path to the piece under its current root.
+ * @return The same relative path under each of the other roots.
  */
 function swapRoot(roots: Roots, full: string): string[] {
   const all = rootList(roots);
@@ -124,6 +146,9 @@ function readText(filePath: string): string {
  *
  * A face that ships its own copy of a manifest shadows the family's, and the family's shadows
  * lib's, so they are keyed by filename rather than concatenated.
+ *
+ * @param roots The roots to search.
+ * @return Every manifest's full path, one per filename, sorted.
  */
 function findManifests(roots: Roots): string[] {
   const byName = new Map<string, string>();
@@ -149,6 +174,9 @@ function findManifests(roots: Roots): string[] {
  * The manifest piece that declares init(), the entry the bundle re-exports.
  * Matched by filename so it works before esbuild runs and whatever extension the
  * piece carries (Node cannot require a .ts to look at its exports).
+ *
+ * @param manifest The manifest to search, its name and pieces list.
+ * @return The init piece's path.
  */
 function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): string {
   const initPiece = manifest.pieces.find((piece) => path.basename(piece).replace(/\.[jt]s$/, '') === 'init');
@@ -161,6 +189,10 @@ function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): string {
 /**
  * The entry source esbuild bundles: a require for every piece so none is tree
  * shaken away, then the init piece re-exported as the bundle's value.
+ *
+ * @param manifest The manifest whose pieces to require, its pieces list.
+ * @param initPiece The piece to re-export as the bundle's value.
+ * @return The entry source, ready to hand esbuild as its stdin input.
  */
 function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string): string {
   const lines = manifest.pieces.map((piece) => `require(${JSON.stringify('./' + piece)});`);
@@ -176,6 +208,9 @@ function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string)
  * it under the other roots, so no side has to spell out where the others live.
  *
  * There is no bail on a missing core: a face in no family still reaches lib through here.
+ *
+ * @param roots The roots to retry a missing import under.
+ * @return The esbuild plugin that does the retrying.
  */
 function overlayPlugin(roots: Roots): esbuild.Plugin {
   return {
@@ -204,7 +239,14 @@ function overlayPlugin(roots: Roots): esbuild.Plugin {
   };
 }
 
-/** Bundles a manifest's pieces into the ES2015 IIFE that becomes initialize. */
+/**
+ * Bundles a manifest's pieces into the ES2015 IIFE that becomes initialize.
+ *
+ * @param manifest The manifest whose pieces to bundle.
+ * @param manifestDir The directory to resolve the manifest's own relative imports from.
+ * @param roots The roots to fall back through when a piece imports one under another root.
+ * @return The bundled source, trimmed of trailing blank lines.
+ */
 async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: Roots): Promise<string> {
   const initPiece = findInitPiece(manifest);
   const result = await esbuild.build({
@@ -226,7 +268,13 @@ async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: 
   return result.outputFiles[0].text.replace(/\r\n/g, '\n').replace(/\n+$/, '');
 }
 
-/** Trims blank edges and indents every non empty line for the initialize body. */
+/**
+ * Trims blank edges and indents every non empty line for the initialize body.
+ *
+ * @param text The block to indent.
+ * @param indent The indent to add to each non empty line.
+ * @return The trimmed, indented block.
+ */
 function indentBlock(text: string, indent: string): string {
   return text
     .replace(/^\n+/, '')
@@ -236,7 +284,12 @@ function indentBlock(text: string, indent: string): string {
     .join('\n');
 }
 
-/** The template file flattened to the one line string Clay expects. */
+/**
+ * The template file flattened to the one line string Clay expects.
+ *
+ * @param templatePath The template file to read.
+ * @return The template, blank lines dropped and the rest joined with no separator.
+ */
 function buildTemplate(templatePath: string): string {
   return readText(templatePath)
     .split('\n')
@@ -248,6 +301,9 @@ function buildTemplate(templatePath: string): string {
  * Squeezes a stylesheet down for the shipped string: comments out, whitespace
  * collapsed, punctuation tightened. The source files stay pretty, only the
  * inlined copy shrinks.
+ *
+ * @param css The stylesheet source to squeeze.
+ * @return The squeezed stylesheet, ready to inline.
  */
 function minifyCss(css: string): string {
   return css
@@ -258,12 +314,23 @@ function minifyCss(css: string): string {
     .trim();
 }
 
-/** The css files minified and joined into the one style string Clay injects. */
+/**
+ * The css files minified and joined into the one style string Clay injects.
+ *
+ * @param stylePaths The stylesheet files to read, in the order they should be joined.
+ * @return The joined, minified style string.
+ */
 function buildStyle(stylePaths: string[]): string {
   return stylePaths.map((stylePath) => minifyCss(readText(stylePath))).join('');
 }
 
-/** Builds the finished component source for one manifest file, plus where it lands. */
+/**
+ * Builds the finished component source for one manifest file, plus where it lands.
+ *
+ * @param manifestPath The manifest file to build.
+ * @param roots The roots to resolve the manifest's template, styles, and pieces from.
+ * @return The component's source and the output path it belongs at.
+ */
 async function buildComponentSource(manifestPath: string, roots: Roots): Promise<{ output: string; source: string }> {
   const manifest: Manifest = requireManifest(manifestPath).default;
   const manifestDir = path.dirname(manifestPath);
@@ -282,7 +349,7 @@ async function buildComponentSource(manifestPath: string, roots: Roots): Promise
   const doc = manifest.doc.map((line) => (line ? ` * ${line}` : ' *')).join('\n');
 
   const source = `// generated from ${relManifest} by tools/clay-components/generate-components.ts
-// do not edit by hand: run \`npm run gen:clay\` after changing the sources
+// do not edit by hand: run the face's \`npm run gen:<face>:clay\` script after changing the sources
 /**
 ${doc}
  */
@@ -317,7 +384,11 @@ ${bundle}
   return { output: path.join(roots.faceRoot, manifest.output), source };
 }
 
-/** Builds and writes every component for one face. */
+/**
+ * Builds and writes every component for one face.
+ *
+ * @param face The face to build components for.
+ */
 async function generateAll(face: string): Promise<void> {
   const roots = rootsFor(face);
 

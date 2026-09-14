@@ -12,17 +12,24 @@
  * @{
  */
 
-// every store stamps the first byte of its blob with a tag. the high nibble names the store and
-// the low nibble is that store's layout revision. the size on its own cannot tell two blobs apart
-// (the calendar snapshot and the weather state happen to be the same size) and reordering two
-// fields keeps the size too, so the tag is what makes the guard mean anything. bump a store's low
-// nibble whenever its persisted struct changes shape, and an older blob is dropped rather than
-// read as the wrong thing
-#define STORE_TAG_WEATHER  0x11
-#define STORE_TAG_STOCK    0x21
-#define STORE_TAG_CALENDAR 0x31
-#define STORE_TAG_HEALTH   0x42
-#define STORE_TAG_LOCATION 0x51
+/**
+ * @name Store tags
+ *
+ * Every store stamps the first byte of its blob with a tag. The high nibble names the store and the
+ * low nibble is that store's layout revision.
+ *
+ * The size on its own cannot tell two blobs apart. The calendar snapshot and the weather state
+ * happen to be the same size, and reordering two fields keeps the size too, so the tag is what makes
+ * the guard mean anything. Bump a store's low nibble whenever its persisted struct changes shape,
+ * and an older blob is dropped rather than read as the wrong thing.
+ * @{
+ */
+#define STORE_TAG_WEATHER  0x11 ///< The weather store's blob
+#define STORE_TAG_STOCK    0x21 ///< The stock store's blob
+#define STORE_TAG_CALENDAR 0x31 ///< The calendar store's snapshot
+#define STORE_TAG_HEALTH   0x42 ///< The health store's saved heart rate window
+#define STORE_TAG_LOCATION 0x51 ///< The location store's last fix
+/** @} */
 
 /**
  * @brief Restore a saved blob into @p state, but only when it is this store's own current layout.
@@ -31,7 +38,7 @@
  * the defaults the caller applied before calling survive a rejected blob.
  *
  * @param key The persist slot the face handed the store.
- * @param state The struct to fill. Its first field must be the uint8_t tag.
+ * @param[out] state The struct to fill. Its first field must be the uint8_t tag.
  * @param size sizeof that struct.
  * @param tag The store's STORE_TAG_* value.
  * @return Whether a saved blob was restored.
@@ -58,7 +65,8 @@ static inline bool store_restore(uint32_t key, void *state, size_t size, uint8_t
  * @brief Save a store's blob with its tag stamped in, so the next restore can recognise it.
  *
  * @param key The persist slot the face handed the store.
- * @param state The struct to write. Its first field must be the uint8_t tag.
+ * @param[in,out] state The struct to write, with its tag stamped in on the way. Its first field
+ *   must be the uint8_t tag.
  * @param size sizeof that struct.
  * @param tag The store's STORE_TAG_* value.
  * @return Whether the whole blob reached flash. False means the cache did not land, so a caller

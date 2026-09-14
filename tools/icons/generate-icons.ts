@@ -3,21 +3,21 @@
  * Rasterize the watchface's SVG glyphs into its Pebble PNG resources.
  *
  * Sources are vendored under vendor/:
- *   weather-icons - Erik Flowers  (key "wi")
- *   uxwing - heart, feet, thermometer, ...  (key "ux")
- *   svgrepo - bluetooth on/slash  (key "sr")
+ *   weather-icons, by Erik Flowers (key "wi")
+ *   uxwing, heart, feet, thermometer, and friends (key "ux")
+ *   svgrepo, bluetooth on and slash (key "sr")
  *
  * The face declares what it needs in resources/icons.json,
  * mapping an icon name to its vendored svg and final pixel size:
  *
  *   { "wi-clear": { "svg": "wi/wi-day-sunny", "size": [24, 24] } }
  *
- * The icon name is the file basename. Its Pebble resource id is derived from it
+ * The icon name is the file basename. Its Pebble resource id comes from it
  * (wi-clear -> ICON_WI_CLEAR). Faces own their sizes, so the same condition can
  * ship at 24px on one face and 12px on another with no shared -sm/-md variants.
  *
  * Glyphs are forced to white because upstream SVGs do not define a consistent
- * fill or stroke color. Faces recolor the loaded bitmap's palette at runtime, so
+ * fill or stroke colour. Faces recolour the loaded bitmap's palette at runtime, so
  * one white master serves every tint. Each icon is rasterized at its final size:
  * Pebble clips bitmaps rather than scaling them at draw time.
  *
@@ -45,7 +45,7 @@ export type IconManifest = Record<string, IconSpec>;
 const ROOT = WORKSPACE;
 const VENDOR = path.resolve(ROOT, 'vendor');
 
-/** watchfaces/<face>/ — the face owns its resources/ and config/pebble.appinfo.json. */
+/** watchfaces/<face>/. The face owns its resources/ and config/pebble.appinfo.json. */
 function faceRoot(face: string): string {
   return resolveFaceDir(face);
 }
@@ -66,9 +66,14 @@ const TRANSPARENT = {
   alpha: 0,
 };
 
-/** Forces a glyph white so the face can recolour the loaded bitmap's palette at runtime. */
+/**
+ * Forces a glyph white so the face can recolour the loaded bitmap's palette at runtime.
+ *
+ * @param svgText The svg source to recolour.
+ * @return The same svg source with its glyph forced white.
+ */
 export function whiten(svgText: string): string {
-  // recolor any hard-coded black so stroke-style glyphs (which set their own color on the path) come through white
+  // recolour any hard-coded black so stroke-style glyphs (which set their own colour on the path) come through white
   let out = svgText.replace(
     /(fill|stroke)="(#000000|#000|black)"/gi,
     `$1="${WHITE}"`
@@ -130,6 +135,7 @@ async function trimToGlyph(svgText: string): Promise<Buffer> {
     .toBuffer();
 }
 
+/** Rasterizes one svg to a PNG at the given size, trimming to its glyph first when asked. */
 async function render(
   svgText: string,
   [width, height]: [number, number],
@@ -160,7 +166,13 @@ function svgPath(ref: string): string {
   return path.join(VENDOR, dir, `${ref.slice(slash + 1)}.svg`);
 }
 
-// "wi-clear" -> "ICON_WI_CLEAR"
+/**
+ * Turns an icon's basename into its Pebble resource id, for example "wi-clear" into
+ * "ICON_WI_CLEAR".
+ *
+ * @param basename The icon's file basename.
+ * @return Its Pebble resource id.
+ */
 export function resourceName(basename: string): string {
   return 'ICON_' + basename.toUpperCase().replace(/-/g, '_');
 }
@@ -173,10 +185,14 @@ function isIconEntry(entry: MediaEntry): boolean {
 }
 
 /**
- * Merge a manifest's icons into an existing media array. Non-icon entries (fonts,
+ * Merges a manifest's icons into an existing media array. Non-icon entries (fonts,
  * background images) keep their place and order. The icon block is replaced in
  * full and lands where the first old icon sat (or just before the fonts on a face
  * that had none). Pure so it can be tested without touching disk.
+ *
+ * @param media The face's current media array.
+ * @param manifest The face's icons.json manifest.
+ * @return The media array with its icon block replaced from the manifest.
  */
 export function buildMedia(media: MediaEntry[], manifest: IconManifest): MediaEntry[] {
   const icons: MediaEntry[] = Object.keys(manifest).map((name) => ({
@@ -210,9 +226,15 @@ function formatEntry(entry: MediaEntry, indent: string): string {
     .join('\n');
 }
 
-// splice the rebuilt media array back into the raw package.json text and leave every
-// other byte of the file untouched. bracket-matching steps over array-valued fields
-// inside an entry (like a font's targetPlatforms) and quoted brackets in strings
+/**
+ * Splices the rebuilt media array back into the raw package.json text and leaves every
+ * other byte of the file untouched. Bracket matching steps over array-valued fields
+ * inside an entry (like a font's targetPlatforms) and quoted brackets in strings.
+ *
+ * @param raw The face's package.json text, unparsed.
+ * @param newMedia The media array to splice in, in place of the existing one.
+ * @return The same text with its media array replaced.
+ */
 export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   const keyAt = raw.indexOf('"media"');
   if (keyAt === -1) {
@@ -294,6 +316,7 @@ async function renderFace(faceDir: string, manifest: IconManifest): Promise<numb
 }
 
 /** Renders every icon the manifest asks for, then syncs the media list in the build config. */
+/** Renders every icon a face's manifest asks for, then syncs its media list from the same manifest. */
 async function main(): Promise<void> {
   const face = process.argv[2];
   if (!face) {

@@ -71,15 +71,15 @@ void test_nothing_done_is_zero(void)
 }
 
 /**
- * @brief The no-data sentinel reads as an empty bar, same as a real zero.
+ * @brief The no-data marker reads as an empty bar, same as a real zero.
  *
  * Worth pinning because it is a decision rather than an accident: a reading of -1 means the store
  * has nothing yet, and this answers 0 for it, so a caller that wants to draw no bar at all has to
  * notice the -1 before it asks. The value line beside the bar does notice, and prints "--".
  */
-void test_the_no_data_sentinel_reads_as_zero(void)
+void test_the_no_data_marker_reads_as_zero(void)
 {
-    int result = pct_of(-1, 10000);
+    int result = pct_of(-1, 50);
 
     TEST_ASSERT_EQUAL_INT(0, result);
 }
@@ -102,7 +102,7 @@ int main(void)
     RUN_TEST(test_a_zero_goal_does_not_divide);
     RUN_TEST(test_a_negative_goal_does_not_divide);
     RUN_TEST(test_nothing_done_is_zero);
-    RUN_TEST(test_the_no_data_sentinel_reads_as_zero);
+    RUN_TEST(test_the_no_data_marker_reads_as_zero);
     RUN_TEST(test_it_truncates);
 
     return UNITY_END();

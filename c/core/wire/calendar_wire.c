@@ -1,6 +1,8 @@
 /**
  * @file calendar_wire.c
  * @brief The agenda as the phone packs it, and the reader that unpacks it.
+ *
+ * @ingroup lib_core
  */
 #include "wire/calendar_wire.h"
 

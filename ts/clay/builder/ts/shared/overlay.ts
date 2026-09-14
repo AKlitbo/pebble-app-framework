@@ -19,6 +19,11 @@ export interface OverlayHost {
  * Opening again first closes whatever this host already had up, so a host can
  * never stack two of its own panels. Tapping the backdrop closes the pair when
  * dismissOnTap is set, which is how the popups treat "tap outside" as cancel.
+ *
+ * @param overlayClass The class to put on the backdrop element.
+ * @param panelClass The class to put on the panel element.
+ * @param dismissOnTap Whether tapping the backdrop closes the pair.
+ * @return The open/close pair for this overlay.
  */
 export function createOverlayHost(overlayClass: string, panelClass: string, dismissOnTap: boolean): OverlayHost {
   let backdrop: HTMLElement | null = null;

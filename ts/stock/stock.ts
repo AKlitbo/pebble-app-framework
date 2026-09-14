@@ -24,7 +24,13 @@ const PROVIDERS: Record<string, StockProvider> = {
   twelvedata: twelvedata,
 };
 
-/** Looks up a quote for one symbol using the configured provider. */
+/**
+ * Looks up a quote for one symbol using the configured provider.
+ *
+ * @param opts The lookup options, including which provider to use.
+ * @param request The HTTP GET function to use.
+ * @param done Called once with the finished quote result.
+ */
 function fetchQuote(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const key = String(opts.provider || '').toLowerCase();
   const provider = PROVIDERS[key];

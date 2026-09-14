@@ -23,8 +23,8 @@
  * @param rise Sunrise, minutes past midnight, or -1 for no data.
  * @param set Sunset, minutes past midnight, or -1 for no data.
  * @param now The clock, minutes past midnight, or -1 for no data.
- * @return The progress from 0 to 100, or -1 when it is night or a reading is missing, so the
- *   caller can hide the sun rather than pin it to an end.
+ * @return The progress from 0 to 100, or -1 when it is night, a reading is missing, or sunset
+ *   does not come after sunrise, so the caller can hide the sun rather than pin it to an end.
  */
 int solar_day_progress(int rise, int set, int now);
 

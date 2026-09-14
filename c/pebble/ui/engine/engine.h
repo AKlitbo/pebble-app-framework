@@ -29,14 +29,14 @@
  */
 typedef struct
 {
-    GRect frame;                                            /**< Draw slot layer frame */
-    void (*draw)(GContext *ctx, GRect bounds, const void *data); /**< Draw slot paint */
-    const void *data;                                       /**< Draw slot data */
+    GRect frame;                                                  ///< Draw slot layer frame
+    void (*draw)(GContext *ctx, GRect bounds, const void *data);  ///< Draw slot paint
+    const void *data;                                             ///< Draw slot data
 
-    const Zone *zone;                                       /**< Text slot area and font tiers */
-    void (*text)(char *out, size_t n);                      /**< Text slot: pulls and formats from a store */
+    const Zone *zone;                                             ///< Text slot area and font tiers
+    void (*text)(char *out, size_t n);                            ///< Text slot, pulls and formats from a store
 
-    uint32_t tags;                                          /**< Which stores this slot reads from, for engine_mark_dirty_tags (0 means repaint on any change) */
+    uint32_t tags;                                                ///< Which stores this slot reads from, for `engine_mark_dirty_tags` (0 means repaint on any change)
 } EngineSlot;
 
 /**

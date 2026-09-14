@@ -52,6 +52,7 @@ interface StartOptions {
   customClay?: unknown;
 }
 
+// the weather settings that mean a refetch is worth it after the config closes
 const WEATHER_KEYS = ['WEATHER_PROVIDER', 'WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'];
 
 // the stock settings that mean a refetch is worth it after the config closes
@@ -86,6 +87,9 @@ const EXTRA_WEATHER_FIELDS = [
 /**
  * Splits the comma list of tickers into clean uppercase symbols. A junk or
  * over-long entry is dropped, and the list is capped at the strip size.
+ *
+ * @param raw The comma-separated symbols as saved in Clay, or anything else that landed there.
+ * @return The cleaned, capped list of symbols.
  */
 function parseSymbols(raw: unknown): string[] {
   return String(raw || '')
@@ -101,8 +105,12 @@ function parseSymbols(raw: unknown): string[] {
 const STOCK_ROUND_TIMEOUT_MS = 30 * 1000;
 
 /**
- * Collects {messageKey: defaultValue} from the Clay config so the same
- * defaults apply whether or not the user has opened the settings page yet.
+ * Walks the Clay config items and builds a map from each item's message key to its
+ * declared default value, so the same defaults apply whether or not the user has
+ * opened the settings page yet.
+ *
+ * @param items The Clay config items to walk, including any nested items.
+ * @return A map from message key to default value.
  */
 function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
   return items.reduce((defaults: Record<string, any>, item) => {
@@ -116,7 +124,13 @@ function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
   }, {});
 }
 
-/** Performs an HTTP GET. callback(error, responseText). */
+/**
+ * Fetches a URL with an HTTP GET and reports the result through a callback rather
+ * than a promise, since that is what the fetch layer expects everywhere else.
+ *
+ * @param url The URL to fetch.
+ * @param callback Called once with an error, or with null and the response body on success.
+ */
 function request(url: string, callback: (err: string | null, body?: string) => void): void {
   const xhr = new XMLHttpRequest();
 
@@ -130,7 +144,8 @@ function request(url: string, callback: (err: string | null, body?: string) => v
     }
     settled = true;
     clearTimeout(watchdog);
-    // keep the no-body error paths one-arg like before so a caller reading arity sees no change
+    // call back with just the error when there is no body, so a caller checking the
+    // callback's arity still gets the shape it expects
     if (body === undefined) {
       callback(err);
     } else {
@@ -170,7 +185,12 @@ function request(url: string, callback: (err: string | null, body?: string) => v
   }
 }
 
-/** Reads the persisted Clay settings from localStorage. */
+/**
+ * Reads the persisted Clay settings from localStorage.
+ *
+ * @return The saved settings, or an empty object when there is nothing saved yet or
+ *   the stored value will not parse.
+ */
 function getConfig(): Record<string, any> {
   try {
     return JSON.parse(localStorage.getItem('clay-settings') as string) || {};
@@ -179,7 +199,14 @@ function getConfig(): Record<string, any> {
   }
 }
 
-/** Unwraps a Clay value, applying a fallback for empty values. */
+/**
+ * Unwraps a Clay value, applying a fallback for empty values.
+ *
+ * @param value The raw Clay value, which may already be unwrapped or still wrapped
+ *   as an object with a value field.
+ * @param fallback What to return when the value is missing or empty.
+ * @return The unwrapped value, or the fallback.
+ */
 function readValue(value: any, fallback: any): any {
   let result = value;
 
@@ -194,19 +221,37 @@ function readValue(value: any, fallback: any): any {
   return result;
 }
 
-/** Reads a boolean Clay setting, applying a fallback when it is unset. */
+/**
+ * Reads a boolean Clay setting, applying a fallback when it is unset.
+ *
+ * @param value The raw Clay value.
+ * @param fallback What to return when the value is missing or empty.
+ * @return The setting as a real boolean.
+ */
 function readBool(value: any, fallback: boolean): boolean {
   const result = readValue(value, fallback);
   return result === true || result === 'true' || result === 1 || result === '1';
 }
 
-/** Reports whether a coordinate pair is within the valid geographic range. */
+/**
+ * Reports whether a coordinate pair is within the valid geographic range.
+ *
+ * @param lat The latitude to check.
+ * @param lon The longitude to check.
+ * @return True when both values are numbers within range.
+ */
 function validCoord(lat: any, lon: any): boolean {
   return typeof lat === 'number' && lat >= -90 && lat <= 90 &&
     typeof lon === 'number' && lon >= -180 && lon <= 180;
 }
 
-/** Reads the manual location the user picked in settings. */
+/**
+ * Reads the manual location the user picked in settings.
+ *
+ * @param config The parsed Clay settings.
+ * @return The saved coordinates and label, or null when nothing is saved or the
+ *   saved value does not hold a valid coordinate pair.
+ */
 function getManualLocation(config: any): { coords: { lat: number; lon: number }; label: string } | null {
   const raw = readValue(config.LOCATION_NAME, '');
 
@@ -257,6 +302,12 @@ const SEED_FIELDS: Array<{ key: string; accept?: (value: any) => boolean; coerce
  * Seeds the Clay store from the watch's current settings so the config opens
  * with the real values instead of defaults. The watch persist is the source of
  * truth, since the phone's clay-settings can be empty or stale after an update.
+ *
+ * @param messageKeys The face's message_keys map.
+ * @param payload The watch's AppMessage payload to seed from.
+ * @param seedKeys Extra select-type face keys to seed as their string form.
+ * @param seedColorKeys Extra colour-type face keys to seed as numbers.
+ * @param seedBoolKeys Extra toggle-type face keys to seed as booleans.
  */
 function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[], seedColorKeys?: string[], seedBoolKeys?: string[]): void {
   const config = getConfig();
@@ -323,12 +374,22 @@ function settingsChanged(keys: string[], before: string[] | null, after: string[
   return keys.some((key, index) => after[index] !== before[index]);
 }
 
-/** Snapshots the weather-relevant settings. */
+/**
+ * Snapshots the weather-relevant settings.
+ *
+ * @return The current weather settings, JSON-encoded so they compare by content.
+ */
 function weatherSettingsSnapshot(): string[] {
   return settingsSnapshot(WEATHER_KEYS);
 }
 
-/** Reports whether any weather-relevant setting changed between two snapshots. */
+/**
+ * Reports whether any weather-relevant setting changed between two snapshots.
+ *
+ * @param before The snapshot taken before the config page opened, or null when none was taken.
+ * @param after The snapshot taken after the config page closed.
+ * @return True when a weather setting changed, or when there was no before snapshot to compare.
+ */
 function weatherSettingsChanged(before: string[] | null, after: string[]): boolean {
   return settingsChanged(WEATHER_KEYS, before, after);
 }
@@ -345,6 +406,10 @@ const GPS_WATCHDOG_MS = 10000;
 /**
  * Decides how long to wait before retrying a weather fetch, or null when no retry
  * should run. A successful fetch never retries, and the attempts are capped.
+ *
+ * @param resultOk Whether the fetch that just finished succeeded.
+ * @param attempt How many retries have already run.
+ * @return The delay in milliseconds before the next retry, or null when no retry should run.
  */
 function weatherRetryDelayMs(resultOk: boolean, attempt: number): number | null {
   if (resultOk || attempt >= WEATHER_RETRY_DELAYS_MS.length) {
@@ -354,12 +419,22 @@ function weatherRetryDelayMs(resultOk: boolean, attempt: number): number | null 
   return WEATHER_RETRY_DELAYS_MS[attempt];
 }
 
-/** Snapshots the stock-relevant settings. */
+/**
+ * Snapshots the stock-relevant settings.
+ *
+ * @return The current stock settings, JSON-encoded so they compare by content.
+ */
 function stockSettingsSnapshot(): string[] {
   return settingsSnapshot(STOCK_KEYS);
 }
 
-/** Reports whether any stock-relevant setting changed between two snapshots. */
+/**
+ * Reports whether any stock-relevant setting changed between two snapshots.
+ *
+ * @param before The snapshot taken before the config page opened, or null when none was taken.
+ * @param after The snapshot taken after the config page closed.
+ * @return True when a stock setting changed, or when there was no before snapshot to compare.
+ */
 function stockSettingsChanged(before: string[] | null, after: string[]): boolean {
   return settingsChanged(STOCK_KEYS, before, after);
 }
@@ -372,6 +447,11 @@ function stockSettingsChanged(before: string[] | null, after: string[]): boolean
  * symbol that throws right away counts as a failed quote, a watchdog force-closes a
  * round whose callback never arrives, and a forced round takes over from one that is
  * still running so the old round's late replies can't reopen it or send twice.
+ *
+ * @param state The fetch state to read and update in place.
+ * @param symbols The symbols to fetch, in display order.
+ * @param force Whether to start a new round even when one is already in flight.
+ * @param deps The fetch, send, clock, and timeout helpers to use.
  */
 function runStockRound(state: StockState, symbols: string[], force: boolean, deps: StockDeps): void {
   // nothing to fetch: never start a round or an empty list would leave the in-flight
@@ -446,6 +526,9 @@ function runStockRound(state: StockState, symbols: string[], force: boolean, dep
 /**
  * Starts the app: builds the Clay settings page, wires the lifecycle listeners,
  * and fetches weather on demand.
+ *
+ * @param options The face's Clay config, coordinate formatter, and any extra
+ *   components or seed keys it needs.
  */
 function startPebbleApp(options: StartOptions): void {
   const clayConfig = options.clayConfig;
@@ -711,8 +794,8 @@ function startPebbleApp(options: StartOptions): void {
    * Fetches a quote for each configured symbol, then forwards the packed strip
    * to the watch. Skipped entirely for faces that do not show stocks.
    *
-   * @return True when a round started, false when there was nothing to fetch or the
-   *   provider's quota gate held it back, so the caller knows no strip is coming.
+   * Returns true when a round started, and false when there was nothing to fetch or
+   * the provider's quota gate held it back, so the caller knows no strip is coming.
    */
   function getStocks(force?: boolean): boolean {
     // a face that does not declare the strip key never shows stocks so skip the fetch
@@ -814,6 +897,7 @@ function startPebbleApp(options: StartOptions): void {
   let refreshTimer: ReturnType<typeof setInterval> | null = null;
   let refreshTick = 0;
 
+  /** Runs on the refresh timer. Refetches the calendar every tick, and weather and stocks less often. */
   function backgroundRefresh() {
     refreshTick++;
     getCalendar();

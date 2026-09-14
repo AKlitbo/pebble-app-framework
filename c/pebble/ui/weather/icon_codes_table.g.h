@@ -7,13 +7,30 @@
 //     Edit the source vocabulary and run `npm run build:conditions` instead.
 // </auto-generated>
 //------------------------------------------------------------------------------
+/**
+ * @file icon_codes_table.g.h
+ * @brief Forecast condition code to weather icon resource lookup.
+ *
+ * Generated from `lib/ts/weather/conditions.ts`, so the phone and the watch read the same list.
+ *
+ * @ingroup lib_ui
+ */
 #pragma once
 
-// resolves a forecast condition code (index into the vocabulary) to its icon, picking the
-// night glyph when WX_FORECAST_NIGHT_BIT is set and falling back to WEATHER_NOW_NA for
-// an unknown code
 #include "ui/weather/icons.h"
 
+/**
+ * @brief Finds the icon resource for a forecast condition code.
+ *
+ * The code is the condition's position in the shared vocabulary, with `WX_FORECAST_NIGHT_BIT`
+ * set for an hour after dark. A night hour gets the night glyph where the condition has one.
+ * An unknown code, including the 255 the phone sends for a mystery sky, gets the `WEATHER_NOW_NA` icon.
+ *
+ * @param code The condition code, with the night bit set for an hour after dark.
+ * @return The `RESOURCE_ID_ICON_*` resource to load.
+ *
+ * @ingroup lib_ui
+ */
 static uint32_t wx_resource_for_code(uint8_t code)
 {
     bool night = (code & WX_FORECAST_NIGHT_BIT) != 0;

@@ -1,6 +1,8 @@
 /**
  * @file stock_wire.c
  * @brief The watchlist as the phone packs it, and the reader that unpacks it.
+ *
+ * @ingroup lib_core
  */
 #include "wire/stock_wire.h"
 

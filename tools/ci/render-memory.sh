@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Render every face's memory rows as one table on the run's summary page.
 #
-# The build is a matrix, one job per face, and GITHUB_STEP_SUMMARY is per job — so writing the
+# The build is a matrix, one job per face, and GITHUB_STEP_SUMMARY is per job. Writing the
 # table from inside the matrix would scatter one-line tables across seven jobs and make the only
 # interesting question, which face is closest to the edge, impossible to answer at a glance.
 # Instead each job leaves a .tsv behind and this collects them into one sorted table.

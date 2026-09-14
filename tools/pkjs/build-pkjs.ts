@@ -1,5 +1,5 @@
 /**
- * Builds targets/<face>/emit/, the only tree the Pebble bundler reads for a face.
+ * Builds targets/<target>/emit/, the only tree the Pebble bundler reads for a build target.
  *
  * Four steps that have to happen in this order, which is why they live in one tool
  * rather than an && chain in package.json:
@@ -16,13 +16,16 @@
  *   vendor   ical.js ships from node_modules rather than the source tree, so it lands the
  *            same way for the same reason.
  *
- * emit/ is written straight into the face's waf staging sandbox (targets/<face>/) so the
+ * emit/ is written straight into the target's waf staging sandbox (targets/<target>/) so the
  * native build never has to stage it. tsc roots at the repo root (lib/ts sits outside any
  * one face), so the tree keeps its source shape: emit/watchfaces/<face>/src/pkjs/index.js, or
  * emit/src/pkjs/index.js for a face at the repo root, beside emit/lib/ts/**. waf_helpers.build_face
  * finds the js entry in either place.
  *
- * Run via `npm run build:pkjs -- <face>`, and by build.sh before every Pebble build.
+ * A target's sources default to its own name, but a face that ships several targets passes
+ * the source face as a second argument.
+ *
+ * Run via `npm run build:pkjs -- <target> [sourceFace]`, and by build.sh before every Pebble build.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -43,7 +46,7 @@ const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'config', 'tsconfig.pkjs.json');
 const ICALJS_FROM = path.join(ROOT, 'node_modules', 'ical.js', 'dist', 'ical.es5.min.cjs');
 
 /**
- * The paths this tool reads and writes. The sandbox is named after the build target; its
+ * The paths this tool reads and writes. The sandbox is named after the build target. Its
  * sources live under the source face. For a face with one target the two names match, but a
  * face that ships several targets (a watchface and a watchapp, say) compiles the same source
  * face into each target's sandbox.
@@ -58,6 +61,13 @@ export interface FacePaths {
   skipDir: string;   // watchfaces/<sourceFace>/src/pkjs/clay/builder
 }
 
+/**
+ * Works out every path this tool reads and writes for one target.
+ *
+ * @param target The build target, and the name its sandbox is written under.
+ * @param sourceFace The face the target's sources live under. Defaults to the target's own name.
+ * @return The paths this tool reads and writes for the target.
+ */
 export function facePaths(target: string, sourceFace: string = target): FacePaths {
   // the sandbox is named after the target, but the sources are the source face's, and that face
   // may sit one level deeper inside a family folder, so its real path is looked up
@@ -76,16 +86,23 @@ export function facePaths(target: string, sourceFace: string = target): FacePath
   };
 }
 
-/** Empties the face's emit tree. It is entirely derived and gitignored, so this is always safe. */
+/**
+ * Empties the face's emit tree. It is entirely derived and gitignored, so this is always safe.
+ *
+ * @param p The paths for the target being cleaned.
+ */
 export function cleanEmit(p: FacePaths): void {
   fs.rmSync(p.emit, { recursive: true, force: true });
 }
 
 /**
- * Writes the per-face pkjs tsconfig into the staging sandbox and returns its path.
+ * Writes the per-face pkjs tsconfig into the staging sandbox.
  *
  * It roots at the repo root (so lib/ts, shared across faces, stays inside rootDir) and emits
  * into the sandbox's emit/. All paths are relative to the sandbox where the file is written.
+ *
+ * @param sourceFace The face whose src/pkjs to include.
+ * @param p The paths for the target being built.
  */
 export function writeTsconfig(sourceFace: string, p: FacePaths): void {
   // a face may sit one level deeper, inside a family folder, so the globs follow its real path
@@ -113,6 +130,8 @@ export function writeTsconfig(sourceFace: string, p: FacePaths): void {
  *
  * Runs tsc's own entry under this node rather than the node_modules/.bin shim, which on
  * Windows is a .cmd that would need a shell and bring its quoting rules along.
+ *
+ * @param p The paths for the target being compiled, including its generated tsconfig.
  */
 export function compile(p: FacePaths): void {
   const result = spawnSync(process.execPath, [requireHost.resolve('typescript/bin/tsc'), '-p', p.tsconfig], {
@@ -126,7 +145,12 @@ export function compile(p: FacePaths): void {
   }
 }
 
-/** Every committed *.g.js under the face's src/pkjs/, as paths relative to that dir. */
+/**
+ * Every committed *.g.js under the face's src/pkjs/, as paths relative to that dir.
+ *
+ * @param p The paths for the target being built, including the face's src/pkjs.
+ * @return Each generated file's path, relative to the face's src/pkjs.
+ */
 export function findGenerated(p: FacePaths): string[] {
   const found: string[] = [];
   const walk = (current: string): void => {
@@ -146,7 +170,12 @@ export function findGenerated(p: FacePaths): string[] {
   return found.sort();
 }
 
-/** Mirrors each generated component into emit/, keeping its path under the face's src/pkjs/. */
+/**
+ * Mirrors each generated component into emit/, keeping its path under the face's src/pkjs/.
+ *
+ * @param p The paths for the target being built.
+ * @return The generated files that were copied, relative to the face's src/pkjs.
+ */
 export function copyGenerated(p: FacePaths): string[] {
   const names = findGenerated(p);
   for (const name of names) {
@@ -162,6 +191,8 @@ export function copyGenerated(p: FacePaths): string[] {
  *
  * Throws when it is missing rather than letting the build carry on, because the require that
  * reaches for it would otherwise fail on the phone, where nobody is watching a build log.
+ *
+ * @param p The paths for the target being built, including where ical.js should land.
  */
 export function copyIcalJs(p: FacePaths): void {
   if (!fs.existsSync(ICALJS_FROM)) {

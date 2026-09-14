@@ -1,6 +1,8 @@
 /**
  * @file time_store.c
  * @brief The active time store: holds the current time and owns the tickers that update it.
+ *
+ * @ingroup lib_stores
  */
 #include "io/stores/time_store.h"
 #include "io/stores/store_cadence.h"
@@ -9,12 +11,12 @@
 
 #include "system/units/units.h"
 
-static struct tm s_tm;
-static void (*s_cb)(void);
+static struct tm s_tm;          ///< The current time, as of the last tick
+static void (*s_cb)(void);      ///< Called whenever the time moves, so the face can redraw
 
-static AppTimer *s_beats_timer; // the .beats ticker. NULL when it isn't running
-static bool s_minute;           // minute tick on
-static bool s_beats;            // .beats timer on
+static AppTimer *s_beats_timer; ///< The .beats ticker. NULL when it isn't running
+static bool s_minute;           ///< Whether the minute tick is on
+static bool s_beats;            ///< Whether the .beats timer is on
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed);
 
@@ -36,6 +38,9 @@ static void set(const struct tm *t)
 
 /**
  * @brief Minute-tick handler: feed the tick straight in.
+ *
+ * @param tick_time The new time.
+ * @param units_changed Which units changed (unused, the store always takes the whole tick).
  */
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed)
 {

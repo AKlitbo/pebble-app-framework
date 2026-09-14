@@ -16,9 +16,8 @@ const WX = '/v1/forecast.json';
 /**
  * Stub `request` that routes by URL substring and records calls in order.
  *
- * @param {!Object<string, {err?: string, body?: string}>} byPath substring -> response
- * @param {!Array<string>} calls sink for requested URLs, in order
- * @return {Function}
+ * byPath maps a URL substring to the error or body to hand back for it, and
+ * calls collects every requested URL in the order the provider asked for them.
  */
 function routing(byPath: Record<string, { err?: string | null; body?: string }>, calls: string[]): RequestFn {
   return (url, callback) => {
@@ -399,8 +398,13 @@ describe('weatherapi provider', () => {
     });
   });
 
-  // live integration against the real weatherapi.com API. opt-in via RUN_LIVE_WEATHER=1
-  // plus WEATHERAPI_KEY. catches the upstream changing response shape
+  /**
+   * Runs only with RUN_LIVE_WEATHER=1 and a WEATHERAPI_KEY, against the real weatherapi.com API.
+   *
+   * WeatherAPI renaming or dropping a field would still parse without error here,
+   * just into the wrong value, and this live check is the only thing that would
+   * catch it before a wearer sees a blank or wrong reading on the watch.
+   */
   describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1' || !process.env.WEATHERAPI_KEY)('live', () => {
     const KEY = process.env.WEATHERAPI_KEY;
     const live = (opts: WeatherOpts) => new Promise<WeatherResult>((resolve) => weatherapi.fetch(opts, fetchRequest, resolve));

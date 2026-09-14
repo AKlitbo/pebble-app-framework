@@ -49,7 +49,7 @@ void test_moon_glyph_at_epoch_is_new(void)
 }
 
 /** @brief A count of 0 must return a safe 0 rather than divide by zero and crash the watch. */
-void test_moon_glyph_nonpositive_count_is_zero(void)
+void test_moon_glyph_zero_count_is_zero(void)
 {
     int result = moon_glyph_index(MOON_EPOCH_UTC, 0);
 
@@ -146,6 +146,27 @@ void test_moon_days_to_new_at_full_is_15(void)
     TEST_ASSERT_EQUAL_INT(15, result);
 }
 
+/**
+ * @brief A negative count returns 0 as well, rather than a negative index.
+ *
+ * Half a cycle in, a count of -8 rounds to -3, and a caller indexing its glyph table with that
+ * reads before the start of the table.
+ */
+void test_moon_glyph_negative_count_is_zero(void)
+{
+    int result = moon_glyph_index(MOON_EPOCH_UTC + MOON_HALF_SEC, -8);
+
+    TEST_ASSERT_EQUAL_INT(0, result);
+}
+
+/** @brief A minute before the new moon the wait reads 0, not a whole cycle away. */
+void test_moon_days_to_new_just_before_new_is_zero(void)
+{
+    int result = moon_days_to_phase(MOON_EPOCH_UTC + MOON_SYNODIC_SEC - 60, false);
+
+    TEST_ASSERT_EQUAL_INT(0, result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -154,7 +175,8 @@ int main(void)
     RUN_TEST(test_moon_age_before_epoch_stays_positive);
     RUN_TEST(test_moon_age_wraps_after_full_cycle);
     RUN_TEST(test_moon_glyph_at_epoch_is_new);
-    RUN_TEST(test_moon_glyph_nonpositive_count_is_zero);
+    RUN_TEST(test_moon_glyph_zero_count_is_zero);
+    RUN_TEST(test_moon_glyph_negative_count_is_zero);
     RUN_TEST(test_moon_glyph_wraps_back_to_new_at_end_of_ring);
     RUN_TEST(test_moon_illumination_is_zero_at_new);
     RUN_TEST(test_moon_illumination_is_full_at_half_cycle);
@@ -165,6 +187,7 @@ int main(void)
     RUN_TEST(test_moon_days_to_full_at_full_is_zero);
     RUN_TEST(test_moon_days_to_full_wraps_past_the_target);
     RUN_TEST(test_moon_days_to_new_at_full_is_15);
+    RUN_TEST(test_moon_days_to_new_just_before_new_is_zero);
 
     return UNITY_END();
 }

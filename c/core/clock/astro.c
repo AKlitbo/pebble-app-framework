@@ -1,6 +1,8 @@
 /**
  * @file astro.c
- * @brief Pure astronomy math, host-testable off-device
+ * @brief Pure astronomy math, host-testable off-device.
+ *
+ * @ingroup lib_core
  */
 #include "clock/astro.h"
 

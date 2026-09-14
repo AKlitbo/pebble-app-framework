@@ -28,7 +28,13 @@ interface YahooResponse {
   chart?: YahooChartInner;
 }
 
-/** Fetches a quote from Yahoo for the supplied symbol (key is ignored, Yahoo needs none). */
+/**
+ * Fetches a quote from Yahoo for the supplied symbol. The key is ignored, Yahoo needs none.
+ *
+ * @param opts The lookup options. Any key is ignored.
+ * @param request The HTTP GET function to use.
+ * @param done Called once with the finished quote result.
+ */
 function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const start = util.begin(opts, false);
   if (start.error) {

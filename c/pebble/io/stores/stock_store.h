@@ -58,7 +58,7 @@ void stock_store_reconfigure(StockConfig cfg);
 /** @brief Hand it the function to call when a quote changes (the screen redraw). */
 void stock_store_subscribe(void (*cb)(void));
 
-/** @brief The whole watchlist strip. count is 0 until a reading lands. */
+/** @brief The whole watchlist strip. `count` is 0 until a reading lands. */
 const StockStrip *stock_store_strip(void);
 
 /**

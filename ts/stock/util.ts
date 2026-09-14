@@ -35,8 +35,13 @@ export type BeginResult =
   | { symbol: string; encodedKey: string; error?: undefined }
   | { error: StockQuote; symbol?: undefined; encodedKey?: undefined };
 
-/** Parses a JSON string, returning null on failure. The result is the raw
- * unknown JSON, so a provider casts it to its own quote shape. */
+/**
+ * Parses a JSON string, returning null on failure. The result is the raw unknown JSON, so a
+ * provider casts it to its own quote shape.
+ *
+ * @param body The raw HTTP response body to parse.
+ * @return The parsed JSON, or null if the body was not valid JSON.
+ */
 function safeParse(body: string): unknown {
   try {
     return JSON.parse(body);
@@ -54,6 +59,11 @@ function safeParse(body: string): unknown {
  * onJson with a null body, so the provider can tell an auth or rate error from a
  * plain network fault. Only a response with neither a readable body nor an error
  * has nothing to act on, so it finishes with 'NET ERROR'.
+ *
+ * @param url The URL to fetch. A cachebusting query param is added before the request goes out.
+ * @param request The HTTP GET function to use.
+ * @param done Called with a status result when there is nothing for onJson to read.
+ * @param onJson Called with the request error and the parsed JSON, or a null body, whenever there is something to read.
  */
 function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn, onJson: (err: string | null, json: T | null) => void): void {
   // cachebust so a proxy can't hand us a stale quote
@@ -81,6 +91,13 @@ function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn,
  *
  * The numbers are kept as the provider's raw values. Rounding and the scale to
  * integer cents happens at the wire step, not here.
+ *
+ * @param symbol The ticker symbol, upper cased.
+ * @param price The raw price value from the provider, not yet checked.
+ * @param change The raw change value from the provider, not yet checked.
+ * @param changePercent The raw change percent value from the provider, not yet checked.
+ * @param asOf The trading day or timestamp the quote is as of, when the provider sends one.
+ * @return The finished quote, or a "NO DATA" status result when price does not parse to a real number.
  */
 // the numbers arrive straight off a parsed provider payload, so they are untrusted until
 // the Number()/isFinite guards below run. saying `number` here would be a lie
@@ -108,6 +125,10 @@ function ok(symbol: string, price: unknown, change: unknown, changePercent: unkn
  * Works the change and its percent out from a price and the previous close, for the providers
  * that send no change field of their own. Either one missing leaves both NaN, which ok() maps
  * to a zero change. A previous close of 0 has no meaningful percent so that stays NaN too.
+ *
+ * @param price The latest price.
+ * @param prevClose The previous close to compare against.
+ * @return The change and change percent, both NaN when they cannot be worked out.
  */
 function deriveChange(price: number, prevClose: number): { change: number; changePercent: number } {
   if (!Number.isFinite(price) || !Number.isFinite(prevClose)) {
@@ -124,6 +145,10 @@ function deriveChange(price: number, prevClose: number): { change: number; chang
  * Runs the shared provider preamble: an optional API-key check, the symbol
  * uppercase and presence check, and URL-encoding the key. Returns the ready
  * pieces, or { error } carrying a status result the caller should return as-is.
+ *
+ * @param opts The lookup options a face handed the dispatcher.
+ * @param needsKey Whether this provider requires an API key.
+ * @return The uppercased symbol and encoded key, or an error result to return as-is.
  */
 function begin(opts: StockOpts, needsKey: boolean): BeginResult {
   if (needsKey && !opts.key) {
@@ -143,6 +168,9 @@ function begin(opts: StockOpts, needsKey: boolean): BeginResult {
  *
  * US markets quote in New York, so the trading day is the New York date. Reading it in
  * another zone would roll a late after-hours print past 20:00 ET onto the next day.
+ *
+ * @param unixSeconds The unix timestamp in seconds.
+ * @return The trading day as "YYYY-MM-DD", or an empty string when the timestamp is not usable.
  */
 function isoDateFromUnix(unixSeconds: unknown): string {
   const unix = Number(unixSeconds);
@@ -164,7 +192,12 @@ function isoDateFromUnix(unixSeconds: unknown): string {
   }
 }
 
-/** Builds a status/error result that carries no live reading. */
+/**
+ * Builds a status/error result that carries no live reading.
+ *
+ * @param text The status text to show, upper cased.
+ * @return A quote result with ok false and the status set.
+ */
 function status(text: string): StockQuote {
   return {
     symbol: '',

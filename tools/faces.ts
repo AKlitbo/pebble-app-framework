@@ -40,6 +40,9 @@ function byName(first: Face, second: Face): number {
 /**
  * Every face in a repo. Takes the repo root, so the lookup works on a fixture as well as on the
  * repo mounting the engine.
+ *
+ * @param root The repo root to search from.
+ * @return Every face found, ordered by name.
  */
 export function findFaces(root: string): Face[] {
   const found: Face[] = [];
@@ -84,6 +87,10 @@ export function findFaces(root: string): Face[] {
  * Nothing declares it: a face nested beside a core/ is in that family, the same positional rule
  * the C build follows. The core mirrors a face's own src/, so core/pkjs sits where the face has
  * src/pkjs, which is what lets a lookup fall back from one to the other by swapping the root.
+ *
+ * @param root The repo root.
+ * @param rel The face's directory relative to the repo root, as returned by findFaces.
+ * @return The family core's absolute directory, or null when the face is not in a family.
  */
 export function familyCoreFor(root: string, rel: string): string | null {
   const parts = rel.split('/');
@@ -97,17 +104,30 @@ export function familyCoreFor(root: string, rel: string): string | null {
   return fs.existsSync(core) ? core : null;
 }
 
-/** Every face in the repo mounting the engine. An engine checked out on its own holds none. */
+/**
+ * Every face in the repo mounting the engine. An engine checked out on its own holds none.
+ *
+ * @return Every face found, ordered by name.
+ */
 export function listFaces(): Face[] {
   return findFaces(WORKSPACE);
 }
 
-/** Every face's name, the handle the build, the CI matrix and release tags use. */
+/**
+ * Every face's name, the handle the build, the CI matrix and release tags use.
+ *
+ * @return Every face's name, ordered the same way as listFaces.
+ */
 export function listFaceNames(): string[] {
   return listFaces().map((face) => face.name);
 }
 
-/** A face's directory relative to the repo root, by name. Throws when there is no such face. */
+/**
+ * A face's directory relative to the repo root, by name. Throws when there is no such face.
+ *
+ * @param face The face's name.
+ * @return Its directory relative to the repo root.
+ */
 export function faceRelative(face: string): string {
   const match = listFaces().find((entry) => entry.name === face);
   if (!match) {
@@ -116,12 +136,22 @@ export function faceRelative(face: string): string {
   return match.rel;
 }
 
-/** A face's absolute source directory, by name. */
+/**
+ * A face's absolute source directory, by name.
+ *
+ * @param face The face's name.
+ * @return Its absolute source directory.
+ */
 export function faceDir(face: string): string {
   return path.join(WORKSPACE, faceRelative(face));
 }
 
-/** A face's family core directory, or null for a face that belongs to no family. */
+/**
+ * A face's family core directory, or null for a face that belongs to no family.
+ *
+ * @param face The face's name.
+ * @return Its family core's absolute directory, or null when it belongs to no family.
+ */
 export function familyCoreDir(face: string): string | null {
   return familyCoreFor(WORKSPACE, faceRelative(face));
 }

@@ -28,9 +28,9 @@
  * @param samples The readings, oldest first so the last real one is the most recent.
  * @param count How many slots there are.
  * @param no_sample The value that marks an empty slot.
- * @param lo Receives the lowest real reading.
- * @param hi Receives the highest real reading.
- * @param last Receives the most recent real reading.
+ * @param[out] lo Receives the lowest real reading.
+ * @param[out] hi Receives the highest real reading.
+ * @param[out] last Receives the most recent real reading.
  * @return How many real samples there were.
  */
 int series_range(const uint8_t *samples, int count, uint8_t no_sample,
