@@ -1,0 +1,152 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  The only change is the block of scripts at the end of the head, which adds the doxygen-awesome
+  dark mode toggle and interactive table of contents. Regenerate it the same way when Doxygen
+  moves up a version, then put that block back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="$langISO">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen $doxygenversion"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
+<!--BEGIN !PROJECT_NAME--><title>$title</title><!--END !PROJECT_NAME-->
+<script type="text/javascript">
+  // the main page takes its title from the README heading, which is the project name again
+  if (document.title === '$projectname: $projectname') {
+    document.title = '$projectname';
+  }
+</script>
+<!--BEGIN PROJECT_ICON-->
+<link rel="icon" href="$relpath^$projecticon" type="image/svg+xml" />
+<!--END PROJECT_ICON-->
+<link href="$relpath^tabs.css" rel="stylesheet" type="text/css"/>
+<!--BEGIN FULL_SIDEBAR-->
+<meta name="doxygen-page-layout" content="1" />
+<!--END FULL_SIDEBAR-->
+<!--BEGIN HTML_DYNAMIC_SECTIONS-->
+<script type="text/javascript" src="$relpath^dynsections.js"></script>
+<!--END HTML_DYNAMIC_SECTIONS-->
+<!--BEGIN HTML_CODE_FOLDING-->
+<script type="text/javascript" src="$relpath^codefolding.js"></script>
+<!--END HTML_CODE_FOLDING-->
+<!--BEGIN COPY_CLIPBOARD-->
+<script type="text/javascript" src="$relpath^clipboard.js"></script>
+<!--END COPY_CLIPBOARD-->
+$treeview
+$search
+$mathjax
+$darkmode
+$mermaidjs
+<link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+$extrastylesheet
+<script type="text/javascript">
+  // a Pebble screen with nothing lit up is black, so a first visit opens dark whatever the system is
+  // set to. the toggle reads its choice as it loads, so this has to run before its script does.
+  // once the marker is down, whatever the reader picks with the toggle is left alone
+  (function () {
+    try {
+      if (!localStorage.getItem('pebble-docs-opened')) {
+        localStorage.setItem('pebble-docs-opened', 'true');
+        if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          localStorage.setItem('prefers-dark-mode-in-light-mode', 'true');
+        }
+      }
+    } catch (e) {
+      // storage is blocked, so the system setting decides
+    }
+  })();
+</script>
+<script type="text/javascript" src="$relpath^doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="$relpath^doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+</head>
+<body>
+<!--BEGIN FULL_SIDEBAR-->
+<div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
+<!--END FULL_SIDEBAR-->
+
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+
+<!--BEGIN TITLEAREA-->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <!--BEGIN PROJECT_LOGO-->
+  <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo"$logosize/></td>
+  <!--END PROJECT_LOGO-->
+  <!--BEGIN PROJECT_NAME-->
+  <td id="projectalign">
+   <div id="projectname">$projectname<!--BEGIN PROJECT_NUMBER--><span id="projectnumber">&#160;$projectnumber</span><!--END PROJECT_NUMBER-->
+   </div>
+   <!--BEGIN PROJECT_BRIEF--><div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
+  </td>
+  <!--END PROJECT_NAME-->
+  <!--BEGIN !PROJECT_NAME-->
+   <!--BEGIN PROJECT_BRIEF-->
+    <td>
+    <div id="projectbrief">$projectbrief</div>
+    </td>
+   <!--END PROJECT_BRIEF-->
+  <!--END !PROJECT_NAME-->
+  <!--BEGIN DISABLE_INDEX-->
+   <!--BEGIN SEARCHENGINE-->
+     <!--BEGIN !FULL_SIDEBAR-->
+    <td>$searchbox</td>
+     <!--END !FULL_SIDEBAR-->
+   <!--END SEARCHENGINE-->
+  <!--END DISABLE_INDEX-->
+ </tr>
+  <!--BEGIN SEARCHENGINE-->
+   <!--BEGIN FULL_SIDEBAR-->
+   <tr><td colspan="2">$searchbox</td></tr>
+   <!--END FULL_SIDEBAR-->
+  <!--END SEARCHENGINE-->
+ </tbody>
+</table>
+</div>
+<!--END TITLEAREA-->
+<!-- end header part -->

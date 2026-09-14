@@ -1,6 +1,6 @@
 # Pebble Watchface Engine
 
-The shared engine behind a family of Pebble watchfaces. It holds the device C, the PebbleKit JS runtime and Clay config pieces, the waf build helpers, and the generators and build tooling every face uses.
+The shared engine behind my Pebble watchfaces. It holds the device C, the PebbleKit JS runtime and Clay config pieces, the waf build helpers, and the generators and build tooling every face uses.
 
 ## Layout
 
@@ -11,6 +11,7 @@ The shared engine behind a family of Pebble watchfaces. It holds the device C, t
 * **`testing/`**: shared test helpers.
 * **`tools/`**: manifest, pkjs, icon, frame, thumbnail and Clay component generators, plus CI scripts.
 * **`config/`**: the shared tsconfig, eslint and vitest setup.
+* **`docs/doxygen/`**: the Doxygen theme and pages. Run `doxygen` from the repo root and the site lands in `docs/doxygen/dist/`.
 * **`build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
 
 ## Using It

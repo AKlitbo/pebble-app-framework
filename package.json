@@ -2,7 +2,7 @@
   "name": "pebble-watchface-engine",
   "author": "Null Syntax",
   "version": "1.0.0",
-  "description": "The shared engine behind a family of Pebble watchfaces, mounted as a submodule at lib/.",
+  "description": "The shared engine behind my Pebble watchfaces, mounted as a submodule at lib/.",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
   "engines": {

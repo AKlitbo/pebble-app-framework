@@ -1,0 +1,415 @@
+/* The engine docs. The look, laid over doxygen-awesome-css.
+ *
+ * doxygen-awesome drives nearly everything off CSS variables set on the html element, so most of
+ * this file hands it different values rather than fighting its rules. It swaps themes by putting
+ * dark-mode or light-mode on the html element, so every colour here is written out once per theme.
+ *
+ * The look comes from the watch. An original Pebble screen is 144 by 168 with one bit per pixel. A
+ * pixel is on or off and there is no grey in between. A screen like that cannot draw a soft shadow,
+ * so it fakes depth by dithering black and white pixels into a checkerboard. This stylesheet plays
+ * by the same rule. No blurs, no drop shadows, no gradients. Where a theme would reach for a shadow,
+ * this one dithers.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+/* TODO: keep our own copy of these two fonts under docs/doxygen so the docs do not have to ask
+   another server for them. The system fonts in the stacks below are what shows until then. */
+
+/* ---------------------------------------------------------------- palette */
+
+html {
+  /* The lit pixel. Warm white paper rather than a blue white */
+  --pb-paper: #f2f0eb;
+  --pb-paper-raised: #fbfaf7;
+  --pb-ink: #16151a;
+  --pb-ink-muted: #605c55;
+  --pb-rule: #d8d4cb;
+  
+  /* Pebble's orange red, taken down a bit so it works on a pale background. */
+  --pb-signal: #c43600;
+  --pb-signal-hover: #9c2b00;
+  --pb-dither: rgba(22, 21, 26, 0.22);
+  --pb-odd: rgba(22, 21, 26, 0.03);
+
+  /* Code colours from the watch's 64 colour palette */
+  --pb-code-keyword: #aa0055;
+  --pb-code-type: #0055aa;
+  --pb-code-flow: #aa5500;
+  --pb-code-string: #005500;
+  --pb-code-preprocessor: #005555;
+
+  /* Callout boxes */
+  --pb-note: #f0e2d8;
+  --pb-note-edge: #c43600;
+  --pb-note-ink: #5a1f00;
+  --pb-warning: #f1e8cc;
+  --pb-warning-edge: #aa5500;
+  --pb-warning-ink: #4a2a00;
+  --pb-bug: #f0d8d4;
+  --pb-bug-edge: #aa0000;
+  --pb-bug-ink: #4a0000;
+  --pb-todo: #e5e0ec;
+  --pb-todo-edge: #5500aa;
+  --pb-todo-ink: #2a0055;
+  --pb-invariant: #dde8dc;
+  --pb-invariant-edge: #005500;
+  --pb-invariant-ink: #002a00;
+
+  --pb-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --pb-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+html.dark-mode {
+  --pb-paper: #121114;
+  --pb-paper-raised: #1b1a1e;
+  --pb-ink: #e4e1da;
+  --pb-ink-muted: #9a968e;
+  --pb-rule: #2e2c33;
+  --pb-signal: #ff4700;
+  --pb-signal-hover: #ff7a45;
+  --pb-dither: rgba(228, 225, 218, 0.16);
+  --pb-odd: rgba(228, 225, 218, 0.03);
+
+  --pb-code-keyword: #ff55aa;
+  --pb-code-type: #55aaff;
+  --pb-code-flow: #ffaa55;
+  --pb-code-string: #aaff55;
+  --pb-code-preprocessor: #55ffff;
+
+  --pb-note: #2a1911;
+  --pb-note-edge: #ff4700;
+  --pb-note-ink: #ffcdb5;
+  --pb-warning: #28220f;
+  --pb-warning-edge: #ffaa00;
+  --pb-warning-ink: #ffe2a8;
+  --pb-bug: #2a1414;
+  --pb-bug-edge: #ff5555;
+  --pb-bug-ink: #ffcccc;
+  --pb-todo: #1f1a29;
+  --pb-todo-edge: #aa55ff;
+  --pb-todo-ink: #e2ccff;
+  --pb-invariant: #142314;
+  --pb-invariant-edge: #55aa55;
+  --pb-invariant-ink: #ccffcc;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) {
+    --pb-paper: #121114;
+    --pb-paper-raised: #1b1a1e;
+    --pb-ink: #e4e1da;
+    --pb-ink-muted: #9a968e;
+    --pb-rule: #2e2c33;
+    --pb-signal: #ff4700;
+    --pb-signal-hover: #ff7a45;
+    --pb-dither: rgba(228, 225, 218, 0.16);
+    --pb-odd: rgba(228, 225, 218, 0.03);
+    --pb-code-keyword: #ff55aa;
+    --pb-code-type: #55aaff;
+    --pb-code-flow: #ffaa55;
+    --pb-code-string: #aaff55;
+    --pb-code-preprocessor: #55ffff;
+    --pb-note: #2a1911;
+    --pb-note-edge: #ff4700;
+    --pb-note-ink: #ffcdb5;
+    --pb-warning: #28220f;
+    --pb-warning-edge: #ffaa00;
+    --pb-warning-ink: #ffe2a8;
+    --pb-bug: #2a1414;
+    --pb-bug-edge: #ff5555;
+    --pb-bug-ink: #ffcccc;
+    --pb-todo: #1f1a29;
+    --pb-todo-edge: #aa55ff;
+    --pb-todo-ink: #e2ccff;
+    --pb-invariant: #142314;
+    --pb-invariant-edge: #55aa55;
+    --pb-invariant-ink: #ccffcc;
+  }
+}
+
+/* ---------------------------------------------------------------- doxygen-awesome overrides */
+
+html,
+html.dark-mode,
+html:not(.light-mode) {
+  --primary-color: var(--pb-signal);
+  --primary-dark-color: var(--pb-signal-hover);
+  --primary-light-color: var(--pb-signal);
+  --on-primary-color: var(--pb-paper);
+  --link-color: var(--pb-signal);
+
+  --page-background-color: var(--pb-paper);
+  --page-foreground-color: var(--pb-ink);
+  --page-secondary-foreground-color: var(--pb-ink-muted);
+  --separator-color: var(--pb-rule);
+
+  --border-radius-large: 4px;
+  --border-radius-medium: 4px;
+  --border-radius-small: 3px;
+  --box-shadow: none;
+  --odd-color: var(--pb-odd);
+
+  --font-family: var(--pb-sans);
+  --font-family-monospace: var(--pb-mono);
+  --page-font-size: 16px;
+  --navigation-font-size: 14.5px;
+  --code-font-size: 14px;
+  --title-font-size: 26px;
+  --memtitle-font-size: 16px;
+  --content-line-height: 27px;
+  --content-maxwidth: auto;
+
+  --menu-selected-background: transparent;
+  --menu-focus-background: var(--pb-signal);
+  --menu-focus-foreground: var(--pb-paper);
+
+  --header-background: var(--pb-paper);
+  --header-foreground: var(--pb-ink);
+
+  --searchbar-background: var(--pb-paper-raised);
+  --searchbar-foreground: var(--pb-ink);
+  --searchbar-border-radius: 3px;
+
+  --code-background: var(--pb-paper-raised);
+  --code-foreground: var(--pb-ink);
+  --section-code-background: transparent;
+  --section-code-border: var(--pb-rule);
+
+  --fragment-background: var(--pb-paper-raised);
+  --fragment-foreground: var(--pb-ink);
+  --fragment-keyword: var(--pb-code-keyword);
+  --fragment-keywordtype: var(--pb-code-type);
+  --fragment-keywordflow: var(--pb-code-flow);
+  --fragment-token: var(--pb-code-string);
+  --fragment-comment: var(--pb-ink-muted);
+  --fragment-link: var(--pb-signal);
+  --fragment-preprocessor: var(--pb-code-preprocessor);
+  --fragment-linenumber-color: var(--pb-ink-muted);
+  --fragment-linenumber-background: var(--pb-paper-raised);
+  --fragment-linenumber-border: var(--pb-rule);
+
+  --side-nav-background: var(--pb-paper);
+  --side-nav-foreground: var(--pb-ink);
+  --side-nav-arrow-opacity: 1;
+  --side-nav-arrow-hover-opacity: 1;
+  --toc-background: var(--pb-paper-raised);
+  --toc-foreground: var(--pb-ink);
+
+  --tablehead-background: var(--pb-paper-raised);
+  --tablehead-foreground: var(--pb-ink);
+  --blockquote-background: var(--pb-paper-raised);
+  --blockquote-foreground: var(--pb-ink-muted);
+
+  --note-color: var(--pb-note);
+  --note-color-dark: var(--pb-note-edge);
+  --note-color-darker: var(--pb-note-ink);
+  --warning-color: var(--pb-warning);
+  --warning-color-dark: var(--pb-warning-edge);
+  --warning-color-darker: var(--pb-warning-ink);
+  --bug-color: var(--pb-bug);
+  --bug-color-dark: var(--pb-bug-edge);
+  --bug-color-darker: var(--pb-bug-ink);
+  --todo-color: var(--pb-todo);
+  --todo-color-dark: var(--pb-todo-edge);
+  --todo-color-darker: var(--pb-todo-ink);
+  --invariant-color: var(--pb-invariant);
+  --invariant-color-dark: var(--pb-invariant-edge);
+  --invariant-color-darker: var(--pb-invariant-ink);
+  --deprecated-color: var(--pb-paper-raised);
+  --deprecated-color-dark: var(--pb-ink-muted);
+  --deprecated-color-darker: var(--pb-ink);
+
+  --webkit-scrollbar-color: var(--pb-rule);
+}
+
+/* ---------------------------------------------------------------- type */
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+#projectname,
+div.header .title,
+.memtitle {
+  font-family: var(--pb-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+div.header .title {
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--pb-ink);
+}
+
+/* the title's own rule is the only line under the header
+   doxygen-awesome draws a thin one under the whole block as well, which shows as a double line */
+div.header {
+  border-bottom: 0;
+}
+
+/* the breadcrumb under a page title, naming the groups the page sits in
+   Doxygen sets it at 8pt and half the width, which is hard to read. it sits inside the title, so
+   it is sized in rem to stay clear of the title's much larger font */
+div.header .title div.ingroups {
+  font-family: var(--pb-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  width: auto;
+  margin-top: 0.4rem;
+}
+
+div.textblock > p,
+div.textblock > ul,
+div.textblock > ol,
+div.memdoc > p {
+  max-width: 72ch;
+}
+
+h2.groupheader {
+  font-size: 1.3rem;
+  margin-top: 2.75rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--pb-rule);
+  color: var(--pb-ink);
+}
+
+/* ---------------------------------------------------------------- chrome */
+
+#top {
+  border-bottom: 0;
+  padding-bottom: 4px;
+  background-image: repeating-conic-gradient(var(--pb-dither) 0% 25%, transparent 0% 50%);
+  background-size: 4px 4px;
+  background-repeat: repeat-x;
+  background-position: bottom left;
+}
+
+#projectname {
+  font-size: 1.05rem;
+  letter-spacing: -0.03em;
+}
+
+#projectbrief {
+  font-family: var(--pb-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pb-ink-muted);
+}
+
+#projectlogo img {
+  width: 26px;
+  height: 26px;
+}
+
+#MSearchBox {
+  border: 1px solid var(--pb-rule);
+  box-shadow: none;
+}
+
+#MSearchBox .left input,
+#MSearchField {
+  font-family: var(--pb-mono);
+  font-size: 0.85rem;
+}
+
+#MSearchBox:focus-within {
+  outline: 2px solid var(--pb-signal);
+  outline-offset: 1px;
+}
+
+doxygen-awesome-dark-mode-toggle svg {
+  fill: var(--pb-signal);
+}
+
+#nav-tree .selected {
+  background: transparent;
+}
+
+#nav-tree .selected a {
+  color: var(--pb-signal);
+  font-weight: 600;
+}
+
+#nav-tree .item:hover a {
+  color: var(--pb-signal);
+}
+
+/* ---------------------------------------------------------------- code */
+
+div.contents p code,
+div.contents li code,
+div.contents dd code,
+div.contents td.memdoc code,
+div.contents table.markdownTable code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--pb-rule);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--pb-ink);
+}
+
+div.contents a code {
+  color: inherit;
+}
+
+div.fragment {
+  border: 1px solid var(--pb-rule);
+}
+
+/* ---------------------------------------------------------------- reference */
+
+div.memitem {
+  border: 1px solid var(--pb-rule);
+  box-shadow: none;
+}
+
+.memtitle {
+  background: transparent;
+  border-bottom: 1px solid var(--pb-rule);
+}
+
+div.memproto {
+  background: var(--pb-paper-raised);
+}
+
+table.memberdecls td.memItemRight a.el {
+  font-family: var(--pb-mono);
+}
+
+table.memberdecls .mdescRight {
+  color: var(--pb-ink-muted);
+}
+
+dl.section > dt,
+dl.params > dt {
+  font-family: var(--pb-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--pb-ink-muted);
+}
+
+table th,
+table.markdownTable th {
+  font-family: var(--pb-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ---------------------------------------------------------------- utilities */
+
+:focus-visible {
+  outline: 2px solid var(--pb-signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    --animation-duration: 0s;
+  }
+}
