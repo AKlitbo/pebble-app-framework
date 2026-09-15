@@ -1,7 +1,7 @@
 name: Engine CI
 
 # the engine's own checks, run on every PR and on main
-# each check runs through an action in actions/, which puts each failure on its line in the PR and
+# each check runs through an action in .github/actions/, which puts each failure on its line in the PR and
 # the totals on the job summary
 on:
   pull_request:
@@ -31,7 +31,7 @@ jobs:
 
       # gcc and make ship on the runner, so the suite needs nothing installed
       - name: Test
-        uses: ./actions/verify-c-tests
+        uses: ./.github/actions/verify-c-tests
 
   vitest:
     name: Test the TypeScript and the Action Scripts
@@ -52,7 +52,7 @@ jobs:
 
       # the checks over real faces skip here and run in the repos that mount the engine
       - name: Test
-        uses: ./actions/verify-vitest
+        uses: ./.github/actions/verify-vitest
 
   lint:
     name: Lint the TypeScript and the Action Scripts
@@ -72,7 +72,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        uses: ./actions/verify-eslint
+        uses: ./.github/actions/verify-eslint
 
   typecheck:
     name: Typecheck the TypeScript Projects
@@ -93,7 +93,7 @@ jobs:
 
       # the same projects npm run typecheck checks, run one at a time so one failure cannot hide the rest
       - name: Typecheck
-        uses: ./actions/verify-typecheck
+        uses: ./.github/actions/verify-typecheck
         with:
           projects: |
             tsconfig.json

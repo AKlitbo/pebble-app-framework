@@ -8,7 +8,7 @@
  * semicolons, K&R braces, mandatory braces for control statements, and trailing
  * commas on multiline literals.
  *
- * The JavaScript in actions/ and shared/ is the CI action scripts, which actions/github-script can only
+ * The JavaScript in .github/actions/ and .github/shared/ is the CI action scripts, which actions/github-script can only
  * load as plain .js, so it is linted with the same house style. Every other JavaScript file is generated
  * and skipped.
  *
@@ -71,13 +71,13 @@ export default defineConfig([
     '**/build/',
     'vendor/',
     '**/*.js',
-    '!actions/**/*.js',
-    '!shared/**/*.js',
+    '!.github/actions/**/*.js',
+    '!.github/shared/**/*.js',
     'targets/',
   ]),
   // the action scripts are CommonJS, since github-script loads them with require
   {
-    files: ['actions/**/*.js', 'shared/**/*.js'],
+    files: ['.github/actions/**/*.js', '.github/shared/**/*.js'],
     extends: [js.configs.recommended],
     plugins: {
       '@stylistic': stylistic,
@@ -91,7 +91,7 @@ export default defineConfig([
   },
   // their specs and fakes are ES modules, which Vitest runs and which import the scripts
   {
-    files: ['actions/**/*.spec.js', 'shared/**/*.spec.js', 'shared/fakes.js'],
+    files: ['.github/actions/**/*.spec.js', '.github/shared/**/*.spec.js', '.github/shared/fakes.js'],
     languageOptions: {
       sourceType: 'module',
     },

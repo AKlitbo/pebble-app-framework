@@ -22,8 +22,8 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 **CI and Docs**
 
-* **`actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions and `build-doxygen`. The face repos' workflows run `setup-pebble`, as `lib/actions/setup-pebble`.
-* **`shared/`**: the helpers and spec fakes the scripts in `actions/` share.
+* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions and `build-doxygen`. The face repos' workflows run `setup-pebble`, as `lib/.github/actions/setup-pebble`.
+* **`.github/shared/`**: the helpers and spec fakes the scripts in `.github/actions/` share.
 * **`docs/doxygen/`**: the Doxygen theme, logo, and the script that renders the licence pages.
 
 ## Using It

@@ -33,7 +33,7 @@ jobs:
           node-version: '24'
 
       - name: Build
-        uses: ./actions/build-doxygen
+        uses: ./.github/actions/build-doxygen
 
       - name: Upload the Site
         if: github.ref == 'refs/heads/main'
