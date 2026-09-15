@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Fixed the watch's repeated weather requests each starting their own GPS fix and provider fetch, which could burn through the quota of keyed providers like OpenWeatherMap and WeatherAPI. Only one weather fetch runs at a time now, and a failed send no longer leaves weather stuck until the phone app restarts.
+- Fixed repeated weather requests from the watch each starting a provider fetch, and a failed send leaving weather stuck until the phone app restarted.
 
 ## [1.1.0] - 2026-09-12
 
