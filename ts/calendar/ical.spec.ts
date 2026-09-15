@@ -337,6 +337,57 @@ describe('parseIcal recurring events', () => {
   });
 
   /**
+   * An occurrence can be pulled into the week from further out. The walk stops at the window's edge
+   * by the rule's own times, so judging the occurrence by its old slot loses it off the agenda.
+   */
+  test('shows an occurrence moved into the window from past its end', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=MO\r\nSUMMARY:Gym\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nRECURRENCE-ID:20260720T090000Z\r\n' +
+      'DTSTART:20260712T090000Z\r\nDTEND:20260712T093000Z\r\nSUMMARY:Gym pulled in\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result.map((event) => [event.title, event.startEpoch])).toEqual([
+      ['Gym pulled in', Math.floor(Date.UTC(2026, 6, 12, 9, 0, 0) / 1000)],
+      ['Gym', Math.floor(Date.UTC(2026, 6, 13, 9, 0, 0) / 1000)],
+    ]);
+  });
+
+  /** An occurrence whose slot has passed can be pushed back to later in the week, and it is still to come. */
+  test('shows an occurrence moved from the past to a time still to come', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:review@example.com\r\nDTSTART:20240104T090000Z\r\nDTEND:20240104T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=TH\r\nSUMMARY:Review\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:review@example.com\r\nRECURRENCE-ID:20260709T090000Z\r\n' +
+      'DTSTART:20260711T090000Z\r\nDTEND:20260711T093000Z\r\nSUMMARY:Review pushed back\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result.map((event) => [event.title, event.startEpoch])).toEqual([
+      ['Review pushed back', Math.floor(Date.UTC(2026, 6, 11, 9, 0, 0) / 1000)],
+      ['Review', Math.floor(Date.UTC(2026, 6, 16, 9, 0, 0) / 1000)],
+    ]);
+  });
+
+  /** A meeting that runs long is still on, so it has to be judged by its own end rather than the slot it replaced. */
+  test('keeps an override running past the end of the slot it replaced', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20240105T110000Z\r\nDTEND:20240105T113000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=FR\r\nSUMMARY:Sync\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nRECURRENCE-ID:20260710T110000Z\r\n' +
+      'DTSTART:20260710T110000Z\r\nDTEND:20260710T130000Z\r\nSUMMARY:Sync runs long\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result.map((event) => event.title)).toEqual(['Sync runs long']);
+  });
+
+  /**
    * A feed can send just the moved copy of a meeting, its RRULE master trimmed away by whatever
    * synced it. Dropping the orphan because its rule is gone loses a real event off the agenda, so
    * it has to read as a plain one on its own.

@@ -88,11 +88,30 @@ function toCalendarEvent(event: ICAL.Event, startEpoch: number, duration: number
 }
 
 /**
+ * One occurrence as the watch sees it.
+ *
+ * An occurrence the feed moved or renamed reads from its own VEVENT, with that VEVENT's own start
+ * and length, rather than from the rule.
+ */
+function readOccurrence(event: ICAL.Event, time: ICAL.Time, duration: number): CalendarEvent {
+  try {
+    const details = event.getOccurrenceDetails(time);
+    return toCalendarEvent(details.item, toEpoch(details.startDate), durationOf(details.item));
+  } catch (error) {
+    return toCalendarEvent(event, toEpoch(time), duration);
+  }
+}
+
+/**
  * Every occurrence of one event that lands in the window.
  *
  * A plain event is just itself. A repeating one gets walked, and ical.js folds in whatever the
  * feed said about it: the days EXDATE cancelled, and the single occurrences a RECURRENCE-ID
  * VEVENT moved or renamed.
+ *
+ * The walk steps through the rule's own times, but a moved occurrence is judged on where it
+ * landed. One moved from the past to later in the week is still to come, and one moved into the
+ * week from further out still shows.
  */
 function occurrencesOf(event: ICAL.Event, now: number, horizon: number): CalendarEvent[] {
   const duration = durationOf(event);
@@ -100,6 +119,10 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
   if (!event.isRecurring()) {
     return [toCalendarEvent(event, toEpoch(event.startDate), duration)];
   }
+
+  // ical.js types this as a list, but it is keyed by the recurrence id of the occurrence it replaces
+  const exceptions = event.exceptions as unknown as Record<string, ICAL.Event>;
+  const moved = Object.keys(exceptions);
 
   const out: CalendarEvent[] = [];
   const iterator = event.iterator();
@@ -110,27 +133,34 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
       break;
     }
 
-    const startEpoch = toEpoch(next);
-    if (startEpoch > horizon) {
+    // the rule hands its times back in order, so the first one past the window ends the walk
+    if (toEpoch(next) > horizon) {
       break;
     }
+
+    // a rule with nothing moved off it skips the lookup, since a daily one set up years ago walks
+    // thousands of steps before it reaches the window
+    const occurrence = moved.length ? readOccurrence(event, next, duration) : toCalendarEvent(event, toEpoch(next), duration);
+
     // already over, but the walk carries on because the ones behind it may not be
-    if (startEpoch + duration < now) {
+    if (occurrence.endEpoch < now) {
       continue;
     }
 
-    // an occurrence the feed moved or renamed reads from its own VEVENT, not from the rule
-    try {
-      const details = event.getOccurrenceDetails(next);
-      out.push(toCalendarEvent(details.item, toEpoch(details.startDate), durationOf(details.item)));
-    } catch (error) {
-      out.push(toCalendarEvent(event, startEpoch, duration));
-    }
-
+    out.push(occurrence);
     if (out.length >= MAX_EVENTS) {
-      break;
+      return out;
     }
   }
+
+  // an occurrence whose own slot sits past the window never came up in the walk, but it can have
+  // been moved into the window. parseIcal drops the ones that were not
+  moved.forEach((id) => {
+    const recurrenceId = exceptions[id].recurrenceId;
+    if (toEpoch(recurrenceId) > horizon) {
+      out.push(readOccurrence(event, recurrenceId, duration));
+    }
+  });
 
   return out;
 }
