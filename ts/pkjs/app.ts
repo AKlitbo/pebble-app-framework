@@ -16,6 +16,7 @@ import weatherUtil from '../weather/util';
 import stock from '../stock/stock';
 import locationComponent from '../clay/location-component';
 import ical from '../calendar/ical';
+import type { CalendarEvent } from '../calendar/ical';
 import wire from './wire';
 import { createSendQueue } from './send-queue';
 import schedule from '../stock/schedule';
@@ -941,9 +942,34 @@ function startPebbleApp(options: StartOptions): void {
     return String(readValue(getConfig().CALENDAR_ICS_URL, DEFAULTS.CALENDAR_ICS_URL || '')).trim();
   }
 
+  /** Sends the packed agenda to the watch, unless the watch holds it already. An empty list clears it. */
+  function sendCalendar(events: CalendarEvent[]) {
+    const bytes = wire.packCalendarStrip(events);
+    if (!bytes) {
+      return;
+    }
+
+    if (wire.bytesEqual(bytes, lastCalendarBytes)) {
+      console.log('Calendar: unchanged, skipping send');
+      return;
+    }
+    lastCalendarBytes = bytes;
+
+    queueSend(
+      { [messageKeys.CALENDAR_STRIP]: bytes },
+      () => { console.log('Calendar sent to Pebble'); },
+      () => {
+        // same as the weather send: a strip that never landed must not count as delivered
+        lastCalendarBytes = null;
+        console.error('Error sending calendar to Pebble');
+      }
+    );
+  }
+
   /**
-   * Fetches the iCal feed, parses it, and sends the packed strip to the watch. Skipped for
-   * faces that do not declare the calendar key, or when no URL is set.
+   * Fetches the iCal feed, parses it, and sends the packed strip to the watch. Skipped for faces
+   * that do not declare the calendar key. With no URL set the watch gets an empty agenda instead,
+   * so one left over from a removed feed does not stay behind.
    */
   function getCalendar() {
     // a face that does not declare the strip key never shows a calendar so skip the fetch
@@ -953,6 +979,7 @@ function startPebbleApp(options: StartOptions): void {
 
     const url = calendarUrl();
     if (!url) {
+      sendCalendar([]);
       return;
     }
 
@@ -969,31 +996,20 @@ function startPebbleApp(options: StartOptions): void {
       }
 
       const events = ical.parseIcal(body as string);
+      if (!events) {
+        // an error page or a cut off body says nothing about the calendar, so the watch keeps the
+        // agenda it has
+        console.error('Calendar: the feed did not read as iCal');
+        return;
+      }
+
       console.log('Calendar: parsed ' + events.length + ' upcoming event(s)');
       if (events.length) {
         console.log('Calendar: next is "' + events[0].title + '" at ' + new Date(events[0].startEpoch * 1000).toString());
       }
 
-      const bytes = wire.packCalendarStrip(events);
-      if (!bytes) {
-        return;
-      }
-
-      if (wire.bytesEqual(bytes, lastCalendarBytes)) {
-        console.log('Calendar: unchanged, skipping send');
-        return;
-      }
-      lastCalendarBytes = bytes;
-
-      queueSend(
-        { [messageKeys.CALENDAR_STRIP]: bytes },
-        () => { console.log('Calendar sent to Pebble'); },
-        () => {
-          // same as the weather send: a strip that never landed must not count as delivered
-          lastCalendarBytes = null;
-          console.error('Error sending calendar to Pebble');
-        }
-      );
+      // an empty list still goes, since that is how the watch hears every event was deleted
+      sendCalendar(events);
     });
   }
 

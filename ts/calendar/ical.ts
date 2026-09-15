@@ -171,27 +171,29 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
  * @param text The feed's raw .ics text.
  * @param nowEpoch The instant to treat as now, as epoch seconds. Injectable so tests stay
  * deterministic. Defaults to the real now.
- * @return The upcoming events in the window, soonest first.
+ * @return The upcoming events in the window, soonest first. An empty list means the feed read clean
+ * with nothing coming up. Null means the text was not a calendar at all, such as an error page,
+ * which says nothing about what is on.
  */
-function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] {
+function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
   const now = nowEpoch || Math.floor(Date.now() / 1000);
   const horizon = now + LOOKAHEAD_DAYS * DAY_SECONDS;
 
   let root: ICAL.Component;
   try {
     const jcal = ICAL.parse(String(text || ''));
-    // a component is [name, properties, subcomponents]. an empty feed parses to a bare [], which
-    // builds a Component happily and only throws once something is read off it, so the shape is
-    // checked here rather than left to surface deeper in
+    // a component is [name, properties, subcomponents]. an empty body parses to a bare [], which
+    // builds a Component happily and only throws once something is read off it. that is no calendar
+    // at all, so the shape is checked here rather than left to surface deeper in
     if (!Array.isArray(jcal) || jcal.length < 3) {
-      return [];
+      return null;
     }
     root = new ICAL.Component(jcal);
   } catch (error) {
-    // the feed is not iCal at all. a fetch can hand back an error page or a truncated body, and
-    // the panels read an empty list as "nothing on", which beats taking the app down
+    // the feed is not iCal at all. a fetch can hand back an error page or a truncated body, which
+    // says nothing about the calendar, so it must not read as one with nothing on
     console.log('calendar: could not read the feed');
-    return [];
+    return null;
   }
 
   // a VEVENT carrying RECURRENCE-ID is one occurrence of another event rather than an event of

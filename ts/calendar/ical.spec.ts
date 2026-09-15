@@ -639,18 +639,25 @@ describe('parseIcal awkward recurrences', () => {
 
 describe('parseIcal bad input', () => {
   /**
-   * A fetch can hand back an error page or a truncated body. The panels read an empty list as
-   * "nothing on", which beats taking the whole app down over it.
+   * A fetch can hand back an error page or a truncated body. That says nothing about the calendar,
+   * and reading it as one with nothing on would wipe a real agenda off the watch.
    */
-  test('reads something that is not iCal as no events', () => {
+  test('reads something that is not iCal as no calendar at all', () => {
     const result = ical.parseIcal('<html>gateway timeout</html>', NOW);
 
-    expect(result).toEqual([]);
+    expect(result).toBeNull();
   });
 
-  /** An empty feed is the everyday case for a calendar with nothing in the window. */
-  test('reads an empty string as no events', () => {
+  /** An empty body is a fetch that went wrong rather than a calendar, so it must not clear the agenda either. */
+  test('reads an empty string as no calendar at all', () => {
     const result = ical.parseIcal('', NOW);
+
+    expect(result).toBeNull();
+  });
+
+  /** A calendar with nothing in the window is the everyday case, and it is the one that has to clear the agenda. */
+  test('reads a calendar with nothing coming up as an empty list', () => {
+    const result = ical.parseIcal(feed(''), NOW);
 
     expect(result).toEqual([]);
   });

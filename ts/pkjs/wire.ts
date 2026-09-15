@@ -161,11 +161,13 @@ function packStockStrip(results: Array<Pick<StockQuote, 'ok' | 'price' | 'change
  * Layout: [count] then per event [startEpoch int32 LE][endEpoch int32 LE][flags bit0=allDay]
  * [titleLen][title bytes][locLen][loc bytes]. Absolute epochs so the watch keeps it fresh.
  *
- * @param events The upcoming events to pack, in slot order, or null when there are none.
- * @return The packed wire bytes, or null when there is nothing to pack.
+ * An empty list packs to a zero count, which is how the watch learns its agenda was cleared.
+ *
+ * @param events The upcoming events to pack, in slot order, or null when there is no list at all.
+ * @return The packed wire bytes, or null when there is no list at all.
  */
 function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
-  if (!events || !events.length) {
+  if (!events) {
     return null;
   }
 

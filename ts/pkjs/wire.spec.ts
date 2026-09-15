@@ -311,11 +311,11 @@ describe('packCalendarStrip', () => {
     expect(result).toBeNull();
   });
 
-  /** An empty list must yield null too, or a clear day ships a payload that blanks the agenda. */
-  test('returns null for an empty list', () => {
+  /** A calendar with nothing coming up has to reach the watch as a zero count, or deleted events stay on the agenda for good. */
+  test('packs an empty list as a zero count', () => {
     const result = wire.packCalendarStrip([]);
 
-    expect(result).toBeNull();
+    expect(result).toEqual([0]);
   });
 });
 

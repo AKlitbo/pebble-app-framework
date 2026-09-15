@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Fixed deleted calendar events staying on the agenda. An empty calendar or a removed feed now clears it.
 - Fixed a cleared watchlist staying on the watch and coming back on the next launch.
 - Fixed moved occurrences of a repeating event going missing from the agenda.
 - Fixed repeated weather requests from the watch each starting a provider fetch, and a failed send leaving weather stuck until the phone app restarted.

@@ -835,7 +835,10 @@ describe('startPebbleApp stock and calendar', () => {
   const host = globalThis as unknown as Record<string, unknown>;
   let originalLoad: LoadFn;
   let listeners: Record<string, Listener>;
+  let sent: ReturnType<typeof installFakeXhr>;
   const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
+
+  const FEED_URL = 'https://example.com/calendar.ics';
 
   // saves the settings and the stock cache the app reads when it starts, then starts it
   function start(settings: Record<string, unknown>, savedStrip: number[] | null = null) {
@@ -849,9 +852,15 @@ describe('startPebbleApp stock and calendar', () => {
     return sendAppMessage.mock.calls.filter(([dict]) => key in dict).map(([dict]) => dict[key]);
   }
 
+  // the request the calendar fetch opened for the feed
+  function feedRequest() {
+    return sent.find((request) => request.url.startsWith(FEED_URL)) as (typeof sent)[number];
+  }
+
   beforeEach(() => {
     vi.useFakeTimers();
     localStorage.clear();
+    sent = installFakeXhr();
     sendAppMessage.mockClear();
     listeners = {};
 
@@ -886,6 +895,35 @@ describe('startPebbleApp stock and calendar', () => {
 
     expect(sendsOf('STOCK_STRIP')).toEqual([[0]]);
     expect(JSON.parse(localStorage.getItem('stock-cache') as string).strip).toBeNull();
+  });
+
+  /** Deleting every upcoming event has to clear the watch, or the deleted events stay on the agenda for good. */
+  test('sends an empty agenda when the feed has nothing coming up', () => {
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    listeners.ready();
+
+    feedRequest().respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
+
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
+  });
+
+  /** An error page says nothing about the calendar, and reading it as empty would wipe a real agenda off the watch. */
+  test('keeps the agenda when the feed does not read as iCal', () => {
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    listeners.ready();
+
+    feedRequest().respond(200, '<html>sign in</html>');
+
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
+  });
+
+  /** Removing the feed has to clear the watch too, or the old agenda outlives the setting that made it. */
+  test('sends an empty agenda when no feed is set', () => {
+    start({});
+
+    listeners.ready();
+
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
   });
 });
 
