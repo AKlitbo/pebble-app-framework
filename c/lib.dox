@@ -1,47 +1,51 @@
 /**
  * @defgroup lib_core Core Helpers
+ * @brief Pure maths, clock, text, and unit helpers that need no watch SDK.
  *
- * Pure maths and text helpers with no watch SDK, so they are easy to test off the watch.
- * Think .beats time, moon phase, weekday names, number formatting, and unit conversions.
+ * Needing no SDK is what lets them be tested off the watch. Think .beats time, moon phase, weekday
+ * names, number formatting, and unit conversions.
  */
 
 /**
  * @defgroup lib_io Data In and Out
+ * @brief The AppMessage pipeline to the phone and the byte readers behind it.
  *
- * The AppMessage pipeline that talks to the phone, plus the little byte readers the stores
- * use to unpack the packed strips.
+ * The stores use the byte readers to unpack the packed strips the phone sends.
  */
 
 /**
  * @defgroup lib_stores Stores
+ * @brief Weather, health, calendar, stocks, and the other readings a face shows.
  *
- * The active stores. Each one holds a kind of reading, such as weather, health, or calendar,
- * keeps it fresh, and nudges the screen when it changes.
+ * Each store keeps its reading fresh and nudges the screen when it changes.
  */
 
 /**
  * @defgroup lib_settings Settings
+ * @brief Loads, saves, and syncs a face's settings from its field table.
  *
- * The persist and settings framework. A face hands it a field table and it does the load, the
- * save, and the phone sync without naming any single setting itself.
+ * A face hands it a field table, and it handles persist and the phone sync without naming any
+ * single setting itself.
  */
 
 /**
  * @defgroup lib_system System Bits
+ * @brief Bluetooth buzzing and the watch's own unit settings.
  *
- * Watch-level odds and ends: buzzing on a bluetooth change and formatting the system units.
+ * The odds and ends that belong to the watch itself rather than to any one face.
  */
 
 /**
  * @defgroup lib_ui UI
+ * @brief The slot engine, zones, fonts, icon cache, and weather icons and labels.
  *
- * The drawing side: the slot engine, zones, fonts, the icon cache, and the weather icons and
- * labels.
+ * Everything that puts pixels on the screen, shared by every face's layout.
  */
 
 /**
  * @defgroup lib_dev Dev Harness
+ * @brief Fixed fixtures and a theme walk for repeatable screenshots.
  *
- * The screenshot harness the frame faces share. It seeds every store with a fixed fixture and
- * steps through the themes on a tap, so a face's screenshots come out the same every time.
+ * The frame faces share it. It seeds every store with a fixed fixture and steps through the themes
+ * on a tap, so a face's screenshots come out the same every time.
  */
