@@ -166,11 +166,25 @@ void settings_set_u8(SettingId id, uint8_t value);
 uint8_t settings_enum_count(SettingId id);
 
 /**
+ * @brief How many outbox bytes every field of the active face takes once written.
+ *
+ * Counts each field's tuple header and value the same way settings_serialize writes them, so a
+ * caller can tell before it starts a message whether the whole snapshot fits.
+ *
+ * @return The bytes the fields need, not counting the dictionary's own one byte header.
+ */
+uint32_t settings_serialized_size(void);
+
+/**
  * @brief Write every field of the active face into an outbox iterator.
  *
+ * Stops at the first field that does not fit, so check settings_serialized_size first when the
+ * snapshot has to arrive whole.
+ *
  * @param iter The dictionary iterator to encode into.
+ * @return True when every field was written, false when the outbox ran out of room partway.
  */
-void settings_serialize(DictionaryIterator *iter);
+bool settings_serialize(DictionaryIterator *iter);
 
 /**
  * @brief Apply any settings present in an inbox message to the active face.

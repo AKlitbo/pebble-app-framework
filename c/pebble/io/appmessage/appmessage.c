@@ -94,9 +94,11 @@ static int       s_failed_len;               ///< How many jobs are in s_failed
 static bool      s_sending;                  ///< A send is out, waiting on its sent or failed callback
 static OutboxJob s_inflight;                 ///< The job in flight, valid while s_sending is set
 static AppTimer *s_retry_timer;              ///< Delay before the next retry pass
+static uint32_t  s_outbox_size;              ///< The outbox buffer size appmessage_open asked for
 
 static void pump(void);
-static void write_settings(DictionaryIterator *iter);
+static uint32_t settings_reply_size(void);
+static bool write_settings(DictionaryIterator *iter);
 
 /**
  * @brief Whether @p kind is one of the phone-data requests. The settings reply is not one, so
@@ -118,6 +120,19 @@ static bool is_request_kind(OutboxKind kind)
  */
 static bool send_job(OutboxKind kind)
 {
+    // the phone reads a settings reply as the watch's whole snapshot, so a reply that cannot fit
+    // whole is never started. half of one would seed the config page with the rest missing
+    if (kind == OUTBOX_SETTINGS)
+    {
+        uint32_t needed = settings_reply_size();
+        if (needed > s_outbox_size)
+        {
+            APP_LOG(APP_LOG_LEVEL_ERROR, "settings reply needs %d bytes but the outbox holds %d",
+                    (int)needed, (int)s_outbox_size);
+            return false;
+        }
+    }
+
     DictionaryIterator *iter;
     if (app_message_outbox_begin(&iter) != APP_MSG_OK)
     {
@@ -140,7 +155,14 @@ static bool send_job(OutboxKind kind)
             break;
 #endif
         case OUTBOX_SETTINGS:
-            write_settings(iter);
+            if (!write_settings(iter))
+            {
+                // the size was checked before the outbox was started, so this only happens if that
+                // count and the writes ever disagree. empty the message rather than send part of a
+                // snapshot, and still send it so the outbox is left ready for the next job
+                const uint8_t *start = (const uint8_t *)iter->dictionary;
+                dict_write_begin(iter, (uint8_t *)start, (uint16_t)((const uint8_t *)iter->end - start));
+            }
             break;
         default:
             return false; // a face that doesn't declare the key never asks for that kind
@@ -322,21 +344,47 @@ void appmessage_request_calendar(void)
 }
 
 /**
+ * @brief How many outbox bytes the settings reply takes, counting everything write_settings writes.
+ *
+ * @return The whole message's size, the dictionary's own header included.
+ */
+static uint32_t settings_reply_size(void)
+{
+    uint32_t size = dict_calc_buffer_size(0) + settings_serialized_size();
+
+#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+    size += dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) - dict_calc_buffer_size(0);
+#endif
+
+#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
+    if (s_handlers.custom_colors_provider)
+    {
+        char combined[APPMESSAGE_CUSTOM_COLORS_MAX];
+        s_handlers.custom_colors_provider(combined, sizeof(combined));
+        size += dict_calc_buffer_size(1, (uint32_t)(strlen(combined) + 1)) - dict_calc_buffer_size(0);
+    }
+#endif
+
+    return size;
+}
+
+/**
  * @brief Write the settings reply payload into the outbox iterator.
  *
  * The watch persist is the source of truth so Clay can seed its store from it. Carries the current
- * settings, a fresh flag, and the custom colours.
+ * settings, a fresh flag, and the custom colours. settings_reply_size counts the same three things.
  *
  * @param iter The outbox iterator to write into.
+ * @return True when all of it was written, false when the outbox ran out of room partway.
  */
-static void write_settings(DictionaryIterator *iter)
+static bool write_settings(DictionaryIterator *iter)
 {
-    settings_serialize(iter);
+    bool written = settings_serialize(iter);
 
     // tell the phone whether we booted with no saved settings (wiped by an install/update), so it
     // can push its own config back instead of letting these defaults seed over it
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
-    dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_FRESH, settings_was_fresh() ? 1 : 0);
+    written = dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_FRESH, settings_was_fresh() ? 1 : 0) == DICT_OK && written;
 #endif
 
     // custom colours ride their own key (split across two persist blobs on the watch), so the
@@ -347,9 +395,11 @@ static void write_settings(DictionaryIterator *iter)
     {
         char combined[APPMESSAGE_CUSTOM_COLORS_MAX];
         s_handlers.custom_colors_provider(combined, sizeof(combined));
-        dict_write_cstring(iter, MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS, combined);
+        written = dict_write_cstring(iter, MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS, combined) == DICT_OK && written;
     }
 #endif
+
+    return written;
 }
 
 /**
@@ -663,5 +713,6 @@ void appmessage_open(void)
     // calendar URL, custom colours, saved-layout slots, api keys, and vibe patterns can add up
     // past 2KB. a message bigger than the inbox is dropped whole, so open both buffers at the
     // platform maximum rather than guess a fixed size (the outbox carries the settings seed back)
-    app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+    s_outbox_size = app_message_outbox_size_maximum();
+    app_message_open(app_message_inbox_size_maximum(), s_outbox_size);
 }

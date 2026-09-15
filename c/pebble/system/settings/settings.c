@@ -398,7 +398,68 @@ uint8_t settings_enum_count(SettingId id)
     return field ? field->enum_count : 0;
 }
 
-void settings_serialize(DictionaryIterator *iter)
+/**
+ * @brief Writes an enum value as the text Clay reads a select back as.
+ *
+ * @param value The enum value.
+ * @param buf Where the text goes. Four bytes holds any uint8_t and its terminator.
+ * @param size The size of @p buf.
+ */
+static void enum_text(uint8_t value, char *buf, size_t size)
+{
+    snprintf(buf, size, "%d", value);
+}
+
+/**
+ * @brief How many bytes one field's value takes on the wire, written the way settings_serialize writes it.
+ *
+ * @param schema The schema the field belongs to.
+ * @param field The field to measure.
+ * @return The value's size, without its tuple header.
+ */
+static uint32_t field_value_size(const SettingsSchema *schema, const SettingField *field)
+{
+    uint8_t *byte = (uint8_t *)field_ptr(schema, field);
+
+    switch (field->type)
+    {
+        case SETTING_BOOL:
+            return sizeof(uint8_t);
+
+        case SETTING_ENUM_U8:
+        {
+            char buf[4];
+            enum_text(*byte, buf, sizeof(buf));
+            return strlen(buf) + 1;
+        }
+
+        case SETTING_CSTRING:
+            return strlen((char *)byte) + 1;
+
+        case SETTING_COLOR:
+            return sizeof(uint32_t);
+    }
+
+    return 0;
+}
+
+uint32_t settings_serialized_size(void)
+{
+    uint32_t size = 0;
+    for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
+    {
+        for (uint8_t i = 0; i < schema->field_count; i++)
+        {
+            // the SDK's own formula for one tuple, less the one byte header that belongs to the
+            // whole dictionary rather than to any field
+            uint32_t value_size = field_value_size(schema, &schema->fields[i]);
+            size += dict_calc_buffer_size(1, value_size) - dict_calc_buffer_size(0);
+        }
+    }
+    return size;
+}
+
+bool settings_serialize(DictionaryIterator *iter)
 {
     for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
     {
@@ -418,7 +479,7 @@ void settings_serialize(DictionaryIterator *iter)
                 case SETTING_ENUM_U8:
                 {
                     char buf[4];  // enum value as a cstring (Clay reads selects as strings)
-                    snprintf(buf, sizeof(buf), "%d", *byte);
+                    enum_text(*byte, buf, sizeof(buf));
                     result = dict_write_cstring(iter, *field->message_key, buf);
                     break;
                 }
@@ -433,15 +494,17 @@ void settings_serialize(DictionaryIterator *iter)
                     break;
             }
 
-            // the outbox is full: the rest of the seed would be dropped silently so stop
-            // and leave the phone on its existing store rather than send a partial snapshot
+            // the outbox ran out of room. stop and say so, so the caller can drop the reply rather
+            // than send the phone part of a snapshot
             if (result != DICT_OK)
             {
                 APP_LOG(APP_LOG_LEVEL_ERROR, "settings_serialize: outbox full at field %d", (int)i);
-                return;
+                return false;
             }
         }
     }
+
+    return true;
 }
 
 SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
