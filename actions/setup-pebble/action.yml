@@ -1,0 +1,97 @@
+name: Setup Pebble
+description: >
+  Installs Node, the project's npm dependencies, pebble-tool and the Pebble SDK so `bash lib/build.sh`
+  can run, then checks the toolchain answers and puts the pebble-tool and SDK versions on the job summary.
+  Linux runners only.
+
+# a face repo's ci.yml and release.yml both run this, since a release built with a different toolchain
+# from CI is a release nobody tested
+
+inputs:
+  node-version:
+    description: The Node version to install.
+    required: false
+    default: '24'
+  sdk-version:
+    description: >
+      The Pebble SDK to install, such as 4.17. The default, latest, takes whatever is newest on the day,
+      so the summary is the only record of which SDK a build used. A pinned version is also cached
+      between runs, which latest cannot be, since a cached latest would quietly stop being the latest.
+    required: false
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+
+    # the pkjs bundle requires @rebble/clay, so a full install is needed
+    - name: Install Dependencies
+      shell: bash
+      run: npm ci
+
+    # the SDK and emulator system libraries, as listed at developer.repebble.com/sdk/
+    - name: Install SDK System Dependencies
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libsdl2-2.0-0 libglib2.0-0 libpixman-1-0 zlib1g libsndio7.0 \
+          binutils-arm-none-eabi
+
+    # uv puts pebble on ~/.local/bin, whether it is installed below or comes back from the cache
+    - name: Put the Pebble Tools on the Path
+      shell: bash
+      run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+    # the cached venvs point at the runner's own python3, so a new runner image or Python has to miss the
+    # cache, or every pinned build would restore a pebble with nothing to run on
+    - name: Read the Runner Image and Python
+      id: runner
+      if: inputs.sdk-version != 'latest'
+      shell: bash
+      run: |
+        echo "image=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+        echo "python=$(python3 -c 'import sys; print("%d.%d" % sys.version_info[:2])')" >> "$GITHUB_OUTPUT"
+
+    # about 1.6 GB once installed, so a pinned SDK is fetched once rather than on every face build
+    # uv runs pebble-tool on the system Python where it can, and on one it downloads where it cannot
+    # a downloaded one comes back from the cache too, or the restored pebble would have nothing to run on
+    - name: Cache pebble-tool and the SDK
+      id: cache
+      if: inputs.sdk-version != 'latest'
+      uses: actions/cache@v6
+      with:
+        path: |
+          ~/.local/bin/pebble
+          ~/.local/share/uv/tools/pebble-tool
+          ~/.local/share/uv/python
+          ~/.local/share/pebble-sdk
+        key: pebble-sdk-${{ inputs.sdk-version }}-${{ runner.arch }}-${{ steps.runner.outputs.image }}-python${{ steps.runner.outputs.python }}
+
+    - name: Install pebble-tool and the SDK
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        SDK_VERSION: ${{ inputs.sdk-version }}
+      run: |
+        set -euo pipefail
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        uv tool install pebble-tool
+        pebble sdk install "$SDK_VERSION"
+
+    - name: Verify Pebble
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        SDK_VERSION: ${{ inputs.sdk-version }}
+      with:
+        # the input reaches the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'verify-pebble.js'));
+          return run({ core, exec });
