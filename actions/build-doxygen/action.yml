@@ -1,0 +1,59 @@
+name: Build Doxygen
+description: >
+  Installs a pinned Doxygen release and builds the docs from the Doxyfile, reporting each Doxygen warning
+  as an annotation on the line it names. A build with any warning fails, so the published docs stay
+  clean. Linux runners only.
+
+inputs:
+  version:
+    description: The Doxygen release to install, such as 1.18.0. The Doxyfile uses settings the runner's own apt package is too old to read.
+    required: false
+    default: '1.18.0'
+  doxyfile:
+    description: The Doxyfile to build from, relative to the repo root.
+    required: false
+    default: Doxyfile
+
+runs:
+  using: composite
+  steps:
+    # the release binary is kept between runs, so a build only downloads it once per version
+    - name: Cache Doxygen
+      id: cache
+      uses: actions/cache@v6
+      with:
+        path: ${{ runner.temp }}/doxygen-${{ inputs.version }}
+        key: doxygen-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
+
+    - name: Install Doxygen
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+        DEST: ${{ runner.temp }}/doxygen-${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        # a release is tagged Release_1_18_0 for version 1.18.0
+        tag="Release_${VERSION//./_}"
+        mkdir -p "$DEST"
+        curl -fsSL "https://github.com/doxygen/doxygen/releases/download/$tag/doxygen-$VERSION.linux.bin.tar.gz" \
+          | tar xz -C "$DEST" --strip-components=1
+
+    - name: Put Doxygen on the Path
+      shell: bash
+      env:
+        DEST: ${{ runner.temp }}/doxygen-${{ inputs.version }}
+      run: echo "$DEST/bin" >> "$GITHUB_PATH"
+
+    - name: Build the Docs
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        VERSION: ${{ inputs.version }}
+        DOXYFILE: ${{ inputs.doxyfile }}
+      with:
+        # the inputs reach the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'build-doxygen.js'));
+          return run({ core, exec });

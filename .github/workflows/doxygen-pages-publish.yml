@@ -1,0 +1,60 @@
+name: Doxygen Pages Publish
+
+# builds the engine's Doxygen docs and publishes them to GitHub Pages
+# every PR builds them too, so a change that breaks the docs or adds a Doxygen warning fails before it
+# merges. only main publishes
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# a PR's newer push makes its older build pointless, but a publish in progress is left to finish
+concurrency:
+  group: doxygen-pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the Doxygen Docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # the licence pages go through a small node script while Doxygen reads them
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Build
+        uses: ./actions/build-doxygen
+
+      - name: Upload the Site
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/doxygen/dist
+
+  publish:
+    name: Publish the Docs to GitHub Pages
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - name: Publish
+        id: deploy
+        uses: actions/deploy-pages@v5

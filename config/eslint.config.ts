@@ -8,7 +8,9 @@
  * semicolons, K&R braces, mandatory braces for control statements, and trailing
  * commas on multiline literals.
  *
- * All JavaScript files are generated, so only .ts files are linted.
+ * The JavaScript in actions/ and shared/ is the CI action scripts, which actions/github-script can only
+ * load as plain .js, so it is linted with the same house style. Every other JavaScript file is generated
+ * and skipped.
  *
  * The ignore patterns live in here as well.
  */
@@ -69,8 +71,31 @@ export default defineConfig([
     '**/build/',
     'vendor/',
     '**/*.js',
+    '!actions/**/*.js',
+    '!shared/**/*.js',
     'targets/',
   ]),
+  // the action scripts are CommonJS, since github-script loads them with require
+  {
+    files: ['actions/**/*.js', 'shared/**/*.js'],
+    extends: [js.configs.recommended],
+    plugins: {
+      '@stylistic': stylistic,
+    },
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'commonjs',
+      globals: globals.node,
+    },
+    rules: houseStyleRules,
+  },
+  // their specs and fakes are ES modules, which Vitest runs and which import the scripts
+  {
+    files: ['actions/**/*.spec.js', 'shared/**/*.spec.js', 'shared/fakes.js'],
+    languageOptions: {
+      sourceType: 'module',
+    },
+  },
   // lint all TypeScript sources except declaration files
   {
     files: ['**/*.ts'],

@@ -1,0 +1,26 @@
+name: Verify ESLint
+description: >
+  Runs ESLint over the repo with its JSON formatter, and reports each error and warning as an annotation
+  on its line and a job summary.
+
+inputs:
+  config:
+    description: The ESLint config to run with, relative to the repo root.
+    required: false
+    default: config/eslint.config.ts
+
+runs:
+  using: composite
+  steps:
+    # ESLint comes from the repo's own install, so the job runs npm ci before this step
+    - name: Verify ESLint
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        ESLINT_CONFIG: ${{ inputs.config }}
+      with:
+        # the input reaches the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'verify-eslint.js'));
+          return run({ core, exec });

@@ -1,0 +1,18 @@
+name: Verify C Tests
+description: >
+  Runs the host C suite with make -C c/spec, and reports each failing test, each spec that did not
+  build, and each spec that stopped before reporting, as annotations and a job summary.
+
+runs:
+  using: composite
+  steps:
+    # nothing to install. github-script hands the script core and exec, and gcc and make ship on the runner
+    - name: Verify C Tests
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+      with:
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'verify-c-tests.js'));
+          return run({ core, exec });

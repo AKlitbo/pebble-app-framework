@@ -4,15 +4,28 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 ## Layout
 
-* **`c/`**: the device engine. `c/core/` is pure and host-testable, `c/pebble/` needs the SDK, `c/spec/` holds the host test harness.
+**Engine Code**
+
+* **`c/`**: the device engine. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/spec/` holds the host test harness.
 * **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay).
 * **`py/`**: the waf helpers that stage and build a face.
 * **`css/`**: the Pebble-64 colour palette the frame backgrounds use.
-* **`testing/`**: shared test helpers.
-* **`tools/`**: manifest, pkjs, icon, frame, thumbnail and Clay component generators, plus CI scripts.
+
+**Tooling**
+
+* **`tools/`**: manifest, pkjs, icon, frame, thumbnail and Clay component generators.
+* **`tools/ci/`**: the memory report and changelog scripts the face repos' workflows run.
 * **`config/`**: the shared tsconfig, eslint and vitest setup.
-* **`docs/doxygen/`**: the Doxygen theme and pages. Run `doxygen` from the repo root and the site lands in `docs/doxygen/dist/`.
+* **`testing/`**: helpers the TypeScript specs share.
+* **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
 * **`build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
+
+**CI and Docs**
+
+* **`actions/`**: the GitHub Actions the engine's workflows run. Each is a github-script action with its script and specs under `scripts/`.
+* **`shared/`**: the helpers and spec fakes the scripts in `actions/` share.
+* **`.github/actions/setup-pebble/`**: installs Node, the npm dependencies and the Pebble SDK. Only the face repos' workflows use it, as `lib/.github/actions/setup-pebble`.
+* **`docs/doxygen/`**: the Doxygen theme, logo, and the script that renders the licence pages.
 
 ## Using It
 
@@ -49,12 +62,27 @@ Everything here runs on its own, with no faces needed:
 ```sh
 make -C c/spec      # the host C suite
 npm ci
-npm test            # the TypeScript specs: providers, Clay pieces, build tools against fixtures/
+npm test            # providers, Clay pieces, build tools against fixtures/, and the action scripts
 npm run lint
 npm run typecheck
 ```
 
 A few specs also check real faces, such as whether each face's generated Clay components and thumbnails are up to date. They skip here and run in a repo that mounts the engine at `lib/` beside its `watchfaces/`.
+
+## Docs
+
+The API docs are built with Doxygen 1.18.0 from the doc comments in `c/`. An older Doxygen ignores settings the Doxyfile uses. Node has to be on the path too, since the licence pages go through a small script while Doxygen reads them.
+
+```sh
+doxygen             # from the repo root
+```
+
+The site lands in `docs/doxygen/dist/`, which git ignores. CI fails a build with any Doxygen warning, and main publishes the site to [GitHub Pages](https://aklitbo.github.io/pebble-watchface-engine/).
+
+## CI
+
+* **`engine-ci.yml`**: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.
+* **`doxygen-pages-publish.yml`**: builds the docs on every PR and publishes them from main.
 
 ## License
 

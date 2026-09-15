@@ -31,7 +31,8 @@ export default defineConfig({
     alias: [{ find: /^\.\/icaljs$/, replacement: ICALJS }],
   },
   test: {
-    include: ['**/*.spec.ts'],
+    // the action scripts in actions/ and shared/ are plain JavaScript, so their specs are too
+    include: ['**/*.spec.ts', 'actions/**/*.spec.js', 'shared/**/*.spec.js'],
     // targets/ holds build-time copies of the shared sources including the specs
     // the real specs live at the root so skip the staged duplicates
     exclude: ['**/node_modules/**', '**/build/**', 'targets/**'],

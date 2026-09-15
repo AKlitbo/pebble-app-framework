@@ -1,0 +1,25 @@
+name: Verify Typecheck
+description: >
+  Runs tsc over each project in turn, and reports every type error as an annotation on its line and a
+  job summary. Every project runs even after one fails, so one run shows all of them.
+
+inputs:
+  projects:
+    description: The tsconfig files to check, one per line, relative to the repo root.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # tsc comes from the repo's own install, so the job runs npm ci before this step
+    - name: Verify Typecheck
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        PROJECTS: ${{ inputs.projects }}
+      with:
+        # the input reaches the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'verify-typecheck.js'));
+          return run({ core, exec });

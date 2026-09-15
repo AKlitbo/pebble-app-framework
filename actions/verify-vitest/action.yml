@@ -1,0 +1,26 @@
+name: Verify Vitest
+description: >
+  Runs Vitest with its JSON reporter, and reports each failing test and each spec file that failed to
+  load, as annotations on the line and a job summary.
+
+inputs:
+  config:
+    description: The Vitest config to run with, relative to the repo root.
+    required: false
+    default: config/vitest.config.ts
+
+runs:
+  using: composite
+  steps:
+    # Vitest comes from the repo's own install, so the job runs npm ci before this step
+    - name: Verify Vitest
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        VITEST_CONFIG: ${{ inputs.config }}
+      with:
+        # the input reaches the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'verify-vitest.js'));
+          return run({ core, exec });
