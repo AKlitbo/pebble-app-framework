@@ -184,11 +184,11 @@ describe('packStockStrip', () => {
     expect(result).toBeNull();
   });
 
-  /** An empty list must yield null too, or an empty watchlist ships a payload that blanks the panel. */
-  test('returns null for an empty list', () => {
+  /** A cleared watchlist has to reach the watch as a zero count, or the removed quotes stay on it for good. */
+  test('packs an empty list as a zero count', () => {
     const result = wire.packStockStrip([]);
 
-    expect(result).toBeNull();
+    expect(result).toEqual([0]);
   });
 
   /**

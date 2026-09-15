@@ -882,11 +882,26 @@ function startPebbleApp(options: StartOptions): void {
   }
 
   /**
+   * Tells the watch its watchlist is empty, and forgets the strip kept for a shut quota gate.
+   *
+   * Both halves matter. The watch keeps its list in flash until it is told otherwise, and a kept
+   * strip would go back to the watch the next time a fetch was held back.
+   */
+  function clearStocks() {
+    if (savedStrip) {
+      savedStrip = null;
+      stockCache.save(localStorage, { lastAsOf: stockState.lastAsOf, lastFetchMs: stockState.lastFetchMs, strip: null });
+    }
+    pushStockBytes(wire.packStockStrip([]));
+  }
+
+  /**
    * Fetches a quote for each configured symbol, then forwards the packed strip
    * to the watch. Skipped entirely for faces that do not show stocks.
    *
-   * Returns true when a round started, and false when there was nothing to fetch or
-   * the provider's quota gate held it back, so the caller knows no strip is coming.
+   * Returns true when a strip is on its way, which includes the empty one sent when no symbols
+   * are set. Returns false when the face shows no stocks or the provider's quota gate held the
+   * fetch back, so the caller knows to push the strip it already has.
    */
   function getStocks(force?: boolean): boolean {
     // a face that does not declare the strip key never shows stocks so skip the fetch
@@ -900,7 +915,8 @@ function startPebbleApp(options: StartOptions): void {
     const symbols = parseSymbols(readValue(config.STOCK_SYMBOLS, DEFAULTS.STOCK_SYMBOLS || ''));
 
     if (!symbols.length) {
-      return false;
+      clearStocks();
+      return true;
     }
 
     // keep the last strip when a poll lands before the provider's data could have moved

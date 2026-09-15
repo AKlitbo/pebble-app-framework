@@ -121,11 +121,13 @@ function packForecastDaily(daily: DailyStrip | null | undefined): number[] | nul
  * Layout: [count] then per slot [ok][price int32 LE cents][pct int16 LE
  * hundredths][symLen][sym bytes]. A failed slot carries its short status text.
  *
- * @param results The quotes to pack, in slot order, or null when there are none.
- * @return The packed wire bytes, or null when there is nothing to pack.
+ * An empty list packs to a zero count, which is how the watch learns its watchlist was cleared.
+ *
+ * @param results The quotes to pack, in slot order, or null when there is no list at all.
+ * @return The packed wire bytes, or null when there is no list at all.
  */
 function packStockStrip(results: Array<Pick<StockQuote, 'ok' | 'price' | 'changePercent' | 'symbol' | 'status'>> | null): number[] | null {
-  if (!results || !results.length) {
+  if (!results) {
     return null;
   }
 

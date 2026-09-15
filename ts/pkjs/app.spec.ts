@@ -790,6 +790,105 @@ describe('startPebbleApp weather', () => {
   });
 });
 
+describe('startPebbleApp stock and calendar', () => {
+  type Listener = (event?: unknown) => void;
+  type LoadFn = (request: string, ...args: unknown[]) => unknown;
+
+  // the keys Gridlock declares for the two strips, plus the weather ones every ready sends through
+  const stripKeys = {
+    SETTINGS_REQUEST: 'SETTINGS_REQUEST',
+    WEATHER_REQUEST: 'WEATHER_REQUEST',
+    WEATHER_TEMPERATURE: 'WEATHER_TEMPERATURE',
+    WEATHER_CONDITIONS: 'WEATHER_CONDITIONS',
+    WEATHER_OK: 'WEATHER_OK',
+    STOCK_STRIP: 'STOCK_STRIP',
+    STOCK_REQUEST: 'STOCK_REQUEST',
+    CALENDAR_STRIP: 'CALENDAR_STRIP',
+    CALENDAR_REQUEST: 'CALENDAR_REQUEST',
+  };
+
+  // a strip the phone kept from an earlier round, holding one good AAPL quote
+  const SAVED_STRIP = [1, 1, 16, 39, 0, 0, 0, 0, 4, 65, 65, 80, 76];
+
+  class FakeClay {
+    registerComponent() {}
+    getSettings() {
+      return {};
+    }
+    generateUrl() {
+      return '';
+    }
+  }
+
+  // stands in for the two modules startPebbleApp requires lazily
+  function fakeModule(id: string): unknown {
+    if (id === 'message_keys') {
+      return stripKeys;
+    }
+    if (id === '@rebble/clay/src/js/index') {
+      return FakeClay;
+    }
+    return undefined;
+  }
+
+  const moduleInternal = Module as unknown as { _load: LoadFn };
+  const host = globalThis as unknown as Record<string, unknown>;
+  let originalLoad: LoadFn;
+  let listeners: Record<string, Listener>;
+  const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
+
+  // saves the settings and the stock cache the app reads when it starts, then starts it
+  function start(settings: Record<string, unknown>, savedStrip: number[] | null = null) {
+    localStorage.setItem('clay-settings', JSON.stringify(settings));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs: 0, strip: savedStrip }));
+    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+  }
+
+  // every value sent to the watch under one key, in the order it went
+  function sendsOf(key: string) {
+    return sendAppMessage.mock.calls.filter(([dict]) => key in dict).map(([dict]) => dict[key]);
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    sendAppMessage.mockClear();
+    listeners = {};
+
+    host.Pebble = {
+      addEventListener: (type: string, handler: Listener) => {
+        listeners[type] = handler;
+      },
+      sendAppMessage,
+      openURL: () => {},
+    };
+
+    originalLoad = moduleInternal._load;
+    moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
+      return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
+    };
+  });
+
+  afterEach(() => {
+    moduleInternal._load = originalLoad;
+    delete host.Pebble;
+    vi.useRealTimers();
+  });
+
+  /**
+   * Clearing every symbol has to clear the watch. Pushing the strip kept for a shut quota gate
+   * instead brings the removed watchlist back on every launch.
+   */
+  test('sends an empty watchlist rather than the saved one when no symbols are set', () => {
+    start({}, SAVED_STRIP);
+
+    listeners.ready();
+
+    expect(sendsOf('STOCK_STRIP')).toEqual([[0]]);
+    expect(JSON.parse(localStorage.getItem('stock-cache') as string).strip).toBeNull();
+  });
+});
+
 describe('collectDefaults', () => {
   /** The defaults seed the store before the config page opens, so a dropped pair opens a setting on nothing. */
   test('collects every messageKey with a default, recursing into nested items', () => {
