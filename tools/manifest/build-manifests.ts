@@ -13,18 +13,18 @@
  * `pebble build` needs package.json to exist before it runs, so each build regenerates it
  * via build.sh.
  *
- * Usage: node tools/manifest/build-manifests.ts [--targets] <face>
+ * Usage: node tools/manifest/build-manifests.ts --faces | [--targets] <face>
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { faceDir } from '../faces.ts';
-import { ENGINE, WORKSPACE } from '../paths.ts';
+import { faceDir, faceRelative, familyCoreFor, listFaceNames } from '../faces.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
 
 const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
-// every face's wscript is identical (waf_helpers keys off the sandbox dir name), so it is
-// generated from one template rather than committed per face. a face missing its wscript
-// makes `pebble build` report "This project is very outdated" instead of anything useful
+// every target's wscript comes from one template with only its folders filled in, so it is
+// generated rather than committed per face. a sandbox missing its wscript makes `pebble build`
+// report "This project is very outdated" instead of anything useful
 const WSCRIPT_TEMPLATE = path.join(ENGINE, 'tools', 'waf', 'wscript.template');
 
 /** A face's config/pebble.appinfo.json. */
@@ -140,7 +140,31 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
   };
 }
 
-/** Writes one target's sandbox: targets/<target name>/{package.json,wscript,.source-face}. */
+/** Where one sandbox's sources sit, each folder relative to the repo root with forward slashes. */
+export interface SandboxDirs {
+  engine: string;     // the engine, such as lib
+  face: string;       // the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
+  familyCore: string; // the face's family core, such as watchfaces/mosaic/core, or empty for none
+}
+
+/**
+ * Fills the wscript template in with where one sandbox's sources sit.
+ *
+ * The build runs from inside targets/<target>/, and everything it needs about where the engine, the
+ * face and its family core are is written into the wscript here, so waf never goes looking for them.
+ *
+ * @param template The wscript template's text.
+ * @param dirs The folders to fill in.
+ * @return The finished wscript.
+ */
+export function fillWscript(template: string, dirs: SandboxDirs): string {
+  return template
+    .split('{{ENGINE_DIR}}').join(dirs.engine)
+    .split('{{FACE_DIR}}').join(dirs.face)
+    .split('{{FAMILY_CORE_DIR}}').join(dirs.familyCore);
+}
+
+/** Writes one target's sandbox: targets/<target name>/{package.json,wscript}. */
 function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target): void {
   // the face's own version wins. the root package.json is the fallback and still owns the author
   const version = config.version || rootPkg.version;
@@ -150,28 +174,40 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
 
-  // the waf entry point has to exist before `pebble build` runs in this sandbox
-  fs.copyFileSync(WSCRIPT_TEMPLATE, path.join(outDir, 'wscript'));
-
-  // the sandbox is named after the target, but its sources live in the face's folder. one
-  // face can feed several targets, so waf_helpers and build.sh read this marker to map the
-  // sandbox back to its source face rather than assuming sandbox name == face name
-  fs.writeFileSync(path.join(outDir, '.source-face'), face + '\n');
+  // the waf entry point has to exist before `pebble build` runs in this sandbox. the sandbox is
+  // named after the target, but its sources are the face's, and one face can feed several targets,
+  // so the wscript is told where the face, its family core and the engine sit
+  const rel = faceRelative(face);
+  const core = familyCoreFor(ROOT, rel);
+  const dirs: SandboxDirs = {
+    engine: ENGINE_REL,
+    face: rel,
+    familyCore: core ? path.relative(ROOT, core).split(path.sep).join('/') : '',
+  };
+  fs.writeFileSync(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));
 
   console.log(`Wrote targets/${target.name}/package.json and wscript (source face ${face} ${version}, watchface=${target.watchface}).`);
 }
 
 /**
- * Writes every target sandbox for a face, or with --targets prints their sandbox names (one per
- * line) so build.sh can loop over them. Each target the face declares gets its own
- * targets/<target name>/ sandbox.
+ * Writes every target sandbox for a face. With --targets it prints the face's sandbox names instead,
+ * and with --faces every face in the repo, one per line, so build.sh can check a name and loop over
+ * them with the same lookup every other tool uses.
  */
 function main() {
   const args = process.argv.slice(2);
+
+  if (args[0] === '--faces') {
+    for (const name of listFaceNames()) {
+      console.log(name);
+    }
+    return;
+  }
+
   const listOnly = args[0] === '--targets';
   const face = listOnly ? args[1] : args[0];
   if (!face) {
-    console.error('usage: build-manifests.ts [--targets] <face>');
+    console.error('usage: build-manifests.ts --faces | [--targets] <face>');
     process.exit(1);
   }
 

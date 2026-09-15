@@ -26,6 +26,11 @@ const ICALJS_CANDIDATES = [
 ];
 const ICALJS = ICALJS_CANDIDATES.find((candidate) => fs.existsSync(candidate)) ?? ICALJS_CANDIDATES[0];
 
+// the engine's folder as seen from wherever the run starts. empty in the engine on its own, and
+// whatever name a repo of faces mounts it under otherwise
+const ENGINE_REL = path.relative(process.cwd(), path.resolve(import.meta.dirname, '..')).split(path.sep).join('/');
+const ENGINE_PREFIX = ENGINE_REL ? `${ENGINE_REL}/` : '';
+
 export default defineConfig({
   resolve: {
     alias: [{ find: /^\.\/icaljs$/, replacement: ICALJS }],
@@ -46,10 +51,9 @@ export default defineConfig({
       reporter: ['text', 'html', 'json-summary'],
       reportsDirectory: 'coverage',
       // every tree that has specs so the number covers the whole suite, whether the run starts
-      // in the engine or in a repo mounting it at lib/
+      // in the engine or in a repo mounting it
       include: [
-        'ts/**', 'tools/**',
-        'lib/ts/**', 'lib/tools/**',
+        `${ENGINE_PREFIX}ts/**`, `${ENGINE_PREFIX}tools/**`,
         'src/pkjs/**', 'src/tools/**',
         'watchfaces/**/src/pkjs/**', 'watchfaces/**/src/tools/**',
       ],

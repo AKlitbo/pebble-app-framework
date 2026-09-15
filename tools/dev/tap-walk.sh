@@ -58,7 +58,8 @@ if [[ "$DO_INSTALL" == "1" ]]; then
     # a face that ships several targets builds them all under its own name, so build.sh wants the
     # face while the .pbw is named after the target
     echo ">> building + installing $TARGET on $EMULATOR"
-    lib/build.sh "${FACE:-$TARGET}"
+    # this script sits in <engine>/tools/dev/, so build.sh is two folders up whatever the engine is called
+    bash "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/build.sh" "${FACE:-$TARGET}"
     pebble install --emulator "$EMULATOR" "$PBW"
     sleep 2
 fi

@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Replaced the `tools/ci/` scripts with those actions. A face repo moving to this engine switches its workflows in the same commit.
+- The engine can be mounted under any folder name. The repo of faces lists that folder in its `package.json` workspaces, which is how the tools tell the engine is mounted.
+- `build.sh` and the waf build find faces through the same lookup as every other tool, and `build.sh` no longer needs the repo's own `build:pkjs` script.
 - Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER` and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects and radio groups.
 - The `setup-pebble` action now checks that pebble-tool runs and puts the pebble-tool and SDK versions on the job summary. A pinned `sdk-version` is cached between runs.
 

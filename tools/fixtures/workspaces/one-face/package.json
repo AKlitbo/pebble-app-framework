@@ -1,0 +1,7 @@
+{
+  "name": "one-face",
+  "private": true,
+  "workspaces": [
+    "engine"
+  ]
+}

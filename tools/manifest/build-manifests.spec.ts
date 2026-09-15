@@ -3,11 +3,14 @@
  *
  * buildMedia owns the per-target media list: which entry gets the menuIcon flag, and the
  * deep-clone that keeps one target's flag from bleeding onto the other. buildManifest is the
- * package.json wire shape pebble build reads. main()'s file I/O is glue, left to the build.
+ * package.json wire shape pebble build reads. fillWscript is the only place a sandbox learns where
+ * its engine and face sit. main()'s file I/O is glue, left to the build.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildMedia, buildManifest, resolveTargets } from './build-manifests';
+import { buildMedia, buildManifest, fillWscript, resolveTargets } from './build-manifests';
 import type { SharedAppinfo } from './build-manifests';
 
 // a fresh config per test so the mutation check can't be masked by an earlier test
@@ -28,6 +31,20 @@ function makeConfig(): SharedAppinfo {
     },
   };
 }
+
+describe('fillWscript', () => {
+  /** A placeholder left unfilled sends waf looking for a folder named after it, and every build in that sandbox fails. */
+  test('fills every folder the real template asks for', () => {
+    const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
+
+    const result = fillWscript(template, { engine: 'engine', face: 'watchfaces/mosaic/gridlock', familyCore: 'watchfaces/mosaic/core' });
+
+    expect(result).not.toContain('{{');
+    expect(result).toContain("'engine': 'engine'");
+    expect(result).toContain("'face': 'watchfaces/mosaic/gridlock'");
+    expect(result).toContain("'family_core': 'watchfaces/mosaic/core'");
+  });
+});
 
 describe('buildMedia', () => {
   /** The app's launcher icon is chosen by this flag, so a missed mark ships an app with no menu icon. */

@@ -9,7 +9,7 @@
  *            spends bytes against the 65535 cap, and a stale require still resolves
  *            against it, which makes a half-finished rename look fine locally while CI
  *            (always building a fresh emit/) disagrees.
- *   compile  the face's src/pkjs + lib/ts -> emit/, as CommonJS for the SDK's bundler.
+ *   compile  the face's src/pkjs + the engine's ts/ -> emit/, as CommonJS for the SDK's bundler.
  *   copy     the *.g.js Clay components are committed, not tsc output, so tsc never puts
  *            them in emit/. The emitted index.js requires them by relative path, so they
  *            have to land beside it.
@@ -17,10 +17,10 @@
  *            same way for the same reason.
  *
  * emit/ is written straight into the target's waf staging sandbox (targets/<target>/) so the
- * native build never has to stage it. tsc roots at the repo root (lib/ts sits outside any
+ * native build never has to stage it. tsc roots at the repo root (the engine sits outside any
  * one face), so the tree keeps its source shape: emit/watchfaces/<face>/src/pkjs/index.js, or
- * emit/src/pkjs/index.js for a face at the repo root, beside emit/lib/ts/**. waf_helpers.build_face
- * finds the js entry in either place.
+ * emit/src/pkjs/index.js for a face at the repo root, beside the engine's emit/<engine folder>/ts/**.
+ * The wscript tells waf_helpers.build_face which of those the entry is.
  *
  * A target's sources default to its own name, but a face that ships several targets passes
  * the source face as a second argument.
@@ -32,7 +32,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { faceRelative } from '../faces.ts';
-import { ENGINE, WORKSPACE } from '../paths.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
 
 const requireHost = createRequire(import.meta.url);
 
@@ -41,8 +41,9 @@ const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'config', 'tsconfig.pkjs.json');
 
 // the package is ESM behind an `exports` map and the SDK bundles with webpack 1, which reads
 // neither, so asking for it by name would resolve its ESM build and break. the package ships a
-// prebuilt ES5 CommonJS file for exactly this, and it lands where lib/ts/calendar/icaljs.d.ts
-// says it does. keeping it a file of its own is also what MPL 2.0 asks of a larger work
+// prebuilt ES5 CommonJS file for exactly this, and it lands where the engine's
+// ts/calendar/icaljs.d.ts says it does. keeping it a file of its own is also what MPL 2.0 asks of
+// a larger work
 const ICALJS_FROM = path.join(ROOT, 'node_modules', 'ical.js', 'dist', 'ical.es5.min.cjs');
 
 /**
@@ -56,7 +57,7 @@ export interface FacePaths {
   sandbox: string;   // targets/<target>
   emit: string;      // targets/<target>/emit
   emitPkjs: string;  // targets/<target>/emit/watchfaces/<sourceFace>/src/pkjs
-  icaljsTo: string;  // targets/<target>/emit/lib/ts/calendar/icaljs.js
+  icaljsTo: string;  // targets/<target>/emit/<engine folder>/ts/calendar/icaljs.js
   tsconfig: string;  // targets/<target>/tsconfig.pkjs.json (generated)
   skipDir: string;   // watchfaces/<sourceFace>/src/pkjs/clay/builder
 }
@@ -80,7 +81,7 @@ export function facePaths(target: string, sourceFace: string = target): FacePath
     sandbox,
     emit,
     emitPkjs: path.join(emit, ...rel.split('/'), 'src', 'pkjs'),
-    icaljsTo: path.join(emit, 'lib', 'ts', 'calendar', 'icaljs.js'),
+    icaljsTo: path.join(emit, ...ENGINE_REL.split('/'), 'ts', 'calendar', 'icaljs.js'),
     tsconfig: path.join(sandbox, 'tsconfig.pkjs.json'),
     skipDir: path.join(faceSrc, 'clay', 'builder'),
   };
@@ -98,8 +99,8 @@ export function cleanEmit(p: FacePaths): void {
 /**
  * Writes the per-face pkjs tsconfig into the staging sandbox.
  *
- * It roots at the repo root (so lib/ts, shared across faces, stays inside rootDir) and emits
- * into the sandbox's emit/. All paths are relative to the sandbox where the file is written.
+ * It roots at the repo root (so the engine's ts/, shared across faces, stays inside rootDir) and
+ * emits into the sandbox's emit/. All paths are relative to the sandbox where the file is written.
  *
  * @param sourceFace The face whose src/pkjs to include.
  * @param p The paths for the target being built.
@@ -111,13 +112,13 @@ export function writeTsconfig(sourceFace: string, p: FacePaths): void {
   const tsconfig = {
     extends: path.relative(p.sandbox, PKJS_BASE_TSCONFIG).split(path.sep).join('/'),
     compilerOptions: { rootDir: '../..', outDir: 'emit' },
-    include: [path.posix.join('../..', rel, 'src/pkjs/**/*.ts'), '../../lib/ts/**/*.ts'],
+    include: [path.posix.join('../..', rel, 'src/pkjs/**/*.ts'), path.posix.join('../..', ENGINE_REL, 'ts/**/*.ts')],
     // builder pieces are bundled into the committed *.g.js so compiling them here
     // would ship them a second time as loose modules against the 65535 byte cap
-    // lib's are excluded for every face even the ones carrying no Clay builder
+    // the engine's are excluded for every face even the ones carrying no Clay builder
     exclude: [
       path.posix.join('../..', rel, 'src/pkjs/clay/builder/**'),
-      '../../lib/ts/clay/builder/**',
+      path.posix.join('../..', ENGINE_REL, 'ts/clay/builder/**'),
       '../../**/*.spec.ts',
     ],
   };

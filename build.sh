@@ -2,18 +2,19 @@
 # Build watchface(s) (.pbw) from source. A face sits at the repo root in a repo of one, or under
 # watchfaces/, at the top level or one deeper inside a family folder. Run from WSL.
 # Regenerates the manifest from the face's config/pebble.appinfo.json and compiles
-# the TypeScript pkjs into targets/<face>/emit/, then runs pebble build in that sandbox.
-#   lib/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
-#   lib/build.sh all               build every face in the repo
-#   lib/build.sh <face> --clean    pebble clean first (needed after a messageKey change)
+# the TypeScript pkjs into targets/<target>/emit/, then runs pebble build in that sandbox.
+#   <engine>/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
+#   <engine>/build.sh all               build every face in the repo
+#   <engine>/build.sh <face> --clean    pebble clean first (needed after a messageKey change)
 # Any other args forward to pebble build (e.g. lib/build.sh lcars-stardate --debug).
 set -euo pipefail
 engine="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# the engine is mounted at <workspace>/lib/, and the faces and build sandboxes live in the workspace
+# the engine is mounted one folder down in the repo of faces, and the faces and build sandboxes live there
 here="$(cd "$engine/.." && pwd)"
+node_ts=(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON)
 
 if [[ $# -lt 1 || "$1" == -* ]]; then
-  echo "usage: lib/build.sh <face|all> [--clean] [pebble build args...]" >&2
+  echo "usage: $0 <face|all> [--clean] [pebble build args...]" >&2
   exit 1
 fi
 face="$1"
@@ -32,18 +33,18 @@ done
 build_face() {
   local face="$1"
 
-  node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$engine/tools/manifest/build-manifests.ts" "$face"
+  "${node_ts[@]}" "$engine/tools/manifest/build-manifests.ts" "$face"
 
   # a face usually builds one target (the face itself), but can declare several (a watchface
   # and a watchapp from one source). the manifest step wrote a sandbox per target. ask it which
   local targets
-  targets=$(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$engine/tools/manifest/build-manifests.ts" --targets "$face")
+  targets=$("${node_ts[@]}" "$engine/tools/manifest/build-manifests.ts" --targets "$face")
 
   for target in $targets; do
-    # compile the TypeScript pkjs runtime (the face's src/pkjs + lib/ts) into
+    # compile the TypeScript pkjs runtime (the face's src/pkjs and the engine's ts/) into
     # targets/<target>/emit/, the gitignored tree the Pebble bundler reads. the .ts is the
     # source of truth, so this runs before every build
-    (cd "$here" && npm run build:pkjs -- "$target" "$face")
+    "${node_ts[@]}" "$engine/tools/pkjs/build-pkjs.ts" "$target" "$face"
 
     echo "== building $target (face $face) =="
     (
@@ -54,21 +55,9 @@ build_face() {
   done
 }
 
-# a face is any directory carrying config/pebble.appinfo.json: the repo root itself in a repo of
-# one, or one under watchfaces/, at the top level or one deeper inside a family folder that also
-# holds the code its faces share. that rule is what keeps a family's core/ from being built as a
-# face, with nothing to register anywhere. a face at the root is named by its appinfo, because the
-# root folder is named after wherever the repo was cloned
+# the faces come from the engine's own lookup, the same one every other tool uses
 face_names() {
-  {
-    if [[ -f "$here/config/pebble.appinfo.json" ]]; then
-      node -p "require(process.argv[1]).name" "$here/config/pebble.appinfo.json"
-    fi
-    if [[ -d "$here/watchfaces" ]]; then
-      find "$here/watchfaces" -mindepth 3 -maxdepth 4 -name pebble.appinfo.json -path '*/config/*' \
-        | sed 's#/config/pebble.appinfo.json$##' | xargs -r -n 1 basename
-    fi
-  } | sort
+  "${node_ts[@]}" "$engine/tools/manifest/build-manifests.ts" --faces
 }
 
 if [[ "$face" == "all" ]]; then
@@ -79,7 +68,7 @@ if [[ "$face" == "all" ]]; then
 fi
 
 if ! face_names | grep -qx "$face"; then
-  echo "no such face: no config/pebble.appinfo.json at the repo root or under watchfaces/ names $face" >&2
+  echo "no such face: $face. The faces in this repo are: $(face_names | tr '\n' ' ')" >&2
   exit 1
 fi
 

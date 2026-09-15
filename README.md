@@ -27,7 +27,7 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 ## Using It
 
-The engine does not build on its own. It is mounted as a git submodule at `lib/` inside a repo of faces, which lists `lib` as an npm workspace so the engine's dependencies install once. A repo holding one face keeps it at the root, laid out like a plain Pebble project with `config/`, `src/` and `resources/`. A repo of several keeps each at `watchfaces/<face>/`, or at `watchfaces/<family>/<face>/` beside the code the family shares.
+The engine does not build on its own. It is mounted as a git submodule one folder down inside a repo of faces, most often at `lib/`, and that repo lists the folder as an npm workspace so the engine's dependencies install once. A repo holding one face keeps it at the root, laid out like a plain Pebble project with `config/`, `src/` and `resources/`. A repo of several keeps each at `watchfaces/<face>/`, or at `watchfaces/<family>/<face>/` beside the code the family shares.
 
 ```sh
 git submodule add https://github.com/AKlitbo/pebble-watchface-engine.git lib
@@ -36,7 +36,7 @@ npm install
 bash lib/build.sh <face>
 ```
 
-The mount point has to be `lib/`. Faces import the engine by relative path, and the waf build finds the repo root by looking for it.
+The folder can have any name, as long as it sits straight under the repo root and the repo's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted engine from one checked out on its own. Faces import the engine by relative path, so their imports use whatever name the repo picked, and the build stages the engine into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore.
 
 Each repo pins an exact engine commit, so an engine change reaches a face only when that repo moves its `lib` pointer.
 

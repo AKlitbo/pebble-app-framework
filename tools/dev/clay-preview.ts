@@ -25,7 +25,7 @@ import Module from 'node:module';
 import { createRequire } from 'node:module';
 import { facePaths, compile, copyGenerated, writeTsconfig } from '../pkjs/build-pkjs.ts';
 import { faceRelative } from '../faces.ts';
-import { WORKSPACE } from '../paths.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
 
 const requireHost = createRequire(import.meta.url);
 
@@ -149,7 +149,7 @@ function components(emit: string): unknown[] {
   }
 
   collect(path.join(emit, ...rel.split('/'), 'src', 'pkjs', 'clay'), '.g.js');
-  collect(path.join(emit, 'lib', 'ts', 'clay'), '-component.js');
+  collect(path.join(emit, ...ENGINE_REL.split('/'), 'ts', 'clay'), '-component.js');
 
   return found;
 }
@@ -195,7 +195,7 @@ build();
 if (process.argv.indexOf('--watch') !== -1) {
   const watched = [
     path.join(ROOT, rel, 'src', 'pkjs'),
-    path.join(ROOT, 'lib', 'ts', 'clay'),
+    path.join(ENGINE, 'ts', 'clay'),
   ].filter((dir) => fs.existsSync(dir));
 
   // fs.watch fires more than once per save and every pass shells out to a synchronous tsc, so

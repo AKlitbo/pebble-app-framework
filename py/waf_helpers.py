@@ -1,8 +1,15 @@
 """
-The helpers every face's wscript shares. A face's wscript is generated from
-tools/waf/wscript.template and imports this module directly, calling stage_shared_sources,
-build_conditions and build_face as its build and configure steps. waf runs the wscript as part of
-bash build.sh, once per sandbox under targets/<target>/.
+The helpers every build target's wscript shares. A wscript is generated from
+tools/waf/wscript.template by build-manifests.ts, which fills in where the engine, the face and
+its family core sit. The wscript imports this module directly and calls stage_shared_sources,
+build_conditions and build_face with those folders. waf runs the wscript as part of build.sh,
+once per sandbox under targets/<target>/.
+
+Every folder in the source dict the wscript passes is relative to the repo root:
+
+    engine       the engine, such as lib
+    face         the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
+    family_core  the face's family core, such as watchfaces/mosaic/core, or empty for none
 """
 
 import os
@@ -12,143 +19,78 @@ import json
 
 def _repo_root(ctx):
     """
-    The repo root: the nearest ancestor of the face dir holding lib/ (the reusable
-    base). Found by walking up rather than assuming a fixed depth, so the layout can
-    move without breaking every wscript. The marker is name-agnostic to the face
-    folder, so renaming it never breaks this.
+    The repo root. A sandbox always sits at targets/<target>/ under it, so it is two levels up.
     """
-    node = ctx.path
-    while node is not None:
-        if node.find_dir('lib'):
-            return node
-        node = node.parent
-
-    ctx.fatal('waf_helpers: could not locate the repo root (no ancestor with lib/)')
+    return ctx.path.parent.parent
 
 
-def _source_face(ctx):
+def _family_name(source):
     """
-    The name of the face feeding this sandbox. A face with one target names its sandbox
-    after itself, so the sandbox name is the face. A face with several targets (a watchface and
-    a watchapp, say) names each sandbox after its target instead, so the manifest step writes a
-    .source-face marker here to map the sandbox back to its source face. Fall back to the sandbox
-    name when there is no marker.
+    The family a face belongs to, which is the folder its family core sits in, or None for a face
+    in no family.
     """
-    marker = ctx.path.find_node('.source-face')
-    if marker:
-        return marker.read().strip()
-    return ctx.path.name
+    if not source['family_core']:
+        return None
+    return os.path.basename(os.path.dirname(os.path.normpath(source['family_core'])))
 
 
-def build_conditions(ctx):
+def build_conditions(ctx, source):
     """
-    Regenerate the weather-icon lookup (icons_table.g.h) from the shared condition
-    vocabulary in lib/ts/weather/conditions.ts. Non-fatal: the generated header is
-    committed, so a node-less environment still builds with the last-generated table.
+    Regenerate the weather lookup tables (icons_table.g.h and friends) from the shared condition
+    vocabulary in the engine's ts/weather/conditions.ts. It runs the engine copy staged into this
+    sandbox, so the tables regenerate for this build without touching the engine checkout itself.
+    Non-fatal: the generated headers are committed, so a node-less environment still builds with
+    the last ones.
     """
     from waflib import Logs
 
     # the tools are ESM .ts in a package with no "type", which is what keeps the tsc-emitted
     # runtime .js CommonJS for the bundler. node detects the module type from the syntax and
     # warns about it, so silence just that warning rather than declare a type
-    script = _repo_root(ctx).find_node('lib/tools/build-conditions.ts')
+    script = ctx.path.find_node(source['engine'] + '/tools/build-conditions.ts')
     cmd = ['node', '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', script.abspath()] if script else None
     if script and ctx.exec_command(cmd) != 0:
         Logs.warn('build-conditions: node unavailable; using committed icons_table.g.h')
 
 
-def stage_shared_sources(ctx):
+def stage_shared_sources(ctx, source):
     """
-    Mirror this face's src/ and resources/ plus the shared lib/ into this build folder
-    (targets/<target>/) so the SDK sees a normal, self-contained project. The source face
-    comes from _source_face (the sandbox name, or the .source-face marker when a face feeds
-    several targets). Its src/ and resources/ live in the face's folder, at the repo root or under
-    watchfaces/, while lib/ is shared at the repo root and comes along for the C.
+    Mirror the face's src/ and resources/, the engine, and the family core into this build folder
+    (targets/<target>/) so the SDK sees a normal, self-contained project. The engine is staged under
+    its own folder name, the same one the face's imports use.
 
     emit/ is not staged. build:pkjs writes it straight into this sandbox (targets/<target>/emit)
-    keeping the face's src/pkjs + lib/ts layout, so the entry's relative requires into lib/ts
-    already resolve here.
+    keeping the source tree's shape, so the entry's relative requires into the engine's ts/ already
+    resolve here.
 
     Only files whose size or mtime differ are copied, and mtimes are preserved, so an
     untouched rebuild does not force a full recompile. Staged files whose source is
-    gone are dropped. The roots come from ctx.path.parent.parent (the true repo root, since
-    this folder sits under targets/), not _repo_root, because once lib/ is staged here
-    _repo_root would resolve to this folder instead.
+    gone are dropped.
     """
-    repo_root = ctx.path.parent.parent.abspath()
-    face = _source_face(ctx)
-    face_root = _face_root(repo_root, face)
-    if not face_root:
-        ctx.fatal('No source for face "{}" at the repo root or under watchfaces/.'.format(face))
+    repo_root = _repo_root(ctx).abspath()
+    face_root = os.path.normpath(os.path.join(repo_root, source['face']))
+    if not os.path.isfile(os.path.join(face_root, 'config', 'pebble.appinfo.json')):
+        ctx.fatal('No face at "{}". Run build-manifests.ts again to rewrite this sandbox.'.format(source['face']))
 
     sources = {
         'src': os.path.join(face_root, 'src'),
         'resources': os.path.join(face_root, 'resources'),
-        'lib': os.path.join(repo_root, 'lib'),
+        source['engine']: os.path.join(repo_root, source['engine']),
     }
 
     # a face nested inside a family folder also gets that family's core: code shared by a handful
-    # of related faces but not by all of them, so it cannot live in lib/. it is staged under the
-    # family's own name, and that name is a path segment the build synthesises rather than one
+    # of related faces but not by all of them, so it cannot live in the engine. it is staged under
+    # the family's own name, and that name is a path segment the build synthesises rather than one
     # anybody types, which is what keeps a family header from colliding with a face-local folder
-    family = _face_family(repo_root, face_root)
+    family = _family_name(source)
     if family:
-        sources[os.path.join('family', family)] = os.path.join(
-            repo_root, 'watchfaces', family, 'core', 'c')
+        sources[os.path.join('family', family)] = os.path.join(repo_root, source['family_core'], 'c')
 
     for name, src_dir in sources.items():
         if os.path.isdir(src_dir):
             _mirror_tree(src_dir, os.path.join(ctx.path.abspath(), name))
 
     _drop_stale_families(ctx.path.abspath(), family)
-
-
-def _face_root(repo_root, face):
-    """
-    A face's source directory, by name.
-
-    A face sits at the repo root in a repo of one, straight under watchfaces/, or one deeper inside
-    a family folder that also holds the code those faces share. A face is a directory carrying
-    config/pebble.appinfo.json, which is what keeps a family's core/ from being taken for one.
-    """
-    # a face at the root is named by its appinfo, because the root folder is named after wherever
-    # the repo was cloned
-    root_appinfo = os.path.join(repo_root, 'config', 'pebble.appinfo.json')
-    if os.path.isfile(root_appinfo):
-        with open(root_appinfo, 'r') as appinfo_file:
-            if json.load(appinfo_file).get('name') == face:
-                return repo_root
-
-    watchfaces = os.path.join(repo_root, 'watchfaces')
-    if not os.path.isdir(watchfaces):
-        return None
-
-    for candidate in (os.path.join(watchfaces, face),
-                      *(os.path.join(watchfaces, group, face)
-                        for group in sorted(os.listdir(watchfaces))
-                        if os.path.isdir(os.path.join(watchfaces, group)))):
-        if os.path.isfile(os.path.join(candidate, 'config', 'pebble.appinfo.json')):
-            return candidate
-
-    return None
-
-
-def _face_family(repo_root, face_root):
-    """
-    The family a face belongs to, which is simply the folder it sits in.
-
-    Nothing declares it: a face nested beside a core/ is in that family, and one at the repo root
-    or straight under watchfaces/ is in none. Positional rather than configured, so the two can
-    never disagree.
-    """
-    if os.path.samefile(face_root, repo_root):
-        return None
-
-    parent = os.path.dirname(face_root)
-    if os.path.samefile(parent, os.path.join(repo_root, 'watchfaces')):
-        return None
-
-    return os.path.basename(parent)
 
 
 def _drop_stale_families(sandbox, family):
@@ -207,29 +149,27 @@ def _needs_copy(src_file, dst_file):
             or int(src_stat.st_mtime) != int(dst_stat.st_mtime))
 
 
-def build_face(ctx, extra_cflags=None):
+def build_face(ctx, source, extra_cflags=None):
     """
-    The build: resolve include paths, collect the face's C/JS plus the shared lib/,
-    compile the app per target platform, bundle with PebbleKit JS, and archive the
-    .pbw afterward. extra_cflags are appended to every platform's CFLAGS (the watchapp
-    build passes -DBUILD_WATCHAPP).
+    The build: resolve include paths, collect the face's C and JS plus the engine's, compile the
+    app per target platform, bundle with PebbleKit JS, and archive the .pbw afterward.
+    extra_cflags are appended to every platform's CFLAGS (the watchapp build passes
+    -DBUILD_WATCHAPP).
     """
-    repo = _repo_root(ctx)
+    # the engine as staged into this sandbox. its c/core/ is pure (SDK-free and host-testable) and
+    # its c/pebble/ needs the SDK. the PebbleKit JS is compiled out of its ts/ into emit/ before
+    # the build, so only the C comes from here
+    engine_dir = ctx.path.find_dir(source['engine'])
+    if not engine_dir:
+        ctx.fatal('The engine is not staged at "{}" in this sandbox.'.format(source['engine']))
 
-    # lib/ = the reusable base copied into every face. lib/c/core/ is pure (SDK-free and
-    # host-testable). lib/c/pebble/ needs the SDK. the PebbleKit JS is compiled out of
-    # lib/ts/ into emit/ before the build, so only the C comes from here
-    lib_dir = repo.find_dir('lib')
-    if not lib_dir:
-        ctx.fatal('Could not find the "lib" directory at the repo root.')
-
-    lib_c = lib_dir.find_dir('c')
+    lib_c = engine_dir.find_dir('c')
     lib_c_core = lib_c.find_dir('core')
     lib_c_pebble = lib_c.find_dir('pebble')
     # this face's own sources (grid engine, widgets, main, theme)
     local_c = ctx.path.find_dir('src/c')
 
-    # only the two lib roots + the face-local dir are on the include path. every shared
+    # only the engine's two C roots and the face-local dir are on the include path. every shared
     # header is included with its folder relative to a root (e.g. "ui/engine/engine.h" or
     # "clock/beats.h") so moving a folder never touches this list
     include_paths = [
@@ -325,16 +265,13 @@ def build_face(ctx, extra_cflags=None):
 
     ctx.env = cached_env
 
-    # emit/ keeps the source tree's shape, so the entry sits wherever the face's pkjs does: one
-    # folder deep for a face of its own, two for one inside a family, and under the source face
-    # rather than the sandbox when a face feeds several targets. found rather than assumed, so
-    # none of that has to be worked out twice
-    # a face at the repo root has no watchfaces/ segment, so its entry sits at emit/src/pkjs/
-    entries = (ctx.path.ant_glob('emit/watchfaces/**/src/pkjs/index.js')
-               or ctx.path.ant_glob('emit/src/pkjs/index.js'))
-    if not entries:
+    # emit/ keeps the source tree's shape, so the entry sits under the face's own folder: straight
+    # at emit/src/pkjs/ for a face at the root, deeper for one under watchfaces/, and under the face
+    # rather than the sandbox when a face feeds several targets
+    entry = ctx.path.find_node(os.path.normpath(os.path.join('emit', source['face'], 'src', 'pkjs', 'index.js')))
+    if not entry:
         ctx.fatal('No pkjs entry in emit/: did build:pkjs run for this face?')
-    js_entry = entries[0].path_from(ctx.path)
+    js_entry = entry.path_from(ctx.path)
 
     ctx.set_group('bundle')
     ctx.pbl_bundle(
