@@ -4,14 +4,16 @@
  *
  * This module is the only copy of the weather/settings glue both faces run, so
  * the hardening it carries (HTTP-status handling, untrusted-payload guards,
- * coordinate range checks, and the change-gated refetch) is tested here once.
+ * coordinate range checks, the change-gated refetch, and the one-at-a-time weather round) is tested here once.
  *
  * The webview globals (localStorage) come from jsdom. XMLHttpRequest is stubbed
  * so nothing touches the network. Clay and the per-face `message_keys` alias are
  * only loaded inside startPebbleApp, so the exported helpers test without them.
- * seedConfigFromWatch takes its message-key map as an argument.
+ * seedConfigFromWatch takes its message-key map as an argument. The startPebbleApp
+ * specs stub both through the module loader and drive the app with a fake Pebble.
  */
 
+import Module from 'node:module';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import app from './app';
 import type { StockQuote } from '../stock/util';
@@ -361,6 +363,133 @@ describe('weatherRetryDelayMs', () => {
   });
 });
 
+describe('runWeatherRound', () => {
+  // a fresh round state for each test. it is the object getWeather carries in the closure
+  function freshState() {
+    return { inFlight: false, round: 0 };
+  }
+
+  type FakeResult = { ok: boolean; temperature?: number };
+
+  // a fetch that holds each result callback open so a spec decides when and how it lands
+  function heldFetches() {
+    const callbacks: Array<(result: FakeResult) => void> = [];
+    const deps = {
+      fetchWeather: (onResult: (result: FakeResult) => void) => callbacks.push(onResult),
+      sendWeather: vi.fn(),
+      timeoutMs: 60000,
+    };
+    return { callbacks, deps };
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  /** The watch re-asks every 3s until its first reading lands, and each ask must not start another gps fix and provider fetch. */
+  test('ignores an unforced round while a fetch is running', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+
+    app.runWeatherRound(state, false, deps);
+    app.runWeatherRound(state, false, deps);
+
+    expect(callbacks).toHaveLength(1);
+  });
+
+  /** An ask landing between a failed fetch and its retry must not start a second retry chain. */
+  test('ignores an unforced round while a retry is waiting', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+    app.runWeatherRound(state, false, deps);
+    callbacks[0]({ ok: false });
+
+    app.runWeatherRound(state, false, deps);
+
+    expect(callbacks).toHaveLength(1);
+
+    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[0]);
+
+    expect(callbacks).toHaveLength(2);
+  });
+
+  /** A weather setting change must replace a running round, and the old round's late result must not reach the watch. */
+  test('lets a forced round replace a running one and ignores the old result', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+    app.runWeatherRound(state, false, deps);
+
+    app.runWeatherRound(state, true, deps);
+    callbacks[0]({ ok: true, temperature: 1 });
+    callbacks[1]({ ok: true, temperature: 2 });
+
+    expect(deps.sendWeather).toHaveBeenCalledTimes(1);
+    expect(deps.sendWeather).toHaveBeenCalledWith({ ok: true, temperature: 2 });
+    expect(state.inFlight).toBe(false);
+  });
+
+  /** A round replaced while it waits on a retry must not fire that retry later. */
+  test('drops the pending retry when a forced round replaces it', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+    app.runWeatherRound(state, false, deps);
+    callbacks[0]({ ok: false });
+
+    app.runWeatherRound(state, true, deps);
+    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[0]);
+
+    expect(callbacks).toHaveLength(2);
+  });
+
+  /** A fetch that never calls back must not hold off every later ask for the rest of the JS session. */
+  test('frees the round via the watchdog when a fetch never calls back', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+    app.runWeatherRound(state, false, deps);
+
+    vi.advanceTimersByTime(deps.timeoutMs);
+    app.runWeatherRound(state, false, deps);
+
+    expect(callbacks).toHaveLength(2);
+  });
+
+  /** Once the retries are used up the next ask has to be free to try again. */
+  test('frees the round once the retries are used up', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+    app.runWeatherRound(state, false, deps);
+
+    callbacks[0]({ ok: false });
+    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[0]);
+    callbacks[1]({ ok: false });
+    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[1]);
+    callbacks[2]({ ok: false });
+
+    expect(deps.sendWeather).toHaveBeenCalledTimes(3);
+    expect(state.inFlight).toBe(false);
+  });
+
+  /** A send that throws, say on a dict the bridge refuses, must not leave the round in flight or every later ask is dropped until the JS restarts. */
+  test('frees the round when sending the result throws', () => {
+    const state = freshState();
+    const { callbacks, deps } = heldFetches();
+    deps.sendWeather.mockImplementation(() => {
+      throw new Error('bad dict');
+    });
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    app.runWeatherRound(state, false, deps);
+
+    callbacks[0]({ ok: true });
+
+    expect(state.inFlight).toBe(false);
+  });
+});
+
 describe('parseSymbols', () => {
   /** Whitespace and case sloppiness in the setting must clean up or the watch gets a bad symbol. */
   test('trims and uppercases each symbol', () => {
@@ -525,6 +654,139 @@ describe('runStockRound', () => {
 
     expect(state.lastFetchMs).toBe(0);
     expect(state.inFlight).toBe(false);
+  });
+});
+
+describe('startPebbleApp weather', () => {
+  type Listener = (event?: unknown) => void;
+  type LoadFn = (request: string, ...args: unknown[]) => unknown;
+
+  // only the keys the weather path reads. no stock or calendar key, so those fetches stay off
+  const weatherKeys = {
+    SETTINGS_REQUEST: 'SETTINGS_REQUEST',
+    WEATHER_REQUEST: 'WEATHER_REQUEST',
+    WEATHER_TEMPERATURE: 'WEATHER_TEMPERATURE',
+    WEATHER_CONDITIONS: 'WEATHER_CONDITIONS',
+    WEATHER_OK: 'WEATHER_OK',
+  };
+
+  class FakeClay {
+    registerComponent() {}
+    getSettings() {
+      return {};
+    }
+    generateUrl() {
+      return '';
+    }
+  }
+
+  // stands in for the two modules startPebbleApp requires lazily
+  function fakeModule(id: string): unknown {
+    if (id === 'message_keys') {
+      return weatherKeys;
+    }
+    if (id === '@rebble/clay/src/js/index') {
+      return FakeClay;
+    }
+    return undefined;
+  }
+
+  const moduleInternal = Module as unknown as { _load: LoadFn };
+  const host = globalThis as unknown as Record<string, unknown>;
+  let originalLoad: LoadFn;
+  let listeners: Record<string, Listener>;
+  let sent: ReturnType<typeof installFakeXhr>;
+  const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
+
+  // a saved manual city with gps off, so every fetch is exactly one open-meteo request
+  function saveCity(label: string, lat: number) {
+    localStorage.setItem('clay-settings', JSON.stringify({
+      WEATHER_PROVIDER: 'openmeteo',
+      LOCATION_USE_GPS: false,
+      LOCATION_NAME: JSON.stringify({ lat, lon: -112, label }),
+    }));
+  }
+
+  function currentBody(temperature: number) {
+    return JSON.stringify({ current: { temperature_2m: temperature, weather_code: 0, is_day: 1 } });
+  }
+
+  function weatherSends() {
+    return sendAppMessage.mock.calls.filter(([dict]) => 'WEATHER_OK' in dict);
+  }
+
+  function askForWeather() {
+    listeners.appmessage({ payload: { WEATHER_REQUEST: 1 } });
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    saveCity('Phoenix', 33.4);
+    sent = installFakeXhr();
+    sendAppMessage.mockClear();
+    listeners = {};
+
+    host.Pebble = {
+      addEventListener: (type: string, handler: Listener) => {
+        listeners[type] = handler;
+      },
+      sendAppMessage,
+      openURL: () => {},
+    };
+
+    originalLoad = moduleInternal._load;
+    moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
+      return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
+    };
+
+    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+  });
+
+  afterEach(() => {
+    moduleInternal._load = originalLoad;
+    delete host.Pebble;
+    vi.useRealTimers();
+  });
+
+  /** The watch re-asks every 3s until its first reading lands, and those asks must not each start a provider fetch. */
+  test('starts no second fetch when the watch asks during a running one', () => {
+    listeners.ready();
+
+    askForWeather();
+    askForWeather();
+    askForWeather();
+
+    expect(sent).toHaveLength(1);
+  });
+
+  /** Dropping the watch's ask is only safe if the fetch already running still answers it. */
+  test('sends the running fetch result to the watch that asked', () => {
+    listeners.ready();
+    askForWeather();
+
+    sent[0].respond(200, currentBody(21));
+
+    const sends = weatherSends();
+    expect(sends).toHaveLength(1);
+    expect(sends[0][0]).toMatchObject({ WEATHER_OK: 1, WEATHER_TEMPERATURE: 21 });
+  });
+
+  /** A new city must be fetched straight away, and the old city's late reading must never reach the watch. */
+  test('lets a weather settings change replace a running fetch', () => {
+    listeners.ready();
+    listeners.showConfiguration();
+    saveCity('Tucson', 32.2);
+    listeners.webviewclosed({ response: '{}' });
+    vi.advanceTimersByTime(app.SETTINGS_REFETCH_DELAY_MS);
+
+    sent[0].respond(200, currentBody(10));
+    sent[1].respond(200, currentBody(30));
+
+    const sends = weatherSends();
+    expect(sent[1].url).toContain('latitude=32.2');
+    expect(sends).toHaveLength(1);
+    expect(sends[0][0]).toMatchObject({ WEATHER_TEMPERATURE: 30 });
   });
 });
 

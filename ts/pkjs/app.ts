@@ -41,6 +41,19 @@ interface StockDeps {
   timeoutMs: number;
 }
 
+/** The weather round state runWeatherRound carries between calls. */
+interface WeatherState {
+  inFlight: boolean;
+  round: number;
+}
+
+/** The helpers runWeatherRound needs, passed in so the specs can swap them. */
+interface WeatherDeps {
+  fetchWeather: (onResult: (result: any) => void) => void;
+  sendWeather: (result: any) => void;
+  timeoutMs: number;
+}
+
 /** The options a face hands startPebbleApp. */
 interface StartOptions {
   clayConfig: ClayConfigItem[];
@@ -57,6 +70,9 @@ const WEATHER_KEYS = ['WEATHER_PROVIDER', 'WEATHER_API_KEY', 'WEATHER_TEMPERATUR
 
 // the stock settings that mean a refetch is worth it after the config closes
 const STOCK_KEYS = ['STOCK_PROVIDER', 'STOCK_API_KEY', 'STOCK_SYMBOLS'];
+
+// how long after the config page closes a changed weather, stock, or calendar setting waits to refetch
+const SETTINGS_REFETCH_DELAY_MS = 250;
 
 // a ticker is upper letters plus dot and dash (BRK.B and other suffixes) up to 12 long.
 // the lookahead demands at least one letter so a punctuation-only entry (a "." or "-") can't
@@ -403,6 +419,10 @@ const WEATHER_RETRY_DELAYS_MS = [5000, 15000];
 // the 15s native timeout since that timeout isn't reliably honored on the pebble app
 const GPS_WATCHDOG_MS = 10000;
 
+// how long one weather attempt gets before its round is given up on. covers the gps watchdog plus
+// a provider that chains a few requests at the 15s request timeout each
+const WEATHER_ROUND_TIMEOUT_MS = 60 * 1000;
+
 /**
  * Decides how long to wait before retrying a weather fetch, or null when no retry
  * should run. A successful fetch never retries, and the attempts are capped.
@@ -417,6 +437,73 @@ function weatherRetryDelayMs(resultOk: boolean, attempt: number): number | null 
   }
 
   return WEATHER_RETRY_DELAYS_MS[attempt];
+}
+
+/**
+ * Runs one weather round: fetches, sends the result on, and retries a failed fetch a few times.
+ *
+ * The watch re-asks every few seconds until its first reading lands, so without a gate every ask
+ * would start its own gps fix and provider fetch with its own retries and burn the provider quota.
+ * A round stays in flight while it fetches or waits on a retry, and an unforced call in that time
+ * is dropped. A forced round (a weather setting changed) replaces a running one, and the old
+ * round's late result or pending retry is ignored. A watchdog closes a round whose fetch never
+ * calls back.
+ *
+ * @param state The round state to read and update in place.
+ * @param force Whether to start a new round even when one is already in flight.
+ * @param deps The fetch, send, and timeout helpers to use.
+ */
+function runWeatherRound(state: WeatherState, force: boolean, deps: WeatherDeps): void {
+  if (state.inFlight && !force) {
+    return;
+  }
+
+  const round = ++state.round; // a new round number tells any round still running to stop
+  state.inFlight = true;
+
+  // bumping the round number again shuts out anything this round still has pending
+  function finishRound() {
+    state.round++;
+    state.inFlight = false;
+  }
+
+  function attempt(retry: number) {
+    // a fetch that never calls back would hold off every later ask, so give up on it after a cap
+    const watchdog = setTimeout(() => {
+      if (round === state.round) {
+        finishRound();
+      }
+    }, deps.timeoutMs);
+
+    deps.fetchWeather((result) => {
+      clearTimeout(watchdog);
+      if (round !== state.round) {
+        return; // a forced round replaced this one, or the watchdog already closed it
+      }
+
+      // the round closes or retries even when the send throws
+      // a round left in flight would drop every later ask until the JS restarts
+      try {
+        deps.sendWeather(result);
+      } catch (error) {
+        console.error('Error sending weather info to Pebble: ' + error);
+      }
+
+      const retryMs = weatherRetryDelayMs(result.ok, retry);
+      if (retryMs === null) {
+        finishRound();
+        return;
+      }
+
+      setTimeout(() => {
+        if (round === state.round) {
+          attempt(retry + 1);
+        }
+      }, retryMs);
+    });
+  }
+
+  attempt(0);
 }
 
 /**
@@ -566,6 +653,9 @@ function startPebbleApp(options: StartOptions): void {
   const savedStock = stockCache.load(localStorage);
   const stockState: StockState = { inFlight: false, round: 0, lastFetchMs: savedStock.lastFetchMs, lastAsOf: savedStock.lastAsOf };
 
+  // weather round state mutated in place by runWeatherRound
+  const weatherState: WeatherState = { inFlight: false, round: 0 };
+
   // the last strip worth showing kept across restarts so a watch with an empty store still has
   // something while the gate is shut. this is not the dedupe cache below and must never be one:
   // it says what the watch could show not what it already has
@@ -643,11 +733,10 @@ function startPebbleApp(options: StartOptions): void {
   }
 
   /**
-   * Fetches the weather using GPS or the stored manual coordinates, then
-   * forwards the result to the watch. A failed fetch retries a few times.
+   * Fetches the weather once using GPS or the stored manual coordinates, and hands the
+   * result to onResult. The config is read on every call so a retry sees the latest settings.
    */
-  function getWeather(attempt?: number) {
-    const retry = attempt || 0;
+  function fetchWeatherOnce(onResult: (result: any) => void) {
     const config = getConfig();
 
     const opts: any = {
@@ -665,16 +754,6 @@ function startPebbleApp(options: StartOptions): void {
     const gpsFallback = readBool(config.LOCATION_GPS_FALLBACK, DEFAULTS.LOCATION_GPS_FALLBACK);
     const manual = getManualLocation(config);
 
-    // sends the result on and when a fetch failed schedules a bounded retry so a cold-start miss
-    // (gps still warming and network not up yet) recovers without waiting out the poll
-    const deliver = (result: any) => {
-      sendWeather(result);
-      const retryMs = weatherRetryDelayMs(result.ok, retry);
-      if (retryMs !== null) {
-        setTimeout(() => getWeather(retry + 1), retryMs);
-      }
-    };
-
     const fetchFor = (coords: any, label: any) => {
       opts.coords = coords;
       opts.label = label;
@@ -682,7 +761,7 @@ function startPebbleApp(options: StartOptions): void {
 
       weather.fetchWeather(opts, request, (result: any) => {
         console.log(`Weather: ${result.condition} ${result.temperature} (ok=${result.ok})`);
-        deliver(result);
+        onResult(result);
       });
     };
 
@@ -690,7 +769,7 @@ function startPebbleApp(options: StartOptions): void {
       if (manual) {
         return fetchFor(manual.coords, manual.label);
       }
-      deliver(weatherUtil.status('No Location'));
+      onResult(weatherUtil.status('No Location'));
     };
 
     // what to do when gps can't place us: the manual city if the user allowed the fallback
@@ -699,7 +778,7 @@ function startPebbleApp(options: StartOptions): void {
       if (gpsFallback) {
         useManual();
       } else {
-        deliver(weatherUtil.status('No GPS'));
+        onResult(weatherUtil.status('No GPS'));
       }
     };
 
@@ -746,6 +825,18 @@ function startPebbleApp(options: StartOptions): void {
       // slow new acquisition that can time out. weather barely moves over that window anyway
       { timeout: 15000, maximumAge: 600000 }
     );
+  }
+
+  /**
+   * Fetches the weather and forwards the result to the watch, retrying a failed fetch a few
+   * times. A round already in flight drops an unforced call, and a forced one replaces it.
+   */
+  function getWeather(force?: boolean) {
+    runWeatherRound(weatherState, Boolean(force), {
+      fetchWeather: fetchWeatherOnce,
+      sendWeather: sendWeather,
+      timeoutMs: WEATHER_ROUND_TIMEOUT_MS,
+    });
   }
 
   /** Sends already-packed watchlist bytes to the watch, unless the watch holds them already. */
@@ -937,7 +1028,8 @@ function startPebbleApp(options: StartOptions): void {
   Pebble.addEventListener('appmessage', (event) => {
     const payload: Record<string, number | string> = event.payload || {};
 
-    // the watch only asks when it needs data so clear the dedupe cache to force a fresh send
+    // the watch only asks when it needs data so clear the dedupe cache to force a fresh send. a
+    // round already in flight starts no second fetch, but its own result still goes out once it lands
     if (payload[messageKeys.WEATHER_REQUEST]) {
       lastWeatherKey = null;
       getWeather();
@@ -1017,8 +1109,8 @@ function startPebbleApp(options: StartOptions): void {
     weatherSettingsBeforeConfig = null;
 
     if (weatherSettingsChanged(weatherBefore, weatherSettingsSnapshot())) {
-      // wrap so the timer id is never passed in as the retry count
-      setTimeout(() => getWeather(), 250);
+      // forced so it replaces a round still fetching with the old location or provider
+      setTimeout(() => getWeather(true), SETTINGS_REFETCH_DELAY_MS);
     }
 
     // stocks refetch on their own settings change the same way
@@ -1026,7 +1118,7 @@ function startPebbleApp(options: StartOptions): void {
     stockSettingsBeforeConfig = null;
 
     if (stockSettingsChanged(stockBefore, stockSettingsSnapshot())) {
-      setTimeout(() => getStocks(true), 250);
+      setTimeout(() => getStocks(true), SETTINGS_REFETCH_DELAY_MS);
     }
 
     // calendar refetches when the iCal URL changed so a new feed shows without waiting for the
@@ -1035,7 +1127,7 @@ function startPebbleApp(options: StartOptions): void {
     calendarUrlBeforeConfig = null;
 
     if (calendarBefore !== calendarUrl()) {
-      setTimeout(getCalendar, 250);
+      setTimeout(getCalendar, SETTINGS_REFETCH_DELAY_MS);
     }
   });
 }
@@ -1043,6 +1135,7 @@ function startPebbleApp(options: StartOptions): void {
 export default {
   startPebbleApp,
   runStockRound,
+  runWeatherRound,
   parseSymbols,
   collectDefaults,
   request,
@@ -1055,6 +1148,8 @@ export default {
   weatherSettingsSnapshot,
   weatherSettingsChanged,
   weatherRetryDelayMs,
+  WEATHER_RETRY_DELAYS_MS,
+  SETTINGS_REFETCH_DELAY_MS,
   stockSettingsSnapshot,
   stockSettingsChanged,
   WEATHER_KEYS,
