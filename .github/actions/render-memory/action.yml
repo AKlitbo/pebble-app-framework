@@ -1,0 +1,27 @@
+name: Render Memory
+description: >
+  Downloads the memory rows every face build uploaded through report-memory, and puts them on the run summary
+  as one table ranked by how close each face is to a limit. A face at 80% of a limit or more also gets a
+  warning. Reports only, and never fails a build for being large.
+
+runs:
+  using: composite
+  steps:
+    # a face that failed to build uploaded nothing, and the faces that did build are still worth seeing
+    - name: Download the Memory Rows
+      uses: actions/download-artifact@v7
+      with:
+        pattern: memory-*
+        path: ${{ runner.temp }}/memory
+        merge-multiple: true
+
+    - name: Render Memory
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        MEMORY_DIR: ${{ runner.temp }}/memory
+      with:
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'render-memory.js'));
+          return run({ core });

@@ -9,9 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added `node-version` and `sdk-version` inputs to the `setup-pebble` action. Both are optional and default to Node 24 and the latest SDK.
+- Added the `report-memory` and `render-memory` actions, which rank every face's memory use on the CI run summary.
+- Added the `prepare-release` and `publish-release` actions, which check a face release before it builds and then publish it.
 
 ### Changed
 
+- Replaced the `tools/ci/` scripts with those actions. A face repo moving to this engine switches its workflows in the same commit.
 - Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER` and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects and radio groups.
 - The `setup-pebble` action now checks that pebble-tool runs and puts the pebble-tool and SDK versions on the job summary. A pinned `sdk-version` is cached between runs.
 

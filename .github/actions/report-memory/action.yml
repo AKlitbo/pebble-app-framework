@@ -1,0 +1,37 @@
+name: Report Memory
+description: >
+  Reads a face build's memory report out of its log, and the app image and static size out of each app
+  binary, then uploads the rows for render-memory to rank against every other face. Run it after a clean
+  build whose output was tee'd to a log. Reports only, and never fails a build for being large.
+
+inputs:
+  face:
+    description: The face that was built.
+    required: true
+  log:
+    description: The build log, relative to the repo root.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Report Memory
+      id: report
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        FACE: ${{ inputs.face }}
+        BUILD_LOG: ${{ inputs.log }}
+      with:
+        # the inputs reach the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'report-memory.js'));
+          return run({ core });
+
+    - name: Upload the Memory Rows
+      uses: actions/upload-artifact@v7
+      with:
+        name: memory-${{ inputs.face }}
+        path: ${{ steps.report.outputs.file }}
+        if-no-files-found: error

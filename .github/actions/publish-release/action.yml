@@ -1,0 +1,53 @@
+name: Publish Release
+description: >
+  Publishes a face release after its build, with every .pbw the face built attached. A pbw for one watch is
+  named for that watch, and one for several is named by the version alone. Takes the outputs of
+  prepare-release.
+
+inputs:
+  tag:
+    description: The face release tag, such as lcars-stardate-v1.11.0.
+    required: false
+    default: ${{ github.ref_name }}
+  face:
+    description: The face being released, from prepare-release.
+    required: true
+  version:
+    description: The version being released, from prepare-release.
+    required: true
+  title:
+    description: The release title, from prepare-release.
+    required: true
+  notes-file:
+    description: The release notes, from prepare-release.
+    required: true
+  token:
+    description: The token gh publishes the release with. It needs contents write.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  url:
+    description: The published release's page.
+    value: ${{ steps.publish.outputs.url }}
+
+runs:
+  using: composite
+  steps:
+    - name: Publish Release
+      id: publish
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        RELEASE_TAG: ${{ inputs.tag }}
+        FACE: ${{ inputs.face }}
+        VERSION: ${{ inputs.version }}
+        TITLE: ${{ inputs.title }}
+        NOTES_FILE: ${{ inputs.notes-file }}
+        GH_TOKEN: ${{ inputs.token }}
+      with:
+        # the inputs reach the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'publish-release.js'));
+          return run({ core, exec });

@@ -1,0 +1,50 @@
+name: Prepare Release
+description: >
+  Checks a pushed face release tag before anything is built. The engine has to sit on an engine tag, the face
+  the tag names has to exist with that version in its appinfo, its changelog entry has to be dated and
+  written, and the tag cannot already be released. Writes the release notes from that changelog entry. Works
+  for a face at the repo root and for one under watchfaces/.
+
+inputs:
+  tag:
+    description: The face release tag, shaped <face>-v<version>, such as lcars-stardate-v1.11.0.
+    required: false
+    default: ${{ github.ref_name }}
+  token:
+    description: The token gh uses to look for a release already out under the tag.
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  face:
+    description: The face the tag names.
+    value: ${{ steps.prepare.outputs.face }}
+  version:
+    description: The version the tag names.
+    value: ${{ steps.prepare.outputs.version }}
+  title:
+    description: The release title, the face's display name and the version.
+    value: ${{ steps.prepare.outputs.title }}
+  notes-file:
+    description: The release notes, written from the face's changelog entry.
+    value: ${{ steps.prepare.outputs.notes-file }}
+  engine-tag:
+    description: The engine tag the release builds on.
+    value: ${{ steps.prepare.outputs.engine-tag }}
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare Release
+      id: prepare
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        RELEASE_TAG: ${{ inputs.tag }}
+        GH_TOKEN: ${{ inputs.token }}
+      with:
+        # the inputs reach the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'prepare-release.js'));
+          return run({ core, exec });

@@ -19,6 +19,7 @@ export function fakeCore() {
   summary.addRaw.mockReturnValue(summary);
   return {
     setFailed: vi.fn(),
+    setOutput: vi.fn(),
     info: vi.fn(),
     notice: vi.fn(),
     warning: vi.fn(),

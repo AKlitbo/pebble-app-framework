@@ -14,7 +14,6 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 **Tooling**
 
 * **`tools/`**: manifest, pkjs, icon, frame, thumbnail and Clay component generators.
-* **`tools/ci/`**: the memory report and changelog scripts the face repos' workflows run.
 * **`config/`**: the shared tsconfig, eslint and vitest setup.
 * **`testing/`**: helpers the TypeScript specs share.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
@@ -22,7 +21,7 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 **CI and Docs**
 
-* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions and `build-doxygen`. The face repos' workflows run `setup-pebble`, as `lib/.github/actions/setup-pebble`.
+* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions and `build-doxygen`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face, each reached as `lib/.github/actions/<name>`.
 * **`.github/shared/`**: the helpers and spec fakes the scripts in `.github/actions/` share.
 * **`docs/doxygen/`**: the Doxygen theme, logo, and the script that renders the licence pages.
 
