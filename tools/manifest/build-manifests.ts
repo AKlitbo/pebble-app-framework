@@ -1,5 +1,5 @@
 /**
- * Generate targets/<target>/package.json from watchfaces/<face>/config/pebble.appinfo.json.
+ * Generate targets/<target>/package.json from a face's config/pebble.appinfo.json.
  *
  * pebble.appinfo.json holds the Pebble appinfo (uuid, messageKeys, the whole resource
  * list) plus the per-face build identity: the release name, the watchface flag, and (for
@@ -27,7 +27,7 @@ const ROOT_PKG = path.join(ROOT, 'package.json');
 // makes `pebble build` report "This project is very outdated" instead of anything useful
 const WSCRIPT_TEMPLATE = path.join(ENGINE, 'tools', 'waf', 'wscript.template');
 
-/** watchfaces/<face>/config/pebble.appinfo.json for a face. */
+/** A face's config/pebble.appinfo.json. */
 function appinfoPath(face: string): string {
   return path.join(faceDir(face), 'config', 'pebble.appinfo.json');
 }
@@ -74,7 +74,7 @@ type Appinfo = SharedAppinfo & Partial<Target> & { version?: string; targets?: T
 
 /**
  * The build targets a face declares, as a flat list. A `targets` map wins. Otherwise the inline
- * single target is the whole list. One source face (watchfaces/<face>/) can produce several .pbw
+ * single target is the whole list. One source face can produce several .pbw
  * targets, each with its own sandbox under targets/<target name>/.
  *
  * @param config The parsed appinfo to read the target or targets from.
@@ -153,7 +153,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
   // the waf entry point has to exist before `pebble build` runs in this sandbox
   fs.copyFileSync(WSCRIPT_TEMPLATE, path.join(outDir, 'wscript'));
 
-  // the sandbox is named after the target, but its sources live under watchfaces/<face>/. one
+  // the sandbox is named after the target, but its sources live in the face's folder. one
   // face can feed several targets, so waf_helpers and build.sh read this marker to map the
   // sandbox back to its source face rather than assuming sandbox name == face name
   fs.writeFileSync(path.join(outDir, '.source-face'), face + '\n');
@@ -163,8 +163,8 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
 
 /**
  * Writes every target sandbox for a face, or with --targets prints their sandbox names (one per
- * line) so build.sh can loop over them. The face is the watchfaces/<face>/ source dir; each
- * target it declares gets its own targets/<target name>/ sandbox.
+ * line) so build.sh can loop over them. Each target the face declares gets its own
+ * targets/<target name>/ sandbox.
  */
 function main() {
   const args = process.argv.slice(2);

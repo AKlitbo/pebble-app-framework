@@ -9,7 +9,7 @@
  *            spends bytes against the 65535 cap, and a stale require still resolves
  *            against it, which makes a half-finished rename look fine locally while CI
  *            (always building a fresh emit/) disagrees.
- *   compile  watchfaces/<face>/src/pkjs + lib/ts -> emit/, as CommonJS for the SDK's bundler.
+ *   compile  the face's src/pkjs + lib/ts -> emit/, as CommonJS for the SDK's bundler.
  *   copy     the *.g.js Clay components are committed, not tsc output, so tsc never puts
  *            them in emit/. The emitted index.js requires them by relative path, so they
  *            have to land beside it.

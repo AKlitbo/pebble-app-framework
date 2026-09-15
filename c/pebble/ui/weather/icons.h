@@ -13,7 +13,7 @@
  */
 
 /// High bit set on an hourly forecast code to mark a night hour, so the column loads the night
-/// icon. Mirrors `conditions.js`'s `FORECAST_NIGHT_BIT`. Real condition numbers are 0 to 11 so
+/// icon. Mirrors `FORECAST_NIGHT_BIT` in `conditions.ts`. Real condition numbers are 0 to 11 so
 /// the bit is free, and the unknown value (255) still lands on `WI_NA`.
 #define WX_FORECAST_NIGHT_BIT 0x80
 

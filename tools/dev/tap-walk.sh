@@ -2,7 +2,7 @@
 #
 # tap-walk.sh: screenshot every UNIQUE state of the dev tap-walk.
 #
-# With a DEV_TAP_WALK_* switch on (see watchfaces/<face>/src/c/dev/dev.h) each accel tap steps the face
+# With a DEV_TAP_WALK_* switch on (see the face's src/c/dev/dev.h) each accel tap steps the face
 # to the next module/appearance. This loops screenshot -> emu-tap -> screenshot and
 # stops once a shot matches the very first one (the walk has wrapped back to start).
 #

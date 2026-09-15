@@ -28,7 +28,7 @@ def _repo_root(ctx):
 
 def _source_face(ctx):
     """
-    The watchfaces/<face>/ dir feeding this sandbox. A face with one target names its sandbox
+    The name of the face feeding this sandbox. A face with one target names its sandbox
     after itself, so the sandbox name is the face. A face with several targets (a watchface and
     a watchapp, say) names each sandbox after its target instead, so the manifest step writes a
     .source-face marker here to map the sandbox back to its source face. Fall back to the sandbox
@@ -62,12 +62,12 @@ def stage_shared_sources(ctx):
     Mirror this face's src/ and resources/ plus the shared lib/ into this build folder
     (targets/<target>/) so the SDK sees a normal, self-contained project. The source face
     comes from _source_face (the sandbox name, or the .source-face marker when a face feeds
-    several targets). Its src/ and resources/ live under watchfaces/<face>/, while lib/ is
-    shared at the repo root and comes along for the C.
+    several targets). Its src/ and resources/ live in the face's folder, at the repo root or under
+    watchfaces/, while lib/ is shared at the repo root and comes along for the C.
 
-    emit/ is not staged: build:pkjs writes it straight into this sandbox (targets/<face>/emit)
-    keeping the watchfaces/<face>/src/pkjs + lib/ts layout, so the entry's relative requires
-    (../../../../lib/ts) already resolve here.
+    emit/ is not staged. build:pkjs writes it straight into this sandbox (targets/<target>/emit)
+    keeping the face's src/pkjs + lib/ts layout, so the entry's relative requires into lib/ts
+    already resolve here.
 
     Only files whose size or mtime differ are copied, and mtimes are preserved, so an
     untouched rebuild does not force a full recompile. Staged files whose source is

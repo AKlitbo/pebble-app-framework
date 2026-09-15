@@ -11,7 +11,8 @@
   "scripts": {
     "test": "vitest run --config config/vitest.config.ts",
     "lint": "eslint . --config config/eslint.config.ts",
-    "typecheck": "tsc -p tsconfig.json && tsc -p config/tsconfig.builder.json && tsc -p config/tsconfig.tools.json && tsc -p config/tsconfig.spec.json"
+    "typecheck": "tsc -p tsconfig.json && tsc -p config/tsconfig.builder.json && tsc -p config/tsconfig.tools.json && tsc -p config/tsconfig.spec.json",
+    "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

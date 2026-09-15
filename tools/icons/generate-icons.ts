@@ -45,7 +45,7 @@ export type IconManifest = Record<string, IconSpec>;
 const ROOT = WORKSPACE;
 const VENDOR = path.resolve(ROOT, 'vendor');
 
-/** watchfaces/<face>/. The face owns its resources/ and config/pebble.appinfo.json. */
+/** The face's folder, which owns its resources/ and config/pebble.appinfo.json. */
 function faceRoot(face: string): string {
   return resolveFaceDir(face);
 }

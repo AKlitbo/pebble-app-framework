@@ -37,7 +37,7 @@ export const PLATFORM_DIMS: Record<string, Dims> = {
 const ROOT = WORKSPACE;
 
 /**
- * The per-face render knobs, loaded from watchfaces/<face>/frame/frame.config.json.
+ * The per-face render knobs, loaded from the face's frame/frame.config.json.
  *
  * A face either bakes each theme from its own frame/<name>.html (supportsTheme: false, one
  * HTML per look) or swaps a palette over one HTML (supportsTheme: true, a theme_<name>.css
@@ -64,7 +64,7 @@ export interface FaceConfig {
   maxColors?: number;
 }
 
-/** The paths generate-frame reads and writes for one face, all under watchfaces/<face>/. */
+/** The paths generate-frame reads and writes for one face, all inside the face's folder. */
 interface FaceDirs {
   appinfo: string;
   frameDir: string;

@@ -3,8 +3,8 @@
  *
  * Runs the host spec suite (every *.spec.ts) under node by default. Specs that need a
  * browser environment opt in per file with a jsdom pragma. Live API blocks stay off
- * unless RUN_LIVE_WEATHER=1 or RUN_LIVE_STOCK=1 and the provider key are set, so the
- * default run is offline and deterministic.
+ * unless RUN_LIVE_WEATHER=1, RUN_LIVE_STOCK=1 or RUN_LIVE_CALENDAR=1 is set along with any
+ * key the provider needs, so the default run is offline and deterministic.
  *
  * Works from the engine on its own and from a repo mounting it at lib/.
  *

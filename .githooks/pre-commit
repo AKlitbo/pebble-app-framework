@@ -5,10 +5,11 @@
 # reviewer waiting. This is the same gate, one step earlier.
 #
 # Install once:  git config core.hooksPath .githooks
+# In a repo that mounts the engine at lib/:  git config core.hooksPath lib/.githooks
 # Skip on purpose (a WIP commit):  git commit --no-verify
 #
-# Deliberately no `npm test`: 628 tests on every commit trains you to reach for
-# --no-verify, and a hook you always skip is worse than no hook. CI runs them.
+# No `npm test` on purpose. The whole suite on every commit trains you to reach for
+# --no-verify, and a hook you always skip is worse than no hook. CI runs the tests.
 set -euo pipefail
 
 npm run lint

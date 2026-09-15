@@ -3,7 +3,7 @@
  * @brief Weather-icon resource lookup implementation.
  *
  * The token-to-resource table lives in `icons_table.g.h`, generated from the shared
- * vocabulary in `lib/js/weather/conditions.js` (see `lib/tools/build-conditions.js`).
+ * vocabulary in `lib/ts/weather/conditions.ts` by `lib/tools/build-conditions.ts`.
  *
  * @ingroup lib_ui
  */
