@@ -8,10 +8,11 @@
  */
 
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
-import { describe, test, expect } from 'vitest';
+import { afterEach, beforeEach, describe, test, expect } from 'vitest';
 import { listFaceNames } from '../faces';
-import { findGenerated, facePaths } from './build-pkjs';
+import { copyIcalJs, findGenerated, facePaths } from './build-pkjs';
 import type { FacePaths } from './build-pkjs';
 
 // a face-shaped folder with one component, one plain module, and a .g.js inside clay/builder
@@ -45,6 +46,59 @@ describe('findGenerated', () => {
     const result = findGenerated(FIXTURE_PATHS).filter((name) => name.split(path.sep).join('/').startsWith('clay/builder/'));
 
     expect(result).toEqual([]);
+  });
+});
+
+describe('copyIcalJs', () => {
+  let emit: string;
+  let paths: FacePaths;
+
+  // writes one emitted CommonJS file under the temporary emit/
+  function emitted(rel: string, source: string): void {
+    const file = path.join(emit, rel);
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, source);
+  }
+
+  beforeEach(() => {
+    emit = fs.mkdtempSync(path.join(os.tmpdir(), 'build-pkjs-'));
+    paths = {
+      ...FIXTURE_PATHS,
+      emit,
+      emitPkjs: path.join(emit, 'src', 'pkjs'),
+      icaljsTo: path.join(emit, 'lib', 'ts', 'calendar', 'icaljs.js'),
+    };
+    emitted('lib/ts/calendar/ical.js', '"use strict";\nconst icaljs = require("./icaljs");\n');
+  });
+
+  afterEach(() => {
+    fs.rmSync(emit, { recursive: true, force: true });
+  });
+
+  /**
+   * tsc emits the calendar reader for any face whose code borrows a type from it, so its file being
+   * there says nothing. A face that never requires it would carry the library in every build for nothing.
+   */
+  test('skips ical.js when the calendar reader is only there for its types', () => {
+    emitted('src/pkjs/index.js', '"use strict";\nconst app = require("../../lib/ts/pkjs/app");\n');
+    emitted('lib/ts/pkjs/app.js', '"use strict";\nconst wire = require("./wire");\n');
+    emitted('lib/ts/pkjs/wire.js', '"use strict";\n');
+
+    const result = copyIcalJs(paths);
+
+    expect(result).toBe(false);
+    expect(fs.existsSync(paths.icaljsTo)).toBe(false);
+  });
+
+  /** A face that reads a calendar requires the library at runtime, and without the copy that require fails on the phone. */
+  test('copies ical.js when the entry requires the calendar reader', () => {
+    emitted('src/pkjs/index.js', '"use strict";\nconst calendar = require("../../lib/ts/calendar/feature");\n');
+    emitted('lib/ts/calendar/feature.js', '"use strict";\nconst ical = require("./ical");\n');
+
+    const result = copyIcalJs(paths);
+
+    expect(result).toBe(true);
+    expect(fs.existsSync(paths.icaljsTo)).toBe(true);
   });
 });
 

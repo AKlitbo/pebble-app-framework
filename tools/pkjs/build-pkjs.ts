@@ -14,7 +14,7 @@
  *            them in emit/. The emitted index.js requires them by relative path, so they
  *            have to land beside it.
  *   vendor   ical.js ships from node_modules rather than the source tree, so it lands the
- *            same way for the same reason.
+ *            same way for the same reason, and only for a face whose code requires the calendar reader.
  *
  * emit/ is written straight into the target's waf staging sandbox (targets/<target>/) so the
  * native build never has to stage it. tsc roots at the repo root (the engine sits outside any
@@ -188,19 +188,65 @@ export function copyGenerated(p: FacePaths): string[] {
 }
 
 /**
- * Copies ical.js's prebuilt ES5 CommonJS file in beside the compiled calendar code.
+ * Whether a chain of relative requires in the emitted CommonJS leads from one file to another.
  *
- * Throws when it is missing rather than letting the build carry on, because the require that
- * reaches for it would otherwise fail on the phone, where nobody is watching a build log.
+ * tsc drops an import that only brings in types, so the requires left in emit/ are the real runtime
+ * graph, the same one the Pebble bundler follows from the face's entry. The emitted files alone
+ * cannot say, since tsc still emits a file a face only reaches for its types.
+ *
+ * @param from The emitted file to start from, normally the face's index.js.
+ * @param to The emitted file to look for.
+ * @return True when the requires lead from one to the other.
+ */
+export function requires(from: string, to: string): boolean {
+  const seen = new Set<string>();
+  const pending = [path.resolve(from)];
+  const target = path.resolve(to);
+
+  while (pending.length) {
+    const file = pending.pop() as string;
+    if (file === target) {
+      return true;
+    }
+    if (seen.has(file) || !fs.existsSync(file)) {
+      continue;
+    }
+    seen.add(file);
+
+    for (const match of fs.readFileSync(file, 'utf8').matchAll(/require\(["'](\.{1,2}\/[^"']+)["']\)/g)) {
+      const base = path.resolve(path.dirname(file), match[1]);
+      const found = [base, base + '.js', path.join(base, 'index.js')].find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+      if (found) {
+        pending.push(found);
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Copies ical.js's prebuilt ES5 CommonJS file in beside the compiled calendar code, for a face whose
+ * code requires the calendar reader.
+ *
+ * A face that never requires it gets no copy, even though tsc may still have emitted the calendar
+ * code for the types another module borrows from it. A face that does need the library and finds it
+ * missing throws rather than letting the build carry on, because the require that reaches for it
+ * would otherwise fail on the phone, where nobody is watching a build log.
  *
  * @param p The paths for the target being built, including where ical.js should land.
+ * @return True when the face needed ical.js and it was copied, false when the face does not use it.
  */
-export function copyIcalJs(p: FacePaths): void {
+export function copyIcalJs(p: FacePaths): boolean {
+  if (!requires(path.join(p.emitPkjs, 'index.js'), path.join(path.dirname(p.icaljsTo), 'ical.js'))) {
+    return false;
+  }
   if (!fs.existsSync(ICALJS_FROM)) {
     throw new Error(`ical.js is missing at ${path.relative(ROOT, ICALJS_FROM)}, run npm install`);
   }
   fs.mkdirSync(path.dirname(p.icaljsTo), { recursive: true });
   fs.copyFileSync(ICALJS_FROM, p.icaljsTo);
+  return true;
 }
 
 function main(): void {
@@ -218,10 +264,10 @@ function main(): void {
   writeTsconfig(sourceFace, p);
   compile(p);
   const names = copyGenerated(p);
-  copyIcalJs(p);
+  const copiedIcal = copyIcalJs(p);
 
   const where = path.relative(ROOT, p.emitPkjs).split(path.sep).join('/');
-  console.log(`built ${target} emit/ and copied ${names.length} generated components into ${where}/, plus ical.js`);
+  console.log(`built ${target} emit/ and copied ${names.length} generated components into ${where}/${copiedIcal ? ', plus ical.js' : ''}`);
 }
 
 if (import.meta.main) {
