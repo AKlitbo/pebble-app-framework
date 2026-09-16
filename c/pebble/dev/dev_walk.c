@@ -34,8 +34,8 @@ typedef struct
     int distance_m;   ///< Distance walked, in metres
     int battery;      ///< Battery percentage
     bool bluetooth;   ///< Whether the phone is connected
-    const char *lat;  ///< Latitude, in LCARS dash style, such as "33-44"
-    const char *lon;  ///< Longitude, in the same LCARS dash style
+    const char *lat;  ///< Latitude, in the dash style the phone sends it in, such as "33-44"
+    const char *lon;  ///< Longitude, in the same dash style
 } DevFixture;
 
 /** @brief The default fixture every store is seeded from. */

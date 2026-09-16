@@ -1,15 +1,16 @@
 /**
- * Bakes this face's LCARS HTML chrome into a background bitmap.
+ * Bakes a face's HTML frame into a background bitmap.
  *
  * Renders frame/<name>.html in Firefox at a supersampled deviceScaleFactor, strips the
  * live readouts (the app draws those at runtime), then resizes to the platform's native
- * screen size with a lanczos3 kernel and writes a PNG. Firefox (not Chromium) because
- * Chromium clips the LCARS elbow carve-outs that use z-index:-1 pseudo-elements.
+ * screen size with a lanczos3 kernel and writes a PNG. Firefox rather than Chromium, because
+ * Chromium clips pseudo-elements drawn at z-index:-1, which carve-outs such as the LCARS elbows
+ * rely on.
  *
  * The build does not bake frames. The PNGs under resources/images/ are committed. Run this
  * by hand to re-bake one during design:
- *   npm run gen:frame -- lower-decks
- *   npm run gen:frame -- classic --scale 4 --out resources/images/background.png
+ *   npm run gen:frame -- <face> [frame]
+ *   npm run gen:frame -- <face> <frame> --scale 4 --out resources/images/background.png
  */
 import path from 'node:path';
 import fs from 'node:fs';
@@ -370,7 +371,7 @@ async function main(): Promise<void> {
         }
         // visibility rather than display so the box still takes up its space
         // it also takes the element's ::before and ::after along with it
-        // which is where LCARS hides its end notches
+        // which is where a frame often keeps its decorations, such as the LCARS end notches
         if (unpaint) {
           document.querySelectorAll(unpaint).forEach((el) => {
             (el as HTMLElement).style.visibility = 'hidden';
