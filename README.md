@@ -21,9 +21,12 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 **CI and Docs**
 
-* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions and `build-doxygen`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face, each reached as `lib/.github/actions/<name>`.
+* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions, `build-doxygen`, and `build-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face, each reached as `lib/.github/actions/<name>`.
 * **`.github/shared/`**: the helpers and spec fakes the scripts in `.github/actions/` share.
-* **`docs/doxygen/`**: the Doxygen theme, logo, and the script that renders the licence pages.
+* **`docs/doxygen/`**: the Doxygen theme, logo, main page, and header.
+* **`docs/typedoc/`**: the look laid over TypeDoc's default theme.
+* **`docs/site/`**: the docs site's page templates, its stylesheets for the pages, the shared bar, and the coverage reports, and the theme script.
+* **`docs/tools/`**: renders the docs site's home page and its changelog, notices, and licence pages, and puts the shared bar on every page Doxygen, TypeDoc, and the coverage reports write.
 
 ## Using It
 
@@ -75,22 +78,39 @@ npm run lint
 npm run typecheck
 ```
 
+The docs site tools have a package of their own in `docs/`, with their own scripts, so a repo of faces never installs TypeDoc, marked, or Prettier:
+
+```sh
+npm ci --prefix docs
+npm --prefix docs run test
+npm --prefix docs run lint            # the site's browser script, which the engine's own lint leaves out
+npm --prefix docs run typecheck
+npm --prefix docs run format:check    # or format to fix the templates, stylesheets, and theme script
+```
+
 A few specs also check real faces, such as whether each face's generated Clay components and thumbnails are up to date. They skip here and run in a repo that mounts the engine at `lib/` beside its `watchfaces/`.
 
 ## Docs
 
-The API docs are built with Doxygen 1.18.0 from the doc comments in `c/`. An older Doxygen ignores settings the Doxyfile uses. Node has to be on the path too, since the licence pages go through a small script while Doxygen reads them.
+The docs site is built from four parts. Doxygen 1.18.0 builds the C docs from the doc comments in `c/`, TypeDoc builds the TypeScript docs from the exported code in `ts/`, and both test suites write a coverage report. A small script then builds the home page from this README, the changelog, the notices, and the licences. An older Doxygen ignores settings the Doxyfile uses.
+
+To build it locally, run these from the repo root in this order. Doxygen, `make`, and gcovr need WSL or Linux.
 
 ```sh
-doxygen             # from the repo root
+npm ci --prefix docs           # TypeDoc and marked, kept out of the engine's own install
+doxygen                        # the C docs
+npm --prefix docs run ts       # the TypeScript docs
+npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
+make -C c/spec coverage        # the C coverage report, which needs gcovr
+npm --prefix docs run site     # the home page and the pages around it, last since it reads both coverage reports
 ```
 
-The site lands in `docs/doxygen/dist/`, which git ignores. CI fails a build with any Doxygen warning, and main publishes the site to [GitHub Pages](https://aklitbo.github.io/pebble-watchface-engine/).
+The [`docs/` README](docs/README.md) covers that folder's layout, its own scripts, and how the shared bar reaches every page. The site lands in `docs/site/dist/`, which git ignores. CI fails a build with any Doxygen or TypeDoc warning, and main publishes the site to [GitHub Pages](https://aklitbo.github.io/pebble-watchface-engine/).
 
 ## CI
 
 * **`engine-ci.yml`**: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.
-* **`doxygen-pages-publish.yml`**: builds the docs on every PR and publishes them from main.
+* **`docs-site-publish.yml`**: builds the docs site on every PR and publishes it from main.
 
 ## License
 

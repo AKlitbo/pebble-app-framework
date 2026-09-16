@@ -1,0 +1,215 @@
+/* The bar across the top of every page on the docs site.
+ *
+ * The home page and the site's own pages carry it from their templates. build-site.ts puts it into every
+ * page Doxygen, TypeDoc, gcovr, and Vitest write. So it sits inside stylesheets it does not control, and it
+ * sets its own colours, fonts, and spacing rather than inheriting them.
+ *
+ * The palette is the one in site.css. theme.js puts dark-mode on the html element of every page, and the
+ * bar reads that.
+ */
+
+.site-bar {
+  --bar-paper: #fbfaf7;
+  --bar-ink: #16151a;
+  --bar-muted: #605c55;
+  --bar-rule: #d8d4cb;
+  --bar-signal: #b33100;
+
+  position: relative;
+  z-index: 100;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 20px;
+  background: var(--bar-paper);
+  border: 0;
+  border-bottom: 1.5px solid var(--bar-ink);
+  color: var(--bar-ink);
+  font:
+    500 13px/1.2 'IBM Plex Mono',
+    ui-monospace,
+    'Cascadia Mono',
+    Consolas,
+    monospace;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+}
+
+html.dark-mode .site-bar {
+  --bar-paper: #1b1a1e;
+  --bar-ink: #e4e1da;
+  --bar-muted: #9a968e;
+  --bar-rule: #2e2c33;
+  --bar-signal: #ff4700;
+}
+
+.site-bar *,
+.site-bar *::before,
+.site-bar *::after {
+  box-sizing: border-box;
+}
+
+/* the link colours are marked important, since a tool's own link rules can carry an id and outrank these */
+.site-bar a,
+.site-bar a:link,
+.site-bar a:visited {
+  color: inherit !important;
+  text-decoration: none;
+  background: none;
+  box-shadow: none;
+}
+
+.site-bar a:focus-visible,
+.site-bar button:focus-visible {
+  outline: 2px solid var(--bar-signal);
+  outline-offset: 2px;
+}
+
+.site-bar-home {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.site-bar-home img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+
+.site-bar a.site-bar-home:hover {
+  color: var(--bar-signal) !important;
+}
+
+/* the links and the GitHub link pin their font, since Doxygen sets its own on every div inside #top */
+.site-bar-links,
+.site-bar .site-bar-links a,
+.site-bar .site-bar-github {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace !important;
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+}
+
+.site-bar-links {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.site-bar .site-bar-links a {
+  padding: 6px 10px;
+  border: 1.5px solid transparent;
+  color: var(--bar-muted) !important;
+  white-space: nowrap;
+}
+
+.site-bar .site-bar-links a:hover {
+  color: var(--bar-signal) !important;
+}
+
+/* the section you are in is filled in, ink behind text the colour of the paper */
+.site-bar .site-bar-links a[aria-current='page'] {
+  background: var(--bar-ink) !important;
+  border-color: var(--bar-ink);
+  color: var(--bar-paper) !important;
+}
+
+/* the link to the repo, kept beside the toggle rather than in with the sections
+   the mark is GitHub's own from Octicons, drawn in the text colour */
+.site-bar .site-bar-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1.5px solid transparent;
+  color: var(--bar-muted) !important;
+  white-space: nowrap;
+}
+
+.site-bar .site-bar-github svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: currentColor;
+}
+
+.site-bar .site-bar-github:hover {
+  color: var(--bar-signal) !important;
+}
+
+/* a square button like the watch's own, with a screen half lit */
+.site-bar .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 10px;
+  background: var(--bar-paper);
+  border: 1.5px solid var(--bar-ink);
+  border-radius: 0;
+  color: var(--bar-ink);
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.site-bar .theme-toggle:hover {
+  border-color: var(--bar-signal);
+  color: var(--bar-signal);
+}
+
+.site-bar .theme-toggle:active {
+  transform: translate(1px, 1px);
+}
+
+.site-bar .theme-toggle svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.site-bar .theme-toggle .lit {
+  fill: currentColor;
+}
+
+.site-bar .theme-toggle .edge {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+/* on a phone the logo replaces the name, and the links take a row of their own that scrolls sideways */
+@media (max-width: 640px) {
+  .site-bar {
+    padding: 8px 16px;
+  }
+
+  .site-bar-home span {
+    display: none;
+  }
+
+  .site-bar-links {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .site-bar .site-bar-github {
+    margin-left: auto;
+  }
+}

@@ -1,0 +1,83 @@
+/* The TypeScript docs. The look, laid over TypeDoc's default theme.
+ *
+ * TypeDoc keeps its colours in --light-color-* and --dark-color-* variables on :root and picks one set
+ * for the theme in use, so this file hands it different values rather than restyling its rules. The
+ * values are the palette from docs/doxygen/pebble.css and docs/site/site.css. A palette change lands
+ * in all three.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --light-color-background: #f2f0eb;
+  --light-color-background-secondary: #fbfaf7;
+  --light-color-background-active: #d8d4cb;
+  --light-color-active-menu-item: #d8d4cb;
+  --light-color-text: #16151a;
+  --light-color-contrast-text: #16151a;
+  --light-color-text-aside: #605c55;
+  --light-color-link: #b33100;
+  --light-color-accent: #d8d4cb;
+  --light-color-focus-outline: #b33100;
+
+  /* TypeDoc's colours for each kind of symbol are picked for white, and a few fall under 4.5:1 on the
+     warmer paper here, so each is a shade darker */
+  --light-color-ts-accessor: #a82e2e;
+  --light-color-ts-class: #185c9f;
+  --light-color-ts-enum: #665a0f;
+  --light-color-ts-interface: #0b6b1c;
+  --light-color-ts-keyword: #0458b0;
+  --light-color-ts-method: #a02d72;
+  --light-color-ts-project: #8f0ea3;
+  --light-color-ts-property: #83491f;
+  --light-color-ts-reference: #b01f50;
+  --light-color-ts-type-alias: #ac0e5a;
+  --light-color-ts-type-parameter: #87490a;
+  --light-color-ts-variable: #2f47c9;
+
+  --dark-color-background: #121114;
+  --dark-color-background-secondary: #1b1a1e;
+  --dark-color-background-active: #2e2c33;
+  --dark-color-active-menu-item: #2e2c33;
+  --dark-color-text: #e4e1da;
+  --dark-color-contrast-text: #e4e1da;
+  --dark-color-text-aside: #9a968e;
+  --dark-color-link: #ff4700;
+  --dark-color-accent: #2e2c33;
+  --dark-color-focus-outline: #ff4700;
+}
+
+body {
+  font-family:
+    'IBM Plex Sans',
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+}
+
+/* a link inside a signature or a line of text is told apart by more than its colour */
+.tsd-signature a,
+.tsd-typography a,
+.tsd-generator a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* the shared bar across the top of the site carries the one theme toggle, so TypeDoc's own setting stays hidden */
+.tsd-theme-toggle {
+  display: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.tsd-signature,
+code,
+pre {
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}

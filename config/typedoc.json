@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "Pebble Watchface Engine: Phone API",
+  "entryPoints": ["../ts"],
+  "entryPointStrategy": "expand",
+  "exclude": ["../ts/**/*.spec.ts", "../ts/**/*.d.ts", "../ts/clay/builder/**"],
+  "tsconfig": "../tsconfig.json",
+  "out": "../docs/site/dist/ts",
+  "readme": "none",
+  "excludeInternal": true,
+  "intentionallyNotExported": ["AppMessageDict"],
+  "treatWarningsAsErrors": true,
+  "customCss": "../docs/typedoc/pebble.css"
+}

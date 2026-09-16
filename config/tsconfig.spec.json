@@ -20,9 +20,11 @@
     "../../src/pkjs/generated.d.ts",
     "../../watchfaces/**/src/pkjs/generated.d.ts"
   ],
+  // the docs site specs import packages only the docs install has, so docs/tsconfig.json checks them
   "exclude": [
     "../node_modules",
     "../../node_modules",
-    "../../targets"
+    "../../targets",
+    "../docs"
   ]
 }

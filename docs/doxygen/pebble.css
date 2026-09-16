@@ -24,9 +24,9 @@ html {
   --pb-ink: #16151a;
   --pb-ink-muted: #605c55;
   --pb-rule: #d8d4cb;
-  
+
   /* Pebble's orange red, taken down a bit so it works on a pale background. */
-  --pb-signal: #c43600;
+  --pb-signal: #b33100;
   --pb-signal-hover: #9c2b00;
   --pb-dither: rgba(22, 21, 26, 0.22);
   --pb-odd: rgba(22, 21, 26, 0.03);
@@ -228,8 +228,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6,
-#projectname,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 div.header .title,
 .memtitle {
   font-family: var(--pb-mono);
@@ -286,22 +290,24 @@ h2.groupheader {
   background-position: bottom left;
 }
 
-#projectname {
-  font-size: 1.05rem;
-  letter-spacing: -0.03em;
+/* the line naming this part of the site, set the way TypeDoc sets its title on the TypeScript pages
+   doxygen-awesome's link colour outranks an id rule here, so the colours are marked important */
+#projectname a {
+  color: var(--pb-ink) !important;
+  font-family: var(--pb-sans);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-decoration: none;
 }
 
-#projectbrief {
-  font-family: var(--pb-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pb-ink-muted);
+#projectname a:hover {
+  color: var(--pb-signal) !important;
 }
 
-#projectlogo img {
-  width: 26px;
-  height: 26px;
+/* the shared bar across the top of the site carries the one theme toggle, so doxygen-awesome's stays hidden */
+doxygen-awesome-dark-mode-toggle {
+  display: none !important;
 }
 
 #MSearchBox {
@@ -313,6 +319,13 @@ h2.groupheader {
 #MSearchField {
   font-family: var(--pb-mono);
   font-size: 0.85rem;
+  color: var(--pb-ink);
+}
+
+/* Doxygen's own grey for the search placeholder falls under 4.5:1 on the raised paper */
+#MSearchField::placeholder {
+  color: var(--pb-ink-muted);
+  opacity: 1;
 }
 
 #MSearchBox:focus-within {

@@ -40,7 +40,9 @@ export default defineConfig({
     include: ['**/*.spec.ts', '.github/actions/**/*.spec.js', '.github/shared/**/*.spec.js'],
     // targets/ holds build-time copies of the shared sources including the specs
     // the real specs live at the root so skip the staged duplicates
-    exclude: ['**/node_modules/**', '**/build/**', 'targets/**'],
+    // the docs site tools import packages only the docs install has, so they run on their own config
+    // and a repo of faces never needs those packages to run its tests
+    exclude: ['**/node_modules/**', '**/build/**', 'targets/**', `${ENGINE_PREFIX}docs/**`],
     // dotenv/config reads .env for the live-API vars
     setupFiles: ['dotenv/config'],
     // generous enough to cover a live API round-trip when those blocks are on

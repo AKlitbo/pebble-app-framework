@@ -1,8 +1,11 @@
 # build output, including the host C test binaries under c/spec/build/
 build/
 
-# the Doxygen html, built next to the theme it uses and rebuilt from the source on every run
-docs/doxygen/dist/
+# the docs site, rebuilt from the source on every run
+docs/site/dist/
+
+# a local npm run test:coverage report
+coverage/
 
 # Python
 __pycache__/

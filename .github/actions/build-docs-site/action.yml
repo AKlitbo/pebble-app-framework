@@ -1,0 +1,49 @@
+name: Build Docs Site
+description: >
+  Builds the parts of the docs site that Doxygen does not, all into docs/site/dist. That is the TypeScript
+  docs from TypeDoc, a coverage report for each test suite, and the site's own pages. Each TypeDoc warning
+  lands as an annotation on the file it names, and a build with any warning fails. Both coverage figures go
+  on the job summary. Linux runners only.
+
+inputs:
+  typedoc-options:
+    description: The TypeDoc options file to build from, relative to the repo root.
+    required: false
+    default: config/typedoc.json
+  vitest-config:
+    description: The Vitest config to measure coverage with, relative to the repo root.
+    required: false
+    default: config/vitest.config.ts
+  gcovr-version:
+    description: The gcovr release to install for the C coverage report, such as 8.6.
+    required: false
+    default: '8.6'
+
+runs:
+  using: composite
+  steps:
+    # pipx ships on the runner, and so do gcc and make
+    - name: Install gcovr
+      shell: bash
+      env:
+        VERSION: ${{ inputs.gcovr-version }}
+      run: pipx install "gcovr==$VERSION"
+
+    # TypeDoc and marked sit in the docs package's own install, which a repo of faces never needs
+    - name: Install the Docs Packages
+      shell: bash
+      run: npm ci --prefix docs
+
+    # Vitest comes from the repo's own install, so the job runs npm ci before this action
+    - name: Build the Docs Site
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        TYPEDOC_OPTIONS: ${{ inputs.typedoc-options }}
+        VITEST_CONFIG: ${{ inputs.vitest-config }}
+      with:
+        # the inputs reach the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'build-docs-site.js'));
+          return run({ core, exec });

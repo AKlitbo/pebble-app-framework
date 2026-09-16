@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{title}} · Pebble Watchface Engine</title>
+    <link rel="icon" href="{{root}}favicon.svg" type="image/svg+xml" />
+    <script src="{{root}}theme.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="{{root}}site.css" />
+    <link rel="stylesheet" href="{{root}}site-bar.css" />
+  </head>
+  <body>
+    {{siteBar}}
+    <div class="wrap">
+      <main class="page">
+        <h1>{{title}}</h1>
+        <div class="readme">{{body}}</div>
+      </main>
+
+      {{footer}}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+# the built site, rebuilt from the source on every run
+site/dist/
+
+# the docs package's own install
+node_modules/

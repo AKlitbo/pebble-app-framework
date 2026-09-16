@@ -26,7 +26,14 @@ CORE_SRC = $(shell find ../core -name '*.c' ! -name '*.spec.c')
 # every colocated spec anywhere under lib/c (../ from here is lib/c)
 SPECS = $(shell find .. -name '*.spec.c')
 
-.PHONY: test clean
+# a coverage build runs the same specs with no optimizing, so a line marked as run really ran
+# the sources are named relative to this folder, and gcov later runs from somewhere else, so
+# -fprofile-abs-path records each one by its full path
+COVERAGE_BUILD = $(BUILD)/coverage
+COVERAGE_OUT  ?= ../../docs/site/dist/coverage/c
+COVERAGE_FLAGS = $(filter-out -O%,$(CFLAGS)) -O0 -g --coverage -fprofile-abs-path
+
+.PHONY: test coverage clean
 .DEFAULT_GOAL := test
 
 # compile each spec fresh, then run it right away. every spec gets the whole of core, plus its own
@@ -45,6 +52,17 @@ test:
 	  $$bin || fail=1; \
 	done; \
 	exit $$fail
+
+# runs the suite as a coverage build, then has gcovr write the report the docs site publishes
+# a failing spec stops here before gcovr runs, so a red suite never publishes a report
+coverage:
+	@rm -rf $(COVERAGE_BUILD)
+	@mkdir -p $(COVERAGE_OUT)
+	@$(MAKE) --no-print-directory test BUILD=$(COVERAGE_BUILD) CFLAGS="$(COVERAGE_FLAGS)"
+	gcovr --root ../.. --object-directory $(COVERAGE_BUILD) \
+	  --filter ../core/ --filter ../pebble/ --exclude '.*\.spec\.c$$' \
+	  --html-nested $(COVERAGE_OUT)/index.html --html-title "Host C Specs" \
+	  --json-summary $(COVERAGE_OUT)/summary.json
 
 clean:
 	rm -rf $(BUILD)

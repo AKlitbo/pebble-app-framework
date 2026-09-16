@@ -54,6 +54,15 @@ jobs:
       - name: Test
         uses: ./.github/actions/verify-vitest
 
+      # the docs site tools import packages only the docs install has, so their specs run on their own config
+      - name: Install the Docs Packages
+        run: npm ci --prefix docs
+
+      - name: Test the Docs Site Tools
+        uses: ./.github/actions/verify-vitest
+        with:
+          config: docs/vitest.config.ts
+
   lint:
     name: Lint the TypeScript and the Action Scripts
     runs-on: ubuntu-latest
@@ -74,6 +83,18 @@ jobs:
       - name: Lint
         uses: ./.github/actions/verify-eslint
 
+      # Prettier keeps the docs site's templates, stylesheets, and theme script tidy
+      # it sits in the docs package's own install, so a repo of faces never needs it
+      - name: Install the Docs Packages
+        run: npm ci --prefix docs
+
+      - name: Check the Docs Site Formatting
+        run: npm --prefix docs run format:check
+
+      # the engine's own config leaves plain JavaScript out, so the site's browser script is linted here
+      - name: Lint the Docs Site Script
+        run: npm --prefix docs run lint
+
   typecheck:
     name: Typecheck the TypeScript Projects
     runs-on: ubuntu-latest
@@ -91,7 +112,12 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      # the same projects npm run typecheck checks, run one at a time so one failure cannot hide the rest
+      # docs/tsconfig.json checks code that imports packages only the docs install has
+      - name: Install the Docs Packages
+        run: npm ci --prefix docs
+
+      # the same projects npm run typecheck and npm run typecheck:docs check, run one at a time so one
+      # failure cannot hide the rest
       - name: Typecheck
         uses: ./.github/actions/verify-typecheck
         with:
@@ -100,3 +126,4 @@ jobs:
             config/tsconfig.builder.json
             config/tsconfig.tools.json
             config/tsconfig.spec.json
+            docs/tsconfig.json

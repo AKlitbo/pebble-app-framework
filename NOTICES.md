@@ -21,3 +21,13 @@ The theme the engine's Doxygen HTML is built with. It only reaches the generated
 - **Source:** <https://github.com/jothepro/doxygen-awesome-css>, release `v2.5.0`
 - **Licence:** MIT. The full text sits beside the files at `docs/doxygen/awesome/LICENSE`
 - **What Ships:** `doxygen-awesome.css`, `doxygen-awesome-darkmode-toggle.js` and `doxygen-awesome-interactive-toc.js`, copied in unchanged. The engine's own look sits on top of them in `docs/doxygen/pebble.css`, so moving to a newer release means copying the three files over again. The toggle's two icons come from Google's Material icons under the Apache License 2.0, as that file notes
+
+## Octicons
+
+The GitHub mark on the docs site's shared bar, beside the link to this repository. It only reaches the generated docs, never a `.pbw`.
+
+- **Source:** <https://github.com/primer/octicons>, the `mark-github-16` icon from release `v19.36.0`
+- **Licence:** MIT. The full text sits at `docs/site/octicons/LICENSE`
+- **What Ships:** the icon's single SVG path, copied in unchanged to `docs/site/templates/site-bar.html`
+
+The mark itself is a GitHub trademark. The site uses it only to link to this repository on GitHub.

@@ -1,0 +1,426 @@
+/* The two coverage reports, restyled to sit on the docs site.
+ *
+ * build-site.ts links this after each report's own stylesheet, so these rules win over theirs.
+ *
+ * gcovr keeps most of its colours in variables on the html element's theme class, so its look is mostly new
+ * values for those. Vitest's report writes its colours straight into its rules, so those are overridden one
+ * by one. Both keep red, yellow, and green for low, medium, and high coverage, in shades that read on
+ * either background.
+ *
+ * If a newer gcovr or Vitest renames a class, that part falls back to the report's own look. Nothing
+ * breaks, and the bar and the page colours still apply.
+ */
+
+:root {
+  --cov-paper: #f2f0eb;
+  --cov-raised: #fbfaf7;
+  --cov-ink: #16151a;
+  --cov-muted: #605c55;
+  --cov-rule: #d8d4cb;
+  --cov-signal: #b33100;
+  --cov-high: #d3e6c4;
+  --cov-high-strong: #3f7d20;
+  --cov-medium: #f1e4b2;
+  --cov-medium-strong: #b88a00;
+  --cov-low: #f1d0d3;
+  --cov-low-strong: #b3261e;
+  --cov-none: #e6e1d8;
+  --cov-code-comment: #605c55;
+  --cov-code-keyword: #aa0055;
+  --cov-code-type: #0055aa;
+  --cov-code-string: #005500;
+  --cov-code-number: #8a4500;
+  --cov-code-preprocessor: #005555;
+  --cov-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --cov-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  color-scheme: light;
+}
+
+html.dark-mode {
+  --cov-paper: #121114;
+  --cov-raised: #1b1a1e;
+  --cov-ink: #e4e1da;
+  --cov-muted: #9a968e;
+  --cov-rule: #2e2c33;
+  --cov-signal: #ff4700;
+  --cov-high: #1e3519;
+  --cov-high-strong: #6fbf4a;
+  --cov-medium: #2f2710;
+  --cov-medium-strong: #e0b43a;
+  --cov-low: #3f1b1e;
+  --cov-low-strong: #ff6b5e;
+  --cov-none: #25232a;
+  --cov-code-comment: #9a968e;
+  --cov-code-keyword: #ff55aa;
+  --cov-code-type: #55aaff;
+  --cov-code-string: #aaff55;
+  --cov-code-number: #ffaa55;
+  --cov-code-preprocessor: #55ffff;
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------- both reports */
+
+html,
+body {
+  background: var(--cov-paper) !important;
+  color: var(--cov-ink) !important;
+}
+
+/* gcovr leaves the browser's own body margin in place, which would inset the shared bar from the edges */
+body {
+  margin: 0 !important;
+  font-family: var(--cov-sans) !important;
+}
+
+a:link,
+a:visited,
+a {
+  color: var(--cov-signal);
+}
+
+h1 {
+  font-family: var(--cov-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+pre,
+code,
+.fraction,
+table.coverage,
+.linecount,
+.linebranch {
+  font-family: var(--cov-mono) !important;
+}
+
+input[type='search'] {
+  background: var(--cov-raised);
+  border: 1px solid var(--cov-rule);
+  color: var(--cov-ink);
+  font: inherit;
+  padding: 2px 6px;
+}
+
+/* ---------------------------------------------------------------- gcovr */
+
+.theme-green,
+.theme-blue {
+  --color-fg-default: var(--cov-ink);
+  --color-fg-muted: var(--cov-muted);
+  --color-canvas-default: var(--cov-paper);
+  --color-canvas-subtle: var(--cov-raised);
+  --color-border-default: var(--cov-rule);
+  --color-border-muted: var(--cov-rule);
+  --color-accent-subtle: var(--cov-raised);
+
+  --high_color: var(--cov-high);
+  --covered_color: var(--cov-high);
+  --medium_color: var(--cov-medium);
+  --partial_covered_color: var(--cov-medium);
+  --low_color: var(--cov-low);
+  --uncovered_color: var(--cov-low);
+  --unknown_color: var(--cov-none);
+  --excluded_color: var(--cov-none);
+  --warning_color: var(--cov-low-strong);
+
+  --takenBranch_color: var(--cov-high-strong);
+  --takenCondition_color: var(--cov-high-strong);
+  --takenDecision_color: var(--cov-high-strong);
+  --invokedCall_color: var(--cov-high-strong);
+  --notTakenBranch_color: var(--cov-low-strong);
+  --notTakenCondition_color: var(--cov-low-strong);
+  --notTakenDecision_color: var(--cov-low-strong);
+  --notInvokedCall_color: var(--cov-low-strong);
+  --uncheckedDecision_color: var(--cov-medium-strong);
+}
+
+/* with the body margin gone, the report keeps its gutter here instead */
+.Layout-main {
+  padding: 20px 20px 40px;
+}
+
+.linebranch,
+.linecondition,
+.linedecision,
+.linecall,
+.linecount,
+.lineblockids {
+  background-color: var(--cov-raised);
+  border-right-color: var(--cov-rule);
+  color: var(--cov-muted);
+}
+
+.linebranchContents,
+.lineconditionContents,
+.linedecisionContents,
+.linecallContents {
+  background: var(--cov-raised);
+  border-color: var(--cov-rule);
+}
+
+#scroll_marker .marker {
+  background: var(--cov-muted);
+}
+
+/* gcovr writes black and blue straight into its summary tables, which disappear on the dark paper */
+table.legend,
+table.legend td.legend,
+table.coverage td,
+table.coverage th,
+table.coverage th[scope='row'] {
+  color: var(--cov-ink);
+}
+
+table.legend td,
+table.coverage th[scope='col'] {
+  color: var(--cov-muted);
+}
+
+table.coverage td {
+  background-color: var(--cov-raised);
+}
+
+div.file-list > span:not(:has(meter)) {
+  color: var(--cov-ink) !important;
+}
+
+/* the line numbers down the side of the source view */
+.lineno {
+  background-color: var(--cov-raised);
+  border-right-color: var(--cov-rule);
+  color: var(--cov-muted);
+}
+
+td.linenos .special,
+span.linenos.special,
+.hll {
+  background-color: var(--cov-medium);
+  color: var(--cov-ink);
+}
+
+/* the source view's syntax colours, taken from the watch's palette the same way the Doxygen pages are */
+.c,
+.ch,
+.cm,
+.c1,
+.cs,
+.cpf {
+  color: var(--cov-code-comment);
+}
+.k,
+.kc,
+.kd,
+.kn,
+.kp,
+.kr {
+  color: var(--cov-code-keyword);
+}
+.kt,
+.nc,
+.nn {
+  color: var(--cov-code-type);
+}
+.s,
+.s1,
+.s2,
+.sa,
+.sb,
+.sc,
+.dl,
+.sd,
+.sh,
+.sx {
+  color: var(--cov-code-string);
+}
+.m,
+.mb,
+.mf,
+.mh,
+.mi,
+.mo,
+.il,
+.se {
+  color: var(--cov-code-number);
+}
+.cp {
+  color: var(--cov-code-preprocessor);
+}
+.o,
+.ow,
+.w {
+  color: var(--cov-muted);
+}
+.nf,
+.fm,
+.nb,
+.bp,
+.nv,
+.no,
+.vc,
+.vg,
+.vi,
+.vm,
+.nl {
+  color: var(--cov-ink);
+}
+
+/* ---------------------------------------------------------------- Vitest */
+
+.quiet {
+  color: var(--cov-muted);
+}
+
+/* Vitest fades every link inside .quiet, which drops the source view's line numbers below readable */
+.quiet a,
+.quiet a:link,
+.quiet a:visited {
+  opacity: 1;
+  color: var(--cov-muted);
+}
+
+/* a link in running text, such as the footer or the folder trail in a page title, is told apart by more than its colour */
+.footer a,
+h1 a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fraction {
+  background: var(--cov-raised);
+  border: 1px solid var(--cov-rule);
+  border-radius: 0;
+  color: var(--cov-muted);
+}
+
+div.path a:link,
+div.path a:visited {
+  color: var(--cov-ink);
+}
+
+.coverage-summary tr,
+.coverage-summary tbody,
+.coverage-summary td,
+.keyline-all {
+  border-color: var(--cov-rule) !important;
+}
+
+/* the file names sit on the red, yellow, and green cells, where the signal orange falls short */
+.coverage-summary td.file a {
+  color: var(--cov-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.coverage-summary td.empty,
+table.coverage td.line-count,
+table.coverage td.line-coverage {
+  color: var(--cov-muted);
+}
+
+.low,
+.cline-no,
+.cstat-no,
+.fstat-no {
+  background: var(--cov-low);
+}
+
+.medium {
+  background: var(--cov-medium);
+}
+
+.high,
+.cline-yes,
+.cstat-yes {
+  background: var(--cov-high);
+}
+
+.red.solid,
+.status-line.low,
+.low .cover-fill {
+  background: var(--cov-low-strong);
+}
+
+.status-line.medium,
+.medium .cover-fill {
+  background: var(--cov-medium-strong);
+}
+
+.status-line.high,
+.high .cover-fill {
+  background: var(--cov-high-strong);
+}
+
+.low .chart {
+  border-color: var(--cov-low-strong);
+}
+.medium .chart {
+  border-color: var(--cov-medium-strong);
+}
+.high .chart {
+  border-color: var(--cov-high-strong);
+}
+
+.cover-empty {
+  background: var(--cov-raised);
+}
+
+/* the highlights keep a pale fill so the code's own colours still read on them, and take a strong edge to stand out */
+.cbranch-no {
+  background: var(--cov-medium) !important;
+  box-shadow: inset 0 0 0 1px var(--cov-medium-strong);
+  color: var(--cov-ink);
+}
+
+.highlighted,
+.highlighted .cstat-no,
+.highlighted .fstat-no,
+.highlighted .cbranch-no {
+  background: var(--cov-low) !important;
+  box-shadow: inset 0 0 0 2px var(--cov-low-strong);
+  color: var(--cov-ink);
+}
+
+.cstat-skip,
+.fstat-skip,
+.cbranch-skip,
+span.cline-neutral {
+  background: var(--cov-none) !important;
+  color: var(--cov-muted) !important;
+}
+
+.missing-if-branch {
+  background: var(--cov-ink);
+  color: var(--cov-paper);
+}
+
+/* prettify's syntax colours, which Vitest's source view uses */
+.pln,
+.pun,
+.opn,
+.clo {
+  color: var(--cov-ink);
+}
+.com {
+  color: var(--cov-code-comment) !important;
+}
+.kwd,
+.tag {
+  color: var(--cov-code-keyword);
+}
+.typ,
+.atn,
+.dec,
+.var {
+  color: var(--cov-code-type);
+}
+.str,
+.atv {
+  color: var(--cov-code-string);
+}
+.lit {
+  color: var(--cov-code-number);
+}
+.fun {
+  color: var(--cov-ink);
+}

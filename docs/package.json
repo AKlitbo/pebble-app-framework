@@ -1,0 +1,24 @@
+{
+  "name": "pebble-watchface-engine-docs",
+  "author": "Null Syntax",
+  "description": "The tools that build the engine's docs site. Kept out of the engine's own package.json so a repo of faces never installs them.",
+  "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=24.2"
+  },
+  "scripts": {
+    "test": "vitest run --config vitest.config.ts",
+    "lint": "eslint --config eslint.config.ts site",
+    "typecheck": "tsc -p tsconfig.json",
+    "format": "prettier --write \"site/**/*.{html,css,js}\" typedoc/pebble.css doxygen/pebble.css",
+    "format:check": "prettier --check \"site/**/*.{html,css,js}\" typedoc/pebble.css doxygen/pebble.css",
+    "ts": "typedoc --options ../config/typedoc.json",
+    "site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-site.ts"
+  },
+  "devDependencies": {
+    "marked": "^18.0.13",
+    "prettier": "^3.9.6",
+    "typedoc": "^0.28.20"
+  }
+}
