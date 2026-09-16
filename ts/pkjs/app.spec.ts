@@ -16,7 +16,8 @@
 import Module from 'node:module';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import app from './app';
-import type { StockQuote } from '../stock/util';
+import stocks from '../stock/feature';
+import calendar from '../calendar/feature';
 
 // stands in for the per-face generated message_keys: each key name maps to
 // itself so payloads and stored config use readable string keys
@@ -490,173 +491,6 @@ describe('runWeatherRound', () => {
   });
 });
 
-describe('parseSymbols', () => {
-  /** Whitespace and case sloppiness in the setting must clean up or the watch gets a bad symbol. */
-  test('trims and uppercases each symbol', () => {
-    const result = app.parseSymbols('aapl, msft ,  tsla');
-
-    expect(result).toEqual(['AAPL', 'MSFT', 'TSLA']);
-  });
-
-  /** A junk entry (spaces, digits, too long) must be dropped so it never reaches the provider. */
-  test('drops entries that are not valid tickers', () => {
-    const result = app.parseSymbols('AAPL, 123, ,TOOLONGSYMBOLXX, BRK.B');
-
-    expect(result).toEqual(['AAPL', 'BRK.B']);
-  });
-
-  /** A punctuation-only entry has no letter, so it must be dropped before it wastes a provider call. */
-  test('drops a punctuation-only entry', () => {
-    const result = app.parseSymbols('AAPL, ., -, ...');
-
-    expect(result).toEqual(['AAPL']);
-  });
-
-  /** More than the strip can hold must be capped so the wire never overruns the store. */
-  test('caps the list at the strip size', () => {
-    const result = app.parseSymbols('A,B,C,D,E,F');
-
-    expect(result).toHaveLength(4);
-  });
-});
-
-describe('runStockRound', () => {
-  // a fresh cross-round state for each test. it is the object getStocks carries in the closure
-  function freshState() {
-    return { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '' };
-  }
-
-  /** A symbol whose fetch throws right away must not leave the in-flight flag stuck, or the watchlist freezes for the whole JS session (the 0.10 freeze). */
-  test('clears the in-flight flag when a symbol fetch throws right away', () => {
-    const state = freshState();
-    const sendStocks = vi.fn();
-    const deps = {
-      fetchQuote: () => { throw new Error('bad url'); },
-      sendStocks, now: () => 100, timeoutMs: 1000,
-    };
-
-    app.runStockRound(state, ['AAPL', 'MSFT'], false, deps);
-
-    expect(state.inFlight).toBe(false);
-    expect(sendStocks).toHaveBeenCalledTimes(1);
-  });
-
-  describe('while a round is in flight', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    /** If a provider never calls back the watchdog must clear the in-flight flag, otherwise every future fetch is dropped at the in-flight guard. */
-    test('clears the in-flight flag via the watchdog when a quote never calls back', () => {
-      const state = freshState();
-      const sendStocks = vi.fn();
-      const deps = {
-        fetchQuote: () => {}, // never invokes onQuote
-        sendStocks, now: () => 100, timeoutMs: 1000,
-      };
-
-      app.runStockRound(state, ['AAPL'], false, deps);
-      expect(state.inFlight).toBe(true);
-      vi.advanceTimersByTime(1000);
-
-      expect(state.inFlight).toBe(false);
-      expect(sendStocks).toHaveBeenCalledTimes(1);
-    });
-
-    /** A second unforced trigger mid-round (ready plus the watch's STOCK_REQUEST) must be dropped, or the round double-spends the provider quota. */
-    test('ignores a second unforced round while one is in flight', () => {
-      const state = freshState();
-      const started: Array<(q: StockQuote) => void> = [];
-      const deps = {
-        fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => started.push(onQuote), // hold the callbacks open
-        sendStocks: vi.fn(), now: () => 100, timeoutMs: 1000,
-      };
-
-      app.runStockRound(state, ['AAPL'], false, deps);
-      app.runStockRound(state, ['AAPL'], false, deps);
-
-      expect(started).toHaveLength(1);
-    });
-
-    /** A forced fetch after a settings change must take over a running round, and the old round's late callback must not send stale symbols to the watch. */
-    test('lets a forced round take over one still running and ignores the stale callback', () => {
-      const state = freshState();
-      const sendStocks = vi.fn();
-      const callbacks: Array<(q: StockQuote) => void> = [];
-      const deps = {
-        fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => callbacks.push(onQuote),
-        sendStocks, now: () => 100, timeoutMs: 1000,
-      };
-
-      app.runStockRound(state, ['AAPL'], false, deps);
-      app.runStockRound(state, ['AAPL'], true, deps);
-      callbacks[0]({ ok: true, symbol: 'AAPL', price: 1, change: 0, changePercent: 0, asOf: '' });
-      const supersededSend = sendStocks.mock.calls.length;
-      callbacks[1]({ ok: true, symbol: 'AAPL', price: 2, change: 0, changePercent: 0, asOf: '' });
-
-      expect(supersededSend).toBe(0);
-      expect(sendStocks).toHaveBeenCalledTimes(1);
-      expect(state.inFlight).toBe(false);
-    });
-
-    /**
-     * The watchdog of a round a forced round took over must not close the new round when it fires.
-     *
-     * The old round's timer is still armed when the forced round starts. If it closed the round
-     * anyway, the watch would get a strip of ERR quotes straight away, the new round's quotes
-     * would be thrown away, and the new round's own timer would send a second strip.
-     */
-    test('keeps the forced round open when the round it took over times out', () => {
-      const state = freshState();
-      const sendStocks = vi.fn();
-      const deps = {
-        fetchQuote: () => {}, // never invokes onQuote
-        sendStocks, now: () => 100, timeoutMs: 1000,
-      };
-      app.runStockRound(state, ['AAPL'], false, deps);
-      vi.advanceTimersByTime(500);
-      app.runStockRound(state, ['AAPL'], true, deps);
-
-      vi.advanceTimersByTime(500);
-
-      expect(state.inFlight).toBe(true);
-      expect(sendStocks).not.toHaveBeenCalled();
-    });
-  });
-
-  /** The throttle time is set from the first good quote, so a later poll knows data was already captured and does not spend quota again. */
-  test('records the throttle time from the first good quote', () => {
-    const state = freshState();
-    const deps = {
-      fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => onQuote({ ok: true, symbol: symbol, price: 1, change: 0, changePercent: 0, asOf: '2026-07-01' }),
-      sendStocks: vi.fn(), now: () => 4242, timeoutMs: 1000,
-    };
-
-    app.runStockRound(state, ['AAPL'], false, deps);
-
-    expect(state.lastFetchMs).toBe(4242);
-    expect(state.lastAsOf).toBe('2026-07-01');
-  });
-
-  /** An all-failed round must leave the gate unstamped so the next poll retries instead of freezing the watchlist on a transient error. */
-  test('does not stamp the gate when every quote failed', () => {
-    const state = freshState();
-    const deps = {
-      fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => onQuote({ ok: false, symbol: '', status: 'RATE LIMIT', price: 0, change: 0, changePercent: 0, asOf: '' }),
-      sendStocks: vi.fn(), now: () => 4242, timeoutMs: 1000,
-    };
-
-    app.runStockRound(state, ['AAPL'], false, deps);
-
-    expect(state.lastFetchMs).toBe(0);
-    expect(state.inFlight).toBe(false);
-  });
-});
-
 describe('startPebbleApp weather', () => {
   type Listener = (event?: unknown) => void;
   type LoadFn = (request: string, ...args: unknown[]) => unknown;
@@ -840,11 +674,12 @@ describe('startPebbleApp stock and calendar', () => {
 
   const FEED_URL = 'https://example.com/calendar.ics';
 
-  // saves the settings and the stock cache the app reads when it starts, then starts it
-  function start(settings: Record<string, unknown>, savedStrip: number[] | null = null) {
+  // saves the settings and the stock cache the app reads when it starts, then starts it with the
+  // features a face like Gridlock opts into
+  function start(settings: Record<string, unknown>, savedStrip: number[] | null = null, features = [stocks, calendar]) {
     localStorage.setItem('clay-settings', JSON.stringify(settings));
     localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs: 0, strip: savedStrip }));
-    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}), features });
   }
 
   // every value sent to the watch under one key, in the order it went
@@ -924,6 +759,21 @@ describe('startPebbleApp stock and calendar', () => {
     listeners.ready();
 
     expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
+  });
+
+  /**
+   * A face that opts into no features must not fetch or send stocks or the calendar, even when it
+   * declares their keys. Otherwise opting in means nothing, and every face goes back to paying for both.
+   */
+  test('sends no stock or calendar strip for a face that lists no features', () => {
+    start({ CALENDAR_ICS_URL: FEED_URL, STOCK_SYMBOLS: 'AAPL' }, SAVED_STRIP, []);
+
+    listeners.ready();
+    listeners.appmessage({ payload: { STOCK_REQUEST: 1, CALENDAR_REQUEST: 1 } });
+
+    expect(sendsOf('STOCK_STRIP')).toEqual([]);
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
+    expect(sent).toEqual([]);
   });
 });
 
@@ -1036,50 +886,6 @@ describe('readBool', () => {
   /** An unset setting must take the fallback so a defaulted-on toggle starts on. */
   test('applies the fallback when the value is unset', () => {
     const result = app.readBool(undefined, true);
-
-    expect(result).toBe(true);
-  });
-});
-
-describe('stockSettingsSnapshot', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  /** The snapshot must JSON-encode the stored stock keys so a later save can be diffed by content. */
-  test('json-encodes the stock keys read from the store', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'finnhub' }));
-
-    const result = app.stockSettingsSnapshot();
-
-    expect(result[app.STOCK_KEYS.indexOf('STOCK_PROVIDER')]).toBe('"finnhub"');
-  });
-});
-
-describe('stockSettingsChanged', () => {
-  /** With no snapshot (the page never reported opening) the safe default is to refetch. */
-  test('returns true when there is no prior snapshot', () => {
-    const result = app.stockSettingsChanged(null, ['"finnhub"']);
-
-    expect(result).toBe(true);
-  });
-
-  /** Identical snapshots mean only non-stock settings changed, so no refetch. */
-  test('returns false when every stock key is unchanged', () => {
-    const before = app.STOCK_KEYS.map(() => '"same"');
-
-    const result = app.stockSettingsChanged(before, before.slice());
-
-    expect(result).toBe(false);
-  });
-
-  /** A single differing stock key must trigger a refetch. */
-  test('returns true when a stock key differs', () => {
-    const before = app.STOCK_KEYS.map(() => '"a"');
-    const after = before.slice();
-    after[0] = '"b"';
-
-    const result = app.stockSettingsChanged(before, after);
 
     expect(result).toBe(true);
   });

@@ -7,40 +7,20 @@
  */
 
 // the `any`s that remain in this file sit at two genuinely-dynamic boundaries: the
-// Clay-settings readers (getConfig/readValue/readBool/validCoord/isString/isEnum/asBool/
-// getManualLocation) that read whatever the user saved to localStorage and the
-// face-generated message_keys map plus the AppMessage dict it keys
+// Clay-settings readers (validCoord/isString/isEnum/asBool/getManualLocation) that read whatever
+// the user saved to localStorage and the face-generated message_keys map plus the AppMessage dict
+// it keys
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import weather from '../weather/weather';
 import weatherUtil from '../weather/util';
-import stock from '../stock/stock';
 import locationComponent from '../clay/location-component';
-import ical from '../calendar/ical';
-import type { CalendarEvent } from '../calendar/ical';
 import wire from './wire';
 import { createSendQueue } from './send-queue';
-import schedule from '../stock/schedule';
-import stockCache from '../stock/cache';
+import { request } from './request';
+import { getConfig, readBool, readValue, settingsChanged, settingsSnapshot } from './settings-store';
+import type { Feature, FeatureHooks } from './feature';
 import type { WeatherResult } from '../weather/util';
-import stockUtil from '../stock/util';
-import type { StockQuote } from '../stock/util';
 import type { ClayConfigItem } from '../clay/types';
-
-/** Fetch state carried across stock rounds, mutated in place by runStockRound. */
-interface StockState {
-  inFlight: boolean;
-  round: number;
-  lastFetchMs: number;
-  lastAsOf: string;
-}
-
-/** The helpers runStockRound needs, passed in so the specs can swap them. */
-interface StockDeps {
-  fetchQuote: (symbol: string, onQuote: (result: StockQuote) => void) => void;
-  sendStocks: (results: StockQuote[]) => void;
-  now: () => number;
-  timeoutMs: number;
-}
 
 /** The weather round state runWeatherRound carries between calls. */
 interface WeatherState {
@@ -64,21 +44,15 @@ interface StartOptions {
   seedColorKeys?: string[];
   seedBoolKeys?: string[];
   customClay?: unknown;
+  // the parts of the runtime only some faces use, such as stocks and the calendar
+  features?: Feature[];
 }
 
 // the weather settings that mean a refetch is worth it after the config closes
 const WEATHER_KEYS = ['WEATHER_PROVIDER', 'WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'];
 
-// the stock settings that mean a refetch is worth it after the config closes
-const STOCK_KEYS = ['STOCK_PROVIDER', 'STOCK_API_KEY', 'STOCK_SYMBOLS'];
-
-// how long after the config page closes a changed weather, stock, or calendar setting waits to refetch
+// how long after the config page closes a changed setting waits to refetch
 const SETTINGS_REFETCH_DELAY_MS = 250;
-
-// a ticker is upper letters plus dot and dash (BRK.B and other suffixes) up to 12 long.
-// the lookahead demands at least one letter so a punctuation-only entry (a "." or "-") can't
-// slip through and burn a provider call on a bogus symbol
-const STOCK_SYMBOL_RE = /^(?=.*[A-Z])[A-Z.-]{1,12}$/;
 
 // extra weather readings that map a message key to its field on the provider result
 const EXTRA_WEATHER_FIELDS = [
@@ -102,26 +76,6 @@ const EXTRA_WEATHER_FIELDS = [
 ];
 
 /**
- * Splits the comma list of tickers into clean uppercase symbols. A junk or
- * over-long entry is dropped, and the list is capped at the strip size.
- *
- * @param raw The comma-separated symbols as saved in Clay, or anything else that landed there.
- * @return The cleaned, capped list of symbols.
- */
-function parseSymbols(raw: unknown): string[] {
-  return String(raw || '')
-    .split(',')
-    .map((symbol) => symbol.trim().toUpperCase())
-    .filter((symbol) => STOCK_SYMBOL_RE.test(symbol))
-    .slice(0, wire.STOCK_MAX_SLOTS);
-}
-
-// backstop for a stock round whose last quote never calls back: without it the in-flight
-// flag would stay stuck and block every future fetch. set above the 15s per-request timeout
-// so normal timeouts resolve on their own first
-const STOCK_ROUND_TIMEOUT_MS = 30 * 1000;
-
-/**
  * Walks the Clay config items and builds a map from each item's message key to its
  * declared default value, so the same defaults apply whether or not the user has
  * opened the settings page yet.
@@ -139,115 +93,6 @@ function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
     }
     return defaults;
   }, {});
-}
-
-/**
- * Fetches a URL with an HTTP GET and reports the result through a callback rather
- * than a promise, since that is what the fetch layer expects everywhere else.
- *
- * @param url The URL to fetch.
- * @param callback Called once with an error, or with null and the response body on success.
- */
-function request(url: string, callback: (err: string | null, body?: string) => void): void {
-  const xhr = new XMLHttpRequest();
-
-  // fire the callback exactly once. the pebble app's XHR doesn't reliably honor xhr.timeout, so
-  // a request can hang forever with no onload/onerror/ontimeout, which strands the whole fetch
-  // (the watch just sits blank). an independent watchdog guarantees the caller always hears back
-  let settled = false;
-  const finish = (err: string | null, body?: string) => {
-    if (settled) {
-      return;
-    }
-    settled = true;
-    clearTimeout(watchdog);
-    // call back with just the error when there is no body, so a caller checking the
-    // callback's arity still gets the shape it expects
-    if (body === undefined) {
-      callback(err);
-    } else {
-      callback(err, body);
-    }
-  };
-
-  const watchdog = setTimeout(() => finish('timeout'), 15000);
-
-  xhr.onload = () => {
-    // 2xx is success. otherwise flag an error but still pass the body so a
-    // provider can read its own error JSON
-    if (xhr.status >= 200 && xhr.status < 300) {
-      finish(null, xhr.responseText);
-    } else {
-      finish('http ' + xhr.status, xhr.responseText);
-    }
-  };
-
-  xhr.onerror = () => {
-    finish('network error');
-  };
-
-  xhr.ontimeout = () => {
-    finish('timeout');
-  };
-
-  xhr.timeout = 15000;
-
-  // a malformed url or a blocked send can throw synchronously, which would otherwise kill the
-  // fetch before any result is delivered. treat it as a failed request so the caller recovers
-  try {
-    xhr.open('GET', url);
-    xhr.send();
-  } catch (error) {
-    finish('send error');
-  }
-}
-
-/**
- * Reads the persisted Clay settings from localStorage.
- *
- * @return The saved settings, or an empty object when there is nothing saved yet or
- *   the stored value will not parse.
- */
-function getConfig(): Record<string, any> {
-  try {
-    return JSON.parse(localStorage.getItem('clay-settings') as string) || {};
-  } catch (error) {
-    return {};
-  }
-}
-
-/**
- * Unwraps a Clay value, applying a fallback for empty values.
- *
- * @param value The raw Clay value, which may already be unwrapped or still wrapped
- *   as an object with a value field.
- * @param fallback What to return when the value is missing or empty.
- * @return The unwrapped value, or the fallback.
- */
-function readValue(value: any, fallback: any): any {
-  let result = value;
-
-  if (result && typeof result === 'object' && 'value' in result) {
-    result = result.value;
-  }
-
-  if (result === undefined || result === null || result === '') {
-    return fallback;
-  }
-
-  return result;
-}
-
-/**
- * Reads a boolean Clay setting, applying a fallback when it is unset.
- *
- * @param value The raw Clay value.
- * @param fallback What to return when the value is missing or empty.
- * @return The setting as a real boolean.
- */
-function readBool(value: any, fallback: boolean): boolean {
-  const result = readValue(value, fallback);
-  return result === true || result === 'true' || result === 1 || result === '1';
 }
 
 /**
@@ -372,26 +217,6 @@ function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[]
 }
 
 /**
- * Snapshots the settings behind a key list so a later save can be diffed against them. Each
- * value is JSON-encoded so objects compare by content.
- */
-function settingsSnapshot(keys: string[]): string[] {
-  const config = getConfig();
-  return keys.map((key) => JSON.stringify(config[key]));
-}
-
-/** Reports whether any setting behind a key list changed between two snapshots. */
-function settingsChanged(keys: string[], before: string[] | null, after: string[]): boolean {
-  // no snapshot means the page never reported opening so refetch to be safe
-  if (!before) {
-    return true;
-  }
-
-  // walks the key list rather than the snapshot so a short after array cannot cut the diff early
-  return keys.some((key, index) => after[index] !== before[index]);
-}
-
-/**
  * Snapshots the weather-relevant settings.
  *
  * @return The current weather settings, JSON-encoded so they compare by content.
@@ -508,110 +333,6 @@ function runWeatherRound(state: WeatherState, force: boolean, deps: WeatherDeps)
 }
 
 /**
- * Snapshots the stock-relevant settings.
- *
- * @return The current stock settings, JSON-encoded so they compare by content.
- */
-function stockSettingsSnapshot(): string[] {
-  return settingsSnapshot(STOCK_KEYS);
-}
-
-/**
- * Reports whether any stock-relevant setting changed between two snapshots.
- *
- * @param before The snapshot taken before the config page opened, or null when none was taken.
- * @param after The snapshot taken after the config page closed.
- * @return True when a stock setting changed, or when there was no before snapshot to compare.
- */
-function stockSettingsChanged(before: string[] | null, after: string[]): boolean {
-  return settingsChanged(STOCK_KEYS, before, after);
-}
-
-/**
- * Runs one stock-fetch round: fires a quote per symbol, collects them in display
- * order, and sends the packed strip once the last lands.
- *
- * Built so an unfinished fetch can never get stuck and block every fetch after it. A
- * symbol that throws right away counts as a failed quote, a watchdog force-closes a
- * round whose callback never arrives, and a forced round takes over from one that is
- * still running so the old round's late replies can't reopen it or send twice.
- *
- * @param state The fetch state to read and update in place.
- * @param symbols The symbols to fetch, in display order.
- * @param force Whether to start a new round even when one is already in flight.
- * @param deps The fetch, send, clock, and timeout helpers to use.
- */
-function runStockRound(state: StockState, symbols: string[], force: boolean, deps: StockDeps): void {
-  // nothing to fetch: never start a round or an empty list would leave the in-flight
-  // flag stuck until the watchdog since no per-symbol callback ever fires
-  if (!symbols.length) {
-    return;
-  }
-
-  // a round already running would spend the quota twice if a second trigger (the ready
-  // event plus the watch's own STOCK_REQUEST) landed before it finished. a forced fetch (a
-  // settings change that may have swapped symbols) takes over instead of being dropped
-  if (state.inFlight && !force) {
-    return;
-  }
-
-  // every slot starts as a failed quote so the array is never sparse. when the watchdog closes a
-  // round early the symbols that never answered still pack as one record each, so the count the
-  // watch reads always matches the records behind it
-  const results: StockQuote[] = symbols.map(() => stockUtil.status('ERR'));
-  let pending = symbols.length;
-  const round = ++state.round; // a new round number tells any round still running to stop
-  state.inFlight = true;
-
-  // closes the round exactly once: bumping the round number again shuts out a late watchdog
-  // or a straggling reply then records when the fetch finished and sends whatever quotes arrived
-  function finishRound() {
-    if (round !== state.round) {
-      return; // a newer forced round took over, or this one already closed
-    }
-    state.round++;
-    clearTimeout(watchdog);
-    state.inFlight = false;
-
-    // record the finish time only when at least one quote came back good so a round that failed
-    // outright (a network blip) can retry on the next poll instead of freezing the
-    // watchlist. record the trading day too so Alpha Vantage knows once it holds today
-    const firstGood = results.find((quote) => quote && quote.ok);
-    if (firstGood) {
-      state.lastFetchMs = deps.now();
-      state.lastAsOf = firstGood.asOf || '';
-    }
-    deps.sendStocks(results);
-  }
-
-  // if a provider never calls back (a hung request the xhr timeout somehow misses) the
-  // in-flight flag would stay stuck and block every future fetch so force the round closed
-  // after a cap. packing tolerates the missing slots as failed quotes
-  const watchdog = setTimeout(finishRound, deps.timeoutMs);
-
-  symbols.forEach((symbol, index) => {
-    function onQuote(result: any) {
-      if (round !== state.round) {
-        return; // taken over or already closed
-      }
-      results[index] = result;
-      if (--pending === 0) {
-        finishRound();
-      }
-    }
-
-    // a single symbol that throws right away (say a bad URL from odd input) must not
-    // strand the whole round with pending stuck above zero so treat it as a failed quote
-    // and let the other symbols finish
-    try {
-      deps.fetchQuote(symbol, onQuote);
-    } catch (err) {
-      onQuote(stockUtil.status('ERR'));
-    }
-  });
-}
-
-/**
  * Starts the app: builds the Clay settings page, wires the lifecycle listeners,
  * and fetches weather on demand.
  *
@@ -645,31 +366,25 @@ function startPebbleApp(options: StartOptions): void {
   const DEFAULTS = collectDefaults(clayConfig);
 
   let weatherSettingsBeforeConfig: string[] | null = null;
-  let stockSettingsBeforeConfig: string[] | null = null;
-  let calendarUrlBeforeConfig: string | null = null;
-
-  // fetch state carried across stock rounds and mutated in place by runStockRound. the two
-  // throttle stamps come back off the phone because this JS is killed and restarted at will and
-  // a gate that forgets when it last fetched is no gate at all
-  const savedStock = stockCache.load(localStorage);
-  const stockState: StockState = { inFlight: false, round: 0, lastFetchMs: savedStock.lastFetchMs, lastAsOf: savedStock.lastAsOf };
 
   // weather round state mutated in place by runWeatherRound
   const weatherState: WeatherState = { inFlight: false, round: 0 };
 
-  // the last strip worth showing kept across restarts so a watch with an empty store still has
-  // something while the gate is shut. this is not the dedupe cache below and must never be one:
-  // it says what the watch could show not what it already has
-  let savedStrip: number[] | null = savedStock.strip;
-
-  // last strip pushed to the watch so an unchanged refresh skips the redundant BLE wake
+  // the last weather dict pushed to the watch so an unchanged refresh skips the redundant BLE wake.
   // reset on ready and on a watch-initiated request so the watch always gets a fresh answer
-  let lastCalendarBytes: number[] | null = null;
-  let lastStockBytes: number[] | null = null;
   let lastWeatherKey: string | null = null;
 
   // one AppMessage may be in flight at a time, so every send is serialized through this queue
   const queueSend = createSendQueue((dict, onOk, onFail) => Pebble.sendAppMessage(dict, onOk, onFail));
+
+  // the features this face opted into, each started once with what the app shares. a face that
+  // lists none never imports their code, so it stays out of that face's bundle
+  const features: FeatureHooks[] = (options.features || []).map((feature) => feature({
+    messageKeys,
+    defaults: DEFAULTS,
+    queueSend,
+    refetchDelayMs: SETTINGS_REFETCH_DELAY_MS,
+  }));
 
   /** Sends a weather result to the watch. */
   function sendWeather(result: any) {
@@ -840,194 +555,22 @@ function startPebbleApp(options: StartOptions): void {
     });
   }
 
-  /** Sends already-packed watchlist bytes to the watch, unless the watch holds them already. */
-  function pushStockBytes(bytes: number[] | null) {
-    if (!bytes) {
-      return;
-    }
-
-    if (wire.bytesEqual(bytes, lastStockBytes)) {
-      return;
-    }
-    lastStockBytes = bytes;
-
-    queueSend(
-      { [messageKeys.STOCK_STRIP]: bytes },
-      () => {
-        console.log('Stock info sent to Pebble successfully!');
-      },
-      () => {
-        // same as the weather send: a strip that never landed must not count as delivered
-        lastStockBytes = null;
-        console.error('Error sending stock info to Pebble!');
-      }
-    );
-  }
-
-  /** Sends the packed watchlist strip to the watch, and keeps it for the next run. */
-  function sendStocks(results: any[]) {
-    const bytes = wire.packStockStrip(results);
-    pushStockBytes(bytes);
-
-    // a round where every quote failed would cache a strip of ERRs and show them tomorrow, so
-    // only a real reading is worth keeping. runStockRound stamps the throttle from the same first
-    // good quote just before it calls this, so the stamps below are already the new ones
-    if (bytes && results.some((quote) => quote && quote.ok)) {
-      savedStrip = bytes;
-      stockCache.save(localStorage, {
-        lastAsOf: stockState.lastAsOf,
-        lastFetchMs: stockState.lastFetchMs,
-        strip: bytes,
-      });
-    }
-  }
-
-  /**
-   * Tells the watch its watchlist is empty, and forgets the strip kept for a shut quota gate.
-   *
-   * Both halves matter. The watch keeps its list in flash until it is told otherwise, and a kept
-   * strip would go back to the watch the next time a fetch was held back.
-   */
-  function clearStocks() {
-    if (savedStrip) {
-      savedStrip = null;
-      stockCache.save(localStorage, { lastAsOf: stockState.lastAsOf, lastFetchMs: stockState.lastFetchMs, strip: null });
-    }
-    pushStockBytes(wire.packStockStrip([]));
-  }
-
-  /**
-   * Fetches a quote for each configured symbol, then forwards the packed strip
-   * to the watch. Skipped entirely for faces that do not show stocks.
-   *
-   * Returns true when a strip is on its way, which includes the empty one sent when no symbols
-   * are set. Returns false when the face shows no stocks or the provider's quota gate held the
-   * fetch back, so the caller knows to push the strip it already has.
-   */
-  function getStocks(force?: boolean): boolean {
-    // a face that does not declare the strip key never shows stocks so skip the fetch
-    if (messageKeys.STOCK_STRIP === undefined) {
-      return false;
-    }
-
-    const config = getConfig();
-    const provider = String(readValue(config.STOCK_PROVIDER, DEFAULTS.STOCK_PROVIDER || 'finnhub'));
-    const key = String(readValue(config.STOCK_API_KEY, DEFAULTS.STOCK_API_KEY || '')).trim().slice(0, 64);
-    const symbols = parseSymbols(readValue(config.STOCK_SYMBOLS, DEFAULTS.STOCK_SYMBOLS || ''));
-
-    if (!symbols.length) {
-      clearStocks();
-      return true;
-    }
-
-    // keep the last strip when a poll lands before the provider's data could have moved
-    if (schedule.shouldThrottleStockFetch(provider, force || false, stockState.lastFetchMs, stockState.lastAsOf, Date.now())) {
-      return false;
-    }
-
-    // fetch every symbol and keep the results in the configured order so the watchlist
-    // rows stay put. runStockRound stops a fetch from spending the quota twice and recovers
-    // on its own if a round gets stuck
-    runStockRound(stockState, symbols, Boolean(force), {
-      fetchQuote: (symbol, onQuote) => stock.fetchQuote({ provider, key, symbol }, request, onQuote),
-      sendStocks: sendStocks,
-      now: Date.now,
-      timeoutMs: STOCK_ROUND_TIMEOUT_MS,
-    });
-    return true;
-  }
-
-  /** Reads the current iCal feed URL from the Clay config. */
-  function calendarUrl(): string {
-    return String(readValue(getConfig().CALENDAR_ICS_URL, DEFAULTS.CALENDAR_ICS_URL || '')).trim();
-  }
-
-  /** Sends the packed agenda to the watch, unless the watch holds it already. An empty list clears it. */
-  function sendCalendar(events: CalendarEvent[]) {
-    const bytes = wire.packCalendarStrip(events);
-    if (!bytes) {
-      return;
-    }
-
-    if (wire.bytesEqual(bytes, lastCalendarBytes)) {
-      console.log('Calendar: unchanged, skipping send');
-      return;
-    }
-    lastCalendarBytes = bytes;
-
-    queueSend(
-      { [messageKeys.CALENDAR_STRIP]: bytes },
-      () => { console.log('Calendar sent to Pebble'); },
-      () => {
-        // same as the weather send: a strip that never landed must not count as delivered
-        lastCalendarBytes = null;
-        console.error('Error sending calendar to Pebble');
-      }
-    );
-  }
-
-  /**
-   * Fetches the iCal feed, parses it, and sends the packed strip to the watch. Skipped for faces
-   * that do not declare the calendar key. With no URL set the watch gets an empty agenda instead,
-   * so one left over from a removed feed does not stay behind.
-   */
-  function getCalendar() {
-    // a face that does not declare the strip key never shows a calendar so skip the fetch
-    if (messageKeys.CALENDAR_STRIP === undefined) {
-      return;
-    }
-
-    const url = calendarUrl();
-    if (!url) {
-      sendCalendar([]);
-      return;
-    }
-
-    // bust any HTTP cache the phone keeps for this GET: a unique query param makes every poll a
-    // fresh URL so an edited event is not hidden behind a stale cached copy. Google ignores the
-    // extra param and still serves the feed
-    const bustedUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now();
-
-    console.log('Calendar: fetching feed');
-    request(bustedUrl, (error, body) => {
-      if (error) {
-        console.error('Calendar fetch failed: ' + error);
-        return;
-      }
-
-      const events = ical.parseIcal(body as string);
-      if (!events) {
-        // an error page or a cut off body says nothing about the calendar, so the watch keeps the
-        // agenda it has
-        console.error('Calendar: the feed did not read as iCal');
-        return;
-      }
-
-      console.log('Calendar: parsed ' + events.length + ' upcoming event(s)');
-      if (events.length) {
-        console.log('Calendar: next is "' + events[0].title + '" at ' + new Date(events[0].startEpoch * 1000).toString());
-      }
-
-      // an empty list still goes, since that is how the watch hears every event was deleted
-      sendCalendar(events);
-    });
-  }
-
   // while the JS is alive the phone drives its own refresh since a suspended JS never answers the
-  // watch's poll. calendar every tick with weather and stock less often since they change slowly
+  // watch's poll. weather refreshes on the slow ticks since it changes slowly, and each feature
+  // picks which ticks it wants
   const REFRESH_MS = 5 * 60 * 1000;
-  const SLOW_REFRESH_EVERY = 6; // weather/stock every ~30 min
+  const SLOW_REFRESH_EVERY = 6; // every ~30 min
   let refreshTimer: ReturnType<typeof setInterval> | null = null;
   let refreshTick = 0;
 
-  /** Runs on the refresh timer. Refetches the calendar every tick, and weather and stocks less often. */
+  /** Runs on the refresh timer. Refetches weather on the slow ticks, and lets each feature refresh too. */
   function backgroundRefresh() {
     refreshTick++;
-    getCalendar();
-    if (refreshTick % SLOW_REFRESH_EVERY === 0) {
+    const slow = refreshTick % SLOW_REFRESH_EVERY === 0;
+    if (slow) {
       getWeather();
-      getStocks();
     }
+    features.forEach((feature) => feature.refresh?.(slow));
   }
 
   // app lifecycle listeners
@@ -1036,18 +579,10 @@ function startPebbleApp(options: StartOptions): void {
     queueSend({ [messageKeys.SETTINGS_REQUEST]: 1 });
 
     // clear the dedupe cache so a watch that just rebooted with empty stores gets a fresh send
-    lastCalendarBytes = null;
-    lastStockBytes = null;
     lastWeatherKey = null;
 
     getWeather();
-    // the gate now outlives a restart so it can hold on the very first fetch of a run. a watch
-    // that just rebooted with an empty store would sit blank till the gate opened, which for
-    // Alpha Vantage is tomorrow, so hand it the strip off the phone instead
-    if (!getStocks()) {
-      pushStockBytes(savedStrip);
-    }
-    getCalendar();
+    features.forEach((feature) => feature.ready?.());
 
     // the timer dies when the JS is suspended so re-arm it fresh on every ready
     if (refreshTimer) {
@@ -1067,23 +602,7 @@ function startPebbleApp(options: StartOptions): void {
       getWeather();
     }
 
-    if (payload[messageKeys.STOCK_REQUEST]) {
-      // the watch drives this on every interval it asks for, so it goes through the provider
-      // quota gate like any other routine fetch. only a settings change forces past it
-      const held = lastStockBytes;
-      lastStockBytes = null;
-      if (!getStocks()) {
-        // the gate held the fetch back. the watch asks when it has nothing to show, so push the
-        // strip already in hand rather than leaving it blank until the gate opens. after a restart
-        // nothing is in hand so fall back to the one off the phone
-        pushStockBytes(held || savedStrip);
-      }
-    }
-
-    if (payload[messageKeys.CALENDAR_REQUEST]) {
-      lastCalendarBytes = null;
-      getCalendar();
-    }
+    features.forEach((feature) => feature.message?.(payload));
 
     // both restore paths seed the same way, so the face's key lists are named once here rather
     // than repeated at each call
@@ -1119,8 +638,7 @@ function startPebbleApp(options: StartOptions): void {
   // before ours so capture the previous values while the page is still open
   Pebble.addEventListener('showConfiguration', () => {
     weatherSettingsBeforeConfig = weatherSettingsSnapshot();
-    stockSettingsBeforeConfig = stockSettingsSnapshot();
-    calendarUrlBeforeConfig = calendarUrl();
+    features.forEach((feature) => feature.configOpened?.());
 
     // Clay's auto-handling is off, so open the config page ourselves
     Pebble.openURL(clay.generateUrl());
@@ -1145,30 +663,14 @@ function startPebbleApp(options: StartOptions): void {
       setTimeout(() => getWeather(true), SETTINGS_REFETCH_DELAY_MS);
     }
 
-    // stocks refetch on their own settings change the same way
-    const stockBefore = stockSettingsBeforeConfig;
-    stockSettingsBeforeConfig = null;
-
-    if (stockSettingsChanged(stockBefore, stockSettingsSnapshot())) {
-      setTimeout(() => getStocks(true), SETTINGS_REFETCH_DELAY_MS);
-    }
-
-    // calendar refetches when the iCal URL changed so a new feed shows without waiting for the
-    // next poll
-    const calendarBefore = calendarUrlBeforeConfig;
-    calendarUrlBeforeConfig = null;
-
-    if (calendarBefore !== calendarUrl()) {
-      setTimeout(getCalendar, SETTINGS_REFETCH_DELAY_MS);
-    }
+    // each feature refetches on its own settings change the same way
+    features.forEach((feature) => feature.configSaved?.());
   });
 }
 
 export default {
   startPebbleApp,
-  runStockRound,
   runWeatherRound,
-  parseSymbols,
   collectDefaults,
   request,
   getConfig,
@@ -1182,8 +684,5 @@ export default {
   weatherRetryDelayMs,
   WEATHER_RETRY_DELAYS_MS,
   SETTINGS_REFETCH_DELAY_MS,
-  stockSettingsSnapshot,
-  stockSettingsChanged,
   WEATHER_KEYS,
-  STOCK_KEYS,
 };
