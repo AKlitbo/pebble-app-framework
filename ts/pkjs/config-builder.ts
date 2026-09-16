@@ -13,7 +13,7 @@ import type { ClayConfigItem } from '../clay/types';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
  * Present means "include it", and its own fields tune it. */
-interface ConfigBuilderOptions {
+export interface ConfigBuilderOptions {
   heading?: string;
   intro?: string;
   theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }> };

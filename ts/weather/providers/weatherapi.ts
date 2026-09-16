@@ -31,18 +31,18 @@ const WEATHERAPI_CODE: Record<number, string> = {
   1087: 'STRM', 1273: 'STRM', 1276: 'STRM', 1279: 'STRM', 1282: 'STRM',
 };
 
-interface WeatherApiDay {
+export interface WeatherApiDay {
   maxtemp_f?: number; maxtemp_c?: number; mintemp_f?: number; mintemp_c?: number;
   daily_chance_of_rain?: number; totalprecip_mm?: number; uv?: number;
 }
 
-interface WeatherApiForecastDay {
+export interface WeatherApiForecastDay {
   astro?: { sunrise?: string; sunset?: string };
   day?: WeatherApiDay;
 }
 
 /** The subset of a WeatherAPI forecast.json response this provider reads. */
-interface WeatherApiResponse {
+export interface WeatherApiResponse {
   error?: { message?: string; code?: number };
   location?: { name?: string; lat?: number; lon?: number };
   current?: {

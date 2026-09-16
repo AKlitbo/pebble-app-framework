@@ -23,20 +23,20 @@ import type { WeatherResult } from '../weather/util';
 import type { ClayConfigItem } from '../clay/types';
 
 /** The weather round state runWeatherRound carries between calls. */
-interface WeatherState {
+export interface WeatherState {
   inFlight: boolean;
   round: number;
 }
 
 /** The helpers runWeatherRound needs, passed in so the specs can swap them. */
-interface WeatherDeps {
+export interface WeatherDeps {
   fetchWeather: (onResult: (result: any) => void) => void;
   sendWeather: (result: any) => void;
   timeoutMs: number;
 }
 
 /** The options a face hands startPebbleApp. */
-interface StartOptions {
+export interface StartOptions {
   clayConfig: ClayConfigItem[];
   formatCoords: (messageKeys: Record<string, number>, result: WeatherResult) => AppMessageDict;
   components?: unknown[];

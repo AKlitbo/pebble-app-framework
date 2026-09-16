@@ -14,7 +14,7 @@
  */
 
 /** What Clay binds initialize to: the element and the page item's own config. */
-interface HiddenStoreContext {
+export interface HiddenStoreContext {
   $element: HTMLElement[];
   config?: { storeClass?: string };
 }

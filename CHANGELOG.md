@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The Clay, thumbnail and icon generators take the face as an optional argument and run for every face that needs them without one, so a repo needs one `gen:clay`, `gen:thumbnails` and `gen:icons` script instead of one per face. Their banners name those scripts, so committed output needs regenerating.
 - ical.js is only copied into a face's build when the face uses iCal.
 - The thumbnail generator takes the panel sizes from the face instead of a fixed list. A face's `module-meta.ts` exports them as `thumbnailSizes`.
+- Exported the option and state types that `startPebbleApp`, `runWeatherRound`, `buildConfig`, the hidden store component, and the WeatherAPI provider take, so a face can name them in its own code.
 - Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER` and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects and radio groups.
 - The `setup-pebble` action now checks that pebble-tool runs and puts the pebble-tool and SDK versions on the job summary. A pinned `sdk-version` is cached between runs.
 
