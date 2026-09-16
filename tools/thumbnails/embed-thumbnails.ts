@@ -15,6 +15,9 @@
  * label so the builders look a thumbnail up by name, the same resilient way they map icons and
  * colours, rather than a numeric id that could drift. Row order follows module-meta.ts.
  *
+ * The sizes a png may come in belong to the face too, since each face draws its own panel shapes,
+ * so module-meta.ts exports them beside the module list as thumbnailSizes.
+ *
  * Run: npm run gen:<face>:thumbnails, which reports what it encoded and throws if anything
  * is stray or missing.
  */
@@ -44,15 +47,33 @@ export function outFile(face: string): string {
   return path.join(faceDir(face), 'src', 'pkjs', 'clay', 'module-thumbnails.g.js');
 }
 
-/** A face's own module list, loaded by path because which face it is is only known at runtime. */
-function metaFor(face: string): Record<string, ModuleMeta> {
-  return requireMeta(path.join(faceDir(face), 'src', 'pkjs', 'clay', 'module-meta.ts')).default;
+/** A face's module-meta.ts, loaded by path because which face it is is only known at runtime. */
+function moduleMetaFile(face: string): { default: Record<string, ModuleMeta>; thumbnailSizes?: unknown } {
+  return requireMeta(path.join(faceDir(face), 'src', 'pkjs', 'clay', 'module-meta.ts'));
 }
 
-// the mosaic grid's four footprints plus the two a fixed-slot face uses
-// either one slot or a tall panel filling a whole column
-// a face only ever names the ones it ships
-const VALID_SIZES = ['1x2', '2x2', '1x4', '2x4', 'slot', 'tall'];
+/** A face's own module list. */
+function metaFor(face: string): Record<string, ModuleMeta> {
+  return moduleMetaFile(face).default;
+}
+
+/**
+ * The panel sizes a face's thumbnails come in, which its module-meta.ts exports as thumbnailSizes.
+ *
+ * The sizes belong to the face, since each one draws its own panel shapes. The Mosaic grid places
+ * blocks such as 1x2 and 2x4, and a fixed-slot face has a slot and a tall panel. A face that does
+ * not export them leaves nothing to check a png's size against, so that throws.
+ *
+ * @param face The face to read the sizes for.
+ * @return The sizes the face's thumbnails may use.
+ */
+export function sizesFor(face: string): string[] {
+  const sizes = moduleMetaFile(face).thumbnailSizes;
+  if (!Array.isArray(sizes) || !sizes.length || !sizes.every((size) => typeof size === 'string')) {
+    throw new Error(`module-meta.ts for ${face} has to export thumbnailSizes, the panel sizes its thumbnails come in`);
+  }
+  return sizes;
+}
 
 /**
  * The registry as module-meta.ts exports it, keyed by display label. Narrowed to the one
@@ -82,15 +103,16 @@ export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
 }
 
 /**
- * Splits the PNG names into the ones that match a known slug and a real size and
+ * Splits the PNG names into the ones that match a known slug and one of the face's sizes, and
  * the strays. A name is <slug>-<size>, split on the last dash so a slug can hold
  * its own dashes.
  *
  * @param files The PNG filenames to classify.
  * @param bySlug The slug-keyed index to match each filename's slug against.
+ * @param sizes The panel sizes the face's thumbnails may come in.
  * @return The matched files plus the strays that matched no known slug or size.
  */
-export function classify(files: string[], bySlug: SlugIndex): { found: ThumbFile[]; stray: string[] } {
+export function classify(files: string[], bySlug: SlugIndex, sizes: string[]): { found: ThumbFile[]; stray: string[] } {
   const found: ThumbFile[] = [];
   const stray: string[] = [];
 
@@ -101,7 +123,7 @@ export function classify(files: string[], bySlug: SlugIndex): { found: ThumbFile
     const size = dash > 0 ? base.slice(dash + 1) : '';
     const entry = bySlug[slug];
 
-    if (!entry || VALID_SIZES.indexOf(size) === -1) {
+    if (!entry || sizes.indexOf(size) === -1) {
       stray.push(file);
       return;
     }
@@ -177,7 +199,7 @@ export function encodeThumbnails(face: string): Built {
     ? fs.readdirSync(dir).filter((name) => name.toLowerCase().endsWith('.png'))
     : [];
 
-  const { found, stray } = classify(files, bySlug);
+  const { found, stray } = classify(files, bySlug, sizesFor(face));
 
   const thumbs: Thumbs = {};
   const order: Record<string, number> = {};

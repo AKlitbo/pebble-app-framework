@@ -26,6 +26,9 @@ const bySlug = {
   'weekday-dots': { label: 'Weekday Dots', order: 1 },
 };
 
+// the sizes a face in these specs says its thumbnails come in
+const SIZES = ['1x2', '2x2'];
+
 describe('indexBySlug', () => {
   /** The builders look a thumbnail up by label, so a lost slug key means the panel falls back to an emoji. */
   test('keys each module by its slug and carries its label', () => {
@@ -52,7 +55,7 @@ describe('indexBySlug', () => {
 describe('classify', () => {
   /** A slug holding its own dash (weekday-dots) must split on the last dash, or its shot lands on the wrong module. */
   test('splits the name on the last dash so a slug can hold dashes', () => {
-    const result = classify(['weekday-dots-1x2.png'], bySlug);
+    const result = classify(['weekday-dots-1x2.png'], bySlug, SIZES);
 
     expect(result.found).toEqual([
       { file: 'weekday-dots-1x2.png', slug: 'weekday-dots', label: 'Weekday Dots', order: 1, size: '1x2' },
@@ -62,23 +65,30 @@ describe('classify', () => {
 
   /** A PNG for a module the registry does not know must be reported, not silently encoded into the asset. */
   test('reports a png whose slug is not in the registry as stray', () => {
-    const result = classify(['nosuch-1x2.png'], bySlug);
+    const result = classify(['nosuch-1x2.png'], bySlug, SIZES);
 
     expect(result.found).toEqual([]);
     expect(result.stray).toEqual(['nosuch-1x2.png']);
   });
 
-  /** A size the grid does not have would ship a thumbnail no layout can ever show. */
-  test('reports a png with an unknown size as stray', () => {
-    const result = classify(['battery-9x9.png'], bySlug);
+  /** A size the face does not list would ship a thumbnail none of its panels can ever show. */
+  test('reports a png with a size the face does not list as stray', () => {
+    const result = classify(['battery-9x9.png'], bySlug, SIZES);
 
     expect(result.found).toEqual([]);
     expect(result.stray).toEqual(['battery-9x9.png']);
   });
 
+  /** The sizes are the face's own, so a fixed-slot face's slot picture has to be taken once the face lists slot. */
+  test('accepts any size the face lists', () => {
+    const result = classify(['battery-slot.png'], bySlug, ['slot', 'tall']);
+
+    expect(result.found.map((thumb) => thumb.size)).toEqual(['slot']);
+  });
+
   /** A name with no size at all must not be read as a bare slug and encoded under an empty size. */
   test('reports a png with no size suffix as stray', () => {
-    const result = classify(['battery.png'], bySlug);
+    const result = classify(['battery.png'], bySlug, SIZES);
 
     expect(result.stray).toEqual(['battery.png']);
   });
