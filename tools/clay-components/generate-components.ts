@@ -14,15 +14,15 @@
  * initialize followed by `init.call(this)` so the manipulator's this still binds
  * the Clay component.
  *
- * Run with `npm run gen:<face>:clay`. Outputs are committed, and the spec fails when
- * they drift from the pieces.
+ * Run with `npm run gen:clay -- <face>`, or with no face to rebuild every face that has a builder.
+ * Outputs are committed, and the spec fails when they drift from the pieces.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import esbuild from 'esbuild';
 import { createRequire } from 'node:module';
-import { faceDir, familyCoreDir } from '../faces.ts';
+import { faceDir, familyCoreDir, listFaceNames } from '../faces.ts';
 import { ENGINE, WORKSPACE } from '../paths.ts';
 
 // the manifests are loaded by path at runtime which an import specifier cannot do
@@ -349,7 +349,7 @@ async function buildComponentSource(manifestPath: string, roots: Roots): Promise
   const doc = manifest.doc.map((line) => (line ? ` * ${line}` : ' *')).join('\n');
 
   const source = `// generated from ${relManifest} by tools/clay-components/generate-components.ts
-// do not edit by hand: run the face's \`npm run gen:<face>:clay\` script after changing the sources
+// do not edit by hand: run \`npm run gen:clay\` after changing the sources
 /**
 ${doc}
  */
@@ -401,14 +401,13 @@ async function generateAll(face: string): Promise<void> {
 
 if (import.meta.main) {
   const face = process.argv[2];
-  if (!face) {
-    throw new Error('usage: generate-components.ts <face>');
-  }
+  // no face means every face that has a builder, found the same way the staleness spec finds them
+  const faces = face ? [face] : listFaceNames().filter((name) => findManifests(rootsFor(name)).length > 0);
 
   // esbuild only takes a resolve plugin through its async API so the run ends on a
   // promise. rethrowing off-tick makes a failure a non-zero exit rather than a
   // silent unhandled rejection
-  generateAll(face).catch((error) => {
+  faces.reduce((chain, name) => chain.then(() => generateAll(name)), Promise.resolve()).catch((error) => {
     setTimeout(() => {
       throw error;
     });

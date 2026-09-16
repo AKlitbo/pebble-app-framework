@@ -25,15 +25,16 @@
  *   1. renders each glyph into resources/icons/<name>.png
  *   2. rewrites config/pebble.appinfo.json's media block so name -> file stays in sync
  *
- * Re-run after editing the manifest:
- *   npm run gen:icons
+ * Re-run after editing a manifest:
+ *   npm run gen:icons -- <face>    for one face
+ *   npm run gen:icons              for every face with a resources/icons.json
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
 import type { MediaEntry } from '../manifest/build-manifests.ts';
-import { faceDir as resolveFaceDir } from '../faces.ts';
+import { faceDir as resolveFaceDir, listFaceNames } from '../faces.ts';
 import { WORKSPACE } from '../paths.ts';
 
 /** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */
@@ -315,14 +316,8 @@ async function renderFace(faceDir: string, manifest: IconManifest): Promise<numb
   return Object.keys(manifest).length;
 }
 
-/** Renders every icon the manifest asks for, then syncs the media list in the build config. */
 /** Renders every icon a face's manifest asks for, then syncs its media list from the same manifest. */
-async function main(): Promise<void> {
-  const face = process.argv[2];
-  if (!face) {
-    throw new Error('usage: generate-icons.ts <face>');
-  }
-
+async function iconsFor(face: string): Promise<void> {
   const dir = faceRoot(face);
   // resources (icons.json + rendered PNGs) and the appinfo live under the face dir
   const manifestPath = path.join(dir, 'resources', 'icons.json');
@@ -336,7 +331,16 @@ async function main(): Promise<void> {
   // it at build time (or with npm run build:manifests -- <face>)
   syncMedia(path.join(dir, 'config', 'pebble.appinfo.json'), manifest);
 
-  console.log(`Rendered ${rendered} icons.`);
+  console.log(`Rendered ${rendered} icons for ${face}.`);
+}
+
+/** Renders the icons for the face named on the command line, or for every face with a resources/icons.json. */
+async function main(): Promise<void> {
+  const face = process.argv[2];
+  const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(path.join(faceRoot(name), 'resources', 'icons.json')));
+  for (const name of faces) {
+    await iconsFor(name);
+  }
 }
 
 if (import.meta.main) {

@@ -36,6 +36,16 @@ npm install
 bash lib/build.sh <face>
 ```
 
+A repo of faces reaches the engine's tools through scripts in its own `package.json`, each running `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON` on the tool. The generators take a face name, and run for every face that needs them when given none.
+
+| Script | Tool | Face |
+| :-- | :-- | :-- |
+| `gen:clay` | `tools/clay-components/generate-components.ts` | optional |
+| `gen:thumbnails` | `tools/thumbnails/embed-thumbnails.ts` | optional |
+| `gen:icons` | `tools/icons/generate-icons.ts` | optional |
+| `gen:frame` | `tools/frame/generate-frame.ts` | required, then the frame |
+| `dev:clay` | `tools/dev/clay-preview.ts` | required |
+
 The folder can have any name, as long as it sits straight under the repo root and the repo's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted engine from one checked out on its own. Faces import the engine by relative path, so their imports use whatever name the repo picked, and the build stages the engine into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore.
 
 Each repo pins an exact engine commit, so an engine change reaches a face only when that repo moves its `lib` pointer.

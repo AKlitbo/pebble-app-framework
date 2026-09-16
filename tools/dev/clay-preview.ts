@@ -216,7 +216,7 @@ if (process.argv.indexOf('--watch') !== -1) {
   };
 
   console.log('watching for changes. refresh the browser after each save.');
-  console.log('note: edits under clay/builder need `npm run gen:gridlock:clay` first.');
+  console.log('note: edits under clay/builder need `npm run gen:clay -- ' + face + '` first.');
   watched.forEach((dir) => {
     fs.watch(dir, { recursive: true }, () => {
       if (timer) { clearTimeout(timer); }
