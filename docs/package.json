@@ -19,6 +19,7 @@
   "devDependencies": {
     "marked": "^18.0.13",
     "prettier": "^3.9.6",
-    "typedoc": "^0.28.20"
+    "typedoc": "^0.28.20",
+    "typescript": "^5.9.3"
   }
 }
