@@ -91,8 +91,7 @@ static OutboxJob s_queue[OUTBOX_QUEUE_MAX];  ///< This pass's work queue
 static int       s_queue_len;                ///< How many jobs are in s_queue
 static OutboxJob s_failed[OUTBOX_QUEUE_MAX]; ///< Requests that nacked this pass, held for the next
 static int       s_failed_len;               ///< How many jobs are in s_failed
-static bool      s_sending;                  ///< A send is out, waiting on its sent or failed callback
-static OutboxJob s_inflight;                 ///< The job in flight, valid while s_sending is set
+static OutboxJob s_inflight;                 ///< The job in flight, OUTBOX_NONE when nothing is out
 static AppTimer *s_retry_timer;              ///< Delay before the next retry pass
 static uint32_t  s_outbox_size;              ///< The outbox buffer size appmessage_open asked for
 
@@ -179,7 +178,7 @@ static bool send_job(OutboxKind kind)
  */
 static bool kind_pending(OutboxKind kind)
 {
-    if (s_sending && s_inflight.kind == kind)
+    if (s_inflight.kind == kind)
     {
         return true;
     }
@@ -279,7 +278,7 @@ static void retry_pass(void *data)
  */
 static void pump(void)
 {
-    if (s_sending)
+    if (s_inflight.kind != OUTBOX_NONE)
     {
         return;
     }
@@ -312,7 +311,7 @@ static void pump(void)
     {
         s_inflight = s_queue[0];
         queue_pop_front();
-        s_sending = true; // wait for the sent/failed callback before the next send
+        // s_inflight now reads as something, which is what holds the next send back
     }
     else
     {
@@ -693,9 +692,12 @@ static void outbox_failed_callback(DictionaryIterator *iter, AppMessageResult re
     APP_LOG(APP_LOG_LEVEL_WARNING, "Outbox failed: %d", (int)reason);
 
     // the in-flight send is done (nacked). hold a real request for a later retry pass, then carry
-    // on with the queue. the send often wakes an asleep pkjs so the next pass tends to land
-    s_sending = false;
-    hold_failed(s_inflight);
+    // on with the queue. the send often wakes an asleep pkjs so the next pass tends to land.
+    // the job has to be taken before the slot is cleared, since clearing it is what says the
+    // outbox is free and hold_failed reads the kind to decide whether the job is worth keeping
+    OutboxJob nacked = s_inflight;
+    s_inflight.kind = OUTBOX_NONE;
+    hold_failed(nacked);
     pump();
 }
 
@@ -708,7 +710,7 @@ static void outbox_failed_callback(DictionaryIterator *iter, AppMessageResult re
 static void outbox_sent_callback(DictionaryIterator *iter, void *context)
 {
     // the in-flight send landed, so free the outbox and send the next queued job
-    s_sending = false;
+    s_inflight.kind = OUTBOX_NONE;
     pump();
 }
 
