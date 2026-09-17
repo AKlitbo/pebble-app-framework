@@ -204,22 +204,59 @@ function parseForecast(json: OpenMeteoResponse | null): ForecastCols {
   return { hourly: parseHourly(json), daily: parseDaily(json) };
 }
 
+
+/**
+ * The hourly block the forecast row is built from.
+ *
+ * `is_day` is what lets each column pick a day or a night glyph, so a builder that drops it
+ * leaves the whole row on daytime icons after dark. `temperature_2m` also rides in `current`
+ * on every query, because `current.time` is how parseHourly knows which column is now.
+ */
+const HOURLY_FORECAST = 'temperature_2m,weather_code,is_day';
+
+/** Eight days so the daily strip fills a 2x4 panel. Open-Meteo gives seven without it. */
+const FORECAST_DAYS = 8;
+
+/**
+ * Assembles an Open-Meteo query from the parts a caller wants.
+ *
+ * Every builder here needs the same coordinates, the same unit, and `timezone=auto` so the daily
+ * sunrise and sunset come back local, so those live here rather than in each one.
+ *
+ * @param opts The weather request options, read for the coordinates and the unit.
+ * @param parts The query pieces this caller wants, each already comma-joined.
+ * @return The Open-Meteo URL to fetch.
+ */
+function buildUrl(opts: WeatherOpts, parts: { current: string; daily: string; hourly?: string; windKmh?: boolean }): string {
+  const coords = opts.coords as WeatherCoords;
+  const unit = opts.fahrenheit ? 'fahrenheit' : 'celsius';
+
+  let url = `${OPEN_METEO_FORECAST_API}?latitude=${coords.lat}&longitude=${coords.lon}` +
+    `&current=${parts.current}`;
+
+  if (parts.hourly) {
+    url += `&hourly=${parts.hourly}&forecast_days=${FORECAST_DAYS}`;
+  }
+
+  url += `&daily=${parts.daily}&temperature_unit=${unit}`;
+
+  if (parts.windKmh) {
+    url += '&wind_speed_unit=kmh';
+  }
+
+  return url + '&timezone=auto';
+}
+
 /**
  * Builds a minimal Open-Meteo URL that carries only the forecast strips.
  * Used by the other providers to fill in a forecast they can't fetch natively.
  */
 function forecastUrl(opts: WeatherOpts): string {
-  const unit = opts.fahrenheit ? 'fahrenheit' : 'celsius';
-  const coords = opts.coords as WeatherCoords;
-  const lat = coords.lat;
-  const lon = coords.lon;
-  // current=temperature_2m is only here to bring back current.time so the hourly
-  // strip knows where "now" is. is_day per hour marks which columns fall after dark
-  const hourly = 'temperature_2m,weather_code,is_day';
-  const daily = 'weather_code,temperature_2m_max,temperature_2m_min';
-  // forecast_days=8 so the daily strip can fill the 2x4's eight columns (the default is 7)
-  return `${OPEN_METEO_FORECAST_API}?latitude=${lat}&longitude=${lon}&current=temperature_2m` +
-    `&hourly=${hourly}&daily=${daily}&forecast_days=8&temperature_unit=${unit}&timezone=auto`;
+  return buildUrl(opts, {
+    current: 'temperature_2m',
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min',
+    hourly: HOURLY_FORECAST,
+  });
 }
 
 /**
@@ -236,24 +273,21 @@ function forecastUrl(opts: WeatherOpts): string {
  * @return The Open-Meteo URL to fetch.
  */
 function extrasUrl(opts: WeatherOpts): string {
-  const unit = opts.fahrenheit ? 'fahrenheit' : 'celsius';
-  const coords = opts.coords as WeatherCoords;
-  const lat = coords.lat;
-  const lon = coords.lon;
-
   let current = 'uv_index,dew_point_2m';
   let daily = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max';
-  let forecast = '';
+
   if (opts.wantForecast) {
     // temperature_2m rides along only to bring back current.time so parseHourly knows
     // where now is. weather_code and the hourly block feed the forecast strips
     current += ',temperature_2m';
     daily += ',weather_code';
-    forecast = '&hourly=temperature_2m,weather_code,is_day&forecast_days=8';
   }
 
-  return `${OPEN_METEO_FORECAST_API}?latitude=${lat}&longitude=${lon}` +
-    `&current=${current}&daily=${daily}${forecast}&temperature_unit=${unit}&timezone=auto`;
+  return buildUrl(opts, {
+    current: current,
+    daily: daily,
+    hourly: opts.wantForecast ? HOURLY_FORECAST : undefined,
+  });
 }
 
 /**
@@ -317,31 +351,28 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     return done(util.status('No Location'));
   }
 
-  const unit = opts.fahrenheit ? 'fahrenheit' : 'celsius';
   const lat = opts.coords.lat;
   const lon = opts.coords.lon;
-  // wind_speed_unit=kmh keeps wind in km/h whatever the temperature unit
-  // timezone=auto makes the daily sunrise/sunset come back as local times
   const current = 'temperature_2m,weather_code,is_day,relative_humidity_2m,wind_speed_10m,wind_direction_10m,' +
     'uv_index,precipitation,apparent_temperature,surface_pressure,cloud_cover,wind_gusts_10m,dew_point_2m';
   // the sunrise and sunset fields stay first so existing URL assertions still match daily=
   let dailyFields = 'sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,' +
     'precipitation_sum,uv_index_max';
-  let url = `${OPEN_METEO_FORECAST_API}?latitude=${lat}&longitude=${lon}&current=${current}`;
 
   // only a face that shows the forecast row pays for the hourly block and the extra
   // days. everyone else gets just the current reading plus today's daily extras
   if (opts.wantForecast) {
     // weather_code rides last so the daily strip knows each day's sky
     dailyFields += ',weather_code';
-    // hourly feeds the forecast row. temperature_2m and weather_code per hour plus
-    // is_day so each column can pick a day or night glyph
-    url += '&hourly=temperature_2m,weather_code,is_day';
-    // forecast_days=8 so the daily strip can fill the 2x4's eight columns (the default is 7)
-    url += '&forecast_days=8';
   }
 
-  url += `&daily=${dailyFields}&temperature_unit=${unit}&wind_speed_unit=kmh&timezone=auto`;
+  // wind_speed_unit=kmh keeps wind in km/h whatever the temperature unit
+  const url = buildUrl(opts, {
+    current: current,
+    daily: dailyFields,
+    hourly: opts.wantForecast ? HOURLY_FORECAST : undefined,
+    windKmh: true,
+  });
 
   util.requestJson<OpenMeteoResponse>(url, request, done, (json) => {
     if (json.error) {

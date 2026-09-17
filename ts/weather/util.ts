@@ -276,6 +276,18 @@ function hmFrom12Hour(timeStr: unknown): string {
   return `${String(hours).padStart(2, '0')}:${minutes}`;
 }
 
+/** Extras that ride as a whole number. */
+const ROUNDED_EXTRAS = [
+  'humidity', 'windKmh', 'uvIndex', 'feelsLike', 'pressure', 'cloud',
+  'windGustKmh', 'dewPoint', 'tempMax', 'tempMin', 'precipChance', 'uvMax',
+];
+
+/** Extras that ride as hundredths, so a rainfall in millimetres stays an integer on the wire. */
+const HUNDREDTH_EXTRAS = ['precip', 'precipTotal'];
+
+/** Extras that ride as text, such as a compass point or a clock time. */
+const TEXT_EXTRAS = ['windDir', 'sunrise', 'sunset'];
+
 /**
  * Copies the optional weather extras onto a result, skipping missing values so
  * the watch keeps showing a placeholder rather than a phantom reading.
@@ -288,94 +300,28 @@ function attachExtras(result: WeatherResult, extra: Record<string, unknown> | nu
     return;
   }
 
-  const humidity = Number(extra.humidity);
-  if (Number.isFinite(humidity)) {
-    result.humidity = Math.round(humidity);
-  }
+  const target = result as unknown as Record<string, unknown>;
 
-  const windKmh = Number(extra.windKmh);
-  if (Number.isFinite(windKmh)) {
-    result.windKmh = Math.round(windKmh);
-  }
+  ROUNDED_EXTRAS.forEach((name) => {
+    const value = Number(extra[name]);
+    if (Number.isFinite(value)) {
+      target[name] = Math.round(value);
+    }
+  });
 
-  if (extra.windDir) {
-    result.windDir = String(extra.windDir);
-  }
+  // these two ship as hundredths so AppMessage never has to carry a float
+  HUNDREDTH_EXTRAS.forEach((name) => {
+    const value = Number(extra[name]);
+    if (Number.isFinite(value)) {
+      target[name] = Math.round(value * 100);
+    }
+  });
 
-  if (extra.sunrise) {
-    result.sunrise = String(extra.sunrise);
-  }
-
-  if (extra.sunset) {
-    result.sunset = String(extra.sunset);
-  }
-
-  const uv = Number(extra.uvIndex);
-  if (Number.isFinite(uv)) {
-    result.uvIndex = Math.round(uv);
-  }
-
-  const precip = Number(extra.precip);
-  if (Number.isFinite(precip)) {
-    // AppMessage can't carry floats so precip (mm) ships as hundredths
-    // (1.25mm -> 125) and the C side divides by 100 to render it
-    result.precip = Math.round(precip * 100);
-  }
-
-  // plain numbers already normalized by each provider (feels-like in the user's unit
-  // and pressure in hPa and cloud % and gust km/h). finite-guarded so a genuine
-  // zero (0% cloud or calm wind) still ships while a missing field drops out
-  const feelsLike = Number(extra.feelsLike);
-  if (Number.isFinite(feelsLike)) {
-    result.feelsLike = Math.round(feelsLike);
-  }
-
-  const pressure = Number(extra.pressure);
-  if (Number.isFinite(pressure)) {
-    result.pressure = Math.round(pressure);
-  }
-
-  const cloud = Number(extra.cloud);
-  if (Number.isFinite(cloud)) {
-    result.cloud = Math.round(cloud);
-  }
-
-  const windGustKmh = Number(extra.windGustKmh);
-  if (Number.isFinite(windGustKmh)) {
-    result.windGustKmh = Math.round(windGustKmh);
-  }
-
-  // dew point and the daily high/low ride in the user's temperature unit like feels-like
-  const dewPoint = Number(extra.dewPoint);
-  if (Number.isFinite(dewPoint)) {
-    result.dewPoint = Math.round(dewPoint);
-  }
-
-  const tempMax = Number(extra.tempMax);
-  if (Number.isFinite(tempMax)) {
-    result.tempMax = Math.round(tempMax);
-  }
-
-  const tempMin = Number(extra.tempMin);
-  if (Number.isFinite(tempMin)) {
-    result.tempMin = Math.round(tempMin);
-  }
-
-  const precipChance = Number(extra.precipChance);
-  if (Number.isFinite(precipChance)) {
-    result.precipChance = Math.round(precipChance);
-  }
-
-  const uvMax = Number(extra.uvMax);
-  if (Number.isFinite(uvMax)) {
-    result.uvMax = Math.round(uvMax);
-  }
-
-  // today's precip total ships as hundredths like precip to avoid floats in AppMessage
-  const precipTotal = Number(extra.precipTotal);
-  if (Number.isFinite(precipTotal)) {
-    result.precipTotal = Math.round(precipTotal * 100);
-  }
+  TEXT_EXTRAS.forEach((name) => {
+    if (extra[name]) {
+      target[name] = String(extra[name]);
+    }
+  });
 }
 
 /**
