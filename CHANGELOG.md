@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed repeated weather requests from the watch each starting a provider fetch, and a failed send leaving weather stuck until the phone app restarted.
 - Fixed a watchlist of errors going back to the watch for as long as the provider's quota gate stayed shut.
 - Fixed drizzle drawing the N/A icon on OpenWeatherMap.
+- Fixed a nacked send retrying with no wait when another send was queued during its backoff.
 
 ## [1.1.0] - 2026-09-12
 

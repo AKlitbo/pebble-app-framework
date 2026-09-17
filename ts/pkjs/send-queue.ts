@@ -66,9 +66,9 @@ export function createSendQueue(send: SendFn): QueueSendFn {
       }
       settled = true;
       clearTimeout(watchdog);
-      sending = false;
 
       if (ok) {
+        sending = false;
         items.shift();
         if (item.onOk) {
           item.onOk();
@@ -81,14 +81,19 @@ export function createSendQueue(send: SendFn): QueueSendFn {
       // head a few times before dropping it and moving on so one stuck send can't wedge the queue
       item.tries++;
       if (item.tries >= SEND_RETRIES) {
+        sending = false;
         items.shift();
         if (item.onFail) {
           item.onFail();
         }
         pump();
-      } else {
-        setTimeout(pump, SEND_RETRY_MS);
+        return;
       }
+
+      setTimeout(() => {
+        sending = false;
+        pump();
+      }, SEND_RETRY_MS);
     };
 
     const watchdog = setTimeout(() => settle(false), SEND_WATCHDOG_MS);

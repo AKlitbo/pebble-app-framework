@@ -109,6 +109,26 @@ describe('createSendQueue', () => {
     expect(calls).toHaveLength(1);
   });
 
+  /**
+   * A send queued while the head is sitting out its backoff must not take the slot. It would put
+   * the nacked dict straight back at the outbox that just refused it and the wait would buy nothing.
+   */
+  test('holds the queue through the backoff when another send is queued in the gap', () => {
+    const { calls, send } = recordingSend();
+    const queueSend = createSendQueue(send);
+
+    queueSend({ a: 1 });
+    calls[0].fail();
+    queueSend({ b: 2 });
+
+    expect(calls).toHaveLength(1);
+
+    vi.advanceTimersByTime(SEND_RETRY_MS);
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1].dict).toEqual({ a: 1 });
+  });
+
   /** Without a cap on the retries one unsendable dict would wedge the queue forever. */
   test('gives up on a dict after the retry cap and calls onFail', () => {
     const { calls, send } = recordingSend();
