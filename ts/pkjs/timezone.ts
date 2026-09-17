@@ -16,23 +16,24 @@ interface SavedPlace {
   tz?: string;
 }
 
-/**
- * How far ahead of UTC a zone is at a given moment, in minutes.
- *
- * Works it out by asking for the zone's own wall clock and measuring it against UTC, which covers
- * the half-hour and three-quarter-hour zones as well as the whole-hour ones.
- *
- * @param zone An IANA zone name, such as Europe/London.
- * @param nowMs The moment to read the zone at, as epoch milliseconds.
- * @return The offset in minutes, negative west of UTC, or null when the runtime cannot read the zone.
- */
-export function offsetMinutes(zone: string, nowMs: number): number | null {
-  if (!zone) {
-    return null;
-  }
+/** A zone's wall clock at one moment, broken into the pieces every caller here wants. */
+export interface ZoneParts {
+  year: number;
+  month: number;   // 1 to 12, as people write it rather than as Date numbers it
+  day: number;
+  hour: number;
+  minute: number;
+  date: string;    // the calendar day as "YYYY-MM-DD"
+}
 
-  try {
-    const parts = new Intl.DateTimeFormat('en-CA', {
+// building a formatter resolves locale and zone data, which costs far more than formatting with
+// one, so each zone keeps the formatter it already built
+const formatters: Record<string, Intl.DateTimeFormat> = {};
+
+/** The formatter for a zone, built once and kept. Throws for a zone the runtime cannot read. */
+function formatterFor(zone: string): Intl.DateTimeFormat {
+  if (!formatters[zone]) {
+    formatters[zone] = new Intl.DateTimeFormat('en-CA', {
       timeZone: zone,
       year: 'numeric',
       month: '2-digit',
@@ -40,24 +41,78 @@ export function offsetMinutes(zone: string, nowMs: number): number | null {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false,
-    }).formatToParts(new Date(nowMs));
+    });
+  }
+
+  return formatters[zone];
+}
+
+/**
+ * What a zone's own clock reads at a given moment.
+ *
+ * One formatter carries both the clock and the calendar day so the two can never disagree across a
+ * zone boundary, and en-CA is what gives the date its YYYY-MM-DD shape.
+ *
+ * @param zone An IANA zone name, such as Europe/London.
+ * @param nowMs The moment to read the zone at, as epoch milliseconds.
+ * @return The zone's wall clock, or null when the runtime cannot read that zone.
+ */
+export function zoneParts(zone: string, nowMs: number): ZoneParts | null {
+  if (!zone) {
+    return null;
+  }
+
+  try {
+    const parts = formatterFor(zone).formatToParts(new Date(nowMs));
 
     const lookup: Record<string, string> = {};
     parts.forEach((part) => { lookup[part.type] = part.value; });
 
-    // midnight comes back as hour 24 in some engines, so fold it onto the day it belongs to
-    const hour = Number(lookup.hour) % 24;
-    const wall = Date.UTC(Number(lookup.year), Number(lookup.month) - 1, Number(lookup.day), hour, Number(lookup.minute));
-    if (!isFinite(wall)) {
+    const year = Number(lookup.year);
+    const month = Number(lookup.month);
+    const day = Number(lookup.day);
+    if (!isFinite(year) || !isFinite(month) || !isFinite(day)) {
       return null;
     }
 
-    // the zone's clock is read to the minute, so the moment it is measured against is floored to
-    // the same minute and what is left over is the offset exactly
-    return Math.round((wall - Math.floor(nowMs / 60000) * 60000) / 60000);
+    return {
+      year: year,
+      month: month,
+      day: day,
+      // midnight comes back as hour 24 in some engines, so fold it onto the day it belongs to
+      hour: Number(lookup.hour) % 24,
+      minute: Number(lookup.minute),
+      date: `${lookup.year}-${lookup.month}-${lookup.day}`,
+    };
   } catch (error) {
     return null;
   }
+}
+
+/**
+ * How far ahead of UTC a zone is at a given moment, in minutes.
+ *
+ * Measures the zone's own wall clock against UTC, which covers the half-hour and
+ * three-quarter-hour zones as well as the whole-hour ones.
+ *
+ * @param zone An IANA zone name, such as Europe/London.
+ * @param nowMs The moment to read the zone at, as epoch milliseconds.
+ * @return The offset in minutes, negative west of UTC, or null when the runtime cannot read the zone.
+ */
+export function offsetMinutes(zone: string, nowMs: number): number | null {
+  const parts = zoneParts(zone, nowMs);
+  if (!parts) {
+    return null;
+  }
+
+  const wall = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute);
+  if (!isFinite(wall)) {
+    return null;
+  }
+
+  // the zone's clock is read to the minute, so the moment it is measured against is floored to
+  // the same minute and what is left over is the offset exactly
+  return Math.round((wall - Math.floor(nowMs / 60000) * 60000) / 60000);
 }
 
 /**
@@ -93,4 +148,4 @@ export function toWire(saved: unknown, nowMs: number): string {
   return offset + ',' + wire.toAscii(String(place.label || ''));
 }
 
-export default { offsetMinutes, toWire };
+export default { zoneParts, offsetMinutes, toWire };

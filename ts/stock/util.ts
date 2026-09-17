@@ -6,6 +6,8 @@
  * purpose so the two data layers stay decoupled.
  */
 
+import { zoneParts } from '../pkjs/timezone';
+
 /** One normalized quote result (or a status/error when ok is false). */
 export interface StockQuote {
   symbol: string;
@@ -178,18 +180,15 @@ function isoDateFromUnix(unixSeconds: unknown): string {
     return '';
   }
 
-  const date = new Date(unix * 1000);
-  try {
-    return new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'America/New_York',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(date);
-  } catch (error) {
-    // older engines without IANA time zone data fall back to the plain UTC date
-    return date.toISOString().slice(0, 10);
+  // zoneParts answers null rather than throwing, so the fallback hangs off that
+  const ms = unix * 1000;
+  const parts = zoneParts('America/New_York', ms);
+  if (parts) {
+    return parts.date;
   }
+
+  // older engines without IANA time zone data fall back to the plain UTC date
+  return new Date(ms).toISOString().slice(0, 10);
 }
 
 /**

@@ -8,6 +8,11 @@
  * bootstrap.
  */
 
+import { zoneParts } from '../pkjs/timezone';
+
+/** US markets quote in New York, so every reading here is that zone's clock. */
+const ET_ZONE = 'America/New_York';
+
 const MINUTE_MS = 60 * 1000;
 // Twelve Data honours the watch's interval while the market is open floored so 4 symbols
 // stay under its 800/day cap (~384/day at 15 min). when the market is shut its price is
@@ -25,36 +30,28 @@ const AV_POLL_FLOOR_MS = 120 * MINUTE_MS;
  * weekday is 0=Sunday..6=Saturday, and date is the ET calendar day as "YYYY-MM-DD".
  */
 function etParts(now: number): { weekday: number; hour: number; minute: number; date: string } {
-  const date = new Date(now);
-  // one formatter carries both the clock and the calendar day so they never disagree
-  // across a zone boundary. en-CA gives the YYYY-MM-DD date shape
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/New_York',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).formatToParts(date);
+  const parts = zoneParts(ET_ZONE, now);
+  if (!parts) {
+    // a runtime that cannot read the zone must not read as a weekday inside market hours, or a
+    // metered provider gets polled through the weekend. Sunday with a shut clock is the safe answer
+    return { weekday: 0, hour: 0, minute: 0, date: '' };
+  }
 
-  const lookup: Record<string, string> = {};
-  parts.forEach((part) => { lookup[part.type] = part.value; });
-
-  // hour comes back as "24" at midnight in some engines so fold it to 0
-  const hour = Number(lookup.hour) % 24;
   // work out the weekday from the ET calendar day itself not a locale short-name string
   // (some engines spell it differently and a bad match would read undefined and let a
   // weekend fall through as an open trading day and over-poll paid providers)
-  const weekday = new Date(Date.UTC(Number(lookup.year), Number(lookup.month) - 1, Number(lookup.day))).getUTCDay();
+  const weekday = new Date(Date.UTC(parts.year, parts.month - 1, parts.day)).getUTCDay();
 
   return {
     weekday: weekday,
-    hour: hour,
-    minute: Number(lookup.minute),
-    date: `${lookup.year}-${lookup.month}-${lookup.day}`,
+    hour: parts.hour,
+    minute: parts.minute,
+    date: parts.date,
   };
 }
+
+/** The three states the US market can be in, so a misspelled comparison stops compiling. */
+export type MarketPhase = 'open' | 'postclose' | 'closed';
 
 /**
  * The trading phase of the US market at the given instant: 'open' (Mon-Fri
@@ -63,8 +60,18 @@ function etParts(now: number): { weekday: number; hour: number; minute: number; 
  * @param now The instant to check, as epoch milliseconds.
  * @return The trading phase, 'open', 'postclose', or 'closed'.
  */
-function marketPhase(now: number): string {
-  const et = etParts(now);
+function marketPhase(now: number): MarketPhase {
+  return phaseOf(etParts(now));
+}
+
+/**
+ * The trading phase for a clock reading already taken, so a caller that needs both the phase and
+ * the calendar day reads the zone once rather than twice.
+ *
+ * @param et The ET wall clock to judge.
+ * @return The trading phase.
+ */
+function phaseOf(et: { weekday: number; hour: number; minute: number }): MarketPhase {
   if (et.weekday === 0 || et.weekday === 6) {
     return 'closed';
   }
@@ -108,12 +115,14 @@ function shouldThrottleStockFetch(provider: string, force: boolean, lastFetchMs:
   }
 
   if (provider === 'alphavantage') {
+    const et = etParts(now);
+
     // already holding today's close so nothing new lands until tomorrow
-    if (lastAsOf && lastAsOf === etParts(now).date) {
+    if (lastAsOf && lastAsOf === et.date) {
       return true;
     }
     // the close only publishes after the bell so only chase it in the evening window
-    if (marketPhase(now) === 'postclose') {
+    if (phaseOf(et) === 'postclose') {
       return sinceLast < AV_POLL_FLOOR_MS;
     }
     return true;
