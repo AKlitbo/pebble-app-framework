@@ -191,6 +191,9 @@ bool settings_serialize(DictionaryIterator *iter);
  *
  * Decodes only. The caller persists and reacts based on the returned flags.
  *
+ * A field already holding what the message carries is left alone and flags nothing. The config
+ * page sends the whole page on every save, so the flags say what moved rather than what turned up.
+ *
  * @param iter The dictionary iterator to decode from.
  * @return Which categories of setting changed.
  */

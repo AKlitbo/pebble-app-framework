@@ -112,6 +112,34 @@ static void set_cstring(char *dst, const char *src, uint16_t size)
 }
 
 /**
+ * @brief Whether a string would land in a field's buffer exactly as the buffer already reads.
+ *
+ * set_cstring keeps only what fits, so the incoming string is measured the same way. Comparing it
+ * in full would call a value too long for the field a change on every save.
+ *
+ * @param current What the field holds now.
+ * @param value The string the phone sent.
+ * @param size The field's buffer size, terminator included.
+ * @return True when storing the string would leave the field reading the same.
+ */
+static bool cstring_same(const char *current, const char *value, uint16_t size)
+{
+    if (size == 0)
+    {
+        return true;  // nowhere to put it, so nothing about the field can move
+    }
+
+    size_t room = (size_t)size - 1;
+    size_t incoming = strlen(value);
+    if (incoming > room)
+    {
+        incoming = room;
+    }
+
+    return strlen(current) == incoming && strncmp(current, value, incoming) == 0;
+}
+
+/**
  * @brief One 0..255 colour byte down to the two bits a GColor channel holds.
  *
  * The phone picks from the watch's own palette, so the byte is already one of 0, 85, 170
@@ -537,7 +565,13 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
                         continue;
                     }
 
-                    *(bool *)ptr = (on == 1);
+                    bool value = (on == 1);
+                    if (*(bool *)ptr == value)
+                    {
+                        continue;
+                    }
+
+                    *(bool *)ptr = value;
                     break;
                 }
 
@@ -557,6 +591,11 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
                         value = (int)field->default_num;  // out-of-range from the phone so clamp to default
                     }
 
+                    if (*(uint8_t *)ptr == (uint8_t)value)
+                    {
+                        continue;
+                    }
+
                     *(uint8_t *)ptr = (uint8_t)value;
                     break;
                 }
@@ -567,6 +606,11 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
                     if (!value || value[0] == '\0')
                     {
                         continue;  // nothing to store, so don't flag a change
+                    }
+
+                    if (cstring_same((const char *)ptr, value, field->size))
+                    {
+                        continue;
                     }
 
                     set_cstring((char *)ptr, value, field->size);
@@ -583,11 +627,20 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
                         continue;
                     }
 
-                    *(uint8_t *)ptr = color_from_hex((uint32_t)hex);
+                    uint8_t value = color_from_hex((uint32_t)hex);
+                    if (*(uint8_t *)ptr == value)
+                    {
+                        continue;
+                    }
+
+                    *(uint8_t *)ptr = value;
                     break;
                 }
             }
 
+            // every case above walks on when the field already reads what the phone sent, so these
+            // three mark what moved rather than what the save carried. the config page sends the
+            // whole page each time, and a fresh weather fetch hangs off weather_changed
             result.changed = true;
             result.layout_changed |= field->affects_layout;
             result.weather_changed |= field->affects_weather;

@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed an accented letter in a calendar title or a stock status reaching the watch as a different letter. The accent comes off and the plain letter stays.
 - Fixed a store switched on after starting disabled never receiving the reply to its poll.
 - Fixed a date format too long for the readout buffer leaving the date line with no terminator for the passes that follow it.
+- Fixed every settings save asking the phone for fresh weather. A field counts as changed only when its value moved.
 
 ## [1.1.0] - 2026-09-12
 

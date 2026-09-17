@@ -635,10 +635,19 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // decode every settings field the message carries. the table owns which keys
     // exist and how each encodes so this transport never names a field
     SettingsInbound settings = settings_apply_inbox(iterator);
-    if (settings.changed || custom_changed)
+    bool moved = settings.changed || custom_changed;
+
+    // a watch that booted with nothing saved writes the phone's restore even when every value in it
+    // already matches a default, because the key existing is what stops the watch asking to be
+    // restored on the next launch. the settings reply is not a request, so a nacked one is never
+    // retried, and reporting fresh again is the only thing that recovers a restore that went missing
+    if (moved || settings_was_fresh())
     {
         settings_save();
+    }
 
+    if (moved)
+    {
         if (s_handlers.on_settings_changed)
         {
             s_handlers.on_settings_changed(settings.layout_changed);
