@@ -270,7 +270,7 @@ export function buildLabelsTable(vocabulary: ConditionVocabulary) {
  * @param nightBit The bit the phone sets on an hourly forecast code after dark.
  * @return The full contents of wire_caps.g.h.
  */
-function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string {
+export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string {
   const lines = bannerLines(
     'wire_caps.g.h',
     'Strip caps and marker values shared by the phone and the watch.',
@@ -298,16 +298,34 @@ function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string {
   return lines.join('\n');
 }
 
+/** One header this tool owns: where it lands, and what it should contain right now. */
+export interface GeneratedHeader {
+  out: string;
+  build: () => string;
+}
+
+/**
+ * Every header this tool writes.
+ *
+ * `main` writes each one and the spec checks each committed file still matches, so a header added
+ * here is covered by both without either being edited. The committed copies are what the host C
+ * suite compiles and what Doxygen documents, neither of which runs this generator.
+ */
+export const GENERATED: GeneratedHeader[] = [
+  { out: ICONS_OUT, build: () => buildIconsTable(conditionVocabulary) },
+  { out: ICON_CODES_OUT, build: () => buildIconCodesTable(conditionVocabulary) },
+  { out: LABELS_OUT, build: () => buildLabelsTable(conditionVocabulary) },
+  { out: WIRE_CAPS_OUT, build: () => buildWireCaps(WIRE_CAPS, conditionVocabulary.FORECAST_NIGHT_BIT) },
+];
+
 /** Writes every generated header from its source and logs what it wrote. */
 function main() {
   const root = path.resolve(import.meta.dirname, '..', '..');
 
-  fs.writeFileSync(ICONS_OUT, buildIconsTable(conditionVocabulary));
-  fs.writeFileSync(ICON_CODES_OUT, buildIconCodesTable(conditionVocabulary));
-  fs.writeFileSync(LABELS_OUT, buildLabelsTable(conditionVocabulary));
-  fs.writeFileSync(WIRE_CAPS_OUT, buildWireCaps(WIRE_CAPS, conditionVocabulary.FORECAST_NIGHT_BIT));
+  GENERATED.forEach((header) => fs.writeFileSync(header.out, header.build()));
 
-  console.log(`generated ${path.relative(root, ICONS_OUT)}, ${path.relative(root, ICON_CODES_OUT)}, ${path.relative(root, LABELS_OUT)} and ${path.relative(root, WIRE_CAPS_OUT)} (${conditionVocabulary.conditions.length} conditions)`);
+  const written = GENERATED.map((header) => path.relative(root, header.out)).join(', ');
+  console.log(`generated ${written} (${conditionVocabulary.conditions.length} conditions)`);
 }
 
 if (import.meta.main) {

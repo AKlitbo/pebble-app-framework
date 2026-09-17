@@ -4,10 +4,16 @@
  * buildIconsTable is a pure codegen transform: vocabulary in, C source out.
  * A drifted branch or wrong fallback ships a watchface that compiles to the
  * wrong icon (or fails to compile), so the generated shape is pinned here.
+ *
+ * The last group checks the committed headers instead of the transform. Three things read those
+ * files straight from the source tree and none of them run this generator, so a stale commit is
+ * invisible until a watch reads a different list from the phone.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildIconsTable, buildIconCodesTable, buildLabelsTable } from './build-conditions';
+import { buildIconsTable, buildIconCodesTable, buildLabelsTable, GENERATED } from './build-conditions';
 import vocabulary from '../ts/weather/conditions.ts';
 import type { ConditionEntry, ConditionFallback } from '../ts/weather/conditions.ts';
 
@@ -276,4 +282,22 @@ describe('buildLabelsTable', () => {
       expect(source).toContain(`return "${labelLong}";`);
     }
   });
+});
+
+describe('the committed headers', () => {
+  /**
+   * The generated headers are committed because the host C suite compiles `c/core` with plain gcc,
+   * Doxygen documents them on a fresh checkout, and an editor resolves the includes from them. None
+   * of those run the generator, so an edit to the vocabulary or to WIRE_CAPS that is committed
+   * without `npm run build:conditions` leaves the watch bounds-checking against numbers the phone
+   * no longer packs to.
+   */
+  test.each(GENERATED.map((header) => [path.basename(header.out), header] as const))(
+    '%s matches what the generator writes now',
+    (_name, header) => {
+      const result = fs.readFileSync(header.out, 'utf8');
+
+      expect(result).toBe(header.build());
+    }
+  );
 });
