@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `node-version` and `sdk-version` inputs to the `setup-pebble` action. Both are optional and default to Node 24 and the latest SDK.
 - Added the `report-memory` and `render-memory` actions, which rank every face's memory use on the CI run summary.
 - Added the `prepare-release` and `publish-release` actions, which check a face release before it builds and then publish it.
+- Added an optional `cancel` to the builder's `DragSpec`, which runs when the pointer is taken away mid drag. A builder that lifts an item out of its model in `lift` puts it back here.
 
 ### Changed
 

@@ -62,6 +62,15 @@ export interface DragSpec<TPayload, TTarget> {
    * it left reads as free for the rest of the drag.
    */
   lift?(payload: TPayload): void;
+
+  /**
+   * The pointer was taken away mid drag, so the item was never released anywhere.
+   *
+   * The webview claiming the touch to scroll is what raises this. A builder that took the item out
+   * of its model in lift puts it back here. A spec without one falls through to dropOutside, which
+   * for a placed item is what removes it.
+   */
+  cancel?(payload: TPayload): void;
 }
 
 /** The two ways a face starts a drag. */
@@ -188,9 +197,16 @@ export function createDrag<TPayload, TTarget>(
     const payload = active && active.payload;
     end();
 
-    if (payload !== null && payload !== undefined) {
-      spec.dropOutside(payload);
+    if (payload === null || payload === undefined) {
+      return;
     }
+
+    if (spec.cancel) {
+      spec.cancel(payload);
+      return;
+    }
+
+    spec.dropOutside(payload);
   });
 
   return {
