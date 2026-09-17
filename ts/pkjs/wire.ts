@@ -20,6 +20,8 @@ const STOCK_MAX_SLOTS = 4;
 const CALENDAR_MAX_SLOTS = 6;
 const CALENDAR_TITLE_MAX = 24;
 const CALENDAR_LOC_MAX = 16;
+// how wide a watchlist label is, matching the symbol buffer on the watch
+const STOCK_LABEL_MAX = 11;
 // a forecast column with no reading ships this marker value so the watch draws a placeholder
 const FORECAST_NO_TEMP = -1000;
 
@@ -52,13 +54,51 @@ function int16Bytes(value: number | null | undefined): number[] {
 }
 
 /**
- * Pushes a length byte then the text as 7-bit ASCII, which is how every string field on the
- * wire is laid out. Callers slice the text to their own field width first.
+ * Flattens text to printable ASCII, which is all the watch fonts carry a glyph for.
+ *
+ * NFD splits a letter from its accent, so dropping the accent leaves the plain letter behind and
+ * Reunion spelled with one goes over as Reunion. Anything else ASCII has no room for becomes a
+ * question mark.
+ *
+ * The split can hand back more characters than it was given, as it does for Hangul, so the result
+ * is measured against the field it is going into. Measuring it against the length it started with
+ * would cut the tail off anything mixing those letters with ASCII, leaving a meeting called
+ * "<Hangul> Standup" as "??? Stand".
+ *
+ * @param text The text to flatten.
+ * @param max How many characters the field on the watch holds. Left out, the result runs on.
+ * @return The flattened text, no longer than max.
  */
-function pushAscii(bytes: number[], text: string): void {
-  bytes.push(text.length);
-  for (let i = 0; i < text.length; i++) {
-    bytes.push(text.charCodeAt(i) & 0x7f);
+function toAscii(text: string, max?: number): string {
+  const limit = max === undefined ? Infinity : max;
+  const split = text.normalize('NFD');
+  let out = '';
+
+  for (let i = 0; i < split.length && out.length < limit; i++) {
+    const code = split.charCodeAt(i);
+    if (code >= 0x0300 && code <= 0x036f) {
+      continue; // an accent on its own, and the letter it sat on is already in hand
+    }
+
+    out += (code >= 0x20 && code <= 0x7e) ? split.charAt(i) : '?';
+  }
+
+  return out;
+}
+
+/**
+ * Pushes a length byte then the text as 7-bit ASCII, which is how every string field on the
+ * wire is laid out.
+ *
+ * @param bytes The strip being built.
+ * @param text The text for the field, at whatever length it arrives.
+ * @param max How many characters the field on the watch holds.
+ */
+function pushAscii(bytes: number[], text: string, max: number): void {
+  const ascii = toAscii(text, max);
+  bytes.push(ascii.length);
+  for (let i = 0; i < ascii.length; i++) {
+    bytes.push(ascii.charCodeAt(i));
   }
 }
 
@@ -145,12 +185,12 @@ function packStockStrip(results: Array<Pick<StockQuote, 'ok' | 'price' | 'change
     const pctHundredths = clampInt((result && result.changePercent || 0) * 100, 16);
     // a good slot carries its ticker while a failed one carries its status text so the
     // watch has something to show. cap to what the store's symbol buffer holds
-    const label = String((result && (result.ok ? result.symbol : result.status)) || '').toUpperCase().slice(0, 11);
+    const label = String((result && (result.ok ? result.symbol : result.status)) || '').toUpperCase();
 
     bytes.push(ok);
     bytes.push(...leBytes(priceCents, 4));
     bytes.push(...leBytes(pctHundredths, 2));
-    pushAscii(bytes, label);
+    pushAscii(bytes, label, STOCK_LABEL_MAX);
   }
 
   return bytes;
@@ -175,8 +215,8 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
   const bytes = [slots.length];
 
   slots.forEach((event) => {
-    const title = String(event.title || '').slice(0, CALENDAR_TITLE_MAX);
-    const location = String(event.location || '').slice(0, CALENDAR_LOC_MAX);
+    const title = String(event.title || '');
+    const location = String(event.location || '');
 
     // clamp both epochs into the int32 the watch reads them back as. a feed can carry an
     // open-ended DTEND far past 2038, and the low four bytes of that land back in 1969, which
@@ -185,8 +225,8 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
     bytes.push(...leBytes(clampInt(event.endEpoch, 32), 4));
     bytes.push(event.allDay ? 1 : 0);
 
-    pushAscii(bytes, title);
-    pushAscii(bytes, location);
+    pushAscii(bytes, title, CALENDAR_TITLE_MAX);
+    pushAscii(bytes, location, CALENDAR_LOC_MAX);
   });
 
   return bytes;

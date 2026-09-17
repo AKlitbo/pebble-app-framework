@@ -295,6 +295,43 @@ describe('packCalendarStrip', () => {
     expect(locLen).toBe(16);
   });
 
+  /** An accent masked down to seven bits lands on a different letter, so a meeting in Reunion reads as Riunion on the watch. */
+  test('strips the accent off a letter rather than changing the letter', () => {
+    const bytes = wire.packCalendarStrip([{ ...event, title: 'Réunion', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('Reunion');
+  });
+
+  /** A title with no ASCII form draws as a line of random letters, and one whose low seven bits are zero cuts the title short where it sits. */
+  test('writes a question mark for a character with no ASCII form', () => {
+    const bytes = wire.packCalendarStrip([{ ...event, title: '午前会議', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('????');
+  });
+
+  /** Hangul splits into more characters than it was given, and a title that grew past the buffer would overrun the store. */
+  test('caps a title that splits into more characters at the buffer', () => {
+    const bytes = wire.packCalendarStrip([{ ...event, title: '한'.repeat(24), location: '' }]);
+
+    expect(bytes[10]).toBe(24);
+  });
+
+  /** Measuring the split text against the length it started with cut the tail off, so this title reached the watch as "??? Stand". */
+  test('keeps the ASCII tail of a title that mixes scripts', () => {
+    const bytes = wire.packCalendarStrip([{ ...event, title: '한 Standup', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('??? Standup');
+  });
+
   /** More events than the strip can hold must be capped so the wire never overruns the store. */
   test('caps the event list at the strip size', () => {
     const many = Array.from({ length: 8 }, () => event);
