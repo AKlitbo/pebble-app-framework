@@ -255,4 +255,4 @@ function bytesEqual(left: number[] | null, right: number[] | null): boolean {
   return true;
 }
 
-export default { packForecastHourly, packForecastDaily, packStockStrip, packCalendarStrip, bytesEqual, STOCK_MAX_SLOTS };
+export default { packForecastHourly, packForecastDaily, packStockStrip, packCalendarStrip, bytesEqual, toAscii, STOCK_MAX_SLOTS };

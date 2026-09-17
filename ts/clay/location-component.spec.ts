@@ -47,6 +47,7 @@ function mount(config?: ClayComponentContext['config']) {
     query: root.querySelector('.loc-query') as HTMLInputElement,
     hidden: root.querySelector('.loc-value') as HTMLInputElement,
     list: root.querySelector('.loc-list') as HTMLElement,
+    note: root.querySelector('.loc-note') as HTMLElement,
   };
 }
 
@@ -161,18 +162,66 @@ describe('manipulator', () => {
     expect(query.value).toBe('Europe/Berlin');
   });
 
-  /** A timezone field must serialise back as "offset,label" for the watch, not the raw JSON blob the geocoder stored. */
-  test('formats a timezone selection as offset,label on get', () => {
-    // the real production key that the earlier substring guard silently missed
+  /** The zone has to survive being persisted, or the pkjs side has nothing to read a fresh offset off and the watch drifts an hour every summer. */
+  test('keeps the saved zone in what a timezone field persists', () => {
     const { ctx, hidden } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
-    hidden.value = JSON.stringify({ lat: 52.5, lon: 13.4, label: 'Europe/Berlin', offset: 60 });
+    const blob = JSON.stringify({ lat: 52.5, lon: 13.4, label: 'Berlin', offset: 60, tz: 'Europe/Berlin' });
+    hidden.value = blob;
 
     const result = ctx.get();
 
-    expect(result).toBe('60,Europe/Berlin');
+    expect(result).toBe(blob);
   });
 
-  /** A plain location field must keep the raw JSON blob, since only timezone keys emit "offset,label". */
+  /**
+   * A place saved before the zone was kept has only the offset it had that day, so its clock goes
+   * an hour out when the clocks change. Picking the city again is the fix, so the picker says so.
+   */
+  test('prompts to pick again when a restored timezone value carries no zone', () => {
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+
+    ctx.set('0,London, England, United Kingdom');
+
+    expect(note.style.display).toBe('block');
+  });
+
+  /** A blob whose zone lookup never came back is the same problem wearing a different shape. */
+  test('prompts to pick again when a saved place has no zone in it', () => {
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+
+    ctx.set(JSON.stringify({ lat: 51.5, lon: -0.1, label: 'London', offset: 0 }));
+
+    expect(note.style.display).toBe('block');
+  });
+
+  /** Nagging somebody whose clock is already right would teach them to ignore the prompt. */
+  test('stays quiet when the saved place carries its zone', () => {
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+
+    ctx.set(JSON.stringify({ lat: 51.5, lon: -0.1, label: 'London', offset: 0, tz: 'Europe/London' }));
+
+    expect(note.style.display).toBe('none');
+  });
+
+  /** A weather location needs no zone, so it must never carry a prompt about one. */
+  test('stays quiet for a location field that is not a timezone', () => {
+    const { ctx, note } = mount({ messageKey: 'LOCATION_NAME' });
+
+    ctx.set(JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix', offset: 0 }));
+
+    expect(note.style.display).toBe('none');
+  });
+
+  /** An empty field has nothing to pick again, so a prompt there is just noise. */
+  test('stays quiet when nothing is saved yet', () => {
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+
+    ctx.set('');
+
+    expect(note.style.display).toBe('none');
+  });
+
+  /** A plain location field carries coordinates the weather fetch needs, so its blob has to come back whole. */
   test('returns the raw json blob for a non-timezone location key', () => {
     const { ctx, hidden } = mount({ messageKey: 'LOCATION_NAME' });
     const blob = JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix', offset: 0 });
@@ -275,7 +324,7 @@ describe('initialize', () => {
     ] }));
 
     mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: 3600 }));
+    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: 3600, timezone: 'America/Phoenix' }));
 
     const saved = JSON.parse(mounted.hidden.value);
 
@@ -285,9 +334,32 @@ describe('initialize', () => {
       lon: -112,
       label: 'Phoenix, Arizona, United States',
       offset: 60,
+      tz: 'America/Phoenix',
     });
     expect(mounted.query.value).toBe('Phoenix, Arizona, United States');
     expect(mounted.list.classList.contains('show')).toBe(false);
+    // a prompt still showing after the pick that answers it reads as a page that ignored them
+    expect(mounted.note.style.display).toBe('none');
+  });
+
+  /**
+   * The tap writes the minutes and the zone arrives on a second request. Saving in that gap keeps a
+   * place with no zone, whose clock reads UTC and can never be re-read, so the prompt has to stay up
+   * until the zone actually lands.
+   */
+  test('keeps the prompt up when the zone lookup never answers', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
+    ] }));
+    mounted.ctx.set('0,Phoenix, Arizona, United States');
+    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(mounted.note.style.display).toBe('block');
   });
 
   /** Editing the query after a selection must drop the stored coordinates, so the watch never saves a label that disagrees with its lat/lon. */

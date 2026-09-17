@@ -312,8 +312,8 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
       },
     ];
 
-    // the search writes "<minutes from UTC>,<place>", which is both halves of what a second
-    // clock needs. only faces with a readout for it ask for the control
+    // the search writes the place it saved, and the pkjs side turns that into the minutes from
+    // UTC and the name a second clock needs. only faces with a readout for it ask for the control
     if (options.location.timeZone) {
       locationItems.push({
         'type': 'locationsearch',

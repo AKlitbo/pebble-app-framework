@@ -25,6 +25,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Exported the option and state types that `startPebbleApp`, `runWeatherRound`, `buildConfig`, the hidden store component, and the WeatherAPI provider take, so a face can name them in its own code.
 - Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER` and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects and radio groups.
 - The `setup-pebble` action now checks that pebble-tool runs and puts the pebble-tool and SDK versions on the job summary. A pinned `sdk-version` is cached between runs.
+- A `locationsearch` field persists the saved place as JSON for every kind of key, with the zone alongside the coordinates. The pkjs side builds the `offset,label` a timezone field sends the watch, so a face reading that setting off the phone's config sees the blob rather than the pair.
+- The config page prompts to pick a timezone city again when the place saved for it carries no zone.
 
 ### Fixed
 
@@ -40,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed a store switched on after starting disabled never receiving the reply to its poll.
 - Fixed a date format too long for the readout buffer leaving the date line with no terminator for the passes that follow it.
 - Fixed every settings save asking the phone for fresh weather. A field counts as changed only when its value moved.
+- Fixed a timezone field keeping the offset its zone had when the city was picked, so a London picked in January ran an hour behind all summer. A place picked before this release has no zone saved with it, so it keeps the old offset until the city is picked again.
 
 ## [1.1.0] - 2026-09-12
 

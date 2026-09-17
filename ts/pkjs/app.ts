@@ -15,6 +15,7 @@ import weather from '../weather/weather';
 import weatherUtil from '../weather/util';
 import locationComponent from '../clay/location-component';
 import wire from './wire';
+import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { request } from './request';
 import { getConfig, readBool, readValue, settingsChanged, settingsSnapshot } from './settings-store';
@@ -365,6 +366,80 @@ function startPebbleApp(options: StartOptions): void {
   // the defaults declared in config.ts
   const DEFAULTS = collectDefaults(clayConfig);
 
+  // the face's timezone fields, by the setting name to read and the key Clay sends it under. a
+  // face with none of them gets an empty list and none of the work below
+  const timezoneFields = Object.keys(messageKeys)
+    .filter((name) => /TIME_?ZONE/i.test(name))
+    .map((name) => ({ name: name, key: messageKeys[name] as number }));
+
+  // the last string pushed for each timezone field, so a refresh only sends one whose offset moved
+  let lastTimezoneValues: Record<string, string> = {};
+
+  /**
+   * Rewrites every timezone field in a settings dict into the "offset,label" the watch reads.
+   *
+   * Clay hands back the place the config page saved. The offset in it is the one that zone kept on
+   * the day the place was picked, so it is read off the zone again here.
+   *
+   * A face is free to name a key TIMEZONE without it holding a saved place, so only a string is
+   * rewritten. A number is a toggle or a colour, and blanking one would leave that setting stuck.
+   *
+   * @param dict The settings dict Clay built from a save.
+   * @return The same dict, with each timezone field rewritten.
+   */
+  function retimeSettings(dict: AppMessageDict): AppMessageDict {
+    timezoneFields.forEach((field) => {
+      if (typeof dict[field.key] === 'string') {
+        dict[field.key] = timezone.toWire(dict[field.key], Date.now());
+      }
+    });
+
+    return dict;
+  }
+
+  /**
+   * Sends any timezone field whose zone has moved its clock since the last push.
+   *
+   * This is how a daylight saving switch reaches the watch. Nothing about the saved settings
+   * changes, only what the zone reads, so no save is involved and nothing goes out until the
+   * offset is genuinely different.
+   *
+   * A field is only recorded once the watch acks it, so a send that is dropped after its retries
+   * is picked up again on the next tick rather than counted as delivered.
+   */
+  function pushTimezones() {
+    if (!timezoneFields.length) {
+      return;
+    }
+
+    const config = getConfig();
+    const dict: AppMessageDict = {};
+    const sent: Record<string, string> = {};
+    let moved = false;
+
+    timezoneFields.forEach((field) => {
+      const saved = readValue(config[field.name], '');
+      if (typeof saved !== 'string') {
+        return;
+      }
+
+      const value = timezone.toWire(saved, Date.now());
+      if (!value || lastTimezoneValues[field.name] === value) {
+        return;
+      }
+
+      sent[field.name] = value;
+      dict[field.key] = value;
+      moved = true;
+    });
+
+    if (moved) {
+      queueSend(dict, () => {
+        Object.keys(sent).forEach((name) => { lastTimezoneValues[name] = sent[name]; });
+      });
+    }
+  }
+
   let weatherSettingsBeforeConfig: string[] | null = null;
 
   // weather round state mutated in place by runWeatherRound
@@ -570,6 +645,7 @@ function startPebbleApp(options: StartOptions): void {
     if (slow) {
       getWeather();
     }
+    pushTimezones();
     features.forEach((feature) => feature.refresh?.(slow));
   }
 
@@ -580,8 +656,10 @@ function startPebbleApp(options: StartOptions): void {
 
     // clear the dedupe cache so a watch that just rebooted with empty stores gets a fresh send
     lastWeatherKey = null;
+    lastTimezoneValues = {};
 
     getWeather();
+    pushTimezones();
     features.forEach((feature) => feature.ready?.());
 
     // the timer dies when the JS is suspended so re-arm it fresh on every ready
@@ -622,7 +700,7 @@ function startPebbleApp(options: StartOptions): void {
 
         if (watchFresh && phoneHasConfig) {
           // restore the watch from our saved config using the same dict a Save would send
-          queueSend(clay.getSettings(JSON.stringify(config)));
+          queueSend(retimeSettings(clay.getSettings(JSON.stringify(config))));
         } else if (!phoneHasConfig) {
           // nothing saved on the phone yet so recover it from the watch instead
           seedFromWatch(payload);
@@ -651,7 +729,7 @@ function startPebbleApp(options: StartOptions): void {
 
     // send the saved settings to the watch through the queue. Clay's auto-handling would send this
     // directly and let it collide with an in-flight send (dropping the whole save with no retry)
-    queueSend(clay.getSettings(event.response));
+    queueSend(retimeSettings(clay.getSettings(event.response)));
 
     // only refetch when a weather setting actually changed. the C side already
     // re-requests for those so refetching on every save (theme or vibe) is wasted

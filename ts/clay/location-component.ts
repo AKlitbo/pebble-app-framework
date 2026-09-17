@@ -6,7 +6,12 @@
  * never has to geocode.
  *
  * Persisted value:
- *   JSON string {lat, lon, label}
+ *   JSON string {lat, lon, label, offset, tz}
+ *
+ * `tz` is the IANA zone the geocoder named, such as Europe/London, and `offset` is how far ahead of
+ * UTC that zone was when the place was picked. A timezone field is sent to the watch as
+ * "offset,label" by the pkjs side, which reads the offset off the zone each time so it follows a
+ * daylight saving switch.
  *
  * IMPORTANT: `initialize` and the `manipulator` methods are serialised
  * (via .toString()) and run inside the Clay config webview, a separate JS
@@ -45,6 +50,7 @@ export default {
     '    </span>',
     '  </label>',
     '  <div class="description" style="display:none;"></div>',
+    '  <div class="loc-note" style="display:none;">Pick this city again so its clock follows daylight saving.</div>',
     '  <input type="hidden" class="loc-value">',
     '</div>',
   ].join(''),
@@ -57,18 +63,23 @@ export default {
     '.loc-search .loc-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; }',
     '.loc-search .loc-item:last-child { border-bottom: none; }',
     '.loc-search .loc-item:hover, .loc-search .loc-item:active { background: #ff4700; color: #fff; }',
+    '.loc-search .loc-note { padding: 0.5rem 0 0; font-size: 0.9em; color: #ff4700; }',
   ].join(''),
 
   manipulator: {
     /**
      * Restores a saved selection: shows the place label and keeps the raw stored value.
      *
-     * @param value The persisted string Clay hands back, JSON for a location or "offset,label"
-     * for a timezone, or empty when nothing is saved yet.
+     * A timezone field also gets told when what it restored carries no zone, since that is the one
+     * thing the user has to act on and the picker is where they would act.
+     *
+     * @param value The persisted string Clay hands back, the saved place as JSON, or "offset,label"
+     * for a timezone saved before the zone was kept, or empty when nothing is saved yet.
      */
     set: function(this: ClayComponentContext, value: string) {
       const root = this.$element[0];
       let label = '';
+      let zone = '';
 
       (root.querySelector('.loc-value') as HTMLInputElement).value = value || '';
 
@@ -78,9 +89,12 @@ export default {
           if (parsed && parsed.label) {
             label = parsed.label;
           }
+          if (parsed && typeof parsed.tz === 'string') {
+            zone = parsed.tz;
+          }
         } catch (error) {
-          // a timezone value round-trips as offset then label so show just the label
-          // anything else is corrupt so leave the box empty
+          // a place saved before the zone was kept round-trips as offset then label, so show just
+          // the label. anything else is corrupt so leave the box empty
           if (typeof value === 'string' && value !== '0') {
             const commaIndex = value.indexOf(',');
             if (commaIndex !== -1) {
@@ -91,39 +105,27 @@ export default {
       }
 
       (root.querySelector('.loc-query') as HTMLInputElement).value = label;
+
+      // a timezone field reads its offset off the zone, so a place saved without one is stuck on
+      // whatever the offset was the day it was picked and goes an hour out when the clocks change.
+      // picking the place again is the whole fix, and it happens right here
+      const messageKey = this.config.messageKey || '';
+      const wantsZone = /TIME_?ZONE/i.test(messageKey);
+      const noteEl = root.querySelector('.loc-note') as HTMLElement;
+      noteEl.style.display = (wantsZone && label && !zone) ? 'block' : 'none';
     },
 
     /**
-     * Returns the value to persist. A timezone field emits "offset,label" for the
-     * watch, any other location field keeps the raw JSON blob.
+     * Returns the value to persist, which is the saved place as JSON for every kind of key.
+     *
+     * A timezone field reaches the watch as "offset,label". The pkjs side builds that from the
+     * saved zone on the way out, which is what keeps the offset right across a daylight saving
+     * switch, so the zone has to survive being persisted here.
      *
      * @return The string Clay should persist, or an empty string when nothing is picked yet.
      */
     get: function(this: ClayComponentContext) {
-      const val = (this.$element[0].querySelector('.loc-value') as HTMLInputElement).value || '';
-      if (!val) {
-        return '';
-      }
-
-      // for a timezone field pull the offset and label out for the watch
-      // match any timezone-named key (like CLOCK_TIMEZONE_1 or TIME_ZONE_OFFSET) so the
-      // watch gets "offset,label" while a plain location key keeps the raw json blob
-      if (this.config.messageKey && /TIME_?ZONE/i.test(this.config.messageKey)) {
-        try {
-          const obj = JSON.parse(val);
-          // the watch header fonts are glyph-subset so an accented letter draws as a box. NFD
-          // splits a letter from its accent and the range strip drops the accent, so a place
-          // like Zurich spelled with an umlaut goes over as plain ASCII. this runs serialised
-          // in the Clay webview so it stays self-contained
-          const label = String(obj.label || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          return obj.offset + ',' + label;
-        } catch (error) {
-          return val; // fallback if already formatted
-        }
-      }
-
-      // otherwise return the raw json blob
-      return val;
+      return (this.$element[0].querySelector('.loc-value') as HTMLInputElement).value || '';
     },
   },
 
@@ -139,6 +141,7 @@ export default {
     const queryEl = root.querySelector('.loc-query') as HTMLInputElement;
     const hiddenEl = root.querySelector('.loc-value') as HTMLInputElement;
     const listEl = root.querySelector('.loc-list') as HTMLElement;
+    const noteEl = root.querySelector('.loc-note') as HTMLElement;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let seq = 0;
 
@@ -166,8 +169,9 @@ export default {
     }
 
     /**
-     * Looks up the selected place's UTC offset and stores it alongside the
-     * coordinates, so a timezone field can ship "offset,label" to the watch.
+     * Looks up the selected place's zone and its offset today, and stores both alongside the
+     * coordinates. The zone is the half that lasts, since the pkjs side reads the offset off it
+     * again every time a timezone field goes to the watch.
      */
     function resolveOffset(place: GeoPlace) {
       const xhr = new XMLHttpRequest();
@@ -181,12 +185,24 @@ export default {
             if (typeof data.utc_offset_seconds !== 'undefined') {
               offsetMinutes = Math.round(data.utc_offset_seconds / 60);
             }
+            // timezone=auto makes the call name the zone as well, and the zone is what the offset
+            // is read off later. the minutes are kept as the answer for a watch whose runtime
+            // cannot look a zone up
+            const zone = typeof data.timezone === 'string' ? data.timezone : '';
             hiddenEl.value = JSON.stringify({
               lat: place.latitude,
               lon: place.longitude,
               label: labelFor(place),
               offset: offsetMinutes,
+              tz: zone,
             });
+
+            // the prompt comes down here rather than on the tap, since the tap only writes the
+            // minutes. saving before this lands keeps a place with no zone, which is the one thing
+            // the prompt is there to catch
+            if (zone) {
+              noteEl.style.display = 'none';
+            }
           } catch (error) {}
         }
       };
@@ -267,6 +283,7 @@ export default {
 
     queryEl.addEventListener('input', function() {
       hiddenEl.value = '';
+      noteEl.style.display = 'none';
       const query = (queryEl.value || '').trim();
 
       if (timer) {
