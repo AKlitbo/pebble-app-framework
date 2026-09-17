@@ -14,6 +14,7 @@
 #include "io/stores/health_store.h"
 #include "io/stores/weather_store.h"
 #include "io/stores/location_store.h"
+#include "ui/weather/labels.h"
 #include "system/settings/settings.h"
 #include "system/settings/setting_values.h"
 #include "system/units/units.h"
@@ -67,10 +68,10 @@ void readout_meridiem(char *out, size_t n)
 
 void readout_date(char *out, size_t n)
 {
-    // strftime first, which copies the .beats token through untouched because it owns no braces.
-    // filling the reading in afterwards keeps the token out of a format string strftime parses
     const char *format = settings_str(SETTING_DATE_FORMAT);
 
+    // strftime first, which copies the .beats token through untouched because it owns no braces.
+    // filling the reading in afterwards keeps the token out of a format string strftime parses
     if (strftime(out, n, format, time_store_tm()) == 0)
     {
         // a date too long for the buffer leaves whatever strftime managed behind it with no
@@ -137,20 +138,17 @@ void readout_weather_temp(char *out, size_t n)
 
 void readout_weather_cond(char *out, size_t n)
 {
-    // drop the night marker so "CLEAR_NIGHT" reads as "CLEAR" (the glyph uses the full token)
+    // wx_label_short answers with the day word for a night token, so the marker comes off by the
+    // rule the generator wrote rather than by a second one spelled out here. cutting at the first
+    // underscore, as this did, is a looser rule that only holds while no token contains one
     const char *cond = weather_store_cond();
-    snprintf(out, n, "%s", cond);
-
-    char *night = strchr(out, '_');
-    if (night)
-    {
-        *night = '\0';
-    }
-
-    if (out[0] == '\0')
+    if (cond[0] == '\0')
     {
         snprintf(out, n, "--");
+        return;
     }
+
+    snprintf(out, n, "%s", wx_label_short(cond));
 }
 
 void readout_lat(char *out, size_t n)

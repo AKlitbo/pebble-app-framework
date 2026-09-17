@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed an overlong date format leaving the readout buffer unterminated for subsequent passes.
 - Fixed every settings save requesting fresh weather. A field now counts as changed only when its value actually changes.
 - Fixed timezone fields retaining the offset from when their city was selected. For example, a London selected in January previously ran an hour behind during summer. Places selected before this release have no saved timezone, so they retain the old offset until the city is selected again.
+- Fixed `readout_weather_cond` cutting a condition token at the first underscore rather than at a trailing `_NIGHT`. It now reads the generated label table, which applies the same rule as the phone.
 
 ## [1.1.0] - 2026-09-12
 
