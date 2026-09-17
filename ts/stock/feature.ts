@@ -310,10 +310,10 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       const held = lastStockBytes;
       lastStockBytes = null;
       if (!getStocks()) {
-        // the gate held the fetch back. the watch asks when it has nothing to show, so push the
-        // strip already in hand rather than leaving it blank until the gate opens. after a restart
-        // nothing is in hand so fall back to the one off the phone
-        pushStockBytes(held || savedStrip);
+        // the gate held the fetch back, so the watch gets the last strip worth showing rather than
+        // sitting blank until the gate opens. the phone only saves a strip with a real quote in it,
+        // so its copy goes first and the one last pushed stands in before anything is saved
+        pushStockBytes(savedStrip || held);
       }
     },
 
