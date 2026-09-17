@@ -17,11 +17,15 @@
 
 /// Auto-trim measures each icon's see-through margin once on load so placement can follow
 /// the visible art. Set to 0 to pin the full bitmap box instead
+#ifndef ICON_AUTOTRIM
 #define ICON_AUTOTRIM 1
+#endif
 
 /// Logs each icon's measured N/E/S/W on first load so you can check the numbers. Off by
 /// default in the shared lib so a normal build stays quiet. A face can switch it on
+#ifndef ICON_TRIM_LOG
 #define ICON_TRIM_LOG 0
+#endif
 
 /**
  * @brief The transparent border around an icon's opaque art, in pixels per side.
