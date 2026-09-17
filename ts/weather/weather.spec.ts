@@ -45,8 +45,10 @@ describe('fetchWeather dispatcher', () => {
 
     weather.fetchWeather({ ...BASE, provider: name }, routing(calls), () => {});
 
+    // a provider that borrows from Open-Meteo sends both arms in one pass, so the routed call is
+    // the one to look for rather than the first one out
     expect(calls.length).toBeGreaterThanOrEqual(1);
-    expect(calls[0]).toContain(ENDPOINT[name]);
+    expect(calls.some((url) => url.includes(ENDPOINT[name]))).toBe(true);
   });
 
   /** An unknown provider must fall back to Open-Meteo, never leave the weather unfetched. */

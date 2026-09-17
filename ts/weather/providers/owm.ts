@@ -7,7 +7,7 @@
 
 import util from '../util';
 import openMeteo from './openmeteo';
-import type { RequestFn, DoneFn, WeatherOpts } from '../util';
+import type { RequestFn, DoneFn, WeatherOpts, WeatherResult } from '../util';
 import type { OpenMeteoResponse } from './openmeteo';
 
 const OWM_WEATHER_API = 'https://api.openweathermap.org/data/2.5/weather';
@@ -53,21 +53,49 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   const lon = opts.coords.lon;
   const url = `${OWM_WEATHER_API}?lat=${lat}&lon=${lon}&units=${units}&appid=${encodedKey}`;
 
-  // fetch OWM first, then the Open-Meteo extras, one request in flight at a time rather than
-  // both at once. a parallel join could strand done() when a request never called back, which
-  // left the watch stuck on its placeholder with no retry. openmeteo and weatherapi go the
-  // same one-at-a-time way
-  util.requestJson<OwmResponse>(url, request, done, (json) => {
+  // OWM's free endpoint carries no UV, dew point or forecast, so Open-Meteo is asked for those
+  // at the same time rather than after. request() holds a watchdog that settles every call, so
+  // both arms always report and the join always closes. weatherapi borrows its strip the same way
+  let pending = 2;
+  let result: WeatherResult | null = null;
+  let extras: OpenMeteoResponse | null = null;
+
+  const tryDone = () => {
+    if (--pending > 0) {
+      return;
+    }
+
+    if (result && result.ok && extras) {
+      util.attachExtras(result, openMeteo.parseExtras(extras));
+      if (opts.wantForecast) {
+        util.attachForecast(result, openMeteo.parseForecast(extras));
+      }
+    }
+
+    done(result as WeatherResult);
+  };
+
+  util.requestJson<OpenMeteoResponse>(openMeteo.extrasUrl(opts), request, () => tryDone(), (om) => {
+    extras = om;
+    tryDone();
+  });
+
+  util.requestJson<OwmResponse>(url, request, (status) => {
+    result = status;
+    tryDone();
+  }, (json) => {
     // OWM returns a 'cod' field with the HTTP status. 401 is usually a bad key
     // it comes as a number on success but often a string on errors so normalize first
     const cod = Number(json.cod);
     if (Number.isFinite(cod) && cod !== 200) {
       console.log('owm api error:', json.message);
-      return done(util.status(cod === 401 ? 'Invalid Key' : 'API Error'));
+      result = util.status(cod === 401 ? 'Invalid Key' : 'API Error');
+      return tryDone();
     }
 
     if (!json.main || !json.weather || !json.weather.length) {
-      return done(util.status('No Wx Data'));
+      result = util.status('No Wx Data');
+      return tryDone();
     }
 
     // OWM icon codes end in 'd' for day or 'n' for night. a missing icon counts
@@ -96,7 +124,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
       cond = icon.slice(0, 2) === '02' ? 'PCLDY' : 'CLDY';
     }
 
-    const result = util.ok(
+    result = util.ok(
       json.main.temp,
       util.applyNight(cond, isDay),
       opts.label || json.name,
@@ -116,23 +144,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
       }
     );
 
-    // a non-numeric temp already yielded a status, so there is nothing to enrich
-    if (!result.ok) {
-      return done(result);
-    }
-
-    // OWM's free endpoint is missing UV and dew point and any forecast so a follow-up
-    // Open-Meteo request grabs them. when the face wants the forecast the same call also
-    // brings back the hourly and daily strips. the URL and its field list live in the
-    // openmeteo module so the two never drift apart. a failure just keeps the OWM reading
-    const omUrl = openMeteo.extrasUrl(opts);
-    util.requestJson<OpenMeteoResponse>(omUrl, request, () => done(result), (om) => {
-      util.attachExtras(result, openMeteo.parseExtras(om));
-      if (opts.wantForecast) {
-        util.attachForecast(result, openMeteo.parseForecast(om));
-      }
-      done(result);
-    });
+    tryDone();
   });
 }
 

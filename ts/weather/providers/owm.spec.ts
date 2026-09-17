@@ -74,9 +74,10 @@ describe('owm provider', () => {
 
       const result = run(BASE, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
 
+      const weatherCall = calls.find((url) => url.includes(WX)) as string;
+
       expect(calls).toHaveLength(2);
-      expect(calls[0]).toContain(WX);
-      expect(calls[0]).toMatch(/lat=40&lon=-73/);
+      expect(weatherCall).toMatch(/lat=40&lon=-73/);
       expect(result.ok).toBe(true);
     });
 
@@ -89,29 +90,38 @@ describe('owm provider', () => {
 
       run({ ...BASE, fahrenheit }, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
 
-      expect(calls[0]).toContain(expected);
+      expect(calls.find((url) => url.includes(WX))).toContain(expected);
     });
   });
 
   describe('request order', () => {
-    /** OWM must resolve before Open-Meteo is asked for the extras, or a callback waiting on both can be left hanging and the reading never reaches the watch. */
-    test('requests OWM before the Open-Meteo extras', () => {
+    /** Asking one after the other spends two request timeouts on a slow poll instead of one, and keeps the phone radio awake for both. */
+    test('asks OWM and Open-Meteo at the same time', () => {
       const calls: string[] = [];
 
       run(BASE, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
 
-      expect(calls[0]).toContain(WX);
-      expect(calls[1]).toContain(OM);
+      expect(calls).toHaveLength(2);
+      expect(calls.some((url) => url.includes(WX))).toBe(true);
+      expect(calls.some((url) => url.includes(OM))).toBe(true);
     });
 
-    /** A failed OWM call has nothing to enrich, so the Open-Meteo extras must not be fetched. */
-    test('skips the Open-Meteo call when the OWM request fails', () => {
+    /** A failed OWM call still has to report, or the round sits on its placeholder until the watchdog closes it. */
+    test('reports the OWM failure even though the extras were asked for', () => {
       const calls: string[] = [];
 
-      run(BASE, routing({ [WX]: { err: 'HTTP 500' } }, calls));
+      const result = run(BASE, routing({ [WX]: { err: 'HTTP 500' }, [OM]: { body: '{}' } }, calls));
 
-      expect(calls).toHaveLength(1);
-      expect(calls[0]).toContain(WX);
+      expect(result.ok).toBe(false);
+      expect(calls).toHaveLength(2);
+    });
+
+    /** The extras arm failing must not lose the reading OWM did return. */
+    test('keeps the OWM reading when the extras call fails', () => {
+      const result = run(BASE, routing({ [WX]: { body: WX_OK }, [OM]: { err: 'HTTP 500' } }, []));
+
+      expect(result.ok).toBe(true);
+      expect(result.temperature).toBe(13);
     });
   });
 
