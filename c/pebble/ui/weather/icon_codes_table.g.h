@@ -4,14 +4,14 @@
 //     Source: the engine's ts/weather/conditions.ts
 //
 //     Changes to this file may be lost if the code is regenerated.
-//     Edit the source vocabulary and run `npm run build:conditions` instead.
+//     Edit the source and run `npm run build:conditions` instead.
 // </auto-generated>
 //------------------------------------------------------------------------------
 /**
  * @file icon_codes_table.g.h
  * @brief Forecast condition code to weather icon resource lookup.
  *
- * Generated from the engine's `ts/weather/conditions.ts`, so the phone and the watch read the same list.
+ * Generated from the engine's `ts/weather/conditions.ts`, so the phone and the watch read the same numbers.
  *
  * @ingroup lib_ui
  */

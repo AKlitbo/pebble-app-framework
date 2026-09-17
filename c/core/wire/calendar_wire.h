@@ -21,14 +21,9 @@
  * @{
  */
 
-/// How many events the strip can hold. Matches CALENDAR_MAX_SLOTS on the phone
-#define CALENDAR_MAX_SLOTS 6
-
-/// Room for a title (up to 24) plus the NUL. Matches CALENDAR_TITLE_MAX on the phone
-#define CAL_TITLE_LEN 25
-
-/// Room for a location (up to 16) plus the NUL. Matches CALENDAR_LOC_MAX on the phone
-#define CAL_LOC_LEN 17
+// CALENDAR_MAX_SLOTS, CAL_TITLE_LEN and CAL_LOC_LEN are generated from the phone's cap table, so
+// the two sides of the strip cannot drift
+#include "wire/wire_caps.g.h"
 
 /**
  * @brief One event. start and end are absolute epochs so the readouts stay fresh against the

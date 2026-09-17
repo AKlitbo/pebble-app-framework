@@ -19,11 +19,10 @@
  * @{
  */
 
-/// How many tickers the watchlist can hold. Matches STOCK_MAX_SLOTS on the phone
-#define STOCK_MAX_SLOTS 4
-
-/// Room for a ticker (up to about 6) or a short status word ("INVALID KEY" is 11) plus the NUL
-#define STOCK_SYMBOL_LEN 12
+// STOCK_MAX_SLOTS and STOCK_SYMBOL_LEN are generated from the phone's cap table, so the two sides
+// of the strip cannot drift. A ticker runs to about six characters and a status word such as
+// "INVALID KEY" to eleven, which is what the label width is sized for
+#include "wire/wire_caps.g.h"
 
 /**
  * @brief One quote slot. When ok is false the symbol field carries a short status word

@@ -4,14 +4,14 @@
 //     Source: the engine's ts/weather/conditions.ts
 //
 //     Changes to this file may be lost if the code is regenerated.
-//     Edit the source vocabulary and run `npm run build:conditions` instead.
+//     Edit the source and run `npm run build:conditions` instead.
 // </auto-generated>
 //------------------------------------------------------------------------------
 /**
  * @file labels_table.g.h
  * @brief Condition token to short and long display label lookups.
  *
- * Generated from the engine's `ts/weather/conditions.ts`, so the phone and the watch read the same list.
+ * Generated from the engine's `ts/weather/conditions.ts`, so the phone and the watch read the same numbers.
  *
  * @ingroup lib_ui
  */

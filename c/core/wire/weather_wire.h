@@ -20,12 +20,11 @@
  * @{
  */
 
-/// A stand-in value that means no temperature yet. Real temps can be negative and 0 is valid
-#define WEATHER_NO_TEMP -1000
-
-/// How many columns a forecast strip can carry. Matches FORECAST_COLS on the phone. The 2x4
-/// stacks two rows of four so both strips fill up to eight
-#define WEATHER_FORECAST_COLS 8
+// WEATHER_NO_TEMP and WEATHER_FORECAST_COLS are generated from the phone's cap table, so the two
+// sides of the strip cannot drift. The marker has to sit outside the real range, since a
+// temperature can be negative and zero is a reading. The 2x4 panel stacks two rows of four, which
+// is what the column count is sized for
+#include "wire/wire_caps.g.h"
 
 /** @brief One hourly forecast column: a sky code plus a temperature (WEATHER_NO_TEMP for none). */
 typedef struct

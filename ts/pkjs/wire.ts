@@ -10,20 +10,41 @@ import type { HourlyStrip, DailyStrip } from '../weather/util';
 import type { StockQuote } from '../stock/util';
 import type { CalendarEvent } from '../calendar/ical';
 
-// how many columns a forecast strip can carry. matches WEATHER_FORECAST_COLS on the watch,
-// which re-clamps the count anyway, so slicing here just keeps the count byte honest and the
-// packer in step with the stock and calendar ones
-const FORECAST_MAX_COLS = 8;
-// how many tickers the watchlist strip can carry. matches STOCK_MAX_SLOTS on the watch
-const STOCK_MAX_SLOTS = 4;
-// calendar strip caps matching CALENDAR_MAX_SLOTS / CAL_TITLE_LEN / CAL_LOC_LEN on the watch
-const CALENDAR_MAX_SLOTS = 6;
-const CALENDAR_TITLE_MAX = 24;
-const CALENDAR_LOC_MAX = 16;
-// how wide a watchlist label is, matching the symbol buffer on the watch
-const STOCK_LABEL_MAX = 11;
-// a forecast column with no reading ships this marker value so the watch draws a placeholder
-const FORECAST_NO_TEMP = -1000;
+/**
+ * Every cap and marker value the two sides of a strip have to agree on.
+ *
+ * The watch reads these back out of `c/core/wire/wire_caps.g.h`, which `npm run build:conditions`
+ * writes from this table. They are the numbers a decode is bounds-checked against, so a pair that
+ * drifted would truncate a strip or refuse a whole message with nothing to show for it.
+ *
+ * A text cap here counts characters. The C side gets that plus one, because its buffer has to hold
+ * a terminator as well.
+ */
+export const WIRE_CAPS = {
+  /** How many columns a forecast strip can carry. The watch re-clamps the count anyway, so slicing
+   *  here just keeps the count byte honest and the packer in step with the other two. */
+  FORECAST_MAX_COLS: 8,
+  /** How many tickers the watchlist strip can carry. */
+  STOCK_MAX_SLOTS: 4,
+  /** How wide a watchlist label is, in characters. */
+  STOCK_LABEL_MAX: 11,
+  /** How many events the agenda strip can carry. */
+  CALENDAR_MAX_SLOTS: 6,
+  /** How long an event title can be, in characters. */
+  CALENDAR_TITLE_MAX: 24,
+  /** How long an event location can be, in characters. */
+  CALENDAR_LOC_MAX: 16,
+  /** A forecast column with no reading ships this marker so the watch draws a placeholder. */
+  FORECAST_NO_TEMP: -1000,
+} as const;
+
+const FORECAST_MAX_COLS = WIRE_CAPS.FORECAST_MAX_COLS;
+const STOCK_MAX_SLOTS = WIRE_CAPS.STOCK_MAX_SLOTS;
+const CALENDAR_MAX_SLOTS = WIRE_CAPS.CALENDAR_MAX_SLOTS;
+const CALENDAR_TITLE_MAX = WIRE_CAPS.CALENDAR_TITLE_MAX;
+const CALENDAR_LOC_MAX = WIRE_CAPS.CALENDAR_LOC_MAX;
+const STOCK_LABEL_MAX = WIRE_CAPS.STOCK_LABEL_MAX;
+const FORECAST_NO_TEMP = WIRE_CAPS.FORECAST_NO_TEMP;
 
 /**
  * Clamps a number to the signed range of a little-endian field, rounded first.

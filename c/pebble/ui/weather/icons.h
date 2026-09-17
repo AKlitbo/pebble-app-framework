@@ -12,10 +12,10 @@
  * @{
  */
 
-/// High bit set on an hourly forecast code to mark a night hour, so the column loads the night
-/// icon. Mirrors `FORECAST_NIGHT_BIT` in `conditions.ts`. Real condition numbers are 0 to 11 so
-/// the bit is free, and the unknown value (255) still lands on `WI_NA`.
-#define WX_FORECAST_NIGHT_BIT 0x80
+// WX_FORECAST_NIGHT_BIT is generated from the same vocabulary the phone sets it from. Real
+// condition numbers run 0 to 11 so the high bit is free, and the unknown value (255) still lands
+// on WI_NA with the bit set
+#include "wire/wire_caps.g.h"
 
 /**
  * @brief Look up the weather-icon resource for a condition abbreviation.
