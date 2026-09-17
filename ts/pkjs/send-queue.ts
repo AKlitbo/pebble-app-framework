@@ -107,4 +107,63 @@ export function createSendQueue(send: SendFn): QueueSendFn {
   };
 }
 
-export default { createSendQueue, SEND_RETRIES, SEND_RETRY_MS, SEND_WATCHDOG_MS };
+/** Sends one kind of payload to the watch, skipping a send the watch already holds. */
+export interface DedupedSender<T> {
+  /** Sends the payload, unless it matches the one the watch took last. */
+  push(value: T): void;
+
+  /** Forgets what the watch holds, so the next push goes out whatever it carries. */
+  forget(): void;
+}
+
+/**
+ * Wraps a queueSend so the same payload is not sent twice in a row.
+ *
+ * Every push costs a BLE wake whether or not the reading moved, so the payload the watch took is
+ * kept and an identical one is dropped. The half worth spelling out is the failure: a send that
+ * nacked its way to the retry cap never reached the watch, so what was kept is thrown away and
+ * the next push goes out again. Recording it on the way in instead would leave the face blank
+ * until the values happened to move.
+ *
+ * @param queueSend The queue every send goes through.
+ * @param build Turns the payload into the dict for the watch.
+ * @param same Whether two payloads are the same reading. Defaults to identity.
+ * @param label What to call this sender in the log.
+ * @return The sender, holding what the watch last took.
+ */
+export function createDedupedSender<T>(
+  queueSend: QueueSendFn,
+  build: (value: T) => AppMessageDict,
+  same: (left: T, right: T) => boolean,
+  label: string
+): DedupedSender<T> {
+  let held: T | null = null;
+
+  return {
+    push(value: T): void {
+      if (held !== null && same(value, held)) {
+        console.log(`${label}: unchanged, skipping send`);
+        return;
+      }
+
+      held = value;
+
+      queueSend(
+        build(value),
+        () => {
+          console.log(`${label}: sent to Pebble`);
+        },
+        () => {
+          held = null;
+          console.error(`${label}: send failed`);
+        }
+      );
+    },
+
+    forget(): void {
+      held = null;
+    },
+  };
+}
+
+export default { createSendQueue, createDedupedSender, SEND_RETRIES, SEND_RETRY_MS, SEND_WATCHDOG_MS };

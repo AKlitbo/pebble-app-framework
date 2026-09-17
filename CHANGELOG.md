@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `report-memory` and `render-memory` actions, which rank each face's memory use in the CI run summary.
 - Added `prepare-release` and `publish-release` actions for checking and publishing face releases.
 - Added an optional `cancel` callback to the builder's `DragSpec`, called when a pointer is taken away mid-drag. Builders that remove an item from their model in `lift` can restore it here.
-
+- Added `createDedupedSender` to `ts/pkjs/send-queue.ts`. It wraps a queueSend so an unchanged payload is skipped and a payload whose send failed is not counted as delivered, which is what the weather, stock, and calendar pushes all use now.
 ### Changed
 
 - **Breaking:** The engine can now be mounted under any folder name. The face repo declares that folder in its `package.json` workspaces, which is how the tools locate the engine.

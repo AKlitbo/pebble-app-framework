@@ -16,7 +16,7 @@ import weatherUtil from '../weather/util';
 import locationComponent from '../clay/location-component';
 import wire from './wire';
 import timezone from './timezone';
-import { createSendQueue } from './send-queue';
+import { createSendQueue, createDedupedSender } from './send-queue';
 import { request } from './request';
 import { getConfig, readBool, readValue, settingsChanged, settingsSnapshot } from './settings-store';
 import type { Feature, FeatureHooks } from './feature';
@@ -445,12 +445,17 @@ function startPebbleApp(options: StartOptions): void {
   // weather round state mutated in place by runWeatherRound
   const weatherState: WeatherState = { inFlight: false, round: 0 };
 
-  // the last weather dict pushed to the watch so an unchanged refresh skips the redundant BLE wake.
-  // reset on ready and on a watch-initiated request so the watch always gets a fresh answer
-  let lastWeatherKey: string | null = null;
-
   // one AppMessage may be in flight at a time, so every send is serialized through this queue
   const queueSend = createSendQueue((dict, onOk, onFail) => Pebble.sendAppMessage(dict, onOk, onFail));
+
+  // the weather dict the watch holds, so an unchanged refresh skips the redundant BLE wake.
+  // forgotten on ready and on a watch-initiated request so the watch always gets a fresh answer
+  const weatherSender = createDedupedSender<AppMessageDict>(
+    queueSend,
+    (dict) => dict,
+    (left, right) => JSON.stringify(left) === JSON.stringify(right),
+    'Weather'
+  );
 
   // the features this face opted into, each started once with what the app shares. a face that
   // lists none never imports their code, so it stays out of that face's bundle
@@ -500,27 +505,9 @@ function startPebbleApp(options: StartOptions): void {
 
     Object.assign(dict, formatCoords(messageKeys, result));
 
-    // a compound dict rather than one strip so compare a serialized signature and
-    // skip the send when nothing moved since last time
-    const key = JSON.stringify(dict);
-    if (key === lastWeatherKey) {
-      return;
-    }
-    lastWeatherKey = key;
-
-    queueSend(
-      dict,
-      () => {
-        console.log('Weather info sent to Pebble successfully!');
-      },
-      () => {
-        // the send never landed, so the watch does not hold this reading after all. drop the
-        // signature or the next fetch of the same reading would be skipped as already-sent and
-        // the face would sit blank until the values happened to move
-        lastWeatherKey = null;
-        console.error('Error sending weather info to Pebble!');
-      }
-    );
+    // a compound dict rather than one strip, so what is compared is a serialized signature of the
+    // whole thing rather than a byte run
+    weatherSender.push(dict);
   }
 
   /**
@@ -655,7 +642,7 @@ function startPebbleApp(options: StartOptions): void {
     queueSend({ [messageKeys.SETTINGS_REQUEST]: 1 });
 
     // clear the dedupe cache so a watch that just rebooted with empty stores gets a fresh send
-    lastWeatherKey = null;
+    weatherSender.forget();
     lastTimezoneValues = {};
 
     getWeather();
@@ -676,7 +663,7 @@ function startPebbleApp(options: StartOptions): void {
     // the watch only asks when it needs data so clear the dedupe cache to force a fresh send. a
     // round already in flight starts no second fetch, but its own result still goes out once it lands
     if (payload[messageKeys.WEATHER_REQUEST]) {
-      lastWeatherKey = null;
+      weatherSender.forget();
       getWeather();
     }
 

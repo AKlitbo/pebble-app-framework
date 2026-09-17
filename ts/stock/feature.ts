@@ -12,6 +12,7 @@ import stockCache from './cache';
 import stockUtil from './util';
 import type { StockQuote } from './util';
 import wire from '../pkjs/wire';
+import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
 import { getConfig, readValue, settingsChanged, settingsSnapshot } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
@@ -186,8 +187,16 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
   // it says what the watch could show not what it already has
   let savedStrip: number[] | null = savedStock.strip;
 
-  // last strip pushed to the watch so an unchanged refresh skips the redundant BLE wake
-  // reset on ready and on a watch-initiated request so the watch always gets a fresh answer
+  // the strip the watch holds, so an unchanged refresh skips the redundant BLE wake. forgotten on
+  // ready and on a watch-initiated request so the watch always gets a fresh answer
+  const sender = createDedupedSender<number[]>(
+    queueSend,
+    (bytes) => ({ [messageKeys.STOCK_STRIP]: bytes }),
+    wire.bytesEqual,
+    'Stocks'
+  );
+
+  // what the watch was last handed, so a held fetch can push it again rather than leave it blank
   let lastStockBytes: number[] | null = null;
 
   /** Sends already-packed watchlist bytes to the watch, unless the watch holds them already. */
@@ -196,22 +205,8 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       return;
     }
 
-    if (wire.bytesEqual(bytes, lastStockBytes)) {
-      return;
-    }
     lastStockBytes = bytes;
-
-    queueSend(
-      { [messageKeys.STOCK_STRIP]: bytes },
-      () => {
-        console.log('Stock info sent to Pebble successfully!');
-      },
-      () => {
-        // same as the weather send: a strip that never landed must not count as delivered
-        lastStockBytes = null;
-        console.error('Error sending stock info to Pebble!');
-      }
-    );
+    sender.push(bytes);
   }
 
   /** Sends the packed watchlist strip to the watch, and keeps it for the next run. */
@@ -290,7 +285,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
   return {
     ready() {
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
-      lastStockBytes = null;
+      sender.forget();
 
       // the gate outlives a restart so it can hold on the very first fetch of a run. a watch that
       // just rebooted with an empty store would sit blank till the gate opened, which for Alpha
@@ -308,7 +303,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       // the watch drives this on every interval it asks for, so it goes through the provider
       // quota gate like any other routine fetch. only a settings change forces past it
       const held = lastStockBytes;
-      lastStockBytes = null;
+      sender.forget();
       if (!getStocks()) {
         // the gate held the fetch back, so the watch gets the last strip worth showing rather than
         // sitting blank until the gate opens. the phone only saves a strip with a real quote in it,

@@ -8,6 +8,7 @@
 import ical from './ical';
 import type { CalendarEvent } from './ical';
 import wire from '../pkjs/wire';
+import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
 import { getConfig, readValue } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
@@ -23,9 +24,14 @@ import type { Feature } from '../pkjs/feature';
 const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
   let urlBeforeConfig: string | null = null;
 
-  // last strip pushed to the watch so an unchanged refresh skips the redundant BLE wake
-  // reset on ready and on a watch-initiated request so the watch always gets a fresh answer
-  let lastCalendarBytes: number[] | null = null;
+  // the strip the watch holds, so an unchanged refresh skips the redundant BLE wake. forgotten on
+  // ready and on a watch-initiated request so the watch always gets a fresh answer
+  const sender = createDedupedSender<number[]>(
+    queueSend,
+    (bytes) => ({ [messageKeys.CALENDAR_STRIP]: bytes }),
+    wire.bytesEqual,
+    'Calendar'
+  );
 
   /** Reads the current iCal feed URL from the Clay config. */
   function calendarUrl(): string {
@@ -39,21 +45,7 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
       return;
     }
 
-    if (wire.bytesEqual(bytes, lastCalendarBytes)) {
-      console.log('Calendar: unchanged, skipping send');
-      return;
-    }
-    lastCalendarBytes = bytes;
-
-    queueSend(
-      { [messageKeys.CALENDAR_STRIP]: bytes },
-      () => { console.log('Calendar sent to Pebble'); },
-      () => {
-        // same as the weather send: a strip that never landed must not count as delivered
-        lastCalendarBytes = null;
-        console.error('Error sending calendar to Pebble');
-      }
-    );
+    sender.push(bytes);
   }
 
   /**
@@ -106,13 +98,13 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
   return {
     ready() {
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
-      lastCalendarBytes = null;
+      sender.forget();
       getCalendar();
     },
 
     message(payload) {
       if (payload[messageKeys.CALENDAR_REQUEST]) {
-        lastCalendarBytes = null;
+        sender.forget();
         getCalendar();
       }
     },
