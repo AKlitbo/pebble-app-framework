@@ -367,6 +367,23 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
     s_next_poll = store_poll_next(s_poll_min > 0 ? s_poll_min : 1, time(NULL));
     // s_live is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
+
+    if (cfg.live)
+    {
+        // the store owns every weather channel and claims them whether or not the store is enabled,
+        // so a face that turns it on after init still gets the reply to its poll. a face seeding
+        // fixtures passes live = false and stays unsubscribed, so a real push cannot overwrite it
+        appmessage_on_weather(on_weather);
+        appmessage_on_weather_extra(on_extra);
+        appmessage_on_weather_forecast(on_forecast);
+        appmessage_on_weather_air(on_air);
+        appmessage_on_weather_forecast_hourly(on_forecast_hourly);
+        appmessage_on_weather_forecast_daily(on_forecast_daily);
+        appmessage_on_location_name(on_location_name);
+        // one coalesced persist per inbox instead of one write per channel handler
+        appmessage_on_inbox_complete(persist_flush);
+    }
+
     s_boot_retries = 0;  // fresh cold-boot re-ask budget
 
     if (seed)
@@ -401,18 +418,6 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
     if (cfg.live)
     {
         s_live = true;
-
-        // the store owns every weather channel. faces that don't declare the extra/forecast/
-        // location keys simply never see those fire
-        appmessage_on_weather(on_weather);
-        appmessage_on_weather_extra(on_extra);
-        appmessage_on_weather_forecast(on_forecast);
-        appmessage_on_weather_air(on_air);
-        appmessage_on_weather_forecast_hourly(on_forecast_hourly);
-        appmessage_on_weather_forecast_daily(on_forecast_daily);
-        appmessage_on_location_name(on_location_name);
-        // one coalesced persist per inbox instead of one write per channel handler
-        appmessage_on_inbox_complete(persist_flush);
 
         // one fetch shortly after launch so the face is not blank while the first deadline is
         // still coming. poll_min 0 disables polling, matching reconfigure

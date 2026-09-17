@@ -194,6 +194,14 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
     // s_live is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
 
+    if (cfg.live)
+    {
+        // the store owns the calendar channel and claims it whether or not the store is enabled, so
+        // a face that turns it on after init still gets the reply to its poll. a face seeding fixtures
+        // passes live = false and stays unsubscribed, so a real push cannot overwrite what it pinned
+        appmessage_on_calendar_strip(on_calendar_strip);
+    }
+
     if (seed)
     {
         apply_seed(seed); // s_cb is NULL until the face subscribes so no redraw yet
@@ -223,9 +231,6 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
     if (cfg.live)
     {
         s_live = true;
-
-        // the store owns the calendar channel. faces that don't declare the key never see it fire
-        appmessage_on_calendar_strip(on_calendar_strip);
 
         // one fetch shortly after launch so the agenda is not blank while the first deadline is
         // still coming. poll_min 0 disables polling, matching reconfigure

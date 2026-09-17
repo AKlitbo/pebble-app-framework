@@ -163,6 +163,14 @@ void stock_store_init(StockConfig cfg, const StockSeed *seed)
     // s_live is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
 
+    if (cfg.live)
+    {
+        // the store owns the stock channel and claims it whether or not the store is enabled, so a
+        // face that turns it on after init still gets the reply to its poll. a face seeding fixtures
+        // passes live = false and stays unsubscribed, so a real push cannot overwrite what it pinned
+        appmessage_on_stock_strip(on_stock_strip);
+    }
+
     if (seed)
     {
         apply_seed(seed); // s_cb is NULL until the face subscribes so no redraw yet
@@ -190,9 +198,6 @@ void stock_store_init(StockConfig cfg, const StockSeed *seed)
     if (cfg.live)
     {
         s_live = true;
-
-        // the store owns the stock channel. faces that don't declare the key never see it fire
-        appmessage_on_stock_strip(on_stock_strip);
 
         // one fetch shortly after launch so the strip is not left on -- while the first deadline
         // is still coming. poll_min 0 disables polling, matching reconfigure
