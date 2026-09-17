@@ -150,6 +150,7 @@ const CONDITION_ALIASES: Record<string, string> = {
   'PATCHY RAIN NEARBY': 'RAIN',
   'THUNDERSTORM': 'STRM',
   'THUNDERSTORMS': 'STRM',
+  'DRIZZLE': 'DRZL',
   'LIGHT RAIN': 'RAIN',
   'HEAVY RAIN': 'RAIN',
   'LIGHT SNOW': 'SNOW',

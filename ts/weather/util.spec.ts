@@ -154,6 +154,7 @@ describe('shorten', () => {
     ['Thunderstorm', 'STRM'],
     ['Light snow', 'SNOW'],
     ['Mist', 'FOGGY'],
+    ['Drizzle', 'DRZL'],
   ])('aliases %s to %s', (input, expected) => {
     const result = util.shorten(input);
 
