@@ -9,6 +9,7 @@
 #include "io/appmessage/appmessage.h"
 
 #include "io/tuple_read.h"
+#include "math/scale.h"
 #include "system/settings/settings.h"
 #include <limits.h>
 
@@ -475,14 +476,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
             int temp_value = tuple_int_or(temp_tuple, 0);
             // clamp to a sane range so a corrupt reading can't display absurdly or overflow the
             // store's int16 field. the face turns the number into "23°C"/"23°F" when it draws
-            if (temp_value < -99)
-            {
-                temp_value = -99;
-            }
-            if (temp_value > 199)
-            {
-                temp_value = 199;
-            }
+            temp_value = clamp_int(temp_value, -99, 199);
 
             if (s_handlers.on_weather)
             {

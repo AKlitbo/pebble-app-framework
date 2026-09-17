@@ -5,6 +5,7 @@
  * @ingroup lib_core
  */
 #include "clock/beats.h"
+#include "math/scale.h"
 
 #include <string.h>
 
@@ -54,14 +55,7 @@ void beats_expand_token(char *text, int beats)
     }
 
     // clamped so the reading is always three digits, which is what lets the swap happen in place
-    if (beats < 0)
-    {
-        beats = 0;
-    }
-    if (beats > 999)
-    {
-        beats = 999;
-    }
+    beats = clamp_int(beats, 0, 999);
 
     // written by hand rather than with snprintf, which would want a buffer sized for any int and
     // then warn about truncating one down to three

@@ -6,6 +6,7 @@
  * @ingroup lib_stores
  */
 #include "io/stores/health_store.h"
+#include "math/scale.h"
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
 
@@ -232,20 +233,6 @@ static void read_hr_history(uint8_t *history_out, int max_records)
 #endif
 }
 
-#if defined(PBL_HEALTH)
-/**
- * @brief Squeeze a health sum into a bucket, keeping it in the 0 to 65535 a `uint16_t` can hold.
- *
- * @param value The sum to clamp.
- * @return @p value clamped to 0 to 65535.
- */
-static uint16_t clamp_u16(int value)
-{
-    if (value < 0) return 0;
-    return (uint16_t)(value > 65535 ? 65535 : value);
-}
-#endif
-
 /**
  * @brief Fill the per-hour step buckets from midnight up to the current hour.
  *
@@ -340,7 +327,7 @@ static void read_step_hourly(void)
 
         for (int h = s_settled_hours; h < cur_hour && h < HOURS_PER_DAY; h++)
         {
-            s_state.step_hourly[h] = clamp_u16(sums[h]);
+            s_state.step_hourly[h] = (uint16_t)clamp_int(sums[h], 0, 65535);
         }
 
         free(scratch);
@@ -356,7 +343,7 @@ static void read_step_hourly(void)
     {
         behind += s_state.step_hourly[h];
     }
-    s_state.step_hourly[cur_hour] = clamp_u16(s_state.steps - behind);
+    s_state.step_hourly[cur_hour] = (uint16_t)clamp_int(s_state.steps - behind, 0, 65535);
 #endif
 }
 
