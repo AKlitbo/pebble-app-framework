@@ -9,43 +9,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added `node-version` and `sdk-version` inputs to the `setup-pebble` action. Both are optional and default to Node 24 and the latest SDK.
-- Added the `report-memory` and `render-memory` actions, which rank every face's memory use on the CI run summary.
-- Added the `prepare-release` and `publish-release` actions, which check a face release before it builds and then publish it.
-- Added an optional `cancel` to the builder's `DragSpec`, which runs when the pointer is taken away mid drag. A builder that lifts an item out of its model in `lift` puts it back here.
+- Added `report-memory` and `render-memory` actions, which rank each face's memory use in the CI run summary.
+- Added `prepare-release` and `publish-release` actions for checking and publishing face releases.
+- Added an optional `cancel` callback to the builder's `DragSpec`, called when a pointer is taken away mid-drag. Builders that remove an item from their model in `lift` can restore it here.
 
 ### Changed
 
-- **Breaking:** The engine can be mounted under any folder name. The repo of faces lists that folder in its `package.json` workspaces, which is how the tools tell the engine is mounted.
-- `build.sh` and the waf build find faces through the same lookup as every other tool, and `build.sh` no longer needs the repo's own `build:pkjs` script.
-- **Breaking:** Stocks and iCal are now features a face opts into, by passing `features: [stocks, calendar]` to `startPebbleApp`. A face that leaves them out no longer bundles their code, so Gridlock has to list both.
-- **Breaking:** The Clay, thumbnail and icon generators take the face as an optional argument and run for every face that needs them without one, so a repo needs one `gen:clay`, `gen:thumbnails` and `gen:icons` script instead of one per face. Their banners name those scripts, so committed output needs regenerating.
-- ical.js is only copied into a face's build when the face uses iCal.
-- **Breaking:** The thumbnail generator takes the panel sizes from the face instead of a fixed list. A face's `module-meta.ts` exports them as `thumbnailSizes`.
-- Exported the option and state types that `startPebbleApp`, `runWeatherRound`, `buildConfig`, the hidden store component, and the WeatherAPI provider take, so a face can name them in its own code.
-- Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER` and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects and radio groups.
-- The `setup-pebble` action now checks that pebble-tool runs and puts the pebble-tool and SDK versions on the job summary. A pinned `sdk-version` is cached between runs.
-- **Breaking:** A `locationsearch` field persists the saved place as JSON for every kind of key, with the zone alongside the coordinates. The pkjs side builds the `offset,label` a timezone field sends the watch, so a face reading that setting off the phone's config sees the blob rather than the pair.
-- The config page prompts to pick a timezone city again when the place saved for it carries no zone.
+- **Breaking:** The engine can now be mounted under any folder name. The face repo declares that folder in its `package.json` workspaces, which is how the tools locate the engine.
+- `build.sh` and the waf build now find faces through the same lookup as the other tools. `build.sh` no longer needs the repo's `build:pkjs` script.
+- **Breaking:** Stocks and iCal are now opt-in features. Pass `features: [stocks, calendar]` to `startPebbleApp`. Faces that omit them no longer bundle their code, so Gridlock must list both.
+- **Breaking:** The Clay, thumbnail, and icon generators now take the face as an optional argument and run for every face that needs them when it is omitted. A repo now needs one `gen:clay`, `gen:thumbnails`, and `gen:icons` script instead of one per face. Their banners name those scripts, so committed output must be regenerated.
+- ical.js is now copied into a face's build only when the face uses iCal.
+- **Breaking:** The thumbnail generator now takes panel sizes from the face instead of a fixed list. A face exports them as `thumbnailSizes` from `module-meta.ts`.
+- Exported the option and state types used by `startPebbleApp`, `runWeatherRound`, `buildConfig`, the hidden store component, and the WeatherAPI provider so faces can name them in their own code.
+- Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER`, and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects, and radio groups.
+- The `setup-pebble` action now verifies that pebble-tool runs and adds the pebble-tool and SDK versions to the job summary. A pinned `sdk-version` is cached between runs.
+- **Breaking:** A `locationsearch` field now persists the saved place as JSON for every key type, including its timezone alongside the coordinates. The pkjs side builds the `offset,label` value sent by a timezone field, so a face reading the setting from the phone's config now receives the JSON blob instead of the pair.
+- The config page now prompts for a timezone city again when the saved place has no timezone.
 
 ### Removed
 
-- **Breaking:** Removed the `tools/ci/` scripts. A face repo moving to this engine switches its workflows to the actions above in the same commit.
+- **Breaking:** Removed the `tools/ci/` scripts. A face repo moving to this engine should switch its workflows to the new actions in the same commit.
 
 ### Fixed
 
-- Fixed a settings reply too big for the outbox being sent in part. It is now skipped unless it fits whole.
-- Fixed deleted calendar events staying on the agenda. An empty calendar or a removed feed now clears it.
-- Fixed a cleared watchlist staying on the watch and coming back on the next launch.
-- Fixed moved occurrences of a repeating event going missing from the agenda.
+- Fixed settings replies larger than the outbox being sent partially. They are now skipped unless they fit in full.
+- Fixed deleted calendar events remaining on the agenda. An empty calendar or removed feed now clears them.
+- Fixed a cleared watchlist remaining on the watch and returning on the next launch.
+- Fixed moved occurrences of repeating events disappearing from the agenda.
 - Fixed repeated weather requests from the watch each starting a provider fetch, and a failed send leaving weather stuck until the phone app restarted.
-- Fixed a watchlist of errors going back to the watch for as long as the provider's quota gate stayed shut.
-- Fixed drizzle drawing the N/A icon on OpenWeatherMap.
-- Fixed a nacked send retrying with no wait when another send was queued during its backoff.
-- Fixed an accented letter in a calendar title or a stock status reaching the watch as a different letter. The accent comes off and the plain letter stays.
-- Fixed a store switched on after starting disabled never receiving the reply to its poll.
-- Fixed a date format too long for the readout buffer leaving the date line with no terminator for the passes that follow it.
-- Fixed every settings save asking the phone for fresh weather. A field counts as changed only when its value moved.
-- Fixed a timezone field keeping the offset its zone had when the city was picked, so a London picked in January ran an hour behind all summer. A place picked before this release has no zone saved with it, so it keeps the old offset until the city is picked again.
+- Fixed an error watchlist being sent back to the watch while the provider's quota gate remained closed.
+- Fixed drizzle displaying the N/A icon with OpenWeatherMap.
+- Fixed a nacked send retrying immediately when another send was queued during its backoff.
+- Fixed accented letters in calendar titles and stock statuses reaching the watch as different letters. The accent is now removed and the plain letter is retained.
+- Fixed a store enabled after startup while disabled not receiving the reply to its poll.
+- Fixed an overlong date format leaving the readout buffer unterminated for subsequent passes.
+- Fixed every settings save requesting fresh weather. A field now counts as changed only when its value actually changes.
+- Fixed timezone fields retaining the offset from when their city was selected. For example, a London selected in January previously ran an hour behind during summer. Places selected before this release have no saved timezone, so they retain the old offset until the city is selected again.
 
 ## [1.1.0] - 2026-09-12
 
