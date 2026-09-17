@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed a nacked send retrying with no wait when another send was queued during its backoff.
 - Fixed an accented letter in a calendar title or a stock status reaching the watch as a different letter. The accent comes off and the plain letter stays.
 - Fixed a store switched on after starting disabled never receiving the reply to its poll.
+- Fixed a date format too long for the readout buffer leaving the date line with no terminator for the passes that follow it.
 
 ## [1.1.0] - 2026-09-12
 

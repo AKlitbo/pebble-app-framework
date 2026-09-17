@@ -69,8 +69,23 @@ void readout_date(char *out, size_t n)
 {
     // strftime first, which copies the .beats token through untouched because it owns no braces.
     // filling the reading in afterwards keeps the token out of a format string strftime parses
-    strftime(out, n, settings_str(SETTING_DATE_FORMAT), time_store_tm());
-    beats_expand_token(out, units_swatch_beats());
+    const char *format = settings_str(SETTING_DATE_FORMAT);
+
+    if (strftime(out, n, format, time_store_tm()) == 0)
+    {
+        // a date too long for the buffer leaves whatever strftime managed behind it with no
+        // terminator, and the two passes below would read and write past the end looking for one
+        out[0] = '\0';
+        return;
+    }
+
+    // reading the beat means breaking the clock apart, so only a format with a token to fill
+    // pays for it. this runs on every repaint and two of the date formats carry a token
+    if (beats_has_token(format))
+    {
+        beats_expand_token(out, units_swatch_beats());
+    }
+
     text_to_upper(out);
 }
 
