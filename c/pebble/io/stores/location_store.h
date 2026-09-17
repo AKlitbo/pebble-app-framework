@@ -19,8 +19,9 @@
  */
 typedef struct
 {
-    bool enabled; ///< False makes the store do nothing for a face without coordinate slots
-    bool live;    ///< True subscribes the coordinates channel and false just keeps the fake data for screenshots
+    bool enabled;         ///< False makes the store do nothing for a face without coordinate slots
+    bool live;            ///< True subscribes the coordinates channel and false just keeps the fake data for screenshots
+    uint32_t persist_key; ///< Slot for the last good fix so the face owns the key instead of the store
 } LocationConfig;
 
 /**
@@ -35,7 +36,7 @@ typedef struct
 /**
  * @brief Start the store with its rules. Pass seed = NULL for normal use.
  *
- * @param cfg The rules (enabled / live).
+ * @param cfg The rules (enabled / live / persist_key).
  * @param seed Optional prefill, or NULL.
  */
 void location_store_init(LocationConfig cfg, const LocationSeed *seed);

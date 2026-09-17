@@ -15,13 +15,14 @@
 #include "wire/coords.h"
 
 /**
- * @brief Persist slot for the last good fix.
+ * @var s_persist_key
+ * @brief Where the last good fix is kept, handed in by the face.
  *
  * A relaunch, such as coming back from the timeline, shows the coords straight away rather than
- * blanking to "--". The key sits clear of the weather store (255), the stock store (254), and the
- * settings keys, which sit in a low band (1 to 8).
+ * blanking to "--". The face picks the slot, so it is the one place that knows which keys it has
+ * already spent.
  */
-#define LOCATION_STORE_PERSIST_KEY 253
+static uint32_t s_persist_key;
 
 /**
  * @var s_state
@@ -48,7 +49,7 @@ static void persist_save(void)
 {
     if (s_live && coords_look_real(s_state.lat, s_state.lon))
     {
-        store_save(LOCATION_STORE_PERSIST_KEY, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
+        store_save(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
     }
 }
 
@@ -61,8 +62,20 @@ static void persist_save(void)
  */
 static void set(const char *lat, const char *lon)
 {
-    snprintf(s_state.lat, sizeof(s_state.lat), "%s", lat ? lat : "");
-    snprintf(s_state.lon, sizeof(s_state.lon), "%s", lon ? lon : "");
+    char next_lat[sizeof(s_state.lat)];
+    char next_lon[sizeof(s_state.lon)];
+    snprintf(next_lat, sizeof(next_lat), "%s", lat ? lat : "");
+    snprintf(next_lon, sizeof(next_lon), "%s", lon ? lon : "");
+
+    // the phone sends the coords with every weather push and a wearer standing still sends the
+    // same two strings each time, so an unmoved fix skips the write rather than wearing the flash
+    if (strcmp(next_lat, s_state.lat) == 0 && strcmp(next_lon, s_state.lon) == 0)
+    {
+        return;
+    }
+
+    snprintf(s_state.lat, sizeof(s_state.lat), "%s", next_lat);
+    snprintf(s_state.lon, sizeof(s_state.lon), "%s", next_lon);
     persist_save();
     if (s_cb) s_cb();
 }
@@ -75,6 +88,7 @@ void location_store_subscribe(void (*cb)(void))
 void location_store_init(LocationConfig cfg, const LocationSeed *seed)
 {
     s_live = cfg.live;  // set before any set() so persist_save knows whether to write
+    s_persist_key = cfg.persist_key;
     s_state.lat[0] = '\0';
     s_state.lon[0] = '\0';
 
@@ -86,7 +100,7 @@ void location_store_init(LocationConfig cfg, const LocationSeed *seed)
     {
         // restore the last good fix so a relaunch shows it right away. s_cb is still NULL so no
         // redraw fires here, but the first paint (window push) re-pulls every readout
-        store_restore(LOCATION_STORE_PERSIST_KEY, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
+        store_restore(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
     }
 
     if (!cfg.enabled)
