@@ -133,14 +133,17 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
       break;
     }
 
+    // breaking the time apart allocates, and a daily rule set up years ago walks thousands of
+    // steps before it reaches the window, so the step is measured once and read twice
+    const startEpoch = toEpoch(next);
+
     // the rule hands its times back in order, so the first one past the window ends the walk
-    if (toEpoch(next) > horizon) {
+    if (startEpoch > horizon) {
       break;
     }
 
-    // a rule with nothing moved off it skips the lookup, since a daily one set up years ago walks
-    // thousands of steps before it reaches the window
-    const occurrence = moved.length ? readOccurrence(event, next, duration) : toCalendarEvent(event, toEpoch(next), duration);
+    // a rule with nothing moved off it skips the lookup, for the same reason the walk is long
+    const occurrence = moved.length ? readOccurrence(event, next, duration) : toCalendarEvent(event, startEpoch, duration);
 
     // already over, but the walk carries on because the ones behind it may not be
     if (occurrence.endEpoch < now) {
@@ -202,7 +205,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
   const masters = blocks.filter((block) => !block.hasProperty('recurrence-id'));
   const overrides = blocks.filter((block) => block.hasProperty('recurrence-id'));
 
-  let events: CalendarEvent[] = [];
+  const events: CalendarEvent[] = [];
   masters.forEach((block) => {
     let event: ICAL.Event;
     try {
@@ -219,7 +222,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
       }
     });
 
-    events = events.concat(occurrencesOf(event, now, horizon));
+    events.push(...occurrencesOf(event, now, horizon));
   });
 
   // an override whose rule is not in the feed still happens, so it reads as a plain event
@@ -238,10 +241,10 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
 
   // keep an event while it has not finished and its start is inside the window. testing
   // against endEpoch means an in-progress meeting still counts as current
-  events = events.filter((event) => event.endEpoch >= now && event.startEpoch <= horizon);
+  const kept = events.filter((event) => event.endEpoch >= now && event.startEpoch <= horizon);
 
-  events.sort((left, right) => left.startEpoch - right.startEpoch);
-  return events.slice(0, MAX_EVENTS);
+  kept.sort((left, right) => left.startEpoch - right.startEpoch);
+  return kept.slice(0, MAX_EVENTS);
 }
 
 export default { parseIcal };
