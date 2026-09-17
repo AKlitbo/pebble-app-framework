@@ -4,7 +4,7 @@ All notable API changes to the Pebble Watchface Engine are documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - Unreleased
 
 ### Added
 
@@ -15,18 +15,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- Replaced the `tools/ci/` scripts with those actions. A face repo moving to this engine switches its workflows in the same commit.
-- The engine can be mounted under any folder name. The repo of faces lists that folder in its `package.json` workspaces, which is how the tools tell the engine is mounted.
+- **Breaking:** The engine can be mounted under any folder name. The repo of faces lists that folder in its `package.json` workspaces, which is how the tools tell the engine is mounted.
 - `build.sh` and the waf build find faces through the same lookup as every other tool, and `build.sh` no longer needs the repo's own `build:pkjs` script.
-- Stocks and iCal are now features a face opts into, by passing `features: [stocks, calendar]` to `startPebbleApp`. A face that leaves them out no longer bundles their code, so Gridlock has to list both.
-- The Clay, thumbnail and icon generators take the face as an optional argument and run for every face that needs them without one, so a repo needs one `gen:clay`, `gen:thumbnails` and `gen:icons` script instead of one per face. Their banners name those scripts, so committed output needs regenerating.
+- **Breaking:** Stocks and iCal are now features a face opts into, by passing `features: [stocks, calendar]` to `startPebbleApp`. A face that leaves them out no longer bundles their code, so Gridlock has to list both.
+- **Breaking:** The Clay, thumbnail and icon generators take the face as an optional argument and run for every face that needs them without one, so a repo needs one `gen:clay`, `gen:thumbnails` and `gen:icons` script instead of one per face. Their banners name those scripts, so committed output needs regenerating.
 - ical.js is only copied into a face's build when the face uses iCal.
-- The thumbnail generator takes the panel sizes from the face instead of a fixed list. A face's `module-meta.ts` exports them as `thumbnailSizes`.
+- **Breaking:** The thumbnail generator takes the panel sizes from the face instead of a fixed list. A face's `module-meta.ts` exports them as `thumbnailSizes`.
 - Exported the option and state types that `startPebbleApp`, `runWeatherRound`, `buildConfig`, the hidden store component, and the WeatherAPI provider take, so a face can name them in its own code.
 - Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER` and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects and radio groups.
 - The `setup-pebble` action now checks that pebble-tool runs and puts the pebble-tool and SDK versions on the job summary. A pinned `sdk-version` is cached between runs.
-- A `locationsearch` field persists the saved place as JSON for every kind of key, with the zone alongside the coordinates. The pkjs side builds the `offset,label` a timezone field sends the watch, so a face reading that setting off the phone's config sees the blob rather than the pair.
+- **Breaking:** A `locationsearch` field persists the saved place as JSON for every kind of key, with the zone alongside the coordinates. The pkjs side builds the `offset,label` a timezone field sends the watch, so a face reading that setting off the phone's config sees the blob rather than the pair.
 - The config page prompts to pick a timezone city again when the place saved for it carries no zone.
+
+### Removed
+
+- **Breaking:** Removed the `tools/ci/` scripts. A face repo moving to this engine switches its workflows to the actions above in the same commit.
 
 ### Fixed
 
@@ -56,6 +59,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
-[Unreleased]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.1.0...HEAD
+[2.0.0]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.1.0...HEAD
 [1.1.0]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/AKlitbo/pebble-watchface-engine/releases/tag/v1.0.0
