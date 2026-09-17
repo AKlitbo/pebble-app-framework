@@ -24,7 +24,7 @@
  * and an older blob is dropped rather than read as the wrong thing.
  * @{
  */
-#define STORE_TAG_WEATHER  0x11 ///< The weather store's blob
+#define STORE_TAG_WEATHER  0x12 ///< The weather store's blob
 #define STORE_TAG_STOCK    0x21 ///< The stock store's blob
 #define STORE_TAG_CALENDAR 0x31 ///< The calendar store's snapshot
 #define STORE_TAG_HEALTH   0x42 ///< The health store's saved heart rate window

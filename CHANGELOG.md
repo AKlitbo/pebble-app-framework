@@ -30,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Removed
 
 - **Breaking:** Removed the `tools/ci/` scripts. A face repo moving to this engine should switch its workflows to the new actions in the same commit.
-
+- **Breaking:** Removed `weather_store_location_name` and the weather store's `LOCATION_NAME` handler. Nothing read them. `STORE_TAG_WEATHER` moves to `0x12` with the struct, so a saved reading is refused once after the upgrade and the weather panels show placeholders until the next poll.
 ### Fixed
 
 - Fixed settings replies larger than the outbox being sent partially. They are now skipped unless they fit in full.

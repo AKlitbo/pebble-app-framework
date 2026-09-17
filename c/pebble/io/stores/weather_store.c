@@ -46,7 +46,6 @@ static struct
     uint8_t tag;          ///< STORE_TAG_WEATHER, so a restore can tell this blob from another shape
     int16_t temp;         ///< Current temperature in the user's unit (WEATHER_NO_TEMP when none)
     char   cond[32];      ///< Short word for the sky, such as "SUNNY"
-    char   location_name[32]; ///< The location name, such as "Toronto"
     int    humidity;      ///< Percent humidity, -1 when none
     int    wind_kmh;      ///< Wind speed in km/h, -1 when none
     char   wind_dir[4];   ///< Wind direction like "NW"
@@ -83,7 +82,6 @@ static void reset_state(void)
 {
     s_state.temp = WEATHER_NO_TEMP;
     s_state.cond[0] = '\0';
-    s_state.location_name[0] = '\0';
     s_state.humidity = -1;
     s_state.wind_kmh = -1;
     s_state.wind_dir[0] = '\0';
@@ -287,16 +285,6 @@ static void on_forecast_daily(const uint8_t *buf, uint16_t len)
     mark_synced();
 }
 
-/**
- * @brief Location-name channel.
- */
-static void on_location_name(const char *name)
-{
-    snprintf(s_state.location_name, sizeof(s_state.location_name), "%s", name ? name : "");
-    mark_dirty();
-    if (s_cb) s_cb();
-}
-
 // --- polling ---
 
 /**
@@ -379,7 +367,6 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
         appmessage_on_weather_air(on_air);
         appmessage_on_weather_forecast_hourly(on_forecast_hourly);
         appmessage_on_weather_forecast_daily(on_forecast_daily);
-        appmessage_on_location_name(on_location_name);
         // one coalesced persist per inbox instead of one write per channel handler
         appmessage_on_inbox_complete(persist_flush);
     }
@@ -446,7 +433,6 @@ void weather_store_reconfigure(WeatherConfig cfg)
 
 int         weather_store_temp(void)          { return s_state.temp; }
 const char *weather_store_cond(void)          { return s_state.cond; }
-const char *weather_store_location_name(void) { return s_state.location_name; }
 int         weather_store_humidity(void)      { return s_state.humidity; }
 int         weather_store_wind_kmh(void)      { return s_state.wind_kmh; }
 const char *weather_store_wind_dir(void)      { return s_state.wind_dir; }

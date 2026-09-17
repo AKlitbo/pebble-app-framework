@@ -95,9 +95,6 @@ int         weather_store_temp(void);
 /** @brief The short word for the sky, or empty if we have not got one yet. */
 const char *weather_store_cond(void);
 
-/** @brief The location name like "Toronto", or empty if we have not got one yet. */
-const char *weather_store_location_name(void);
-
 /** @brief The humidity in percent, or -1 if we have not got one yet. */
 int         weather_store_humidity(void);
 
