@@ -327,19 +327,56 @@ export function rootFor(page: string): string {
   return '../'.repeat(page.split('/').length - 1);
 }
 
+/** What the shared bar needs to know about the page it sits on and the build it came from. */
+export interface SiteBarOptions {
+  /** The way back up to the site root from the page. */
+  root: string;
+  /** The section the page is in, which the bar shows as selected. */
+  section: SiteSection;
+  /** The theme toggle's html. */
+  themeToggle: string;
+  /** The version this build is published as, such as main or v2.0.0, which the version picker opens on. */
+  version: string;
+  /** Where the coverage reports sit from the site root, such as ../main/, or empty when this build has its own. */
+  coverageSite: string;
+}
+
 /**
  * Fills the shared bar for one page and marks the section that page belongs to.
  *
- * @param template The bar's template, with `{{root}}`, `{{repoUrl}}`, and `{{themeToggle}}`.
- * @param root The way back up to the site root from the page.
- * @param section The section the page is in, which the bar shows as selected.
- * @param themeToggle The theme toggle's html.
+ * @param template The bar's template, with `{{root}}`, `{{coverageRoot}}`, `{{version}}`, `{{repoUrl}}`, and `{{themeToggle}}`.
+ * @param options The page and the build the bar is for.
  * @return The bar's html.
  */
-export function renderSiteBar(template: string, root: string, section: SiteSection, themeToggle: string): string {
-  const bar = fillTemplate(template, { root, repoUrl: REPO_URL, themeToggle });
+export function renderSiteBar(template: string, options: SiteBarOptions): string {
+  const { root, section, themeToggle } = options;
+  const bar = fillTemplate(template, {
+    root,
+    coverageRoot: root + options.coverageSite,
+    version: escapeHtml(options.version),
+    repoUrl: REPO_URL,
+    themeToggle,
+  });
 
   return section === null ? bar : bar.replace(`data-section="${section}"`, `data-section="${section}" aria-current="page"`);
+}
+
+/**
+ * Points the links in a coverage page at folders that have had the dot taken off their names.
+ *
+ * Vitest lays its report out like the source tree, so the engine's action scripts land under
+ * coverage/ts/.github/. GitHub Pages leaves out every .github folder when it packs the site, and each of
+ * those pages 404s. build-site.ts renames the folder without its dot, and this moves the links to match.
+ *
+ * @param html A page of the coverage report.
+ * @param folders The names the dot came off, such as `.github`.
+ * @return The page with every link into one of those folders pointed at the name without the dot.
+ */
+export function undotLinks(html: string, folders: string[]): string {
+  return folders.reduce((page, folder) => {
+    const escaped = folder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return page.replace(new RegExp(`href="((?:\\.\\./)*)${escaped}/`, 'g'), `href="$1${folder.slice(1)}/`);
+  }, html);
 }
 
 /** The kinds of page other tools write, which each need the bar in a different spot. */

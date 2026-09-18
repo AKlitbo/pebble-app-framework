@@ -1,9 +1,10 @@
 name: Build Docs Site
 description: >
   Builds the parts of the docs site that Doxygen does not, all into docs/site/dist. That is the TypeScript
-  docs from TypeDoc, a coverage report for each test suite, and the site's own pages. Each TypeDoc warning
-  lands as an annotation on the file it names, and a build with any warning fails. Both coverage figures go
-  on the job summary. Linux runners only.
+  docs from TypeDoc, a coverage report for each test suite, and the site's own pages. A build pointed at
+  another build's coverage reports skips its own. Each TypeDoc warning lands as an annotation on the file
+  it names, and a build with any warning fails. Both coverage figures go on the job summary. Linux runners
+  only.
 
 inputs:
   typedoc-options:
@@ -18,12 +19,19 @@ inputs:
     description: The gcovr release to install for the C coverage report, such as 8.6.
     required: false
     default: '8.6'
+  coverage-site:
+    description: >
+      Where another build's coverage reports sit, relative to this site's root, such as ../main/. Given one,
+      this build skips both coverage runs and its pages link there. Left empty, it builds its own.
+    required: false
+    default: ''
 
 runs:
   using: composite
   steps:
     # pipx ships on the runner, and so do gcc and make
     - name: Install gcovr
+      if: inputs.coverage-site == ''
       shell: bash
       env:
         VERSION: ${{ inputs.gcovr-version }}
@@ -41,6 +49,8 @@ runs:
         ACTION_PATH: ${{ github.action_path }}
         TYPEDOC_OPTIONS: ${{ inputs.typedoc-options }}
         VITEST_CONFIG: ${{ inputs.vitest-config }}
+        # build-site.ts reads this too, for where the coverage links point
+        DOCS_COVERAGE_SITE: ${{ inputs.coverage-site }}
       with:
         # the inputs reach the script through the environment, never through this body
         script: |

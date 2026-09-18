@@ -3,11 +3,14 @@
     <img src="{{root}}logo.svg" alt="" width="22" height="22" />
     <span>Pebble Watchface Engine</span>
   </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="{{root}}" disabled>
+    <option value="{{version}}" selected>{{version}}</option>
+  </select>
   <div class="site-bar-links">
     <a data-section="c" href="{{root}}c/index.html">Device API</a>
     <a data-section="ts" href="{{root}}ts/index.html">Phone API</a>
-    <a data-section="coverage-c" href="{{root}}coverage/c/index.html">C Coverage</a>
-    <a data-section="coverage-ts" href="{{root}}coverage/ts/index.html">TS Coverage</a>
+    <a data-section="coverage-c" href="{{coverageRoot}}coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="{{coverageRoot}}coverage/ts/index.html">TS Coverage</a>
   </div>
   <a class="site-bar-github" href="{{repoUrl}}">
     <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">

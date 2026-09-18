@@ -1,0 +1,36 @@
+name: Publish Docs Site
+description: >
+  Publishes one version of the built docs site onto the branch GitHub Pages serves, in a folder named for
+  that version. The other versions on the branch are left alone. versions.json and the branch's front page
+  are rewritten each time, so the version picker lists every version and the front page opens the latest
+  release. Needs a checkout with a token that can push, and contents write.
+
+inputs:
+  site:
+    description: The built site to publish, relative to the repo root.
+    required: false
+    default: docs/site/dist
+  folder:
+    description: The version it is published as. main, or a release tag such as v2.0.0.
+    required: true
+  branch:
+    description: The branch GitHub Pages serves the site from.
+    required: false
+    default: gh-pages
+
+runs:
+  using: composite
+  steps:
+    - name: Publish the Docs Site
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        SITE: ${{ inputs.site }}
+        FOLDER: ${{ inputs.folder }}
+        BRANCH: ${{ inputs.branch }}
+      with:
+        # the inputs reach the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'publish-docs-site.js'));
+          return run({ core, exec });

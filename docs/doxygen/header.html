@@ -1,8 +1,8 @@
 <!-- HTML header for doxygen 1.18.0 -->
 <!--
   Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
-  Two things are changed. The scripts at the end of the head load the site's theme.js, the
-  doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
   double escaped outline links. The title area keeps only the line naming this part of the site, to
   match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
   shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
@@ -42,6 +42,7 @@ $mermaidjs
 $extrastylesheet
 <!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
 <script type="text/javascript" src="$relpath^../theme.js"></script>
+<script type="text/javascript" src="$relpath^../versions.js"></script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-darkmode-toggle.js"></script>
 <script type="text/javascript" src="$relpath^doxygen-awesome-interactive-toc.js"></script>
 <script type="text/javascript">

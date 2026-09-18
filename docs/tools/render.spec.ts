@@ -19,6 +19,7 @@ import {
   rootFor,
   splitTitle,
   takeIntro,
+  undotLinks,
 } from './render.ts';
 
 const HOME = { root: '', commit: 'abc1234' };
@@ -238,11 +239,12 @@ describe('rootFor', () => {
 });
 
 describe('renderSiteBar', () => {
-  const TEMPLATE = '<nav class="site-bar"><a class="site-bar-home" href="{{root}}index.html">Pebble Watchface Engine</a><a data-section="c" href="{{root}}c/index.html">Device API</a><a data-section="coverage-c" href="{{root}}coverage/c/index.html">C Coverage</a><a href="{{repoUrl}}">GitHub</a>{{themeToggle}}</nav>';
+  const TEMPLATE = '<nav class="site-bar"><a class="site-bar-home" href="{{root}}index.html">Pebble Watchface Engine</a><select class="site-bar-version" data-root="{{root}}"><option value="{{version}}">{{version}}</option></select><a data-section="c" href="{{root}}c/index.html">Device API</a><a data-section="coverage-c" href="{{coverageRoot}}coverage/c/index.html">C Coverage</a><a href="{{repoUrl}}">GitHub</a>{{themeToggle}}</nav>';
+  const BUILD = { themeToggle: '<button></button>', version: 'main', coverageSite: '' };
 
   /** The bar is the only thing that tells a reader which part of the site they are in. */
   test('marks the section the page is in', () => {
-    const result = renderSiteBar(TEMPLATE, '../../', 'coverage-c', '<button></button>');
+    const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../../', section: 'coverage-c' });
 
     expect(result).toContain('<a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">');
     expect(result.match(/aria-current/g)).toHaveLength(1);
@@ -250,17 +252,25 @@ describe('renderSiteBar', () => {
 
   /** A changelog or licence page belongs to no section, so nothing in the bar may look selected there. */
   test('marks nothing for a page outside the sections', () => {
-    const result = renderSiteBar(TEMPLATE, '../', null, '<button></button>');
+    const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../', section: null });
 
     expect(result).not.toContain('aria-current');
   });
 
   /** A PR's uploaded copy of the site has to keep its readers inside that copy, so only GitHub leaves it. */
   test('keeps every link but GitHub relative to the page', () => {
-    const result = renderSiteBar(TEMPLATE, '../../', 'c', '<button></button>');
+    const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../../', section: 'c' });
 
     expect(result).toContain('<a class="site-bar-home" href="../../index.html">Pebble Watchface Engine</a>');
     expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-watchface-engine">GitHub</a>');
+  });
+
+  /** A release leaves its coverage reports out, so a link inside its own folder would 404. */
+  test('points the coverage links at the build that holds the reports', () => {
+    const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../', section: 'c', coverageSite: '../main/' });
+
+    expect(result).toContain('href="../../main/coverage/c/index.html"');
+    expect(result).toContain('<a data-section="c" aria-current="page" href="../c/index.html">');
   });
 });
 
@@ -302,5 +312,34 @@ describe('addSiteBar', () => {
     const result = () => addSiteBar(html, 'typedoc', HEAD, BAR);
 
     expect(result).toThrow('tsd-page-toolbar');
+  });
+});
+
+describe('undotLinks', () => {
+  /** GitHub Pages drops the .github folder, so a link still naming it opens a 404 for every action script. */
+  test('points a link into a renamed folder at the name without the dot', () => {
+    const html = '<a href=".github/actions/build-docs-site/scripts/index.html">.github/actions</a>';
+
+    const result = undotLinks(html, ['.github']);
+
+    expect(result).toBe('<a href="github/actions/build-docs-site/scripts/index.html">.github/actions</a>');
+  });
+
+  /** A page deeper in the report reaches the folder through ../, and that link has to follow the rename too. */
+  test('follows the rename through links that climb first', () => {
+    const html = '<a href="../../.github/actions/index.html">x</a>';
+
+    const result = undotLinks(html, ['.github']);
+
+    expect(result).toBe('<a href="../../github/actions/index.html">x</a>');
+  });
+
+  /** Only the renamed folder moves, so a file whose name merely contains it keeps its link. */
+  test('leaves links to anything else alone', () => {
+    const html = '<a href="ts/pkjs/.github.ts.html">x</a><a href="base.css">y</a>';
+
+    const result = undotLinks(html, ['.github']);
+
+    expect(result).toBe(html);
   });
 });

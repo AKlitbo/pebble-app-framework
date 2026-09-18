@@ -117,6 +117,17 @@ describe('build-docs-site', () => {
     );
   });
 
+  /** A release links to main's coverage, so measuring its own would spend the time on reports nobody opens. */
+  test('skips both coverage runs when the reports live on another build', async () => {
+    vi.stubEnv('DOCS_COVERAGE_SITE', '../main/');
+
+    const { core, exec } = await build();
+
+    const commands = exec.getExecOutput.mock.calls.map(([command, args]) => `${command} ${args[0]}`);
+    expect(commands).toEqual(['node docs/node_modules/typedoc/bin/typedoc', 'npm --prefix']);
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('| C coverage | linked from ../main/ |');
+  });
+
   /** A coverage run that wrote nothing should read as missing on the summary, not crash the step that explains why. */
   test('shows a missing coverage report as no report', async () => {
     const { core } = await build({ summaries: {} });

@@ -2,9 +2,10 @@
  * Builds everything on the docs site that Doxygen does not.
  *
  * That is the TypeScript docs from TypeDoc, a coverage report for each test suite, and the site's own pages,
- * run in that order since the pages read both coverage reports. Each part runs even when one before it
- * failed, so one run shows every problem, and the step fails at the end if any part did. Every TypeDoc
- * warning fails the build, since the site only publishes from a build with none.
+ * run in that order since the pages read both coverage reports. A build given another build's coverage
+ * reports in DOCS_COVERAGE_SITE skips both coverage runs and links there instead. Each part runs even when
+ * one before it failed, so one run shows every problem, and the step fails at the end if any part did.
+ * Every TypeDoc warning fails the build, since the site only publishes from a build with none.
  */
 const fs = require('fs');
 const { fail, step, existingPath, firstLine, markdownTable, outputTail } = require('../../../shared/lib');
@@ -55,14 +56,18 @@ module.exports = step(async ({ core, exec }) => {
     problems.push({ message: `TypeDoc exited ${typedoc.exitCode}.`, output: typedoc });
   }
 
-  const vitest = await run('TypeScript Coverage', 'npx', ['vitest', 'run', '--config', vitestConfig, '--coverage', `--coverage.reportsDirectory=${TS_COVERAGE}`]);
-  if (vitest.exitCode !== 0) {
-    problems.push({ message: `Vitest exited ${vitest.exitCode} while measuring coverage, so a spec failed.`, output: vitest });
-  }
+  // a release links to main's coverage reports rather than measuring its own
+  const coverageSite = process.env.DOCS_COVERAGE_SITE || '';
+  if (coverageSite === '') {
+    const vitest = await run('TypeScript Coverage', 'npx', ['vitest', 'run', '--config', vitestConfig, '--coverage', `--coverage.reportsDirectory=${TS_COVERAGE}`]);
+    if (vitest.exitCode !== 0) {
+      problems.push({ message: `Vitest exited ${vitest.exitCode} while measuring coverage, so a spec failed.`, output: vitest });
+    }
 
-  const make = await run('C Coverage', 'make', ['-C', 'c/spec', 'coverage']);
-  if (make.exitCode !== 0) {
-    problems.push({ message: `make -C c/spec coverage exited ${make.exitCode}, so a C spec or gcovr failed.`, output: make });
+    const make = await run('C Coverage', 'make', ['-C', 'c/spec', 'coverage']);
+    if (make.exitCode !== 0) {
+      problems.push({ message: `make -C c/spec coverage exited ${make.exitCode}, so a C spec or gcovr failed.`, output: make });
+    }
   }
 
   const pages = await run('Site Pages', 'npm', ['--prefix', 'docs', 'run', 'site']);
@@ -75,8 +80,8 @@ module.exports = step(async ({ core, exec }) => {
     '',
     markdownTable(['Part', 'Result'], [
       ['TypeDoc', warnings.length > 0 ? `${warnings.length} warning(s)` : typedoc.exitCode === 0 ? 'built with no warnings' : 'failed'],
-      ['TypeScript coverage', figure(readVitestLines(readSummary(TS_SUMMARY)))],
-      ['C coverage', figure(readGcovrLines(readSummary(C_SUMMARY)))],
+      ['TypeScript coverage', coverageSite ? `linked from ${coverageSite}` : figure(readVitestLines(readSummary(TS_SUMMARY)))],
+      ['C coverage', coverageSite ? `linked from ${coverageSite}` : figure(readGcovrLines(readSummary(C_SUMMARY)))],
       ['Site pages', pages.exitCode === 0 ? 'built' : 'failed'],
     ]),
   ];

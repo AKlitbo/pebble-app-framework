@@ -91,6 +91,37 @@ html.dark-mode .site-bar {
   color: var(--bar-signal) !important;
 }
 
+/* the version picker beside the name, square like the theme toggle
+   its font is pinned because Doxygen and TypeDoc both style form controls of their own */
+.site-bar .site-bar-version {
+  margin: 0;
+  padding: 5px 6px;
+  background: var(--bar-paper);
+  border: 1.5px solid var(--bar-rule);
+  border-radius: 0;
+  color: var(--bar-ink);
+  color-scheme: light;
+  font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  cursor: pointer;
+}
+
+html.dark-mode .site-bar .site-bar-version {
+  color-scheme: dark;
+}
+
+.site-bar .site-bar-version:hover:enabled {
+  border-color: var(--bar-signal);
+}
+
+/* disabled until the list of versions loads, which a local build never has */
+.site-bar .site-bar-version:disabled {
+  color: var(--bar-muted);
+  cursor: default;
+  opacity: 1;
+}
+
 /* the links and the GitHub link pin their font, since Doxygen sets its own on every div inside #top */
 .site-bar-links,
 .site-bar .site-bar-links a,

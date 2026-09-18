@@ -6,6 +6,7 @@
     <title>Pebble Watchface Engine</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <script src="theme.js"></script>
+    <script src="versions.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       rel="stylesheet"
@@ -57,7 +58,7 @@
       <div class="section-label">Test Coverage</div>
       <div class="cards">
         <div class="card-slot">
-          <a class="card" href="coverage/c/">
+          <a class="card" href="{{coverageRoot}}coverage/c/">
             <div class="card-top"><span class="lang">C</span><span class="kind">gcovr</span></div>
             <h2>Host C Specs</h2>
             <p>Which lines of the engine's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
@@ -66,7 +67,7 @@
           </a>
         </div>
         <div class="card-slot">
-          <a class="card" href="coverage/ts/">
+          <a class="card" href="{{coverageRoot}}coverage/ts/">
             <div class="card-top"><span class="lang">TS</span><span class="kind">Vitest v8</span></div>
             <h2>TypeScript Specs</h2>
             <p>Which lines of the phone runtime and the build tools the Vitest suite reaches.</p>

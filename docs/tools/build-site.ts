@@ -31,6 +31,7 @@ import {
   sectionList,
   splitTitle,
   takeIntro,
+  undotLinks,
   type GeneratedPage,
   type SiteSection,
 } from './render.ts';
@@ -52,6 +53,7 @@ const SHARED_FILES = [
   'docs/site/site-bar.css',
   'docs/site/coverage.css',
   'docs/site/theme.js',
+  'docs/site/versions.js',
   'docs/doxygen/logo.svg',
   'docs/doxygen/favicon.svg',
 ];
@@ -59,7 +61,7 @@ const SHARED_FILES = [
 const FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">';
 
 // the folders other tools write, with the section each belongs to and the tags each page needs in its head
-// the Doxygen header already loads theme.js and the Plex fonts, and TypeDoc's stylesheet brings the fonts
+// the Doxygen header already loads theme.js, versions.js, and the Plex fonts, and TypeDoc's stylesheet brings the fonts
 // the coverage reports bring none of it, and they get the site's look from coverage.css
 const GENERATED: { folder: string; kind: GeneratedPage; section: SiteSection; head: (root: string) => string }[] = [
   {
@@ -72,7 +74,7 @@ const GENERATED: { folder: string; kind: GeneratedPage; section: SiteSection; he
     folder: 'ts',
     kind: 'typedoc',
     section: 'ts',
-    head: (root) => `<script src="${root}theme.js"></script>\n<link rel="stylesheet" href="${root}site-bar.css">\n`,
+    head: (root) => `<script src="${root}theme.js"></script>\n<script src="${root}versions.js"></script>\n<link rel="stylesheet" href="${root}site-bar.css">\n`,
   },
   {
     folder: 'coverage/c',
@@ -92,7 +94,7 @@ const GENERATED: { folder: string; kind: GeneratedPage; section: SiteSection; he
 const SKIPPED = new Set(['c/doxygen_crawl.html']);
 
 function coverageHead(root: string): string {
-  return `<script src="${root}theme.js"></script>\n${FONTS}\n<link rel="stylesheet" href="${root}site-bar.css">\n<link rel="stylesheet" href="${root}coverage.css">\n`;
+  return `<script src="${root}theme.js"></script>\n<script src="${root}versions.js"></script>\n${FONTS}\n<link rel="stylesheet" href="${root}site-bar.css">\n<link rel="stylesheet" href="${root}coverage.css">\n`;
 }
 
 /** Reads a repo file with Windows line endings folded, so a checkout on either system renders the same. */
@@ -135,17 +137,39 @@ function pagesUnder(folder: string): string[] {
     .filter((relative) => !SKIPPED.has(relative));
 }
 
+/**
+ * Takes the dot off each folder at the top of a report, since GitHub Pages leaves out a .github folder
+ * when it packs the site. A folder left by an earlier build under the new name is replaced, because the
+ * report was just written again.
+ */
+function undotFolders(folder: string): string[] {
+  const start = path.join(DIST, folder);
+  if (!fs.existsSync(start)) {
+    return [];
+  }
+  const dotted = fs.readdirSync(start, { withFileTypes: true }).filter((entry) => entry.isDirectory() && entry.name.startsWith('.'));
+  for (const entry of dotted) {
+    const target = path.join(start, entry.name.slice(1));
+    fs.rmSync(target, { recursive: true, force: true });
+    fs.renameSync(path.join(start, entry.name), target);
+  }
+  return dotted.map((entry) => entry.name);
+}
+
 const version = (JSON.parse(read('package.json')) as { version: string }).version;
 const commit = process.env.GITHUB_SHA || git('rev-parse', 'HEAD');
 // a PR build's ref name is its merge ref, so the branch it came from is tried first
 const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || git('rev-parse', '--abbrev-ref', 'HEAD');
 const built = new Date().toISOString().slice(0, 10);
+// a release build leaves the coverage reports out and links to main's, such as ../main/ from the site root
+const coverageSite = process.env.DOCS_COVERAGE_SITE || '';
 
 const themeToggle = template('theme-toggle.html');
 const siteBarTemplate = template('site-bar.html');
 
+// in CI the branch is main or the tag being built, which is also the folder the site is published into
 function siteBar(root: string, section: SiteSection): string {
-  return renderSiteBar(siteBarTemplate, root, section, themeToggle);
+  return renderSiteBar(siteBarTemplate, { root, section, themeToggle, version: branch, coverageSite });
 }
 
 function footer(root: string): string {
@@ -172,6 +196,7 @@ write('index.html', fillTemplate(template('landing.html'), {
   built,
   coverageC: pixelStrip(readGcovrSummary(readSummary('coverage/c/summary.json'))),
   coverageTs: pixelStrip(readVitestSummary(readSummary('coverage/ts/coverage-summary.json'))),
+  coverageRoot: coverageSite,
   toc: sectionList(rendered.sections),
   readme: rendered.html,
   footer: footer(''),
@@ -193,6 +218,9 @@ for (const file of SHARED_FILES) {
   fs.copyFileSync(path.join(ROOT, file), path.join(DIST, path.basename(file)));
 }
 
+// the Vitest report lays out the action scripts under .github/, which would never reach GitHub Pages
+const undotted = undotFolders('coverage/ts');
+
 // the shared bar on every page the other tools wrote
 let barred = 0;
 for (const generated of GENERATED) {
@@ -200,7 +228,8 @@ for (const generated of GENERATED) {
     const file = path.join(DIST, relative);
     const html = fs.readFileSync(file, 'utf8');
     const root = rootFor(relative);
-    const result = addSiteBar(html, generated.kind, generated.head(root), siteBar(root, generated.section));
+    const linked = generated.folder === 'coverage/ts' ? undotLinks(html, undotted) : html;
+    const result = addSiteBar(linked, generated.kind, generated.head(root), siteBar(root, generated.section));
     if (result !== html) {
       fs.writeFileSync(file, result);
       barred++;

@@ -21,11 +21,11 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 **CI and Docs**
 
-* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions, `build-doxygen`, and `build-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face, each reached as `lib/.github/actions/<name>`.
+* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The engine's workflows run the verify actions, `build-doxygen`, `build-docs-site`, and `publish-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face, each reached as `lib/.github/actions/<name>`.
 * **`.github/shared/`**: the helpers and spec fakes the scripts in `.github/actions/` share.
 * **`docs/doxygen/`**: the Doxygen theme, logo, main page, and header.
 * **`docs/typedoc/`**: the look laid over TypeDoc's default theme.
-* **`docs/site/`**: the docs site's page templates, its stylesheets for the pages, the shared bar, and the coverage reports, and the theme script.
+* **`docs/site/`**: the docs site's page templates, its stylesheets for the pages, the shared bar, and the coverage reports, the theme script, and the version picker's script.
 * **`docs/tools/`**: renders the docs site's home page and its changelog, notices, and licence pages, and puts the shared bar on every page Doxygen, TypeDoc, and the coverage reports write.
 
 ## Using It
@@ -105,12 +105,12 @@ make -C c/spec coverage        # the C coverage report, which needs gcovr
 npm --prefix docs run site     # the home page and the pages around it, last since it reads both coverage reports
 ```
 
-The [`docs/` README](docs/README.md) covers that folder's layout, its own scripts, and how the shared bar reaches every page. The site lands in `docs/site/dist/`, which git ignores. CI fails a build with any Doxygen or TypeDoc warning, and main publishes the site to [GitHub Pages](https://aklitbo.github.io/pebble-watchface-engine/).
+The [`docs/` README](docs/README.md) covers that folder's layout, its own scripts, and how the shared bar reaches every page. The site lands in `docs/site/dist/`, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to [GitHub Pages](https://aklitbo.github.io/pebble-watchface-engine/), each into a folder of its own, and the site opens on the latest release.
 
 ## CI
 
 * **`engine-ci.yml`**: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.
-* **`docs-site-publish.yml`**: builds the docs site on every PR and publishes it from main.
+* **`docs-site-publish.yml`**: builds the docs site on every PR, and publishes a version of it from main and from each pushed `v*` tag.
 
 ## License
 
