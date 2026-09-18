@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>core/clock/ - Host C Specs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="index.css"/>
+    <script src="index.js"></script>
+  <script src="../../theme.js"></script>
+<script src="../../versions.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="../../site-bar.css">
+<link rel="stylesheet" href="../../coverage.css">
+</head>
+
+  <body>
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+    <div class="Layout-main">
+      <div class="Layout-main-centered-lg" style="max-width: 1280px;">
+        <div class="d-flex flex-justify-center">
+          <h1>Host C Specs</h1>
+        </div>
+        <hr class="block-separator"/>
+        <header>
+<div id="summary" class="summary">
+  <div>
+    <table class="legend">
+      <tr>
+        <th scope="row">Directory:</th>
+        <td>c/core/clock/</td>
+      </tr>
+      <tr>
+        <th scope="row">Coverage:</th>
+        <td class="legend">
+          <span class="coverage-low">low: &ge; 0%</span>
+          <span class="coverage-medium">medium: &ge; 75.0%</span>
+          <span class="coverage-high">high: &ge; 90.0%</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div>
+    <table class="coverage">
+      <tr>
+        <th></th>
+        <th scope="col">Coverage</th>
+        <th scope="col">Exec / Excl / Total</th>
+      </tr>
+      <tr>
+        <th scope="row">Lines:</th>
+        <td class="coverage-high">97.6%</td>
+        <td class="coverage-high">559 / 0 / 573</td>
+      </tr>
+      <tr>
+        <th scope="row">Functions:</th>
+        <td class="coverage-high">100.0%</td>
+        <td class="coverage-high">88 / 0 / 88</td>
+      </tr>
+      <tr>
+        <th scope="row">Branches:</th>
+        <td class="coverage-medium">89.4%</td>
+        <td class="coverage-medium">388 / 0 / 434</td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </header>
+        <hr/>
+        <nav>
+<a href="index.functions.html">List of functions</a>
+
+        </nav>
+        <main>
+<div class="Box m-3 filelist">
+  <div class="Box-header py-2 d-flex sticky">
+    <div role="rowheader" class="color-fg-muted flex-auto min-width-0 col-md-2 sortable sorted-ascending">File</div>
+    <div role="rowheader" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline"></div>
+    <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Lines</div>
+    <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Functions</div>
+    <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Branches</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="astro.c" href="index.astro.c.4dffec4dd98f0cef9724e89ef90d4bc4.html">astro.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">4 / 0 / 4</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">1 / 0 / 1</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-unknown" data-sort="-">
+      <span>-%</span>
+      <span title="Exec / Excl / Total">0 / 0 / 0</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="beats.c" href="index.beats.c.0186ca90c96e5db1824bc1eb398a470f.html">beats.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="92.6" title="92.6%">92.6</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="92.6">
+      <span>92.6%</span>
+      <span title="Exec / Excl / Total">25 / 0 / 27</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">5 / 0 / 5</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-medium" data-sort="87.5">
+      <span>87.5%</span>
+      <span title="Exec / Excl / Total">14 / 0 / 16</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="clockstr.c" href="index.clockstr.c.677a691248ff69be783697d1f47cf659.html">clockstr.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">24 / 0 / 24</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">2 / 0 / 2</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-medium" data-sort="85.7">
+      <span>85.7%</span>
+      <span title="Exec / Excl / Total">24 / 0 / 28</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="date.c" href="index.date.c.c241bd81fddece8f15e75e53c6e4eff9.html">date.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">33 / 0 / 33</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">10 / 0 / 10</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-medium" data-sort="86.7">
+      <span>86.7%</span>
+      <span title="Exec / Excl / Total">26 / 0 / 30</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="duration.c" href="index.duration.c.bea16a9fb1e626b6173f48df0ec63f98.html">duration.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">14 / 0 / 14</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">2 / 0 / 2</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">6 / 0 / 6</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="moon.c" href="index.moon.c.b0c81440c6f0d923134f0aaee1cabe24.html">moon.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">25 / 0 / 25</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">5 / 0 / 5</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">10 / 0 / 10</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="nightsched.c" href="index.nightsched.c.175e890909dd730b711afab66488e503.html">nightsched.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">18 / 0 / 18</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">3 / 0 / 3</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">34 / 0 / 34</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="solar.c" href="index.solar.c.75b93eaf445806e7c80013333870bda6.html">solar.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="92.9" title="92.9%">92.9</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="92.9">
+      <span>92.9%</span>
+      <span title="Exec / Excl / Total">26 / 0 / 28</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">4 / 0 / 4</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-medium" data-sort="86.7">
+      <span>86.7%</span>
+      <span title="Exec / Excl / Total">26 / 0 / 30</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="tide.c" href="index.tide.c.db83129144d91ffb1aa32bf20aa862e1.html">tide.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">9 / 0 / 9</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">3 / 0 / 3</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">4 / 0 / 4</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="timeband.c" href="index.timeband.c.05184555b9d2f9136637e4c202fc7825.html">timeband.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="96.2" title="96.2%">96.2</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="96.2">
+      <span>96.2%</span>
+      <span title="Exec / Excl / Total">76 / 0 / 79</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">12 / 0 / 12</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-medium" data-sort="75.0">
+      <span>75.0%</span>
+      <span title="Exec / Excl / Total">36 / 0 / 48</span>
+    </div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2">
+      <div class="d-flex">
+        <span class="css-truncate css-truncate-target d-block width-fit">
+          <a class="" title="weekday.c" href="index.weekday.c.ecf9761fab4573c15c9d4a496f74f83a.html">weekday.c</a>
+        </span>
+      </div>
+    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline file-list coverage-high">
+      <span style="width: 200px;">
+        <meter class="coverage-high" min="0" max="100" value="100.0" title="100.0%">100.0</meter>
+      </span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">4 / 0 / 4</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">1 / 0 / 1</span>
+    </div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 file-list coverage-high" data-sort="100.0">
+      <span>100.0%</span>
+      <span title="Exec / Excl / Total">4 / 0 / 4</span>
+    </div>
+  </div>
+</div>
+
+        </main>
+        <hr class="block-separator"/>
+        <footer class="text-center">
+          Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
+          at 2026-09-18 08:28:21
+        </footer>
+      </div>
+    </div>
+  </body>
+
+</html>

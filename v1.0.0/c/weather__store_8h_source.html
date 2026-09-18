@@ -1,0 +1,342 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/io/stores/weather_store.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('weather__store_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">weather_store.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="weather__store_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;pebble.h&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="weather__wire_8h.html">wire/weather_wire.h</a>&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="};">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structWeatherConfig.html">   24</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structWeatherConfig.html#a6992e5d383515e3e97821d52ffb05630">   26</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structWeatherConfig.html#a6992e5d383515e3e97821d52ffb05630">enabled</a>;     </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structWeatherConfig.html#ad002199ba6f3a4b7af38924a8bb640e7">   27</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structWeatherConfig.html#ad002199ba6f3a4b7af38924a8bb640e7">live</a>;        </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4">   28</a></span>    <span class="keywordtype">int</span>      <a class="code hl_variable" href="structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4">poll_min</a>;    </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structWeatherConfig.html#aea465941bd98b1490454738c7af6088e">   29</a></span>    uint32_t <a class="code hl_variable" href="structWeatherConfig.html#aea465941bd98b1490454738c7af6088e">persist_key</a>; </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>} <a class="code hl_struct" href="structWeatherConfig.html">WeatherConfig</a>;</div>
+</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span></div>
+<div class="foldopen" id="foldopen00036" data-start="{" data-end="};">
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="structWeatherSeed.html">   36</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>{</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">   38</a></span>    int16_t     <a class="code hl_variable" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">temp</a>;      </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a93c60f615195612444d3d584e7a669cb">   39</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structWeatherSeed.html#a93c60f615195612444d3d584e7a669cb">cond</a>;      </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a3283c2db1cab5449deea79f7ec44ff4d">   40</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a3283c2db1cab5449deea79f7ec44ff4d">humidity</a>;  </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a709b8a2cb2aa19136736b221aa2b600d">   41</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a709b8a2cb2aa19136736b221aa2b600d">wind_kmh</a>;  </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#abe78d980ed72ae675e9e9c4aac94baf5">   42</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structWeatherSeed.html#abe78d980ed72ae675e9e9c4aac94baf5">wind_dir</a>;  </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#ae98c7da3fd4c33502a0b16eee2559adb">   43</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structWeatherSeed.html#ae98c7da3fd4c33502a0b16eee2559adb">sunrise</a>;   </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a8ae79ebf1a025752b1c6930608493313">   44</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structWeatherSeed.html#a8ae79ebf1a025752b1c6930608493313">sunset</a>;    </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#af976c15fe0ef750a0e83a1250f6bea43">   45</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#af976c15fe0ef750a0e83a1250f6bea43">uv</a>;        </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a61eddb007829da41b47f94582d5c43a6">   46</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a61eddb007829da41b47f94582d5c43a6">temp_max</a>;  </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a961fe24ad83d628b251f98ad0e96b32d">   47</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a961fe24ad83d628b251f98ad0e96b32d">temp_min</a>;  </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437">   48</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437">precip_chance</a>; </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#abb6bbc297a857aaca63ced30f49e05e7">   49</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#abb6bbc297a857aaca63ced30f49e05e7">feels_like</a>;    </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902">   50</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902">pressure</a>;      </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a0511b520955d08ad1183532ad35cb828">   51</a></span>    <span class="keywordtype">int</span>         <a class="code hl_variable" href="structWeatherSeed.html#a0511b520955d08ad1183532ad35cb828">dew_point</a>;     </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#afa5fea3e4ef452f8a9fedf2f5d125a04">   52</a></span>    <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherHourly.html">WeatherHourly</a> *<a class="code hl_variable" href="structWeatherSeed.html#afa5fea3e4ef452f8a9fedf2f5d125a04">forecast_hourly</a>; </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="structWeatherSeed.html#a982b6926993492b778b20d9fbf5e6bcb">   53</a></span>    <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherDaily.html">WeatherDaily</a>  *<a class="code hl_variable" href="structWeatherSeed.html#a982b6926993492b778b20d9fbf5e6bcb">forecast_daily</a>;  </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>} <a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a>;</div>
+</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span></div>
+<div class="foldopen" id="foldopen00063" data-start="" data-end="">
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="group__lib__stores.html#gae0d84f2727ec304e5376009e5f7dcd18">   63</a></span><span class="preprocessor">#define WEATHER_SEED_EMPTY ((WeatherSeed){                       \</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">    .temp = WEATHER_NO_TEMP, .cond = &quot;&quot;,                         \</span></div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">    .humidity = -1, .wind_kmh = -1, .wind_dir = &quot;&quot;,             \</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">    .sunrise = &quot;&quot;, .sunset = &quot;&quot;, .uv = -1,                       \</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="preprocessor">    .temp_max = WEATHER_NO_TEMP, .temp_min = WEATHER_NO_TEMP,   \</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">    .precip_chance = -1,                                         \</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="preprocessor">    .feels_like = WEATHER_NO_TEMP, .pressure = -1,               \</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">    .dew_point = WEATHER_NO_TEMP,                                \</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="preprocessor">    .forecast_hourly = NULL, .forecast_daily = NULL })</span></div>
+</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__stores.html#ga49a92d34f22c2bb81f54084b02215709">weather_store_init</a>(<a class="code hl_struct" href="structWeatherConfig.html">WeatherConfig</a> cfg, <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> *seed);</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__stores.html#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store_reconfigure</a>(<a class="code hl_struct" href="structWeatherConfig.html">WeatherConfig</a> cfg);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__stores.html#ga40fd78d1cab03532c37b131b1c2a9111">weather_store_subscribe</a>(<span class="keywordtype">void</span> (*cb)(<span class="keywordtype">void</span>));</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga2cd48126740a404ee6893890c5abf288">weather_store_temp</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="group__lib__stores.html#ga2b52199ca0e311c968b7f831305acd62">weather_store_cond</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="group__lib__stores.html#ga5b052daed5b04526d28d4d3296bef8a1">weather_store_location_name</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#gaec0de378ffe3adbadab18b877c3e214c">weather_store_humidity</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga06fe793fd4c59b655856f6f1454e66a1">weather_store_wind_kmh</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="group__lib__stores.html#ga21865e60abf090e923d95f74e4e5e3b2">weather_store_wind_dir</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="group__lib__stores.html#gae1aaec2e20f48ead785d1c217b0a2ad4">weather_store_sunrise</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="group__lib__stores.html#ga21fd739c3cdf95b044af16789ac88bd5">weather_store_sunset</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga06cf30734c71d28b90e5b660ee75bc9d">weather_store_feels_like</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#gac167df267d9204941ae5ef9541074edc">weather_store_pressure</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga4780ec893b0d2cb94e17ab85c78e377d">weather_store_dew_point</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span></div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga839bf5c5187f067697de69f79f025b3f">weather_store_uv</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span></div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga9521fad2bb38f644e02c9c3ac8547d4b">weather_store_temp_max</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span></div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga3ad694d30ad387bd9a9c1db451cc9c2d">weather_store_temp_min</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span></div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="keywordtype">int</span>         <a class="code hl_function" href="group__lib__stores.html#ga04d4ed2abc57cd51459c6913b2d77e1d">weather_store_precip_chance</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span></div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span><span class="keyword">const</span> <a class="code hl_struct" href="structWeatherHourly.html">WeatherHourly</a> *<a class="code hl_function" href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store_forecast_hourly</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span><span class="keyword">const</span> <a class="code hl_struct" href="structWeatherDaily.html">WeatherDaily</a> *<a class="code hl_function" href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store_forecast_daily</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span></div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#ga7856768b2bde2cf55422b2c3b5ea3b4e">weather_store_age_s</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span></div>
+<div class="ttc" id="agroup__lib__stores_html_ga04d4ed2abc57cd51459c6913b2d77e1d"><div class="ttname"><a href="group__lib__stores.html#ga04d4ed2abc57cd51459c6913b2d77e1d">weather_store_precip_chance</a></div><div class="ttdeci">int weather_store_precip_chance(void)</div><div class="ttdoc">The chance of rain in percent, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:404</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga0610dff5f72df6fa9f4312a73e6d96de"><div class="ttname"><a href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store_forecast_daily</a></div><div class="ttdeci">const WeatherDaily * weather_store_forecast_daily(void)</div><div class="ttdoc">The 7-day forecast strip. count is 0 until a reading lands.</div><div class="ttdef"><b>Definition</b> weather_store.c:410</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga06cf30734c71d28b90e5b660ee75bc9d"><div class="ttname"><a href="group__lib__stores.html#ga06cf30734c71d28b90e5b660ee75bc9d">weather_store_feels_like</a></div><div class="ttdeci">int weather_store_feels_like(void)</div><div class="ttdoc">How warm it feels, or WEATHER_NO_TEMP if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:405</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga06fe793fd4c59b655856f6f1454e66a1"><div class="ttname"><a href="group__lib__stores.html#ga06fe793fd4c59b655856f6f1454e66a1">weather_store_wind_kmh</a></div><div class="ttdeci">int weather_store_wind_kmh(void)</div><div class="ttdoc">The wind speed in km/h, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:397</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga21865e60abf090e923d95f74e4e5e3b2"><div class="ttname"><a href="group__lib__stores.html#ga21865e60abf090e923d95f74e4e5e3b2">weather_store_wind_dir</a></div><div class="ttdeci">const char * weather_store_wind_dir(void)</div><div class="ttdoc">The wind direction like &quot;NW&quot;, or empty if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:398</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga21fd739c3cdf95b044af16789ac88bd5"><div class="ttname"><a href="group__lib__stores.html#ga21fd739c3cdf95b044af16789ac88bd5">weather_store_sunset</a></div><div class="ttdeci">const char * weather_store_sunset(void)</div><div class="ttdoc">The sunset time like &quot;21:30&quot;, or empty if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:400</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga2af1e0b42fd91db04b7bf0e358f80a85"><div class="ttname"><a href="group__lib__stores.html#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store_reconfigure</a></div><div class="ttdeci">void weather_store_reconfigure(WeatherConfig cfg)</div><div class="ttdoc">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval,...</div><div class="ttdef"><b>Definition</b> weather_store.c:378</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga2b52199ca0e311c968b7f831305acd62"><div class="ttname"><a href="group__lib__stores.html#ga2b52199ca0e311c968b7f831305acd62">weather_store_cond</a></div><div class="ttdeci">const char * weather_store_cond(void)</div><div class="ttdoc">The short word for the sky, or empty if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:394</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga2cd48126740a404ee6893890c5abf288"><div class="ttname"><a href="group__lib__stores.html#ga2cd48126740a404ee6893890c5abf288">weather_store_temp</a></div><div class="ttdeci">int weather_store_temp(void)</div><div class="ttdoc">The temperature reading in the user&#39;s unit, or WEATHER_NO_TEMP if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:393</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga3ad694d30ad387bd9a9c1db451cc9c2d"><div class="ttname"><a href="group__lib__stores.html#ga3ad694d30ad387bd9a9c1db451cc9c2d">weather_store_temp_min</a></div><div class="ttdeci">int weather_store_temp_min(void)</div><div class="ttdoc">Today&#39;s low, or WEATHER_NO_TEMP if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:403</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga40fd78d1cab03532c37b131b1c2a9111"><div class="ttname"><a href="group__lib__stores.html#ga40fd78d1cab03532c37b131b1c2a9111">weather_store_subscribe</a></div><div class="ttdeci">void weather_store_subscribe(void(*cb)(void))</div><div class="ttdoc">Hand it the function to call when the weather changes (the screen redraw).</div><div class="ttdef"><b>Definition</b> weather_store.c:307</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga4780ec893b0d2cb94e17ab85c78e377d"><div class="ttname"><a href="group__lib__stores.html#ga4780ec893b0d2cb94e17ab85c78e377d">weather_store_dew_point</a></div><div class="ttdeci">int weather_store_dew_point(void)</div><div class="ttdoc">The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:407</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga49a92d34f22c2bb81f54084b02215709"><div class="ttname"><a href="group__lib__stores.html#ga49a92d34f22c2bb81f54084b02215709">weather_store_init</a></div><div class="ttdeci">void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)</div><div class="ttdoc">Start the store with its rules. Pass seed = NULL for normal use.</div><div class="ttdef"><b>Definition</b> weather_store.c:312</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga5b052daed5b04526d28d4d3296bef8a1"><div class="ttname"><a href="group__lib__stores.html#ga5b052daed5b04526d28d4d3296bef8a1">weather_store_location_name</a></div><div class="ttdeci">const char * weather_store_location_name(void)</div><div class="ttdoc">The location name like &quot;Toronto&quot;, or empty if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:395</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga7856768b2bde2cf55422b2c3b5ea3b4e"><div class="ttname"><a href="group__lib__stores.html#ga7856768b2bde2cf55422b2c3b5ea3b4e">weather_store_age_s</a></div><div class="ttdeci">int weather_store_age_s(void)</div><div class="ttdoc">How many seconds since the last reading turned up, or -1 if we have none.</div><div class="ttdef"><b>Definition</b> weather_store.c:412</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga839bf5c5187f067697de69f79f025b3f"><div class="ttname"><a href="group__lib__stores.html#ga839bf5c5187f067697de69f79f025b3f">weather_store_uv</a></div><div class="ttdeci">int weather_store_uv(void)</div><div class="ttdoc">The UV index, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:401</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga9521fad2bb38f644e02c9c3ac8547d4b"><div class="ttname"><a href="group__lib__stores.html#ga9521fad2bb38f644e02c9c3ac8547d4b">weather_store_temp_max</a></div><div class="ttdeci">int weather_store_temp_max(void)</div><div class="ttdoc">Today&#39;s high, or WEATHER_NO_TEMP if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:402</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gaba5bc2a406811b7f6d4b6df181f620d7"><div class="ttname"><a href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store_forecast_hourly</a></div><div class="ttdeci">const WeatherHourly * weather_store_forecast_hourly(void)</div><div class="ttdoc">The hourly forecast strip. count is 0 until a reading lands.</div><div class="ttdef"><b>Definition</b> weather_store.c:409</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gac167df267d9204941ae5ef9541074edc"><div class="ttname"><a href="group__lib__stores.html#gac167df267d9204941ae5ef9541074edc">weather_store_pressure</a></div><div class="ttdeci">int weather_store_pressure(void)</div><div class="ttdoc">The surface pressure in hPa, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:406</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gae1aaec2e20f48ead785d1c217b0a2ad4"><div class="ttname"><a href="group__lib__stores.html#gae1aaec2e20f48ead785d1c217b0a2ad4">weather_store_sunrise</a></div><div class="ttdeci">const char * weather_store_sunrise(void)</div><div class="ttdoc">The sunrise time like &quot;06:30&quot;, or empty if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:399</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gaec0de378ffe3adbadab18b877c3e214c"><div class="ttname"><a href="group__lib__stores.html#gaec0de378ffe3adbadab18b877c3e214c">weather_store_humidity</a></div><div class="ttdeci">int weather_store_humidity(void)</div><div class="ttdoc">The humidity in percent, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> weather_store.c:396</div></div>
+<div class="ttc" id="astructWeatherConfig_html"><div class="ttname"><a href="structWeatherConfig.html">WeatherConfig</a></div><div class="ttdoc">The rules a face hands the store, built from its own settings so the store names no SETTING_*.</div><div class="ttdef"><b>Definition</b> weather_store.h:25</div></div>
+<div class="ttc" id="astructWeatherConfig_html_a6992e5d383515e3e97821d52ffb05630"><div class="ttname"><a href="structWeatherConfig.html#a6992e5d383515e3e97821d52ffb05630">WeatherConfig::enabled</a></div><div class="ttdeci">bool enabled</div><div class="ttdoc">False makes the store do nothing (no channels and no polling).</div><div class="ttdef"><b>Definition</b> weather_store.h:26</div></div>
+<div class="ttc" id="astructWeatherConfig_html_ad002199ba6f3a4b7af38924a8bb640e7"><div class="ttname"><a href="structWeatherConfig.html#ad002199ba6f3a4b7af38924a8bb640e7">WeatherConfig::live</a></div><div class="ttdeci">bool live</div><div class="ttdoc">True subscribes the channels and polls. False just keeps the fake data for screenshots.</div><div class="ttdef"><b>Definition</b> weather_store.h:27</div></div>
+<div class="ttc" id="astructWeatherConfig_html_ae74aa3985257e1cabb55468fb482cba4"><div class="ttname"><a href="structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4">WeatherConfig::poll_min</a></div><div class="ttdeci">int poll_min</div><div class="ttdoc">Minutes between weather requests (e.g. 10, 20, 30).</div><div class="ttdef"><b>Definition</b> weather_store.h:28</div></div>
+<div class="ttc" id="astructWeatherConfig_html_aea465941bd98b1490454738c7af6088e"><div class="ttname"><a href="structWeatherConfig.html#aea465941bd98b1490454738c7af6088e">WeatherConfig::persist_key</a></div><div class="ttdeci">uint32_t persist_key</div><div class="ttdoc">Slot for the last good reading so the face owns the key instead of the store.</div><div class="ttdef"><b>Definition</b> weather_store.h:29</div></div>
+<div class="ttc" id="astructWeatherDaily_html"><div class="ttname"><a href="structWeatherDaily.html">WeatherDaily</a></div><div class="ttdoc">The 7-day strip. count is 0 until a reading lands.</div><div class="ttdef"><b>Definition</b> weather_wire.h:56</div></div>
+<div class="ttc" id="astructWeatherHourly_html"><div class="ttname"><a href="structWeatherHourly.html">WeatherHourly</a></div><div class="ttdoc">The hourly strip. count is 0 until a reading lands.</div><div class="ttdef"><b>Definition</b> weather_wire.h:47</div></div>
+<div class="ttc" id="astructWeatherSeed_html"><div class="ttname"><a href="structWeatherSeed.html">WeatherSeed</a></div><div class="ttdoc">Optional prefill: shown until the first real reading lands, or pinned when live = false.</div><div class="ttdef"><b>Definition</b> weather_store.h:37</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a0511b520955d08ad1183532ad35cb828"><div class="ttname"><a href="structWeatherSeed.html#a0511b520955d08ad1183532ad35cb828">WeatherSeed::dew_point</a></div><div class="ttdeci">int dew_point</div><div class="ttdoc">Dew point temperature, WEATHER_NO_TEMP for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:51</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a3283c2db1cab5449deea79f7ec44ff4d"><div class="ttname"><a href="structWeatherSeed.html#a3283c2db1cab5449deea79f7ec44ff4d">WeatherSeed::humidity</a></div><div class="ttdeci">int humidity</div><div class="ttdoc">Percent, -1 for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:40</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a61eddb007829da41b47f94582d5c43a6"><div class="ttname"><a href="structWeatherSeed.html#a61eddb007829da41b47f94582d5c43a6">WeatherSeed::temp_max</a></div><div class="ttdeci">int temp_max</div><div class="ttdoc">Today&#39;s high, WEATHER_NO_TEMP for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:46</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a709b8a2cb2aa19136736b221aa2b600d"><div class="ttname"><a href="structWeatherSeed.html#a709b8a2cb2aa19136736b221aa2b600d">WeatherSeed::wind_kmh</a></div><div class="ttdeci">int wind_kmh</div><div class="ttdoc">Wind in km/h, -1 for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:41</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a800405640fdfe30f5f50c13c2ff784c6"><div class="ttname"><a href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">WeatherSeed::temp</a></div><div class="ttdeci">int16_t temp</div><div class="ttdoc">Reading in the user&#39;s unit, WEATHER_NO_TEMP for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:38</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a87dffebd1350edddd8bff9f6488f6437"><div class="ttname"><a href="structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437">WeatherSeed::precip_chance</a></div><div class="ttdeci">int precip_chance</div><div class="ttdoc">Chance of rain in percent, -1 for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:48</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a8ae79ebf1a025752b1c6930608493313"><div class="ttname"><a href="structWeatherSeed.html#a8ae79ebf1a025752b1c6930608493313">WeatherSeed::sunset</a></div><div class="ttdeci">const char * sunset</div><div class="ttdoc">Sunset time like &quot;21:30&quot;, empty for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:44</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a90ff9b074f7922ebde4f03d1acb34902"><div class="ttname"><a href="structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902">WeatherSeed::pressure</a></div><div class="ttdeci">int pressure</div><div class="ttdoc">Surface pressure in hPa, -1 for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:50</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a93c60f615195612444d3d584e7a669cb"><div class="ttname"><a href="structWeatherSeed.html#a93c60f615195612444d3d584e7a669cb">WeatherSeed::cond</a></div><div class="ttdeci">const char * cond</div><div class="ttdoc">Short word for the sky like &quot;SUNNY&quot;.</div><div class="ttdef"><b>Definition</b> weather_store.h:39</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a961fe24ad83d628b251f98ad0e96b32d"><div class="ttname"><a href="structWeatherSeed.html#a961fe24ad83d628b251f98ad0e96b32d">WeatherSeed::temp_min</a></div><div class="ttdeci">int temp_min</div><div class="ttdoc">Today&#39;s low, WEATHER_NO_TEMP for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:47</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a982b6926993492b778b20d9fbf5e6bcb"><div class="ttname"><a href="structWeatherSeed.html#a982b6926993492b778b20d9fbf5e6bcb">WeatherSeed::forecast_daily</a></div><div class="ttdeci">const WeatherDaily * forecast_daily</div><div class="ttdoc">Optional 7 day strip, NULL for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:53</div></div>
+<div class="ttc" id="astructWeatherSeed_html_abb6bbc297a857aaca63ced30f49e05e7"><div class="ttname"><a href="structWeatherSeed.html#abb6bbc297a857aaca63ced30f49e05e7">WeatherSeed::feels_like</a></div><div class="ttdeci">int feels_like</div><div class="ttdoc">How warm it feels, WEATHER_NO_TEMP for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:49</div></div>
+<div class="ttc" id="astructWeatherSeed_html_abe78d980ed72ae675e9e9c4aac94baf5"><div class="ttname"><a href="structWeatherSeed.html#abe78d980ed72ae675e9e9c4aac94baf5">WeatherSeed::wind_dir</a></div><div class="ttdeci">const char * wind_dir</div><div class="ttdoc">Wind direction like &quot;NW&quot;, empty for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:42</div></div>
+<div class="ttc" id="astructWeatherSeed_html_ae98c7da3fd4c33502a0b16eee2559adb"><div class="ttname"><a href="structWeatherSeed.html#ae98c7da3fd4c33502a0b16eee2559adb">WeatherSeed::sunrise</a></div><div class="ttdeci">const char * sunrise</div><div class="ttdoc">Sunrise time like &quot;06:30&quot;, empty for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:43</div></div>
+<div class="ttc" id="astructWeatherSeed_html_af976c15fe0ef750a0e83a1250f6bea43"><div class="ttname"><a href="structWeatherSeed.html#af976c15fe0ef750a0e83a1250f6bea43">WeatherSeed::uv</a></div><div class="ttdeci">int uv</div><div class="ttdoc">UV index, -1 for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:45</div></div>
+<div class="ttc" id="astructWeatherSeed_html_afa5fea3e4ef452f8a9fedf2f5d125a04"><div class="ttname"><a href="structWeatherSeed.html#afa5fea3e4ef452f8a9fedf2f5d125a04">WeatherSeed::forecast_hourly</a></div><div class="ttdeci">const WeatherHourly * forecast_hourly</div><div class="ttdoc">Optional hourly strip, NULL for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:52</div></div>
+<div class="ttc" id="aweather__wire_8h_html"><div class="ttname"><a href="weather__wire_8h.html">weather_wire.h</a></div><div class="ttdoc">The forecast strips as the phone packs them, and the readers that unpack them.</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="weather__store_8h.html">weather_store.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: System Bits</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__system.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">System Bits <div class="ingroups"><a class="el" href="group__lib.html">Shared Base Library</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:c_2Fpebble_2Fsystem_2Funits_2Funits_2Eh" id="r_c_2Fpebble_2Fsystem_2Funits_2Funits_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="units_8h.html">c/pebble/system/units/units.h</a></td></tr>
+<tr class="memdesc:units_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unit conversion + distance formatting helpers. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fsystem_2Fvibe_2Fvibe_2Eh" id="r_c_2Fpebble_2Fsystem_2Fvibe_2Fvibe_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="vibe_8h.html">c/pebble/system/vibe/vibe.h</a></td></tr>
+<tr class="memdesc:vibe_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Haptic feedback wrapper. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:gabbe12c91a0e3541c91618e6765204e19" id="r_gabbe12c91a0e3541c91618e6765204e19"><td class="memItemLeft"><a id="gabbe12c91a0e3541c91618e6765204e19" name="gabbe12c91a0e3541c91618e6765204e19"></a>enum &#160;</td><td class="memItemRight"><a class="el" href="#gabbe12c91a0e3541c91618e6765204e19">VibePulse</a> { <b>VibePulseShort</b>
+, <b>VibePulseLong</b>
+, <b>VibePulseDouble</b>
+ }</td></tr>
+<tr class="memdesc:gabbe12c91a0e3541c91618e6765204e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the available haptic pulse patterns. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga6abe1f5f8efd60ddf21617822f0f6fd6" id="r_ga6abe1f5f8efd60ddf21617822f0f6fd6"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga6abe1f5f8efd60ddf21617822f0f6fd6">units_swatch_beats</a> (void)</td></tr>
+<tr class="memdesc:ga6abe1f5f8efd60ddf21617822f0f6fd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current swatch internet time in .beats.  <br /></td></tr>
+<tr class="memitem:ga85d3000cf6b4ab6360ff3df4e97add8e" id="r_ga85d3000cf6b4ab6360ff3df4e97add8e"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga85d3000cf6b4ab6360ff3df4e97add8e">units_ms_until_next_beat</a> (void)</td></tr>
+<tr class="memdesc:ga85d3000cf6b4ab6360ff3df4e97add8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ms until the next .beats boundary.  <br /></td></tr>
+<tr class="memitem:ga94c81ab17362b08d64e0b2497730bbd5" id="r_ga94c81ab17362b08d64e0b2497730bbd5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga94c81ab17362b08d64e0b2497730bbd5">units_format_distance</a> (char *buffer, size_t size, int meters, bool miles)</td></tr>
+<tr class="memdesc:ga94c81ab17362b08d64e0b2497730bbd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format meters as "N.N MI" or "N.N KM".  <br /></td></tr>
+<tr class="memitem:ga4132ffc49e378387d53b1a1171fd2b05" id="r_ga4132ffc49e378387d53b1a1171fd2b05"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga4132ffc49e378387d53b1a1171fd2b05">units_format_distance_value</a> (char *buffer, size_t size, int meters, bool miles)</td></tr>
+<tr class="memdesc:ga4132ffc49e378387d53b1a1171fd2b05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format meters as "N.N" (no unit suffix), rounded to a tenth.  <br /></td></tr>
+<tr class="memitem:ga6c4edc61ad14869972212cf59a4f7d47" id="r_ga6c4edc61ad14869972212cf59a4f7d47"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga6c4edc61ad14869972212cf59a4f7d47">units_distance_unit</a> (bool miles)</td></tr>
+<tr class="memdesc:ga6c4edc61ad14869972212cf59a4f7d47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unit label for the current distance mode ("MI" or "KM").  <br /></td></tr>
+<tr class="memitem:ga06fdc71bb88f3abae23d9c6ac8ef7c8e" id="r_ga06fdc71bb88f3abae23d9c6ac8ef7c8e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga06fdc71bb88f3abae23d9c6ac8ef7c8e">vibe_pulse</a> (<a class="el" href="#gabbe12c91a0e3541c91618e6765204e19">VibePulse</a> pulse)</td></tr>
+<tr class="memdesc:ga06fdc71bb88f3abae23d9c6ac8ef7c8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fire a pulse unless in quiet time.  <br /></td></tr>
+<tr class="memitem:ga005b71470c6beaa166cd9cc7c5cf10b1" id="r_ga005b71470c6beaa166cd9cc7c5cf10b1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga005b71470c6beaa166cd9cc7c5cf10b1">vibe_custom</a> (const uint32_t *durations, uint32_t num_segments)</td></tr>
+<tr class="memdesc:ga005b71470c6beaa166cd9cc7c5cf10b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzz a custom on and off rhythm unless in quiet time. The durations are milliseconds that alternate buzz then pause then buzz and so on, starting on a buzz. Lets a caller play a little tune that the three canned pulses cannot.  <br /></td></tr>
+<tr class="memitem:ga68e3aacc6c4efcb6b2827627e09da299" id="r_ga68e3aacc6c4efcb6b2827627e09da299"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga68e3aacc6c4efcb6b2827627e09da299">vibe_choice</a> (uint8_t choice)</td></tr>
+<tr class="memdesc:ga68e3aacc6c4efcb6b2827627e09da299"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fire the pattern named by a <a class="el" href="group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> (VIBE_NONE stays silent). The caller resolves the choice from wherever it likes, so the lib never has to know which setting it came from.  <br /></td></tr>
+<tr class="memitem:ga9b510de5a24f5136dfb470f5aa6aafd5" id="r_ga9b510de5a24f5136dfb470f5aa6aafd5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga9b510de5a24f5136dfb470f5aa6aafd5">vibe_bt_transition</a> (bool connected)</td></tr>
+<tr class="memdesc:ga9b510de5a24f5136dfb470f5aa6aafd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default bluetooth-transition buzz: fire the pattern the user picked in settings for a connect or disconnect. A face installs this as system_store's vibe policy so the store itself never has to know about settings or buzzing.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Watch-level odds and ends: buzzing on a bluetooth change and formatting the system units.</p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga6c4edc61ad14869972212cf59a4f7d47" name="ga6c4edc61ad14869972212cf59a4f7d47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6c4edc61ad14869972212cf59a4f7d47">&#9670;&#160;</a></span>units_distance_unit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * units_distance_unit </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>miles</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Unit label for the current distance mode ("MI" or "KM"). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">miles</td><td>Miles if true, otherwise km. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Static unit string. </dd></dl>
+
+</div>
+</div>
+<a id="ga94c81ab17362b08d64e0b2497730bbd5" name="ga94c81ab17362b08d64e0b2497730bbd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga94c81ab17362b08d64e0b2497730bbd5">&#9670;&#160;</a></span>units_format_distance()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void units_format_distance </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>meters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>miles</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format meters as "N.N MI" or "N.N KM". </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Output buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>Buffer size. </td></tr>
+    <tr><td class="paramname">meters</td><td>Distance in meters. </td></tr>
+    <tr><td class="paramname">miles</td><td>Format as miles if true, otherwise km. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga4132ffc49e378387d53b1a1171fd2b05" name="ga4132ffc49e378387d53b1a1171fd2b05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4132ffc49e378387d53b1a1171fd2b05">&#9670;&#160;</a></span>units_format_distance_value()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void units_format_distance_value </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>buffer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>meters</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>miles</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format meters as "N.N" (no unit suffix), rounded to a tenth. </p>
+<p>Pair with <a class="el" href="#ga6c4edc61ad14869972212cf59a4f7d47" title="Unit label for the current distance mode (&quot;MI&quot; or &quot;KM&quot;).">units_distance_unit()</a> when the unit wants its own small-font slot.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Output buffer. </td></tr>
+    <tr><td class="paramname">size</td><td>Buffer size. </td></tr>
+    <tr><td class="paramname">meters</td><td>Distance in meters. </td></tr>
+    <tr><td class="paramname">miles</td><td>Format as miles if true, otherwise km. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga85d3000cf6b4ab6360ff3df4e97add8e" name="ga85d3000cf6b4ab6360ff3df4e97add8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga85d3000cf6b4ab6360ff3df4e97add8e">&#9670;&#160;</a></span>units_ms_until_next_beat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t units_ms_until_next_beat </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ms until the next .beats boundary. </p>
+<dl class="section return"><dt>Returns</dt><dd>Milliseconds remaining until next boundary. </dd></dl>
+
+</div>
+</div>
+<a id="ga6abe1f5f8efd60ddf21617822f0f6fd6" name="ga6abe1f5f8efd60ddf21617822f0f6fd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6abe1f5f8efd60ddf21617822f0f6fd6">&#9670;&#160;</a></span>units_swatch_beats()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int units_swatch_beats </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Current swatch internet time in .beats. </p>
+<dl class="section return"><dt>Returns</dt><dd>Swatch internet time in .beats (0..999). </dd></dl>
+
+</div>
+</div>
+<a id="ga9b510de5a24f5136dfb470f5aa6aafd5" name="ga9b510de5a24f5136dfb470f5aa6aafd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9b510de5a24f5136dfb470f5aa6aafd5">&#9670;&#160;</a></span>vibe_bt_transition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vibe_bt_transition </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>connected</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The default bluetooth-transition buzz: fire the pattern the user picked in settings for a connect or disconnect. A face installs this as system_store's vibe policy so the store itself never has to know about settings or buzzing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">connected</td><td>True when the link just came up, false when it just dropped. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga68e3aacc6c4efcb6b2827627e09da299" name="ga68e3aacc6c4efcb6b2827627e09da299"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga68e3aacc6c4efcb6b2827627e09da299">&#9670;&#160;</a></span>vibe_choice()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vibe_choice </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>choice</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fire the pattern named by a <a class="el" href="group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> (VIBE_NONE stays silent). The caller resolves the choice from wherever it likes, so the lib never has to know which setting it came from. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">choice</td><td>A <a class="el" href="group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> value (VIBE_NONE / VIBE_SHORT / VIBE_LONG / VIBE_DOUBLE). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga005b71470c6beaa166cd9cc7c5cf10b1" name="ga005b71470c6beaa166cd9cc7c5cf10b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga005b71470c6beaa166cd9cc7c5cf10b1">&#9670;&#160;</a></span>vibe_custom()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vibe_custom </td>
+          <td>(</td>
+          <td class="paramtype">const uint32_t *</td>          <td class="paramname"><span class="paramname"><em>durations</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>num_segments</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Buzz a custom on and off rhythm unless in quiet time. The durations are milliseconds that alternate buzz then pause then buzz and so on, starting on a buzz. Lets a caller play a little tune that the three canned pulses cannot. </p>
+<p>The array is not copied. The vibe controller keeps reading it while the pattern plays, so it has to outlive the call: pass a static or otherwise long-lived array, never a stack one.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">durations</td><td>The on and off times in milliseconds. The first entry is a buzz. </td></tr>
+    <tr><td class="paramname">num_segments</td><td>How many entries the durations array has. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga06fdc71bb88f3abae23d9c6ac8ef7c8e" name="ga06fdc71bb88f3abae23d9c6ac8ef7c8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga06fdc71bb88f3abae23d9c6ac8ef7c8e">&#9670;&#160;</a></span>vibe_pulse()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vibe_pulse </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#gabbe12c91a0e3541c91618e6765204e19">VibePulse</a></td>          <td class="paramname"><span class="paramname"><em>pulse</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fire a pulse unless in quiet time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pulse</td><td>The pulse pattern to fire. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

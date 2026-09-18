@@ -1,0 +1,328 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: File List</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('files.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">File List</div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock">Here is a list of all documented files with brief descriptions:</div><div class="directory">
+<table class="directory">
+<tr id="row_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><a class="el" href="dir_1784a01aa976a8c78ef5dfc3737bcac8.html" target="_self">c</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_43a8bf500d24bc333c45d4b8ac63ccd1.html" target="_self">core</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_ed0a980f694fc128a68d545a93b54902.html" target="_self">clock</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_0_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="astro_8c.html" target="_self">astro.c</a></td><td class="desc">Pure astronomy math, host-testable off-device </td></tr>
+<tr id="row_0_0_0_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="astro_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="astro_8h.html" target="_self">astro.h</a></td><td class="desc">Pure astronomy math you can test off the watch. Right now just the Julian Date, worked out from a UTC timestamp with plain integer math, so it needs no Pebble services and no floats </td></tr>
+<tr id="row_0_0_0_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="beats_8c.html" target="_self">beats.c</a></td><td class="desc">Pure swatch .beats math, host-testable off-device </td></tr>
+<tr id="row_0_0_0_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="beats_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="beats_8h.html" target="_self">beats.h</a></td><td class="desc">Pure swatch .beats math, operates on ms since Biel Mean Time (UTC+1) midnight. Also holds the token a date format uses to ask for a .beats reading </td></tr>
+<tr id="row_0_0_0_4_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="clockstr_8c.html" target="_self">clockstr.c</a></td><td class="desc">Reads the "HH:MM" clock strings the phone sends </td></tr>
+<tr id="row_0_0_0_5_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="clockstr_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="clockstr_8h.html" target="_self">clockstr.h</a></td><td class="desc">Reads the "HH:MM" clock strings the phone sends </td></tr>
+<tr id="row_0_0_0_6_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="date_8c.html" target="_self">date.c</a></td><td class="desc">Pure calendar math, host-testable off-device </td></tr>
+<tr id="row_0_0_0_7_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="date_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="date_8h.html" target="_self">date.h</a></td><td class="desc">Pure calendar math you can test off the watch. Week numbers, day counts, and month shapes worked out from plain numbers, so it needs no Pebble services and no struct tm </td></tr>
+<tr id="row_0_0_0_8_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="duration_8c.html" target="_self">duration.c</a></td><td class="desc">A minute count turned into a short human duration </td></tr>
+<tr id="row_0_0_0_9_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="duration_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="duration_8h.html" target="_self">duration.h</a></td><td class="desc">A minute count turned into a short human duration, no SDK </td></tr>
+<tr id="row_0_0_0_10_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="moon_8c.html" target="_self">moon.c</a></td><td class="desc">Pure moon-phase math, host-testable off-device </td></tr>
+<tr id="row_0_0_0_11_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="moon_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="moon_8h.html" target="_self">moon.h</a></td><td class="desc">Pure moon-phase math you can test off the watch. It counts from a known new moon using the average length of a moon cycle, so it needs nothing but a UTC timestamp </td></tr>
+<tr id="row_0_0_0_12_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="nightsched_8c.html" target="_self">nightsched.c</a></td><td class="desc">The night window, by containment rather than by edge </td></tr>
+<tr id="row_0_0_0_13_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="nightsched_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="nightsched_8h.html" target="_self">nightsched.h</a></td><td class="desc">Whether a night-time window is open right now, from plain clock readings </td></tr>
+<tr id="row_0_0_0_14_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="solar_8c.html" target="_self">solar.c</a></td><td class="desc">How the day's light is going, worked out from three plain clock readings </td></tr>
+<tr id="row_0_0_0_15_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="solar_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="solar_8h.html" target="_self">solar.h</a></td><td class="desc">How the day's light is going, worked out from three plain clock readings </td></tr>
+<tr id="row_0_0_0_16_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="tide_8c.html" target="_self">tide.c</a></td><td class="desc">The rise and fall of a semidiurnal tide, from a plain running minute count </td></tr>
+<tr id="row_0_0_0_17_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="tide_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="tide_8h.html" target="_self">tide.h</a></td><td class="desc">The rise and fall of a semidiurnal tide, from a plain running minute count </td></tr>
+<tr id="row_0_0_0_18_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="timeband_8c.html" target="_self">timeband.c</a></td><td class="desc">The window sums: build one, place a moment on it, and clip a span to it </td></tr>
+<tr id="row_0_0_0_19_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="timeband_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="timeband_8h.html" target="_self">timeband.h</a></td><td class="desc">A stretch of the day as an axis, and the sums that put a moment somewhere along it </td></tr>
+<tr id="row_0_0_0_20_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="weekday_8c.html" target="_self">weekday.c</a></td><td class="desc">Weekday names, host-testable off-device </td></tr>
+<tr id="row_0_0_0_21_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="weekday_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="weekday_8h.html" target="_self">weekday.h</a></td><td class="desc">Short weekday names shared by the panels that label a day </td></tr>
+<tr id="row_0_0_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_007465599ddcf89ba3c82f3542f367e2.html" target="_self">health</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_1_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="step__hours_8c.html" target="_self">step_hours.c</a></td><td class="desc">The hour arithmetic behind the step chart's buckets </td></tr>
+<tr id="row_0_0_1_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="step__hours_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="step__hours_8h.html" target="_self">step_hours.h</a></td><td class="desc">The hour arithmetic behind the step chart's buckets </td></tr>
+<tr id="row_0_0_2_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_0502b9e2d0b962669fe7f3b8ebb471ee.html" target="_self">io</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_2_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="bytes__le_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="bytes__le_8h.html" target="_self">bytes_le.h</a></td><td class="desc">Little-endian byte readers shared by the wire-decoding stores </td></tr>
+<tr id="row_0_0_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_975944ca08e4197b5d32725618908be6.html" target="_self">math</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_3_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="pct_8c.html" target="_self">pct.c</a></td><td class="desc">Progress towards a goal, as a percent </td></tr>
+<tr id="row_0_0_3_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="pct_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="pct_8h.html" target="_self">pct.h</a></td><td class="desc">Progress towards a goal, as a percent </td></tr>
+<tr id="row_0_0_3_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="scale_8c.html" target="_self">scale.c</a></td><td class="desc">The clamp and segment maths a bar or gauge is built from </td></tr>
+<tr id="row_0_0_3_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="scale_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="scale_8h.html" target="_self">scale.h</a></td><td class="desc">The clamp and segment maths a bar or gauge is built from, no SDK </td></tr>
+<tr id="row_0_0_3_4_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="series_8c.html" target="_self">series.c</a></td><td class="desc">Reducing a run of samples to the few numbers a chart draws from </td></tr>
+<tr id="row_0_0_3_5_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="series_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="series_8h.html" target="_self">series.h</a></td><td class="desc">Reducing a run of samples to the few numbers a chart draws from, no SDK </td></tr>
+<tr id="row_0_0_4_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_036e2ba4292662e9dab3e89cbe289acc.html" target="_self">text</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_4_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="number__format_8c.html" target="_self">number_format.c</a></td><td class="desc">Pure number formatting </td></tr>
+<tr id="row_0_0_4_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="number__format_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="number__format_8h.html" target="_self">number_format.h</a></td><td class="desc">Pure number and string formatting (no SDK) </td></tr>
+<tr id="row_0_0_4_2_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="text__case_8c.html" target="_self">text_case.c</a></td><td class="desc">Pure ascii case helpers implementation </td></tr>
+<tr id="row_0_0_4_3_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="text__case_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="text__case_8h.html" target="_self">text_case.h</a></td><td class="desc">Pure ascii case helpers (no SDK) </td></tr>
+<tr id="row_0_0_5_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_28b4001ce92dfe7ad704728330398cd4.html" target="_self">units</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_5_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="distance_8c.html" target="_self">distance.c</a></td><td class="desc">Pure distance math implementation </td></tr>
+<tr id="row_0_0_5_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="distance_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="distance_8h.html" target="_self">distance.h</a></td><td class="desc">Pure distance conversions + formatting (no SDK) </td></tr>
+<tr id="row_0_0_5_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="wind_8c.html" target="_self">wind.c</a></td><td class="desc">Pure wind-speed maths implementation </td></tr>
+<tr id="row_0_0_5_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="wind_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="wind_8h.html" target="_self">wind.h</a></td><td class="desc">Pure wind-speed conversions + unit labels (no SDK) </td></tr>
+<tr id="row_0_0_6_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_268815ebbe195797878e60e59cfc6e97.html" target="_self">weather</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_6_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="wind__dir_8c.html" target="_self">wind_dir.c</a></td><td class="desc">The compass direction a wind is blowing from, as a bearing and as a sideways component </td></tr>
+<tr id="row_0_0_6_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="wind__dir_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="wind__dir_8h.html" target="_self">wind_dir.h</a></td><td class="desc">The compass direction a wind is blowing from, as a bearing and as a sideways component </td></tr>
+<tr id="row_0_0_7_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_14fc4356e607a1acac06543a980f1178.html" target="_self">wire</a></td><td class="desc"></td></tr>
+<tr id="row_0_0_7_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="calendar__wire_8c.html" target="_self">calendar_wire.c</a></td><td class="desc">The agenda as the phone packs it, and the reader that unpacks it </td></tr>
+<tr id="row_0_0_7_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="calendar__wire_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="calendar__wire_8h.html" target="_self">calendar_wire.h</a></td><td class="desc">The agenda as the phone packs it, and the reader that unpacks it </td></tr>
+<tr id="row_0_0_7_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="coords_8c.html" target="_self">coords.c</a></td><td class="desc">Telling a real fix from the phone's way of saying it has none </td></tr>
+<tr id="row_0_0_7_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="coords_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="coords_8h.html" target="_self">coords.h</a></td><td class="desc">Telling a real fix from the phone's way of saying it has none </td></tr>
+<tr id="row_0_0_7_4_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="stock__wire_8c.html" target="_self">stock_wire.c</a></td><td class="desc">The watchlist as the phone packs it, and the reader that unpacks it </td></tr>
+<tr id="row_0_0_7_5_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="stock__wire_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="stock__wire_8h.html" target="_self">stock_wire.h</a></td><td class="desc">The watchlist as the phone packs it, and the reader that unpacks it </td></tr>
+<tr id="row_0_0_7_6_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="weather__wire_8c.html" target="_self">weather_wire.c</a></td><td class="desc">The forecast strips as the phone packs them, and the readers that unpack them </td></tr>
+<tr id="row_0_0_7_7_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="weather__wire_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="weather__wire_8h.html" target="_self">weather_wire.h</a></td><td class="desc">The forecast strips as the phone packs them, and the readers that unpack them </td></tr>
+<tr id="row_0_0_7_8_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="wire__read_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="wire__read_8h.html" target="_self">wire_read.h</a></td><td class="desc">Reads the values the phone packs into a message </td></tr>
+<tr id="row_0_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_8ca3a7d76cfdeab50ad5c2bb00d0dbed.html" target="_self">pebble</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_66f96759c461397a21175858153eb847.html" target="_self">dev</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_0_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="dev__walk_8c.html" target="_self">dev_walk.c</a></td><td class="desc">The shared frame-face dev harness: fixture-as-store-seeds plus the theme walk. Always compiled and gc-dropped from any face that never calls it (release builds) </td></tr>
+<tr id="row_0_1_0_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="dev__walk_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="dev__walk_8h.html" target="_self">dev_walk.h</a></td><td class="desc">Shared dev harness for the frame faces: seeds every store with a fixed fixture (via the store seed mechanism, so no live source overwrites it) and drives an accelerometer-tap theme "walk" for deterministic screenshots — tap through every theme on fixed data and a fixed clock </td></tr>
+<tr id="row_0_1_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_e15f76b52830ddd5f0de2f263cd6b322.html" target="_self">io</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_1_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_ec6c522da683cd0cf53781fe14cb50e8.html" target="_self">appmessage</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_1_0_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="appmessage_8c.html" target="_self">appmessage.c</a></td><td class="desc">AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself </td></tr>
+<tr id="row_0_1_1_0_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="appmessage_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="appmessage_8h.html" target="_self">appmessage.h</a></td><td class="desc">AppMessage transport: decodes the inbox and notifies the app via handlers </td></tr>
+<tr id="row_0_1_1_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_85938fb17b79254122ee52d45df94ccd.html" target="_self">stores</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_1_1_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="calendar__store_8c.html" target="_self">calendar_store.c</a></td><td class="desc">The active calendar store: holds the agenda, owns the appmessage calendar channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due </td></tr>
+<tr id="row_0_1_1_1_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="calendar__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="calendar__store_8h.html" target="_self">calendar_store.h</a></td><td class="desc">Active calendar store. It owns the appmessage calendar channel and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the events and subscribes for repaints. The phone data flows straight in and nobody wires it </td></tr>
+<tr id="row_0_1_1_1_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="health__store_8c.html" target="_self">health_store.c</a></td><td class="desc">The active health store: reads the watch's health service and holds the numbers. It owns the service accessors too so it is the single point of truth for health </td></tr>
+<tr id="row_0_1_1_1_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="health__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="health__store_8h.html" target="_self">health_store.h</a></td><td class="desc">Active health store. It subscribes to the watch's health service itself and holds the readings, so a face just hands it the rules, optionally seeds it, then reads the numbers back </td></tr>
+<tr id="row_0_1_1_1_4_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="location__store_8c.html" target="_self">location_store.c</a></td><td class="desc">The active location store: holds the phone's coordinates and owns the appmessage coords channel </td></tr>
+<tr id="row_0_1_1_1_5_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="location__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="location__store_8h.html" target="_self">location_store.h</a></td><td class="desc">Active location store. It owns the appmessage coords channel (the same phone geolocation the weather rides on), so a face hands it the rules, optionally seeds it, then reads lat/lon back. There's no poll timer. Coords arrive alongside weather </td></tr>
+<tr id="row_0_1_1_1_6_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="stock__store_8c.html" target="_self">stock_store.c</a></td><td class="desc">The active stock store: holds the quotes, owns the appmessage stock channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due </td></tr>
+<tr id="row_0_1_1_1_7_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="stock__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="stock__store_8h.html" target="_self">stock_store.h</a></td><td class="desc">Active stock store. It owns the appmessage stock channel and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the slots and subscribes for repaints. The phone data flows straight in and nobody wires it </td></tr>
+<tr id="row_0_1_1_1_8_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="store__cadence_8c.html" target="_self">store_cadence.c</a></td><td class="desc">Holds the list of work the stores want run on the face's cadence </td></tr>
+<tr id="row_0_1_1_1_9_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="store__cadence_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="store__cadence_8h.html" target="_self">store_cadence.h</a></td><td class="desc">The shared cadence the stores hang their periodic work on </td></tr>
+<tr id="row_0_1_1_1_10_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="store__persist_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="store__persist_8h.html" target="_self">store_persist.h</a></td><td class="desc">Shared persist save and restore helpers for the stores </td></tr>
+<tr id="row_0_1_1_1_11_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="store__poll_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="store__poll_8h.html" target="_self">store_poll.h</a></td><td class="desc">Wall-clock deadlines for the stores that poll the phone </td></tr>
+<tr id="row_0_1_1_1_12_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="system__store_8c.html" target="_self">system_store.c</a></td><td class="desc">The active system store: holds the battery + bluetooth state and subscribes to the battery and connection services itself. The alarm is read through on demand </td></tr>
+<tr id="row_0_1_1_1_13_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="system__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="system__store_8h.html" target="_self">system_store.h</a></td><td class="desc">Active system store: the watch's own battery, bluetooth and next-alarm state. It subscribes to the battery and connection services itself and buzzes on a bluetooth change through a policy the face installs (so the store never has to know about settings or buzzing) </td></tr>
+<tr id="row_0_1_1_1_14_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="time__store_8c.html" target="_self">time_store.c</a></td><td class="desc">The active time store: holds the current time and owns the tickers that update it </td></tr>
+<tr id="row_0_1_1_1_15_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="time__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="time__store_8h.html" target="_self">time_store.h</a></td><td class="desc">Active time store. It owns the tickers (the minute tick and the swatch .beats AppTimer) and swaps between them for the current cadence, so a face just hands it the rules and reads the time back </td></tr>
+<tr id="row_0_1_1_1_16_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="weather__store_8c.html" target="_self">weather_store.c</a></td><td class="desc">The active weather store: holds the readings, owns the appmessage weather channels, and asks the phone for more whenever its turn on the face's cadence finds a poll due </td></tr>
+<tr id="row_0_1_1_1_17_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="weather__store_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="weather__store_8h.html" target="_self">weather_store.h</a></td><td class="desc">Active weather store. It owns the appmessage weather channels and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the values and subscribes for repaints. The phone data flows straight in and nobody wires it </td></tr>
+<tr id="row_0_1_1_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="tuple__read_8c.html" target="_self">tuple_read.c</a></td><td class="desc">Reads a value out of an inbound message tuple </td></tr>
+<tr id="row_0_1_1_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="tuple__read_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="tuple__read_8h.html" target="_self">tuple_read.h</a></td><td class="desc">Reads a value out of an inbound message tuple </td></tr>
+<tr id="row_0_1_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_240f0be455ee8374031b4536c0878fdb.html" target="_self">system</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_2_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_28cead8ff240942ca4a6a0328d315091.html" target="_self">settings</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_2_0_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="setting__values_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="setting__values_8h.html" target="_self">setting_values.h</a></td><td class="desc">Named values for the multi-choice settings </td></tr>
+<tr id="row_0_1_2_0_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="settings_8c.html" target="_self">settings.c</a></td><td class="desc">Persist API implementation </td></tr>
+<tr id="row_0_1_2_0_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="settings_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="settings_8h.html" target="_self">settings.h</a></td><td class="desc">Persist API: a per-face <a class="el" href="structSettingField.html" title="Blueprint for a single setting.">SettingField</a> table drives versioned load/save, sanitize, the typed reads, and the appmessage round-trip, so shared code never names or hardcodes a field </td></tr>
+<tr id="row_0_1_2_0_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="settings__catalog_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="settings__catalog_8h.html" target="_self">settings_catalog.h</a></td><td class="desc">The shared catalog of known settings: a KNOWN_* macro per setting that bakes in its neutral wire key, encoding, bounds, default, and side effects </td></tr>
+<tr id="row_0_1_2_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_9b042b3c268606548540d62cfd4ef4bb.html" target="_self">units</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_2_1_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="units_8c.html" target="_self">units.c</a></td><td class="desc">SDK-facing units facade: reads the clock for .beats, forwards the rest to the pure lib cores (clock/beats, units/distance) </td></tr>
+<tr id="row_0_1_2_1_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="units_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="units_8h.html" target="_self">units.h</a></td><td class="desc">Unit conversion + distance formatting helpers </td></tr>
+<tr id="row_0_1_2_2_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_0cc79c66e21f5433efb7647ba402c1e0.html" target="_self">vibe</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_2_2_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="vibe_8c.html" target="_self">vibe.c</a></td><td class="desc">Haptic feedback wrapper implementation </td></tr>
+<tr id="row_0_1_2_2_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="vibe_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="vibe_8h.html" target="_self">vibe.h</a></td><td class="desc">Haptic feedback wrapper </td></tr>
+<tr id="row_0_1_3_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_73cd9e8d22924b8864e68f6d4269e34d.html" target="_self">ui</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_3_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_edf12280bfbca98d03f2fddcafd2a5b9.html" target="_self">engine</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_3_0_0_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="engine_8c.html" target="_self">engine.c</a></td><td class="desc">The skin-neutral slot engine: build one layer per slot and repaint them all on a store change </td></tr>
+<tr id="row_0_1_3_0_1_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="engine_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="engine_8h.html" target="_self">engine.h</a></td><td class="desc">The skin-neutral slot engine: builds one layer per slot from a face's slot list and repaints them all when a store changes. A slot is either a text-slot (a TextLayer built from a <a class="el" href="structZone.html" title="Defines a paintable area, including geometry and styling.">Zone</a>, so the font-fit tiers still apply) or a draw-slot (a custom layer whose update_proc paints a gauge, icon, or panel). A face supplies a build callback. A dynamic face (the grid) re-runs it on a layout change. This is the shared core a face's own engine sits on </td></tr>
+<tr id="row_0_1_3_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a class="el" href="dir_c032a0d1d999e1e26bfd0553b3607a68.html" target="_self">weather</a></td><td class="desc"></td></tr>
+<tr id="row_0_1_3_1_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="icon__codes__table_8g_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><b>icon_codes_table.g.h</b></td><td class="desc"></td></tr>
+<tr id="row_0_1_3_1_1_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="icons_8c.html" target="_self">icons.c</a></td><td class="desc">Weather-icon resource lookup implementation </td></tr>
+<tr id="row_0_1_3_1_2_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="icons_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="icons_8h.html" target="_self">icons.h</a></td><td class="desc">Condition-string to weather-icon resource lookup </td></tr>
+<tr id="row_0_1_3_1_3_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="icons__table_8g_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><b>icons_table.g.h</b></td><td class="desc"></td></tr>
+<tr id="row_0_1_3_1_4_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="labels_8c.html" target="_self">labels.c</a></td><td class="desc">Condition-string to display-label lookup implementation </td></tr>
+<tr id="row_0_1_3_1_5_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="labels_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="labels_8h.html" target="_self">labels.h</a></td><td class="desc">Condition-string to display-label lookup </td></tr>
+<tr id="row_0_1_3_1_6_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="labels__table_8g_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><b>labels_table.g.h</b></td><td class="desc"></td></tr>
+<tr id="row_0_1_3_2_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="fonts_8c.html" target="_self">fonts.c</a></td><td class="desc">Font registry implementation: a flat id-indexed table of loaded handles </td></tr>
+<tr id="row_0_1_3_3_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="fonts_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="fonts_8h.html" target="_self">fonts.h</a></td><td class="desc">Font registry: a face loads its custom fonts once, each under a small integer slot id, and the rest of the ui looks them up by id so layout tables can stay static (an id, not a live GFont handle). The registry does not care which fonts they are. The face owns the slots and what they mean (see the face's own draw/fonts.h), this just maps an id to its handle </td></tr>
+<tr id="row_0_1_3_4_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="icon__cache_8c.html" target="_self">icon_cache.c</a></td><td class="desc">Icon store. A small cache that maps a resource id to its picture and is shared across a face, so each icon loads once and is freed in one place. Also carries the palette tint and the auto-trim margin scan </td></tr>
+<tr id="row_0_1_3_5_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="icon__cache_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="icon__cache_8h.html" target="_self">icon_cache.h</a></td><td class="desc">A small load-once icon store keyed by resource id, shared across a face so each icon picture loads a single time and frees in one place. Alongside it sits the palette tint and an optional auto-trim that measures each icon's transparent border so a caller can pin the visible art instead of the padded bitmap box </td></tr>
+<tr id="row_0_1_3_6_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="readouts_8c.html" target="_self">readouts.c</a></td><td class="desc">Text formatters shared by the faces, bound to the engine's text-slots </td></tr>
+<tr id="row_0_1_3_7_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="readouts_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="readouts_8h.html" target="_self">readouts.h</a></td><td class="desc">Text formatters shared by the faces: pull a value from a store, honour the relevant setting, and format it into a buffer. Each matches the engine's text-slot signature, so a slot binds straight to one (e.g. <span class="tt">{ .zone = &amp;s_zones[ZONE_TIME],
+.text = <a class="el" href="group__lib__ui.html#ga5f1ce126b5f8ddfb48e78d1077355883" title="Format the clock per the Time Format setting: 24h, 12h, system, or .beats.">readout_time</a> }</span>) </td></tr>
+<tr id="row_0_1_3_8_" class="odd"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="icondoc"><div class="doc-icon"></div></span><a class="el" href="zone_8c.html" target="_self">zone.c</a></td><td class="desc">Layout primitives implementation </td></tr>
+<tr id="row_0_1_3_9_" class="even"><td class="entry"><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><span class="spacer">&#160;</span><a href="zone_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a><a class="el" href="zone_8h.html" target="_self">zone.h</a></td><td class="desc">Layout primitives: defines paintable areas and text alignments </td></tr>
+</table>
+</div><!-- directory -->
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

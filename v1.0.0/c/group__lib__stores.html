@@ -1,0 +1,1127 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Stores</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__stores.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Stores <div class="ingroups"><a class="el" href="group__lib.html">Shared Base Library</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fcalendar_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fcalendar_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="calendar__store_8h.html">c/pebble/io/stores/calendar_store.h</a></td></tr>
+<tr class="memdesc:calendar__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active calendar store. It owns the appmessage calendar channel and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the events and subscribes for repaints. The phone data flows straight in and nobody wires it. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__store_8h.html">c/pebble/io/stores/health_store.h</a></td></tr>
+<tr class="memdesc:health__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active health store. It subscribes to the watch's health service itself and holds the readings, so a face just hands it the rules, optionally seeds it, then reads the numbers back. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="location__store_8h.html">c/pebble/io/stores/location_store.h</a></td></tr>
+<tr class="memdesc:location__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active location store. It owns the appmessage coords channel (the same phone geolocation the weather rides on), so a face hands it the rules, optionally seeds it, then reads lat/lon back. There's no poll timer. Coords arrive alongside weather. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fstock_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fstock_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="stock__store_8h.html">c/pebble/io/stores/stock_store.h</a></td></tr>
+<tr class="memdesc:stock__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active stock store. It owns the appmessage stock channel and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the slots and subscribes for repaints. The phone data flows straight in and nobody wires it. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fstore_5Fcadence_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fstore_5Fcadence_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__cadence_8h.html">c/pebble/io/stores/store_cadence.h</a></td></tr>
+<tr class="memdesc:store__cadence_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared cadence the stores hang their periodic work on. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fstore_5Fpersist_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fstore_5Fpersist_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__persist_8h.html">c/pebble/io/stores/store_persist.h</a></td></tr>
+<tr class="memdesc:store__persist_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared persist save and restore helpers for the stores. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fstore_5Fpoll_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fstore_5Fpoll_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__poll_8h.html">c/pebble/io/stores/store_poll.h</a></td></tr>
+<tr class="memdesc:store__poll_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock deadlines for the stores that poll the phone. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fsystem_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fsystem_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="system__store_8h.html">c/pebble/io/stores/system_store.h</a></td></tr>
+<tr class="memdesc:system__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active system store: the watch's own battery, bluetooth and next-alarm state. It subscribes to the battery and connection services itself and buzzes on a bluetooth change through a policy the face installs (so the store never has to know about settings or buzzing). <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Ftime_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Ftime_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="time__store_8h.html">c/pebble/io/stores/time_store.h</a></td></tr>
+<tr class="memdesc:time__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active time store. It owns the tickers (the minute tick and the swatch .beats AppTimer) and swaps between them for the current cadence, so a face just hands it the rules and reads the time back. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fstores_2Fweather_5Fstore_2Eh" id="r_c_2Fpebble_2Fio_2Fstores_2Fweather_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="weather__store_8h.html">c/pebble/io/stores/weather_store.h</a></td></tr>
+<tr class="memdesc:weather__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active weather store. It owns the appmessage weather channels and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the values and subscribes for repaints. The phone data flows straight in and nobody wires it. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:CalendarConfig" id="r_CalendarConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structCalendarConfig.html">CalendarConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structCalendarConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:CalendarSeed" id="r_CalendarSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structCalendarSeed.html">CalendarSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill: shown until the first real reading lands, or pinned when live = false.  <a href="structCalendarSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:HealthConfig" id="r_HealthConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHealthConfig.html">HealthConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structHealthConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:HealthSeed" id="r_HealthSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHealthSeed.html">HealthSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned readings when live = false.  <a href="structHealthSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:LocationConfig" id="r_LocationConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structLocationConfig.html">LocationConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structLocationConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:LocationSeed" id="r_LocationSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structLocationSeed.html">LocationSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned coords when live = false.  <a href="structLocationSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:StockConfig" id="r_StockConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structStockConfig.html">StockConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structStockConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:StockSeed" id="r_StockSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structStockSeed.html">StockSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill: shown until the first real reading lands, or pinned when live = false.  <a href="structStockSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:SystemConfig" id="r_SystemConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSystemConfig.html">SystemConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structSystemConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:SystemSeed" id="r_SystemSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSystemSeed.html">SystemSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned state when live = false.  <a href="structSystemSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:TimeConfig" id="r_TimeConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structTimeConfig.html">TimeConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structTimeConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:WeatherConfig" id="r_WeatherConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structWeatherConfig.html">WeatherConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structWeatherConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:WeatherSeed" id="r_WeatherSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structWeatherSeed.html">WeatherSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill: shown until the first real reading lands, or pinned when live = false.  <a href="structWeatherSeed.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga60f6d598b8ff59f299aa4ded2e48b695" id="r_ga60f6d598b8ff59f299aa4ded2e48b695"><td class="memItemLeft"><a id="ga60f6d598b8ff59f299aa4ded2e48b695" name="ga60f6d598b8ff59f299aa4ded2e48b695"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_CADENCE_MAX</b>&#160;&#160;&#160;8</td></tr>
+<tr class="memitem:gaf7f92da5799b3fc95c172f84287e6867" id="r_gaf7f92da5799b3fc95c172f84287e6867"><td class="memItemLeft"><a id="gaf7f92da5799b3fc95c172f84287e6867" name="gaf7f92da5799b3fc95c172f84287e6867"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_WEATHER</b>&#160;&#160;&#160;0x11</td></tr>
+<tr class="memitem:ga5b35a6941ad6bb200a944b38ae9fa676" id="r_ga5b35a6941ad6bb200a944b38ae9fa676"><td class="memItemLeft"><a id="ga5b35a6941ad6bb200a944b38ae9fa676" name="ga5b35a6941ad6bb200a944b38ae9fa676"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_STOCK</b>&#160;&#160;&#160;0x21</td></tr>
+<tr class="memitem:ga71057ac435b7b29a882b011053659d86" id="r_ga71057ac435b7b29a882b011053659d86"><td class="memItemLeft"><a id="ga71057ac435b7b29a882b011053659d86" name="ga71057ac435b7b29a882b011053659d86"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_CALENDAR</b>&#160;&#160;&#160;0x31</td></tr>
+<tr class="memitem:ga31737569cb65fc760932f244727a568d" id="r_ga31737569cb65fc760932f244727a568d"><td class="memItemLeft"><a id="ga31737569cb65fc760932f244727a568d" name="ga31737569cb65fc760932f244727a568d"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_HEALTH</b>&#160;&#160;&#160;0x42</td></tr>
+<tr class="memitem:gaa19bf75ee3cb87a3a31a97238f4dcf73" id="r_gaa19bf75ee3cb87a3a31a97238f4dcf73"><td class="memItemLeft"><a id="gaa19bf75ee3cb87a3a31a97238f4dcf73" name="gaa19bf75ee3cb87a3a31a97238f4dcf73"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_LOCATION</b>&#160;&#160;&#160;0x51</td></tr>
+<tr class="memitem:gae0d84f2727ec304e5376009e5f7dcd18" id="r_gae0d84f2727ec304e5376009e5f7dcd18"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga96c4cb6d425115a65f787896786b232f" id="r_ga96c4cb6d425115a65f787896786b232f"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga96c4cb6d425115a65f787896786b232f">BtVibePolicy</a>(bool connected)</td></tr>
+<tr class="memdesc:ga96c4cb6d425115a65f787896786b232f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a real bluetooth transition (a change, not the first reading), so the face can buzz however its own settings say. NULL for a silent link change.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gad9d0b53b9a4f189dd3a591801401ec35" id="r_gad9d0b53b9a4f189dd3a591801401ec35"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad9d0b53b9a4f189dd3a591801401ec35">calendar_store_init</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg, const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *seed)</td></tr>
+<tr class="memdesc:gad9d0b53b9a4f189dd3a591801401ec35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:gade1a2a8d19355c64e027ed3b89479f0e" id="r_gade1a2a8d19355c64e027ed3b89479f0e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gade1a2a8d19355c64e027ed3b89479f0e">calendar_store_reconfigure</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg)</td></tr>
+<tr class="memdesc:gade1a2a8d19355c64e027ed3b89479f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memitem:ga83e9c3f206ad5ced9e3d6c50cb0fa96b" id="r_ga83e9c3f206ad5ced9e3d6c50cb0fa96b"><td class="memItemLeft"><a id="ga83e9c3f206ad5ced9e3d6c50cb0fa96b" name="ga83e9c3f206ad5ced9e3d6c50cb0fa96b"></a>
+void&#160;</td><td class="memItemRight"><b>calendar_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga83e9c3f206ad5ced9e3d6c50cb0fa96b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the agenda changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:gabbe75636f8fd3bbc25e5907b8b703478" id="r_gabbe75636f8fd3bbc25e5907b8b703478"><td class="memItemLeft"><a id="gabbe75636f8fd3bbc25e5907b8b703478" name="gabbe75636f8fd3bbc25e5907b8b703478"></a>
+const <a class="el" href="structCalendarStrip.html">CalendarStrip</a> *&#160;</td><td class="memItemRight"><b>calendar_store_strip</b> (void)</td></tr>
+<tr class="memdesc:gabbe75636f8fd3bbc25e5907b8b703478"><td class="mdescLeft">&#160;</td><td class="mdescRight">The whole agenda strip. count is 0 until a reading lands. <br /></td></tr>
+<tr class="memitem:ga3b326a92ec3b996da7b21ffe32934106" id="r_ga3b326a92ec3b996da7b21ffe32934106"><td class="memItemLeft">const <a class="el" href="structCalendarEvent.html">CalendarEvent</a> *&#160;</td><td class="memItemRight"><a class="el" href="#ga3b326a92ec3b996da7b21ffe32934106">calendar_store_event</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga3b326a92ec3b996da7b21ffe32934106"><td class="mdescLeft">&#160;</td><td class="mdescRight">One event by index, or NULL when the index is past what is filled.  <br /></td></tr>
+<tr class="memitem:ga53bd3d81fba50d07ccee2739d53c22ae" id="r_ga53bd3d81fba50d07ccee2739d53c22ae"><td class="memItemLeft"><a id="ga53bd3d81fba50d07ccee2739d53c22ae" name="ga53bd3d81fba50d07ccee2739d53c22ae"></a>
+int&#160;</td><td class="memItemRight"><b>calendar_store_age_s</b> (void)</td></tr>
+<tr class="memdesc:ga53bd3d81fba50d07ccee2739d53c22ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
+<tr class="memitem:gadb98993f8a5d2ea3ac0b99effab8b393" id="r_gadb98993f8a5d2ea3ac0b99effab8b393"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gadb98993f8a5d2ea3ac0b99effab8b393">health_store_init</a> (<a class="el" href="structHealthConfig.html">HealthConfig</a> cfg, const <a class="el" href="structHealthSeed.html">HealthSeed</a> *seed)</td></tr>
+<tr class="memdesc:gadb98993f8a5d2ea3ac0b99effab8b393"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga3d23a155e70dad9fd2ac23f2ec39775c" id="r_ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="memItemLeft"><a id="ga3d23a155e70dad9fd2ac23f2ec39775c" name="ga3d23a155e70dad9fd2ac23f2ec39775c"></a>
+void&#160;</td><td class="memItemRight"><b>health_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the numbers change (the screen redraw). <br /></td></tr>
+<tr class="memitem:ga2db6e554fac24c95cdb2823cdb18bef0" id="r_ga2db6e554fac24c95cdb2823cdb18bef0"><td class="memItemLeft"><a id="ga2db6e554fac24c95cdb2823cdb18bef0" name="ga2db6e554fac24c95cdb2823cdb18bef0"></a>
+uint8_t *&#160;</td><td class="memItemRight"><b>health_store_hr_history</b> (void)</td></tr>
+<tr class="memdesc:ga2db6e554fac24c95cdb2823cdb18bef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last hour of heart rate readings, one per minute (a 60 slot buffer). The store fills it on each update. The little charts read it back out. <br /></td></tr>
+<tr class="memitem:ga34ce959b4e7f9802230c7e1319b3bf28" id="r_ga34ce959b4e7f9802230c7e1319b3bf28"><td class="memItemLeft"><a id="ga34ce959b4e7f9802230c7e1319b3bf28" name="ga34ce959b4e7f9802230c7e1319b3bf28"></a>
+const uint16_t *&#160;</td><td class="memItemRight"><b>health_store_step_hourly</b> (void)</td></tr>
+<tr class="memdesc:ga34ce959b4e7f9802230c7e1319b3bf28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots). The bar chart reads it back out. <br /></td></tr>
+<tr class="memitem:ga7f6eb32c1ad9a2a9ffa41d13dc507204" id="r_ga7f6eb32c1ad9a2a9ffa41d13dc507204"><td class="memItemLeft"><a id="ga7f6eb32c1ad9a2a9ffa41d13dc507204" name="ga7f6eb32c1ad9a2a9ffa41d13dc507204"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_step_hours</b> (void)</td></tr>
+<tr class="memdesc:ga7f6eb32c1ad9a2a9ffa41d13dc507204"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of the hourly step buckets hold a real value (0 to 24). Steps count 0 as a real reading (a quiet hour), so a chart needs the count rather than a no-data sentinel. <br /></td></tr>
+<tr class="memitem:gaebe919776f17167171641aeae6310796" id="r_gaebe919776f17167171641aeae6310796"><td class="memItemLeft"><a id="gaebe919776f17167171641aeae6310796" name="gaebe919776f17167171641aeae6310796"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_hr</b> (void)</td></tr>
+<tr class="memdesc:gaebe919776f17167171641aeae6310796"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heart rate in beats per minute, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga38cd6bed400162ebab1a2284484c4445" id="r_ga38cd6bed400162ebab1a2284484c4445"><td class="memItemLeft"><a id="ga38cd6bed400162ebab1a2284484c4445" name="ga38cd6bed400162ebab1a2284484c4445"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_steps</b> (void)</td></tr>
+<tr class="memdesc:ga38cd6bed400162ebab1a2284484c4445"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps taken so far today, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gabe7efc42c8679e55ecb7804fb17895ec" id="r_gabe7efc42c8679e55ecb7804fb17895ec"><td class="memItemLeft"><a id="gabe7efc42c8679e55ecb7804fb17895ec" name="gabe7efc42c8679e55ecb7804fb17895ec"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_calories</b> (void)</td></tr>
+<tr class="memdesc:gabe7efc42c8679e55ecb7804fb17895ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active calories so far today, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gaae218db51d5633570091919ba1e07ab4" id="r_gaae218db51d5633570091919ba1e07ab4"><td class="memItemLeft"><a id="gaae218db51d5633570091919ba1e07ab4" name="gaae218db51d5633570091919ba1e07ab4"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_sleep_min</b> (void)</td></tr>
+<tr class="memdesc:gaae218db51d5633570091919ba1e07ab4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minutes of sleep, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga1712c5d7441e81d5b804d19e112bdb3c" id="r_ga1712c5d7441e81d5b804d19e112bdb3c"><td class="memItemLeft"><a id="ga1712c5d7441e81d5b804d19e112bdb3c" name="ga1712c5d7441e81d5b804d19e112bdb3c"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_active_min</b> (void)</td></tr>
+<tr class="memdesc:ga1712c5d7441e81d5b804d19e112bdb3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active minutes so far today, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga82d8e5fff446bf3a7e20228c8cb49df9" id="r_ga82d8e5fff446bf3a7e20228c8cb49df9"><td class="memItemLeft"><a id="ga82d8e5fff446bf3a7e20228c8cb49df9" name="ga82d8e5fff446bf3a7e20228c8cb49df9"></a>
+int&#160;</td><td class="memItemRight"><b>health_store_distance_m</b> (void)</td></tr>
+<tr class="memdesc:ga82d8e5fff446bf3a7e20228c8cb49df9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's walked distance in meters, or 0 if we cannot read it. <br /></td></tr>
+<tr class="memitem:ga2027df7324b501eba2a93b048974f50c" id="r_ga2027df7324b501eba2a93b048974f50c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga2027df7324b501eba2a93b048974f50c">location_store_init</a> (<a class="el" href="structLocationConfig.html">LocationConfig</a> cfg, const <a class="el" href="structLocationSeed.html">LocationSeed</a> *seed)</td></tr>
+<tr class="memdesc:ga2027df7324b501eba2a93b048974f50c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga59425f07e9de612bbcaae2dd0bcf266f" id="r_ga59425f07e9de612bbcaae2dd0bcf266f"><td class="memItemLeft"><a id="ga59425f07e9de612bbcaae2dd0bcf266f" name="ga59425f07e9de612bbcaae2dd0bcf266f"></a>
+void&#160;</td><td class="memItemRight"><b>location_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga59425f07e9de612bbcaae2dd0bcf266f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the coordinates change (the screen redraw). <br /></td></tr>
+<tr class="memitem:gaca52fe40f16b8699445cc2a3d3df0bf9" id="r_gaca52fe40f16b8699445cc2a3d3df0bf9"><td class="memItemLeft"><a id="gaca52fe40f16b8699445cc2a3d3df0bf9" name="gaca52fe40f16b8699445cc2a3d3df0bf9"></a>
+const char *&#160;</td><td class="memItemRight"><b>location_store_lat</b> (void)</td></tr>
+<tr class="memdesc:gaca52fe40f16b8699445cc2a3d3df0bf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latitude string, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga84432464d20d131431730d966053fc52" id="r_ga84432464d20d131431730d966053fc52"><td class="memItemLeft"><a id="ga84432464d20d131431730d966053fc52" name="ga84432464d20d131431730d966053fc52"></a>
+const char *&#160;</td><td class="memItemRight"><b>location_store_lon</b> (void)</td></tr>
+<tr class="memdesc:ga84432464d20d131431730d966053fc52"><td class="mdescLeft">&#160;</td><td class="mdescRight">The longitude string, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gaec0631f8c075d9a6c76e2f6f386f3970" id="r_gaec0631f8c075d9a6c76e2f6f386f3970"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaec0631f8c075d9a6c76e2f6f386f3970">stock_store_init</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg, const <a class="el" href="structStockSeed.html">StockSeed</a> *seed)</td></tr>
+<tr class="memdesc:gaec0631f8c075d9a6c76e2f6f386f3970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:gaf5880da69fee6e18843b989032e67836" id="r_gaf5880da69fee6e18843b989032e67836"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaf5880da69fee6e18843b989032e67836">stock_store_reconfigure</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg)</td></tr>
+<tr class="memdesc:gaf5880da69fee6e18843b989032e67836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memitem:ga286d1850c71a9b7e3e62be5b92ea916a" id="r_ga286d1850c71a9b7e3e62be5b92ea916a"><td class="memItemLeft"><a id="ga286d1850c71a9b7e3e62be5b92ea916a" name="ga286d1850c71a9b7e3e62be5b92ea916a"></a>
+void&#160;</td><td class="memItemRight"><b>stock_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga286d1850c71a9b7e3e62be5b92ea916a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when a quote changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:ga4b56f050715401cfdd8a57bd1063cbe7" id="r_ga4b56f050715401cfdd8a57bd1063cbe7"><td class="memItemLeft"><a id="ga4b56f050715401cfdd8a57bd1063cbe7" name="ga4b56f050715401cfdd8a57bd1063cbe7"></a>
+const <a class="el" href="structStockStrip.html">StockStrip</a> *&#160;</td><td class="memItemRight"><b>stock_store_strip</b> (void)</td></tr>
+<tr class="memdesc:ga4b56f050715401cfdd8a57bd1063cbe7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The whole watchlist strip. count is 0 until a reading lands. <br /></td></tr>
+<tr class="memitem:ga44242789115b6e0615358ddc114a24dc" id="r_ga44242789115b6e0615358ddc114a24dc"><td class="memItemLeft">const <a class="el" href="structStockSlot.html">StockSlot</a> *&#160;</td><td class="memItemRight"><a class="el" href="#ga44242789115b6e0615358ddc114a24dc">stock_store_slot</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga44242789115b6e0615358ddc114a24dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">One slot by index, or NULL when the index is past what is filled.  <br /></td></tr>
+<tr class="memitem:ga5074e747148193546c869652ea01584d" id="r_ga5074e747148193546c869652ea01584d"><td class="memItemLeft"><a id="ga5074e747148193546c869652ea01584d" name="ga5074e747148193546c869652ea01584d"></a>
+int&#160;</td><td class="memItemRight"><b>stock_store_age_s</b> (void)</td></tr>
+<tr class="memdesc:ga5074e747148193546c869652ea01584d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
+<tr class="memitem:gadc0f8176e42cbe69fd30b1a363ca4794" id="r_gadc0f8176e42cbe69fd30b1a363ca4794"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gadc0f8176e42cbe69fd30b1a363ca4794">store_cadence_register</a> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gadc0f8176e42cbe69fd30b1a363ca4794"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ask for <code class="param">cb</code> to run each time the face's cadence comes round. A store calls this from its own init, so no face has to wire it up by hand.  <br /></td></tr>
+<tr class="memitem:ga10c78a131269bea0afd102549a41083c" id="r_ga10c78a131269bea0afd102549a41083c"><td class="memItemLeft"><a id="ga10c78a131269bea0afd102549a41083c" name="ga10c78a131269bea0afd102549a41083c"></a>
+void&#160;</td><td class="memItemRight"><b>store_cadence_fire</b> (void)</td></tr>
+<tr class="memdesc:ga10c78a131269bea0afd102549a41083c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run everything registered, in the order it was registered. The time store calls this from its ticker, before it tells the face the time moved. <br /></td></tr>
+<tr class="memitem:ga286178630dd827b7d2e677742541e280" id="r_ga286178630dd827b7d2e677742541e280"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga286178630dd827b7d2e677742541e280">store_restore</a> (uint32_t key, void *state, size_t size, uint8_t tag)</td></tr>
+<tr class="memdesc:ga286178630dd827b7d2e677742541e280"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restore a saved blob into <code class="param">state</code>, but only when it is this store's own current layout.  <br /></td></tr>
+<tr class="memitem:ga814b2c13673684e3684ff4ed7beec6eb" id="r_ga814b2c13673684e3684ff4ed7beec6eb"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga814b2c13673684e3684ff4ed7beec6eb">store_save</a> (uint32_t key, void *state, size_t size, uint8_t tag)</td></tr>
+<tr class="memdesc:ga814b2c13673684e3684ff4ed7beec6eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a store's blob with its tag stamped in, so the next restore can recognise it.  <br /></td></tr>
+<tr class="memitem:gaee79556bd3009dd1478b61913e5368d4" id="r_gaee79556bd3009dd1478b61913e5368d4"><td class="memItemLeft">static time_t&#160;</td><td class="memItemRight"><a class="el" href="#gaee79556bd3009dd1478b61913e5368d4">store_poll_next</a> (int poll_min, time_t now)</td></tr>
+<tr class="memdesc:gaee79556bd3009dd1478b61913e5368d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next wall-clock second a poll of this interval falls due.  <br /></td></tr>
+<tr class="memitem:ga997e6ccf70b96c79e2500b83af6e54dc" id="r_ga997e6ccf70b96c79e2500b83af6e54dc"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga997e6ccf70b96c79e2500b83af6e54dc">store_poll_due</a> (int poll_min, time_t *next, time_t now)</td></tr>
+<tr class="memdesc:ga997e6ccf70b96c79e2500b83af6e54dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <code class="param">next</code> has come round, moving it on to the following deadline when it has.  <br /></td></tr>
+<tr class="memitem:ga98c417e24d8488baa2bb33e39155a3e7" id="r_ga98c417e24d8488baa2bb33e39155a3e7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga98c417e24d8488baa2bb33e39155a3e7">system_store_init</a> (<a class="el" href="structSystemConfig.html">SystemConfig</a> cfg, const <a class="el" href="structSystemSeed.html">SystemSeed</a> *seed)</td></tr>
+<tr class="memdesc:ga98c417e24d8488baa2bb33e39155a3e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga8d12e20cd8e402fc7c7abbfcd7454f3c" id="r_ga8d12e20cd8e402fc7c7abbfcd7454f3c"><td class="memItemLeft"><a id="ga8d12e20cd8e402fc7c7abbfcd7454f3c" name="ga8d12e20cd8e402fc7c7abbfcd7454f3c"></a>
+void&#160;</td><td class="memItemRight"><b>system_store_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga8d12e20cd8e402fc7c7abbfcd7454f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop tracking the battery + connection services. <br /></td></tr>
+<tr class="memitem:gaa56e12f48eddf86b1533059128765d2e" id="r_gaa56e12f48eddf86b1533059128765d2e"><td class="memItemLeft"><a id="gaa56e12f48eddf86b1533059128765d2e" name="gaa56e12f48eddf86b1533059128765d2e"></a>
+void&#160;</td><td class="memItemRight"><b>system_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa56e12f48eddf86b1533059128765d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when something changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft"><a id="gaa29b6900ac64eda8dfb6dd8918ef531b" name="gaa29b6900ac64eda8dfb6dd8918ef531b"></a>
+void&#160;</td><td class="memItemRight"><b>system_store_on_reconnect</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop. <br /></td></tr>
+<tr class="memitem:ga0a7b3e80e633a5f021929a1f3751260f" id="r_ga0a7b3e80e633a5f021929a1f3751260f"><td class="memItemLeft"><a id="ga0a7b3e80e633a5f021929a1f3751260f" name="ga0a7b3e80e633a5f021929a1f3751260f"></a>
+int&#160;</td><td class="memItemRight"><b>system_store_battery</b> (void)</td></tr>
+<tr class="memdesc:ga0a7b3e80e633a5f021929a1f3751260f"><td class="mdescLeft">&#160;</td><td class="mdescRight">How full the battery is from 0 to 100. <br /></td></tr>
+<tr class="memitem:ga93e1005fb36a193016d69e406ef58f16" id="r_ga93e1005fb36a193016d69e406ef58f16"><td class="memItemLeft"><a id="ga93e1005fb36a193016d69e406ef58f16" name="ga93e1005fb36a193016d69e406ef58f16"></a>
+bool&#160;</td><td class="memItemRight"><b>system_store_charging</b> (void)</td></tr>
+<tr class="memdesc:ga93e1005fb36a193016d69e406ef58f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while the watch is plugged in. <br /></td></tr>
+<tr class="memitem:ga2ebbd6eb46dfd92742b55a346d164961" id="r_ga2ebbd6eb46dfd92742b55a346d164961"><td class="memItemLeft"><a id="ga2ebbd6eb46dfd92742b55a346d164961" name="ga2ebbd6eb46dfd92742b55a346d164961"></a>
+bool&#160;</td><td class="memItemRight"><b>system_store_bluetooth</b> (void)</td></tr>
+<tr class="memdesc:ga2ebbd6eb46dfd92742b55a346d164961"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the phone link is up. <br /></td></tr>
+<tr class="memitem:ga323c6c5d1989296b9618d94e94f92daa" id="r_ga323c6c5d1989296b9618d94e94f92daa"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga323c6c5d1989296b9618d94e94f92daa">system_store_next_alarm</a> (time_t *out)</td></tr>
+<tr class="memdesc:ga323c6c5d1989296b9618d94e94f92daa"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the wearer's next enabled alarm fires.  <br /></td></tr>
+<tr class="memitem:ga000282fef3aa31a69a8038abb49fa576" id="r_ga000282fef3aa31a69a8038abb49fa576"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga000282fef3aa31a69a8038abb49fa576">time_store_init</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg, const struct tm *seed)</td></tr>
+<tr class="memdesc:ga000282fef3aa31a69a8038abb49fa576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL to start from the current time.  <br /></td></tr>
+<tr class="memitem:ga9c2eacc43d552852d63185bd4ca16379" id="r_ga9c2eacc43d552852d63185bd4ca16379"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga9c2eacc43d552852d63185bd4ca16379">time_store_reconfigure</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg)</td></tr>
+<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match.  <br /></td></tr>
+<tr class="memitem:ga03d7e9b1823247fa9d5a6ead85797571" id="r_ga03d7e9b1823247fa9d5a6ead85797571"><td class="memItemLeft"><a id="ga03d7e9b1823247fa9d5a6ead85797571" name="ga03d7e9b1823247fa9d5a6ead85797571"></a>
+void&#160;</td><td class="memItemRight"><b>time_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga03d7e9b1823247fa9d5a6ead85797571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the time changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:gadc9650a7506ac75294df48a7a8deadcd" id="r_gadc9650a7506ac75294df48a7a8deadcd"><td class="memItemLeft"><a id="gadc9650a7506ac75294df48a7a8deadcd" name="gadc9650a7506ac75294df48a7a8deadcd"></a>
+const struct tm *&#160;</td><td class="memItemRight"><b>time_store_tm</b> (void)</td></tr>
+<tr class="memdesc:gadc9650a7506ac75294df48a7a8deadcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time we hold right now. <br /></td></tr>
+<tr class="memitem:ga49a92d34f22c2bb81f54084b02215709" id="r_ga49a92d34f22c2bb81f54084b02215709"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga49a92d34f22c2bb81f54084b02215709">weather_store_init</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg, const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *seed)</td></tr>
+<tr class="memdesc:ga49a92d34f22c2bb81f54084b02215709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga2af1e0b42fd91db04b7bf0e358f80a85" id="r_ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store_reconfigure</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg)</td></tr>
+<tr class="memdesc:ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memitem:ga40fd78d1cab03532c37b131b1c2a9111" id="r_ga40fd78d1cab03532c37b131b1c2a9111"><td class="memItemLeft"><a id="ga40fd78d1cab03532c37b131b1c2a9111" name="ga40fd78d1cab03532c37b131b1c2a9111"></a>
+void&#160;</td><td class="memItemRight"><b>weather_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga40fd78d1cab03532c37b131b1c2a9111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the weather changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:ga2cd48126740a404ee6893890c5abf288" id="r_ga2cd48126740a404ee6893890c5abf288"><td class="memItemLeft"><a id="ga2cd48126740a404ee6893890c5abf288" name="ga2cd48126740a404ee6893890c5abf288"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_temp</b> (void)</td></tr>
+<tr class="memdesc:ga2cd48126740a404ee6893890c5abf288"><td class="mdescLeft">&#160;</td><td class="mdescRight">The temperature reading in the user's unit, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga2b52199ca0e311c968b7f831305acd62" id="r_ga2b52199ca0e311c968b7f831305acd62"><td class="memItemLeft"><a id="ga2b52199ca0e311c968b7f831305acd62" name="ga2b52199ca0e311c968b7f831305acd62"></a>
+const char *&#160;</td><td class="memItemRight"><b>weather_store_cond</b> (void)</td></tr>
+<tr class="memdesc:ga2b52199ca0e311c968b7f831305acd62"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short word for the sky, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga5b052daed5b04526d28d4d3296bef8a1" id="r_ga5b052daed5b04526d28d4d3296bef8a1"><td class="memItemLeft"><a id="ga5b052daed5b04526d28d4d3296bef8a1" name="ga5b052daed5b04526d28d4d3296bef8a1"></a>
+const char *&#160;</td><td class="memItemRight"><b>weather_store_location_name</b> (void)</td></tr>
+<tr class="memdesc:ga5b052daed5b04526d28d4d3296bef8a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The location name like "Toronto", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gaec0de378ffe3adbadab18b877c3e214c" id="r_gaec0de378ffe3adbadab18b877c3e214c"><td class="memItemLeft"><a id="gaec0de378ffe3adbadab18b877c3e214c" name="gaec0de378ffe3adbadab18b877c3e214c"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_humidity</b> (void)</td></tr>
+<tr class="memdesc:gaec0de378ffe3adbadab18b877c3e214c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The humidity in percent, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga06fe793fd4c59b655856f6f1454e66a1" id="r_ga06fe793fd4c59b655856f6f1454e66a1"><td class="memItemLeft"><a id="ga06fe793fd4c59b655856f6f1454e66a1" name="ga06fe793fd4c59b655856f6f1454e66a1"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_wind_kmh</b> (void)</td></tr>
+<tr class="memdesc:ga06fe793fd4c59b655856f6f1454e66a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wind speed in km/h, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga21865e60abf090e923d95f74e4e5e3b2" id="r_ga21865e60abf090e923d95f74e4e5e3b2"><td class="memItemLeft"><a id="ga21865e60abf090e923d95f74e4e5e3b2" name="ga21865e60abf090e923d95f74e4e5e3b2"></a>
+const char *&#160;</td><td class="memItemRight"><b>weather_store_wind_dir</b> (void)</td></tr>
+<tr class="memdesc:ga21865e60abf090e923d95f74e4e5e3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wind direction like "NW", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gae1aaec2e20f48ead785d1c217b0a2ad4" id="r_gae1aaec2e20f48ead785d1c217b0a2ad4"><td class="memItemLeft"><a id="gae1aaec2e20f48ead785d1c217b0a2ad4" name="gae1aaec2e20f48ead785d1c217b0a2ad4"></a>
+const char *&#160;</td><td class="memItemRight"><b>weather_store_sunrise</b> (void)</td></tr>
+<tr class="memdesc:gae1aaec2e20f48ead785d1c217b0a2ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sunrise time like "06:30", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga21fd739c3cdf95b044af16789ac88bd5" id="r_ga21fd739c3cdf95b044af16789ac88bd5"><td class="memItemLeft"><a id="ga21fd739c3cdf95b044af16789ac88bd5" name="ga21fd739c3cdf95b044af16789ac88bd5"></a>
+const char *&#160;</td><td class="memItemRight"><b>weather_store_sunset</b> (void)</td></tr>
+<tr class="memdesc:ga21fd739c3cdf95b044af16789ac88bd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sunset time like "21:30", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga06cf30734c71d28b90e5b660ee75bc9d" id="r_ga06cf30734c71d28b90e5b660ee75bc9d"><td class="memItemLeft"><a id="ga06cf30734c71d28b90e5b660ee75bc9d" name="ga06cf30734c71d28b90e5b660ee75bc9d"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_feels_like</b> (void)</td></tr>
+<tr class="memdesc:ga06cf30734c71d28b90e5b660ee75bc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How warm it feels, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gac167df267d9204941ae5ef9541074edc" id="r_gac167df267d9204941ae5ef9541074edc"><td class="memItemLeft"><a id="gac167df267d9204941ae5ef9541074edc" name="gac167df267d9204941ae5ef9541074edc"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_pressure</b> (void)</td></tr>
+<tr class="memdesc:gac167df267d9204941ae5ef9541074edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The surface pressure in hPa, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga4780ec893b0d2cb94e17ab85c78e377d" id="r_ga4780ec893b0d2cb94e17ab85c78e377d"><td class="memItemLeft"><a id="ga4780ec893b0d2cb94e17ab85c78e377d" name="ga4780ec893b0d2cb94e17ab85c78e377d"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_dew_point</b> (void)</td></tr>
+<tr class="memdesc:ga4780ec893b0d2cb94e17ab85c78e377d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga839bf5c5187f067697de69f79f025b3f" id="r_ga839bf5c5187f067697de69f79f025b3f"><td class="memItemLeft"><a id="ga839bf5c5187f067697de69f79f025b3f" name="ga839bf5c5187f067697de69f79f025b3f"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_uv</b> (void)</td></tr>
+<tr class="memdesc:ga839bf5c5187f067697de69f79f025b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UV index, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga9521fad2bb38f644e02c9c3ac8547d4b" id="r_ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="memItemLeft"><a id="ga9521fad2bb38f644e02c9c3ac8547d4b" name="ga9521fad2bb38f644e02c9c3ac8547d4b"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_temp_max</b> (void)</td></tr>
+<tr class="memdesc:ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga3ad694d30ad387bd9a9c1db451cc9c2d" id="r_ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="memItemLeft"><a id="ga3ad694d30ad387bd9a9c1db451cc9c2d" name="ga3ad694d30ad387bd9a9c1db451cc9c2d"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_temp_min</b> (void)</td></tr>
+<tr class="memdesc:ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga04d4ed2abc57cd51459c6913b2d77e1d" id="r_ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="memItemLeft"><a id="ga04d4ed2abc57cd51459c6913b2d77e1d" name="ga04d4ed2abc57cd51459c6913b2d77e1d"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_precip_chance</b> (void)</td></tr>
+<tr class="memdesc:ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The chance of rain in percent, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gaba5bc2a406811b7f6d4b6df181f620d7" id="r_gaba5bc2a406811b7f6d4b6df181f620d7"><td class="memItemLeft"><a id="gaba5bc2a406811b7f6d4b6df181f620d7" name="gaba5bc2a406811b7f6d4b6df181f620d7"></a>
+const <a class="el" href="structWeatherHourly.html">WeatherHourly</a> *&#160;</td><td class="memItemRight"><b>weather_store_forecast_hourly</b> (void)</td></tr>
+<tr class="memdesc:gaba5bc2a406811b7f6d4b6df181f620d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip. count is 0 until a reading lands. <br /></td></tr>
+<tr class="memitem:ga0610dff5f72df6fa9f4312a73e6d96de" id="r_ga0610dff5f72df6fa9f4312a73e6d96de"><td class="memItemLeft"><a id="ga0610dff5f72df6fa9f4312a73e6d96de" name="ga0610dff5f72df6fa9f4312a73e6d96de"></a>
+const <a class="el" href="structWeatherDaily.html">WeatherDaily</a> *&#160;</td><td class="memItemRight"><b>weather_store_forecast_daily</b> (void)</td></tr>
+<tr class="memdesc:ga0610dff5f72df6fa9f4312a73e6d96de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 7-day forecast strip. count is 0 until a reading lands. <br /></td></tr>
+<tr class="memitem:ga7856768b2bde2cf55422b2c3b5ea3b4e" id="r_ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="memItemLeft"><a id="ga7856768b2bde2cf55422b2c3b5ea3b4e" name="ga7856768b2bde2cf55422b2c3b5ea3b4e"></a>
+int&#160;</td><td class="memItemRight"><b>weather_store_age_s</b> (void)</td></tr>
+<tr class="memdesc:ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The active stores. Each one holds a kind of reading (weather, health, calendar and friends), keeps it fresh, and nudges the screen when it changes.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="gae0d84f2727ec304e5376009e5f7dcd18" name="gae0d84f2727ec304e5376009e5f7dcd18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae0d84f2727ec304e5376009e5f7dcd18">&#9670;&#160;</a></span>WEATHER_SEED_EMPTY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define WEATHER_SEED_EMPTY</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">((<a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a>){                       \</div>
+<div class="line">.temp = <a class="code hl_define" href="group__lib__core.html#gad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>, .cond = <span class="stringliteral">&quot;&quot;</span>,                         \</div>
+<div class="line">.humidity = -1, .wind_kmh = -1, .wind_dir = <span class="stringliteral">&quot;&quot;</span>,             \</div>
+<div class="line">.sunrise = <span class="stringliteral">&quot;&quot;</span>, .sunset = <span class="stringliteral">&quot;&quot;</span>, .uv = -1,                       \</div>
+<div class="line">.temp_max = <a class="code hl_define" href="group__lib__core.html#gad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>, .temp_min = <a class="code hl_define" href="group__lib__core.html#gad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>,   \</div>
+<div class="line">.precip_chance = -1,                                         \</div>
+<div class="line">.feels_like = <a class="code hl_define" href="group__lib__core.html#gad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>, .pressure = -1,               \</div>
+<div class="line">.dew_point = <a class="code hl_define" href="group__lib__core.html#gad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>,                                \</div>
+<div class="line">.forecast_hourly = NULL, .forecast_daily = NULL })</div>
+<div class="ttc" id="agroup__lib__core_html_gad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="group__lib__core.html#gad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A stand-in value that means no temperature yet. Real temps can be negative and 0 is valid.</div><div class="ttdef"><b>Definition</b> weather_wire.h:24</div></div>
+<div class="ttc" id="astructWeatherSeed_html"><div class="ttname"><a href="structWeatherSeed.html">WeatherSeed</a></div><div class="ttdoc">Optional prefill: shown until the first real reading lands, or pinned when live = false.</div><div class="ttdef"><b>Definition</b> weather_store.h:37</div></div>
+</div><!-- fragment --><p>A <a class="el" href="structWeatherSeed.html" title="Optional prefill: shown until the first real reading lands, or pinned when live = false.">WeatherSeed</a> with every optional reading already set to its no-data value. Spread it and override only what you have, so a partial seed still reads as "--" instead of a bogus 0. </p><div class="fragment"><div class="line"><a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> seed = <a class="code hl_define" href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a>;</div>
+<div class="line">seed.<a class="code hl_variable" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">temp</a> = 23;</div>
+<div class="line">seed.<a class="code hl_variable" href="structWeatherSeed.html#a93c60f615195612444d3d584e7a669cb">cond</a> = <span class="stringliteral">&quot;SUNNY&quot;</span>;</div>
+<div class="ttc" id="agroup__lib__stores_html_gae0d84f2727ec304e5376009e5f7dcd18"><div class="ttname"><a href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a></div><div class="ttdeci">#define WEATHER_SEED_EMPTY</div><div class="ttdef"><b>Definition</b> weather_store.h:63</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a800405640fdfe30f5f50c13c2ff784c6"><div class="ttname"><a href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">WeatherSeed::temp</a></div><div class="ttdeci">int16_t temp</div><div class="ttdoc">Reading in the user&#39;s unit, WEATHER_NO_TEMP for none.</div><div class="ttdef"><b>Definition</b> weather_store.h:38</div></div>
+<div class="ttc" id="astructWeatherSeed_html_a93c60f615195612444d3d584e7a669cb"><div class="ttname"><a href="structWeatherSeed.html#a93c60f615195612444d3d584e7a669cb">WeatherSeed::cond</a></div><div class="ttdeci">const char * cond</div><div class="ttdoc">Short word for the sky like &quot;SUNNY&quot;.</div><div class="ttdef"><b>Definition</b> weather_store.h:39</div></div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="ga96c4cb6d425115a65f787896786b232f" name="ga96c4cb6d425115a65f787896786b232f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga96c4cb6d425115a65f787896786b232f">&#9670;&#160;</a></span>BtVibePolicy</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) BtVibePolicy(bool connected)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called on a real bluetooth transition (a change, not the first reading), so the face can buzz however its own settings say. NULL for a silent link change. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">connected</td><td>True when the link just came up, false when it just dropped. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga3b326a92ec3b996da7b21ffe32934106" name="ga3b326a92ec3b996da7b21ffe32934106"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b326a92ec3b996da7b21ffe32934106">&#9670;&#160;</a></span>calendar_store_event()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structCalendarEvent.html">CalendarEvent</a> * calendar_store_event </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One event by index, or NULL when the index is past what is filled. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Which event to read (0 based). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The event, or NULL. </dd></dl>
+
+</div>
+</div>
+<a id="gad9d0b53b9a4f189dd3a591801401ec35" name="gad9d0b53b9a4f189dd3a591801401ec35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad9d0b53b9a4f189dd3a591801401ec35">&#9670;&#160;</a></span>calendar_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void calendar_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCalendarConfig.html">CalendarConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live / poll interval). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gade1a2a8d19355c64e027ed3b89479f0e" name="gade1a2a8d19355c64e027ed3b89479f0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gade1a2a8d19355c64e027ed3b89479f0e">&#9670;&#160;</a></span>calendar_store_reconfigure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void calendar_store_reconfigure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCalendarConfig.html">CalendarConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gadb98993f8a5d2ea3ac0b99effab8b393" name="gadb98993f8a5d2ea3ac0b99effab8b393"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadb98993f8a5d2ea3ac0b99effab8b393">&#9670;&#160;</a></span>health_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structHealthConfig.html">HealthConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structHealthSeed.html">HealthSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2027df7324b501eba2a93b048974f50c" name="ga2027df7324b501eba2a93b048974f50c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2027df7324b501eba2a93b048974f50c">&#9670;&#160;</a></span>location_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void location_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structLocationConfig.html">LocationConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structLocationSeed.html">LocationSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaec0631f8c075d9a6c76e2f6f386f3970" name="gaec0631f8c075d9a6c76e2f6f386f3970"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaec0631f8c075d9a6c76e2f6f386f3970">&#9670;&#160;</a></span>stock_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stock_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structStockConfig.html">StockConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structStockSeed.html">StockSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live / poll interval). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf5880da69fee6e18843b989032e67836" name="gaf5880da69fee6e18843b989032e67836"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf5880da69fee6e18843b989032e67836">&#9670;&#160;</a></span>stock_store_reconfigure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stock_store_reconfigure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structStockConfig.html">StockConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga44242789115b6e0615358ddc114a24dc" name="ga44242789115b6e0615358ddc114a24dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga44242789115b6e0615358ddc114a24dc">&#9670;&#160;</a></span>stock_store_slot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structStockSlot.html">StockSlot</a> * stock_store_slot </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One slot by index, or NULL when the index is past what is filled. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Which slot to read (0 based). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The slot, or NULL. </dd></dl>
+
+</div>
+</div>
+<a id="gadc0f8176e42cbe69fd30b1a363ca4794" name="gadc0f8176e42cbe69fd30b1a363ca4794"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadc0f8176e42cbe69fd30b1a363ca4794">&#9670;&#160;</a></span>store_cadence_register()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void store_cadence_register </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>cb&#160;</em></span>)(void)</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ask for <code class="param">cb</code> to run each time the face's cadence comes round. A store calls this from its own init, so no face has to wire it up by hand. </p>
+<p>The cadence is whichever ticker the face runs: the minute tick, or the .beats timer in its place. A face with neither never fires this, so put periodic work here, not work something depends on. Registering the same function twice does nothing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cb</td><td>The work to run. NULL is ignored. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga997e6ccf70b96c79e2500b83af6e54dc" name="ga997e6ccf70b96c79e2500b83af6e54dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga997e6ccf70b96c79e2500b83af6e54dc">&#9670;&#160;</a></span>store_poll_due()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool store_poll_due </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>poll_min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t *</td>          <td class="paramname"><span class="paramname"><em>next</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t</td>          <td class="paramname"><span class="paramname"><em>now</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether <code class="param">next</code> has come round, moving it on to the following deadline when it has. </p>
+<p>A clock that jumps forward just fires once and carries on. One that jumps back would strand the deadline more than an interval ahead, so that case is pulled back in.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">poll_min</td><td>Minutes between polls. 0 or less means polling is off and this is never due. </td></tr>
+    <tr><td class="paramname">next</td><td>The store's deadline, read and updated in place. </td></tr>
+    <tr><td class="paramname">now</td><td>The current wall-clock time. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether a poll should go out now. </dd></dl>
+
+</div>
+</div>
+<a id="gaee79556bd3009dd1478b61913e5368d4" name="gaee79556bd3009dd1478b61913e5368d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaee79556bd3009dd1478b61913e5368d4">&#9670;&#160;</a></span>store_poll_next()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">time_t store_poll_next </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>poll_min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t</td>          <td class="paramname"><span class="paramname"><em>now</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The next wall-clock second a poll of this interval falls due. </p>
+<p>Counted from the epoch rather than from launch, so two watches started minutes apart poll at the same moments and a relaunch does not shift the phase.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">poll_min</td><td>Minutes between polls. Must be above 0. </td></tr>
+    <tr><td class="paramname">now</td><td>The current wall-clock time. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The second the next poll is due. </dd></dl>
+
+</div>
+</div>
+<a id="ga286178630dd827b7d2e677742541e280" name="ga286178630dd827b7d2e677742541e280"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga286178630dd827b7d2e677742541e280">&#9670;&#160;</a></span>store_restore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool store_restore </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>tag</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Restore a saved blob into <code class="param">state</code>, but only when it is this store's own current layout. </p>
+<p>Checks the size and then the tag byte. Nothing is written into <code class="param">state</code> unless both match, so the defaults the caller applied before calling survive a rejected blob.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>The persist slot the face handed the store. </td></tr>
+    <tr><td class="paramname">state</td><td>The struct to fill. Its first field must be the uint8_t tag. </td></tr>
+    <tr><td class="paramname">size</td><td>sizeof that struct. </td></tr>
+    <tr><td class="paramname">tag</td><td>The store's STORE_TAG_* value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether a saved blob was restored. </dd></dl>
+
+</div>
+</div>
+<a id="ga814b2c13673684e3684ff4ed7beec6eb" name="ga814b2c13673684e3684ff4ed7beec6eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga814b2c13673684e3684ff4ed7beec6eb">&#9670;&#160;</a></span>store_save()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool store_save </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>state</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>tag</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Save a store's blob with its tag stamped in, so the next restore can recognise it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>The persist slot the face handed the store. </td></tr>
+    <tr><td class="paramname">state</td><td>The struct to write. Its first field must be the uint8_t tag. </td></tr>
+    <tr><td class="paramname">size</td><td>sizeof that struct. </td></tr>
+    <tr><td class="paramname">tag</td><td>The store's STORE_TAG_* value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the whole blob reached flash. False means the cache did not land, so a caller that tracks a dirty flag can hold it and try again. </dd></dl>
+
+</div>
+</div>
+<a id="ga98c417e24d8488baa2bb33e39155a3e7" name="ga98c417e24d8488baa2bb33e39155a3e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga98c417e24d8488baa2bb33e39155a3e7">&#9670;&#160;</a></span>system_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void system_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structSystemConfig.html">SystemConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structSystemSeed.html">SystemSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live / vibe policy). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga323c6c5d1989296b9618d94e94f92daa" name="ga323c6c5d1989296b9618d94e94f92daa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga323c6c5d1989296b9618d94e94f92daa">&#9670;&#160;</a></span>system_store_next_alarm()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool system_store_next_alarm </td>
+          <td>(</td>
+          <td class="paramtype">time_t *</td>          <td class="paramname"><span class="paramname"><em>out</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>When the wearer's next enabled alarm fires. </p>
+<p>Read through to the alarm service on every call, since there is nothing to subscribe to. A platform without the alarm API always reads as no alarm.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">out</td><td>Set to the alarm's UTC time, or 0 when there is none. Never NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when an enabled alarm is scheduled. </dd></dl>
+
+</div>
+</div>
+<a id="ga000282fef3aa31a69a8038abb49fa576" name="ga000282fef3aa31a69a8038abb49fa576"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga000282fef3aa31a69a8038abb49fa576">&#9670;&#160;</a></span>time_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void time_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structTimeConfig.html">TimeConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const struct tm *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL to start from the current time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live / cadence). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional time to pin (dev/screenshots), or NULL for the current time. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga9c2eacc43d552852d63185bd4ca16379" name="ga9c2eacc43d552852d63185bd4ca16379"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9c2eacc43d552852d63185bd4ca16379">&#9670;&#160;</a></span>time_store_reconfigure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void time_store_reconfigure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structTimeConfig.html">TimeConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga49a92d34f22c2bb81f54084b02215709" name="ga49a92d34f22c2bb81f54084b02215709"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga49a92d34f22c2bb81f54084b02215709">&#9670;&#160;</a></span>weather_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void weather_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structWeatherConfig.html">WeatherConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules (enabled / live / poll interval). </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga2af1e0b42fd91db04b7bf0e358f80a85" name="ga2af1e0b42fd91db04b7bf0e358f80a85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2af1e0b42fd91db04b7bf0e358f80a85">&#9670;&#160;</a></span>weather_store_reconfigure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void weather_store_reconfigure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structWeatherConfig.html">WeatherConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

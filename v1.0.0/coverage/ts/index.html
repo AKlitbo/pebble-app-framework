@@ -1,0 +1,422 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for All files</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+<script src="../../theme.js"></script>
+<script src="../../versions.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="../../site-bar.css">
+<link rel="stylesheet" href="../../coverage.css">
+</head>
+    
+<body>
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" aria-current="page" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1>All files</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">64.94% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>1354/2085</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">66.29% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>883/1332</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">64.44% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>232/360</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">64.71% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>1291/1995</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line medium'></div>
+    <div class="pad1">
+<table class="coverage-summary">
+<thead>
+<tr>
+   <th data-col="file" data-fmt="html" data-html="true" class="file">File</th>
+   <th data-col="pic" data-type="number" data-fmt="html" data-html="true" class="pic"></th>
+   <th data-col="statements" data-type="number" data-fmt="pct" class="pct">Statements</th>
+   <th data-col="statements_raw" data-type="number" data-fmt="html" class="abs"></th>
+   <th data-col="branches" data-type="number" data-fmt="pct" class="pct">Branches</th>
+   <th data-col="branches_raw" data-type="number" data-fmt="html" class="abs"></th>
+   <th data-col="functions" data-type="number" data-fmt="pct" class="pct">Functions</th>
+   <th data-col="functions_raw" data-type="number" data-fmt="html" class="abs"></th>
+   <th data-col="lines" data-type="number" data-fmt="pct" class="pct">Lines</th>
+   <th data-col="lines_raw" data-type="number" data-fmt="html" class="abs"></th>
+</tr>
+</thead>
+<tbody><tr>
+	<td class="file low" data-value="testing"><a href="testing/index.html">testing</a></td>
+	<td data-value="0" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 0%"></div><div class="cover-empty" style="width: 100%"></div></div>
+	</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="4" class="abs low">0/4</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="2" class="abs low">0/2</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="4" class="abs low">0/4</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="3" class="abs low">0/3</td>
+	</tr>
+
+<tr>
+	<td class="file medium" data-value="tools"><a href="tools/index.html">tools</a></td>
+	<td data-value="68.18" class="pic medium">
+	<div class="chart"><div class="cover-fill" style="width: 68%"></div><div class="cover-empty" style="width: 32%"></div></div>
+	</td>
+	<td data-value="68.18" class="pct medium">68.18%</td>
+	<td data-value="88" class="abs medium">60/88</td>
+	<td data-value="30.76" class="pct low">30.76%</td>
+	<td data-value="26" class="abs low">8/26</td>
+	<td data-value="53.84" class="pct medium">53.84%</td>
+	<td data-value="13" class="abs medium">7/13</td>
+	<td data-value="68.96" class="pct medium">68.96%</td>
+	<td data-value="87" class="abs medium">60/87</td>
+	</tr>
+
+<tr>
+	<td class="file medium" data-value="tools/clay-components"><a href="tools/clay-components/index.html">tools/clay-components</a></td>
+	<td data-value="78.4" class="pic medium">
+	<div class="chart"><div class="cover-fill" style="width: 78%"></div><div class="cover-empty" style="width: 22%"></div></div>
+	</td>
+	<td data-value="78.4" class="pct medium">78.4%</td>
+	<td data-value="88" class="abs medium">69/88</td>
+	<td data-value="60.71" class="pct medium">60.71%</td>
+	<td data-value="28" class="abs medium">17/28</td>
+	<td data-value="86.66" class="pct high">86.66%</td>
+	<td data-value="30" class="abs high">26/30</td>
+	<td data-value="76.54" class="pct medium">76.54%</td>
+	<td data-value="81" class="abs medium">62/81</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="tools/dev"><a href="tools/dev/index.html">tools/dev</a></td>
+	<td data-value="0" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 0%"></div><div class="cover-empty" style="width: 100%"></div></div>
+	</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="98" class="abs low">0/98</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="44" class="abs low">0/44</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="20" class="abs low">0/20</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="90" class="abs low">0/90</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="tools/frame"><a href="tools/frame/index.html">tools/frame</a></td>
+	<td data-value="36.18" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 36%"></div><div class="cover-empty" style="width: 64%"></div></div>
+	</td>
+	<td data-value="36.18" class="pct low">36.18%</td>
+	<td data-value="152" class="abs low">55/152</td>
+	<td data-value="28.57" class="pct low">28.57%</td>
+	<td data-value="77" class="abs low">22/77</td>
+	<td data-value="22.72" class="pct low">22.72%</td>
+	<td data-value="22" class="abs low">5/22</td>
+	<td data-value="36.05" class="pct low">36.05%</td>
+	<td data-value="147" class="abs low">53/147</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="tools/icons"><a href="tools/icons/index.html">tools/icons</a></td>
+	<td data-value="46.87" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 46%"></div><div class="cover-empty" style="width: 54%"></div></div>
+	</td>
+	<td data-value="46.87" class="pct low">46.87%</td>
+	<td data-value="128" class="abs low">60/128</td>
+	<td data-value="44.61" class="pct low">44.61%</td>
+	<td data-value="65" class="abs low">29/65</td>
+	<td data-value="60" class="pct medium">60%</td>
+	<td data-value="20" class="abs medium">12/20</td>
+	<td data-value="44.73" class="pct low">44.73%</td>
+	<td data-value="114" class="abs low">51/114</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="tools/manifest"><a href="tools/manifest/index.html">tools/manifest</a></td>
+	<td data-value="41.86" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 41%"></div><div class="cover-empty" style="width: 59%"></div></div>
+	</td>
+	<td data-value="41.86" class="pct low">41.86%</td>
+	<td data-value="43" class="abs low">18/43</td>
+	<td data-value="50" class="pct medium">50%</td>
+	<td data-value="20" class="abs medium">10/20</td>
+	<td data-value="57.14" class="pct medium">57.14%</td>
+	<td data-value="7" class="abs medium">4/7</td>
+	<td data-value="40.47" class="pct low">40.47%</td>
+	<td data-value="42" class="abs low">17/42</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="tools/pkjs"><a href="tools/pkjs/index.html">tools/pkjs</a></td>
+	<td data-value="31.48" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 31%"></div><div class="cover-empty" style="width: 69%"></div></div>
+	</td>
+	<td data-value="31.48" class="pct low">31.48%</td>
+	<td data-value="54" class="abs low">17/54</td>
+	<td data-value="36.84" class="pct low">36.84%</td>
+	<td data-value="19" class="abs low">7/19</td>
+	<td data-value="22.22" class="pct low">22.22%</td>
+	<td data-value="9" class="abs low">2/9</td>
+	<td data-value="31.48" class="pct low">31.48%</td>
+	<td data-value="54" class="abs low">17/54</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="tools/thumbnails"><a href="tools/thumbnails/index.html">tools/thumbnails</a></td>
+	<td data-value="48.48" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 48%"></div><div class="cover-empty" style="width: 52%"></div></div>
+	</td>
+	<td data-value="48.48" class="pct low">48.48%</td>
+	<td data-value="66" class="abs low">32/66</td>
+	<td data-value="45" class="pct low">45%</td>
+	<td data-value="20" class="abs low">9/20</td>
+	<td data-value="61.11" class="pct medium">61.11%</td>
+	<td data-value="18" class="abs medium">11/18</td>
+	<td data-value="48.48" class="pct low">48.48%</td>
+	<td data-value="66" class="abs low">32/66</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/calendar"><a href="ts/calendar/index.html">ts/calendar</a></td>
+	<td data-value="95.65" class="pic high">
+	<div class="chart"><div class="cover-fill" style="width: 95%"></div><div class="cover-empty" style="width: 5%"></div></div>
+	</td>
+	<td data-value="95.65" class="pct high">95.65%</td>
+	<td data-value="69" class="abs high">66/69</td>
+	<td data-value="86.66" class="pct high">86.66%</td>
+	<td data-value="30" class="abs high">26/30</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="13" class="abs high">13/13</td>
+	<td data-value="95.23" class="pct high">95.23%</td>
+	<td data-value="63" class="abs high">60/63</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/clay"><a href="ts/clay/index.html">ts/clay</a></td>
+	<td data-value="89.62" class="pic high">
+	<div class="chart"><div class="cover-fill" style="width: 89%"></div><div class="cover-empty" style="width: 11%"></div></div>
+	</td>
+	<td data-value="89.62" class="pct high">89.62%</td>
+	<td data-value="106" class="abs high">95/106</td>
+	<td data-value="74.28" class="pct medium">74.28%</td>
+	<td data-value="70" class="abs medium">52/70</td>
+	<td data-value="94.44" class="pct high">94.44%</td>
+	<td data-value="18" class="abs high">17/18</td>
+	<td data-value="89.42" class="pct high">89.42%</td>
+	<td data-value="104" class="abs high">93/104</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="ts/clay/builder/ts"><a href="ts/clay/builder/ts/index.html">ts/clay/builder/ts</a></td>
+	<td data-value="0" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 0%"></div><div class="cover-empty" style="width: 100%"></div></div>
+	</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="61" class="abs low">0/61</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="33" class="abs low">0/33</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="10" class="abs low">0/10</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="61" class="abs low">0/61</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/clay/builder/ts/shared"><a href="ts/clay/builder/ts/shared/index.html">ts/clay/builder/ts/shared</a></td>
+	<td data-value="100" class="pic high">
+	<div class="chart"><div class="cover-fill cover-full" style="width: 100%"></div><div class="cover-empty" style="width: 0%"></div></div>
+	</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="50" class="abs high">50/50</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="13" class="abs high">13/13</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="8" class="abs high">8/8</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="50" class="abs high">50/50</td>
+	</tr>
+
+<tr>
+	<td class="file low" data-value="ts/clay/builder/ts/testing"><a href="ts/clay/builder/ts/testing/index.html">ts/clay/builder/ts/testing</a></td>
+	<td data-value="0" class="pic low">
+	<div class="chart"><div class="cover-fill" style="width: 0%"></div><div class="cover-empty" style="width: 100%"></div></div>
+	</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="8" class="abs low">0/8</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="2" class="abs low">0/2</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="1" class="abs low">0/1</td>
+	<td data-value="0" class="pct low">0%</td>
+	<td data-value="8" class="abs low">0/8</td>
+	</tr>
+
+<tr>
+	<td class="file medium" data-value="ts/pkjs"><a href="ts/pkjs/index.html">ts/pkjs</a></td>
+	<td data-value="55.11" class="pic medium">
+	<div class="chart"><div class="cover-fill" style="width: 55%"></div><div class="cover-empty" style="width: 45%"></div></div>
+	</td>
+	<td data-value="55.11" class="pct medium">55.11%</td>
+	<td data-value="508" class="abs medium">280/508</td>
+	<td data-value="58.04" class="pct medium">58.04%</td>
+	<td data-value="379" class="abs medium">220/379</td>
+	<td data-value="59.79" class="pct medium">59.79%</td>
+	<td data-value="97" class="abs medium">58/97</td>
+	<td data-value="54.73" class="pct medium">54.73%</td>
+	<td data-value="486" class="abs medium">266/486</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/stock"><a href="ts/stock/index.html">ts/stock</a></td>
+	<td data-value="98.9" class="pic high">
+	<div class="chart"><div class="cover-fill" style="width: 98%"></div><div class="cover-empty" style="width: 2%"></div></div>
+	</td>
+	<td data-value="98.9" class="pct high">98.9%</td>
+	<td data-value="91" class="abs high">90/91</td>
+	<td data-value="95.55" class="pct high">95.55%</td>
+	<td data-value="90" class="abs high">86/90</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="16" class="abs high">16/16</td>
+	<td data-value="98.87" class="pct high">98.87%</td>
+	<td data-value="89" class="abs high">88/89</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/stock/providers"><a href="ts/stock/providers/index.html">ts/stock/providers</a></td>
+	<td data-value="96.8" class="pic high">
+	<div class="chart"><div class="cover-fill" style="width: 96%"></div><div class="cover-empty" style="width: 4%"></div></div>
+	</td>
+	<td data-value="96.8" class="pct high">96.8%</td>
+	<td data-value="94" class="abs high">91/94</td>
+	<td data-value="90" class="pct high">90%</td>
+	<td data-value="90" class="abs high">81/90</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="8" class="abs high">8/8</td>
+	<td data-value="96.8" class="pct high">96.8%</td>
+	<td data-value="94" class="abs high">91/94</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/weather"><a href="ts/weather/index.html">ts/weather</a></td>
+	<td data-value="99.41" class="pic high">
+	<div class="chart"><div class="cover-fill" style="width: 99%"></div><div class="cover-empty" style="width: 1%"></div></div>
+	</td>
+	<td data-value="99.41" class="pct high">99.41%</td>
+	<td data-value="170" class="abs high">169/170</td>
+	<td data-value="97.74" class="pct high">97.74%</td>
+	<td data-value="133" class="abs high">130/133</td>
+	<td data-value="100" class="pct high">100%</td>
+	<td data-value="19" class="abs high">19/19</td>
+	<td data-value="99.35" class="pct high">99.35%</td>
+	<td data-value="156" class="abs high">155/156</td>
+	</tr>
+
+<tr>
+	<td class="file high" data-value="ts/weather/providers"><a href="ts/weather/providers/index.html">ts/weather/providers</a></td>
+	<td data-value="97.58" class="pic high">
+	<div class="chart"><div class="cover-fill" style="width: 97%"></div><div class="cover-empty" style="width: 3%"></div></div>
+	</td>
+	<td data-value="97.58" class="pct high">97.58%</td>
+	<td data-value="207" class="abs high">202/207</td>
+	<td data-value="90.57" class="pct high">90.57%</td>
+	<td data-value="191" class="abs high">173/191</td>
+	<td data-value="96.29" class="pct high">96.29%</td>
+	<td data-value="27" class="abs high">26/27</td>
+	<td data-value="98" class="pct high">98%</td>
+	<td data-value="200" class="abs high">196/200</td>
+	</tr>
+
+</tbody>
+</table>
+</div>
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-09-18T15:27:44.608Z
+            </div>
+        <script src="prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="sorter.js"></script>
+        <script src="block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -1,0 +1,336 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/system/settings/settings.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.0.0" selected>v1.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('settings_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">settings.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="settings_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;pebble.h&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span></div>
+<div class="foldopen" id="foldopen00023" data-start="{" data-end="};">
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">   23</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    SETTING_TEMPERATURE_UNIT,</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    SETTING_DATE_FORMAT,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    SETTING_THEME,</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    SETTING_STEPS_MODE,</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    SETTING_DISTANCE_UNIT,</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    SETTING_TIME_FORMAT,</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    SETTING_BLUETOOTH_ICON,</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    SETTING_QUIET_TIME_ICON,</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    SETTING_BLUETOOTH_VIBE_CONNECT,</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    SETTING_BLUETOOTH_VIBE_DISCONNECT,</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    SETTING_HOURLY_VIBE,</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    SETTING_BATTERY_DISPLAY,</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    SETTING_HEADER_FONT,</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    SETTING_COUNT</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>} <a class="code hl_enumeration" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a>;</div>
+</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span></div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="};">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338">   44</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">   46</a></span>    <a class="code hl_enumvalue" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a>,     </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">   47</a></span>    <a class="code hl_enumvalue" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>,  </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">   48</a></span>    <a class="code hl_enumvalue" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>,  </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3">   49</a></span>    <a class="code hl_enumvalue" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3">SETTING_COLOR</a>     </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>} <a class="code hl_enumeration" href="group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338">SettingType</a>;</div>
+</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span></div>
+<div class="foldopen" id="foldopen00055" data-start="{" data-end="};">
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structSettingField.html">   55</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structSettingField.html#aec798b7f3491ac6acec2d2188063e15b">   57</a></span>    <a class="code hl_enumeration" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a>   <a class="code hl_variable" href="structSettingField.html#aec798b7f3491ac6acec2d2188063e15b">id</a>;               </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structSettingField.html#ac8a166713eef87fb9adb5c8119c0d4dd">   58</a></span>    <span class="keyword">const</span> uint32_t *<a class="code hl_variable" href="structSettingField.html#ac8a166713eef87fb9adb5c8119c0d4dd">message_key</a>;  </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structSettingField.html#ae67eb62444a3ef84ce77260694c533c1">   59</a></span>    <a class="code hl_enumeration" href="group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338">SettingType</a> <a class="code hl_variable" href="structSettingField.html#ae67eb62444a3ef84ce77260694c533c1">type</a>;             </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="structSettingField.html#a1d9df18c4cf838434964e182d565b4d7">   60</a></span>    uint16_t    <a class="code hl_variable" href="structSettingField.html#a1d9df18c4cf838434964e182d565b4d7">offset</a>;           </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structSettingField.html#a3b8afca1c975f184271f81e55763af53">   61</a></span>    uint16_t    <a class="code hl_variable" href="structSettingField.html#a3b8afca1c975f184271f81e55763af53">size</a>;             </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structSettingField.html#a1b26f28a04acef7e3ea2af0b7e1f1707">   62</a></span>    uint8_t     <a class="code hl_variable" href="structSettingField.html#a1b26f28a04acef7e3ea2af0b7e1f1707">enum_count</a>;       </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="structSettingField.html#ab9dc0056bfc6811d5be0dd8600042c14">   63</a></span>    uint32_t    <a class="code hl_variable" href="structSettingField.html#ab9dc0056bfc6811d5be0dd8600042c14">default_num</a>;      </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structSettingField.html#a3a2055d62a14725d4f8b08a50d6546d1">   64</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="structSettingField.html#a3a2055d62a14725d4f8b08a50d6546d1">default_str</a>;      </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="structSettingField.html#ab9b0ae808d778bce54ba249994d87728">   65</a></span>    <span class="keywordtype">bool</span>        <a class="code hl_variable" href="structSettingField.html#ab9b0ae808d778bce54ba249994d87728">affects_layout</a>;   </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="structSettingField.html#a5b5aa3e72da7efea998a16f6c833e4e3">   66</a></span>    <span class="keywordtype">bool</span>        <a class="code hl_variable" href="structSettingField.html#a5b5aa3e72da7efea998a16f6c833e4e3">affects_weather</a>;  </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>} <a class="code hl_struct" href="structSettingField.html">SettingField</a>;</div>
+</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span></div>
+<div class="foldopen" id="foldopen00085" data-start="{" data-end="};">
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structSettingsSchema.html">   85</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code hl_struct" href="structSettingsSchema.html">SettingsSchema</a></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>{</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a8ebbf487f15d86af43b9aea6d0316c07">   87</a></span>    uint32_t <a class="code hl_variable" href="structSettingsSchema.html#a8ebbf487f15d86af43b9aea6d0316c07">key</a>;                     </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a1ba82ee7252bbf6eac986e2e8cfcc10d">   88</a></span>    uint8_t <a class="code hl_variable" href="structSettingsSchema.html#a1ba82ee7252bbf6eac986e2e8cfcc10d">version</a>;                  </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a423877692a5620c67cc25c955455a635">   89</a></span>    uint16_t <a class="code hl_variable" href="structSettingsSchema.html#a423877692a5620c67cc25c955455a635">min_versioned_size</a>;      </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b">   90</a></span>    <span class="keywordtype">void</span> *<a class="code hl_variable" href="structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b">blob</a>;                       </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb">   91</a></span>    uint16_t <a class="code hl_variable" href="structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb">blob_size</a>;               </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a0c8a65bed4b4810a0d8b5aa38b7ea2ed">   92</a></span>    <span class="keyword">const</span> <a class="code hl_struct" href="structSettingField.html">SettingField</a> *<a class="code hl_variable" href="structSettingsSchema.html#a0c8a65bed4b4810a0d8b5aa38b7ea2ed">fields</a>;       </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a06d990933c3f595e205f7cca8a63a5eb">   93</a></span>    uint8_t <a class="code hl_variable" href="structSettingsSchema.html#a06d990933c3f595e205f7cca8a63a5eb">field_count</a>;              </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a98dd2666626795edfc3593fd9880b495">   94</a></span>    bool (*<a class="code hl_variable" href="structSettingsSchema.html#a98dd2666626795edfc3593fd9880b495">migrate</a>)(<span class="keywordtype">int</span> stored_size); </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="structSettingsSchema.html#a0ca782030ce421247e781ebb459f438e">   95</a></span>    <span class="keyword">const</span> <span class="keyword">struct </span><a class="code hl_struct" href="structSettingsSchema.html">SettingsSchema</a> *<a class="code hl_variable" href="structSettingsSchema.html#a0ca782030ce421247e781ebb459f438e">companion</a>; </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="group__lib__settings.html#ga4c71229864f5dc765a8b70c2c971fb99">   96</a></span>} <a class="code hl_struct" href="structSettingsSchema.html">SettingsSchema</a>;</div>
+</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span></div>
+<div class="foldopen" id="foldopen00101" data-start="{" data-end="};">
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structSettingsInbound.html">  101</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>{</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="structSettingsInbound.html#afe10d6eafb1c7b87bbf92d71cd16618f">  103</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structSettingsInbound.html#afe10d6eafb1c7b87bbf92d71cd16618f">changed</a>;         </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="structSettingsInbound.html#a0191358313d7d00799bd893bc58e491f">  104</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structSettingsInbound.html#a0191358313d7d00799bd893bc58e491f">layout_changed</a>;  </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="structSettingsInbound.html#a843cd791d2de3b7dc02479ba114cf969">  105</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structSettingsInbound.html#a843cd791d2de3b7dc02479ba114cf969">weather_changed</a>; </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>} <a class="code hl_struct" href="structSettingsInbound.html">SettingsInbound</a>;</div>
+</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings_init</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structSettingsSchema.html">SettingsSchema</a> *schema);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__settings.html#ga40b5dc5d02dfa2e8a630782dc5be7263">settings_was_fresh</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span></div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__settings.html#gab9d20e3758e874e18f045827a5cd29b3">settings_save</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>uint8_t <a class="code hl_function" href="group__lib__settings.html#ga3751b197b3c6a12637ebdf7ebc0ea997">settings_u8</a>(<a class="code hl_enumeration" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> <span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span></div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_function" href="group__lib__settings.html#gab048a393e0f36aa1df969db0a34db046">settings_str</a>(<a class="code hl_enumeration" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> <span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__settings.html#gaca6beaa8ac8e3de5499b406ebab187af">settings_set_u8</a>(<a class="code hl_enumeration" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> <span class="keywordtype">id</span>, uint8_t value);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span></div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>uint8_t <a class="code hl_function" href="group__lib__settings.html#ga7f6e82a36168e1d570748a8c18d0a30b">settings_enum_count</a>(<a class="code hl_enumeration" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> <span class="keywordtype">id</span>);</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__settings.html#ga7ff125b1b36f670963a5dc666c513834">settings_serialize</a>(DictionaryIterator *iter);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><a class="code hl_struct" href="structSettingsInbound.html">SettingsInbound</a> <a class="code hl_function" href="group__lib__settings.html#ga226c66180fb376a5888b279eca034417">settings_apply_inbox</a>(DictionaryIterator *iter);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span></div>
+<div class="ttc" id="agroup__lib__settings_html_ga226c66180fb376a5888b279eca034417"><div class="ttname"><a href="group__lib__settings.html#ga226c66180fb376a5888b279eca034417">settings_apply_inbox</a></div><div class="ttdeci">SettingsInbound settings_apply_inbox(DictionaryIterator *iter)</div><div class="ttdoc">Apply any settings present in an inbox message to the active face.</div><div class="ttdef"><b>Definition</b> settings.c:441</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga3751b197b3c6a12637ebdf7ebc0ea997"><div class="ttname"><a href="group__lib__settings.html#ga3751b197b3c6a12637ebdf7ebc0ea997">settings_u8</a></div><div class="ttdeci">uint8_t settings_u8(SettingId id)</div><div class="ttdoc">Read a known uint8/bool setting by id.</div><div class="ttdef"><b>Definition</b> settings.c:368</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga40b5dc5d02dfa2e8a630782dc5be7263"><div class="ttname"><a href="group__lib__settings.html#ga40b5dc5d02dfa2e8a630782dc5be7263">settings_was_fresh</a></div><div class="ttdeci">bool settings_was_fresh(void)</div><div class="ttdoc">Whether the watch booted with no saved settings (storage wiped by a fresh install or an update)....</div><div class="ttdef"><b>Definition</b> settings.c:355</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga5b6861430c47031f602e2af972953f53"><div class="ttname"><a href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a></div><div class="ttdeci">SettingId</div><div class="ttdoc">Identity of a known (shared) setting, used for typed reads and indexing.</div><div class="ttdef"><b>Definition</b> settings.h:24</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga7f6e82a36168e1d570748a8c18d0a30b"><div class="ttname"><a href="group__lib__settings.html#ga7f6e82a36168e1d570748a8c18d0a30b">settings_enum_count</a></div><div class="ttdeci">uint8_t settings_enum_count(SettingId id)</div><div class="ttdoc">How many values an enum setting allows (its sanitize ceiling).</div><div class="ttdef"><b>Definition</b> settings.c:389</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga7ff125b1b36f670963a5dc666c513834"><div class="ttname"><a href="group__lib__settings.html#ga7ff125b1b36f670963a5dc666c513834">settings_serialize</a></div><div class="ttdeci">void settings_serialize(DictionaryIterator *iter)</div><div class="ttdoc">Write every field of the active face into an outbox iterator.</div><div class="ttdef"><b>Definition</b> settings.c:395</div></div>
+<div class="ttc" id="agroup__lib__settings_html_ga8dfa1a122b59a38c38cc2824be723338"><div class="ttname"><a href="group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338">SettingType</a></div><div class="ttdeci">SettingType</div><div class="ttdoc">How a setting encodes on the wire and how the sanitize pass clamps it.</div><div class="ttdef"><b>Definition</b> settings.h:45</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gab048a393e0f36aa1df969db0a34db046"><div class="ttname"><a href="group__lib__settings.html#gab048a393e0f36aa1df969db0a34db046">settings_str</a></div><div class="ttdeci">const char * settings_str(SettingId id)</div><div class="ttdoc">Read a known string setting by id.</div><div class="ttdef"><b>Definition</b> settings.c:374</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gab9d20e3758e874e18f045827a5cd29b3"><div class="ttname"><a href="group__lib__settings.html#gab9d20e3758e874e18f045827a5cd29b3">settings_save</a></div><div class="ttdeci">void settings_save(void)</div><div class="ttdoc">Persist the active face&#39;s structs under their keys (the whole chain).</div><div class="ttdef"><b>Definition</b> settings.c:360</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gabf78fb93dcb30f9c8f17cc2eaa9a934e"><div class="ttname"><a href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings_init</a></div><div class="ttdeci">void settings_init(const SettingsSchema *head)</div><div class="ttdoc">Load a face&#39;s settings from a trusted blob, applying defaults first.</div><div class="ttdef"><b>Definition</b> settings.c:340</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gaca6beaa8ac8e3de5499b406ebab187af"><div class="ttname"><a href="group__lib__settings.html#gaca6beaa8ac8e3de5499b406ebab187af">settings_set_u8</a></div><div class="ttdeci">void settings_set_u8(SettingId id, uint8_t value)</div><div class="ttdoc">Write a known uint8/enum setting by id (in-memory only, does not persist).</div><div class="ttdef"><b>Definition</b> settings.c:380</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066"><div class="ttname"><a href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a></div><div class="ttdeci">@ SETTING_ENUM_U8</div><div class="ttdef"><b>Definition</b> settings.h:47</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3"><div class="ttname"><a href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3">SETTING_COLOR</a></div><div class="ttdeci">@ SETTING_COLOR</div><div class="ttdef"><b>Definition</b> settings.h:49</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be"><div class="ttname"><a href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a></div><div class="ttdeci">@ SETTING_BOOL</div><div class="ttdef"><b>Definition</b> settings.h:46</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345"><div class="ttname"><a href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a></div><div class="ttdeci">@ SETTING_CSTRING</div><div class="ttdef"><b>Definition</b> settings.h:48</div></div>
+<div class="ttc" id="astructSettingField_html"><div class="ttname"><a href="structSettingField.html">SettingField</a></div><div class="ttdoc">Blueprint for a single setting.</div><div class="ttdef"><b>Definition</b> settings.h:56</div></div>
+<div class="ttc" id="astructSettingField_html_a1b26f28a04acef7e3ea2af0b7e1f1707"><div class="ttname"><a href="structSettingField.html#a1b26f28a04acef7e3ea2af0b7e1f1707">SettingField::enum_count</a></div><div class="ttdeci">uint8_t enum_count</div><div class="ttdef"><b>Definition</b> settings.h:62</div></div>
+<div class="ttc" id="astructSettingField_html_a1d9df18c4cf838434964e182d565b4d7"><div class="ttname"><a href="structSettingField.html#a1d9df18c4cf838434964e182d565b4d7">SettingField::offset</a></div><div class="ttdeci">uint16_t offset</div><div class="ttdef"><b>Definition</b> settings.h:60</div></div>
+<div class="ttc" id="astructSettingField_html_a3a2055d62a14725d4f8b08a50d6546d1"><div class="ttname"><a href="structSettingField.html#a3a2055d62a14725d4f8b08a50d6546d1">SettingField::default_str</a></div><div class="ttdeci">const char * default_str</div><div class="ttdef"><b>Definition</b> settings.h:64</div></div>
+<div class="ttc" id="astructSettingField_html_a3b8afca1c975f184271f81e55763af53"><div class="ttname"><a href="structSettingField.html#a3b8afca1c975f184271f81e55763af53">SettingField::size</a></div><div class="ttdeci">uint16_t size</div><div class="ttdef"><b>Definition</b> settings.h:61</div></div>
+<div class="ttc" id="astructSettingField_html_a5b5aa3e72da7efea998a16f6c833e4e3"><div class="ttname"><a href="structSettingField.html#a5b5aa3e72da7efea998a16f6c833e4e3">SettingField::affects_weather</a></div><div class="ttdeci">bool affects_weather</div><div class="ttdef"><b>Definition</b> settings.h:66</div></div>
+<div class="ttc" id="astructSettingField_html_ab9b0ae808d778bce54ba249994d87728"><div class="ttname"><a href="structSettingField.html#ab9b0ae808d778bce54ba249994d87728">SettingField::affects_layout</a></div><div class="ttdeci">bool affects_layout</div><div class="ttdef"><b>Definition</b> settings.h:65</div></div>
+<div class="ttc" id="astructSettingField_html_ab9dc0056bfc6811d5be0dd8600042c14"><div class="ttname"><a href="structSettingField.html#ab9dc0056bfc6811d5be0dd8600042c14">SettingField::default_num</a></div><div class="ttdeci">uint32_t default_num</div><div class="ttdef"><b>Definition</b> settings.h:63</div></div>
+<div class="ttc" id="astructSettingField_html_ac8a166713eef87fb9adb5c8119c0d4dd"><div class="ttname"><a href="structSettingField.html#ac8a166713eef87fb9adb5c8119c0d4dd">SettingField::message_key</a></div><div class="ttdeci">const uint32_t * message_key</div><div class="ttdef"><b>Definition</b> settings.h:58</div></div>
+<div class="ttc" id="astructSettingField_html_ae67eb62444a3ef84ce77260694c533c1"><div class="ttname"><a href="structSettingField.html#ae67eb62444a3ef84ce77260694c533c1">SettingField::type</a></div><div class="ttdeci">SettingType type</div><div class="ttdef"><b>Definition</b> settings.h:59</div></div>
+<div class="ttc" id="astructSettingField_html_aec798b7f3491ac6acec2d2188063e15b"><div class="ttname"><a href="structSettingField.html#aec798b7f3491ac6acec2d2188063e15b">SettingField::id</a></div><div class="ttdeci">SettingId id</div><div class="ttdef"><b>Definition</b> settings.h:57</div></div>
+<div class="ttc" id="astructSettingsInbound_html"><div class="ttname"><a href="structSettingsInbound.html">SettingsInbound</a></div><div class="ttdoc">Carries what an inbound settings message changed, so the caller can react.</div><div class="ttdef"><b>Definition</b> settings.h:102</div></div>
+<div class="ttc" id="astructSettingsInbound_html_a0191358313d7d00799bd893bc58e491f"><div class="ttname"><a href="structSettingsInbound.html#a0191358313d7d00799bd893bc58e491f">SettingsInbound::layout_changed</a></div><div class="ttdeci">bool layout_changed</div><div class="ttdef"><b>Definition</b> settings.h:104</div></div>
+<div class="ttc" id="astructSettingsInbound_html_a843cd791d2de3b7dc02479ba114cf969"><div class="ttname"><a href="structSettingsInbound.html#a843cd791d2de3b7dc02479ba114cf969">SettingsInbound::weather_changed</a></div><div class="ttdeci">bool weather_changed</div><div class="ttdef"><b>Definition</b> settings.h:105</div></div>
+<div class="ttc" id="astructSettingsInbound_html_afe10d6eafb1c7b87bbf92d71cd16618f"><div class="ttname"><a href="structSettingsInbound.html#afe10d6eafb1c7b87bbf92d71cd16618f">SettingsInbound::changed</a></div><div class="ttdeci">bool changed</div><div class="ttdef"><b>Definition</b> settings.h:103</div></div>
+<div class="ttc" id="astructSettingsSchema_html"><div class="ttname"><a href="structSettingsSchema.html">SettingsSchema</a></div><div class="ttdoc">A face&#39;s persistence identity.</div><div class="ttdef"><b>Definition</b> settings.h:86</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a06d990933c3f595e205f7cca8a63a5eb"><div class="ttname"><a href="structSettingsSchema.html#a06d990933c3f595e205f7cca8a63a5eb">SettingsSchema::field_count</a></div><div class="ttdeci">uint8_t field_count</div><div class="ttdef"><b>Definition</b> settings.h:93</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a0c8a65bed4b4810a0d8b5aa38b7ea2ed"><div class="ttname"><a href="structSettingsSchema.html#a0c8a65bed4b4810a0d8b5aa38b7ea2ed">SettingsSchema::fields</a></div><div class="ttdeci">const SettingField * fields</div><div class="ttdef"><b>Definition</b> settings.h:92</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a0ca782030ce421247e781ebb459f438e"><div class="ttname"><a href="structSettingsSchema.html#a0ca782030ce421247e781ebb459f438e">SettingsSchema::companion</a></div><div class="ttdeci">const struct SettingsSchema * companion</div><div class="ttdef"><b>Definition</b> settings.h:95</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a1ba82ee7252bbf6eac986e2e8cfcc10d"><div class="ttname"><a href="structSettingsSchema.html#a1ba82ee7252bbf6eac986e2e8cfcc10d">SettingsSchema::version</a></div><div class="ttdeci">uint8_t version</div><div class="ttdef"><b>Definition</b> settings.h:88</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a423877692a5620c67cc25c955455a635"><div class="ttname"><a href="structSettingsSchema.html#a423877692a5620c67cc25c955455a635">SettingsSchema::min_versioned_size</a></div><div class="ttdeci">uint16_t min_versioned_size</div><div class="ttdef"><b>Definition</b> settings.h:89</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a438d6811d84f07c545ee4446c8fa9c5b"><div class="ttname"><a href="structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b">SettingsSchema::blob</a></div><div class="ttdeci">void * blob</div><div class="ttdef"><b>Definition</b> settings.h:90</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a596fbeb3c05f172304792c0479cea8cb"><div class="ttname"><a href="structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb">SettingsSchema::blob_size</a></div><div class="ttdeci">uint16_t blob_size</div><div class="ttdef"><b>Definition</b> settings.h:91</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a8ebbf487f15d86af43b9aea6d0316c07"><div class="ttname"><a href="structSettingsSchema.html#a8ebbf487f15d86af43b9aea6d0316c07">SettingsSchema::key</a></div><div class="ttdeci">uint32_t key</div><div class="ttdef"><b>Definition</b> settings.h:87</div></div>
+<div class="ttc" id="astructSettingsSchema_html_a98dd2666626795edfc3593fd9880b495"><div class="ttname"><a href="structSettingsSchema.html#a98dd2666626795edfc3593fd9880b495">SettingsSchema::migrate</a></div><div class="ttdeci">bool(*) migrate(int stored_size)</div><div class="ttdef"><b>Definition</b> settings.h:94</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>system</b></li><li class="navelem"><b>settings</b></li><li class="navelem"><a href="settings_8h.html">settings.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
