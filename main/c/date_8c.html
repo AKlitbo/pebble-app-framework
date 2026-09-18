@@ -1,0 +1,350 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/core/clock/date.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('date_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">date.c File Reference<div class="ingroups"><a class="el" href="group__lib__core.html">Core Helpers</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Pure calendar math, host-testable off-device.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="date_8h_source.html">clock/date.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a506f07c45946335c5ec3a88e78ca5e78" id="r_a506f07c45946335c5ec3a88e78ca5e78"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a506f07c45946335c5ec3a88e78ca5e78">is_leap</a> (int year)</td></tr>
+<tr class="memdesc:a506f07c45946335c5ec3a88e78ca5e78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a year is a leap year, by the usual rule.  <br /></td></tr>
+<tr class="memitem:a1a6b972504fbe2691560543745c1f5ce" id="r_a1a6b972504fbe2691560543745c1f5ce"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a1a6b972504fbe2691560543745c1f5ce">dec31_wday</a> (int year)</td></tr>
+<tr class="memdesc:a1a6b972504fbe2691560543745c1f5ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The weekday December 31st lands on for a year.  <br /></td></tr>
+<tr class="memitem:ga70f355976c89a7190d80f6d344631710" id="r_ga70f355976c89a7190d80f6d344631710"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga70f355976c89a7190d80f6d344631710">date_iso_weeks_in_year</a> (int year)</td></tr>
+<tr class="memdesc:ga70f355976c89a7190d80f6d344631710"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many ISO 8601 weeks a year holds, either 52 or 53.  <br /></td></tr>
+<tr class="memitem:a2ec80a6baceb057022750ccc09a69ac5" id="r_a2ec80a6baceb057022750ccc09a69ac5"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a2ec80a6baceb057022750ccc09a69ac5">raw_week</a> (int yday, int wday)</td></tr>
+<tr class="memdesc:a2ec80a6baceb057022750ccc09a69ac5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The week number worked out from the date alone, before the year boundary is taken into account.  <br /></td></tr>
+<tr class="memitem:gaee874b4db4f19a63aec92cf2c57defd2" id="r_gaee874b4db4f19a63aec92cf2c57defd2"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaee874b4db4f19a63aec92cf2c57defd2">date_iso_week</a> (int year, int yday, int wday)</td></tr>
+<tr class="memdesc:gaee874b4db4f19a63aec92cf2c57defd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ISO 8601 week number, which always counts weeks from Monday.  <br /></td></tr>
+<tr class="memitem:ga0c190d7c5d5f7d46fc36c3f04bd3e56a" id="r_ga0c190d7c5d5f7d46fc36c3f04bd3e56a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga0c190d7c5d5f7d46fc36c3f04bd3e56a">date_iso_week_year</a> (int year, int yday, int wday)</td></tr>
+<tr class="memdesc:ga0c190d7c5d5f7d46fc36c3f04bd3e56a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ISO 8601 year the week number belongs to, which is not always the calendar year.  <br /></td></tr>
+<tr class="memitem:gadde776e9b470fd4e9df1307415b09851" id="r_gadde776e9b470fd4e9df1307415b09851"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gadde776e9b470fd4e9df1307415b09851">date_day_of_year</a> (int yday)</td></tr>
+<tr class="memdesc:gadde776e9b470fd4e9df1307415b09851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which day of the year it is, counting January 1st as day 1.  <br /></td></tr>
+<tr class="memitem:ga3c68f59a1602b5e27b1a05a0d63b499c" id="r_ga3c68f59a1602b5e27b1a05a0d63b499c"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3c68f59a1602b5e27b1a05a0d63b499c">date_days_left_in_year</a> (int year, int yday)</td></tr>
+<tr class="memdesc:ga3c68f59a1602b5e27b1a05a0d63b499c"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many days are left before the year ends, so December 31st reads 0.  <br /></td></tr>
+<tr class="memitem:gaef88f0efc2274de9f1984658aea37f9b" id="r_gaef88f0efc2274de9f1984658aea37f9b"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaef88f0efc2274de9f1984658aea37f9b">date_days_in_month</a> (int year, int mon0)</td></tr>
+<tr class="memdesc:gaef88f0efc2274de9f1984658aea37f9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many days a month has, with February getting its leap day.  <br /></td></tr>
+<tr class="memitem:ga0b126160626de63678618d54227455ad" id="r_ga0b126160626de63678618d54227455ad"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga0b126160626de63678618d54227455ad">date_first_wday</a> (int wday, int mday)</td></tr>
+<tr class="memdesc:ga0b126160626de63678618d54227455ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">The weekday the 1st of the month lands on, walked back from today's weekday.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Pure calendar math, host-testable off-device. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a1a6b972504fbe2691560543745c1f5ce" name="a1a6b972504fbe2691560543745c1f5ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a6b972504fbe2691560543745c1f5ce">&#9670;&#160;</a></span>dec31_wday()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int dec31_wday </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>year</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The weekday December 31st lands on for a year. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">year</td><td>The full year (2026, not 126). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The weekday, 0 Sunday to 6 Saturday. </dd></dl>
+
+</div>
+</div>
+<a id="a506f07c45946335c5ec3a88e78ca5e78" name="a506f07c45946335c5ec3a88e78ca5e78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a506f07c45946335c5ec3a88e78ca5e78">&#9670;&#160;</a></span>is_leap()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int is_leap </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>year</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a year is a leap year, by the usual rule. </p>
+<p>Every fourth year is one, except a century year, unless it also divides evenly by 400.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">year</td><td>The full year (2026, not 126). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when the year has a leap day, false when it does not. </dd></dl>
+
+</div>
+</div>
+<a id="a2ec80a6baceb057022750ccc09a69ac5" name="a2ec80a6baceb057022750ccc09a69ac5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ec80a6baceb057022750ccc09a69ac5">&#9670;&#160;</a></span>raw_week()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int raw_week </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>yday</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>wday</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The week number worked out from the date alone, before the year boundary is taken into account. </p>
+<p>A number below 1 means the day belongs to last year's final week. A number above the year's own total means it already belongs to next year's week 1. The ISO weekday used here runs Monday as 1 through Sunday as 7.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">yday</td><td>The day of the year counting January 1st as 0 (like tm_yday). </td></tr>
+    <tr><td class="paramname">wday</td><td>The weekday, 0 Sunday to 6 Saturday. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The raw week number, which may fall outside 1 to the year's own week count. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>clock</b></li><li class="navelem"><a href="date_8c.html">date.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

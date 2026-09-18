@@ -1,0 +1,359 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Globals</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('globals_s.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="contents">
+<div class="textblock">Here is a list of all documented functions, variables, defines, enums, and typedefs with links to the documentation:</div><br/>
+<div class="qindex"><a class="qindex" href="globals.html#index_a">A</a><div class="alphasepar"></div><a class="qindex" href="globals_b.html#index_b">B</a><div class="alphasepar"></div><a class="qindex" href="globals_c.html#index_c">C</a><div class="alphasepar"></div><a class="qindex" href="globals_d.html#index_d">D</a><div class="alphasepar"></div><a class="qindex" href="globals_e.html#index_e">E</a><div class="alphasepar"></div><a class="qindex" href="globals_f.html#index_f">F</a><div class="alphasepar"></div><a class="qindex" href="globals_g.html#index_g">G</a><div class="alphasepar"></div><a class="qindex" href="globals_h.html#index_h">H</a><div class="alphasepar"></div><a class="qindex" href="globals_i.html#index_i">I</a><div class="alphasepar"></div><a class="qindex" href="globals_k.html#index_k">K</a><div class="alphasepar"></div><a class="qindex" href="globals_l.html#index_l">L</a><div class="alphasepar"></div><a class="qindex" href="globals_m.html#index_m">M</a><div class="alphasepar"></div><a class="qindex" href="globals_n.html#index_n">N</a><div class="alphasepar"></div><a class="qindex" href="globals_o.html#index_o">O</a><div class="alphasepar"></div><a class="qindex" href="globals_p.html#index_p">P</a><div class="alphasepar"></div><a class="qindex" href="globals_r.html#index_r">R</a><div class="alphasepar"></div><a class="qindex" href="globals_s.html#index_s">S</a><div class="alphasepar"></div><a class="qindex" href="globals_t.html#index_t">T</a><div class="alphasepar"></div><a class="qindex" href="globals_u.html#index_u">U</a><div class="alphasepar"></div><a class="qindex" href="globals_v.html#index_v">V</a><div class="alphasepar"></div><a class="qindex" href="globals_w.html#index_w">W</a><div class="alphasepar"></div><a class="qindex" href="globals_z.html#index_z">Z</a></div>
+
+
+<h3 class="doxsection"><a id="index_s" name="index_s"></a>- s -</h3><ul>
+<li>s_active&#160;:&#160;<a class="el" href="health__store_8c.html#a95c0d4852541c54e2e54f73d03906258">health_store.c</a></li>
+<li>s_apply_theme&#160;:&#160;<a class="el" href="dev__walk_8c.html#a64a674fa95930169baa46bbb3ac437c4">dev_walk.c</a></li>
+<li>s_beats&#160;:&#160;<a class="el" href="time__store_8c.html#a3d9299acd4b3e475b07567a74035c95c">time_store.c</a></li>
+<li>s_beats_timer&#160;:&#160;<a class="el" href="time__store_8c.html#a25cfc5c232d6d20427553ac3cd954060">time_store.c</a></li>
+<li>s_boot_retries&#160;:&#160;<a class="el" href="weather__store_8c.html#a3e8ceb6edd19c82d11e2d15c671924f4">weather_store.c</a></li>
+<li>s_bt_initialized&#160;:&#160;<a class="el" href="system__store_8c.html#a79e1d87e0fc4fcc34ecaab711a8c9b20">system_store.c</a></li>
+<li>s_build&#160;:&#160;<a class="el" href="engine_8c.html#ad322bae72e6bc943d51af5902a99a3ad">engine.c</a></li>
+<li>s_by_id&#160;:&#160;<a class="el" href="settings_8c.html#adcdaae53b13f19b99ab529c1fcf20f70">settings.c</a></li>
+<li>s_cache&#160;:&#160;<a class="el" href="icon__cache_8c.html#a18da54972932ec5215eb68625bc9b2fc">icon_cache.c</a></li>
+<li>s_cache_count&#160;:&#160;<a class="el" href="icon__cache_8c.html#a087e3f140143741a1c109e184bb4f93c">icon_cache.c</a></li>
+<li>s_cached_day&#160;:&#160;<a class="el" href="health__store_8c.html#aded462fa2005d5b78ddcc2ec22a3c224">health_store.c</a></li>
+<li>s_calories&#160;:&#160;<a class="el" href="health__store_8c.html#a1298cf249bbdfafe80e35ecbf562df8f">health_store.c</a></li>
+<li>s_cb&#160;:&#160;<a class="el" href="calendar__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">calendar_store.c</a>, <a class="el" href="health__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">health_store.c</a>, <a class="el" href="location__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">location_store.c</a>, <a class="el" href="stock__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">stock_store.c</a>, <a class="el" href="system__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">system_store.c</a>, <a class="el" href="time__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">time_store.c</a>, <a class="el" href="weather__store_8c.html#a0d75601f9ac1a6725c17065d338a664a">weather_store.c</a></li>
+<li>s_count&#160;:&#160;<a class="el" href="store__cadence_8c.html#a47dc03369e0928c481cda480be840aa6">store_cadence.c</a>, <a class="el" href="engine_8c.html#a7e54b2f45f314ed1fcc886592c28d8ea">engine.c</a></li>
+<li>s_default&#160;:&#160;<a class="el" href="dev__walk_8c.html#a57a5d737644702015a1c500d8107054c">dev_walk.c</a></li>
+<li>s_dirty&#160;:&#160;<a class="el" href="weather__store_8c.html#ae8a3c3beea14ff8ceadf605953c6ee61">weather_store.c</a></li>
+<li>s_entries&#160;:&#160;<a class="el" href="store__cadence_8c.html#a6d951c57f74d4f01024feff104f026a6">store_cadence.c</a></li>
+<li>s_fonts&#160;:&#160;<a class="el" href="fonts_8c.html#ae4b5b3aaed5630b21c309b7ba50e6298">fonts.c</a></li>
+<li>s_handlers&#160;:&#160;<a class="el" href="appmessage_8c.html#a3294e778e6cb9bcda9026e5a45b3dfa3">appmessage.c</a></li>
+<li>s_hour&#160;:&#160;<a class="el" href="dev__walk_8c.html#ab37f9bc781877575967ffb6110c32529">dev_walk.c</a></li>
+<li>s_hr_history&#160;:&#160;<a class="el" href="health__store_8c.html#a0570e28604a87591fea07b1d00bea341">health_store.c</a></li>
+<li>s_last_text&#160;:&#160;<a class="el" href="engine_8c.html#a4d0081c02703d45434f7c88b613044ec">engine.c</a></li>
+<li>s_layers&#160;:&#160;<a class="el" href="engine_8c.html#a909c063122f3aa3d55132a57c933431d">engine.c</a></li>
+<li>s_live&#160;:&#160;<a class="el" href="calendar__store_8c.html#a86591675781beec649ac9e8db3485c4f">calendar_store.c</a>, <a class="el" href="health__store_8c.html#a86591675781beec649ac9e8db3485c4f">health_store.c</a>, <a class="el" href="location__store_8c.html#a86591675781beec649ac9e8db3485c4f">location_store.c</a>, <a class="el" href="stock__store_8c.html#a86591675781beec649ac9e8db3485c4f">stock_store.c</a>, <a class="el" href="system__store_8c.html#a86591675781beec649ac9e8db3485c4f">system_store.c</a>, <a class="el" href="weather__store_8c.html#a86591675781beec649ac9e8db3485c4f">weather_store.c</a></li>
+<li>s_minute&#160;:&#160;<a class="el" href="time__store_8c.html#a8d97f148044f6486b6f7880444989530">time_store.c</a></li>
+<li>s_mode&#160;:&#160;<a class="el" href="dev__walk_8c.html#a0dfed1fc4a58a0b8d59b3c8cfc20b767">dev_walk.c</a></li>
+<li>s_next_poll&#160;:&#160;<a class="el" href="calendar__store_8c.html#a599c81a3107fff4c866f7cc0dfb42e14">calendar_store.c</a>, <a class="el" href="stock__store_8c.html#a599c81a3107fff4c866f7cc0dfb42e14">stock_store.c</a>, <a class="el" href="weather__store_8c.html#a599c81a3107fff4c866f7cc0dfb42e14">weather_store.c</a></li>
+<li>s_outbox&#160;:&#160;<a class="el" href="appmessage_8c.html#a1a96284017193cf901d1b43de9d74204">appmessage.c</a></li>
+<li>s_outbox_size&#160;:&#160;<a class="el" href="appmessage_8c.html#a7c4c02490661b71985034c11410d24fa">appmessage.c</a></li>
+<li>s_owned&#160;:&#160;<a class="el" href="fonts_8c.html#a3d76776bb273826e38fd579317266275">fonts.c</a></li>
+<li>s_owner_by_id&#160;:&#160;<a class="el" href="settings_8c.html#a8e4e35842d12414042a0ffc65b36328e">settings.c</a></li>
+<li>s_persist_key&#160;:&#160;<a class="el" href="calendar__store_8c.html#afc1e32c72630b62007536cb95f77bb07">calendar_store.c</a>, <a class="el" href="health__store_8c.html#afc1e32c72630b62007536cb95f77bb07">health_store.c</a>, <a class="el" href="location__store_8c.html#afc1e32c72630b62007536cb95f77bb07">location_store.c</a>, <a class="el" href="stock__store_8c.html#afc1e32c72630b62007536cb95f77bb07">stock_store.c</a>, <a class="el" href="weather__store_8c.html#afc1e32c72630b62007536cb95f77bb07">weather_store.c</a></li>
+<li>s_poll_min&#160;:&#160;<a class="el" href="calendar__store_8c.html#ad180049e0de115c19b3a8d6027e6e160">calendar_store.c</a>, <a class="el" href="stock__store_8c.html#ad180049e0de115c19b3a8d6027e6e160">stock_store.c</a>, <a class="el" href="weather__store_8c.html#ad180049e0de115c19b3a8d6027e6e160">weather_store.c</a></li>
+<li>s_primary&#160;:&#160;<a class="el" href="settings_8c.html#a103a9efc5cd332137f9d11dca75ae011">settings.c</a></li>
+<li>s_reconnect&#160;:&#160;<a class="el" href="system__store_8c.html#aa5f439ff5804491818cbb8d665f2b0f4">system_store.c</a></li>
+<li>s_retry_timer&#160;:&#160;<a class="el" href="appmessage_8c.html#a1c284c34e48865d6cc11ec3e4f893a1e">appmessage.c</a></li>
+<li>s_seed_alarm&#160;:&#160;<a class="el" href="system__store_8c.html#a6c3d05d77814566ebfe0ec462c67324d">system_store.c</a></li>
+<li>s_settled_hours&#160;:&#160;<a class="el" href="health__store_8c.html#a368b1a1c575f22bb1bcd8da8f13d0523">health_store.c</a></li>
+<li>s_shots&#160;:&#160;<a class="el" href="dev__walk_8c.html#ac25bab8a664832452512cea49fba4bab">dev_walk.c</a></li>
+<li>s_sleep&#160;:&#160;<a class="el" href="health__store_8c.html#a60233dc911b0cddbb4943118bdcd6a49">health_store.c</a></li>
+<li>s_slots&#160;:&#160;<a class="el" href="engine_8c.html#a01fb1f0b7c05dba36e53d2dbb10399a0">engine.c</a></li>
+<li>s_state&#160;:&#160;<a class="el" href="calendar__store_8c.html#ab23985ad11a6603fcf21648b82cb8a25">calendar_store.c</a>, <a class="el" href="health__store_8c.html#abf510f50a4ba9d557e025c283f158378">health_store.c</a>, <a class="el" href="location__store_8c.html#a3af1e441f6e0b5610fe289862db9f45b">location_store.c</a>, <a class="el" href="stock__store_8c.html#accbaec961a40c7b63a084fc29cfc2cce">stock_store.c</a>, <a class="el" href="system__store_8c.html#acd337eadf05b132c8f14a9f9887137a0">system_store.c</a>, <a class="el" href="weather__store_8c.html#a34f3119af3501c2700a27a542b72172e">weather_store.c</a></li>
+<li>s_step_history&#160;:&#160;<a class="el" href="health__store_8c.html#a020edc6544e87babbf91c8698f05fe05">health_store.c</a></li>
+<li>s_steps_pending&#160;:&#160;<a class="el" href="health__store_8c.html#ae18e4c4a49e72e6e74a3ca38a0c4f0a6">health_store.c</a></li>
+<li>s_text_layers&#160;:&#160;<a class="el" href="engine_8c.html#ab6aacb721186c806b81243810c84db56">engine.c</a></li>
+<li>s_theme&#160;:&#160;<a class="el" href="dev__walk_8c.html#afcaa9a965b7eaadd0552070c0b7eeb82">dev_walk.c</a></li>
+<li>s_timer&#160;:&#160;<a class="el" href="calendar__store_8c.html#aa2450b83d4ef266d458eca3c73715aa2">calendar_store.c</a>, <a class="el" href="stock__store_8c.html#aa2450b83d4ef266d458eca3c73715aa2">stock_store.c</a>, <a class="el" href="weather__store_8c.html#aa2450b83d4ef266d458eca3c73715aa2">weather_store.c</a></li>
+<li>s_tm&#160;:&#160;<a class="el" href="time__store_8c.html#ac91dab61b991b18d0b6f0632cb71a458">time_store.c</a></li>
+<li>s_use_clock&#160;:&#160;<a class="el" href="icon__cache_8c.html#a8525e491c3ae583afac48b8313e3fc40">icon_cache.c</a></li>
+<li>s_vibe&#160;:&#160;<a class="el" href="system__store_8c.html#a31b5ed7b8b45ba3b1d0ae0689ab31747">system_store.c</a></li>
+<li>s_was_fresh&#160;:&#160;<a class="el" href="settings_8c.html#aa467d3462915f91a8ef7e224cba65b46">settings.c</a></li>
+<li>s_window&#160;:&#160;<a class="el" href="engine_8c.html#a3ddf81e700000ec6ae43c39a1be82d1c">engine.c</a></li>
+<li>same_point()&#160;:&#160;<a class="el" href="wind__dir_8c.html#abc8fa95a19e620685d08ceb068af93da">wind_dir.c</a></li>
+<li>sanitize()&#160;:&#160;<a class="el" href="settings_8c.html#a65b158704b02954e590b5e35d81a1557">settings.c</a></li>
+<li>sanitize_cstring()&#160;:&#160;<a class="el" href="settings_8c.html#ae0e0f648471d2d0721f39364d0fd7311">settings.c</a></li>
+<li>save_schema()&#160;:&#160;<a class="el" href="settings_8c.html#a2cf5365c5efd32d58fee43dc10e0cb09">settings.c</a></li>
+<li>scratch_take()&#160;:&#160;<a class="el" href="health__store_8c.html#ae01790c8e757012f0597ca4d625fb387">health_store.c</a></li>
+<li>SECONDS_PER_MINUTE&#160;:&#160;<a class="el" href="timeband_8c.html#ae5e089b553f791f79d02046ff63f3cdb">timeband.c</a></li>
+<li>SECONDS_PER_STEP_HOUR&#160;:&#160;<a class="el" href="step__hours_8c.html#af8de678038c3651c67cfd413b51b1d4e">step_hours.c</a></li>
+<li>SECS_PER_DAY&#160;:&#160;<a class="el" href="beats_8h.html#ae6bc10904b2b09a717f1fb81cce017de">beats.h</a></li>
+<li>SECS_PER_HOUR&#160;:&#160;<a class="el" href="beats_8h.html#a11528d10d5838afd2d0ec2f5841167cf">beats.h</a></li>
+<li>SECS_PER_MIN&#160;:&#160;<a class="el" href="beats_8h.html#a5e7d1008e5b26253223a67794b77a806">beats.h</a></li>
+<li>segment_width()&#160;:&#160;<a class="el" href="group__lib__core.html#gac01ee128d72ea0af440967d27c4de224">scale.c</a>, <a class="el" href="group__lib__core.html#gac01ee128d72ea0af440967d27c4de224">scale.h</a></li>
+<li>segments_filled()&#160;:&#160;<a class="el" href="group__lib__core.html#ga5e3c99e7f2fade51632dd8aa3f3988f0">scale.c</a>, <a class="el" href="group__lib__core.html#ga5e3c99e7f2fade51632dd8aa3f3988f0">scale.h</a></li>
+<li>send_job()&#160;:&#160;<a class="el" href="appmessage_8c.html#a8227736a721829bfecf2b2649e296d98">appmessage.c</a></li>
+<li>send_settings()&#160;:&#160;<a class="el" href="appmessage_8c.html#a7537892c98316590da6b643bbbba37cc">appmessage.c</a></li>
+<li>series_max_u16()&#160;:&#160;<a class="el" href="group__lib__core.html#ga8cc817ecf16f05e721472b4f6714943a">series.c</a>, <a class="el" href="group__lib__core.html#ga8cc817ecf16f05e721472b4f6714943a">series.h</a></li>
+<li>series_range()&#160;:&#160;<a class="el" href="group__lib__core.html#ga4260de92aa2412a987a0d0ee799d5406">series.c</a>, <a class="el" href="group__lib__core.html#ga4260de92aa2412a987a0d0ee799d5406">series.h</a></li>
+<li>set()&#160;:&#160;<a class="el" href="location__store_8c.html#ae105e0a25cad9f394204c3eebad894f5">location_store.c</a>, <a class="el" href="time__store_8c.html#af5ca081d291a55bf66553c888a21abf4">time_store.c</a></li>
+<li>set_battery()&#160;:&#160;<a class="el" href="system__store_8c.html#a15cd2f3047048f896198aad66974e8b5">system_store.c</a></li>
+<li>set_bluetooth()&#160;:&#160;<a class="el" href="system__store_8c.html#a0e2565513a6aae0c0c79e2b69154d35c">system_store.c</a></li>
+<li>set_current()&#160;:&#160;<a class="el" href="weather__store_8c.html#a22aef660d42e4f3460fed6caa17becde">weather_store.c</a></li>
+<li>set_version()&#160;:&#160;<a class="el" href="settings_8c.html#ad62598c57dd65d4124722127957f24cd">settings.c</a></li>
+<li>SETTING_BATTERY_DISPLAY&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">settings.h</a></li>
+<li>SETTING_BLUETOOTH_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">settings.h</a></li>
+<li>SETTING_BLUETOOTH_VIBE_CONNECT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548">settings.h</a></li>
+<li>SETTING_BLUETOOTH_VIBE_DISCONNECT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0">settings.h</a></li>
+<li>SETTING_BOOL&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">settings.h</a></li>
+<li>SETTING_COLOR&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3">settings.h</a></li>
+<li>SETTING_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">settings.h</a></li>
+<li>SETTING_CSTRING&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">settings.h</a></li>
+<li>SETTING_DATE_FORMAT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">settings.h</a></li>
+<li>SETTING_DISTANCE_UNIT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">settings.h</a></li>
+<li>SETTING_ENUM_U8&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">settings.h</a></li>
+<li>SETTING_HEADER_FONT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">settings.h</a></li>
+<li>SETTING_HOURLY_VIBE&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895">settings.h</a></li>
+<li>SETTING_QUIET_TIME_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd">settings.h</a></li>
+<li>SETTING_STEPS_MODE&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4">settings.h</a></li>
+<li>SETTING_TEMPERATURE_UNIT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188">settings.h</a></li>
+<li>SETTING_THEME&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2">settings.h</a></li>
+<li>SETTING_TIME_FORMAT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf">settings.h</a></li>
+<li>SettingId&#160;:&#160;<a class="el" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">settings.h</a></li>
+<li>settings_apply_inbox()&#160;:&#160;<a class="el" href="group__lib__settings.html#ga226c66180fb376a5888b279eca034417">settings.c</a>, <a class="el" href="group__lib__settings.html#ga226c66180fb376a5888b279eca034417">settings.h</a></li>
+<li>settings_enum_count()&#160;:&#160;<a class="el" href="group__lib__settings.html#ga7f6e82a36168e1d570748a8c18d0a30b">settings.c</a>, <a class="el" href="group__lib__settings.html#ga7f6e82a36168e1d570748a8c18d0a30b">settings.h</a></li>
+<li>settings_init()&#160;:&#160;<a class="el" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings.c</a>, <a class="el" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings.h</a></li>
+<li>settings_reply_size()&#160;:&#160;<a class="el" href="appmessage_8c.html#abb7f7e97f2dd93df0449b3f9bdc9c96a">appmessage.c</a></li>
+<li>settings_save()&#160;:&#160;<a class="el" href="group__lib__settings.html#gab9d20e3758e874e18f045827a5cd29b3">settings.c</a>, <a class="el" href="group__lib__settings.html#gab9d20e3758e874e18f045827a5cd29b3">settings.h</a></li>
+<li>settings_serialize()&#160;:&#160;<a class="el" href="group__lib__settings.html#ga8a25e0c1aea6e4cb033cefa62a590458">settings.c</a>, <a class="el" href="group__lib__settings.html#ga8a25e0c1aea6e4cb033cefa62a590458">settings.h</a></li>
+<li>settings_serialized_size()&#160;:&#160;<a class="el" href="group__lib__settings.html#gaa8498d8f013ff55cd4bf1308ddc8f12b">settings.c</a>, <a class="el" href="group__lib__settings.html#gaa8498d8f013ff55cd4bf1308ddc8f12b">settings.h</a></li>
+<li>settings_set_u8()&#160;:&#160;<a class="el" href="group__lib__settings.html#gaca6beaa8ac8e3de5499b406ebab187af">settings.c</a>, <a class="el" href="group__lib__settings.html#gaca6beaa8ac8e3de5499b406ebab187af">settings.h</a></li>
+<li>settings_str()&#160;:&#160;<a class="el" href="group__lib__settings.html#gab048a393e0f36aa1df969db0a34db046">settings.c</a>, <a class="el" href="group__lib__settings.html#gab048a393e0f36aa1df969db0a34db046">settings.h</a></li>
+<li>settings_u8()&#160;:&#160;<a class="el" href="group__lib__settings.html#ga3751b197b3c6a12637ebdf7ebc0ea997">settings.c</a>, <a class="el" href="group__lib__settings.html#ga3751b197b3c6a12637ebdf7ebc0ea997">settings.h</a></li>
+<li>settings_was_fresh()&#160;:&#160;<a class="el" href="group__lib__settings.html#ga40b5dc5d02dfa2e8a630782dc5be7263">settings.c</a>, <a class="el" href="group__lib__settings.html#ga40b5dc5d02dfa2e8a630782dc5be7263">settings.h</a></li>
+<li>SettingsChangedHandler&#160;:&#160;<a class="el" href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">appmessage.h</a></li>
+<li>SettingsSchema&#160;:&#160;<a class="el" href="group__lib__settings.html#ga4c71229864f5dc765a8b70c2c971fb99">settings.h</a></li>
+<li>SettingType&#160;:&#160;<a class="el" href="group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338">settings.h</a></li>
+<li>sin_milli()&#160;:&#160;<a class="el" href="wind__dir_8c.html#aa7482b792506f560fb3194367a85ac91">wind_dir.c</a></li>
+<li>solar_day_progress()&#160;:&#160;<a class="el" href="group__lib__core.html#gac982a31420ab76dbaa86ab1885c065ad">solar.c</a>, <a class="el" href="group__lib__core.html#gac982a31420ab76dbaa86ab1885c065ad">solar.h</a></li>
+<li>solar_next_event()&#160;:&#160;<a class="el" href="group__lib__core.html#ga974fb27e5854c3558a46a423c0e9e621">solar.c</a>, <a class="el" href="group__lib__core.html#ga974fb27e5854c3558a46a423c0e9e621">solar.h</a></li>
+<li>solar_night_progress()&#160;:&#160;<a class="el" href="group__lib__core.html#gaee0b6058425e523d5393b77aceb34a54">solar.c</a>, <a class="el" href="group__lib__core.html#gaee0b6058425e523d5393b77aceb34a54">solar.h</a></li>
+<li>start_ticker()&#160;:&#160;<a class="el" href="time__store_8c.html#ab8e8312ec2a60fbeb416d80c0858872f">time_store.c</a></li>
+<li>STEP_CATCHUP_HOURS&#160;:&#160;<a class="el" href="health__store_8c.html#ae8aeac449ddb0996fbb979993bc46de9">health_store.c</a></li>
+<li>step_hours_bucket()&#160;:&#160;<a class="el" href="group__lib__core.html#gae8f7c596b8063c664a6e1ad5c347df10">step_hours.c</a>, <a class="el" href="group__lib__core.html#gae8f7c596b8063c664a6e1ad5c347df10">step_hours.h</a></li>
+<li>STEP_HOURS_PER_DAY&#160;:&#160;<a class="el" href="group__lib__core.html#gab582a8ca15586973977cd7f48de42fa2">step_hours.h</a></li>
+<li>step_hours_settled()&#160;:&#160;<a class="el" href="group__lib__core.html#ga998d8f2fe2b302cdff2610abd009f245">step_hours.c</a>, <a class="el" href="group__lib__core.html#ga998d8f2fe2b302cdff2610abd009f245">step_hours.h</a></li>
+<li>steps_first_read()&#160;:&#160;<a class="el" href="health__store_8c.html#a005cb76793b70941963f6480b8a38e8c">health_store.c</a></li>
+<li>STEPS_MODE_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928">setting_values.h</a></li>
+<li>STEPS_MODE_KM&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf">setting_values.h</a></li>
+<li>STEPS_MODE_MILES&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe">setting_values.h</a></li>
+<li>STEPS_MODE_STEPS&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa">setting_values.h</a></li>
+<li>StepsMode&#160;:&#160;<a class="el" href="group__lib__settings.html#ga6e6066815d52058ba7571050020ca960">setting_values.h</a></li>
+<li>STOCK_FIRST_POLL_MS&#160;:&#160;<a class="el" href="stock__store_8c.html#add7b6eb41b69d99664bcf9d324a8019d">stock_store.c</a></li>
+<li>STOCK_MAX_SLOTS&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#aa30008256f21f16b5c000b4f358a1709">wire_caps.g.h</a></li>
+<li>stock_store_age_s()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga5074e747148193546c869652ea01584d">stock_store.c</a>, <a class="el" href="group__lib__stores.html#ga5074e747148193546c869652ea01584d">stock_store.h</a></li>
+<li>stock_store_init()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaec0631f8c075d9a6c76e2f6f386f3970">stock_store.c</a>, <a class="el" href="group__lib__stores.html#gaec0631f8c075d9a6c76e2f6f386f3970">stock_store.h</a></li>
+<li>stock_store_reconfigure()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaf5880da69fee6e18843b989032e67836">stock_store.c</a>, <a class="el" href="group__lib__stores.html#gaf5880da69fee6e18843b989032e67836">stock_store.h</a></li>
+<li>stock_store_slot()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga44242789115b6e0615358ddc114a24dc">stock_store.c</a>, <a class="el" href="group__lib__stores.html#ga44242789115b6e0615358ddc114a24dc">stock_store.h</a></li>
+<li>stock_store_strip()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga4b56f050715401cfdd8a57bd1063cbe7">stock_store.c</a>, <a class="el" href="group__lib__stores.html#ga4b56f050715401cfdd8a57bd1063cbe7">stock_store.h</a></li>
+<li>stock_store_subscribe()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga286d1850c71a9b7e3e62be5b92ea916a">stock_store.c</a>, <a class="el" href="group__lib__stores.html#ga286d1850c71a9b7e3e62be5b92ea916a">stock_store.h</a></li>
+<li>STOCK_SYMBOL_LEN&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#a12ebf366686d792fba83b752e39cb3f9">wire_caps.g.h</a></li>
+<li>stock_wire_decode()&#160;:&#160;<a class="el" href="group__lib__core.html#gacaf9695fcec823203cf5c23309448d8f">stock_wire.c</a>, <a class="el" href="group__lib__core.html#gacaf9695fcec823203cf5c23309448d8f">stock_wire.h</a></li>
+<li>StockStripHandler&#160;:&#160;<a class="el" href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">appmessage.h</a></li>
+<li>stop_polling()&#160;:&#160;<a class="el" href="calendar__store_8c.html#ae097f0c73987f4efa784f7ab6a0fa8ae">calendar_store.c</a>, <a class="el" href="stock__store_8c.html#ae097f0c73987f4efa784f7ab6a0fa8ae">stock_store.c</a>, <a class="el" href="weather__store_8c.html#ae097f0c73987f4efa784f7ab6a0fa8ae">weather_store.c</a></li>
+<li>stop_ticker()&#160;:&#160;<a class="el" href="time__store_8c.html#a598578fd5c48946f7fd5962c92b526b5">time_store.c</a></li>
+<li>store_cadence_fire()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga10c78a131269bea0afd102549a41083c">store_cadence.c</a>, <a class="el" href="group__lib__stores.html#ga10c78a131269bea0afd102549a41083c">store_cadence.h</a></li>
+<li>STORE_CADENCE_MAX&#160;:&#160;<a class="el" href="group__lib__stores.html#ga60f6d598b8ff59f299aa4ded2e48b695">store_cadence.h</a></li>
+<li>store_cadence_register()&#160;:&#160;<a class="el" href="group__lib__stores.html#gadc0f8176e42cbe69fd30b1a363ca4794">store_cadence.c</a>, <a class="el" href="group__lib__stores.html#gadc0f8176e42cbe69fd30b1a363ca4794">store_cadence.h</a></li>
+<li>store_poll_due()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga997e6ccf70b96c79e2500b83af6e54dc">store_poll.h</a></li>
+<li>store_poll_next()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaee79556bd3009dd1478b61913e5368d4">store_poll.h</a></li>
+<li>store_restore()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">store_persist.h</a></li>
+<li>store_save()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">store_persist.h</a></li>
+<li>STORE_TAG_CALENDAR&#160;:&#160;<a class="el" href="group__lib__stores.html#ga71057ac435b7b29a882b011053659d86">store_persist.h</a></li>
+<li>STORE_TAG_HEALTH&#160;:&#160;<a class="el" href="group__lib__stores.html#ga31737569cb65fc760932f244727a568d">store_persist.h</a></li>
+<li>STORE_TAG_LOCATION&#160;:&#160;<a class="el" href="group__lib__stores.html#gaa19bf75ee3cb87a3a31a97238f4dcf73">store_persist.h</a></li>
+<li>STORE_TAG_STOCK&#160;:&#160;<a class="el" href="group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676">store_persist.h</a></li>
+<li>STORE_TAG_WEATHER&#160;:&#160;<a class="el" href="group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867">store_persist.h</a></li>
+<li>system_store_battery()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga0a7b3e80e633a5f021929a1f3751260f">system_store.c</a>, <a class="el" href="group__lib__stores.html#ga0a7b3e80e633a5f021929a1f3751260f">system_store.h</a></li>
+<li>system_store_bluetooth()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga2ebbd6eb46dfd92742b55a346d164961">system_store.c</a>, <a class="el" href="group__lib__stores.html#ga2ebbd6eb46dfd92742b55a346d164961">system_store.h</a></li>
+<li>system_store_charging()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga93e1005fb36a193016d69e406ef58f16">system_store.c</a>, <a class="el" href="group__lib__stores.html#ga93e1005fb36a193016d69e406ef58f16">system_store.h</a></li>
+<li>system_store_deinit()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga8d12e20cd8e402fc7c7abbfcd7454f3c">system_store.c</a>, <a class="el" href="group__lib__stores.html#ga8d12e20cd8e402fc7c7abbfcd7454f3c">system_store.h</a></li>
+<li>system_store_init()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga98c417e24d8488baa2bb33e39155a3e7">system_store.c</a>, <a class="el" href="group__lib__stores.html#ga98c417e24d8488baa2bb33e39155a3e7">system_store.h</a></li>
+<li>system_store_next_alarm()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga323c6c5d1989296b9618d94e94f92daa">system_store.c</a>, <a class="el" href="group__lib__stores.html#ga323c6c5d1989296b9618d94e94f92daa">system_store.h</a></li>
+<li>system_store_on_reconnect()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaa29b6900ac64eda8dfb6dd8918ef531b">system_store.c</a>, <a class="el" href="group__lib__stores.html#gaa29b6900ac64eda8dfb6dd8918ef531b">system_store.h</a></li>
+<li>system_store_subscribe()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaa56e12f48eddf86b1533059128765d2e">system_store.c</a>, <a class="el" href="group__lib__stores.html#gaa56e12f48eddf86b1533059128765d2e">system_store.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
