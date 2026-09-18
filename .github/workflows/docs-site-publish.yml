@@ -6,8 +6,8 @@ name: Docs Site Publish
 # every PR builds it too, so a change that breaks the docs or adds a Doxygen or TypeDoc warning fails
 # before it merges
 # main and each pushed release tag publish into a folder of their own on the gh-pages branch, main/ or one
-# named for the tag, so every release keeps the docs it shipped with. a release leaves the coverage reports
-# out and links to main's. GitHub Pages serves the branch as it stands
+# named for the tag, so every release keeps the docs and coverage it shipped with. GitHub Pages serves the
+# branch as it stands
 on:
   pull_request:
   push:
@@ -47,8 +47,6 @@ jobs:
       # the TypeScript docs, both coverage reports, and the home page with the pages around it
       - name: Build the Rest of the Site
         uses: ./.github/actions/build-docs-site
-        with:
-          coverage-site: ${{ github.ref_type == 'tag' && '../main/' || '' }}
 
       # the publish job picks the site up from here, and a PR's copy stays a week so it can be looked over
       - name: Upload the Site

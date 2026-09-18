@@ -337,14 +337,12 @@ export interface SiteBarOptions {
   themeToggle: string;
   /** The version this build is published as, such as main or v2.0.0, which the version picker opens on. */
   version: string;
-  /** Where the coverage reports sit from the site root, such as ../main/, or empty when this build has its own. */
-  coverageSite: string;
 }
 
 /**
  * Fills the shared bar for one page and marks the section that page belongs to.
  *
- * @param template The bar's template, with `{{root}}`, `{{coverageRoot}}`, `{{version}}`, `{{repoUrl}}`, and `{{themeToggle}}`.
+ * @param template The bar's template, with `{{root}}`, `{{version}}`, `{{repoUrl}}`, and `{{themeToggle}}`.
  * @param options The page and the build the bar is for.
  * @return The bar's html.
  */
@@ -352,7 +350,6 @@ export function renderSiteBar(template: string, options: SiteBarOptions): string
   const { root, section, themeToggle } = options;
   const bar = fillTemplate(template, {
     root,
-    coverageRoot: root + options.coverageSite,
     version: escapeHtml(options.version),
     repoUrl: REPO_URL,
     themeToggle,

@@ -239,8 +239,8 @@ describe('rootFor', () => {
 });
 
 describe('renderSiteBar', () => {
-  const TEMPLATE = '<nav class="site-bar"><a class="site-bar-home" href="{{root}}index.html">Pebble Watchface Engine</a><select class="site-bar-version" data-root="{{root}}"><option value="{{version}}">{{version}}</option></select><a data-section="c" href="{{root}}c/index.html">Device API</a><a data-section="coverage-c" href="{{coverageRoot}}coverage/c/index.html">C Coverage</a><a href="{{repoUrl}}">GitHub</a>{{themeToggle}}</nav>';
-  const BUILD = { themeToggle: '<button></button>', version: 'main', coverageSite: '' };
+  const TEMPLATE = '<nav class="site-bar"><a class="site-bar-home" href="{{root}}index.html">Pebble Watchface Engine</a><select class="site-bar-version" data-root="{{root}}"><option value="{{version}}">{{version}}</option></select><a data-section="c" href="{{root}}c/index.html">Device API</a><a data-section="coverage-c" href="{{root}}coverage/c/index.html">C Coverage</a><a href="{{repoUrl}}">GitHub</a>{{themeToggle}}</nav>';
+  const BUILD = { themeToggle: '<button></button>', version: 'main' };
 
   /** The bar is the only thing that tells a reader which part of the site they are in. */
   test('marks the section the page is in', () => {
@@ -263,14 +263,6 @@ describe('renderSiteBar', () => {
 
     expect(result).toContain('<a class="site-bar-home" href="../../index.html">Pebble Watchface Engine</a>');
     expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-watchface-engine">GitHub</a>');
-  });
-
-  /** A release leaves its coverage reports out, so a link inside its own folder would 404. */
-  test('points the coverage links at the build that holds the reports', () => {
-    const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../', section: 'c', coverageSite: '../main/' });
-
-    expect(result).toContain('href="../../main/coverage/c/index.html"');
-    expect(result).toContain('<a data-section="c" aria-current="page" href="../c/index.html">');
   });
 });
 

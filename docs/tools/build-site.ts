@@ -161,15 +161,13 @@ const commit = process.env.GITHUB_SHA || git('rev-parse', 'HEAD');
 // a PR build's ref name is its merge ref, so the branch it came from is tried first
 const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || git('rev-parse', '--abbrev-ref', 'HEAD');
 const built = new Date().toISOString().slice(0, 10);
-// a release build leaves the coverage reports out and links to main's, such as ../main/ from the site root
-const coverageSite = process.env.DOCS_COVERAGE_SITE || '';
 
 const themeToggle = template('theme-toggle.html');
 const siteBarTemplate = template('site-bar.html');
 
 // in CI the branch is main or the tag being built, which is also the folder the site is published into
 function siteBar(root: string, section: SiteSection): string {
-  return renderSiteBar(siteBarTemplate, { root, section, themeToggle, version: branch, coverageSite });
+  return renderSiteBar(siteBarTemplate, { root, section, themeToggle, version: branch });
 }
 
 function footer(root: string): string {
@@ -196,7 +194,6 @@ write('index.html', fillTemplate(template('landing.html'), {
   built,
   coverageC: pixelStrip(readGcovrSummary(readSummary('coverage/c/summary.json'))),
   coverageTs: pixelStrip(readVitestSummary(readSummary('coverage/ts/coverage-summary.json'))),
-  coverageRoot: coverageSite,
   toc: sectionList(rendered.sections),
   readme: rendered.html,
   footer: footer(''),
