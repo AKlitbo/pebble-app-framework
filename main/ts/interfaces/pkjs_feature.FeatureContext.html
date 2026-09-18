@@ -50,7 +50,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">FeatureContext</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#defaults">defaults</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#messagekeys">messageKeys</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#queuesend">queueSend</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">dict</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AppMessageDict</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">onOk</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">onFail</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#refetchdelayms">refetchDelayMs</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/12e9981331a772e4c49c098a7a52ec56609da9f6/ts/pkjs/feature.ts#L10">pkjs/feature.ts:10</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/ts/pkjs/feature.ts#L10">pkjs/feature.ts:10</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -72,28 +72,28 @@
 <div class="tsd-comment tsd-typography"><p>The defaults declared in the face's Clay config, by message key.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/12e9981331a772e4c49c098a7a52ec56609da9f6/ts/pkjs/feature.ts#L14">pkjs/feature.ts:14</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/ts/pkjs/feature.ts#L14">pkjs/feature.ts:14</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="messagekeys"><span>message<wbr/>Keys</span><a href="#messagekeys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">messageKeys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></div>
 <div class="tsd-comment tsd-typography"><p>The face's message keys, by name. A key the face does not declare reads as undefined.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/12e9981331a772e4c49c098a7a52ec56609da9f6/ts/pkjs/feature.ts#L12">pkjs/feature.ts:12</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/ts/pkjs/feature.ts#L12">pkjs/feature.ts:12</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="queuesend"><span>queue<wbr/>Send</span><a href="#queuesend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">queueSend</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">dict</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AppMessageDict</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">onOk</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">onFail</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></div>
 <div class="tsd-comment tsd-typography"><p>Sends a dict to the watch through the one queue every send shares.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/12e9981331a772e4c49c098a7a52ec56609da9f6/ts/pkjs/feature.ts#L16">pkjs/feature.ts:16</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/ts/pkjs/feature.ts#L16">pkjs/feature.ts:16</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="refetchdelayms"><span>refetch<wbr/>Delay<wbr/>Ms</span><a href="#refetchdelayms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">refetchDelayMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>How long after the settings page closes a changed setting waits before it refetches.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/12e9981331a772e4c49c098a7a52ec56609da9f6/ts/pkjs/feature.ts#L18">pkjs/feature.ts:18</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/ts/pkjs/feature.ts#L18">pkjs/feature.ts:18</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

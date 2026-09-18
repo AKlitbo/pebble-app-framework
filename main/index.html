@@ -58,7 +58,7 @@
         <div class="head-side">
           <div class="build">
             <b>v2.0.0</b><br />
-            main @ 12e9981<br />
+            main @ 3c8bb0b<br />
             built 2026-09-18
           </div>
         </div>
@@ -218,7 +218,7 @@ npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
 npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
 npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/12e9981331a772e4c49c098a7a52ec56609da9f6/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
+<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
 <h2 id="ci">CI</h2>
 <ul>
 <li><strong><code>engine-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>
