@@ -8,6 +8,7 @@
  */
 #include "io/appmessage/appmessage.h"
 
+#include "io/outbox_queue.h"
 #include "io/tuple_read.h"
 #include "math/scale.h"
 #include "system/settings/settings.h"
@@ -64,53 +65,15 @@ void appmessage_on_inbox_complete(InboxCompleteHandler cb)    { s_handlers.on_in
  */
 #define REQUEST_RETRY_MAX 3          ///< Retry passes a nacked request gets before it is dropped
 #define REQUEST_RETRY_DELAY_MS 5000  ///< Delay before the next retry pass, in ms
-#define OUTBOX_QUEUE_MAX 6           ///< Most jobs the queue or the failed set holds at once
 /** @} */
 
-/**
- * @brief What an outbox job sends.
- */
-typedef enum
-{
-    OUTBOX_NONE,     ///< The zero value, so a default-initialized job slot reads as nothing rather than a real request
-    OUTBOX_WEATHER,  ///< A weather request
-    OUTBOX_SETTINGS, ///< The settings reply
-    OUTBOX_STOCK,    ///< A stock request
-    OUTBOX_CALENDAR  ///< A calendar request
-} OutboxKind;
-
-/**
- * @brief One job waiting to go out, or already in flight.
- */
-typedef struct
-{
-    OutboxKind kind;         ///< What this job sends
-    int        retries_left; ///< Retry passes left after a failed send (0 for the settings reply)
-} OutboxJob;
-
-static OutboxJob s_queue[OUTBOX_QUEUE_MAX];  ///< This pass's work queue
-static int       s_queue_len;                ///< How many jobs are in s_queue
-static OutboxJob s_failed[OUTBOX_QUEUE_MAX]; ///< Requests that nacked this pass, held for the next
-static int       s_failed_len;               ///< How many jobs are in s_failed
-static OutboxJob s_inflight;                 ///< The job in flight, OUTBOX_NONE when nothing is out
-static AppTimer *s_retry_timer;              ///< Delay before the next retry pass
-static uint32_t  s_outbox_size;              ///< The outbox buffer size appmessage_open asked for
+static OutboxQueue s_outbox;    ///< What is queued, what nacked, and what is in flight
+static AppTimer *s_retry_timer; ///< Delay before the next retry pass
+static uint32_t  s_outbox_size; ///< The outbox buffer size appmessage_open asked for
 
 static void pump(void);
 static uint32_t settings_reply_size(void);
 static bool write_settings(DictionaryIterator *iter);
-
-/**
- * @brief Whether @p kind is one of the phone-data requests. The settings reply is not one, so
- * it never retries.
- *
- * @param kind The job kind to check.
- * @return True for a weather, stock, or calendar request.
- */
-static bool is_request_kind(OutboxKind kind)
-{
-    return kind == OUTBOX_WEATHER || kind == OUTBOX_STOCK || kind == OUTBOX_CALENDAR;
-}
 
 /**
  * @brief Build the message for @p kind and hand it to the outbox.
@@ -172,35 +135,6 @@ static bool send_job(OutboxKind kind)
 }
 
 /**
- * @brief Whether @p kind already sits in flight, in the work queue, or in the failed set.
- *
- * @param kind The job kind to check.
- * @return True when a job of this kind is already pending somewhere.
- */
-static bool kind_pending(OutboxKind kind)
-{
-    if (s_inflight.kind == kind)
-    {
-        return true;
-    }
-    for (int i = 0; i < s_queue_len; i++)
-    {
-        if (s_queue[i].kind == kind)
-        {
-            return true;
-        }
-    }
-    for (int i = 0; i < s_failed_len; i++)
-    {
-        if (s_failed[i].kind == kind)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
  * @brief Add a job to the work queue unless its kind is already pending, then pump.
  *
  * @param kind The job kind to send.
@@ -208,48 +142,14 @@ static bool kind_pending(OutboxKind kind)
  */
 static void enqueue(OutboxKind kind, int retries)
 {
-    if (kind_pending(kind))
-    {
-        return; // a poll that repeats just keeps the one already waiting
-    }
-    if (s_queue_len < OUTBOX_QUEUE_MAX)
-    {
-        s_queue[s_queue_len].kind = kind;
-        s_queue[s_queue_len].retries_left = retries;
-        s_queue_len++;
-    }
-    pump();
-}
-
-/**
- * @brief Drop the front job off the work queue, shifting the rest forward.
- */
-static void queue_pop_front(void)
-{
-    for (int i = 1; i < s_queue_len; i++)
-    {
-        s_queue[i - 1] = s_queue[i];
-    }
-    s_queue_len--;
-}
-
-/**
- * @brief Hold a nacked request for the next pass, if it still has retries and is a real request.
- *
- * @param job The job that just nacked.
- */
-static void hold_failed(OutboxJob job)
-{
-    if (!is_request_kind(job.kind) || job.retries_left <= 0)
+    // a poll that repeats just keeps the one already waiting, and leaves the queue untouched
+    if (outbox_pending(&s_outbox, kind))
     {
         return;
     }
-    if (s_failed_len < OUTBOX_QUEUE_MAX)
-    {
-        s_failed[s_failed_len].kind = job.kind;
-        s_failed[s_failed_len].retries_left = job.retries_left - 1;
-        s_failed_len++;
-    }
+
+    outbox_push(&s_outbox, kind, retries);
+    pump();
 }
 
 /**
@@ -260,17 +160,7 @@ static void hold_failed(OutboxJob job)
 static void retry_pass(void *data)
 {
     s_retry_timer = NULL;
-
-    while (s_failed_len > 0 && s_queue_len < OUTBOX_QUEUE_MAX)
-    {
-        s_queue[s_queue_len++] = s_failed[0];
-        for (int i = 1; i < s_failed_len; i++)
-        {
-            s_failed[i - 1] = s_failed[i];
-        }
-        s_failed_len--;
-    }
-
+    outbox_retry_pass(&s_outbox);
     pump();
 }
 
@@ -279,7 +169,7 @@ static void retry_pass(void *data)
  */
 static void pump(void)
 {
-    if (s_inflight.kind != OUTBOX_NONE)
+    if (outbox_busy(&s_outbox))
     {
         return;
     }
@@ -288,8 +178,7 @@ static void pump(void)
     // again once it reconnects
     if (!connection_service_peek_pebble_app_connection())
     {
-        s_queue_len = 0;
-        s_failed_len = 0;
+        outbox_clear(&s_outbox);
         if (s_retry_timer)
         {
             app_timer_cancel(s_retry_timer);
@@ -299,27 +188,26 @@ static void pump(void)
     }
 
     // this pass is done: if any request failed, arm the next pass and stop
-    if (s_queue_len == 0)
+    if (s_outbox.queue_len == 0)
     {
-        if (s_failed_len > 0 && !s_retry_timer)
+        if (s_outbox.failed_len > 0 && !s_retry_timer)
         {
             s_retry_timer = app_timer_register(REQUEST_RETRY_DELAY_MS, retry_pass, NULL);
         }
         return;
     }
 
-    if (send_job(s_queue[0].kind))
+    if (send_job(s_outbox.queue[0].kind))
     {
-        s_inflight = s_queue[0];
-        queue_pop_front();
-        // s_inflight now reads as something, which is what holds the next send back
+        // taking the head is what marks the outbox busy, so it happens only once the send landed
+        outbox_take_head(&s_outbox);
     }
     else
     {
         // the outbox refused it even though the phone is there (rare). hold it for a retry pass and
         // move on, so a stuck head can't wedge the queue
-        hold_failed(s_queue[0]);
-        queue_pop_front();
+        outbox_hold_failed(&s_outbox, s_outbox.queue[0]);
+        outbox_pop_front(&s_outbox);
         pump();
     }
 }
@@ -687,11 +575,9 @@ static void outbox_failed_callback(DictionaryIterator *iter, AppMessageResult re
 
     // the in-flight send is done (nacked). hold a real request for a later retry pass, then carry
     // on with the queue. the send often wakes an asleep pkjs so the next pass tends to land.
-    // the job has to be taken before the slot is cleared, since clearing it is what says the
-    // outbox is free and hold_failed reads the kind to decide whether the job is worth keeping
-    OutboxJob nacked = s_inflight;
-    s_inflight.kind = OUTBOX_NONE;
-    hold_failed(nacked);
+    // outbox_release hands back what was in flight as it frees the slot, so the kind hold_failed
+    // reads is the nacked job's rather than the cleared one's
+    outbox_hold_failed(&s_outbox, outbox_release(&s_outbox));
     pump();
 }
 
@@ -704,7 +590,7 @@ static void outbox_failed_callback(DictionaryIterator *iter, AppMessageResult re
 static void outbox_sent_callback(DictionaryIterator *iter, void *context)
 {
     // the in-flight send landed, so free the outbox and send the next queued job
-    s_inflight.kind = OUTBOX_NONE;
+    outbox_release(&s_outbox);
     pump();
 }
 

@@ -7,6 +7,7 @@
 #include "system/settings/settings.h"
 
 #include "io/tuple_read.h"
+#include "text/cstring_fit.h"
 #include "text/number_format.h"
 
 #include <stdio.h>
@@ -89,57 +90,6 @@ static void build_index(void)
 }
 
 /**
- * @brief Copy a cstring into a fixed buffer, NUL-terminating within size.
- *
- * A NULL src yields an empty string. Shared by the defaults, the sanitize
- * repair, and the inbound copy so the bounded-copy idiom lives in one place.
- *
- * @param dst The destination buffer.
- * @param src The source string, or NULL for empty.
- * @param size The size of the destination buffer.
- */
-static void set_cstring(char *dst, const char *src, uint16_t size)
-{
-    if (src)
-    {
-        strncpy(dst, src, size - 1);
-        dst[size - 1] = '\0';
-    }
-    else
-    {
-        dst[0] = '\0';
-    }
-}
-
-/**
- * @brief Whether a string would land in a field's buffer exactly as the buffer already reads.
- *
- * set_cstring keeps only what fits, so the incoming string is measured the same way. Comparing it
- * in full would call a value too long for the field a change on every save.
- *
- * @param current What the field holds now.
- * @param value The string the phone sent.
- * @param size The field's buffer size, terminator included.
- * @return True when storing the string would leave the field reading the same.
- */
-static bool cstring_same(const char *current, const char *value, uint16_t size)
-{
-    if (size == 0)
-    {
-        return true;  // nowhere to put it, so nothing about the field can move
-    }
-
-    size_t room = (size_t)size - 1;
-    size_t incoming = strlen(value);
-    if (incoming > room)
-    {
-        incoming = room;
-    }
-
-    return strlen(current) == incoming && strncmp(current, value, incoming) == 0;
-}
-
-/**
  * @brief One 0..255 colour byte down to the two bits a GColor channel holds.
  *
  * The phone picks from the watch's own palette, so the byte is already one of 0, 85, 170
@@ -216,7 +166,7 @@ static void apply_defaults(const SettingsSchema *schema)
                 break;
 
             case SETTING_CSTRING:
-                set_cstring((char *)ptr, field->default_str, field->size);
+                cstring_fit((char *)ptr, field->default_str, field->size);
                 break;
 
             case SETTING_COLOR:
@@ -245,7 +195,7 @@ static bool sanitize_cstring(const SettingsSchema *schema, const SettingField *f
         return false;
     }
 
-    set_cstring(str, field->default_str, field->size);
+    cstring_fit(str, field->default_str, field->size);
     return true;
 }
 
@@ -608,12 +558,12 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
                         continue;  // nothing to store, so don't flag a change
                     }
 
-                    if (cstring_same((const char *)ptr, value, field->size))
+                    if (cstring_fit_same((const char *)ptr, value, field->size))
                     {
                         continue;
                     }
 
-                    set_cstring((char *)ptr, value, field->size);
+                    cstring_fit((char *)ptr, value, field->size);
                     break;
                 }
 
