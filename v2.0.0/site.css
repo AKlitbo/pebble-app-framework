@@ -1,0 +1,498 @@
+/* The docs site. The home page, the changelog, the notices, and the licence pages.
+ *
+ * The palette and fonts are the ones in docs/doxygen/pebble.css and docs/typedoc/pebble.css, so the three
+ * parts of the site read as one. A palette change lands in all three.
+ *
+ * The look comes from the watch, the same as the Doxygen pages. An original Pebble screen has one bit per
+ * pixel and cannot draw a soft shadow, so it fakes depth by dithering. No blurs, no drop shadows, no soft
+ * gradients. The card shadow is a 2px checkerboard of pixels.
+ *
+ * theme.js puts dark-mode or light-mode on the html element. With no script the system setting decides.
+ */
+
+:root {
+  --paper: #f2f0eb;
+  --paper-raised: #fbfaf7;
+  --ink: #16151a;
+  --ink-muted: #605c55;
+  --rule: #d8d4cb;
+  --signal: #b33100;
+  --signal-hover: #9c2b00;
+  --dither: rgba(22, 21, 26, 0.55);
+  --sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    --paper: #121114;
+    --paper-raised: #1b1a1e;
+    --ink: #e4e1da;
+    --ink-muted: #9a968e;
+    --rule: #2e2c33;
+    --signal: #ff4700;
+    --signal-hover: #ff7a45;
+    --dither: rgba(228, 225, 218, 0.35);
+    color-scheme: dark;
+  }
+}
+
+:root.dark-mode {
+  --paper: #121114;
+  --paper-raised: #1b1a1e;
+  --ink: #e4e1da;
+  --ink-muted: #9a968e;
+  --rule: #2e2c33;
+  --signal: #ff4700;
+  --signal-hover: #ff7a45;
+  --dither: rgba(228, 225, 218, 0.35);
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------- page */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--sans);
+}
+
+/* the side gutter sits here and not on the body, so the shared bar above runs the full width */
+.wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.section-label {
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 40px 0 16px;
+}
+
+/* ---------------------------------------------------------------- home page header */
+
+.site-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-head .logo {
+  width: 56px;
+  height: 56px;
+  flex: none;
+}
+
+.head-text {
+  flex: 1 1 280px;
+}
+
+.site-head h1 {
+  margin: 0;
+  font: 600 clamp(26px, 4.4vw, 38px)/1.1 var(--mono);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.tagline {
+  margin: 6px 0 0;
+  color: var(--ink-muted);
+  max-width: 62ch;
+}
+
+.head-side {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.build {
+  font: 400 12px/1.7 var(--mono);
+  color: var(--ink-muted);
+  text-align: right;
+}
+
+.build b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@media (max-width: 520px) {
+  .build {
+    text-align: left;
+  }
+}
+
+/* ---------------------------------------------------------------- cards */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 28px;
+}
+
+@media (max-width: 640px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-slot {
+  position: relative;
+}
+
+.card-slot::before {
+  content: '';
+  position: absolute;
+  inset: 6px -6px -6px 6px;
+  background: repeating-conic-gradient(var(--dither) 0 25%, transparent 0 50%) 0 0 / 2px 2px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 20px 22px 18px;
+  background: var(--paper-raised);
+  border: 1.5px solid var(--ink);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 80ms steps(2);
+}
+
+/* hovering presses the card onto its shadow, like a button going down */
+.card:hover,
+.card:focus-visible {
+  transform: translate(4px, 4px);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.card:active {
+  transform: translate(6px, 6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lang {
+  font: 600 13px/1 var(--mono);
+  min-width: 34px;
+  height: 34px;
+  padding-inline: 6px;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  color: var(--paper-raised);
+}
+
+.kind {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.card h2 {
+  margin: 4px 0 0;
+  font: 600 21px/1.25 var(--sans);
+}
+
+.card p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 15px;
+}
+
+.card-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font: 400 12.5px/1.4 var(--mono);
+  color: var(--ink-muted);
+}
+
+.go {
+  color: var(--signal);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.card:hover .go {
+  color: var(--signal-hover);
+}
+
+/* the coverage strip. one lit pixel for each full ten percent of lines */
+.pixels {
+  position: relative;
+  display: flex;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.pixels i {
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+}
+
+.pixels i.off {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+/* ---------------------------------------------------------------- README */
+
+.readme-layout {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 48px;
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 1px solid var(--rule);
+}
+
+@media (max-width: 760px) {
+  .readme-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.toc {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toc .section-label {
+  margin: 0 0 12px;
+}
+
+.toc a {
+  font: 400 13.5px/1.5 var(--mono);
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding: 3px 0;
+}
+
+.toc a:hover {
+  color: var(--signal);
+}
+
+@media (max-width: 760px) {
+  .toc {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+  }
+
+  .toc .section-label {
+    flex-basis: 100%;
+  }
+}
+
+/* rendered markdown, on the home page and on every other page */
+.readme {
+  max-width: 70ch;
+}
+
+.readme > :first-child {
+  margin-top: 0;
+}
+
+.readme h2 {
+  font: 600 23px/1.25 var(--sans);
+  margin: 44px 0 12px;
+  scroll-margin-top: 24px;
+}
+
+.readme h3 {
+  font: 600 17px/1.3 var(--sans);
+  margin: 28px 0 8px;
+  scroll-margin-top: 24px;
+}
+
+.readme p {
+  margin: 0 0 14px;
+}
+
+.readme ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.readme li {
+  margin-bottom: 6px;
+}
+
+.readme a {
+  color: var(--signal);
+  text-underline-offset: 2px;
+}
+
+.readme a:hover {
+  color: var(--signal-hover);
+}
+
+.readme code {
+  font: 500 0.86em var(--mono);
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  padding: 0 4px;
+  overflow-wrap: anywhere;
+}
+
+.readme pre {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--ink);
+  overflow-x: auto;
+  font: 400 13.5px/1.65 var(--mono);
+}
+
+.readme pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  overflow-wrap: normal;
+}
+
+.readme .cmt {
+  color: var(--ink-muted);
+}
+
+/* a licence reads exactly as written, so it keeps its own line breaks and wraps only what runs too long */
+.readme pre.licence {
+  white-space: pre-wrap;
+  border-left-color: var(--rule);
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- other pages */
+
+.page h1 {
+  margin: 0 0 24px;
+  font: 600 clamp(24px, 4vw, 32px)/1.15 var(--mono);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.site-foot {
+  margin-top: 64px;
+  border-top: 1.5px solid var(--ink);
+  padding-top: 28px;
+}
+
+.foot-cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 48px;
+}
+
+@media (max-width: 640px) {
+  .foot-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+.foot-col .section-label {
+  margin: 0 0 10px;
+}
+
+.foot-col a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid var(--rule);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.foot-col a:last-of-type {
+  border-bottom: 1px solid var(--rule);
+}
+
+.foot-col a span:last-child {
+  font: 400 12.5px/1.6 var(--mono);
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.foot-col a:hover span:first-child {
+  color: var(--signal);
+}
+
+.foot-col a:focus-visible,
+.foot-base a:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.foot-base {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 20px;
+  font: 400 12px/1.5 var(--mono);
+  color: var(--ink-muted);
+}
+
+.foot-base a {
+  color: var(--ink);
+  text-underline-offset: 3px;
+}
+
+.foot-base a:hover {
+  color: var(--signal);
+}

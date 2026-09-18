@@ -1,0 +1,291 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Globals</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.0.0" selected>v2.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('globals_eval.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="contents">
+<div class="textblock">Here is a list of all documented enum values with links to the documentation:</div><br/>
+<div class="qindex"><a class="qindex" href="#index_b">B</a><div class="alphasepar"></div><a class="qindex" href="#index_d">D</a><div class="alphasepar"></div><a class="qindex" href="#index_n">N</a><div class="alphasepar"></div><a class="qindex" href="#index_o">O</a><div class="alphasepar"></div><a class="qindex" href="#index_s">S</a><div class="alphasepar"></div><a class="qindex" href="#index_t">T</a><div class="alphasepar"></div><a class="qindex" href="#index_v">V</a><div class="alphasepar"></div><a class="qindex" href="#index_w">W</a></div>
+
+
+<h3 class="doxsection"><a id="index_b" name="index_b"></a>- b -</h3><ul>
+<li>BATTERY_DISPLAY_BOTH&#160;:&#160;<a class="el" href="group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2">setting_values.h</a></li>
+<li>BATTERY_DISPLAY_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0">setting_values.h</a></li>
+<li>BATTERY_DISPLAY_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357">setting_values.h</a></li>
+<li>BATTERY_DISPLAY_PERCENT&#160;:&#160;<a class="el" href="group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24dadb70a1bb92d4ea05d4d1ddf4b3f230d7">setting_values.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_d" name="index_d"></a>- d -</h3><ul>
+<li>DEV_WALK_NONE&#160;:&#160;<a class="el" href="group__lib__dev.html#ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca">dev_walk.h</a></li>
+<li>DEV_WALK_THEMES&#160;:&#160;<a class="el" href="group__lib__dev.html#ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d">dev_walk.h</a></li>
+<li>DISTANCE_UNIT_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9">setting_values.h</a></li>
+<li>DISTANCE_UNIT_KM&#160;:&#160;<a class="el" href="group__lib__settings.html#gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f">setting_values.h</a></li>
+<li>DISTANCE_UNIT_MILES&#160;:&#160;<a class="el" href="group__lib__settings.html#gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3">setting_values.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_n" name="index_n"></a>- n -</h3><ul>
+<li>NIGHT_SCHED_FIXED&#160;:&#160;<a class="el" href="group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be">nightsched.h</a></li>
+<li>NIGHT_SCHED_OFF&#160;:&#160;<a class="el" href="group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997">nightsched.h</a></li>
+<li>NIGHT_SCHED_SOLAR&#160;:&#160;<a class="el" href="group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73">nightsched.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_o" name="index_o"></a>- o -</h3><ul>
+<li>OUTBOX_CALENDAR&#160;:&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">outbox_queue.h</a></li>
+<li>OUTBOX_NONE&#160;:&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">outbox_queue.h</a></li>
+<li>OUTBOX_SETTINGS&#160;:&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c">outbox_queue.h</a></li>
+<li>OUTBOX_STOCK&#160;:&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">outbox_queue.h</a></li>
+<li>OUTBOX_WEATHER&#160;:&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49">outbox_queue.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_s" name="index_s"></a>- s -</h3><ul>
+<li>SETTING_BATTERY_DISPLAY&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">settings.h</a></li>
+<li>SETTING_BLUETOOTH_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">settings.h</a></li>
+<li>SETTING_BLUETOOTH_VIBE_CONNECT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548">settings.h</a></li>
+<li>SETTING_BLUETOOTH_VIBE_DISCONNECT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0">settings.h</a></li>
+<li>SETTING_BOOL&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">settings.h</a></li>
+<li>SETTING_COLOR&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3">settings.h</a></li>
+<li>SETTING_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">settings.h</a></li>
+<li>SETTING_CSTRING&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">settings.h</a></li>
+<li>SETTING_DATE_FORMAT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">settings.h</a></li>
+<li>SETTING_DISTANCE_UNIT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">settings.h</a></li>
+<li>SETTING_ENUM_U8&#160;:&#160;<a class="el" href="group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">settings.h</a></li>
+<li>SETTING_HEADER_FONT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">settings.h</a></li>
+<li>SETTING_HOURLY_VIBE&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895">settings.h</a></li>
+<li>SETTING_QUIET_TIME_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd">settings.h</a></li>
+<li>SETTING_STEPS_MODE&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4">settings.h</a></li>
+<li>SETTING_TEMPERATURE_UNIT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188">settings.h</a></li>
+<li>SETTING_THEME&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2">settings.h</a></li>
+<li>SETTING_TIME_FORMAT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf">settings.h</a></li>
+<li>STEPS_MODE_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928">setting_values.h</a></li>
+<li>STEPS_MODE_KM&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf">setting_values.h</a></li>
+<li>STEPS_MODE_MILES&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe">setting_values.h</a></li>
+<li>STEPS_MODE_STEPS&#160;:&#160;<a class="el" href="group__lib__settings.html#gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa">setting_values.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_t" name="index_t"></a>- t -</h3><ul>
+<li>TIME_FORMAT_12H&#160;:&#160;<a class="el" href="group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763">setting_values.h</a></li>
+<li>TIME_FORMAT_12H_NO_LEAD&#160;:&#160;<a class="el" href="group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468">setting_values.h</a></li>
+<li>TIME_FORMAT_24H&#160;:&#160;<a class="el" href="group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79">setting_values.h</a></li>
+<li>TIME_FORMAT_BEATS&#160;:&#160;<a class="el" href="group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5">setting_values.h</a></li>
+<li>TIME_FORMAT_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f">setting_values.h</a></li>
+<li>TIME_FORMAT_SYSTEM&#160;:&#160;<a class="el" href="group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485">setting_values.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_v" name="index_v"></a>- v -</h3><ul>
+<li>VIBE_COUNT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856">setting_values.h</a></li>
+<li>VIBE_DOUBLE&#160;:&#160;<a class="el" href="group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26">setting_values.h</a></li>
+<li>VIBE_LONG&#160;:&#160;<a class="el" href="group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79">setting_values.h</a></li>
+<li>VIBE_NONE&#160;:&#160;<a class="el" href="group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a">setting_values.h</a></li>
+<li>VIBE_SHORT&#160;:&#160;<a class="el" href="group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052">setting_values.h</a></li>
+<li>VibePulseDouble&#160;:&#160;<a class="el" href="group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19ae2653abdfc98405084bd8d0da715af1c">vibe.h</a></li>
+<li>VibePulseLong&#160;:&#160;<a class="el" href="group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19a362ca2d17606221941dfa679ddb9ecbe">vibe.h</a></li>
+<li>VibePulseShort&#160;:&#160;<a class="el" href="group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19ae9aaea4d3226665ad0772d40537a1319">vibe.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_w" name="index_w"></a>- w -</h3><ul>
+<li>WIND_UNIT_COUNT&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea">wind.h</a></li>
+<li>WIND_UNIT_KMH&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c">wind.h</a></li>
+<li>WIND_UNIT_KTS&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a60a6d323d0f94b93a78fc02d92b6545d">wind.h</a></li>
+<li>WIND_UNIT_MPH&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a3d492848e908a0c4425a669ee67ee63b">wind.h</a></li>
+<li>WIND_UNIT_MS&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1ae2b15fe48410daeee405fc533127c566">wind.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

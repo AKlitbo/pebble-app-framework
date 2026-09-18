@@ -1,0 +1,799 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for tools/dev/clay-preview.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+<script src="../../../../theme.js"></script>
+<script src="../../../../versions.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="../../../../site-bar.css">
+<link rel="stylesheet" href="../../../../coverage.css">
+</head>
+    
+<body>
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../../../index.html">
+    <img src="../../../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../../../" disabled>
+    <option value="v2.0.0" selected>v2.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" href="../../../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" aria-current="page" href="../../../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">tools/dev</a> clay-preview.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/98</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/44</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/20</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/90</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a>
+<a name='L181'></a><a href='#L181'>181</a>
+<a name='L182'></a><a href='#L182'>182</a>
+<a name='L183'></a><a href='#L183'>183</a>
+<a name='L184'></a><a href='#L184'>184</a>
+<a name='L185'></a><a href='#L185'>185</a>
+<a name='L186'></a><a href='#L186'>186</a>
+<a name='L187'></a><a href='#L187'>187</a>
+<a name='L188'></a><a href='#L188'>188</a>
+<a name='L189'></a><a href='#L189'>189</a>
+<a name='L190'></a><a href='#L190'>190</a>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a>
+<a name='L202'></a><a href='#L202'>202</a>
+<a name='L203'></a><a href='#L203'>203</a>
+<a name='L204'></a><a href='#L204'>204</a>
+<a name='L205'></a><a href='#L205'>205</a>
+<a name='L206'></a><a href='#L206'>206</a>
+<a name='L207'></a><a href='#L207'>207</a>
+<a name='L208'></a><a href='#L208'>208</a>
+<a name='L209'></a><a href='#L209'>209</a>
+<a name='L210'></a><a href='#L210'>210</a>
+<a name='L211'></a><a href='#L211'>211</a>
+<a name='L212'></a><a href='#L212'>212</a>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a>
+<a name='L223'></a><a href='#L223'>223</a>
+<a name='L224'></a><a href='#L224'>224</a>
+<a name='L225'></a><a href='#L225'>225</a>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
+ * Local Clay preview.
+ *
+ * Builds a face's real settings page (the same @rebble/clay the watch build uses, with its own
+ * custom components and every normal item) into a plain HTML file you can open in a browser. Lets
+ * you click around the config UI without loading it onto the watch after every change. It also
+ * shows you the console error when the page refuses to render, which on the watch just looks like
+ * a settings screen that never appears. That is the real reason it earns its keep.
+ *
+ * Run once:   node tools/dev/clay-preview.ts &lt;face&gt;
+ * Keep fresh: node tools/dev/clay-preview.ts &lt;face&gt; --watch   (then refresh the browser)
+ * As a user:  node tools/dev/clay-preview.ts &lt;face&gt; --settings=saved.json
+ *
+ * Opens to: tools/dev/clay-preview.html
+ *
+ * --settings seeds the page from a { messageKey: value } file, which is what "open the settings on
+ * a watch you have already configured" actually means. Without it every preview is a brand new
+ * install, and a bug that only bites returning users renders perfectly.
+ *
+ * The Save button does nothing here: it talks to the phone. This is for eyeballing the page.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import Module from 'node:module';
+import { createRequire } from 'node:module';
+import { facePaths, compile, copyGenerated, writeTsconfig } from '../pkjs/build-pkjs.ts';
+import { faceRelative } from '../faces.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
+&nbsp;
+const requireHost = <span class="cstat-no" title="statement not covered" >createRequire(import.meta.url);</span>
+&nbsp;
+const ROOT = <span class="cstat-no" title="statement not covered" >WORKSPACE;</span>
+const OUT = <span class="cstat-no" title="statement not covered" >path.join(import.meta.dirname, 'clay-preview.html');</span>
+&nbsp;
+const face = <span class="cstat-no" title="statement not covered" >process.argv[2];</span>
+<span class="cstat-no" title="statement not covered" >if (!face || face.startsWith('--')) {</span>
+<span class="cstat-no" title="statement not covered" >  console.error('usage: node tools/dev/clay-preview.ts &lt;face&gt; [--watch] [--platform=emery|gabbro]');</span>
+<span class="cstat-no" title="statement not covered" >  process.exit(1);</span>
+}
+&nbsp;
+const rel = <span class="cstat-no" title="statement not covered" >faceRelative(face);</span>
+const paths = <span class="cstat-no" title="statement not covered" >facePaths(face);</span>
+&nbsp;
+// the bundle pokes at a few host globals while it builds the page, so give it harmless stand-ins
+// under plain node. a defined Pebble (not "pypkjs") is what makes generateUrl hand back a
+// self-contained data url instead of a hosted-previewer link. these are deliberately partial so
+// they go through a loose host view rather than pretending to be a real Navigator or Storage
+const host = <span class="cstat-no" title="statement not covered" >global as unknown as Record&lt;string, unknown&gt;;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (typeof host.navigator === 'undefined') { <span class="cstat-no" title="statement not covered" >host.navigator = { userAgent: 'node' }; }</span></span>
+<span class="cstat-no" title="statement not covered" >if (typeof host.window === 'undefined') { <span class="cstat-no" title="statement not covered" >host.window = {}; }</span></span>
+// which watch the page should think it was opened from. Clay filters items by their declared
+// capabilities against this, so it is what shows the round build losing its rectangle-only
+// controls without a watch in hand. firmware is stubbed alongside the platform because Clay
+// reads both when it resolves a capability
+const platformArg = <span class="cstat-no" title="statement not covered" >process.argv.slice(3).<span class="fstat-no" title="function not covered" >find((a</span>rg) =&gt; <span class="cstat-no" title="statement not covered" >arg.startsWith('--platform='))</span>;</span>
+const platform = <span class="cstat-no" title="statement not covered" >platformArg ? platformArg.slice('--platform='.length) : 'emery';</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (typeof host.Pebble === 'undefined') {</span>
+<span class="cstat-no" title="statement not covered" >  host.Pebble = {</span>
+    platform,
+<span class="fstat-no" title="function not covered" >    addEventListener: f</span>unction () {},
+<span class="fstat-no" title="function not covered" >    getAccountToken: f</span>unction () { <span class="cstat-no" title="statement not covered" >return ''; }</span>,
+<span class="fstat-no" title="function not covered" >    getWatchToken: f</span>unction () { <span class="cstat-no" title="statement not covered" >return ''; }</span>,
+<span class="fstat-no" title="function not covered" >    getActiveWatchInfo: f</span>unction () {
+<span class="cstat-no" title="statement not covered" >      return { platform, firmware: { major: 4, minor: 3, patch: 0 } };</span>
+    },
+  };
+}
+// Clay reads the values it seeds the page with straight out of localStorage under this key, so
+// pre-loading it is all "open the settings again later" takes
+const seed = <span class="cstat-no" title="statement not covered" >process.argv.slice(3).<span class="fstat-no" title="function not covered" >find((a</span>rg) =&gt; <span class="cstat-no" title="statement not covered" >arg.startsWith('--settings='))</span>;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (typeof host.localStorage === 'undefined') {</span>
+  const store: Record&lt;string, string&gt; = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >  if (seed) {</span>
+<span class="cstat-no" title="statement not covered" >    store['clay-settings'] = fs.readFileSync(seed.slice('--settings='.length), 'utf8');</span>
+  }
+<span class="cstat-no" title="statement not covered" >  host.localStorage = {</span>
+<span class="fstat-no" title="function not covered" >    getItem: f</span>unction (key: string) { <span class="cstat-no" title="statement not covered" >return key in store ? store[key] : null; }</span>,
+<span class="fstat-no" title="function not covered" >    setItem: f</span>unction (key: string, value: string) { <span class="cstat-no" title="statement not covered" >store[key] = String(value); }</span>,
+  };
+}
+&nbsp;
+// the watch build aliases "message_keys" to a generated file which does not exist under plain
+// node, so stand in a map built from the appinfo. the real ids do not matter for rendering
+const appinfo = <span class="cstat-no" title="statement not covered" >path.join(ROOT, rel, 'config', 'pebble.appinfo.json');</span>
+const declared: string[] = <span class="cstat-no" title="statement not covered" >JSON.parse(fs.readFileSync(appinfo, 'utf8')).messageKeys || [];</span>
+const messageKeysStub: Record&lt;string, number&gt; = <span class="cstat-no" title="statement not covered" >{};</span>
+<span class="cstat-no" title="statement not covered" >declared.<span class="fstat-no" title="function not covered" >forEach((n</span>ame, i) =&gt; { <span class="cstat-no" title="statement not covered" >messageKeysStub[name] = 10000 + i; }</span>);</span>
+&nbsp;
+// _load is a private Node internal so it is not in the public module types
+const moduleInternal = <span class="cstat-no" title="statement not covered" >Module as unknown as {</span>
+  _load: (request: string, ...args: unknown[]) =&gt; unknown;
+};
+const origLoad = <span class="cstat-no" title="statement not covered" >moduleInternal._load;</span>
+<span class="cstat-no" title="statement not covered" >moduleInternal._load = <span class="fstat-no" title="function not covered" >function (this: unknown, r</span>equest: string, ...args: unknown[]) {</span>
+<span class="cstat-no" title="statement not covered" >  if (request === 'message_keys') { <span class="cstat-no" title="statement not covered" >return messageKeysStub; }</span></span>
+<span class="cstat-no" title="statement not covered" >  return origLoad.apply(this, [request, ...args]);</span>
+};
+&nbsp;
+const Clay = <span class="cstat-no" title="statement not covered" >requireHost('@rebble/clay/src/js/index');</span>
+&nbsp;
+/** Pull the raw HTML out of the data url generateUrl hands back. */
+function <span class="fstat-no" title="function not covered" >htmlFromDataUrl(u</span>rl: string): string {
+  const comma = <span class="cstat-no" title="statement not covered" >url.indexOf(',');</span>
+  const head = <span class="cstat-no" title="statement not covered" >url.slice(0, comma);</span>
+  const body = <span class="cstat-no" title="statement not covered" >url.slice(comma + 1);</span>
+<span class="cstat-no" title="statement not covered" >  return head.indexOf(';base64') !== -1</span>
+    ? Buffer.from(body, 'base64').toString('utf8')
+    : decodeURIComponent(body);
+}
+&nbsp;
+/** Whether a module actually is a Clay component, rather than a lump of generated data. */
+function <span class="fstat-no" title="function not covered" >isComponent(v</span>alue: unknown): boolean {
+<span class="cstat-no" title="statement not covered" >  if (!value || typeof value !== 'object') {</span>
+<span class="cstat-no" title="statement not covered" >    return false;</span>
+  }
+  const candidate = <span class="cstat-no" title="statement not covered" >value as { name?: unknown; manipulator?: unknown };</span>
+<span class="cstat-no" title="statement not covered" >  return typeof candidate.name === 'string' &amp;&amp; Boolean(candidate.manipulator);</span>
+}
+&nbsp;
+/**
+ * Every custom component the face's emit tree carries, ready to register.
+ *
+ * Picked by shape rather than by filename: the same clay/ folder holds generated *data* (the
+ * thumbnail and vibrant tables), and handing one of those to registerComponent throws
+ * "The manipulator must be defined", which reads like a broken component rather than a file that
+ * was never a component at all.
+ */
+function <span class="fstat-no" title="function not covered" >components(e</span>mit: string): unknown[] {
+  const found: unknown[] = <span class="cstat-no" title="statement not covered" >[];</span>
+&nbsp;
+  function <span class="fstat-no" title="function not covered" >collect(d</span>ir: string, suffix: string): void {
+<span class="cstat-no" title="statement not covered" >    if (!fs.existsSync(dir)) {</span>
+<span class="cstat-no" title="statement not covered" >      return;</span>
+    }
+<span class="cstat-no" title="statement not covered" >    for (const name of fs.readdirSync(dir)) {</span>
+<span class="cstat-no" title="statement not covered" >      if (!name.endsWith(suffix)) {</span>
+<span class="cstat-no" title="statement not covered" >        continue;</span>
+      }
+      // the generated .g.js builders are plain CommonJS. the TS ones land on .default
+      const mod = <span class="cstat-no" title="statement not covered" >requireHost(path.join(dir, name)) as { default?: unknown };</span>
+      const candidate = <span class="cstat-no" title="statement not covered" >mod.default || mod;</span>
+<span class="cstat-no" title="statement not covered" >      if (isComponent(candidate)) {</span>
+<span class="cstat-no" title="statement not covered" >        found.push(candidate);</span>
+      }
+    }
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  collect(path.join(emit, ...rel.split('/'), 'src', 'pkjs', 'clay'), '.g.js');</span>
+<span class="cstat-no" title="statement not covered" >  collect(path.join(emit, ...ENGINE_REL.split('/'), 'ts', 'clay'), '-component.js');</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return found;</span>
+}
+&nbsp;
+/** Renders the settings page to clay-preview.html so a browser can open it. */
+function <span class="fstat-no" title="function not covered" >build(): void {</span>
+  // required per build so each pass picks up the freshly compiled emit/ tree. at module scope they
+  // would stay bound to the first load and dropping the require cache would not budge them
+  const configPath = <span class="cstat-no" title="statement not covered" >path.join(paths.emit, ...rel.split('/'), 'src', 'pkjs', 'config.js');</span>
+  const configModule = <span class="cstat-no" title="statement not covered" >requireHost(configPath) as { default?: unknown; customClay?: unknown };</span>
+&nbsp;
+  // a face that runs code inside its own config page exports it beside the rows, so the preview
+  // gets the same page the watch would rather than one with its buttons dead
+  const customClay = (<span class="cstat-no" title="statement not covered" >configModule.customClay || null) as (() =&gt; void) | null;</span>
+&nbsp;
+  const clay = <span class="cstat-no" title="statement not covered" >new Clay(configModule.default, customClay, { autoHandleEvents: false });</span>
+<span class="cstat-no" title="statement not covered" >  for (const component of components(paths.emit)) {</span>
+<span class="cstat-no" title="statement not covered" >    clay.registerComponent(component);</span>
+  }
+&nbsp;
+  // Clay only fills meta inside its showConfiguration handler, and generateUrl is called here
+  // without one, so the page would carry activeWatchInfo: null and show every item whatever
+  // --platform said. filling it is what makes the capability filter testable off-watch
+<span class="cstat-no" title="statement not covered" >  (clay as { meta?: unknown }).meta = {</span>
+    activeWatchInfo: { platform, firmware: { major: 4, minor: 3, patch: 0 } },
+    accountToken: '',
+    watchToken: '',
+    userData: {},
+  };
+&nbsp;
+  const html = <span class="cstat-no" title="statement not covered" >htmlFromDataUrl(clay.generateUrl());</span>
+<span class="cstat-no" title="statement not covered" >  fs.writeFileSync(OUT, html);</span>
+&nbsp;
+  const stamp = <span class="cstat-no" title="statement not covered" >new Date().toISOString().slice(11, 19);</span>
+<span class="cstat-no" title="statement not covered" >  console.log('[' + stamp + '] wrote ' + OUT + ' (' + html.length + ' bytes) for ' + face);</span>
+}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >writeTsconfig(face, paths);</span>
+<span class="cstat-no" title="statement not covered" >compile(paths);</span>
+<span class="cstat-no" title="statement not covered" >copyGenerated(paths);</span>
+<span class="cstat-no" title="statement not covered" >build();</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >if (process.argv.indexOf('--watch') !== -1) {</span>
+  const watched = <span class="cstat-no" title="statement not covered" >[</span>
+    path.join(ROOT, rel, 'src', 'pkjs'),
+    path.join(ENGINE, 'ts', 'clay'),
+  ].<span class="fstat-no" title="function not covered" >filter((d</span>ir) =&gt; <span class="cstat-no" title="statement not covered" >fs.existsSync(dir))</span>;
+&nbsp;
+  // fs.watch fires more than once per save and every pass shells out to a synchronous tsc, so
+  // roll a burst of events into one rebuild
+  let timer: ReturnType&lt;typeof setTimeout&gt; | null = <span class="cstat-no" title="statement not covered" >null;</span>
+&nbsp;
+  const <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >rebuild = (): void =&gt; {</span></span>
+    // node caches required modules, so drop them before the next build
+<span class="cstat-no" title="statement not covered" >    Object.keys(requireHost.cache).<span class="fstat-no" title="function not covered" >forEach((k</span>ey) =&gt; { <span class="cstat-no" title="statement not covered" >delete requireHost.cache[key]; }</span>);</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+      // no cleanEmit here: wiping emit/ would mean a cold tsc on every keystroke
+<span class="cstat-no" title="statement not covered" >      compile(paths);</span>
+<span class="cstat-no" title="statement not covered" >      copyGenerated(paths);</span>
+<span class="cstat-no" title="statement not covered" >      build();</span>
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >      console.error('build failed: ' + (error as Error).message);</span>
+    }
+  };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  console.log('watching for changes. refresh the browser after each save.');</span>
+<span class="cstat-no" title="statement not covered" >  console.log('note: edits under clay/builder need `npm run gen:clay -- ' + face + '` first.');</span>
+<span class="cstat-no" title="statement not covered" >  watched.<span class="fstat-no" title="function not covered" >forEach((d</span>ir) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    fs.watch(dir, { recursive: true <span class="fstat-no" title="function not covered" >}, () =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (timer) { <span class="cstat-no" title="statement not covered" >clearTimeout(timer); }</span></span>
+<span class="cstat-no" title="statement not covered" >      timer = setTimeout(rebuild, 150);</span>
+    });
+  });
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-09-18T02:36:14.656Z
+            </div>
+        <script src="../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
+    </body>
+</html>
+    

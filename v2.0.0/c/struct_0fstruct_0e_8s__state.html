@@ -1,0 +1,331 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: [struct].s_state Struct Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.0.0" selected>v2.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_0fstruct_0e_8s__state.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">[struct].s_state Struct Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Data Fields</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a0ebb7e2470a25382914057567df6b6fc" name="a0ebb7e2470a25382914057567df6b6fc"></a>
+<a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
+<tr class="memdesc:a0ebb7e2470a25382914057567df6b6fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a8c57d2ae2893bf12ecf2938512fdf39d" name="a8c57d2ae2893bf12ecf2938512fdf39d"></a>
+time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
+<tr class="memdesc:a8c57d2ae2893bf12ecf2938512fdf39d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When that agenda arrived. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a3adc1e2c434f4609f082da78980b03fb" name="a3adc1e2c434f4609f082da78980b03fb"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
+<tr class="memdesc:a3adc1e2c434f4609f082da78980b03fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_STOCK, so a restore can tell this blob from another shape. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a245b7bb94f1403b5c18554b3b88da49b" name="a245b7bb94f1403b5c18554b3b88da49b"></a>
+<a class="el" href="structStockStrip.html">StockStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
+<tr class="memdesc:a245b7bb94f1403b5c18554b3b88da49b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The quotes as the phone last sent them. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aa3adf9f8ede4619ee3c823e6d473bd48" name="aa3adf9f8ede4619ee3c823e6d473bd48"></a>
+time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
+<tr class="memdesc:aa3adf9f8ede4619ee3c823e6d473bd48"><td class="mdescLeft">&#160;</td><td class="mdescRight">When those quotes arrived. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a9635eeca5ca5289d871f0ddc134409ec" name="a9635eeca5ca5289d871f0ddc134409ec"></a>
+int&#160;</td><td class="memItemRight"><b>battery_level</b></td></tr>
+<tr class="memdesc:a9635eeca5ca5289d871f0ddc134409ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Battery charge, in percent. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aaa7823a92a3a7859ef0ac150d6def6af" name="aaa7823a92a3a7859ef0ac150d6def6af"></a>
+bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
+<tr class="memdesc:aaa7823a92a3a7859ef0ac150d6def6af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch is charging. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a99366657db6debaa3b1e59f6d094ea37" name="a99366657db6debaa3b1e59f6d094ea37"></a>
+bool&#160;</td><td class="memItemRight"><b>bluetooth_connected</b></td></tr>
+<tr class="memdesc:a99366657db6debaa3b1e59f6d094ea37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone is connected. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a9d9ce9226e75c270100d5ec903c2def2" name="a9d9ce9226e75c270100d5ec903c2def2"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
+<tr class="memdesc:a9d9ce9226e75c270100d5ec903c2def2"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aa561dc7a98c82760ae578d581a6fade7" name="aa561dc7a98c82760ae578d581a6fade7"></a>
+char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
+<tr class="memdesc:aa561dc7a98c82760ae578d581a6fade7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude as text, as the phone sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab334df8e695943ac85f46fa33b38c444" name="ab334df8e695943ac85f46fa33b38c444"></a>
+char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
+<tr class="memdesc:ab334df8e695943ac85f46fa33b38c444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aacd6798200fa6693dd1d61678a3a5426" name="aacd6798200fa6693dd1d61678a3a5426"></a>
+int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
+<tr class="memdesc:aacd6798200fa6693dd1d61678a3a5426"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a73486514c26c941f48eb0614c847d1b1" name="a73486514c26c941f48eb0614c847d1b1"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>hr_history</b> [<a class="el" href="health__store_8c.html#a565e5d788d520b3a16db7c546e9ee7b3">HR_HISTORY_MINUTES</a>]</td></tr>
+<tr class="memdesc:a73486514c26c941f48eb0614c847d1b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rolling heart rate window, one reading a minute. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab10d667a8f7be4c273b98ad2640b3784" name="ab10d667a8f7be4c273b98ad2640b3784"></a>
+time_t&#160;</td><td class="memItemRight"><b>hr_last_min</b></td></tr>
+<tr class="memdesc:ab10d667a8f7be4c273b98ad2640b3784"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock minute of the last history write, so the window can slide. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab2a1a1b19162e6ab14cc18a126a7725f" name="ab2a1a1b19162e6ab14cc18a126a7725f"></a>
+int&#160;</td><td class="memItemRight"><b>steps</b></td></tr>
+<tr class="memdesc:ab2a1a1b19162e6ab14cc18a126a7725f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step count. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="af5be0d1c21be86823aae812c02002ec2" name="af5be0d1c21be86823aae812c02002ec2"></a>
+int&#160;</td><td class="memItemRight"><b>calories</b></td></tr>
+<tr class="memdesc:af5be0d1c21be86823aae812c02002ec2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calorie count. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a45f284f8a31081cd0a6ec41f7000a239" name="a45f284f8a31081cd0a6ec41f7000a239"></a>
+int&#160;</td><td class="memItemRight"><b>sleep_min</b></td></tr>
+<tr class="memdesc:a45f284f8a31081cd0a6ec41f7000a239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes slept. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a84c730b3592239ff34ee2c564d429c94" name="a84c730b3592239ff34ee2c564d429c94"></a>
+int&#160;</td><td class="memItemRight"><b>active_min</b></td></tr>
+<tr class="memdesc:a84c730b3592239ff34ee2c564d429c94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active minutes. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a2f878a6ba6a2497a54e6e5e5d420ef22" name="a2f878a6ba6a2497a54e6e5e5d420ef22"></a>
+int&#160;</td><td class="memItemRight"><b>distance_m</b></td></tr>
+<tr class="memdesc:a2f878a6ba6a2497a54e6e5e5d420ef22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance walked, in metres. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aebcaea8e6c16f4f83258984729e701c1" name="aebcaea8e6c16f4f83258984729e701c1"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>step_hourly</b> [HOURS_PER_DAY]</td></tr>
+<tr class="memdesc:aebcaea8e6c16f4f83258984729e701c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps in each hour of today, midnight first. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="af5b1b14ffb090792e3552dd0b40f350b" name="af5b1b14ffb090792e3552dd0b40f350b"></a>
+int&#160;</td><td class="memItemRight"><b>step_hours</b></td></tr>
+<tr class="memdesc:af5b1b14ffb090792e3552dd0b40f350b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of those hours are real (0 to 24). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a237a05ff153b38d7cb6339835b41ab76" name="a237a05ff153b38d7cb6339835b41ab76"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
+<tr class="memdesc:a237a05ff153b38d7cb6339835b41ab76"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_WEATHER, so a restore can tell this blob from another shape. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab31b0951909f8022d16aebd3f0365b8f" name="ab31b0951909f8022d16aebd3f0365b8f"></a>
+int16_t&#160;</td><td class="memItemRight"><b>temp</b></td></tr>
+<tr class="memdesc:ab31b0951909f8022d16aebd3f0365b8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current temperature in the user's unit (WEATHER_NO_TEMP when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aecc535d5b1a1d9b9f2302f72af9e5d43" name="aecc535d5b1a1d9b9f2302f72af9e5d43"></a>
+char&#160;</td><td class="memItemRight"><b>cond</b> [32]</td></tr>
+<tr class="memdesc:aecc535d5b1a1d9b9f2302f72af9e5d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Short word for the sky, such as "SUNNY". <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a657f671119802e671fe6c60f9a9aafad" name="a657f671119802e671fe6c60f9a9aafad"></a>
+int&#160;</td><td class="memItemRight"><b>humidity</b></td></tr>
+<tr class="memdesc:a657f671119802e671fe6c60f9a9aafad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Percent humidity, -1 when none. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a1061be4ea06b4a20974a70f0064ddd11" name="a1061be4ea06b4a20974a70f0064ddd11"></a>
+int&#160;</td><td class="memItemRight"><b>wind_kmh</b></td></tr>
+<tr class="memdesc:a1061be4ea06b4a20974a70f0064ddd11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wind speed in km/h, -1 when none. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="adc98b14ac4937434785a4e9517ece49e" name="adc98b14ac4937434785a4e9517ece49e"></a>
+char&#160;</td><td class="memItemRight"><b>wind_dir</b> [4]</td></tr>
+<tr class="memdesc:adc98b14ac4937434785a4e9517ece49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wind direction like "NW". <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a00fe86ac601abcee5c50ea45ac1df152" name="a00fe86ac601abcee5c50ea45ac1df152"></a>
+char&#160;</td><td class="memItemRight"><b>sunrise</b> [8]</td></tr>
+<tr class="memdesc:a00fe86ac601abcee5c50ea45ac1df152"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunrise time like "06:30". <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a66b813693c7577f236cb129a08151a5b" name="a66b813693c7577f236cb129a08151a5b"></a>
+char&#160;</td><td class="memItemRight"><b>sunset</b> [8]</td></tr>
+<tr class="memdesc:a66b813693c7577f236cb129a08151a5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunset time like "21:30". <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ac24d23c4f6dbab19a57a45e89ac813d7" name="ac24d23c4f6dbab19a57a45e89ac813d7"></a>
+int&#160;</td><td class="memItemRight"><b>uv</b></td></tr>
+<tr class="memdesc:ac24d23c4f6dbab19a57a45e89ac813d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV index (-1 when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a835e7afcfdf20d2b7124e78ab1ebef4f" name="a835e7afcfdf20d2b7124e78ab1ebef4f"></a>
+int&#160;</td><td class="memItemRight"><b>temp_max</b></td></tr>
+<tr class="memdesc:a835e7afcfdf20d2b7124e78ab1ebef4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high (WEATHER_NO_TEMP when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a8deb5599c32222e56c1a167e71112fba" name="a8deb5599c32222e56c1a167e71112fba"></a>
+int&#160;</td><td class="memItemRight"><b>temp_min</b></td></tr>
+<tr class="memdesc:a8deb5599c32222e56c1a167e71112fba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low (WEATHER_NO_TEMP when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a6f8f263f9567c81244f4f711c835ff1c" name="a6f8f263f9567c81244f4f711c835ff1c"></a>
+int&#160;</td><td class="memItemRight"><b>precip_chance</b></td></tr>
+<tr class="memdesc:a6f8f263f9567c81244f4f711c835ff1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Percent chance of precip (-1 when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a8fc2f9c91855b94aaee0e33a8afb8225" name="a8fc2f9c91855b94aaee0e33a8afb8225"></a>
+int&#160;</td><td class="memItemRight"><b>feels_like</b></td></tr>
+<tr class="memdesc:a8fc2f9c91855b94aaee0e33a8afb8225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apparent temperature (WEATHER_NO_TEMP when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a92c92efd5d840d8128d5b4555aae3fb8" name="a92c92efd5d840d8128d5b4555aae3fb8"></a>
+int&#160;</td><td class="memItemRight"><b>pressure</b></td></tr>
+<tr class="memdesc:a92c92efd5d840d8128d5b4555aae3fb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Surface pressure in hPa (-1 when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a6947fe23a493df36de1f8094612d4c9b" name="a6947fe23a493df36de1f8094612d4c9b"></a>
+int&#160;</td><td class="memItemRight"><b>dew_point</b></td></tr>
+<tr class="memdesc:a6947fe23a493df36de1f8094612d4c9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dew point temperature (WEATHER_NO_TEMP when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aa03a86332b85e7d7c3e17454552642e6" name="aa03a86332b85e7d7c3e17454552642e6"></a>
+<a class="el" href="structWeatherHourly.html">WeatherHourly</a>&#160;</td><td class="memItemRight"><b>hourly</b></td></tr>
+<tr class="memdesc:aa03a86332b85e7d7c3e17454552642e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip (<span class="tt">count</span> 0 when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab9845291a3090935ed2e532d73887d10" name="ab9845291a3090935ed2e532d73887d10"></a>
+<a class="el" href="structWeatherDaily.html">WeatherDaily</a>&#160;</td><td class="memItemRight"><b>daily</b></td></tr>
+<tr class="memdesc:ab9845291a3090935ed2e532d73887d10"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 7-day forecast strip (<span class="tt">count</span> 0 when none). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a3b313ff9b49afb5828c3bf78702c8d29" name="a3b313ff9b49afb5828c3bf78702c8d29"></a>
+time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
+<tr class="memdesc:a3b313ff9b49afb5828c3bf78702c8d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the last reading landed, or 0 for never. <br /></td></tr>
+</table>
+<hr/>The documentation for this struct was generated from the following files:</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="struct_0fstruct_0e_8s__state.html">[struct].s_state</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

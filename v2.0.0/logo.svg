@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-label="Pebble Watchface Engine">
+  <!--
+    The watch, its four buttons, and a screen with a row of three pixels lit, the way a readout
+    starts to fill in.
+
+    Doxygen shows this through an img tag, so it cannot pick up the colour of the text around it and
+    it never hears about the light and dark switch. Every colour in here has to work on both
+    backgrounds on its own, which is why the body is orange rather than a dark shape. The orange is
+    far enough from both to stay clear.
+  -->
+  <g fill="#ff4700">
+    <!-- the four buttons. back on the left, then up and select and down on the right -->
+    <rect x="2.7" y="10.9" width="1.8" height="2.2" rx="0.8" />
+    <rect x="19.5" y="6.2" width="1.8" height="2.2" rx="0.8" />
+    <rect x="19.5" y="10.9" width="1.8" height="2.2" rx="0.8" />
+    <rect x="19.5" y="15.6" width="1.8" height="2.2" rx="0.8" />
+    <!-- the body -->
+    <rect x="4.5" y="1.5" width="15" height="21" rx="3.6" />
+  </g>
+  <!-- the screen -->
+  <rect x="7" y="5" width="10" height="14" rx="1.2" fill="#f2f0eb" />
+  <!-- three pixels on, in a row along the bottom -->
+  <g fill="#ff4700">
+    <rect x="8.4" y="15.4" width="2.2" height="2.2" />
+    <rect x="10.9" y="15.4" width="2.2" height="2.2" />
+    <rect x="13.4" y="15.4" width="2.2" height="2.2" />
+  </g>
+</svg>
