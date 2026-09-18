@@ -1,0 +1,622 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Data In and Out</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.1.0" selected>v1.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__io.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Data In and Out <div class="ingroups"><a class="el" href="group__lib.html">Shared Base Library</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Fappmessage_2Fappmessage_2Eh" id="r_c_2Fpebble_2Fio_2Fappmessage_2Fappmessage_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="appmessage_8h.html">c/pebble/io/appmessage/appmessage.h</a></td></tr>
+<tr class="memdesc:appmessage_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">AppMessage transport: decodes the inbox and notifies the app via handlers. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fio_2Ftuple_5Fread_2Eh" id="r_c_2Fpebble_2Fio_2Ftuple_5Fread_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="tuple__read_8h.html">c/pebble/io/tuple_read.h</a></td></tr>
+<tr class="memdesc:tuple__read_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a value out of an inbound message tuple. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga8bfcc8d396856901aeea684974fdb15c" id="r_ga8bfcc8d396856901aeea684974fdb15c"><td class="memItemLeft"><a id="ga8bfcc8d396856901aeea684974fdb15c" name="ga8bfcc8d396856901aeea684974fdb15c"></a>
+#define&#160;</td><td class="memItemRight"><b>APPMESSAGE_CUSTOM_COLORS_MAX</b>&#160;&#160;&#160;502</td></tr>
+<tr class="memdesc:ga8bfcc8d396856901aeea684974fdb15c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worst case combined custom-colours string. Two persist-key-sized halves plus the bar and the NUL. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga7f166ce0149d01e665fe17a47dfa00bd" id="r_ga7f166ce0149d01e665fe17a47dfa00bd"><td class="memItemLeft"><a id="ga7f166ce0149d01e665fe17a47dfa00bd" name="ga7f166ce0149d01e665fe17a47dfa00bd"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>WeatherHandler</b>(int temp, const char *condition)</td></tr>
+<tr class="memitem:ga59b6055d84a446d8b469ba7ef8883030" id="r_ga59b6055d84a446d8b469ba7ef8883030"><td class="memItemLeft"><a id="ga59b6055d84a446d8b469ba7ef8883030" name="ga59b6055d84a446d8b469ba7ef8883030"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>CoordsHandler</b>(const char *lat, const char *lon)</td></tr>
+<tr class="memitem:gaa75e1339172964d75887a1c2b7b464fe" id="r_gaa75e1339172964d75887a1c2b7b464fe"><td class="memItemLeft"><a id="gaa75e1339172964d75887a1c2b7b464fe" name="gaa75e1339172964d75887a1c2b7b464fe"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>SettingsChangedHandler</b>(bool time_or_date_changed)</td></tr>
+<tr class="memitem:ga20ba4f3074f2ac3ff172d912a05d005e" id="r_ga20ba4f3074f2ac3ff172d912a05d005e"><td class="memItemLeft"><a id="ga20ba4f3074f2ac3ff172d912a05d005e" name="ga20ba4f3074f2ac3ff172d912a05d005e"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>WeatherExtraHandler</b>(int humidity, int wind_kmh, const char *wind_dir, const char *sunrise, const char *sunset)</td></tr>
+<tr class="memitem:ga84945e018c2a84f45e45ce683273e985" id="r_ga84945e018c2a84f45e45ce683273e985"><td class="memItemLeft"><a id="ga84945e018c2a84f45e45ce683273e985" name="ga84945e018c2a84f45e45ce683273e985"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>WeatherForecastHandler</b>(int uv, int temp_max, int temp_min, int precip_chance)</td></tr>
+<tr class="memitem:gaacc7569bc241a64a05d4fb72c8b8e4a7" id="r_gaacc7569bc241a64a05d4fb72c8b8e4a7"><td class="memItemLeft"><a id="gaacc7569bc241a64a05d4fb72c8b8e4a7" name="gaacc7569bc241a64a05d4fb72c8b8e4a7"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>WeatherAirHandler</b>(int feels_like, int pressure, int dew_point)</td></tr>
+<tr class="memitem:gad1004ca4be56020f12044e28936eba28" id="r_gad1004ca4be56020f12044e28936eba28"><td class="memItemLeft"><a id="gad1004ca4be56020f12044e28936eba28" name="gad1004ca4be56020f12044e28936eba28"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>WeatherForecastStripHandler</b>(const uint8_t *buf, uint16_t len)</td></tr>
+<tr class="memitem:gac4a084dd2740afb9dbb74118db98bf4f" id="r_gac4a084dd2740afb9dbb74118db98bf4f"><td class="memItemLeft"><a id="gac4a084dd2740afb9dbb74118db98bf4f" name="gac4a084dd2740afb9dbb74118db98bf4f"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>LocationNameHandler</b>(const char *name)</td></tr>
+<tr class="memitem:gaad5cc31baad613ac137e95653cdab162" id="r_gaad5cc31baad613ac137e95653cdab162"><td class="memItemLeft"><a id="gaad5cc31baad613ac137e95653cdab162" name="gaad5cc31baad613ac137e95653cdab162"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>StockStripHandler</b>(const uint8_t *buf, uint16_t len)</td></tr>
+<tr class="memitem:gaea56a19672a4978e838e9d0a8753405b" id="r_gaea56a19672a4978e838e9d0a8753405b"><td class="memItemLeft"><a id="gaea56a19672a4978e838e9d0a8753405b" name="gaea56a19672a4978e838e9d0a8753405b"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>CalendarStripHandler</b>(const uint8_t *buf, uint16_t len)</td></tr>
+<tr class="memitem:ga6daf051587a0083e33af5e4d0847f931" id="r_ga6daf051587a0083e33af5e4d0847f931"><td class="memItemLeft"><a id="ga6daf051587a0083e33af5e4d0847f931" name="ga6daf051587a0083e33af5e4d0847f931"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>CustomColorsHandler</b>(const char *combined)</td></tr>
+<tr class="memitem:ga6efc27e8b660e10498f1678ddecc05dc" id="r_ga6efc27e8b660e10498f1678ddecc05dc"><td class="memItemLeft"><a id="ga6efc27e8b660e10498f1678ddecc05dc" name="ga6efc27e8b660e10498f1678ddecc05dc"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>CustomColorsProvider</b>(char *out, size_t n)</td></tr>
+<tr class="memitem:gaae586b1981cefa58e0284ec05e167205" id="r_gaae586b1981cefa58e0284ec05e167205"><td class="memItemLeft"><a id="gaae586b1981cefa58e0284ec05e167205" name="gaae586b1981cefa58e0284ec05e167205"></a>
+typedef void(*)&#160;</td><td class="memItemRight"><b>InboxCompleteHandler</b>(void)</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga8760e9417f2f894915a0950dc1fdab07" id="r_ga8760e9417f2f894915a0950dc1fdab07"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga8760e9417f2f894915a0950dc1fdab07">appmessage_on_weather</a> (WeatherHandler cb)</td></tr>
+<tr class="memitem:ga7c64814ef2b8dcd4ee38743e31fb58d2" id="r_ga7c64814ef2b8dcd4ee38743e31fb58d2"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga7c64814ef2b8dcd4ee38743e31fb58d2">appmessage_on_coords</a> (CoordsHandler cb)</td></tr>
+<tr class="memitem:gad9d1d40d059728d240df1d07fd713323" id="r_gad9d1d40d059728d240df1d07fd713323"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad9d1d40d059728d240df1d07fd713323">appmessage_on_settings_changed</a> (SettingsChangedHandler cb)</td></tr>
+<tr class="memitem:gad4360c9f5dace5487ea6dd8bae620527" id="r_gad4360c9f5dace5487ea6dd8bae620527"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad4360c9f5dace5487ea6dd8bae620527">appmessage_on_weather_extra</a> (WeatherExtraHandler cb)</td></tr>
+<tr class="memitem:gafd576cde1016f517bdafb33b332993ee" id="r_gafd576cde1016f517bdafb33b332993ee"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gafd576cde1016f517bdafb33b332993ee">appmessage_on_weather_forecast</a> (WeatherForecastHandler cb)</td></tr>
+<tr class="memitem:ga36f8c9345e5a6323013776b74dab2c20" id="r_ga36f8c9345e5a6323013776b74dab2c20"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga36f8c9345e5a6323013776b74dab2c20">appmessage_on_weather_air</a> (WeatherAirHandler cb)</td></tr>
+<tr class="memitem:ga88a4d530275216588d8c63a4c0c7a8c2" id="r_ga88a4d530275216588d8c63a4c0c7a8c2"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga88a4d530275216588d8c63a4c0c7a8c2">appmessage_on_weather_forecast_hourly</a> (WeatherForecastStripHandler cb)</td></tr>
+<tr class="memitem:gad021727509d62fff8c31b283ef912c6b" id="r_gad021727509d62fff8c31b283ef912c6b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad021727509d62fff8c31b283ef912c6b">appmessage_on_weather_forecast_daily</a> (WeatherForecastStripHandler cb)</td></tr>
+<tr class="memitem:ga4bee672fd0b3bbfc53bc653dee0d7983" id="r_ga4bee672fd0b3bbfc53bc653dee0d7983"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga4bee672fd0b3bbfc53bc653dee0d7983">appmessage_on_location_name</a> (LocationNameHandler cb)</td></tr>
+<tr class="memitem:ga45a5f177aabba862b779b38b5b4ed288" id="r_ga45a5f177aabba862b779b38b5b4ed288"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga45a5f177aabba862b779b38b5b4ed288">appmessage_on_stock_strip</a> (StockStripHandler cb)</td></tr>
+<tr class="memitem:ga1ab2899a032be1fe4ab307e70f8bf3cd" id="r_ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga1ab2899a032be1fe4ab307e70f8bf3cd">appmessage_on_calendar_strip</a> (CalendarStripHandler cb)</td></tr>
+<tr class="memitem:gacd479537bb794bc2cc1f07b4db3fb830" id="r_gacd479537bb794bc2cc1f07b4db3fb830"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gacd479537bb794bc2cc1f07b4db3fb830">appmessage_on_custom_colors</a> (CustomColorsHandler cb)</td></tr>
+<tr class="memitem:gaf7a398e20625029f2e376405e9132660" id="r_gaf7a398e20625029f2e376405e9132660"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaf7a398e20625029f2e376405e9132660">appmessage_set_custom_colors_provider</a> (CustomColorsProvider cb)</td></tr>
+<tr class="memitem:ga8fb7bfc73fc11194d6954aa0d6ffe01c" id="r_ga8fb7bfc73fc11194d6954aa0d6ffe01c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga8fb7bfc73fc11194d6954aa0d6ffe01c">appmessage_on_inbox_complete</a> (InboxCompleteHandler cb)</td></tr>
+<tr class="memitem:ga08eff87fc42ee9c842bb5c338706f1fa" id="r_ga08eff87fc42ee9c842bb5c338706f1fa"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga08eff87fc42ee9c842bb5c338706f1fa">appmessage_open</a> (void)</td></tr>
+<tr class="memdesc:ga08eff87fc42ee9c842bb5c338706f1fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the SDK callbacks and open the inbox/outbox.  <br /></td></tr>
+<tr class="memitem:gaf552756e4da1e1818775bb984bdd36c0" id="r_gaf552756e4da1e1818775bb984bdd36c0"><td class="memItemLeft"><a id="gaf552756e4da1e1818775bb984bdd36c0" name="gaf552756e4da1e1818775bb984bdd36c0"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_request_weather</b> (void)</td></tr>
+<tr class="memdesc:gaf552756e4da1e1818775bb984bdd36c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh weather reading. The weather store calls this on its turn on the shared cadence. <br /></td></tr>
+<tr class="memitem:gac7dbcd76bf92e5bbf684d2c9849b5ebf" id="r_gac7dbcd76bf92e5bbf684d2c9849b5ebf"><td class="memItemLeft"><a id="gac7dbcd76bf92e5bbf684d2c9849b5ebf" name="gac7dbcd76bf92e5bbf684d2c9849b5ebf"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_request_stock</b> (void)</td></tr>
+<tr class="memdesc:gac7dbcd76bf92e5bbf684d2c9849b5ebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for fresh quotes. The stock store calls this on its turn on the shared cadence. A no-op on faces that do not declare the stock keys. <br /></td></tr>
+<tr class="memitem:gac18380f0c5fdc613452b569ef4d88c35" id="r_gac18380f0c5fdc613452b569ef4d88c35"><td class="memItemLeft"><a id="gac18380f0c5fdc613452b569ef4d88c35" name="gac18380f0c5fdc613452b569ef4d88c35"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void)</td></tr>
+<tr class="memdesc:gac18380f0c5fdc613452b569ef4d88c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence. A no-op on faces that do not declare the calendar keys. <br /></td></tr>
+<tr class="memitem:ga2efbc3a4f1c2f061db644fae33148a15" id="r_ga2efbc3a4f1c2f061db644fae33148a15"><td class="memItemLeft">int32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga2efbc3a4f1c2f061db644fae33148a15">tuple_int_or</a> (const Tuple *tuple, int32_t fallback)</td></tr>
+<tr class="memdesc:ga2efbc3a4f1c2f061db644fae33148a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an int tuple, whatever width the phone sent it at.  <br /></td></tr>
+<tr class="memitem:ga86dd1adef099205e5eb8c1d52b03ce96" id="r_ga86dd1adef099205e5eb8c1d52b03ce96"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga86dd1adef099205e5eb8c1d52b03ce96">tuple_str_or</a> (const Tuple *tuple, const char *fallback)</td></tr>
+<tr class="memdesc:ga86dd1adef099205e5eb8c1d52b03ce96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a cstring tuple, or the fallback when it is not one that can be read.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The AppMessage pipeline that talks to the phone, plus the little byte readers the stores use to unpack the packed strips.</p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga1ab2899a032be1fe4ab307e70f8bf3cd" name="ga1ab2899a032be1fe4ab307e70f8bf3cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1ab2899a032be1fe4ab307e70f8bf3cd">&#9670;&#160;</a></span>appmessage_on_calendar_strip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_calendar_strip </td>
+          <td>(</td>
+          <td class="paramtype">CalendarStripHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Packed agenda strip </p>
+
+</div>
+</div>
+<a id="ga7c64814ef2b8dcd4ee38743e31fb58d2" name="ga7c64814ef2b8dcd4ee38743e31fb58d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7c64814ef2b8dcd4ee38743e31fb58d2">&#9670;&#160;</a></span>appmessage_on_coords()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_coords </td>
+          <td>(</td>
+          <td class="paramtype">CoordsHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Latitude and longitude </p>
+
+</div>
+</div>
+<a id="gacd479537bb794bc2cc1f07b4db3fb830" name="gacd479537bb794bc2cc1f07b4db3fb830"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacd479537bb794bc2cc1f07b4db3fb830">&#9670;&#160;</a></span>appmessage_on_custom_colors()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_custom_colors </td>
+          <td>(</td>
+          <td class="paramtype">CustomColorsHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Inbound: splits and stores the combined string </p>
+
+</div>
+</div>
+<a id="ga8fb7bfc73fc11194d6954aa0d6ffe01c" name="ga8fb7bfc73fc11194d6954aa0d6ffe01c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8fb7bfc73fc11194d6954aa0d6ffe01c">&#9670;&#160;</a></span>appmessage_on_inbox_complete()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_inbox_complete </td>
+          <td>(</td>
+          <td class="paramtype">InboxCompleteHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Fires once after a whole inbox is handled </p>
+
+</div>
+</div>
+<a id="ga4bee672fd0b3bbfc53bc653dee0d7983" name="ga4bee672fd0b3bbfc53bc653dee0d7983"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4bee672fd0b3bbfc53bc653dee0d7983">&#9670;&#160;</a></span>appmessage_on_location_name()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_location_name </td>
+          <td>(</td>
+          <td class="paramtype">LocationNameHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Location name </p>
+
+</div>
+</div>
+<a id="gad9d1d40d059728d240df1d07fd713323" name="gad9d1d40d059728d240df1d07fd713323"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad9d1d40d059728d240df1d07fd713323">&#9670;&#160;</a></span>appmessage_on_settings_changed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_settings_changed </td>
+          <td>(</td>
+          <td class="paramtype">SettingsChangedHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A setting changed on the phone </p>
+
+</div>
+</div>
+<a id="ga45a5f177aabba862b779b38b5b4ed288" name="ga45a5f177aabba862b779b38b5b4ed288"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga45a5f177aabba862b779b38b5b4ed288">&#9670;&#160;</a></span>appmessage_on_stock_strip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_stock_strip </td>
+          <td>(</td>
+          <td class="paramtype">StockStripHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Packed watchlist strip </p>
+
+</div>
+</div>
+<a id="ga8760e9417f2f894915a0950dc1fdab07" name="ga8760e9417f2f894915a0950dc1fdab07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8760e9417f2f894915a0950dc1fdab07">&#9670;&#160;</a></span>appmessage_on_weather()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_weather </td>
+          <td>(</td>
+          <td class="paramtype">WeatherHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Temperature and condition </p>
+
+</div>
+</div>
+<a id="ga36f8c9345e5a6323013776b74dab2c20" name="ga36f8c9345e5a6323013776b74dab2c20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga36f8c9345e5a6323013776b74dab2c20">&#9670;&#160;</a></span>appmessage_on_weather_air()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_weather_air </td>
+          <td>(</td>
+          <td class="paramtype">WeatherAirHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Feels-like, pressure and dew point </p>
+
+</div>
+</div>
+<a id="gad4360c9f5dace5487ea6dd8bae620527" name="gad4360c9f5dace5487ea6dd8bae620527"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad4360c9f5dace5487ea6dd8bae620527">&#9670;&#160;</a></span>appmessage_on_weather_extra()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_weather_extra </td>
+          <td>(</td>
+          <td class="paramtype">WeatherExtraHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Humidity, wind and sun times </p>
+
+</div>
+</div>
+<a id="gafd576cde1016f517bdafb33b332993ee" name="gafd576cde1016f517bdafb33b332993ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafd576cde1016f517bdafb33b332993ee">&#9670;&#160;</a></span>appmessage_on_weather_forecast()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_weather_forecast </td>
+          <td>(</td>
+          <td class="paramtype">WeatherForecastHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>UV, today's high and low, rain chance </p>
+
+</div>
+</div>
+<a id="gad021727509d62fff8c31b283ef912c6b" name="gad021727509d62fff8c31b283ef912c6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad021727509d62fff8c31b283ef912c6b">&#9670;&#160;</a></span>appmessage_on_weather_forecast_daily()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_weather_forecast_daily </td>
+          <td>(</td>
+          <td class="paramtype">WeatherForecastStripHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Packed 7 day strip </p>
+
+</div>
+</div>
+<a id="ga88a4d530275216588d8c63a4c0c7a8c2" name="ga88a4d530275216588d8c63a4c0c7a8c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga88a4d530275216588d8c63a4c0c7a8c2">&#9670;&#160;</a></span>appmessage_on_weather_forecast_hourly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_on_weather_forecast_hourly </td>
+          <td>(</td>
+          <td class="paramtype">WeatherForecastStripHandler</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Packed hourly strip </p>
+
+</div>
+</div>
+<a id="ga08eff87fc42ee9c842bb5c338706f1fa" name="ga08eff87fc42ee9c842bb5c338706f1fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga08eff87fc42ee9c842bb5c338706f1fa">&#9670;&#160;</a></span>appmessage_open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_open </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Register the SDK callbacks and open the inbox/outbox. </p>
+<p>Call after the channel handlers are installed. </p>
+
+</div>
+</div>
+<a id="gaf7a398e20625029f2e376405e9132660" name="gaf7a398e20625029f2e376405e9132660"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf7a398e20625029f2e376405e9132660">&#9670;&#160;</a></span>appmessage_set_custom_colors_provider()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void appmessage_set_custom_colors_provider </td>
+          <td>(</td>
+          <td class="paramtype">CustomColorsProvider</td>          <td class="paramname"><span class="paramname"><em>cb</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Outbound: rebuilds the combined string </p>
+
+</div>
+</div>
+<a id="ga2efbc3a4f1c2f061db644fae33148a15" name="ga2efbc3a4f1c2f061db644fae33148a15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2efbc3a4f1c2f061db644fae33148a15">&#9670;&#160;</a></span>tuple_int_or()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t tuple_int_or </td>
+          <td>(</td>
+          <td class="paramtype">const Tuple *</td>          <td class="paramname"><span class="paramname"><em>tuple</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t</td>          <td class="paramname"><span class="paramname"><em>fallback</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads an int tuple, whatever width the phone sent it at. </p>
+<p>A sender may pick TUPLE_INT or TUPLE_UINT for an integer, so both are accepted and the choice only decides what the top bit means.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tuple</td><td>The tuple, or NULL when the key was absent. </td></tr>
+    <tr><td class="paramname">fallback</td><td>Returned when the tuple is absent, is not an int, or carries a width no sender may use. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value, or <code class="param">fallback</code>. </dd></dl>
+
+</div>
+</div>
+<a id="ga86dd1adef099205e5eb8c1d52b03ce96" name="ga86dd1adef099205e5eb8c1d52b03ce96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga86dd1adef099205e5eb8c1d52b03ce96">&#9670;&#160;</a></span>tuple_str_or()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * tuple_str_or </td>
+          <td>(</td>
+          <td class="paramtype">const Tuple *</td>          <td class="paramname"><span class="paramname"><em>tuple</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>fallback</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads a cstring tuple, or the fallback when it is not one that can be read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tuple</td><td>The tuple, or NULL when the key was absent. </td></tr>
+    <tr><td class="paramname">fallback</td><td>Returned when the tuple is absent, is not a cstring, or carries no terminator inside its own length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The string, or <code class="param">fallback</code>. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

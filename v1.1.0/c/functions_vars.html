@@ -1,0 +1,385 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Data Fields - Variables</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.1.0" selected>v1.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('functions_vars.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="contents">
+<div class="textblock">Here is a list of all documented variables with links to the struct/union documentation for each field:</div><br/>
+<div class="qindex"><a class="qindex" href="#index_a">A</a><div class="alphasepar"></div><a class="qindex" href="#index_b">B</a><div class="alphasepar"></div><a class="qindex" href="#index_c">C</a><div class="alphasepar"></div><a class="qindex" href="#index_d">D</a><div class="alphasepar"></div><a class="qindex" href="#index_e">E</a><div class="alphasepar"></div><a class="qindex" href="#index_f">F</a><div class="alphasepar"></div><a class="qindex" href="#index_h">H</a><div class="alphasepar"></div><a class="qindex" href="#index_i">I</a><div class="alphasepar"></div><a class="qindex" href="#index_k">K</a><div class="alphasepar"></div><a class="qindex" href="#index_l">L</a><div class="alphasepar"></div><a class="qindex" href="#index_m">M</a><div class="alphasepar"></div><a class="qindex" href="#index_n">N</a><div class="alphasepar"></div><a class="qindex" href="#index_o">O</a><div class="alphasepar"></div><a class="qindex" href="#index_p">P</a><div class="alphasepar"></div><a class="qindex" href="#index_r">R</a><div class="alphasepar"></div><a class="qindex" href="#index_s">S</a><div class="alphasepar"></div><a class="qindex" href="#index_t">T</a><div class="alphasepar"></div><a class="qindex" href="#index_u">U</a><div class="alphasepar"></div><a class="qindex" href="#index_v">V</a><div class="alphasepar"></div><a class="qindex" href="#index_w">W</a><div class="alphasepar"></div><a class="qindex" href="#index_z">Z</a></div>
+
+
+<h3 class="doxsection"><a id="index_a" name="index_a"></a>- a -</h3><ul>
+<li>active&#160;:&#160;<a class="el" href="structHealthConfig.html#a843879d7b5ad5103735e75d662e3781b">HealthConfig</a></li>
+<li>active_min&#160;:&#160;<a class="el" href="structHealthSeed.html#a8be3ae0a2c011bad8f9bec3c4328b687">HealthSeed</a></li>
+<li>affects_layout&#160;:&#160;<a class="el" href="structSettingField.html#ab9b0ae808d778bce54ba249994d87728">SettingField</a></li>
+<li>affects_weather&#160;:&#160;<a class="el" href="structSettingField.html#a5b5aa3e72da7efea998a16f6c833e4e3">SettingField</a></li>
+<li>all_day&#160;:&#160;<a class="el" href="structCalendarEvent.html#a169531a172f31f86d98b773c59209a04">CalendarEvent</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_b" name="index_b"></a>- b -</h3><ul>
+<li>base_hour&#160;:&#160;<a class="el" href="structWeatherHourly.html#ad7a834d6b6571d80f22136ef20ef9e41">WeatherHourly</a></li>
+<li>base_weekday&#160;:&#160;<a class="el" href="structWeatherDaily.html#af780eee24c1b9f82b788f4fdcd7379c8">WeatherDaily</a></li>
+<li>battery&#160;:&#160;<a class="el" href="structSystemSeed.html#a51e6c8c9c417fce174a71a3ba8d3994d">SystemSeed</a></li>
+<li>beats&#160;:&#160;<a class="el" href="structTimeConfig.html#a9f051ec76f4f1a95058f5ec52506aabc">TimeConfig</a></li>
+<li>blob&#160;:&#160;<a class="el" href="structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b">SettingsSchema</a></li>
+<li>blob_size&#160;:&#160;<a class="el" href="structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb">SettingsSchema</a></li>
+<li>bluetooth&#160;:&#160;<a class="el" href="structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee">SystemSeed</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_c" name="index_c"></a>- c -</h3><ul>
+<li>calories&#160;:&#160;<a class="el" href="structHealthConfig.html#af6cc7bfa1e1468a1568965065272ec3a">HealthConfig</a>, <a class="el" href="structHealthSeed.html#aa6696d59b0ddcf768b8fd291bbc14119">HealthSeed</a></li>
+<li>change_pct&#160;:&#160;<a class="el" href="structStockSlot.html#a8dd9ac04b08e83a1400323dcd32e76f8">StockSlot</a></li>
+<li>changed&#160;:&#160;<a class="el" href="structSettingsInbound.html#afe10d6eafb1c7b87bbf92d71cd16618f">SettingsInbound</a></li>
+<li>charging&#160;:&#160;<a class="el" href="structSystemSeed.html#a709c393ec6012a6fccd8bfba55c21594">SystemSeed</a></li>
+<li>clipped_end&#160;:&#160;<a class="el" href="structTimeBandSpan.html#abb8db41808468ee3b0693a2a427e12c9">TimeBandSpan</a></li>
+<li>clipped_start&#160;:&#160;<a class="el" href="structTimeBandSpan.html#a9a878a11dc8dcb894f60e121ffb50c20">TimeBandSpan</a></li>
+<li>code&#160;:&#160;<a class="el" href="structWeatherDayCol.html#ac38766be593b08c4c3abdc4a89626203">WeatherDayCol</a>, <a class="el" href="structWeatherHourCol.html#ae088f957b24a2f5b36846803d1e1b383">WeatherHourCol</a></li>
+<li>companion&#160;:&#160;<a class="el" href="structSettingsSchema.html#a0ca782030ce421247e781ebb459f438e">SettingsSchema</a></li>
+<li>cond&#160;:&#160;<a class="el" href="structWeatherSeed.html#a93c60f615195612444d3d584e7a669cb">WeatherSeed</a></li>
+<li>count&#160;:&#160;<a class="el" href="structCalendarStrip.html#a72c606e3a79d61f51137e7ab7630ffd2">CalendarStrip</a>, <a class="el" href="structStockStrip.html#a42f670ac4726b7bda534a6a5b0856b03">StockStrip</a>, <a class="el" href="structWeatherDaily.html#abbd4a49f7df11b0756e1418e49fb391b">WeatherDaily</a>, <a class="el" href="structWeatherHourly.html#ad43f77992787c31c31ee2048e367a58e">WeatherHourly</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_d" name="index_d"></a>- d -</h3><ul>
+<li>data&#160;:&#160;<a class="el" href="structEngineSlot.html#a42d96fd8327f37c24cb80e76386ecd45">EngineSlot</a></li>
+<li>default_num&#160;:&#160;<a class="el" href="structSettingField.html#ab9dc0056bfc6811d5be0dd8600042c14">SettingField</a></li>
+<li>default_str&#160;:&#160;<a class="el" href="structSettingField.html#a3a2055d62a14725d4f8b08a50d6546d1">SettingField</a></li>
+<li>dew_point&#160;:&#160;<a class="el" href="structWeatherSeed.html#a0511b520955d08ad1183532ad35cb828">WeatherSeed</a></li>
+<li>distance_m&#160;:&#160;<a class="el" href="structHealthSeed.html#aa847d55e5639320abb08555d2507c30f">HealthSeed</a></li>
+<li>draw&#160;:&#160;<a class="el" href="structEngineSlot.html#a1b963e9e7f45ae3fdd2a683646ad1124">EngineSlot</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_e" name="index_e"></a>- e -</h3><ul>
+<li>enabled&#160;:&#160;<a class="el" href="structCalendarConfig.html#a7068709f0ab194ca300c6546d35a29f1">CalendarConfig</a>, <a class="el" href="structHealthConfig.html#aab7e2af6cac33f03edaefa0395c538e9">HealthConfig</a>, <a class="el" href="structLocationConfig.html#a22bd5c4f8f5982330f411ebdf94cfdb9">LocationConfig</a>, <a class="el" href="structStockConfig.html#ab92abb509fc8c934b82746b032bf6fd8">StockConfig</a>, <a class="el" href="structSystemConfig.html#a88dcb4a79cae989efdd1632d95a2e362">SystemConfig</a>, <a class="el" href="structTimeConfig.html#a0a92308d9979b089ac817db98ed714a2">TimeConfig</a>, <a class="el" href="structWeatherConfig.html#a6992e5d383515e3e97821d52ffb05630">WeatherConfig</a></li>
+<li>end&#160;:&#160;<a class="el" href="structCalendarEvent.html#a69c9ffe9bd08ab6d24ba17bedd033be4">CalendarEvent</a></li>
+<li>enum_count&#160;:&#160;<a class="el" href="structSettingField.html#a1b26f28a04acef7e3ea2af0b7e1f1707">SettingField</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_f" name="index_f"></a>- f -</h3><ul>
+<li>feels_like&#160;:&#160;<a class="el" href="structWeatherSeed.html#abb6bbc297a857aaca63ced30f49e05e7">WeatherSeed</a></li>
+<li>field_count&#160;:&#160;<a class="el" href="structSettingsSchema.html#a06d990933c3f595e205f7cca8a63a5eb">SettingsSchema</a></li>
+<li>fields&#160;:&#160;<a class="el" href="structSettingsSchema.html#a0c8a65bed4b4810a0d8b5aa38b7ea2ed">SettingsSchema</a></li>
+<li>font_id_fallback&#160;:&#160;<a class="el" href="structZone.html#a1ce7118149bace3fb6260d85a0c8b159">Zone</a></li>
+<li>font_id_fallback2&#160;:&#160;<a class="el" href="structZone.html#ae0fc160a4fcbf56dbef709fa11ed4192">Zone</a></li>
+<li>font_id_fallback3&#160;:&#160;<a class="el" href="structZone.html#acfe63c946adc852f1475a9f8a68369c0">Zone</a></li>
+<li>forecast_daily&#160;:&#160;<a class="el" href="structWeatherSeed.html#a982b6926993492b778b20d9fbf5e6bcb">WeatherSeed</a></li>
+<li>forecast_hourly&#160;:&#160;<a class="el" href="structWeatherSeed.html#afa5fea3e4ef452f8a9fedf2f5d125a04">WeatherSeed</a></li>
+<li>frame&#160;:&#160;<a class="el" href="structEngineSlot.html#a0cc398600007b0b9eafeb67ca50b9201">EngineSlot</a></li>
+<li>from&#160;:&#160;<a class="el" href="structTimeBandSpan.html#a3e97f13ab587ef30e42ededc9f0a595b">TimeBandSpan</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_h" name="index_h"></a>- h -</h3><ul>
+<li>hr&#160;:&#160;<a class="el" href="structHealthSeed.html#a164c62c872f758f093f13bb1772e3cbe">HealthSeed</a></li>
+<li>hr_history&#160;:&#160;<a class="el" href="structHealthConfig.html#ab51a8038aeefea6ecc2daa83c85c54d0">HealthConfig</a>, <a class="el" href="structHealthSeed.html#afd4cb3c261939fd333cfbd42c93ed85a">HealthSeed</a></li>
+<li>humidity&#160;:&#160;<a class="el" href="structWeatherSeed.html#a3283c2db1cab5449deea79f7ec44ff4d">WeatherSeed</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_i" name="index_i"></a>- i -</h3><ul>
+<li>id&#160;:&#160;<a class="el" href="structSettingField.html#aec798b7f3491ac6acec2d2188063e15b">SettingField</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_k" name="index_k"></a>- k -</h3><ul>
+<li>key&#160;:&#160;<a class="el" href="structSettingsSchema.html#a8ebbf487f15d86af43b9aea6d0316c07">SettingsSchema</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_l" name="index_l"></a>- l -</h3><ul>
+<li>lat&#160;:&#160;<a class="el" href="structLocationSeed.html#a58307502423dcd0ab844df491022d3a5">LocationSeed</a></li>
+<li>layout_changed&#160;:&#160;<a class="el" href="structSettingsInbound.html#a0191358313d7d00799bd893bc58e491f">SettingsInbound</a></li>
+<li>live&#160;:&#160;<a class="el" href="structCalendarConfig.html#a686613ad49821e6aab85b1ff80eb9ac7">CalendarConfig</a>, <a class="el" href="structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14">HealthConfig</a>, <a class="el" href="structLocationConfig.html#a83c6b320e75bb7bed8f72b441b063e33">LocationConfig</a>, <a class="el" href="structStockConfig.html#ae0699f32855948ce685614e570317f38">StockConfig</a>, <a class="el" href="structSystemConfig.html#a3a51107da6d0eccf43036c688e77b2fa">SystemConfig</a>, <a class="el" href="structTimeConfig.html#af951cac1e7733963949ff707dcfe650e">TimeConfig</a>, <a class="el" href="structWeatherConfig.html#ad002199ba6f3a4b7af38924a8bb640e7">WeatherConfig</a></li>
+<li>location&#160;:&#160;<a class="el" href="structCalendarEvent.html#a33d3f80513e76379d78b3fa3617167ae">CalendarEvent</a></li>
+<li>lon&#160;:&#160;<a class="el" href="structLocationSeed.html#a525f72325d8cad6c0317e6b0d4ce469f">LocationSeed</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_m" name="index_m"></a>- m -</h3><ul>
+<li>margin&#160;:&#160;<a class="el" href="structIconEntry.html#a28ec4407002560f82c3199726fbc4d56">IconEntry</a></li>
+<li>message_key&#160;:&#160;<a class="el" href="structSettingField.html#ac8a166713eef87fb9adb5c8119c0d4dd">SettingField</a></li>
+<li>migrate&#160;:&#160;<a class="el" href="structSettingsSchema.html#a98dd2666626795edfc3593fd9880b495">SettingsSchema</a></li>
+<li>min_versioned_size&#160;:&#160;<a class="el" href="structSettingsSchema.html#a423877692a5620c67cc25c955455a635">SettingsSchema</a></li>
+<li>minute_tick&#160;:&#160;<a class="el" href="structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20">TimeConfig</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_n" name="index_n"></a>- n -</h3><ul>
+<li>next_alarm&#160;:&#160;<a class="el" href="structSystemSeed.html#ab5d79666596362e29fc16f637bb07ae7">SystemSeed</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_o" name="index_o"></a>- o -</h3><ul>
+<li>offset&#160;:&#160;<a class="el" href="structSettingField.html#a1d9df18c4cf838434964e182d565b4d7">SettingField</a></li>
+<li>ok&#160;:&#160;<a class="el" href="structStockSlot.html#afcd50802e50f27fd66ede857cd333679">StockSlot</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_p" name="index_p"></a>- p -</h3><ul>
+<li>persist_key&#160;:&#160;<a class="el" href="structCalendarConfig.html#a28bab0644bbdd2302aea9e28f11b1dc8">CalendarConfig</a>, <a class="el" href="structHealthConfig.html#a162f07256f08bd8dada6c12f6178cce0">HealthConfig</a>, <a class="el" href="structStockConfig.html#a35aea9539901a173b4dc1343054dff80">StockConfig</a>, <a class="el" href="structWeatherConfig.html#aea465941bd98b1490454738c7af6088e">WeatherConfig</a></li>
+<li>poll_min&#160;:&#160;<a class="el" href="structCalendarConfig.html#acb8009a48a79bd45de23069a2a9160f8">CalendarConfig</a>, <a class="el" href="structStockConfig.html#a26c88d84596dd4347fe66f69a84fc698">StockConfig</a>, <a class="el" href="structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4">WeatherConfig</a></li>
+<li>precip_chance&#160;:&#160;<a class="el" href="structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437">WeatherSeed</a></li>
+<li>pressure&#160;:&#160;<a class="el" href="structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902">WeatherSeed</a></li>
+<li>price_cents&#160;:&#160;<a class="el" href="structStockSlot.html#a5256275b025aa00f48cc430f0fb775be">StockSlot</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_r" name="index_r"></a>- r -</h3><ul>
+<li>rect_fallback&#160;:&#160;<a class="el" href="structZone.html#a839f256ad624c5be0d82732ecab01f47">Zone</a></li>
+<li>rect_fallback2&#160;:&#160;<a class="el" href="structZone.html#a896caa855cd84c0e6ef28c7c1856eafe">Zone</a></li>
+<li>rect_fallback3&#160;:&#160;<a class="el" href="structZone.html#a9991f1fe88fcf46da0b4e4e1fbdc8aab">Zone</a></li>
+<li>retries_left&#160;:&#160;<a class="el" href="structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1">OutboxJob</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_s" name="index_s"></a>- s -</h3><ul>
+<li>size&#160;:&#160;<a class="el" href="structSettingField.html#a3b8afca1c975f184271f81e55763af53">SettingField</a></li>
+<li>sleep&#160;:&#160;<a class="el" href="structHealthConfig.html#abc0f98aaaeadd8c236d39a08d7deebcf">HealthConfig</a></li>
+<li>sleep_min&#160;:&#160;<a class="el" href="structHealthSeed.html#a8a4f5427747cc9c610f9a4d762f60e82">HealthSeed</a></li>
+<li>span_min&#160;:&#160;<a class="el" href="structTimeBand.html#a9841d94a14ac1b0ca9e1f33868437da5">TimeBand</a></li>
+<li>start&#160;:&#160;<a class="el" href="structCalendarEvent.html#a35709dd02442840c04c3b8f55df74bd9">CalendarEvent</a></li>
+<li>start_min&#160;:&#160;<a class="el" href="structTimeBand.html#a740086bb48f2ad7e76e859f9eb151232">TimeBand</a></li>
+<li>step_history&#160;:&#160;<a class="el" href="structHealthConfig.html#a9cb4f23e6be6dec63f49cb4707a8421b">HealthConfig</a></li>
+<li>step_hourly&#160;:&#160;<a class="el" href="structHealthSeed.html#a1ed293dabaee597deaed84e6448b0eb0">HealthSeed</a></li>
+<li>step_hours&#160;:&#160;<a class="el" href="structHealthSeed.html#ae8ed84681436e54cc8f65a3270cea4e1">HealthSeed</a>, <a class="el" href="structWeatherHourly.html#a7cc8b049ea31e32b4c89ee2f49294eaa">WeatherHourly</a></li>
+<li>steps&#160;:&#160;<a class="el" href="structHealthSeed.html#a192572a06658ca20b3f0f436379b0c05">HealthSeed</a></li>
+<li>strip&#160;:&#160;<a class="el" href="structCalendarSeed.html#ae30b59c3ff9a7e08801f875e88e94e50">CalendarSeed</a>, <a class="el" href="structStockSeed.html#ad8f30db92dc3f9f9c3127c38b6aa58ca">StockSeed</a></li>
+<li>sunrise&#160;:&#160;<a class="el" href="structWeatherSeed.html#ae98c7da3fd4c33502a0b16eee2559adb">WeatherSeed</a></li>
+<li>sunset&#160;:&#160;<a class="el" href="structWeatherSeed.html#a8ae79ebf1a025752b1c6930608493313">WeatherSeed</a></li>
+<li>symbol&#160;:&#160;<a class="el" href="structStockSlot.html#a297cf0bffbcaf225d6be1979660efbb0">StockSlot</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_t" name="index_t"></a>- t -</h3><ul>
+<li>tags&#160;:&#160;<a class="el" href="structEngineSlot.html#a4587109d787749d3787c2521ec404314">EngineSlot</a></li>
+<li>temp&#160;:&#160;<a class="el" href="structWeatherHourCol.html#a1775eddd69fb1c024595af53454d0e22">WeatherHourCol</a>, <a class="el" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">WeatherSeed</a></li>
+<li>temp_max&#160;:&#160;<a class="el" href="structWeatherDayCol.html#ad3f35b86fa0243cf336df447a5823c64">WeatherDayCol</a>, <a class="el" href="structWeatherSeed.html#a61eddb007829da41b47f94582d5c43a6">WeatherSeed</a></li>
+<li>temp_min&#160;:&#160;<a class="el" href="structWeatherDayCol.html#a07060351177da6c12bd309d7c76e79ab">WeatherDayCol</a>, <a class="el" href="structWeatherSeed.html#a961fe24ad83d628b251f98ad0e96b32d">WeatherSeed</a></li>
+<li>text&#160;:&#160;<a class="el" href="structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180">EngineSlot</a></li>
+<li>tint&#160;:&#160;<a class="el" href="structIconEntry.html#aff9ed05ce2b092a889acb2cfdb5a3149">IconEntry</a></li>
+<li>tinted&#160;:&#160;<a class="el" href="structIconEntry.html#a7b9da71f47b947747679cd8eb52290bb">IconEntry</a></li>
+<li>title&#160;:&#160;<a class="el" href="structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa">CalendarEvent</a></li>
+<li>to&#160;:&#160;<a class="el" href="structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7">TimeBandSpan</a></li>
+<li>type&#160;:&#160;<a class="el" href="structSettingField.html#ae67eb62444a3ef84ce77260694c533c1">SettingField</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_u" name="index_u"></a>- u -</h3><ul>
+<li>used&#160;:&#160;<a class="el" href="structIconEntry.html#a11d272fabe3a08b5ab94b0190abc098a">IconEntry</a></li>
+<li>uv&#160;:&#160;<a class="el" href="structWeatherSeed.html#af976c15fe0ef750a0e83a1250f6bea43">WeatherSeed</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_v" name="index_v"></a>- v -</h3><ul>
+<li>version&#160;:&#160;<a class="el" href="structSettingsSchema.html#a1ba82ee7252bbf6eac986e2e8cfcc10d">SettingsSchema</a></li>
+<li>vibe&#160;:&#160;<a class="el" href="structSystemConfig.html#a7009ff4ab3db654c9944b6cc01c4d9d2">SystemConfig</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_w" name="index_w"></a>- w -</h3><ul>
+<li>weather_changed&#160;:&#160;<a class="el" href="structSettingsInbound.html#a843cd791d2de3b7dc02479ba114cf969">SettingsInbound</a></li>
+<li>wind_dir&#160;:&#160;<a class="el" href="structWeatherSeed.html#abe78d980ed72ae675e9e9c4aac94baf5">WeatherSeed</a></li>
+<li>wind_kmh&#160;:&#160;<a class="el" href="structWeatherSeed.html#a709b8a2cb2aa19136736b221aa2b600d">WeatherSeed</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_z" name="index_z"></a>- z -</h3><ul>
+<li>zone&#160;:&#160;<a class="el" href="structEngineSlot.html#a69694269a011f100691b29354f0ca5c5">EngineSlot</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/io/stores/system_store.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v1.1.0" selected>v1.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('system__store_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">system_store.c File Reference</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The active system store: holds the battery + bluetooth state and subscribes to the battery and connection services itself. The alarm is read through on demand.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Fstate" id="r__5Bstruct_5D_2Es_5Fstate"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__state.html">[struct].s_state</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a15cd2f3047048f896198aad66974e8b5" id="r_a15cd2f3047048f896198aad66974e8b5"><td class="memItemLeft"><a id="a15cd2f3047048f896198aad66974e8b5" name="a15cd2f3047048f896198aad66974e8b5"></a>
+static void&#160;</td><td class="memItemRight"><b>set_battery</b> (int level, bool charging)</td></tr>
+<tr class="memdesc:a15cd2f3047048f896198aad66974e8b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the battery reading and notify. <br /></td></tr>
+<tr class="memitem:a0e2565513a6aae0c0c79e2b69154d35c" id="r_a0e2565513a6aae0c0c79e2b69154d35c"><td class="memItemLeft"><a id="a0e2565513a6aae0c0c79e2b69154d35c" name="a0e2565513a6aae0c0c79e2b69154d35c"></a>
+static void&#160;</td><td class="memItemRight"><b>set_bluetooth</b> (bool connected)</td></tr>
+<tr class="memdesc:a0e2565513a6aae0c0c79e2b69154d35c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the bluetooth state, buzzing the face's policy on a real transition, and notify. <br /></td></tr>
+<tr class="memitem:acd10b3aaddfe22573b8e9d242eff655b" id="r_acd10b3aaddfe22573b8e9d242eff655b"><td class="memItemLeft"><a id="acd10b3aaddfe22573b8e9d242eff655b" name="acd10b3aaddfe22573b8e9d242eff655b"></a>
+static void&#160;</td><td class="memItemRight"><b>on_battery</b> (BatteryChargeState state)</td></tr>
+<tr class="memitem:af2f59572470146f43e36b0480130d05b" id="r_af2f59572470146f43e36b0480130d05b"><td class="memItemLeft"><a id="af2f59572470146f43e36b0480130d05b" name="af2f59572470146f43e36b0480130d05b"></a>
+static void&#160;</td><td class="memItemRight"><b>on_connection</b> (bool connected)</td></tr>
+<tr class="memitem:gaa56e12f48eddf86b1533059128765d2e" id="r_gaa56e12f48eddf86b1533059128765d2e"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>system_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa56e12f48eddf86b1533059128765d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when something changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>system_store_on_reconnect</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop. <br /></td></tr>
+<tr class="memitem:ga98c417e24d8488baa2bb33e39155a3e7" id="r_ga98c417e24d8488baa2bb33e39155a3e7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga98c417e24d8488baa2bb33e39155a3e7">system_store_init</a> (<a class="el" href="structSystemConfig.html">SystemConfig</a> cfg, const <a class="el" href="structSystemSeed.html">SystemSeed</a> *seed)</td></tr>
+<tr class="memdesc:ga98c417e24d8488baa2bb33e39155a3e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga8d12e20cd8e402fc7c7abbfcd7454f3c" id="r_ga8d12e20cd8e402fc7c7abbfcd7454f3c"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>system_store_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga8d12e20cd8e402fc7c7abbfcd7454f3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop tracking the battery + connection services. <br /></td></tr>
+<tr class="memitem:ga0a7b3e80e633a5f021929a1f3751260f" id="r_ga0a7b3e80e633a5f021929a1f3751260f"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>system_store_battery</b> (void)</td></tr>
+<tr class="memdesc:ga0a7b3e80e633a5f021929a1f3751260f"><td class="mdescLeft">&#160;</td><td class="mdescRight">How full the battery is from 0 to 100. <br /></td></tr>
+<tr class="memitem:ga93e1005fb36a193016d69e406ef58f16" id="r_ga93e1005fb36a193016d69e406ef58f16"><td class="memItemLeft">
+bool&#160;</td><td class="memItemRight"><b>system_store_charging</b> (void)</td></tr>
+<tr class="memdesc:ga93e1005fb36a193016d69e406ef58f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while the watch is plugged in. <br /></td></tr>
+<tr class="memitem:ga2ebbd6eb46dfd92742b55a346d164961" id="r_ga2ebbd6eb46dfd92742b55a346d164961"><td class="memItemLeft">
+bool&#160;</td><td class="memItemRight"><b>system_store_bluetooth</b> (void)</td></tr>
+<tr class="memdesc:ga2ebbd6eb46dfd92742b55a346d164961"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the phone link is up. <br /></td></tr>
+<tr class="memitem:ga323c6c5d1989296b9618d94e94f92daa" id="r_ga323c6c5d1989296b9618d94e94f92daa"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga323c6c5d1989296b9618d94e94f92daa">system_store_next_alarm</a> (time_t *out)</td></tr>
+<tr class="memdesc:ga323c6c5d1989296b9618d94e94f92daa"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the wearer's next enabled alarm fires.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="acd337eadf05b132c8f14a9f9887137a0" name="acd337eadf05b132c8f14a9f9887137a0"></a>
+<a class="el" href="struct_0fstruct_0e_8s__state.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
+<tr class="memitem:a79e1d87e0fc4fcc34ecaab711a8c9b20" id="r_a79e1d87e0fc4fcc34ecaab711a8c9b20"><td class="memItemLeft"><a id="a79e1d87e0fc4fcc34ecaab711a8c9b20" name="a79e1d87e0fc4fcc34ecaab711a8c9b20"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_bt_initialized</b></td></tr>
+<tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
+<tr class="memitem:a6c3d05d77814566ebfe0ec462c67324d" id="r_a6c3d05d77814566ebfe0ec462c67324d"><td class="memItemLeft"><a id="a6c3d05d77814566ebfe0ec462c67324d" name="a6c3d05d77814566ebfe0ec462c67324d"></a>
+static time_t&#160;</td><td class="memItemRight"><b>s_seed_alarm</b></td></tr>
+<tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
+static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
+<tr class="memitem:a31b5ed7b8b45ba3b1d0ae0689ab31747" id="r_a31b5ed7b8b45ba3b1d0ae0689ab31747"><td class="memItemLeft"><a id="a31b5ed7b8b45ba3b1d0ae0689ab31747" name="a31b5ed7b8b45ba3b1d0ae0689ab31747"></a>
+static <a class="el" href="group__lib__stores.html#ga96c4cb6d425115a65f787896786b232f">BtVibePolicy</a>&#160;</td><td class="memItemRight"><b>s_vibe</b></td></tr>
+<tr class="memitem:aa5f439ff5804491818cbb8d665f2b0f4" id="r_aa5f439ff5804491818cbb8d665f2b0f4"><td class="memItemLeft"><a id="aa5f439ff5804491818cbb8d665f2b0f4" name="aa5f439ff5804491818cbb8d665f2b0f4"></a>
+static void(*)&#160;</td><td class="memItemRight"><b>s_reconnect</b> (void)</td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The active system store: holds the battery + bluetooth state and subscribes to the battery and connection services itself. The alarm is read through on demand. </p>
+</div></div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="system__store_8c.html">system_store.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
