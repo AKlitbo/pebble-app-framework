@@ -1,0 +1,428 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/dev/dev_walk.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">dev_walk.c File Reference<div class="ingroups"><a class="el" href="group__lib__dev.html">Dev Harness</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="dev__walk_8h_source.html">dev/dev_walk.h</a>&quot;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="time__store_8h_source.html">io/stores/time_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="weather__store_8h_source.html">io/stores/weather_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="health__store_8h_source.html">io/stores/health_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="location__store_8h_source.html">io/stores/location_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="engine_8h_source.html">ui/engine/engine.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:DevFixture" id="r_DevFixture"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevFixture.html">DevFixture</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The believable happy numbers a screenshot sits on, and the baseline every shot below varies from.  <a href="structDevFixture.html#details">More...</a><br /></td></tr>
+<tr class="memitem:DevShot" id="r_DevShot"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structDevShot.html">DevShot</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One screenshot's worth of state, so a walk of eight themes is not eight shots of the same numbers.  <a href="structDevShot.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a626e6bc16739d5be4d8e8ff0e4233ecb" id="r_a626e6bc16739d5be4d8e8ff0e4233ecb"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a626e6bc16739d5be4d8e8ff0e4233ecb">apply_shot</a> (uint8_t index)</td></tr>
+<tr class="memdesc:a626e6bc16739d5be4d8e8ff0e4233ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-seed the stores from one shot.  <br /></td></tr>
+<tr class="memitem:a562c18803644a3ae69effdc57b5ccf91" id="r_a562c18803644a3ae69effdc57b5ccf91"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a562c18803644a3ae69effdc57b5ccf91">tap_handler</a> (AccelAxisType axis, int32_t direction)</td></tr>
+<tr class="memdesc:a562c18803644a3ae69effdc57b5ccf91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accelerometer tap: advance the active walk by one.  <br /></td></tr>
+<tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
+<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits every store from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Call in place of the live store inits.  <br /></td></tr>
+<tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="group__lib__dev.html#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
+<tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer tap. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
+<tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga1ff4ca8046b48b20d4d60258901384c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drop the tap subscription. Call from deinit. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a57a5d737644702015a1c500d8107054c" id="r_a57a5d737644702015a1c500d8107054c"><td class="memItemLeft">static const <a class="el" href="structDevFixture.html">DevFixture</a>&#160;</td><td class="memItemRight"><a class="el" href="#a57a5d737644702015a1c500d8107054c">s_default</a></td></tr>
+<tr class="memdesc:a57a5d737644702015a1c500d8107054c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default fixture every store is seeded from.  <br /></td></tr>
+<tr class="memitem:ac25bab8a664832452512cea49fba4bab" id="r_ac25bab8a664832452512cea49fba4bab"><td class="memItemLeft">static const <a class="el" href="structDevShot.html">DevShot</a>&#160;</td><td class="memItemRight"><a class="el" href="#ac25bab8a664832452512cea49fba4bab">s_shots</a> []</td></tr>
+<tr class="memdesc:ac25bab8a664832452512cea49fba4bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shots a theme walk steps through.  <br /></td></tr>
+<tr class="memitem:a0dfed1fc4a58a0b8d59b3c8cfc20b767" id="r_a0dfed1fc4a58a0b8d59b3c8cfc20b767"><td class="memItemLeft"><a id="a0dfed1fc4a58a0b8d59b3c8cfc20b767" name="a0dfed1fc4a58a0b8d59b3c8cfc20b767"></a>
+static <a class="el" href="group__lib__dev.html#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a>&#160;</td><td class="memItemRight"><b>s_mode</b></td></tr>
+<tr class="memdesc:a0dfed1fc4a58a0b8d59b3c8cfc20b767"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which walk is running. <br /></td></tr>
+<tr class="memitem:a64a674fa95930169baa46bbb3ac437c4" id="r_a64a674fa95930169baa46bbb3ac437c4"><td class="memItemLeft"><a id="a64a674fa95930169baa46bbb3ac437c4" name="a64a674fa95930169baa46bbb3ac437c4"></a>
+static void(*)&#160;</td><td class="memItemRight"><b>s_apply_theme</b> (void)</td></tr>
+<tr class="memdesc:a64a674fa95930169baa46bbb3ac437c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The face's theme-apply hook, run before the engine rebuilds. <br /></td></tr>
+<tr class="memitem:afcaa9a965b7eaadd0552070c0b7eeb82" id="r_afcaa9a965b7eaadd0552070c0b7eeb82"><td class="memItemLeft"><a id="afcaa9a965b7eaadd0552070c0b7eeb82" name="afcaa9a965b7eaadd0552070c0b7eeb82"></a>
+static uint8_t&#160;</td><td class="memItemRight"><b>s_theme</b></td></tr>
+<tr class="memdesc:afcaa9a965b7eaadd0552070c0b7eeb82"><td class="mdescLeft">&#160;</td><td class="mdescRight">The theme the walk is on. <br /></td></tr>
+<tr class="memitem:ab37f9bc781877575967ffb6110c32529" id="r_ab37f9bc781877575967ffb6110c32529"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#ab37f9bc781877575967ffb6110c32529">s_hour</a></td></tr>
+<tr class="memdesc:ab37f9bc781877575967ffb6110c32529"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hour the walk was started in.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a626e6bc16739d5be4d8e8ff0e4233ecb" name="a626e6bc16739d5be4d8e8ff0e4233ecb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a626e6bc16739d5be4d8e8ff0e4233ecb">&#9670;&#160;</a></span>apply_shot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void apply_shot </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>index</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Re-seed the stores from one shot. </p>
+<p>The stores are only ever seeded here with live off, and neither takes a subscription on that path, so re-initialising them per tap re-seeds rather than stacking handlers.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Which shot, wrapped to the table. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a562c18803644a3ae69effdc57b5ccf91" name="a562c18803644a3ae69effdc57b5ccf91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a562c18803644a3ae69effdc57b5ccf91">&#9670;&#160;</a></span>tap_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void tap_handler </td>
+          <td>(</td>
+          <td class="paramtype">AccelAxisType</td>          <td class="paramname"><span class="paramname"><em>axis</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t</td>          <td class="paramname"><span class="paramname"><em>direction</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Accelerometer tap: advance the active walk by one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">axis</td><td>The tap axis (unused). </td></tr>
+    <tr><td class="paramname">direction</td><td>The tap direction (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
+<a id="a57a5d737644702015a1c500d8107054c" name="a57a5d737644702015a1c500d8107054c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57a5d737644702015a1c500d8107054c">&#9670;&#160;</a></span>s_default</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structDevFixture.html">DevFixture</a> s_default</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">                                  = {</div>
+<div class="line">    .temp = 21, .cond = <span class="stringliteral">&quot;PCLDY&quot;</span>,</div>
+<div class="line">    .hr = 72, .steps = 8431, .calories = 420, .sleep_min = 431, .active_min = 52, .distance_m = 5300,</div>
+<div class="line">    .battery = 64, .bluetooth = <span class="keyword">true</span>,</div>
+<div class="line">    .lat = <span class="stringliteral">&quot;33-44&quot;</span>, .lon = <span class="stringliteral">&quot;-112-07&quot;</span>,</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>The default fixture every store is seeded from. </p>
+
+</div>
+</div>
+<a id="ab37f9bc781877575967ffb6110c32529" name="ab37f9bc781877575967ffb6110c32529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab37f9bc781877575967ffb6110c32529">&#9670;&#160;</a></span>s_hour</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int s_hour</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The hour the walk was started in. </p>
+<p>A shot moves the minute without moving the hour, so it never drags a night sweep into daytime. </p>
+
+</div>
+</div>
+<a id="ac25bab8a664832452512cea49fba4bab" name="ac25bab8a664832452512cea49fba4bab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac25bab8a664832452512cea49fba4bab">&#9670;&#160;</a></span>s_shots</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structDevShot.html">DevShot</a> s_shots[]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">                             = {</div>
+<div class="line">    {.temp = 21, .cond = <span class="stringliteral">&quot;PCLDY&quot;</span>, .hr = 72, .steps = 8431,  .battery = 64,  .bluetooth = <span class="keyword">true</span>,  .quiet_icon = <span class="keyword">false</span>, .minute = 42},</div>
+<div class="line">    {.temp = 3,  .cond = <span class="stringliteral">&quot;SNOW&quot;</span>,  .hr = 58, .steps = 12045, .battery = 92,  .bluetooth = <span class="keyword">true</span>,  .quiet_icon = <span class="keyword">true</span>,  .minute = 18},</div>
+<div class="line">    {.temp = -8, .cond = <span class="stringliteral">&quot;CLEAR&quot;</span>, .hr = 61, .steps = 3120,  .battery = 41,  .bluetooth = <span class="keyword">false</span>, .quiet_icon = <span class="keyword">false</span>, .minute = 5},</div>
+<div class="line">    {.temp = 31, .cond = <span class="stringliteral">&quot;CLEAR&quot;</span>, .hr = 88, .steps = 15680, .battery = 17,  .bluetooth = <span class="keyword">true</span>,  .quiet_icon = <span class="keyword">true</span>,  .minute = 55},</div>
+<div class="line">    {.temp = 14, .cond = <span class="stringliteral">&quot;DRZL&quot;</span>,  .hr = 66, .steps = 6402,  .battery = 78,  .bluetooth = <span class="keyword">true</span>,  .quiet_icon = <span class="keyword">false</span>, .minute = 27},</div>
+<div class="line">    {.temp = 27, .cond = <span class="stringliteral">&quot;CLDY&quot;</span>,  .hr = 74, .steps = 9310,  .battery = 8,   .bluetooth = <span class="keyword">false</span>, .quiet_icon = <span class="keyword">true</span>,  .minute = 33},</div>
+<div class="line">    {.temp = 9,  .cond = <span class="stringliteral">&quot;FOGGY&quot;</span>, .hr = 55, .steps = 4870,  .battery = 100, .bluetooth = <span class="keyword">true</span>,  .quiet_icon = <span class="keyword">false</span>, .minute = 11},</div>
+<div class="line">    {.temp = 35, .cond = <span class="stringliteral">&quot;PCLDY&quot;</span>, .hr = 91, .steps = 11250, .battery = 53,  .bluetooth = <span class="keyword">true</span>,  .quiet_icon = <span class="keyword">true</span>,  .minute = 48},</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p>The shots a theme walk steps through. </p>
+<p>Spread on purpose rather than at random: a flat battery and a full one, a dropped phone, the Quiet Time mark up and down, and a range of weather so the scene is not drawing the same sky eight times. </p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__walk_8c.html">dev_walk.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

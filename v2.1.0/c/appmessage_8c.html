@@ -1,0 +1,709 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/io/appmessage/appmessage.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">appmessage.c File Reference<div class="ingroups"><a class="el" href="group__lib__io.html">Data In and Out</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="outbox__queue_8h_source.html">io/outbox_queue.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="tuple__read_8h_source.html">io/tuple_read.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="scale_8h_source.html">math/scale.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
+<code>#include &lt;limits.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Fhandlers" id="r__5Bstruct_5D_2Es_5Fhandlers"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__handlers.html">[struct].s_handlers</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Outbox queue limits</div></td></tr>
+<tr><td colspan="2" class="ititle"><div class="groupText"><p>Only one AppMessage send can be in flight at a time, so every outbound message (the weather, stock and calendar requests plus the settings reply) goes through one queue. It sends the head, waits for its sent or failed callback, then sends the next, and drains a pass at a time.</p>
+<p>A request the phone nacks is held in a failed set and retried on a later pass. Its pkjs was usually asleep, and that first send is often what wakes it. Holding it back means a whole poll is not lost to one asleep-phone nack and left stale until the next interval. </p>
+</div></td></tr>
+<tr class="memitem:a74e58c793ca8409dc757bf0059fff54d" id="r_a74e58c793ca8409dc757bf0059fff54d"><td class="memItemLeft"><a id="a74e58c793ca8409dc757bf0059fff54d" name="a74e58c793ca8409dc757bf0059fff54d"></a>
+#define&#160;</td><td class="memItemRight"><b>REQUEST_RETRY_MAX</b>&#160;&#160;&#160;3</td></tr>
+<tr class="memdesc:a74e58c793ca8409dc757bf0059fff54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retry passes a nacked request gets before it is dropped. <br /></td></tr>
+<tr class="memitem:aa5fb091797fee70e44b207aad9233dd7" id="r_aa5fb091797fee70e44b207aad9233dd7"><td class="memItemLeft"><a id="aa5fb091797fee70e44b207aad9233dd7" name="aa5fb091797fee70e44b207aad9233dd7"></a>
+#define&#160;</td><td class="memItemRight"><b>REQUEST_RETRY_DELAY_MS</b>&#160;&#160;&#160;5000</td></tr>
+<tr class="memdesc:aa5fb091797fee70e44b207aad9233dd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay before the next retry pass, in ms. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga8760e9417f2f894915a0950dc1fdab07" id="r_ga8760e9417f2f894915a0950dc1fdab07"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather</b> (<a class="el" href="group__lib__io.html#ga7f166ce0149d01e665fe17a47dfa00bd">WeatherHandler</a> cb)</td></tr>
+<tr class="memdesc:ga8760e9417f2f894915a0950dc1fdab07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature and condition. <br /></td></tr>
+<tr class="memitem:ga7c64814ef2b8dcd4ee38743e31fb58d2" id="r_ga7c64814ef2b8dcd4ee38743e31fb58d2"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_coords</b> (<a class="el" href="group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030">CoordsHandler</a> cb)</td></tr>
+<tr class="memdesc:ga7c64814ef2b8dcd4ee38743e31fb58d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude and longitude. <br /></td></tr>
+<tr class="memitem:gad9d1d40d059728d240df1d07fd713323" id="r_gad9d1d40d059728d240df1d07fd713323"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_settings_changed</b> (<a class="el" href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">SettingsChangedHandler</a> cb)</td></tr>
+<tr class="memdesc:gad9d1d40d059728d240df1d07fd713323"><td class="mdescLeft">&#160;</td><td class="mdescRight">A setting changed on the phone. <br /></td></tr>
+<tr class="memitem:gad4360c9f5dace5487ea6dd8bae620527" id="r_gad4360c9f5dace5487ea6dd8bae620527"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_extra</b> (<a class="el" href="group__lib__io.html#ga20ba4f3074f2ac3ff172d912a05d005e">WeatherExtraHandler</a> cb)</td></tr>
+<tr class="memdesc:gad4360c9f5dace5487ea6dd8bae620527"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity, wind and sun times. <br /></td></tr>
+<tr class="memitem:gafd576cde1016f517bdafb33b332993ee" id="r_gafd576cde1016f517bdafb33b332993ee"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_forecast</b> (<a class="el" href="group__lib__io.html#ga84945e018c2a84f45e45ce683273e985">WeatherForecastHandler</a> cb)</td></tr>
+<tr class="memdesc:gafd576cde1016f517bdafb33b332993ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV, today's high and low, rain chance. <br /></td></tr>
+<tr class="memitem:ga36f8c9345e5a6323013776b74dab2c20" id="r_ga36f8c9345e5a6323013776b74dab2c20"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_air</b> (<a class="el" href="group__lib__io.html#gaacc7569bc241a64a05d4fb72c8b8e4a7">WeatherAirHandler</a> cb)</td></tr>
+<tr class="memdesc:ga36f8c9345e5a6323013776b74dab2c20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Feels-like, pressure and dew point. <br /></td></tr>
+<tr class="memitem:ga88a4d530275216588d8c63a4c0c7a8c2" id="r_ga88a4d530275216588d8c63a4c0c7a8c2"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_forecast_hourly</b> (<a class="el" href="group__lib__io.html#gad1004ca4be56020f12044e28936eba28">WeatherForecastStripHandler</a> cb)</td></tr>
+<tr class="memdesc:ga88a4d530275216588d8c63a4c0c7a8c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed hourly strip. <br /></td></tr>
+<tr class="memitem:gad021727509d62fff8c31b283ef912c6b" id="r_gad021727509d62fff8c31b283ef912c6b"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_forecast_daily</b> (<a class="el" href="group__lib__io.html#gad1004ca4be56020f12044e28936eba28">WeatherForecastStripHandler</a> cb)</td></tr>
+<tr class="memdesc:gad021727509d62fff8c31b283ef912c6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed 7 day strip. <br /></td></tr>
+<tr class="memitem:ga4bee672fd0b3bbfc53bc653dee0d7983" id="r_ga4bee672fd0b3bbfc53bc653dee0d7983"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_location_name</b> (<a class="el" href="group__lib__io.html#gac4a084dd2740afb9dbb74118db98bf4f">LocationNameHandler</a> cb)</td></tr>
+<tr class="memdesc:ga4bee672fd0b3bbfc53bc653dee0d7983"><td class="mdescLeft">&#160;</td><td class="mdescRight">Location name. <br /></td></tr>
+<tr class="memitem:ga45a5f177aabba862b779b38b5b4ed288" id="r_ga45a5f177aabba862b779b38b5b4ed288"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_stock_strip</b> (<a class="el" href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">StockStripHandler</a> cb)</td></tr>
+<tr class="memdesc:ga45a5f177aabba862b779b38b5b4ed288"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed watchlist strip. <br /></td></tr>
+<tr class="memitem:ga1ab2899a032be1fe4ab307e70f8bf3cd" id="r_ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_calendar_strip</b> (<a class="el" href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a> cb)</td></tr>
+<tr class="memdesc:ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed agenda strip. <br /></td></tr>
+<tr class="memitem:gacd479537bb794bc2cc1f07b4db3fb830" id="r_gacd479537bb794bc2cc1f07b4db3fb830"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_custom_colors</b> (<a class="el" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a> cb)</td></tr>
+<tr class="memdesc:gacd479537bb794bc2cc1f07b4db3fb830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inbound: splits and stores the combined string. <br /></td></tr>
+<tr class="memitem:gaf7a398e20625029f2e376405e9132660" id="r_gaf7a398e20625029f2e376405e9132660"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_set_custom_colors_provider</b> (<a class="el" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a> cb)</td></tr>
+<tr class="memdesc:gaf7a398e20625029f2e376405e9132660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbound: rebuilds the combined string. <br /></td></tr>
+<tr class="memitem:ga8fb7bfc73fc11194d6954aa0d6ffe01c" id="r_ga8fb7bfc73fc11194d6954aa0d6ffe01c"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_inbox_complete</b> (<a class="el" href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">InboxCompleteHandler</a> cb)</td></tr>
+<tr class="memdesc:ga8fb7bfc73fc11194d6954aa0d6ffe01c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fires once after a whole inbox is handled. <br /></td></tr>
+<tr class="memitem:a5f7778c42828f5ddb907706658b382e8" id="r_a5f7778c42828f5ddb907706658b382e8"><td class="memItemLeft"><a id="a5f7778c42828f5ddb907706658b382e8" name="a5f7778c42828f5ddb907706658b382e8"></a>
+static void&#160;</td><td class="memItemRight"><b>pump</b> (void)</td></tr>
+<tr class="memdesc:a5f7778c42828f5ddb907706658b382e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the head job when the outbox is free, once the phone is there. <br /></td></tr>
+<tr class="memitem:abb7f7e97f2dd93df0449b3f9bdc9c96a" id="r_abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#abb7f7e97f2dd93df0449b3f9bdc9c96a">settings_reply_size</a> (void)</td></tr>
+<tr class="memdesc:abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many outbox bytes the settings reply takes, counting everything write_settings writes.  <br /></td></tr>
+<tr class="memitem:afd8b8f5d619f4689a2891358d52737cc" id="r_afd8b8f5d619f4689a2891358d52737cc"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#afd8b8f5d619f4689a2891358d52737cc">write_settings</a> (DictionaryIterator *iter)</td></tr>
+<tr class="memdesc:afd8b8f5d619f4689a2891358d52737cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the settings reply payload into the outbox iterator.  <br /></td></tr>
+<tr class="memitem:a8227736a721829bfecf2b2649e296d98" id="r_a8227736a721829bfecf2b2649e296d98"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#a8227736a721829bfecf2b2649e296d98">send_job</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
+<tr class="memdesc:a8227736a721829bfecf2b2649e296d98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the message for <code class="param">kind</code> and hand it to the outbox.  <br /></td></tr>
+<tr class="memitem:a4d5c99898dbd4b6c81ee21ab84e99965" id="r_a4d5c99898dbd4b6c81ee21ab84e99965"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a4d5c99898dbd4b6c81ee21ab84e99965">enqueue</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind, int retries)</td></tr>
+<tr class="memdesc:a4d5c99898dbd4b6c81ee21ab84e99965"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a job to the work queue unless its kind is already pending, then pump.  <br /></td></tr>
+<tr class="memitem:aa69231abc10b6f39ee8277edc53f1e11" id="r_aa69231abc10b6f39ee8277edc53f1e11"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aa69231abc10b6f39ee8277edc53f1e11">retry_pass</a> (void *data)</td></tr>
+<tr class="memdesc:aa69231abc10b6f39ee8277edc53f1e11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the whole failed set back into the work queue for another pass, then pump.  <br /></td></tr>
+<tr class="memitem:gaf552756e4da1e1818775bb984bdd36c0" id="r_gaf552756e4da1e1818775bb984bdd36c0"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_weather</b> (void)</td></tr>
+<tr class="memdesc:gaf552756e4da1e1818775bb984bdd36c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh weather reading. The weather store calls this on its turn on the shared cadence. <br /></td></tr>
+<tr class="memitem:gac7dbcd76bf92e5bbf684d2c9849b5ebf" id="r_gac7dbcd76bf92e5bbf684d2c9849b5ebf"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_stock</b> (void)</td></tr>
+<tr class="memdesc:gac7dbcd76bf92e5bbf684d2c9849b5ebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for fresh quotes. The stock store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the stock keys. <br /></td></tr>
+<tr class="memitem:gac18380f0c5fdc613452b569ef4d88c35" id="r_gac18380f0c5fdc613452b569ef4d88c35"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void)</td></tr>
+<tr class="memdesc:gac18380f0c5fdc613452b569ef4d88c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the calendar keys. <br /></td></tr>
+<tr class="memitem:a7537892c98316590da6b643bbbba37cc" id="r_a7537892c98316590da6b643bbbba37cc"><td class="memItemLeft"><a id="a7537892c98316590da6b643bbbba37cc" name="a7537892c98316590da6b643bbbba37cc"></a>
+static void&#160;</td><td class="memItemRight"><b>send_settings</b> (void)</td></tr>
+<tr class="memdesc:a7537892c98316590da6b643bbbba37cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the settings reply so it serialises with the data requests through the one outbox. <br /></td></tr>
+<tr class="memitem:a75036a87df47ccdab47d4335b1e01a94" id="r_a75036a87df47ccdab47d4335b1e01a94"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a75036a87df47ccdab47d4335b1e01a94">dispatch_bytes</a> (DictionaryIterator *iter, uint32_t key, void(*cb)(const uint8_t *data, uint16_t len))</td></tr>
+<tr class="memdesc:a75036a87df47ccdab47d4335b1e01a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a byte array tuple by key and hand its bytes to a handler.  <br /></td></tr>
+<tr class="memitem:a0d534305af0a10edbc3c427bae3e975c" id="r_a0d534305af0a10edbc3c427bae3e975c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d534305af0a10edbc3c427bae3e975c">inbox_received_callback</a> (DictionaryIterator *iterator, void *context)</td></tr>
+<tr class="memdesc:a0d534305af0a10edbc3c427bae3e975c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply an inbox message: weather, coords, and any changed settings.  <br /></td></tr>
+<tr class="memitem:a84466f8e93f6160cfe1de858608d07ce" id="r_a84466f8e93f6160cfe1de858608d07ce"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a84466f8e93f6160cfe1de858608d07ce">inbox_dropped_callback</a> (AppMessageResult reason, void *context)</td></tr>
+<tr class="memdesc:a84466f8e93f6160cfe1de858608d07ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a dropped inbox message.  <br /></td></tr>
+<tr class="memitem:a6b185c8da29188c8cae40cdca98e100b" id="r_a6b185c8da29188c8cae40cdca98e100b"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a6b185c8da29188c8cae40cdca98e100b">outbox_failed_callback</a> (DictionaryIterator *iter, AppMessageResult reason, void *context)</td></tr>
+<tr class="memdesc:a6b185c8da29188c8cae40cdca98e100b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbox send was nacked (usually the phone's pkjs is asleep).  <br /></td></tr>
+<tr class="memitem:a0369d40d54958ca96f392694cf507399" id="r_a0369d40d54958ca96f392694cf507399"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0369d40d54958ca96f392694cf507399">outbox_sent_callback</a> (DictionaryIterator *iter, void *context)</td></tr>
+<tr class="memdesc:a0369d40d54958ca96f392694cf507399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbox delivered. Frees the outbox and sends the next queued job.  <br /></td></tr>
+<tr class="memitem:ga08eff87fc42ee9c842bb5c338706f1fa" id="r_ga08eff87fc42ee9c842bb5c338706f1fa"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga08eff87fc42ee9c842bb5c338706f1fa">appmessage_open</a> (void)</td></tr>
+<tr class="memdesc:ga08eff87fc42ee9c842bb5c338706f1fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the SDK callbacks and open the inbox/outbox.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a3294e778e6cb9bcda9026e5a45b3dfa3" name="a3294e778e6cb9bcda9026e5a45b3dfa3"></a>
+<a class="el" href="struct_0fstruct_0e_8s__handlers.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_handlers</b></td></tr>
+<tr class="memdesc:a3294e778e6cb9bcda9026e5a45b3dfa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The registered channel handlers. Each one stays NULL until a consumer opts in. <br /></td></tr>
+<tr class="memitem:a1a96284017193cf901d1b43de9d74204" id="r_a1a96284017193cf901d1b43de9d74204"><td class="memItemLeft"><a id="a1a96284017193cf901d1b43de9d74204" name="a1a96284017193cf901d1b43de9d74204"></a>
+static <a class="el" href="structOutboxQueue.html">OutboxQueue</a>&#160;</td><td class="memItemRight"><b>s_outbox</b></td></tr>
+<tr class="memdesc:a1a96284017193cf901d1b43de9d74204"><td class="mdescLeft">&#160;</td><td class="mdescRight">What is queued, what nacked, and what is in flight. <br /></td></tr>
+<tr class="memitem:a1c284c34e48865d6cc11ec3e4f893a1e" id="r_a1c284c34e48865d6cc11ec3e4f893a1e"><td class="memItemLeft"><a id="a1c284c34e48865d6cc11ec3e4f893a1e" name="a1c284c34e48865d6cc11ec3e4f893a1e"></a>
+static AppTimer *&#160;</td><td class="memItemRight"><b>s_retry_timer</b></td></tr>
+<tr class="memdesc:a1c284c34e48865d6cc11ec3e4f893a1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay before the next retry pass. <br /></td></tr>
+<tr class="memitem:a7c4c02490661b71985034c11410d24fa" id="r_a7c4c02490661b71985034c11410d24fa"><td class="memItemLeft"><a id="a7c4c02490661b71985034c11410d24fa" name="a7c4c02490661b71985034c11410d24fa"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr>
+<tr class="memdesc:a7c4c02490661b71985034c11410d24fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The outbox buffer size appmessage_open asked for. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a75036a87df47ccdab47d4335b1e01a94" name="a75036a87df47ccdab47d4335b1e01a94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75036a87df47ccdab47d4335b1e01a94">&#9670;&#160;</a></span>dispatch_bytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dispatch_bytes </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>cb&#160;</em></span>)(const uint8_t *data, uint16_t len)&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Find a byte array tuple by key and hand its bytes to a handler. </p>
+<p>The forecast, stock, and calendar strips all ride as packed byte arrays through a same-signature handler, so one dispatcher covers them. The handler comes in as an argument rather than a table, so it stays out of the binary's .data section.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iter</td><td>The dictionary iterator to search. </td></tr>
+    <tr><td class="paramname">key</td><td>The message key to look up. </td></tr>
+    <tr><td class="paramname">cb</td><td>The handler to call with the raw bytes, or NULL to do nothing. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4d5c99898dbd4b6c81ee21ab84e99965" name="a4d5c99898dbd4b6c81ee21ab84e99965"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d5c99898dbd4b6c81ee21ab84e99965">&#9670;&#160;</a></span>enqueue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void enqueue </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a></td>          <td class="paramname"><span class="paramname"><em>kind</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>retries</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add a job to the work queue unless its kind is already pending, then pump. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kind</td><td>The job kind to send. </td></tr>
+    <tr><td class="paramname">retries</td><td>Retry passes left if the first send nacks (0 for the settings reply). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a84466f8e93f6160cfe1de858608d07ce" name="a84466f8e93f6160cfe1de858608d07ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84466f8e93f6160cfe1de858608d07ce">&#9670;&#160;</a></span>inbox_dropped_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void inbox_dropped_callback </td>
+          <td>(</td>
+          <td class="paramtype">AppMessageResult</td>          <td class="paramname"><span class="paramname"><em>reason</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Log a dropped inbox message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reason</td><td>The reason the message was dropped. </td></tr>
+    <tr><td class="paramname">context</td><td>Application context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0d534305af0a10edbc3c427bae3e975c" name="a0d534305af0a10edbc3c427bae3e975c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d534305af0a10edbc3c427bae3e975c">&#9670;&#160;</a></span>inbox_received_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void inbox_received_callback </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iterator</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Apply an inbox message: weather, coords, and any changed settings. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iterator</td><td>The dictionary iterator containing the message. </td></tr>
+    <tr><td class="paramname">context</td><td>Application context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6b185c8da29188c8cae40cdca98e100b" name="a6b185c8da29188c8cae40cdca98e100b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b185c8da29188c8cae40cdca98e100b">&#9670;&#160;</a></span>outbox_failed_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outbox_failed_callback </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">AppMessageResult</td>          <td class="paramname"><span class="paramname"><em>reason</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Outbox send was nacked (usually the phone's pkjs is asleep). </p>
+<p>Frees the outbox and holds a real request for a later retry pass, then pumps the rest of the queue. The settings reply is not held.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iter</td><td>The dictionary iterator. </td></tr>
+    <tr><td class="paramname">reason</td><td>The reason the message failed. </td></tr>
+    <tr><td class="paramname">context</td><td>Application context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0369d40d54958ca96f392694cf507399" name="a0369d40d54958ca96f392694cf507399"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0369d40d54958ca96f392694cf507399">&#9670;&#160;</a></span>outbox_sent_callback()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void outbox_sent_callback </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Outbox delivered. Frees the outbox and sends the next queued job. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iter</td><td>The dictionary iterator. </td></tr>
+    <tr><td class="paramname">context</td><td>Application context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa69231abc10b6f39ee8277edc53f1e11" name="aa69231abc10b6f39ee8277edc53f1e11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa69231abc10b6f39ee8277edc53f1e11">&#9670;&#160;</a></span>retry_pass()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void retry_pass </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Move the whole failed set back into the work queue for another pass, then pump. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>The timer context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8227736a721829bfecf2b2649e296d98" name="a8227736a721829bfecf2b2649e296d98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8227736a721829bfecf2b2649e296d98">&#9670;&#160;</a></span>send_job()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool send_job </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a></td>          <td class="paramname"><span class="paramname"><em>kind</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Build the message for <code class="param">kind</code> and hand it to the outbox. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kind</td><td>The job kind to send. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False if the outbox refused it or a face does not declare the key for <code class="param">kind</code>. </dd></dl>
+
+</div>
+</div>
+<a id="abb7f7e97f2dd93df0449b3f9bdc9c96a" name="abb7f7e97f2dd93df0449b3f9bdc9c96a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb7f7e97f2dd93df0449b3f9bdc9c96a">&#9670;&#160;</a></span>settings_reply_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t settings_reply_size </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>How many outbox bytes the settings reply takes, counting everything write_settings writes. </p>
+<dl class="section return"><dt>Returns</dt><dd>The whole message's size, the dictionary's own header included. </dd></dl>
+
+</div>
+</div>
+<a id="afd8b8f5d619f4689a2891358d52737cc" name="afd8b8f5d619f4689a2891358d52737cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd8b8f5d619f4689a2891358d52737cc">&#9670;&#160;</a></span>write_settings()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool write_settings </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Write the settings reply payload into the outbox iterator. </p>
+<p>The watch persist is the source of truth so Clay can seed its store from it. Carries the current settings, a fresh flag, and the custom colours. settings_reply_size counts the same three things.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iter</td><td>The outbox iterator to write into. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when all of it was written, false when the outbox ran out of room partway. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>appmessage</b></li><li class="navelem"><a href="appmessage_8c.html">appmessage.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

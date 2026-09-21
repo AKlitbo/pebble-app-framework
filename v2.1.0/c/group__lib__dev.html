@@ -1,0 +1,324 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Dev Harness</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__dev.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dev Harness </div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Fixed fixtures and a theme walk for repeatable screenshots.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Ec" id="r_c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">c/pebble/dev/dev_walk.c</a></td></tr>
+<tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Eh" id="r_c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">c/pebble/dev/dev_walk.h</a></td></tr>
+<tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for the frame faces. It seeds every store with a fixed fixture, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk" for deterministic screenshots. Each tap steps to the next theme on the same fixed data and the same fixed clock. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:gabd7169bdf3c69ae6ffe751b975f1fadd" id="r_gabd7169bdf3c69ae6ffe751b975f1fadd"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> { <a class="el" href="#ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca">DEV_WALK_NONE</a>
+, <a class="el" href="#ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d">DEV_WALK_THEMES</a>
+ }</td></tr>
+<tr class="memdesc:gabd7169bdf3c69ae6ffe751b975f1fadd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which walk a tap advances. The face works this out from its own toggles.  <a href="#gabd7169bdf3c69ae6ffe751b975f1fadd">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
+<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits every store from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Call in place of the live store inits.  <br /></td></tr>
+<tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
+<tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer tap. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
+<tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft"><a id="ga1ff4ca8046b48b20d4d60258901384c1" name="ga1ff4ca8046b48b20d4d60258901384c1"></a>
+void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga1ff4ca8046b48b20d4d60258901384c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drop the tap subscription. Call from deinit. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Fixed fixtures and a theme walk for repeatable screenshots. </p>
+<p>The frame faces share it. It seeds every store with a fixed fixture and steps through the themes on a tap, so a face's screenshots come out the same every time.</p>
+</div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
+<a id="gabd7169bdf3c69ae6ffe751b975f1fadd" name="gabd7169bdf3c69ae6ffe751b975f1fadd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabd7169bdf3c69ae6ffe751b975f1fadd">&#9670;&#160;</a></span>DevWalkMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which walk a tap advances. The face works this out from its own toggles. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca" name="ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca"></a>DEV_WALK_NONE&#160;</td><td class="fielddoc"><p>Just pin the fixture, no tap handler. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d" name="ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d"></a>DEV_WALK_THEMES&#160;</td><td class="fielddoc"><p>A tap steps to the next theme. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga881065800617954a0fd094063774f0d9" name="ga881065800617954a0fd094063774f0d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga881065800617954a0fd094063774f0d9">&#9670;&#160;</a></span>dev_walk_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dev_walk_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a></td>          <td class="paramname"><span class="paramname"><em>mode</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>apply_theme&#160;</em></span>)(void)&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer tap. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mode</td><td>Which walk to run. </td></tr>
+    <tr><td class="paramname">apply_theme</td><td>The face's own theme-apply hook. It re-colours the zones and swaps the frame, and runs before the engine rebuilds so a theme change lands. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gad7d36031f9102cac1d91f9d66079d9ed" name="gad7d36031f9102cac1d91f9d66079d9ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad7d36031f9102cac1d91f9d66079d9ed">&#9670;&#160;</a></span>dev_walk_seed_stores()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dev_walk_seed_stores </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>min</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inits every store from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Call in place of the live store inits. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hour</td><td>The pinned clock hour (0-23). </td></tr>
+    <tr><td class="paramname">min</td><td>The pinned clock minute. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

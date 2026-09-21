@@ -1,0 +1,262 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: Globals</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('globals_w.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="contents">
+<div class="textblock">Here is a list of all documented functions, variables, defines, enums, and typedefs with links to the documentation:</div><br/>
+<div class="qindex"><a class="qindex" href="globals.html#index_a">A</a><div class="alphasepar"></div><a class="qindex" href="globals_b.html#index_b">B</a><div class="alphasepar"></div><a class="qindex" href="globals_c.html#index_c">C</a><div class="alphasepar"></div><a class="qindex" href="globals_d.html#index_d">D</a><div class="alphasepar"></div><a class="qindex" href="globals_e.html#index_e">E</a><div class="alphasepar"></div><a class="qindex" href="globals_f.html#index_f">F</a><div class="alphasepar"></div><a class="qindex" href="globals_g.html#index_g">G</a><div class="alphasepar"></div><a class="qindex" href="globals_h.html#index_h">H</a><div class="alphasepar"></div><a class="qindex" href="globals_i.html#index_i">I</a><div class="alphasepar"></div><a class="qindex" href="globals_k.html#index_k">K</a><div class="alphasepar"></div><a class="qindex" href="globals_l.html#index_l">L</a><div class="alphasepar"></div><a class="qindex" href="globals_m.html#index_m">M</a><div class="alphasepar"></div><a class="qindex" href="globals_n.html#index_n">N</a><div class="alphasepar"></div><a class="qindex" href="globals_o.html#index_o">O</a><div class="alphasepar"></div><a class="qindex" href="globals_p.html#index_p">P</a><div class="alphasepar"></div><a class="qindex" href="globals_r.html#index_r">R</a><div class="alphasepar"></div><a class="qindex" href="globals_s.html#index_s">S</a><div class="alphasepar"></div><a class="qindex" href="globals_t.html#index_t">T</a><div class="alphasepar"></div><a class="qindex" href="globals_u.html#index_u">U</a><div class="alphasepar"></div><a class="qindex" href="globals_v.html#index_v">V</a><div class="alphasepar"></div><a class="qindex" href="globals_w.html#index_w">W</a><div class="alphasepar"></div><a class="qindex" href="globals_z.html#index_z">Z</a></div>
+
+
+<h3 class="doxsection"><a id="index_w" name="index_w"></a>- w -</h3><ul>
+<li>WEATHER_BOOT_RETRIES&#160;:&#160;<a class="el" href="weather__store_8c.html#a3e000c92d82e89bbcb703377923e50fa">weather_store.c</a></li>
+<li>WEATHER_BOOT_RETRY_MS&#160;:&#160;<a class="el" href="weather__store_8c.html#aff467cb3eccd97fac6e8e0eb3dfb4ba7">weather_store.c</a></li>
+<li>weather_daily_decode()&#160;:&#160;<a class="el" href="group__lib__core.html#gac4fcf3a860dea22cf18924b3c4783405">weather_wire.c</a>, <a class="el" href="group__lib__core.html#gac4fcf3a860dea22cf18924b3c4783405">weather_wire.h</a></li>
+<li>WEATHER_FIRST_POLL_MS&#160;:&#160;<a class="el" href="weather__store_8c.html#a095baca2ac96275e14cbde3495f43b73">weather_store.c</a></li>
+<li>WEATHER_FORECAST_COLS&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#a102929a83f0e748a60db5079d778b530">wire_caps.g.h</a></li>
+<li>weather_hourly_decode()&#160;:&#160;<a class="el" href="group__lib__core.html#gaa8a79a3914a591d37a2080d4a9c2dd86">weather_wire.c</a>, <a class="el" href="group__lib__core.html#gaa8a79a3914a591d37a2080d4a9c2dd86">weather_wire.h</a></li>
+<li>WEATHER_NO_TEMP&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">wire_caps.g.h</a></li>
+<li>WEATHER_SEED_EMPTY&#160;:&#160;<a class="el" href="group__lib__stores.html#gae0d84f2727ec304e5376009e5f7dcd18">weather_store.h</a></li>
+<li>weather_store_age_s()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga7856768b2bde2cf55422b2c3b5ea3b4e">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga7856768b2bde2cf55422b2c3b5ea3b4e">weather_store.h</a></li>
+<li>weather_store_cond()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga2b52199ca0e311c968b7f831305acd62">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga2b52199ca0e311c968b7f831305acd62">weather_store.h</a></li>
+<li>weather_store_dew_point()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga4780ec893b0d2cb94e17ab85c78e377d">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga4780ec893b0d2cb94e17ab85c78e377d">weather_store.h</a></li>
+<li>weather_store_feels_like()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga06cf30734c71d28b90e5b660ee75bc9d">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga06cf30734c71d28b90e5b660ee75bc9d">weather_store.h</a></li>
+<li>weather_store_forecast_daily()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store.h</a></li>
+<li>weather_store_forecast_hourly()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store.c</a>, <a class="el" href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store.h</a></li>
+<li>weather_store_humidity()&#160;:&#160;<a class="el" href="group__lib__stores.html#gaec0de378ffe3adbadab18b877c3e214c">weather_store.c</a>, <a class="el" href="group__lib__stores.html#gaec0de378ffe3adbadab18b877c3e214c">weather_store.h</a></li>
+<li>weather_store_init()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga49a92d34f22c2bb81f54084b02215709">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga49a92d34f22c2bb81f54084b02215709">weather_store.h</a></li>
+<li>weather_store_precip_chance()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga04d4ed2abc57cd51459c6913b2d77e1d">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga04d4ed2abc57cd51459c6913b2d77e1d">weather_store.h</a></li>
+<li>weather_store_pressure()&#160;:&#160;<a class="el" href="group__lib__stores.html#gac167df267d9204941ae5ef9541074edc">weather_store.c</a>, <a class="el" href="group__lib__stores.html#gac167df267d9204941ae5ef9541074edc">weather_store.h</a></li>
+<li>weather_store_reconfigure()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store.h</a></li>
+<li>weather_store_subscribe()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga40fd78d1cab03532c37b131b1c2a9111">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga40fd78d1cab03532c37b131b1c2a9111">weather_store.h</a></li>
+<li>weather_store_sunrise()&#160;:&#160;<a class="el" href="group__lib__stores.html#gae1aaec2e20f48ead785d1c217b0a2ad4">weather_store.c</a>, <a class="el" href="group__lib__stores.html#gae1aaec2e20f48ead785d1c217b0a2ad4">weather_store.h</a></li>
+<li>weather_store_sunset()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga21fd739c3cdf95b044af16789ac88bd5">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga21fd739c3cdf95b044af16789ac88bd5">weather_store.h</a></li>
+<li>weather_store_temp()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga2cd48126740a404ee6893890c5abf288">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga2cd48126740a404ee6893890c5abf288">weather_store.h</a></li>
+<li>weather_store_temp_max()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga9521fad2bb38f644e02c9c3ac8547d4b">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga9521fad2bb38f644e02c9c3ac8547d4b">weather_store.h</a></li>
+<li>weather_store_temp_min()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga3ad694d30ad387bd9a9c1db451cc9c2d">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga3ad694d30ad387bd9a9c1db451cc9c2d">weather_store.h</a></li>
+<li>weather_store_uv()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga839bf5c5187f067697de69f79f025b3f">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga839bf5c5187f067697de69f79f025b3f">weather_store.h</a></li>
+<li>weather_store_wind_dir()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga21865e60abf090e923d95f74e4e5e3b2">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga21865e60abf090e923d95f74e4e5e3b2">weather_store.h</a></li>
+<li>weather_store_wind_kmh()&#160;:&#160;<a class="el" href="group__lib__stores.html#ga06fe793fd4c59b655856f6f1454e66a1">weather_store.c</a>, <a class="el" href="group__lib__stores.html#ga06fe793fd4c59b655856f6f1454e66a1">weather_store.h</a></li>
+<li>WeatherAirHandler&#160;:&#160;<a class="el" href="group__lib__io.html#gaacc7569bc241a64a05d4fb72c8b8e4a7">appmessage.h</a></li>
+<li>WeatherExtraHandler&#160;:&#160;<a class="el" href="group__lib__io.html#ga20ba4f3074f2ac3ff172d912a05d005e">appmessage.h</a></li>
+<li>WeatherForecastHandler&#160;:&#160;<a class="el" href="group__lib__io.html#ga84945e018c2a84f45e45ce683273e985">appmessage.h</a></li>
+<li>WeatherForecastStripHandler&#160;:&#160;<a class="el" href="group__lib__io.html#gad1004ca4be56020f12044e28936eba28">appmessage.h</a></li>
+<li>WeatherHandler&#160;:&#160;<a class="el" href="group__lib__io.html#ga7f166ce0149d01e665fe17a47dfa00bd">appmessage.h</a></li>
+<li>weekday_short()&#160;:&#160;<a class="el" href="group__lib__core.html#gadccedafdeb6e437c664e8426bfd9812b">weekday.c</a>, <a class="el" href="group__lib__core.html#gadccedafdeb6e437c664e8426bfd9812b">weekday.h</a></li>
+<li>wind_bearing()&#160;:&#160;<a class="el" href="group__lib__core.html#gaf6fadf25dfa1b520911598ccade94119">wind_dir.c</a>, <a class="el" href="group__lib__core.html#gaf6fadf25dfa1b520911598ccade94119">wind_dir.h</a></li>
+<li>wind_from_kmh()&#160;:&#160;<a class="el" href="group__lib__core.html#ga56c983dede8e0be266f38d389a62c371">wind.c</a>, <a class="el" href="group__lib__core.html#ga56c983dede8e0be266f38d389a62c371">wind.h</a></li>
+<li>wind_lean()&#160;:&#160;<a class="el" href="group__lib__core.html#ga357ae2f2cfb0a32380b717e9a8ac6ce8">wind_dir.c</a>, <a class="el" href="group__lib__core.html#ga357ae2f2cfb0a32380b717e9a8ac6ce8">wind_dir.h</a></li>
+<li>WIND_UNIT_COUNT&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea">wind.h</a></li>
+<li>WIND_UNIT_KMH&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c">wind.h</a></li>
+<li>WIND_UNIT_KTS&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a60a6d323d0f94b93a78fc02d92b6545d">wind.h</a></li>
+<li>wind_unit_label()&#160;:&#160;<a class="el" href="group__lib__core.html#gafd0dc1755ed3d4dd661c56e5c498e84d">wind.c</a>, <a class="el" href="group__lib__core.html#gafd0dc1755ed3d4dd661c56e5c498e84d">wind.h</a></li>
+<li>WIND_UNIT_MPH&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1a3d492848e908a0c4425a669ee67ee63b">wind.h</a></li>
+<li>WIND_UNIT_MS&#160;:&#160;<a class="el" href="group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1ae2b15fe48410daeee405fc533127c566">wind.h</a></li>
+<li>WindUnit&#160;:&#160;<a class="el" href="group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1">wind.h</a></li>
+<li>wire_cstring_terminated()&#160;:&#160;<a class="el" href="group__lib__core.html#ga700d7a3380b25b5472c1b580502b9b3e">wire_read.h</a></li>
+<li>wire_int_or()&#160;:&#160;<a class="el" href="group__lib__core.html#gaac313f9ba01fb8da75be8388287f9a7a">wire_read.h</a></li>
+<li>wrap_day()&#160;:&#160;<a class="el" href="timeband_8c.html#a53741af02acdd92c6c86ff7ec2e9656b">timeband.c</a></li>
+<li>write_settings()&#160;:&#160;<a class="el" href="appmessage_8c.html#afd8b8f5d619f4689a2891358d52737cc">appmessage.c</a></li>
+<li>WX_FORECAST_NIGHT_BIT&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#abc4a5b3638a2e2195948cc82481cc705">wire_caps.g.h</a></li>
+<li>wx_label_long()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga61ef1487b9a0b61c43a630db94e9c5ce">labels.c</a>, <a class="el" href="group__lib__ui.html#ga61ef1487b9a0b61c43a630db94e9c5ce">labels.h</a></li>
+<li>wx_label_long_for_table()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga86c728c4f0f87344e86363f79ba77dbc">labels_table.g.h</a></li>
+<li>wx_label_short()&#160;:&#160;<a class="el" href="group__lib__ui.html#gae99f459f7d5cbdb4a1e65e0a87af42ed">labels.c</a>, <a class="el" href="group__lib__ui.html#gae99f459f7d5cbdb4a1e65e0a87af42ed">labels.h</a></li>
+<li>wx_label_short_for_table()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga1bbb76ca85f87f6fd82050dea891fc32">labels_table.g.h</a></li>
+<li>wx_resource_for()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga9a50b66845b71a795a1739d45b510875">icons.h</a></li>
+<li>wx_resource_for_code()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga67fe2814ada74f69f1420dc7ff186b59">icon_codes_table.g.h</a></li>
+<li>wx_resource_for_forecast_code()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga840331c50e64d3b0b831af1bb6c8b90d">icons.h</a></li>
+<li>wx_resource_for_table()&#160;:&#160;<a class="el" href="group__lib__ui.html#ga7bdf911d493eb75876b96a13b80a6e41">icons_table.g.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

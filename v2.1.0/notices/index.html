@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Third-Party Notices · Pebble Watchface Engine</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <script src="../theme.js"></script>
+    <script src="../versions.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../site.css" />
+    <link rel="stylesheet" href="../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <main class="page">
+        <h1>Third-Party Notices</h1>
+        <div class="readme"><p>The engine is dual-licensed under the AGPL-3.0-or-later or the PolyForm Noncommercial License 1.0.0, see <a href="../licences/">LICENSE</a>. It bundles the third-party work below, which keeps its own licence.</p>
+<h2 id="icaljs">ical.js</h2>
+<p>The phone-side calendar reader in the shared PebbleKit JS bundle, so it ships in every <code>.pbw</code> built on this engine.</p>
+<ul>
+<li><strong>Source:</strong> <a href="https://github.com/kewisch/ical.js">https://github.com/kewisch/ical.js</a></li>
+<li><strong>Licence:</strong> Mozilla Public License 2.0, published at <a href="https://www.mozilla.org/en-US/MPL/2.0/">https://www.mozilla.org/en-US/MPL/2.0/</a>. The full text also ships in the package at <code>node_modules/ical.js/LICENSE</code></li>
+<li><strong>What Ships:</strong> the package&#39;s own prebuilt <code>dist/ical.es5.min.cjs</code>, copied in unchanged by the pkjs build. It is not modified, patched or re-bundled, so the source that produced it is the upstream repository above, and its licence header travels inside the bundle</li>
+</ul>
+<p>The MPL covers ical.js and nothing else here. Section 1.10 of that licence says a file carrying none of its code is not a modification of it, so the rest of the engine stays under its own terms. Keeping ical.js in a file of its own is deliberate, and is what section 1.7 asks of a larger work. The MPL 2.0 is also compatible with the AGPL through its secondary licence provision.</p>
+<p>Refer to the source above for the full terms.</p>
+<h2 id="doxygen-awesome-css">doxygen-awesome-css</h2>
+<p>The theme the engine&#39;s Doxygen HTML is built with. It only reaches the generated docs, never a <code>.pbw</code>.</p>
+<ul>
+<li><strong>Source:</strong> <a href="https://github.com/jothepro/doxygen-awesome-css">https://github.com/jothepro/doxygen-awesome-css</a>, release <code>v2.5.0</code></li>
+<li><strong>Licence:</strong> MIT. The full text sits beside the files at <code>docs/doxygen/awesome/LICENSE</code></li>
+<li><strong>What Ships:</strong> <code>doxygen-awesome.css</code>, <code>doxygen-awesome-darkmode-toggle.js</code> and <code>doxygen-awesome-interactive-toc.js</code>, copied in unchanged. The engine&#39;s own look sits on top of them in <code>docs/doxygen/pebble.css</code>, so moving to a newer release means copying the three files over again. The toggle&#39;s two icons come from Google&#39;s Material icons under the Apache License 2.0, as that file notes</li>
+</ul>
+<h2 id="octicons">Octicons</h2>
+<p>The GitHub mark on the docs site&#39;s shared bar, beside the link to this repository. It only reaches the generated docs, never a <code>.pbw</code>.</p>
+<ul>
+<li><strong>Source:</strong> <a href="https://github.com/primer/octicons">https://github.com/primer/octicons</a>, the <code>mark-github-16</code> icon from release <code>v19.36.0</code></li>
+<li><strong>Licence:</strong> MIT. The full text sits at <code>docs/site/octicons/LICENSE</code></li>
+<li><strong>What Ships:</strong> the icon&#39;s single SVG path, copied in unchanged to <code>docs/site/templates/site-bar.html</code></li>
+</ul>
+<p>The mark itself is a GitHub trademark. The site uses it only to link to this repository on GitHub.</p>
+</div>
+      </main>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-watchface-engine">AKlitbo/pebble-watchface-engine</a>
+    <span>Built from v2.1.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

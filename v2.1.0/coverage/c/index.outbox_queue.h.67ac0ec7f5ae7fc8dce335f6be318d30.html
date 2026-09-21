@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html class="theme-green">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>pebble/io/outbox_queue.h - Host C Specs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="index.css"/>
+    <script src="index.js"></script>
+  <script src="../../theme.js"></script>
+<script src="../../versions.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="../../site-bar.css">
+<link rel="stylesheet" href="../../coverage.css">
+</head>
+
+  <body>
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+    <div class="Layout-main">
+      <div class="Layout-main-centered-lg" style="max-width: 1280px;">
+        <div class="d-flex flex-justify-center">
+          <h1>Host C Specs</h1>
+        </div>
+        <hr class="block-separator"/>
+        <header>
+<div id="summary-index.outbox_queue.h.67ac0ec7f5ae7fc8dce335f6be318d30.html" class="summary">
+  <div>
+    <table class="legend">
+      <tr>
+        <th scope="row">Directory:</th>
+        <td>c/</td>
+      </tr>
+      <tr>
+        <th scope="row">Coverage:</th>
+        <td class="legend">
+          <span class="coverage-low">low: &ge; 0%</span>
+          <span class="coverage-medium">medium: &ge; 75.0%</span>
+          <span class="coverage-high">high: &ge; 90.0%</span>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div>
+    <table class="coverage">
+      <tr>
+        <th></th>
+        <th scope="col">Coverage</th>
+        <th scope="col">Exec / Excl / Total</th>
+      </tr>
+      <tr>
+        <th scope="row">Lines:</th>
+        <td class="coverage-high">100.0%</td>
+        <td class="coverage-high">58 / 0 / 58</td>
+      </tr>
+      <tr>
+        <th scope="row">Functions:</th>
+        <td class="coverage-high">100.0%</td>
+        <td class="coverage-high">10 / 0 / 10</td>
+      </tr>
+      <tr>
+        <th scope="row">Branches:</th>
+        <td class="coverage-high">92.5%</td>
+        <td class="coverage-high">37 / 0 / 40</td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </header>
+        <hr/>
+        <nav>
+<div class="m-3">
+  <details>
+    <summary>List of functions</summary>
+<div class="Box m-3 functionslist">
+  <div class="Box-header py-2 d-flex sticky">
+    <div role="rowheader" class="color-fg-muted flex-auto min-width-0 col-md-2 sortable sorted-ascending">Function (File:Line)</div>
+    <div role="rowheader" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline sortable">Calls</div>
+    <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Lines</div>
+    <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Branches</div>
+    <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Blocks</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l81">outbox_busy (c/pebble/io/outbox_queue.h:81)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="6">called 6 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l253">outbox_clear (c/pebble/io/outbox_queue.h:253)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="1">called 1 time</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l206">outbox_hold_failed (c/pebble/io/outbox_queue.h:206)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="11">called 11 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">83.3%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l70">outbox_is_request (c/pebble/io/outbox_queue.h:70)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="11">called 11 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l96">outbox_pending (c/pebble/io/outbox_queue.h:96)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="17">called 17 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">91.7%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">94.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l155">outbox_pop_front (c/pebble/io/outbox_queue.h:155)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="6">called 6 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l137">outbox_push (c/pebble/io/outbox_queue.h:137)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="16">called 16 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l193">outbox_release (c/pebble/io/outbox_queue.h:193)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="1">called 1 time</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l227">outbox_retry_pass (c/pebble/io/outbox_queue.h:227)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="1">called 1 time</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">83.3%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l176">outbox_take_head (c/pebble/io/outbox_queue.h:176)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="5">called 5 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+</div>  </details>
+</div>
+
+        </nav>
+        <main>
+<div class="Box m-3 file-source">
+  <div class="Box-header d-flex flex-space-between sticky">
+    pebble/io/outbox_queue.h
+    <div class="toggle-buttons">
+      <button type="button" class="button_toggle_coveredLine show_coveredLine" value="coveredLine" title="Toggle covered lines">55 covered</button>
+      <button type="button" class="button_toggle_uncoveredLine show_uncoveredLine" value="uncoveredLine" title="Toggle uncovered lines">0 uncovered</button>
+      <button type="button" class="button_toggle_partialCoveredLine show_partialCoveredLine" value="partialCoveredLine" title="Toggle partial covered lines">3 partial covered</button>
+      <button type="button" class="button_toggle_excludedLine show_excludedLine" value="excludedLine" title="Toggle excluded lines">0 excluded</button>
+    </div>
+    <div class="nav">
+      <a class="nav prev" href="index.pebble.340baa4019d3e1067c517c42e2964e92.html"></a>
+      <a class="nav index" href="index.html"></a>
+      <a class="nav next" href="index.stores.05dad3e64d52a3fe97dae3831a7ced75.html"></a>
+    </div>
+  </div>
+  <div class="source-table-container">
+    <table class="text-mono text-small">
+      <tr>
+        <th align="right">Line</th>
+        <th align="right">Branch</th>
+        <th align="right">Exec</th>
+        <th align="left" style="width: 100%;">Source</th>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l1" href="#l1">1</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l2" href="#l2">2</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @file outbox_queue.h</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l3" href="#l3">3</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief The outbox's work queue, its failed set, and the slot holding whatever is in flight.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l4" href="#l4">4</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l5" href="#l5">5</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * One AppMessage goes out at a time, so everything the watch wants to send queues here first. A</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l6" href="#l6">6</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * request the phone nacks is held in the failed set and moved back for a later pass, because its</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l7" href="#l7">7</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * pkjs was usually asleep and that first send is often what wakes it. Holding it means a whole poll</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l8" href="#l8">8</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * is not lost to one asleep-phone nack.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l9" href="#l9">9</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l10" href="#l10">10</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * None of that needs the SDK. The transport owns one of these, does the sending and the timers, and</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l11" href="#l11">11</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * asks here what to send next, which keeps the deciding testable on the host.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l12" href="#l12">12</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l13" href="#l13">13</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @ingroup lib_io</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l14" href="#l14">14</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l15" href="#l15">15</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cp">#pragma once</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l16" href="#l16">16</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdbool.h&gt;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l17" href="#l17">17</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l18" href="#l18">18</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l19" href="#l19">19</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @addtogroup lib_io</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l20" href="#l20">20</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l21" href="#l21">21</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l22" href="#l22">22</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l23" href="#l23">23</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">/// Most jobs the work queue or the failed set holds at once</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l24" href="#l24">24</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cp">#define OUTBOX_QUEUE_MAX 6</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l25" href="#l25">25</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l26" href="#l26">26</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l27" href="#l27">27</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief What an outbox job sends.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l28" href="#l28">28</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l29" href="#l29">29</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="k">typedef</span><span class="w"> </span><span class="k">enum</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l30" href="#l30">30</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l31" href="#l31">31</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OUTBOX_NONE</span><span class="p">,</span><span class="w">     </span><span class="c1">///&lt; The zero value, so a default-initialized job slot reads as nothing rather than a real request</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l32" href="#l32">32</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OUTBOX_WEATHER</span><span class="p">,</span><span class="w">  </span><span class="c1">///&lt; A weather request</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l33" href="#l33">33</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OUTBOX_SETTINGS</span><span class="p">,</span><span class="w"> </span><span class="c1">///&lt; The settings reply</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l34" href="#l34">34</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OUTBOX_STOCK</span><span class="p">,</span><span class="w">    </span><span class="c1">///&lt; A stock request</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l35" href="#l35">35</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OUTBOX_CALENDAR</span><span class="w">  </span><span class="c1">///&lt; A calendar request</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l36" href="#l36">36</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span><span class="w"> </span><span class="n">OutboxKind</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l37" href="#l37">37</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l38" href="#l38">38</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l39" href="#l39">39</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief One job waiting to go out, or already in flight.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l40" href="#l40">40</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l41" href="#l41">41</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l42" href="#l42">42</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l43" href="#l43">43</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OutboxKind</span><span class="w"> </span><span class="n">kind</span><span class="p">;</span><span class="w">         </span><span class="c1">///&lt; What this job sends</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l44" href="#l44">44</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="kt">int</span><span class="w">        </span><span class="n">retries_left</span><span class="p">;</span><span class="w"> </span><span class="c1">///&lt; Retry passes left after a failed send (0 for the settings reply)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l45" href="#l45">45</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span><span class="w"> </span><span class="n">OutboxJob</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l46" href="#l46">46</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l47" href="#l47">47</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l48" href="#l48">48</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Everything the outbox is holding: what is waiting, what nacked, and what is out.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l49" href="#l49">49</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l50" href="#l50">50</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * Zero-initialized is the empty state, since `OUTBOX_NONE` is the enum's zero.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l51" href="#l51">51</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l52" href="#l52">52</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l53" href="#l53">53</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l54" href="#l54">54</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">queue</span><span class="p">[</span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">];</span><span class="w">  </span><span class="c1">///&lt; This pass's work queue, oldest first</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l55" href="#l55">55</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="kt">int</span><span class="w">       </span><span class="n">queue_len</span><span class="p">;</span><span class="w">                </span><span class="c1">///&lt; How many jobs are in the queue</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l56" href="#l56">56</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">failed</span><span class="p">[</span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">];</span><span class="w"> </span><span class="c1">///&lt; Requests that nacked this pass, held for the next</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l57" href="#l57">57</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="kt">int</span><span class="w">       </span><span class="n">failed_len</span><span class="p">;</span><span class="w">               </span><span class="c1">///&lt; How many jobs are in the failed set</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l58" href="#l58">58</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">inflight</span><span class="p">;</span><span class="w">                 </span><span class="c1">///&lt; The job in flight, OUTBOX_NONE when nothing is out</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l59" href="#l59">59</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span><span class="w"> </span><span class="n">OutboxQueue</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l60" href="#l60">60</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l61" href="#l61">61</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l62" href="#l62">62</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Whether a kind is a request the watch makes, rather than a reply it sends back.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l63" href="#l63">63</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l64" href="#l64">64</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * Only a request is worth retrying. The settings reply answers something the phone already asked</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l65" href="#l65">65</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * for, so the phone asks again if it needs to.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l66" href="#l66">66</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l67" href="#l67">67</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param kind The job kind.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l68" href="#l68">68</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return True for a request the watch raised itself.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l69" href="#l69">69</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l70" href="#l70">70</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">11</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">outbox_is_request</span><span class="p">(</span><span class="n">OutboxKind</span><span class="w"> </span><span class="n">kind</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l71" href="#l71">71</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l72" href="#l72">72</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">6/6</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 4 times.</div>
+              <div class="takenBranch">&check; Branch 1 taken 7 times.</div>
+              <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 4 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 5 taken 1 time.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">11</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">OUTBOX_WEATHER</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">OUTBOX_STOCK</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">OUTBOX_CALENDAR</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l73" href="#l73">73</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l74" href="#l74">74</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l75" href="#l75">75</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l76" href="#l76">76</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Whether anything is in flight, which is what says the outbox is busy.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l77" href="#l77">77</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l78" href="#l78">78</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to read.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l79" href="#l79">79</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return True while a send is waiting on its sent or failed callback.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l80" href="#l80">80</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l81" href="#l81">81</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">6</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">outbox_busy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l82" href="#l82">82</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l83" href="#l83">83</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">6</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">inflight</span><span class="p">.</span><span class="n">kind</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">OUTBOX_NONE</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l84" href="#l84">84</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l85" href="#l85">85</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l86" href="#l86">86</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l87" href="#l87">87</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Whether this kind is already somewhere in the outbox.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l88" href="#l88">88</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l89" href="#l89">89</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * Covers all three places a job can be, so a poll that repeats while an earlier one is still</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l90" href="#l90">90</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * working its way out does not queue a second copy of the same request.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l91" href="#l91">91</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l92" href="#l92">92</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to read.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l93" href="#l93">93</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param kind The job kind to look for.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l94" href="#l94">94</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return True when that kind is in flight, queued, or held after a nack.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l95" href="#l95">95</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l96" href="#l96">96</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">17</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">outbox_pending</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">,</span><span class="w"> </span><span class="n">OutboxKind</span><span class="w"> </span><span class="n">kind</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l97" href="#l97">97</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l98" href="#l98">98</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 16 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">17</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">OUTBOX_NONE</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l99" href="#l99">99</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l100" href="#l100">100</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="c1">// the empty flight slot and every unused array entry read as OUTBOX_NONE, so without this</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l101" href="#l101">101</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="c1">// an idle outbox would answer that nothing is already pending</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l102" href="#l102">102</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l103" href="#l103">103</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l104" href="#l104">104</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l105" href="#l105">105</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 15 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">16</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">inflight</span><span class="p">.</span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kind</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l106" href="#l106">106</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l107" href="#l107">107</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l108" href="#l108">108</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l109" href="#l109">109</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l110" href="#l110">110</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 11 times.</div>
+              <div class="takenBranch">&check; Branch 1 taken 14 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">25</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l111" href="#l111">111</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l112" href="#l112">112</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">11</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kind</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l113" href="#l113">113</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l114" href="#l114">114</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l115" href="#l115">115</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l116" href="#l116">116</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l117" href="#l117">117</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l118" href="#l118">118</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 13 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">14</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l119" href="#l119">119</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l120" href="#l120">120</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">1/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount partialCoveredLine show_partialCoveredLine">1</td>
+        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">kind</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">kind</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l121" href="#l121">121</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l122" href="#l122">122</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l123" href="#l123">123</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l124" href="#l124">124</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l125" href="#l125">125</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l126" href="#l126">126</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">13</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l127" href="#l127">127</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l128" href="#l128">128</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l129" href="#l129">129</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l130" href="#l130">130</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Add a job to the work queue unless its kind is already pending.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l131" href="#l131">131</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l132" href="#l132">132</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to add to.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l133" href="#l133">133</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param kind The job kind to send.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l134" href="#l134">134</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param retries Retry passes left if the first send nacks (0 for the settings reply).</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l135" href="#l135">135</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return True when the job was added, false when it was already pending or the queue is full.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l136" href="#l136">136</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l137" href="#l137">137</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">16</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">outbox_push</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">,</span><span class="w"> </span><span class="n">OutboxKind</span><span class="w"> </span><span class="n">kind</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">retries</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l138" href="#l138">138</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l139" href="#l139">139</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">4/4</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 1 taken 13 times.</div>
+              <div class="takenBranch">&check; Branch 2 taken 3 times.</div>
+              <div class="takenBranch">&check; Branch 3 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 4 taken 12 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">16</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox_pending</span><span class="p">(</span><span class="n">outbox</span><span class="p">,</span><span class="w"> </span><span class="n">kind</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l140" href="#l140">140</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l141" href="#l141">141</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">4</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l142" href="#l142">142</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l143" href="#l143">143</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l144" href="#l144">144</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">12</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="p">].</span><span class="n">kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kind</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l145" href="#l145">145</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">12</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="p">].</span><span class="n">retries_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">retries</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l146" href="#l146">146</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">12</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="o">++</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l147" href="#l147">147</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">12</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l148" href="#l148">148</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l149" href="#l149">149</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l150" href="#l150">150</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l151" href="#l151">151</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Drop the front job off the work queue, shifting the rest forward.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l152" href="#l152">152</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l153" href="#l153">153</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to drop from.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l154" href="#l154">154</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l155" href="#l155">155</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">6</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">outbox_pop_front</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l156" href="#l156">156</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l157" href="#l157">157</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 1 taken 6 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">8</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l158" href="#l158">158</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l159" href="#l159">159</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">2</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="n">i</span><span class="p">];</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l160" href="#l160">160</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l161" href="#l161">161</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l162" href="#l162">162</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 5 times.</div>
+              <div class="takenBranch">&check; Branch 1 taken 1 time.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">6</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l163" href="#l163">163</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l164" href="#l164">164</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">5</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="o">--</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l165" href="#l165">165</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l166" href="#l166">166</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">6</td>
+        <td class="src  coveredLine show_coveredLine"><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l167" href="#l167">167</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l168" href="#l168">168</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l169" href="#l169">169</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Take the head of the queue as the job now in flight.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l170" href="#l170">170</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l171" href="#l171">171</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * The caller sends it first and only takes it once the send was accepted, so a refused send leaves</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l172" href="#l172">172</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * the head where it was.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l173" href="#l173">173</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l174" href="#l174">174</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to take from.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l175" href="#l175">175</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l176" href="#l176">176</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">5</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">outbox_take_head</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l177" href="#l177">177</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l178" href="#l178">178</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 4 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">5</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l179" href="#l179">179</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l180" href="#l180">180</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span><span class="w">  </span><span class="c1">// outbox_clear leaves the array behind, so an empty queue still has one to read</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l181" href="#l181">181</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l182" href="#l182">182</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l183" href="#l183">183</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">4</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">inflight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l184" href="#l184">184</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">4</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox_pop_front</span><span class="p">(</span><span class="n">outbox</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l185" href="#l185">185</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l186" href="#l186">186</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l187" href="#l187">187</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l188" href="#l188">188</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Mark whatever was in flight as settled, whichever way it went.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l189" href="#l189">189</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l190" href="#l190">190</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to clear.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l191" href="#l191">191</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return The job that was in flight, so a nacked one can be handed to outbox_hold_failed.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l192" href="#l192">192</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l193" href="#l193">193</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">OutboxJob</span><span class="w"> </span><span class="nf">outbox_release</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l194" href="#l194">194</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l195" href="#l195">195</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">settled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">inflight</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l196" href="#l196">196</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">inflight</span><span class="p">.</span><span class="n">kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OUTBOX_NONE</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l197" href="#l197">197</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">settled</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l198" href="#l198">198</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l199" href="#l199">199</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l200" href="#l200">200</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l201" href="#l201">201</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Hold a nacked request for the next pass, if it still has retries and is a real request.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l202" href="#l202">202</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l203" href="#l203">203</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to hold it in.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l204" href="#l204">204</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param job The job that just nacked.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l205" href="#l205">205</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l206" href="#l206">206</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">11</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">outbox_hold_failed</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">,</span><span class="w"> </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">job</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l207" href="#l207">207</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l208" href="#l208">208</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">4/4</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 1 taken 10 times.</div>
+              <div class="takenBranch">&check; Branch 2 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 3 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 4 taken 8 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">11</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">outbox_is_request</span><span class="p">(</span><span class="n">job</span><span class="p">.</span><span class="n">kind</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">retries_left</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l209" href="#l209">209</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l210" href="#l210">210</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">3</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l211" href="#l211">211</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l212" href="#l212">212</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l213" href="#l213">213</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">1/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 8 times.</div>
+              <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount partialCoveredLine show_partialCoveredLine">8</td>
+        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l214" href="#l214">214</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l215" href="#l215">215</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">8</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed</span><span class="p">[</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="p">].</span><span class="n">kind</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">kind</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l216" href="#l216">216</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">8</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed</span><span class="p">[</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="p">].</span><span class="n">retries_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">retries_left</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l217" href="#l217">217</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">8</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="o">++</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l218" href="#l218">218</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l219" href="#l219">219</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l220" href="#l220">220</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l221" href="#l221">221</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l222" href="#l222">222</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Move the whole failed set back into the work queue for another pass.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l223" href="#l223">223</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l224" href="#l224">224</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to move within.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l225" href="#l225">225</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return How many jobs were moved back.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l226" href="#l226">226</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l227" href="#l227">227</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">outbox_retry_pass</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l228" href="#l228">228</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l229" href="#l229">229</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">moved</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l230" href="#l230">230</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l231" href="#l231">231</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">3/4</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 1 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 2 taken 2 times.</div>
+              <div class="notTakenBranch">&cross; Branch 3 not taken.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount partialCoveredLine show_partialCoveredLine">3</td>
+        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l232" href="#l232">232</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l233" href="#l233">233</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">2</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue</span><span class="p">[</span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="o">++</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l234" href="#l234">234</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">3</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l235" href="#l235">235</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l236" href="#l236">236</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">            </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed</span><span class="p">[</span><span class="n">i</span><span class="p">];</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l237" href="#l237">237</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">        </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l238" href="#l238">238</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">2</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="o">--</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l239" href="#l239">239</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">2</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">moved</span><span class="o">++</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l240" href="#l240">240</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l241" href="#l241">241</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l242" href="#l242">242</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">moved</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l243" href="#l243">243</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l244" href="#l244">244</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l245" href="#l245">245</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l246" href="#l246">246</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Forget everything waiting, for a phone that is no longer there.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l247" href="#l247">247</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l248" href="#l248">248</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * Nothing reaches a phone that is not connected, so a store's next poll asks again once it is back</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l249" href="#l249">249</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * rather than a stale queue draining into it.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l250" href="#l250">250</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l251" href="#l251">251</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param outbox The outbox to empty.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l252" href="#l252">252</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l253" href="#l253">253</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">outbox_clear</span><span class="p">(</span><span class="n">OutboxQueue</span><span class="w"> </span><span class="o">*</span><span class="n">outbox</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l254" href="#l254">254</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l255" href="#l255">255</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">queue_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l256" href="#l256">256</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">outbox</span><span class="o">-&gt;</span><span class="n">failed_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l257" href="#l257">257</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l258" href="#l258">258</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l259" href="#l259">259</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/** @} */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l260" href="#l260">260</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+    </table>
+  </div>
+</div>
+        </main>
+        <hr class="block-separator"/>
+        <footer class="text-center">
+          Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
+          at 2026-09-21 02:57:08
+        </footer>
+      </div>
+    </div>
+  </body>
+
+</html>

@@ -1,0 +1,437 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/io/stores/calendar_store.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.0" selected>v2.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('calendar__store_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">calendar_store.c File Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The active calendar store: holds the agenda, owns the appmessage calendar channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="calendar__store_8h_source.html">io/stores/calendar_store.h</a>&quot;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__poll_8h_source.html">io/stores/store_poll.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:CalendarPersist" id="r_CalendarPersist"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structCalendarPersist.html">CalendarPersist</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The trimmed snapshot saved to flash. Holds only the first few events, not the whole strip.  <a href="structCalendarPersist.html#details">More...</a><br /></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Fstate" id="r__5Bstruct_5D_2Es_5Fstate"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__state.html">[struct].s_state</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a73139d62bf8fca78148767c7d0c96938" id="r_a73139d62bf8fca78148767c7d0c96938"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a73139d62bf8fca78148767c7d0c96938">CALENDAR_FIRST_POLL_MS</a>&#160;&#160;&#160;1100</td></tr>
+<tr class="memdesc:a73139d62bf8fca78148767c7d0c96938"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay before the first fetch after launch, in ms.  <br /></td></tr>
+<tr class="memitem:a6e53a2809a0e3f9ee7c3f806191d7c58" id="r_a6e53a2809a0e3f9ee7c3f806191d7c58"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a6e53a2809a0e3f9ee7c3f806191d7c58">CALENDAR_PERSIST_SLOTS</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:a6e53a2809a0e3f9ee7c3f806191d7c58"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many events the saved snapshot keeps.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a9fbef29f6a0a976770a3055c37a35d95" id="r_a9fbef29f6a0a976770a3055c37a35d95"><td class="memItemLeft"><a id="a9fbef29f6a0a976770a3055c37a35d95" name="a9fbef29f6a0a976770a3055c37a35d95"></a>
+static void&#160;</td><td class="memItemRight"><b>reset_state</b> (void)</td></tr>
+<tr class="memdesc:a9fbef29f6a0a976770a3055c37a35d95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the agenda back to empty. <br /></td></tr>
+<tr class="memitem:a7929b94f95a6b9dba4c3af1f4ee2acd2" id="r_a7929b94f95a6b9dba4c3af1f4ee2acd2"><td class="memItemLeft"><a id="a7929b94f95a6b9dba4c3af1f4ee2acd2" name="a7929b94f95a6b9dba4c3af1f4ee2acd2"></a>
+static void&#160;</td><td class="memItemRight"><b>persist_save</b> (void)</td></tr>
+<tr class="memdesc:a7929b94f95a6b9dba4c3af1f4ee2acd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stash a trimmed snapshot so a relaunch can restore it. Only a live face writes. <br /></td></tr>
+<tr class="memitem:ac1b0e8487bbcc44a33b7c5d631d628e1" id="r_ac1b0e8487bbcc44a33b7c5d631d628e1"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ac1b0e8487bbcc44a33b7c5d631d628e1">apply_seed</a> (const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *seed)</td></tr>
+<tr class="memdesc:ac1b0e8487bbcc44a33b7c5d631d628e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefill the store from a seed, for dev builds and screenshots.  <br /></td></tr>
+<tr class="memitem:a1ad7346f70a3c6902ddca4acf2a83838" id="r_a1ad7346f70a3c6902ddca4acf2a83838"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a1ad7346f70a3c6902ddca4acf2a83838">on_calendar_strip</a> (const uint8_t *buf, uint16_t len)</td></tr>
+<tr class="memdesc:a1ad7346f70a3c6902ddca4acf2a83838"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calendar channel. Takes the agenda the reader unpacked and puts it away.  <br /></td></tr>
+<tr class="memitem:a72d3fbc6394dec90dd05ebee86d7dba4" id="r_a72d3fbc6394dec90dd05ebee86d7dba4"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a72d3fbc6394dec90dd05ebee86d7dba4">catch_up_fire</a> (void *data)</td></tr>
+<tr class="memdesc:a72d3fbc6394dec90dd05ebee86d7dba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The one-shot catch-up fetch, used at launch and after a settings save.  <br /></td></tr>
+<tr class="memitem:ae097f0c73987f4efa784f7ab6a0fa8ae" id="r_ae097f0c73987f4efa784f7ab6a0fa8ae"><td class="memItemLeft"><a id="ae097f0c73987f4efa784f7ab6a0fa8ae" name="ae097f0c73987f4efa784f7ab6a0fa8ae"></a>
+static void&#160;</td><td class="memItemRight"><b>stop_polling</b> (void)</td></tr>
+<tr class="memdesc:ae097f0c73987f4efa784f7ab6a0fa8ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the catch-up fetch timer, if one is armed. <br /></td></tr>
+<tr class="memitem:ac219f20bf18466869ec6ecc7820e97a6" id="r_ac219f20bf18466869ec6ecc7820e97a6"><td class="memItemLeft"><a id="ac219f20bf18466869ec6ecc7820e97a6" name="ac219f20bf18466869ec6ecc7820e97a6"></a>
+static void&#160;</td><td class="memItemRight"><b>cadence_poll</b> (void)</td></tr>
+<tr class="memdesc:ac219f20bf18466869ec6ecc7820e97a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence: poll when the deadline has come round. <br /></td></tr>
+<tr class="memitem:ga83e9c3f206ad5ced9e3d6c50cb0fa96b" id="r_ga83e9c3f206ad5ced9e3d6c50cb0fa96b"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>calendar_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga83e9c3f206ad5ced9e3d6c50cb0fa96b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the agenda changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:gad9d0b53b9a4f189dd3a591801401ec35" id="r_gad9d0b53b9a4f189dd3a591801401ec35"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gad9d0b53b9a4f189dd3a591801401ec35">calendar_store_init</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg, const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *seed)</td></tr>
+<tr class="memdesc:gad9d0b53b9a4f189dd3a591801401ec35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:gade1a2a8d19355c64e027ed3b89479f0e" id="r_gade1a2a8d19355c64e027ed3b89479f0e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gade1a2a8d19355c64e027ed3b89479f0e">calendar_store_reconfigure</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg)</td></tr>
+<tr class="memdesc:gade1a2a8d19355c64e027ed3b89479f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memitem:gabbe75636f8fd3bbc25e5907b8b703478" id="r_gabbe75636f8fd3bbc25e5907b8b703478"><td class="memItemLeft">
+const <a class="el" href="structCalendarStrip.html">CalendarStrip</a> *&#160;</td><td class="memItemRight"><b>calendar_store_strip</b> (void)</td></tr>
+<tr class="memdesc:gabbe75636f8fd3bbc25e5907b8b703478"><td class="mdescLeft">&#160;</td><td class="mdescRight">The whole agenda strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>
+<tr class="memitem:ga3b326a92ec3b996da7b21ffe32934106" id="r_ga3b326a92ec3b996da7b21ffe32934106"><td class="memItemLeft">const <a class="el" href="structCalendarEvent.html">CalendarEvent</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga3b326a92ec3b996da7b21ffe32934106">calendar_store_event</a> (uint8_t index)</td></tr>
+<tr class="memdesc:ga3b326a92ec3b996da7b21ffe32934106"><td class="mdescLeft">&#160;</td><td class="mdescRight">One event by index, or NULL when the index is past what is filled.  <br /></td></tr>
+<tr class="memitem:ga53bd3d81fba50d07ccee2739d53c22ae" id="r_ga53bd3d81fba50d07ccee2739d53c22ae"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>calendar_store_age_s</b> (void)</td></tr>
+<tr class="memdesc:ga53bd3d81fba50d07ccee2739d53c22ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab23985ad11a6603fcf21648b82cb8a25" name="ab23985ad11a6603fcf21648b82cb8a25"></a>
+<a class="el" href="struct_0fstruct_0e_8s__state.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
+<tr class="memdesc:ab23985ad11a6603fcf21648b82cb8a25"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda the store holds right now. <br /></td></tr>
+<tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
+static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
+<tr class="memdesc:a0d75601f9ac1a6725c17065d338a664a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever the agenda changes, so the face can redraw. <br /></td></tr>
+<tr class="memitem:aa2450b83d4ef266d458eca3c73715aa2" id="r_aa2450b83d4ef266d458eca3c73715aa2"><td class="memItemLeft"><a id="aa2450b83d4ef266d458eca3c73715aa2" name="aa2450b83d4ef266d458eca3c73715aa2"></a>
+static AppTimer *&#160;</td><td class="memItemRight"><b>s_timer</b></td></tr>
+<tr class="memdesc:aa2450b83d4ef266d458eca3c73715aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The catch-up fetch only. The recurring poll rides the cadence. <br /></td></tr>
+<tr class="memitem:ad180049e0de115c19b3a8d6027e6e160" id="r_ad180049e0de115c19b3a8d6027e6e160"><td class="memItemLeft"><a id="ad180049e0de115c19b3a8d6027e6e160" name="ad180049e0de115c19b3a8d6027e6e160"></a>
+static int&#160;</td><td class="memItemRight"><b>s_poll_min</b></td></tr>
+<tr class="memdesc:ad180049e0de115c19b3a8d6027e6e160"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes between recurring polls. 0 or less means no recurring poll. <br /></td></tr>
+<tr class="memitem:a599c81a3107fff4c866f7cc0dfb42e14" id="r_a599c81a3107fff4c866f7cc0dfb42e14"><td class="memItemLeft"><a id="a599c81a3107fff4c866f7cc0dfb42e14" name="a599c81a3107fff4c866f7cc0dfb42e14"></a>
+static time_t&#160;</td><td class="memItemRight"><b>s_next_poll</b></td></tr>
+<tr class="memdesc:a599c81a3107fff4c866f7cc0dfb42e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock second the next recurring poll is due. <br /></td></tr>
+<tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
+<tr class="memdesc:a86591675781beec649ac9e8db3485c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">True once the store is enabled on a live face. It gates the cadence turn. <br /></td></tr>
+<tr class="memitem:afc1e32c72630b62007536cb95f77bb07" id="r_afc1e32c72630b62007536cb95f77bb07"><td class="memItemLeft"><a id="afc1e32c72630b62007536cb95f77bb07" name="afc1e32c72630b62007536cb95f77bb07"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_persist_key</b></td></tr>
+<tr class="memdesc:afc1e32c72630b62007536cb95f77bb07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist slot the face handed us for the saved strip. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The active calendar store: holds the agenda, owns the appmessage calendar channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due. </p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="a73139d62bf8fca78148767c7d0c96938" name="a73139d62bf8fca78148767c7d0c96938"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73139d62bf8fca78148767c7d0c96938">&#9670;&#160;</a></span>CALENDAR_FIRST_POLL_MS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CALENDAR_FIRST_POLL_MS&#160;&#160;&#160;1100</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Delay before the first fetch after launch, in ms. </p>
+<p>It fires from the event loop so appmessage is open by then, and lands a touch after the weather and stock first fetches so they are not fighting over the outbox at boot. The recurring poll then runs at the configured interval. </p>
+
+</div>
+</div>
+<a id="a6e53a2809a0e3f9ee7c3f806191d7c58" name="a6e53a2809a0e3f9ee7c3f806191d7c58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e53a2809a0e3f9ee7c3f806191d7c58">&#9670;&#160;</a></span>CALENDAR_PERSIST_SLOTS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define CALENDAR_PERSIST_SLOTS&#160;&#160;&#160;4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How many events the saved snapshot keeps. </p>
+<p>The full strip of 6 events is too big to persist. It blows past the 256 byte persist key ceiling and the save just fails. A relaunch saves the first few events plus the sync time instead, which is enough to paint the agenda straight away before the first poll after launch refreshes the full strip. </p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ac1b0e8487bbcc44a33b7c5d631d628e1" name="ac1b0e8487bbcc44a33b7c5d631d628e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1b0e8487bbcc44a33b7c5d631d628e1">&#9670;&#160;</a></span>apply_seed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void apply_seed </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prefill the store from a seed, for dev builds and screenshots. </p>
+<p><span class="tt"><a class="el" href="#a0d75601f9ac1a6725c17065d338a664a" title="Called whenever the agenda changes, so the face can redraw.">s_cb</a></span> is still NULL at the point init calls this, so no redraw fires here.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seed</td><td>The prefill to apply. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a72d3fbc6394dec90dd05ebee86d7dba4" name="a72d3fbc6394dec90dd05ebee86d7dba4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72d3fbc6394dec90dd05ebee86d7dba4">&#9670;&#160;</a></span>catch_up_fire()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void catch_up_fire </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The one-shot catch-up fetch, used at launch and after a settings save. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>The timer context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1ad7346f70a3c6902ddca4acf2a83838" name="a1ad7346f70a3c6902ddca4acf2a83838"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ad7346f70a3c6902ddca4acf2a83838">&#9670;&#160;</a></span>on_calendar_strip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void on_calendar_strip </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calendar channel. Takes the agenda the reader unpacked and puts it away. </p>
+<p>A message that does not read clean leaves the last good agenda where it is, so a bad one can never blank the panel.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buf</td><td>The raw wire bytes. </td></tr>
+    <tr><td class="paramname">len</td><td>How many bytes there are. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="calendar__store_8c.html">calendar_store.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
