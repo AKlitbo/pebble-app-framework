@@ -4,6 +4,13 @@ All notable API changes to the Pebble Watchface Engine are documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - Unreleased
+
+### Added
+
+- Added `layout_has_any_block` in `c/core/layout/layout_string.h`, which says whether a layout wire string holds a placeable block. The catalog bound comes in as an argument.
+- Added `layout_role_pick` in `c/core/layout/layout_role.h`, which picks between a face's day, night and Quiet Time layouts. A trigger with no layout assigned falls through to the next one rather than drawing an empty grid.
+
 ## [2.0.0] - 2026-09-17
 
 ### Added
@@ -63,6 +70,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[2.1.0]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...HEAD
 [2.0.0]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/AKlitbo/pebble-watchface-engine/releases/tag/v1.0.0
