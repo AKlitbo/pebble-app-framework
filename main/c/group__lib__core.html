@@ -245,6 +245,14 @@ Files</h2></td></tr>
 <tr class="memdesc:step__hours_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hour arithmetic behind the step chart's buckets. <br /></td></tr>
 <tr class="memitem:c_2Fcore_2Fio_2Fbytes_5Fle_2Eh" id="r_c_2Fcore_2Fio_2Fbytes_5Fle_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="bytes__le_8h.html">c/core/io/bytes_le.h</a></td></tr>
 <tr class="memdesc:bytes__le_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Little-endian byte readers shared by the wire-decoding stores. <br /></td></tr>
+<tr class="memitem:c_2Fcore_2Flayout_2Flayout_5Frole_2Ec" id="r_c_2Fcore_2Flayout_2Flayout_5Frole_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__role_8c.html">c/core/layout/layout_role.c</a></td></tr>
+<tr class="memdesc:layout__role_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The order the layout triggers are asked in. <br /></td></tr>
+<tr class="memitem:c_2Fcore_2Flayout_2Flayout_5Frole_2Eh" id="r_c_2Fcore_2Flayout_2Flayout_5Frole_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__role_8h.html">c/core/layout/layout_role.h</a></td></tr>
+<tr class="memdesc:layout__role_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of a face's layouts should be on screen right now. <br /></td></tr>
+<tr class="memitem:c_2Fcore_2Flayout_2Flayout_5Fstring_2Ec" id="r_c_2Fcore_2Flayout_2Flayout_5Fstring_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__string_8c.html">c/core/layout/layout_string.c</a></td></tr>
+<tr class="memdesc:layout__string_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Walking a layout wire string far enough to answer whether it holds anything. <br /></td></tr>
+<tr class="memitem:c_2Fcore_2Flayout_2Flayout_5Fstring_2Eh" id="r_c_2Fcore_2Flayout_2Flayout_5Fstring_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__string_8h.html">c/core/layout/layout_string.h</a></td></tr>
+<tr class="memdesc:layout__string_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reading a layout wire string without parsing the whole thing. <br /></td></tr>
 <tr class="memitem:c_2Fcore_2Fmath_2Fpct_2Ec" id="r_c_2Fcore_2Fmath_2Fpct_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="pct_8c.html">c/core/math/pct.c</a></td></tr>
 <tr class="memdesc:pct_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Progress towards a goal, as a percent. <br /></td></tr>
 <tr class="memitem:c_2Fcore_2Fmath_2Fpct_2Eh" id="r_c_2Fcore_2Fmath_2Fpct_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="pct_8h.html">c/core/math/pct.h</a></td></tr>
@@ -347,6 +355,12 @@ Enumerations</h2></td></tr>
 , <b>NIGHT_SCHED_COUNT</b>
  }</td></tr>
 <tr class="memdesc:ga90cd678ac8db70a4a741a5ef04cd8793"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the schedule is following. The caller's own enum should line up with these.  <a href="#ga90cd678ac8db70a4a741a5ef04cd8793">More...</a><br /></td></tr>
+<tr class="memitem:gacc6a111ebb7ba5e35f9c1946e436943f" id="r_gacc6a111ebb7ba5e35f9c1946e436943f"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a> { <a class="el" href="#ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971">LAYOUT_ROLE_DAY</a> = 0
+, <a class="el" href="#ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5">LAYOUT_ROLE_NIGHT</a>
+, <a class="el" href="#ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e">LAYOUT_ROLE_QUIET</a>
+, <b>LAYOUT_ROLE_COUNT</b>
+ }</td></tr>
+<tr class="memdesc:gacc6a111ebb7ba5e35f9c1946e436943f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout is showing. The caller's own storage should line up with these.  <a href="#gacc6a111ebb7ba5e35f9c1946e436943f">More...</a><br /></td></tr>
 <tr class="memitem:ga81835140b8dd390d395cd5fcf7dee1b1" id="r_ga81835140b8dd390d395cd5fcf7dee1b1"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga81835140b8dd390d395cd5fcf7dee1b1">WindUnit</a> { <br />
 &#160;&#160;<a class="el" href="#gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c">WIND_UNIT_KMH</a> = 0
 , <a class="el" href="#gga81835140b8dd390d395cd5fcf7dee1b1a3d492848e908a0c4425a669ee67ee63b">WIND_UNIT_MPH</a>
@@ -447,6 +461,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga3fd54f4514af9738e081706d21fd44bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a little-endian signed 16-bit value out of a byte pair.  <br /></td></tr>
 <tr class="memitem:ga7ac2e494355ca66ce8ec8bbd881e90e9" id="r_ga7ac2e494355ca66ce8ec8bbd881e90e9"><td class="memItemLeft">static int32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga7ac2e494355ca66ce8ec8bbd881e90e9">read_i32_le</a> (const uint8_t *p)</td></tr>
 <tr class="memdesc:ga7ac2e494355ca66ce8ec8bbd881e90e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a little-endian signed 32-bit value out of four bytes.  <br /></td></tr>
+<tr class="memitem:ga483c460c27f1f46834ac736434668598" id="r_ga483c460c27f1f46834ac736434668598"><td class="memItemLeft"><a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga483c460c27f1f46834ac736434668598">layout_role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
+<tr class="memdesc:ga483c460c27f1f46834ac736434668598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout wins, given what is firing and what has a grid behind it.  <br /></td></tr>
+<tr class="memitem:gadb8a7e98c9c67c5167942ae96433c21f" id="r_gadb8a7e98c9c67c5167942ae96433c21f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gadb8a7e98c9c67c5167942ae96433c21f">layout_has_any_block</a> (const char *layout, int type_count)</td></tr>
+<tr class="memdesc:gadb8a7e98c9c67c5167942ae96433c21f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a layout string holds at least one placeable block.  <br /></td></tr>
 <tr class="memitem:ga0fa2f5ff0207c0179c689d0277bdfffd" id="r_ga0fa2f5ff0207c0179c689d0277bdfffd"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga0fa2f5ff0207c0179c689d0277bdfffd">pct_of</a> (int value, int goal)</td></tr>
 <tr class="memdesc:ga0fa2f5ff0207c0179c689d0277bdfffd"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far along a goal is, from 0 to 100.  <br /></td></tr>
 <tr class="memitem:ga2a3f6820b74bffadc7d6f3b88eb4916d" id="r_ga2a3f6820b74bffadc7d6f3b88eb4916d"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga2a3f6820b74bffadc7d6f3b88eb4916d">clamp_int</a> (int value, int lo, int hi)</td></tr>
@@ -530,6 +548,30 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
+<a id="gacc6a111ebb7ba5e35f9c1946e436943f" name="gacc6a111ebb7ba5e35f9c1946e436943f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacc6a111ebb7ba5e35f9c1946e436943f">&#9670;&#160;</a></span>LayoutRole</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which layout is showing. The caller's own storage should line up with these. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971" name="ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971"></a>LAYOUT_ROLE_DAY&#160;</td><td class="fielddoc"><p>The everyday grid, and what everything else falls back to. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5" name="ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5"></a>LAYOUT_ROLE_NIGHT&#160;</td><td class="fielddoc"><p>The one the night schedule brings in after dark. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e" name="ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e"></a>LAYOUT_ROLE_QUIET&#160;</td><td class="fielddoc"><p>The one Quiet Time brings in, whatever the hour. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
 <a id="ga90cd678ac8db70a4a741a5ef04cd8793" name="ga90cd678ac8db70a4a741a5ef04cd8793"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga90cd678ac8db70a4a741a5ef04cd8793">&#9670;&#160;</a></span>NightSchedMode</h2>
 
@@ -1672,6 +1714,83 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>total * num / den, or 0 for a denominator of zero so there is no divide by it. </dd></dl>
+
+</div>
+</div>
+<a id="gadb8a7e98c9c67c5167942ae96433c21f" name="gadb8a7e98c9c67c5167942ae96433c21f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadb8a7e98c9c67c5167942ae96433c21f">&#9670;&#160;</a></span>layout_has_any_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool layout_has_any_block </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>layout</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>type_count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether a layout string holds at least one placeable block. </p>
+<p>One test covers the ways a layout can be nothing: the "0" sentinel a cleared grid is sent as, an empty string, and whatever a corrupt blob left behind. A record naming a module the catalog does not have is not placeable either, so it does not count.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">layout</td><td>The wire string, or NULL. </td></tr>
+    <tr><td class="paramname">type_count</td><td>How many module numbers the caller's catalog has, so anything at or past it is junk. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when at least one record names a real module. </dd></dl>
+
+</div>
+</div>
+<a id="ga483c460c27f1f46834ac736434668598" name="ga483c460c27f1f46834ac736434668598"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga483c460c27f1f46834ac736434668598">&#9670;&#160;</a></span>layout_role_pick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a> layout_role_pick </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>quiet_on</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>quiet_set</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>night_on</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>night_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which layout wins, given what is firing and what has a grid behind it. </p>
+<p>Quiet Time sits above the night schedule on purpose. Someone who has set both is saying they want a quieter screen while the watch is quiet, and that holds whether it happens to be dark out or not.</p>
+<p>A trigger with no layout assigned is skipped rather than honoured, so the answer walks down to the next one that has something to show and lands on the day grid if nothing else does. That is what lets someone use one of these without filling in the other.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">quiet_on</td><td>True while Quiet Time is on. </td></tr>
+    <tr><td class="paramname">quiet_set</td><td>True when a layout is assigned to Quiet Time. </td></tr>
+    <tr><td class="paramname">night_on</td><td>True while the night schedule says it is night. </td></tr>
+    <tr><td class="paramname">night_set</td><td>True when a layout is assigned to night. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The role whose layout should be drawn. </dd></dl>
 
 </div>
 </div>

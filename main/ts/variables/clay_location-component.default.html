@@ -53,6 +53,8 @@
 <h5 id="initialize"><span class="tsd-kind-property">initialize</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">this</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_location-component.ClayComponentContext.html" class="tsd-signature-type tsd-kind-interface">ClayComponentContext</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></h5>
 <div class="tsd-comment tsd-typography"><p>Wires up the live autocomplete: a debounced geocoder query, a results
 dropdown, and persisting the chosen place's coordinates (plus offset).</p>
+<p>A timezone field also matches time zones and plain offsets, which needs no network, so those
+rows are on screen before the geocoder has been asked anything.</p>
 </div></li>
 <li class="tsd-parameter">
 <h5 id="manipulator"><span class="tsd-kind-property">manipulator</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">get</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">this</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_location-component.ClayComponentContext.html" class="tsd-signature-type tsd-kind-interface">ClayComponentContext</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">set</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">this</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_location-component.ClayComponentContext.html" class="tsd-signature-type tsd-kind-interface">ClayComponentContext</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></h5>
@@ -83,7 +85,7 @@ thing the user has to act on and the picker is where they would act.</p>
 <div class="tsd-comment tsd-typography"><p>The markup this component renders for its config row.</p>
 </div></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/3c8bb0b05a521b1edb4e231de59b49b3dced4f3a/ts/clay/location-component.ts#L38">clay/location-component.ts:38</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/4a9a4a7621d40b03b857048dd802ca4770ab2b90/ts/clay/location-component.ts#L59">clay/location-component.ts:59</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

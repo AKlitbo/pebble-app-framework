@@ -25,6 +25,10 @@ var group__lib__core =
     [ "step_hours.c", "step__hours_8c.html", null ],
     [ "step_hours.h", "step__hours_8h.html", null ],
     [ "bytes_le.h", "bytes__le_8h.html", null ],
+    [ "layout_role.c", "layout__role_8c.html", null ],
+    [ "layout_role.h", "layout__role_8h.html", null ],
+    [ "layout_string.c", "layout__string_8c.html", null ],
+    [ "layout_string.h", "layout__string_8h.html", null ],
     [ "pct.c", "pct_8c.html", null ],
     [ "pct.h", "pct_8h.html", null ],
     [ "scale.c", "scale_8c.html", null ],
@@ -108,6 +112,11 @@ var group__lib__core =
     [ "STEP_HOURS_PER_DAY", "group__lib__core.html#gab582a8ca15586973977cd7f48de42fa2", null ],
     [ "TIDE_PERIOD_MIN", "group__lib__core.html#gaa01e1adc5b81c1d2cc14f870a42e5f3f", null ],
     [ "TIMEBAND_DAY_MINUTES", "group__lib__core.html#gad3c2b297779efc19aa0c02f2e8635917", null ],
+    [ "LayoutRole", "group__lib__core.html#gacc6a111ebb7ba5e35f9c1946e436943f", [
+      [ "LAYOUT_ROLE_DAY", "group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971", null ],
+      [ "LAYOUT_ROLE_NIGHT", "group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5", null ],
+      [ "LAYOUT_ROLE_QUIET", "group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e", null ]
+    ] ],
     [ "NightSchedMode", "group__lib__core.html#ga90cd678ac8db70a4a741a5ef04cd8793", [
       [ "NIGHT_SCHED_OFF", "group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997", null ],
       [ "NIGHT_SCHED_SOLAR", "group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73", null ],
@@ -151,6 +160,8 @@ var group__lib__core =
     [ "fmt_int_or_dash", "group__lib__core.html#ga145e042f4414e0854e809ac7c7b086ca", null ],
     [ "fmt_pct_signed", "group__lib__core.html#gad8460f42bd55675f97ac3b2feae4fde0", null ],
     [ "fraction_px", "group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f", null ],
+    [ "layout_has_any_block", "group__lib__core.html#gadb8a7e98c9c67c5167942ae96433c21f", null ],
+    [ "layout_role_pick", "group__lib__core.html#ga483c460c27f1f46834ac736434668598", null ],
     [ "moon_age_sec", "group__lib__core.html#gaf635be67f90fcbcc72361db3e1b899e0", null ],
     [ "moon_days_to_phase", "group__lib__core.html#ga3c81c549c8dfe4c2751f023abfe727b7", null ],
     [ "moon_glyph_index", "group__lib__core.html#ga83dfa9388ce19b76dd9f18ffc9135a67", null ],

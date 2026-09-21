@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nightschedmode_0',['NightSchedMode',['../group__lib__core.html#ga90cd678ac8db70a4a741a5ef04cd8793',1,'nightsched.h']]]
+  ['layoutrole_0',['LayoutRole',['../group__lib__core.html#gacc6a111ebb7ba5e35f9c1946e436943f',1,'layout_role.h']]]
 ];
