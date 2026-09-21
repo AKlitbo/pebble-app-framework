@@ -312,16 +312,17 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
       },
     ];
 
-    // the search writes the place it saved, and the pkjs side turns that into the minutes from
-    // UTC and the name a second clock needs. only faces with a readout for it ask for the control
+    // the search writes the place or zone it saved, and the pkjs side turns that into the minutes
+    // from UTC and the name a second clock needs. only faces with a readout for it ask for the
+    // control
     if (options.location.timeZone) {
       locationItems.push({
         'type': 'locationsearch',
         'messageKey': 'CLOCK_TIMEZONE_1',
         'label': 'Alternate Time Zone',
-        'description': 'Sets the time shown by the alternate time zone readout.',
+        'description': 'Sets the time shown by the alternate time zone readout. Search a city, a zone name such as Europe/London, or type UTC or an offset like UTC+05:30.',
         'attributes': {
-          'placeholder': 'Search a city, e.g. Phoenix',
+          'placeholder': 'e.g. Phoenix, UTC, or Europe/London',
         },
       });
     }

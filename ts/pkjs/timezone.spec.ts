@@ -66,6 +66,24 @@ describe('toWire', () => {
     expect(result).toBe('60,Berlin');
   });
 
+  /** A zone picked by name has no coordinates, so a toWire that wanted a place would send nothing. */
+  test('sends a zone picked on its own, with no coordinates', () => {
+    const saved = JSON.stringify({ label: 'UTC', offset: 0, tz: 'UTC', fixed: false });
+
+    const result = toWire(saved, SUMMER);
+
+    expect(result).toBe('0,UTC');
+  });
+
+  /** A plain offset has no zone to read, so the minutes saved with it are the whole answer. */
+  test('sends a fixed offset from its saved minutes', () => {
+    const saved = JSON.stringify({ label: 'UTC+05:30', offset: 330, tz: '', fixed: true });
+
+    const result = toWire(saved, SUMMER);
+
+    expect(result).toBe('330,UTC+05:30');
+  });
+
   /** A saved place whose zone the runtime cannot read falls back to the number rather than sending nothing. */
   test('falls back to the saved offset when the zone cannot be read', () => {
     const saved = JSON.stringify({ label: 'Berlin', offset: 60, tz: 'Nowhere/Atlantis' });

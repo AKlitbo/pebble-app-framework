@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added `layout_has_any_block` in `c/core/layout/layout_string.h`, which says whether a layout wire string holds a placeable block. The catalog bound comes in as an argument.
 - Added `layout_role_pick` in `c/core/layout/layout_role.h`, which picks between a face's day, night and Quiet Time layouts. A trigger with no layout assigned falls through to the next one rather than drawing an empty grid.
+- Added time zones to a `locationsearch` field on a timezone key. It matches UTC, a zone name, or a typed offset such as `utc+05:30` as well as a city, and a zone pick persists `{label, offset, tz, fixed}` with no coordinates.
 
 ## [2.0.0] - 2026-09-17
 

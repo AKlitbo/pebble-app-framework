@@ -5,13 +5,18 @@
  * matching places. Selecting one stores the resolved coordinates so the watch
  * never has to geocode.
  *
- * Persisted value:
- *   JSON string {lat, lon, label, offset, tz}
+ * A timezone field offers time zones alongside the places, since the geocoder only knows
+ * populated ones and there is no city called UTC. Typing utc, zulu, a zone name, or a plain
+ * offset such as utc+05:30 all land on a row that can be picked.
  *
- * `tz` is the IANA zone the geocoder named, such as Europe/London, and `offset` is how far ahead of
- * UTC that zone was when the place was picked. A timezone field is sent to the watch as
- * "offset,label" by the pkjs side, which reads the offset off the zone each time so it follows a
- * daylight saving switch.
+ * Persisted value:
+ *   JSON string {lat, lon, label, offset, tz, fixed}
+ *
+ * `tz` is the IANA zone, such as Europe/London, and `offset` is how far ahead of UTC that zone was
+ * when the pick was made. A timezone field is sent to the watch as "offset,label" by the pkjs
+ * side, which reads the offset off the zone each time so it follows a daylight saving switch. A
+ * zone pick carries no coordinates, and a plain offset carries no zone either, so it sets `fixed`
+ * to say the missing zone is on purpose.
  *
  * IMPORTANT: `initialize` and the `manipulator` methods are serialised
  * (via .toString()) and run inside the Clay config webview, a separate JS
@@ -33,6 +38,22 @@ interface GeoPlace {
   country?: string;
   latitude?: number;
   longitude?: number;
+}
+
+/**
+ * Intl grew a list of the zones it knows in ES2022, which is newer than the lib this compiles
+ * against, so the shape is spelled out here. It is a type and nothing else, which is what lets
+ * `initialize` mention it and still serialise clean.
+ */
+interface IntlWithZones {
+  supportedValuesOf?(key: string): string[];
+}
+
+/** One time zone row the picker offers, ready to persist as it stands. */
+interface ZoneChoice {
+  zone: string;    // the IANA name, or empty for an offset no zone matches
+  label: string;   // the word the watch shows
+  offset: number;  // minutes ahead of UTC, negative west of it
 }
 
 export default {
@@ -63,6 +84,7 @@ export default {
     '.loc-search .loc-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; }',
     '.loc-search .loc-item:last-child { border-bottom: none; }',
     '.loc-search .loc-item:hover, .loc-search .loc-item:active { background: #ff4700; color: #fff; }',
+    '.loc-search .loc-hint { float: right; opacity: 0.55; }',
     '.loc-search .loc-note { padding: 0.5rem 0 0; font-size: 0.9em; color: #ff4700; }',
   ].join(''),
 
@@ -80,6 +102,7 @@ export default {
       const root = this.$element[0];
       let label = '';
       let zone = '';
+      let fixed = false;
 
       (root.querySelector('.loc-value') as HTMLInputElement).value = value || '';
 
@@ -91,6 +114,9 @@ export default {
           }
           if (parsed && typeof parsed.tz === 'string') {
             zone = parsed.tz;
+          }
+          if (parsed && parsed.fixed) {
+            fixed = true;
           }
         } catch (error) {
           // a place saved before the zone was kept round-trips as offset then label, so show just
@@ -108,11 +134,12 @@ export default {
 
       // a timezone field reads its offset off the zone, so a place saved without one is stuck on
       // whatever the offset was the day it was picked and goes an hour out when the clocks change.
-      // picking the place again is the whole fix, and it happens right here
+      // picking the place again is the whole fix, and it happens right here. a plain offset has no
+      // zone on purpose and no daylight saving to follow, so it is left alone
       const messageKey = this.config.messageKey || '';
       const wantsZone = /TIME_?ZONE/i.test(messageKey);
       const noteEl = root.querySelector('.loc-note') as HTMLElement;
-      noteEl.style.display = (wantsZone && label && !zone) ? 'block' : 'none';
+      noteEl.style.display = (wantsZone && label && !zone && !fixed) ? 'block' : 'none';
     },
 
     /**
@@ -132,6 +159,9 @@ export default {
   /**
    * Wires up the live autocomplete: a debounced geocoder query, a results
    * dropdown, and persisting the chosen place's coordinates (plus offset).
+   *
+   * A timezone field also matches time zones and plain offsets, which needs no network, so those
+   * rows are on screen before the geocoder has been asked anything.
    */
   initialize: function(this: ClayComponentContext) {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -144,6 +174,32 @@ export default {
     const noteEl = root.querySelector('.loc-note') as HTMLElement;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let seq = 0;
+
+    // only a timezone field offers zones. the weather location wants a real place with
+    // coordinates, and a row like UTC has none
+    const wantsZone = /TIME_?ZONE/i.test(self.config.messageKey || '');
+
+    // the zone rows showing for what is typed now, so a geocoder answer can redraw the list
+    // without losing them
+    let zoneRows: ZoneChoice[] = [];
+
+    // Intl names about four hundred zones and costs nothing to ask. it leaves out UTC and every
+    // Etc entry though, so UTC goes on by hand. an older webview without the call still reaches
+    // every named zone through the city search below
+    let zoneNames: string[] = [];
+    if (wantsZone) {
+      try {
+        const lister = (Intl as unknown as IntlWithZones).supportedValuesOf;
+        if (typeof lister === 'function') {
+          zoneNames = lister.call(Intl, 'timeZone').slice();
+        }
+      } catch (error) {}
+      zoneNames.unshift('UTC');
+    }
+
+    // reading a zone means building a formatter, which is the expensive half, so each zone keeps
+    // the answer it gave. it is only ever read for a dropdown row so a stale minute is harmless
+    const offsets: Record<string, number> = {};
 
     (root.querySelector('.loc-label') as HTMLElement).textContent = self.config.label || 'Location';
     if (self.config.attributes && self.config.attributes.placeholder) {
@@ -158,6 +214,153 @@ export default {
     /** Joins a place's name, region, and country into one label, dropping missing parts. */
     function labelFor(place: GeoPlace) {
       return [place.name, place.admin1, place.country].filter(Boolean).join(', ');
+    }
+
+    /** Two digits, so an offset reads UTC+05:30 rather than UTC+5:30. */
+    function pad(value: number) {
+      return value < 10 ? '0' + value : String(value);
+    }
+
+    /** Minutes ahead of UTC written the way people say it. */
+    function offsetText(minutes: number) {
+      const away = Math.abs(minutes);
+      return 'UTC' + (minutes < 0 ? '-' : '+') + pad(Math.floor(away / 60)) + ':' + pad(away % 60);
+    }
+
+    /**
+     * How far ahead of UTC a zone is right now, in minutes. Measures the zone's own clock against
+     * UTC so the half hour and quarter hour zones come out right too. Zero when the webview will
+     * not read that zone, which only costs the dropdown a hint since the pkjs side works the real
+     * number out again on every send.
+     */
+    function zoneOffset(zone: string): number {
+      if (typeof offsets[zone] === 'number') {
+        return offsets[zone];
+      }
+
+      let minutes = 0;
+      try {
+        const parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: zone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).formatToParts(new Date());
+
+        const at: Record<string, string> = {};
+        parts.forEach(function(part) { at[part.type] = part.value; });
+
+        // midnight comes back as hour 24 in some engines, so fold it onto the day it belongs to
+        const hour = Number(at.hour) % 24;
+        const wall = Date.UTC(Number(at.year), Number(at.month) - 1, Number(at.day), hour, Number(at.minute));
+        const now = Date.now();
+        if (isFinite(wall)) {
+          minutes = Math.round((wall - Math.floor(now / 60000) * 60000) / 60000);
+        }
+      } catch (error) {}
+
+      offsets[zone] = minutes;
+      return minutes;
+    }
+
+    /**
+     * The word the watch shows for a zone. UTC keeps its name, anything else uses the city on the
+     * end of it, so Australia/Adelaide reads ADELAIDE in the panel header rather than running off
+     * the side of it.
+     */
+    function zoneLabel(zone: string) {
+      if (zone === 'UTC') {
+        return 'UTC';
+      }
+
+      return zone.substring(zone.lastIndexOf('/') + 1).replace(/_/g, ' ');
+    }
+
+    /**
+     * A typed offset turned into a row that can be picked. Takes utc+5, +05:30, gmt-8 and -0330
+     * alike.
+     *
+     * A whole hour has a real zone behind it, written Etc/GMT with the sign the other way round,
+     * so UTC+5 is stored as Etc/GMT-5. Anything finer has no zone at all, so it keeps the minutes
+     * on their own. A fixed offset has no daylight saving to follow, so nothing is lost by that.
+     */
+    function offsetChoice(needle: string): ZoneChoice | null {
+      const parts = /^(?:utc|gmt)?([+-])(\d{1,2})(?::?(\d{2}))?$/.exec(needle);
+      if (!parts) {
+        return null;
+      }
+
+      const hours = Number(parts[2]);
+      const minutes = Number(parts[3] || 0);
+      if (hours > 14 || minutes > 59) {
+        return null;
+      }
+
+      const total = (parts[1] === '-' ? -1 : 1) * (hours * 60 + minutes);
+      if (total === 0) {
+        return { zone: 'UTC', label: 'UTC', offset: 0 };
+      }
+
+      return {
+        zone: minutes === 0 ? 'Etc/GMT' + (total < 0 ? '+' : '-') + hours : '',
+        label: offsetText(total),
+        offset: total,
+      };
+    }
+
+    /**
+     * The zone rows for what has been typed, likeliest first and capped so the list stays
+     * scannable. Empty for a field that is not a timezone.
+     */
+    function zoneMatches(query: string): ZoneChoice[] {
+      if (!wantsZone) {
+        return [];
+      }
+
+      // spaces and underscores are noise here, so New York, new_york and newyork all match
+      const needle = query.toLowerCase().replace(/[\s_]/g, '');
+      const found: ZoneChoice[] = [];
+
+      const typed = offsetChoice(needle);
+      if (typed) {
+        found.push(typed);
+      }
+
+      // the words people reach for when they mean UTC, none of which is a zone name
+      let meansUtc = false;
+      ['utc', 'zulu', 'gmt', 'greenwich'].forEach(function(alias) {
+        if (alias.indexOf(needle) === 0) {
+          meansUtc = true;
+        }
+      });
+      if (meansUtc && !typed) {
+        found.push({ zone: 'UTC', label: 'UTC', offset: 0 });
+      }
+
+      // the city on the end is the word people type, so those rank first. matching anywhere after
+      // that is what makes a query like europe or pacific useful
+      const ending: string[] = [];
+      const anywhere: string[] = [];
+      zoneNames.forEach(function(zone) {
+        const lower = zone.toLowerCase().replace(/_/g, '');
+        if (lower.substring(lower.lastIndexOf('/') + 1).indexOf(needle) === 0) {
+          ending.push(zone);
+        } else if (lower.indexOf(needle) !== -1) {
+          anywhere.push(zone);
+        }
+      });
+
+      ending.concat(anywhere).forEach(function(zone) {
+        if (found.length >= 5 || zone === 'UTC') {
+          return;
+        }
+        found.push({ zone: zone, label: zoneLabel(zone), offset: zoneOffset(zone) });
+      });
+
+      return found.slice(0, 5);
     }
 
     /** Clears and hides the suggestions dropdown. */
@@ -210,14 +413,50 @@ export default {
       xhr.send();
     }
 
-    /** Renders the geocoder results as a clickable dropdown, persisting the pick on selection. */
-    function renderResults(results: GeoPlace[]) {
+    /**
+     * Renders the dropdown: the matching zones first, then the places the geocoder found.
+     *
+     * Both halves are drawn together rather than each owning the list, since the zones are ready
+     * at once and the places arrive whenever the network gets round to it.
+     */
+    function renderResults(zones: ZoneChoice[], results: GeoPlace[]) {
       hideList();
-      if (!results || !results.length) {
-        return;
-      }
 
-      results.forEach(function(place: GeoPlace) {
+      zones.forEach(function(choice: ZoneChoice) {
+        const item = document.createElement('li');
+        item.className = 'loc-item loc-item-zone';
+        // the full zone name, since Adelaide on its own does not say which one
+        item.textContent = choice.zone || choice.label;
+
+        // what that zone reads against UTC, unless the row already says so itself
+        if (choice.label.indexOf('UTC') !== 0) {
+          const hint = document.createElement('span');
+          hint.className = 'loc-hint';
+          hint.textContent = offsetText(choice.offset);
+          item.appendChild(hint);
+        }
+
+        item.addEventListener('click', function(event) {
+          event.stopPropagation();
+          queryEl.value = choice.label;
+
+          // no coordinates, since a zone is not a place and nothing reads them back. the minutes
+          // are only a fallback for a phone that cannot look a zone up, and fixed says the
+          // missing zone on an offset row is meant
+          hiddenEl.value = JSON.stringify({
+            label: choice.label,
+            offset: choice.offset,
+            tz: choice.zone,
+            fixed: !choice.zone,
+          });
+
+          noteEl.style.display = 'none';
+          hideList();
+        });
+        listEl.appendChild(item);
+      });
+
+      (results || []).forEach(function(place: GeoPlace) {
         const item = document.createElement('li');
         item.className = 'loc-item';
         item.textContent = labelFor(place);
@@ -239,10 +478,19 @@ export default {
         listEl.appendChild(item);
       });
 
-      listEl.classList.add('show');
+      if (listEl.firstChild) {
+        listEl.classList.add('show');
+      }
     }
 
-    /** Queries the Open-Meteo geocoder for the typed term, ignoring a stale response that lands after a newer query. */
+    /**
+     * Queries the Open-Meteo geocoder for the typed term, ignoring a stale response that lands
+     * after a newer query.
+     *
+     * A geocoder that fails, times out, or knows nothing falls back to the zone rows rather than
+     * an empty list. Offline on a phone is the normal way to reach the config page, and UTC needs
+     * nothing from the network.
+     */
     function search(query: string) {
       const mySeq = ++seq;
       const xhr = new XMLHttpRequest();
@@ -256,23 +504,23 @@ export default {
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const data = JSON.parse(xhr.responseText);
-            renderResults(data && data.results);
+            renderResults(zoneRows, data && data.results);
           } catch (error) {
-            hideList();
+            renderResults(zoneRows, []);
           }
         } else {
-          hideList();
+          renderResults(zoneRows, []);
         }
       };
 
       xhr.onerror = function() {
         if (mySeq === seq) {
-          hideList();
+          renderResults(zoneRows, []);
         }
       };
       xhr.ontimeout = function() {
         if (mySeq === seq) {
-          hideList();
+          renderResults(zoneRows, []);
         }
       };
       xhr.timeout = 10000;
@@ -291,8 +539,14 @@ export default {
       }
       if (query.length < 2) {
         seq++;
+        zoneRows = [];
         return hideList();
       }
+
+      // the zones need nothing from the network, so they are on screen while the geocoder is
+      // still being waited on
+      zoneRows = zoneMatches(query);
+      renderResults(zoneRows, []);
 
       timer = setTimeout(function() { search(query); }, 300);
     });

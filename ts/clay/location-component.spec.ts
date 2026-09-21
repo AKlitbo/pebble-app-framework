@@ -357,7 +357,9 @@ describe('initialize', () => {
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
     mounted.ctx.set('0,Phoenix, Arizona, United States');
-    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    // the place row, since a timezone field lists America/Phoenix above it and picking that one
+    // would answer the prompt outright
+    mounted.list.querySelector('.loc-item:not(.loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(mounted.note.style.display).toBe('block');
   });
@@ -438,6 +440,191 @@ describe('initialize', () => {
     document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(mounted.list.classList.contains('show')).toBe(false);
+  });
+});
+
+/**
+ * Zone rows on a timezone field.
+ *
+ * The geocoder only knows populated places, so before these rows existed there was no way to pick
+ * UTC at all. The cases worth pinning are the ones a reader cannot check by eye: which words reach
+ * UTC, the inverted sign on the Etc zones, and that none of this leaks into the weather location
+ * field or takes the city search away.
+ */
+describe('zone search', () => {
+  let xhrs: ReturnType<typeof installFakeXhr>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    xhrs = installFakeXhr();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  /** The rows a query put up, as the text of each one. */
+  function zoneRows(mounted: ReturnType<typeof mount>): string[] {
+    const items = mounted.list.querySelectorAll('.loc-item-zone');
+    return Array.prototype.map.call(items, (item: HTMLElement) => item.firstChild.textContent) as string[];
+  }
+
+  /** The whole point. No city is called UTC, so without this row the watch can never show it. */
+  test('offers UTC for a query of utc', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+
+    const result = zoneRows(mounted);
+
+    expect(result[0]).toBe('UTC');
+  });
+
+  /** The word the user asked for. Zulu is not a zone name, so nothing would match it on its own. */
+  test('offers UTC for a query of zulu', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'zulu');
+
+    const result = zoneRows(mounted);
+
+    expect(result[0]).toBe('UTC');
+  });
+
+  /** The zones need nothing from the network, so a config page opened offline still reaches UTC. */
+  test('shows the zone rows before the geocoder has been asked', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+
+    expect(xhrs).toHaveLength(0);
+    expect(mounted.list.classList.contains('show')).toBe(true);
+  });
+
+  /** A zone that saved no tz would be stuck on today's offset, which is the bug the zone is for. */
+  test('persists the zone and its label on picking UTC', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result).toEqual({ label: 'UTC', offset: 0, tz: 'UTC', fixed: false });
+    expect(xhrs).toHaveLength(0);
+  });
+
+  /**
+   * Etc zone names run the sign the other way round, so UTC+5 is Etc/GMT-5. Getting it backwards
+   * puts the alternate clock ten hours out and looks like a plausible zone name either way.
+   */
+  test('stores a whole hour offset as the Etc zone with the sign inverted', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc+5');
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result).toEqual({ label: 'UTC+05:00', offset: 300, tz: 'Etc/GMT-5', fixed: false });
+  });
+
+  /** West of UTC flips it the other way, and a reversed pair here is the same ten hour error. */
+  test('stores a western whole hour offset as an Etc zone too', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'gmt-8');
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result).toEqual({ label: 'UTC-08:00', offset: -480, tz: 'Etc/GMT+8', fixed: false });
+  });
+
+  /** There is no Etc zone for a half hour, so the minutes stand alone and fixed says that is meant. */
+  test('stores a half hour offset as minutes with no zone', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc+5:30');
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result).toEqual({ label: 'UTC+05:30', offset: 330, tz: '', fixed: true });
+  });
+
+  /**
+   * A fixed offset has no zone on purpose and no daylight saving to follow. Nagging to pick the
+   * city again would be asking for something the user cannot give.
+   */
+  test('raises no daylight saving prompt for a restored fixed offset', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+
+    mounted.ctx.set(JSON.stringify({ label: 'UTC+05:30', offset: 330, tz: '', fixed: true }));
+
+    expect(mounted.note.style.display).toBe('none');
+  });
+
+  /** Picking a zone by name has to reach the watch as a word that fits, not as Australia/Adelaide. */
+  test('labels a named zone with the city on the end of it', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'adelaide');
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result.tz).toBe('Australia/Adelaide');
+    expect(result.label).toBe('Adelaide');
+  });
+
+  /** Zones are an addition. A city search that stopped working would be a worse face than before. */
+  test('still lists the geocoded cities under the zones', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Berlin');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(JSON.stringify({ results: [{ name: 'Berlin', country: 'DE', latitude: 52.5, longitude: 13.4 }] }));
+
+    const result = mounted.list.querySelector('.loc-item:not(.loc-item-zone)');
+
+    expect(result.textContent).toBe('Berlin, DE');
+  });
+
+  /** The weather location needs coordinates, and a row like UTC has none to give it. */
+  test('offers no zones on a location field that is not a timezone', () => {
+    const mounted = mount({ messageKey: 'LOCATION_NAME' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+
+    const result = zoneRows(mounted);
+
+    expect(result).toHaveLength(0);
+  });
+
+  /** Offline is the normal way to open the config page, and UTC needs nothing from the network. */
+  test('keeps the zone rows up when the geocoder request errors', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+    vi.advanceTimersByTime(300);
+    xhrs[0].error();
+
+    const result = zoneRows(mounted);
+
+    expect(result[0]).toBe('UTC');
+    expect(mounted.list.classList.contains('show')).toBe(true);
   });
 });
 
