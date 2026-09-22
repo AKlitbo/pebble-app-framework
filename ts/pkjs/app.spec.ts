@@ -288,6 +288,64 @@ describe('seedConfigFromWatch', () => {
       CONNECTION_VIBE_DISCONNECT: '1',
     });
   });
+
+  /**
+   * A phone that lost its store, through a new phone or the app's data being cleared, opened the
+   * settings page on an empty Alternate Time Zone while the watch carried on showing the old one.
+   * Saving from there sent nothing back and the panel dropped to UTC.
+   */
+  test('seeds a timezone field from the watch', () => {
+    app.seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' });
+
+    const result = stored('CLOCK_TIMEZONE_1');
+
+    expect(result).toBe('-420,Phoenix');
+  });
+
+  /** A face may name a key TIMEZONE for something that holds no place, so only a string seeds. */
+  test('skips a timezone key that did not arrive as a string', () => {
+    app.seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 });
+
+    const result = 'CLOCK_TIMEZONE_1' in JSON.parse(localStorage.getItem('clay-settings'));
+
+    expect(result).toBe(false);
+  });
+});
+
+describe('retimeSettings', () => {
+  const timezoneKeys = { CLOCK_TIMEZONE_1: 11 };
+  // a June evening, when London is an hour ahead of UTC and the saved offset of 0 is a winter one
+  const nowMs = Date.UTC(2026, 5, 10, 22, 0);
+
+  /** The watch reads the offset rather than the zone, so a saved place has to arrive rewritten. */
+  test('rewrites a saved place into the offset it reads today', () => {
+    const dict = { 11: JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' }) };
+
+    const result = app.retimeSettings(dict, timezoneKeys, nowMs);
+
+    expect(result[11]).toBe('60,London');
+  });
+
+  /**
+   * A field with nothing saved in it used to go out as an empty string, which the watch reads as
+   * zero minutes under no name, so a working Time Zone panel fell to UTC labelled TZ.
+   */
+  test('drops a timezone field with nothing saved in it', () => {
+    const dict = { 11: '' };
+
+    const result = app.retimeSettings(dict, timezoneKeys, nowMs);
+
+    expect(11 in result).toBe(false);
+  });
+
+  /** A face may name a key TIMEZONE for a toggle, and blanking one would leave it stuck. */
+  test('leaves a timezone key that is not a string alone', () => {
+    const dict = { 11: 3 };
+
+    const result = app.retimeSettings(dict, timezoneKeys, nowMs);
+
+    expect(result[11]).toBe(3);
+  });
 });
 
 describe('weatherSettingsSnapshot', () => {

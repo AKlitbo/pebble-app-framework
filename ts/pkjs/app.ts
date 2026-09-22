@@ -148,6 +148,55 @@ const isString = (value: any) => typeof value === 'string';
 const isEnum = (value: any) => typeof value === 'string' || typeof value === 'number';
 const asBool = (value: any) => value === 1;
 
+/**
+ * The face's timezone settings, by the name to read them under and the key they ride on.
+ *
+ * The Clay store keys on the name and an AppMessage dict keys on the number, so anything handling
+ * a timezone field needs both halves. A face with no timezone key gets an empty list.
+ *
+ * @param messageKeys The face's message_keys map.
+ * @return Every timezone field the face declares.
+ */
+function timezoneFieldsIn(messageKeys: any): Array<{ name: string; key: number }> {
+  return Object.keys(messageKeys)
+    .filter((name) => /TIME_?ZONE/i.test(name))
+    .map((name) => ({ name: name, key: messageKeys[name] as number }));
+}
+
+/**
+ * Rewrites every timezone field in a settings dict into the "offset,label" the watch reads.
+ *
+ * Clay hands back the place the config page saved. The offset in it is the one that zone kept on
+ * the day the place was picked, so it is read off the zone again here.
+ *
+ * A face is free to name a key TIMEZONE without it holding a saved place, so only a string is
+ * rewritten. A number is a toggle or a colour, and blanking one would leave that setting stuck.
+ *
+ * A field with nothing saved in it is dropped rather than sent. The watch reads an empty value as
+ * zero minutes under no name, so sending one turns a working panel into UTC labelled TZ.
+ *
+ * @param dict The settings dict Clay built from a save.
+ * @param messageKeys The face's message_keys map.
+ * @param nowMs The time to read each zone's offset at.
+ * @return The same dict, with each timezone field rewritten or dropped.
+ */
+function retimeSettings(dict: AppMessageDict, messageKeys: any, nowMs: number): AppMessageDict {
+  timezoneFieldsIn(messageKeys).forEach((field) => {
+    if (typeof dict[field.key] !== 'string') {
+      return;
+    }
+
+    const wired = timezone.toWire(dict[field.key], nowMs);
+    if (wired) {
+      dict[field.key] = wired;
+    } else {
+      delete dict[field.key];
+    }
+  });
+
+  return dict;
+}
+
 // settings we copy from the watch payload into the Clay store
 // accept is an optional type guard and coerce an optional transform (default is copy as-is)
 const SEED_FIELDS: Array<{ key: string; accept?: (value: any) => boolean; coerce?: (value: any) => any }> = [
@@ -211,6 +260,15 @@ function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[]
     const messageKey = messageKeys[key];
     if (messageKey in payload) {
       config[key] = asBool(payload[messageKey]);
+    }
+  });
+
+  // the watch keeps a timezone as the "offset,label" string it was sent, so seeding it back puts
+  // the place name in front of the user. the zone itself does not survive that trip, so the picker
+  // shows its prompt to choose the city again, which is the only way the zone comes back
+  timezoneFieldsIn(messageKeys).forEach((field) => {
+    if (field.key in payload && isString(payload[field.key])) {
+      config[field.name] = payload[field.key];
     }
   });
 
@@ -366,36 +424,11 @@ function startPebbleApp(options: StartOptions): void {
   // the defaults declared in config.ts
   const DEFAULTS = collectDefaults(clayConfig);
 
-  // the face's timezone fields, by the setting name to read and the key Clay sends it under. a
-  // face with none of them gets an empty list and none of the work below
-  const timezoneFields = Object.keys(messageKeys)
-    .filter((name) => /TIME_?ZONE/i.test(name))
-    .map((name) => ({ name: name, key: messageKeys[name] as number }));
+  // the face's timezone fields, empty for a face that declares none
+  const timezoneFields = timezoneFieldsIn(messageKeys);
 
   // the last string pushed for each timezone field, so a refresh only sends one whose offset moved
   let lastTimezoneValues: Record<string, string> = {};
-
-  /**
-   * Rewrites every timezone field in a settings dict into the "offset,label" the watch reads.
-   *
-   * Clay hands back the place the config page saved. The offset in it is the one that zone kept on
-   * the day the place was picked, so it is read off the zone again here.
-   *
-   * A face is free to name a key TIMEZONE without it holding a saved place, so only a string is
-   * rewritten. A number is a toggle or a colour, and blanking one would leave that setting stuck.
-   *
-   * @param dict The settings dict Clay built from a save.
-   * @return The same dict, with each timezone field rewritten.
-   */
-  function retimeSettings(dict: AppMessageDict): AppMessageDict {
-    timezoneFields.forEach((field) => {
-      if (typeof dict[field.key] === 'string') {
-        dict[field.key] = timezone.toWire(dict[field.key], Date.now());
-      }
-    });
-
-    return dict;
-  }
 
   /**
    * Sends any timezone field whose zone has moved its clock since the last push.
@@ -687,7 +720,7 @@ function startPebbleApp(options: StartOptions): void {
 
         if (watchFresh && phoneHasConfig) {
           // restore the watch from our saved config using the same dict a Save would send
-          queueSend(retimeSettings(clay.getSettings(JSON.stringify(config))));
+          queueSend(retimeSettings(clay.getSettings(JSON.stringify(config)), messageKeys, Date.now()));
         } else if (!phoneHasConfig) {
           // nothing saved on the phone yet so recover it from the watch instead
           seedFromWatch(payload);
@@ -716,7 +749,7 @@ function startPebbleApp(options: StartOptions): void {
 
     // send the saved settings to the watch through the queue. Clay's auto-handling would send this
     // directly and let it collide with an in-flight send (dropping the whole save with no retry)
-    queueSend(retimeSettings(clay.getSettings(event.response)));
+    queueSend(retimeSettings(clay.getSettings(event.response), messageKeys, Date.now()));
 
     // only refetch when a weather setting actually changed. the C side already
     // re-requests for those so refetching on every save (theme or vibe) is wasted
@@ -744,6 +777,7 @@ export default {
   validCoord,
   getManualLocation,
   seedConfigFromWatch,
+  retimeSettings,
   weatherSettingsSnapshot,
   weatherSettingsChanged,
   weatherRetryDelayMs,

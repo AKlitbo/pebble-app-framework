@@ -85,7 +85,8 @@ export default {
     '.loc-search .loc-item:last-child { border-bottom: none; }',
     '.loc-search .loc-item:hover, .loc-search .loc-item:active { background: #ff4700; color: #fff; }',
     '.loc-search .loc-hint { float: right; opacity: 0.55; }',
-    '.loc-search .loc-note { padding: 0.5rem 0 0; font-size: 0.9em; color: #ff4700; }',
+    '.loc-search .loc-note { position: relative; margin: 0.7rem 0 0.15rem; padding: 0.5rem 0.6rem 0.5rem 2.1rem; background: rgba(255, 71, 0, 0.1); border-left: 3px solid #ff4700; font-size: 0.85em; line-height: 1.4; }',
+    '.loc-search .loc-note:before { content: "!"; position: absolute; left: 0.6rem; top: 0.65rem; width: 1.15em; height: 1.15em; border: 1px solid #ff4700; border-radius: 50%; color: #ff4700; font-size: 0.95em; font-weight: 700; line-height: 1.1em; text-align: center; }',
   ].join(''),
 
   manipulator: {
