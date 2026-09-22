@@ -310,6 +310,22 @@ describe('seedConfigFromWatch', () => {
 
     expect(result).toBe(false);
   });
+
+  /**
+   * A face without SETTINGS_FRESH seeds on every launch. Writing the watch's offset string over a
+   * saved place loses its zone, so the second clock stops following summer time and the page asks
+   * for the city again after every launch.
+   */
+  test('keeps a place the phone already saved for a timezone field', () => {
+    const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: saved }));
+
+    app.seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' });
+
+    const result = stored('CLOCK_TIMEZONE_1');
+
+    expect(result).toBe(saved);
+  });
 });
 
 describe('retimeSettings', () => {

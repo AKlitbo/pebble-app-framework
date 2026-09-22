@@ -214,6 +214,8 @@ const SEED_FIELDS: Array<{ key: string; accept?: (value: any) => boolean; coerce
  * Seeds the Clay store from the watch's current settings so the config opens
  * with the real values instead of defaults. The watch persist is the source of
  * truth, since the phone's clay-settings can be empty or stale after an update.
+ * A timezone field is the one exception. It only seeds when the phone has nothing
+ * saved for it, since the watch's copy has lost the zone the phone's still holds.
  *
  * @param messageKeys The face's message_keys map.
  * @param payload The watch's AppMessage payload to seed from.
@@ -265,8 +267,14 @@ function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[]
 
   // the watch keeps a timezone as the "offset,label" string it was sent, so seeding it back puts
   // the place name in front of the user. the zone itself does not survive that trip, so the picker
-  // shows its prompt to choose the city again, which is the only way the zone comes back
+  // shows its prompt to choose the city again, which is the only way the zone comes back.
+  // a place the phone already saved is kept, since it still has its zone. a face without
+  // SETTINGS_FRESH seeds on every launch, so writing over it would lose the zone each time
   timezoneFieldsIn(messageKeys).forEach((field) => {
+    if (config[field.name]) {
+      return;
+    }
+
     if (field.key in payload && isString(payload[field.key])) {
       config[field.name] = payload[field.key];
     }
