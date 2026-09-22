@@ -58,8 +58,8 @@
         <div class="head-side">
           <div class="build">
             <b>v2.1.0</b><br />
-            main @ 4a9a4a7<br />
-            built 2026-09-21
+            main @ 86a2ac6<br />
+            built 2026-09-22
           </div>
         </div>
       </header>
@@ -102,7 +102,7 @@
             <div class="card-top"><span class="lang">TS</span><span class="kind">Vitest v8</span></div>
             <h2>TypeScript Specs</h2>
             <p>Which lines of the phone runtime and the build tools the Vitest suite reaches.</p>
-            <div class="pixels" title="80.7% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">80.7% of lines</span></div>
+            <div class="pixels" title="80.8% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">80.8% of lines</span></div>
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>
@@ -218,7 +218,7 @@ npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
 npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
 npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/4a9a4a7621d40b03b857048dd802ca4770ab2b90/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
+<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/86a2ac6b49e48c3b9694cf5a2e2d736a3be2c7d7/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
 <h2 id="ci">CI</h2>
 <ul>
 <li><strong><code>engine-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>

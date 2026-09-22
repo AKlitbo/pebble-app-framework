@@ -53,6 +53,16 @@
         <h1>Changelog</h1>
         <div class="readme"><p>All notable API changes to the Pebble Watchface Engine are documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="211-unreleased">[2.1.1] - Unreleased</h2>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>The <code>locationsearch</code> prompt to pick a city again now draws as a callout, with an accent bar and a badge. A face can repaint it through <code>.loc-note</code>.</li>
+</ul>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Fixed a timezone key never being seeded back from the watch, so the config page opened on an empty field when the phone had nothing saved. The place name now comes back and the picker asks for the city again.</li>
+<li>Fixed an empty timezone key being sent to the watch, which reads it as zero minutes under no name. The key is now left out until a place is saved.</li>
+</ul>
 <h2 id="210-2026-09-20"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
 <h3 id="added">Added</h3>
 <ul>
@@ -69,7 +79,7 @@
 <li>Added an optional <code>cancel</code> callback to the builder&#39;s <code>DragSpec</code>, called when a pointer is taken away mid-drag. Builders that remove an item from their model in <code>lift</code> can restore it here.</li>
 <li>Added <code>createDedupedSender</code> to <code>ts/pkjs/send-queue.ts</code>. It wraps a queueSend so an unchanged payload is skipped and a payload whose send failed is not counted as delivered, which is what the weather, stock, and calendar pushes all use now.</li>
 </ul>
-<h3 id="changed">Changed</h3>
+<h3 id="changed-2">Changed</h3>
 <ul>
 <li><strong>Breaking:</strong> The engine can now be mounted under any folder name. The face repo declares that folder in its <code>package.json</code> workspaces, which is how the tools locate the engine.</li>
 <li><code>build.sh</code> and the waf build now find faces through the same lookup as the other tools. <code>build.sh</code> no longer needs the repo&#39;s <code>build:pkjs</code> script.</li>
@@ -91,7 +101,7 @@
 <li><strong>Breaking:</strong> Removed the <code>tools/ci/</code> scripts. A face repo moving to this engine should switch its workflows to the new actions in the same commit.</li>
 <li><strong>Breaking:</strong> Removed <code>weather_store_location_name</code> and the weather store&#39;s <code>LOCATION_NAME</code> handler. Nothing read them. <code>STORE_TAG_WEATHER</code> moves to <code>0x12</code> with the struct, so a saved reading is refused once after the upgrade and the weather panels show placeholders until the next poll.</li>
 </ul>
-<h3 id="fixed">Fixed</h3>
+<h3 id="fixed-2">Fixed</h3>
 <ul>
 <li>Fixed settings replies larger than the outbox being sent partially. They are now skipped unless they fit in full.</li>
 <li>Fixed deleted calendar events remaining on the agenda. An empty calendar or removed feed now clears them.</li>
