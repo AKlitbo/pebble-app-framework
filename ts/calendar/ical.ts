@@ -207,20 +207,18 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
 
   const events: CalendarEvent[] = [];
   masters.forEach((block) => {
+    // each rule gets only the moved occurrences carrying its own UID, passed in by hand. left to
+    // itself ical.js hands every RECURRENCE-ID in the calendar to every rule without checking the
+    // UID, so one moved meeting would replace a slot in every other series at the same time
+    const uid = block.getFirstPropertyValue('uid');
+    const own = overrides.filter((override) => override.getFirstPropertyValue('uid') === uid);
+
     let event: ICAL.Event;
     try {
-      event = new ICAL.Event(block);
+      event = new ICAL.Event(block, { exceptions: own });
     } catch (error) {
       return; // one unreadable event is not worth losing the others over
     }
-
-    overrides.forEach((override) => {
-      try {
-        event.relateException(override);
-      } catch (error) {
-        // the override belongs to a different event, which is the normal case
-      }
-    });
 
     events.push(...occurrencesOf(event, now, horizon));
   });

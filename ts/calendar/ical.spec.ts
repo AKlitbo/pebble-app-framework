@@ -337,6 +337,29 @@ describe('parseIcal recurring events', () => {
   });
 
   /**
+   * A moved meeting belongs to its own series alone. Handing it to every rule in the feed puts it
+   * in place of another series' slot at the same time, so the agenda loses that meeting and shows
+   * the moved one twice.
+   */
+  test('keeps a RECURRENCE-ID event off a different series at the same time', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:standup@example.com\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=MO\r\nSUMMARY:Standup\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=MO\r\nSUMMARY:Gym\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T180000Z\r\nDTEND:20260713T183000Z\r\nSUMMARY:Gym moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result.map((event) => [event.title, event.startEpoch])).toEqual([
+      ['Standup', Math.floor(Date.UTC(2026, 6, 13, 9, 0, 0) / 1000)],
+      ['Gym moved', Math.floor(Date.UTC(2026, 6, 13, 18, 0, 0) / 1000)],
+    ]);
+  });
+
+  /**
    * An occurrence can be pulled into the week from further out. The walk stops at the window's edge
    * by the rule's own times, so judging the occurrence by its old slot loses it off the agenda.
    */
