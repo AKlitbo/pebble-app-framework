@@ -343,11 +343,11 @@ describe('initialize', () => {
   });
 
   /**
-   * The tap writes the minutes and the zone arrives on a second request. Saving in that gap keeps a
-   * place with no zone, whose clock reads UTC and can never be re-read, so the prompt has to stay up
-   * until the zone actually lands.
+   * A place the geocoder gave no zone for only gets one from a second request. Saving in that gap
+   * keeps a place with no zone, whose clock reads UTC and can never be re-read, so the prompt has
+   * to be up until the zone actually lands. Typing hid it, so the tap has to put it back.
    */
-  test('keeps the prompt up when the zone lookup never answers', () => {
+  test('shows the prompt when the picked place has no zone yet', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
     mounted.ctx.initialize();
 
@@ -356,12 +356,75 @@ describe('initialize', () => {
     xhrs[0].respond(JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
-    mounted.ctx.set('0,Phoenix, Arizona, United States');
     // the place row, since a timezone field lists America/Phoenix above it and picking that one
     // would answer the prompt outright
     mounted.list.querySelector('.loc-item:not(.loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(mounted.note.style.display).toBe('block');
+  });
+
+  /**
+   * The geocoder names each place's zone. Waiting on a second request for it meant a save straight
+   * after the tap, or one made offline, stored no zone, and the second clock read UTC under the
+   * city's name.
+   */
+  test('keeps the zone the geocoder named before the lookup answers', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Tokyo');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(JSON.stringify({ results: [
+      { name: 'Tokyo', country: 'Japan', latitude: 35.7, longitude: 139.7, timezone: 'Asia/Tokyo' },
+    ] }));
+    mounted.list.querySelector('.loc-item:not(.loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result.tz).toBe('Asia/Tokyo');
+    expect(result.offset).toBe(540);
+    expect(mounted.note.style.display).toBe('none');
+  });
+
+  /** A slow lookup for the first city tapped must not write that city over the one picked after it. */
+  test('ignores a zone lookup that answers after a newer pick', () => {
+    const mounted = mount();
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Springfield');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(JSON.stringify({ results: [
+      { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
+      { name: 'Springfield', admin1: 'Missouri', latitude: 37.2, longitude: -93.3 },
+    ] }));
+    const items = mounted.list.querySelectorAll('.loc-item');
+    items[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    items[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    xhrs[2].respond(JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
+    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
+
+    const result = JSON.parse(mounted.hidden.value);
+
+    expect(result.label).toBe('Springfield, Missouri');
+  });
+
+  /** A lookup that lands after the box was edited must not save a city the box no longer shows. */
+  test('ignores a zone lookup that answers after the query was edited', () => {
+    const mounted = mount();
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Springfield');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(JSON.stringify({ results: [
+      { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
+    ] }));
+    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    type(mounted.query, 'Spr');
+    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
+
+    const result = mounted.hidden.value;
+
+    expect(result).toBe('');
   });
 
   /** Editing the query after a selection must drop the stored coordinates, so the watch never saves a label that disagrees with its lat/lon. */
@@ -646,7 +709,7 @@ describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1')('live geocoding', () => {
     fetchRequest(url, (err, body) => resolve(err ? null : JSON.parse(body)));
   });
 
-  /** The dropdown renders name and stores latitude/longitude. Upstream dropping them blanks the suggestions or saves no coords. */
+  /** The dropdown renders name and stores latitude, longitude, and zone. Upstream dropping them blanks the suggestions, saves no coords, or saves a city clock as UTC. */
   test('returns results carrying the fields the dropdown reads', async () => {
     const data = await geocode('Phoenix');
     expect(Array.isArray(data && data.results)).toBe(true);
@@ -655,5 +718,6 @@ describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1')('live geocoding', () => {
     expect(typeof top.name).toBe('string');
     expect(typeof top.latitude).toBe('number');
     expect(typeof top.longitude).toBe('number');
+    expect(typeof top.timezone).toBe('string');
   });
 });

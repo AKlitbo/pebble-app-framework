@@ -38,6 +38,7 @@ interface GeoPlace {
   country?: string;
   latitude?: number;
   longitude?: number;
+  timezone?: string;  // the IANA zone the geocoder names for the place
 }
 
 /**
@@ -175,6 +176,9 @@ export default {
     const noteEl = root.querySelector('.loc-note') as HTMLElement;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let seq = 0;
+    // counts every pick and edit, so a zone lookup that answers after the user moved on leaves
+    // the field alone
+    let picks = 0;
 
     // only a timezone field offers zones. the weather location wants a real place with
     // coordinates, and a row like UTC has none
@@ -378,10 +382,14 @@ export default {
      * again every time a timezone field goes to the watch.
      */
     function resolveOffset(place: GeoPlace) {
+      const myPick = picks;
       const xhr = new XMLHttpRequest();
       const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + place.latitude + '&longitude=' + place.longitude + '&current_weather=true&timezone=auto';
 
       xhr.onload = function() {
+        if (myPick !== picks) {
+          return;
+        }
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const data = JSON.parse(xhr.responseText);
@@ -392,7 +400,7 @@ export default {
             // timezone=auto makes the call name the zone as well, and the zone is what the offset
             // is read off later. the minutes are kept as the answer for a watch whose runtime
             // cannot look a zone up
-            const zone = typeof data.timezone === 'string' ? data.timezone : '';
+            const zone = typeof data.timezone === 'string' && data.timezone ? data.timezone : (place.timezone || '');
             hiddenEl.value = JSON.stringify({
               lat: place.latitude,
               lon: place.longitude,
@@ -401,9 +409,8 @@ export default {
               tz: zone,
             });
 
-            // the prompt comes down here rather than on the tap, since the tap only writes the
-            // minutes. saving before this lands keeps a place with no zone, which is the one thing
-            // the prompt is there to catch
+            // a place the geocoder gave no zone for only gets one here. saving before this lands
+            // keeps a place with no zone, which is the one thing the prompt is there to catch
             if (zone) {
               noteEl.style.display = 'none';
             }
@@ -440,6 +447,7 @@ export default {
         item.addEventListener('click', function(event) {
           event.stopPropagation();
           queryEl.value = choice.label;
+          picks++;
 
           // no coordinates, since a zone is not a place and nothing reads them back. the minutes
           // are only a fallback for a phone that cannot look a zone up, and fixed says the
@@ -464,14 +472,22 @@ export default {
         item.addEventListener('click', function(event) {
           event.stopPropagation();
           queryEl.value = labelFor(place);
+          picks++;
 
-          // pre-fill the JSON in case the offset fetch never comes back
+          // the geocoder already names the place's zone, so the pick is whole from the tap and a
+          // save straight away or offline still keeps the right clock. the lookup below only
+          // fills in the minutes, or the zone for a place the geocoder gave none
+          const zone = typeof place.timezone === 'string' ? place.timezone : '';
           hiddenEl.value = JSON.stringify({
             lat: place.latitude,
             lon: place.longitude,
             label: labelFor(place),
-            offset: 0,
+            offset: zone ? zoneOffset(zone) : 0,
+            tz: zone,
           });
+
+          // typing hid the prompt, so a timezone field puts it back until a zone turns up
+          noteEl.style.display = (wantsZone && !zone) ? 'block' : 'none';
 
           resolveOffset(place);
           hideList();
@@ -532,6 +548,7 @@ export default {
 
     queryEl.addEventListener('input', function() {
       hiddenEl.value = '';
+      picks++;
       noteEl.style.display = 'none';
       const query = (queryEl.value || '').trim();
 
