@@ -8,7 +8,7 @@
 
 import { describe, test, expect } from 'vitest';
 import yahoo from './yahoo';
-import { fetchRequest } from '../../../testing/fetch-request';
+import { fetchRequest } from '../../testing/fetch-request';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
 
 /** Stub `request` that records the requested url and replies with a canned error and body. */

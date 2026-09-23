@@ -66,6 +66,8 @@ export default defineConfig({
         // counting the assembled copies would double-book them
         '**/*.g.js',
         '**/fixtures/**',
+        // the helpers the specs share, which a default run only partly touches
+        `${ENGINE_PREFIX}ts/testing/**`,
         'targets/**',
         '**/build/**',
       ],

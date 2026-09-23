@@ -3,7 +3,7 @@
   "name": "Pebble Watchface Engine: Phone API",
   "entryPoints": ["../ts"],
   "entryPointStrategy": "expand",
-  "exclude": ["../ts/**/*.spec.ts", "../ts/**/*.d.ts", "../ts/clay/builder/**"],
+  "exclude": ["../ts/**/*.spec.ts", "../ts/**/*.d.ts", "../ts/clay/builder/**", "../ts/testing/**"],
   "tsconfig": "../tsconfig.json",
   "out": "../docs/site/dist/ts",
   "readme": "none",

@@ -7,7 +7,7 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 **Engine Code**
 
 * **`c/`**: the device engine. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/spec/` holds the host test harness.
-* **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay).
+* **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its `testing/` folder holds helpers the TypeScript specs share and never ships to a face.
 * **`py/`**: the waf helpers that stage and build a face.
 * **`css/`**: the Pebble-64 colour palette the frame backgrounds use.
 
@@ -15,7 +15,6 @@ The shared engine behind my Pebble watchfaces. It holds the device C, the Pebble
 
 * **`tools/`**: manifest, pkjs, icon, frame, thumbnail and Clay component generators.
 * **`config/`**: the shared tsconfig, eslint and vitest setup.
-* **`testing/`**: helpers the TypeScript specs share.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
 * **`build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
 

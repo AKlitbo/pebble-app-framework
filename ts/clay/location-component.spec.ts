@@ -15,7 +15,7 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import component from './location-component';
 import type { ClayComponentContext } from './location-component';
-import { fetchRequest } from '../../testing/fetch-request';
+import { fetchRequest } from '../testing/fetch-request';
 
 /** The context Clay binds to, plus the handles the specs drive the component through. */
 interface MountedContext extends ClayComponentContext {

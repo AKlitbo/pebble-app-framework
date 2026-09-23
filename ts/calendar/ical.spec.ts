@@ -16,7 +16,7 @@
 
 import { describe, test, expect } from 'vitest';
 import ical from './ical';
-import { fetchRequest } from '../../testing/fetch-request';
+import { fetchRequest } from '../testing/fetch-request';
 
 // a fixed clock so the window filter is deterministic: 2026-07-10 12:00 UTC
 const NOW = Math.floor(Date.UTC(2026, 6, 10, 12, 0, 0) / 1000);

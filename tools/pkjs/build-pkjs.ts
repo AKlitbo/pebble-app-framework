@@ -116,9 +116,11 @@ export function writeTsconfig(sourceFace: string, p: FacePaths): void {
     // builder pieces are bundled into the committed *.g.js so compiling them here
     // would ship them a second time as loose modules against the 65535 byte cap
     // the engine's are excluded for every face even the ones carrying no Clay builder
+    // ts/testing only holds helpers the specs share, so it never ships either
     exclude: [
       path.posix.join('../..', rel, 'src/pkjs/clay/builder/**'),
       path.posix.join('../..', ENGINE_REL, 'ts/clay/builder/**'),
+      path.posix.join('../..', ENGINE_REL, 'ts/testing/**'),
       '../../**/*.spec.ts',
     ],
   };

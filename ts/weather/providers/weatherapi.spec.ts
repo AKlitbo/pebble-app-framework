@@ -8,30 +8,11 @@
 
 import { describe, test, expect } from 'vitest';
 import weatherapi from './weatherapi';
-import { fetchRequest } from '../../../testing/fetch-request';
+import { fetchRequest } from '../../testing/fetch-request';
+import { routing } from '../../testing/routing';
 import type { RequestFn, WeatherOpts, WeatherResult } from '../util';
 
 const WX = '/v1/forecast.json';
-
-/**
- * Stub `request` that routes by URL substring and records calls in order.
- *
- * byPath maps a URL substring to the error or body to hand back for it, and
- * calls collects every requested URL in the order the provider asked for them.
- */
-function routing(byPath: Record<string, { err?: string | null; body?: string }>, calls: string[]): RequestFn {
-  return (url, callback) => {
-    calls.push(url);
-
-    const key = Object.keys(byPath).find((path) => url.includes(path));
-    if (!key) {
-      throw new Error('unexpected request url: ' + url);
-    }
-
-    const response = byPath[key];
-    callback(response.err || null, response.body);
-  };
-}
 
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: WeatherOpts, request: RequestFn): WeatherResult {

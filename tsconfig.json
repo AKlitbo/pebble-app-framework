@@ -19,6 +19,7 @@
     "../src/pkjs/clay/builder/**",
     "../watchfaces/**/src/pkjs/clay/builder/**",
     "ts/clay/builder/**",
+    "ts/testing/**",
     "../**/*.spec.ts"
   ]
 }

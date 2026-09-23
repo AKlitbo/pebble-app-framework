@@ -8,7 +8,7 @@
 
 import { describe, test, expect } from 'vitest';
 import alphavantage from './alphavantage';
-import { fetchRequest } from '../../../testing/fetch-request';
+import { fetchRequest } from '../../testing/fetch-request';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
 
 /** Stub `request` that records the requested url (in order) and replies with a canned body. */
