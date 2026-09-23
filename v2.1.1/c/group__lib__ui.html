@@ -1,0 +1,1367 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: UI</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.1" selected>v2.1.1</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__ui.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">UI </div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The slot engine, zones, fonts, icon cache, and weather icons and labels.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fengine_2Fengine_2Ec" id="r_c_2Fpebble_2Fui_2Fengine_2Fengine_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="engine_8c.html">c/pebble/ui/engine/engine.c</a></td></tr>
+<tr class="memdesc:engine_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The skin-neutral slot engine. Builds one layer per slot and repaints them all on a store change. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fengine_2Fengine_2Eh" id="r_c_2Fpebble_2Fui_2Fengine_2Fengine_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="engine_8h.html">c/pebble/ui/engine/engine.h</a></td></tr>
+<tr class="memdesc:engine_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The skin-neutral slot engine: builds one layer per slot from a face's slot list and repaints them all when a store changes. A slot is either a text-slot (a TextLayer built from a <a class="el" href="structZone.html" title="Everything needed to present one text slot. Where it sits, and which registered font,...">Zone</a>, so the font-fit tiers still apply) or a draw-slot (a custom layer whose update_proc paints a gauge, icon, or panel). A face supplies a build callback. A dynamic face (the grid) re-runs it on a layout change. This is the shared core a face's own engine sits on. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Ffonts_2Ec" id="r_c_2Fpebble_2Fui_2Ffonts_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="fonts_8c.html">c/pebble/ui/fonts.c</a></td></tr>
+<tr class="memdesc:fonts_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Font registry implementation. A flat id-indexed table of loaded handles. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Ffonts_2Eh" id="r_c_2Fpebble_2Fui_2Ffonts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="fonts_8h.html">c/pebble/ui/fonts.h</a></td></tr>
+<tr class="memdesc:fonts_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Font registry. A face loads its custom fonts once, each under a small integer slot id, and the rest of the ui looks them up by id so layout tables can stay static, carrying an id rather than a live GFont handle. The registry does not care which fonts they are. The face owns the slots and what they mean, see the face's own <span class="tt">draw/fonts.h</span>. This just maps an id to its handle. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Ficon_5Fcache_2Ec" id="r_c_2Fpebble_2Fui_2Ficon_5Fcache_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__cache_8c.html">c/pebble/ui/icon_cache.c</a></td></tr>
+<tr class="memdesc:icon__cache_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Icon store. A small cache that maps a resource id to its picture and is shared across a face, so each icon loads once and is freed in one place. Also carries the palette tint and the auto-trim margin scan. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Ficon_5Fcache_2Eh" id="r_c_2Fpebble_2Fui_2Ficon_5Fcache_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__cache_8h.html">c/pebble/ui/icon_cache.h</a></td></tr>
+<tr class="memdesc:icon__cache_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">A small load-once icon store keyed by resource id, shared across a face so each icon picture loads a single time and frees in one place. Alongside it sits the palette tint and an optional auto-trim that measures each icon's transparent border so a caller can pin the visible art instead of the padded bitmap box. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Freadouts_2Ec" id="r_c_2Fpebble_2Fui_2Freadouts_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="readouts_8c.html">c/pebble/ui/readouts.c</a></td></tr>
+<tr class="memdesc:readouts_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text formatters shared by the faces, bound to the engine's text-slots. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Freadouts_2Eh" id="r_c_2Fpebble_2Fui_2Freadouts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="readouts_8h.html">c/pebble/ui/readouts.h</a></td></tr>
+<tr class="memdesc:readouts_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text formatters shared by the faces: pull a value from a store, honour the relevant setting, and format it into a buffer. Each matches the engine's text-slot signature, so a slot binds straight to one (e.g. <span class="tt">{ .zone = &amp;s_zones[ZONE_TIME],
+.text = <a class="el" href="#ga5f1ce126b5f8ddfb48e78d1077355883" title="Format the clock per the Time Format setting: 24h, 12h, system, or .beats.">readout_time</a> }</span>). <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficon_5Fcodes_5Ftable_2Eg_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Ficon_5Fcodes_5Ftable_2Eg_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__codes__table_8g_8h.html">c/pebble/ui/weather/icon_codes_table.g.h</a></td></tr>
+<tr class="memdesc:icon__codes__table_8g_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forecast condition code to weather icon resource lookup. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficons_2Ec" id="r_c_2Fpebble_2Fui_2Fweather_2Ficons_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons_8c.html">c/pebble/ui/weather/icons.c</a></td></tr>
+<tr class="memdesc:icons_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weather-icon resource lookup implementation. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficons_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Ficons_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons_8h.html">c/pebble/ui/weather/icons.h</a></td></tr>
+<tr class="memdesc:icons_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition-string to weather-icon resource lookup. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficons_5Ftable_2Eg_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Ficons_5Ftable_2Eg_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons__table_8g_8h.html">c/pebble/ui/weather/icons_table.g.h</a></td></tr>
+<tr class="memdesc:icons__table_8g_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition token to weather icon resource lookup. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Flabels_2Ec" id="r_c_2Fpebble_2Fui_2Fweather_2Flabels_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="labels_8c.html">c/pebble/ui/weather/labels.c</a></td></tr>
+<tr class="memdesc:labels_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition-string to display-label lookup implementation. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Flabels_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Flabels_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="labels_8h.html">c/pebble/ui/weather/labels.h</a></td></tr>
+<tr class="memdesc:labels_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition-string to display-label lookup. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Flabels_5Ftable_2Eg_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Flabels_5Ftable_2Eg_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="labels__table_8g_8h.html">c/pebble/ui/weather/labels_table.g.h</a></td></tr>
+<tr class="memdesc:labels__table_8g_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition token to short and long display label lookups. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fzone_2Ec" id="r_c_2Fpebble_2Fui_2Fzone_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone_8c.html">c/pebble/ui/zone.c</a></td></tr>
+<tr class="memdesc:zone_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Layout primitives implementation. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fui_2Fzone_2Eh" id="r_c_2Fpebble_2Fui_2Fzone_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone_8h.html">c/pebble/ui/zone.h</a></td></tr>
+<tr class="memdesc:zone_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Layout primitives. Defines paintable areas and their text alignments. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:EngineSlot" id="r_EngineSlot"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structEngineSlot.html">EngineSlot</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One slot of a face. Set <span class="tt"><a class="el" href="structEngineSlot.html#a69694269a011f100691b29354f0ca5c5" title="Text slot area and font tiers.">zone</a></span> (+ <span class="tt"><a class="el" href="structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180" title="Text slot, pulls and formats from a store.">text</a></span>) for a text-slot, or <span class="tt"><a class="el" href="structEngineSlot.html#a0cc398600007b0b9eafeb67ca50b9201" title="Draw slot layer frame.">frame</a></span> (+ <span class="tt"><a class="el" href="structEngineSlot.html#a1b963e9e7f45ae3fdd2a683646ad1124" title="Draw slot paint.">draw</a></span>) for a draw-slot. Never both.  <a href="structEngineSlot.html#details">More...</a><br /></td></tr>
+<tr class="memitem:IconMargins" id="r_IconMargins"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structIconMargins.html">IconMargins</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transparent border around an icon's opaque art, in pixels per side.  <a href="structIconMargins.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Zone" id="r_Zone"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structZone.html">Zone</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to two smaller font and rect tiers to step down to when the text would overflow.  <a href="structZone.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga36e1ce7a039108d509b546091b2f81ea" id="r_ga36e1ce7a039108d509b546091b2f81ea"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memitem:ga4ca1872518ba74eea31ab554588e7398" id="r_ga4ca1872518ba74eea31ab554588e7398"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga4ca1872518ba74eea31ab554588e7398">FONT_SLOTS_MAX</a>&#160;&#160;&#160;24</td></tr>
+<tr class="memitem:ga0218b6d868d6c02e798e1f43e04a8d28" id="r_ga0218b6d868d6c02e798e1f43e04a8d28"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0218b6d868d6c02e798e1f43e04a8d28">ICON_AUTOTRIM</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memitem:gacd235799baa707d5f8b99169732c0625" id="r_gacd235799baa707d5f8b99169732c0625"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gacd235799baa707d5f8b99169732c0625">ICON_TRIM_LOG</a>&#160;&#160;&#160;0</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:gafb4e0c889ad43fc740ce8968464eead4" id="r_gafb4e0c889ad43fc740ce8968464eead4"><td class="memItemLeft"><a id="gafb4e0c889ad43fc740ce8968464eead4" name="gafb4e0c889ad43fc740ce8968464eead4"></a>
+typedef uint8_t(*)&#160;</td><td class="memItemRight"><b>EngineBuild</b>(<a class="el" href="structEngineSlot.html">EngineSlot</a> *out, uint8_t max, GRect bounds)</td></tr>
+<tr class="memdesc:gafb4e0c889ad43fc740ce8968464eead4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills <span class="tt">out</span> with the current slots and returns the count. A static face returns a fixed list. A dynamic face works it out from settings. <span class="tt">bounds</span> is the window's root bounds, handy for a full-window draw-slot (overlays that paint at absolute coords). <br /></td></tr>
+<tr class="memitem:ga8cad323339ccb30f88dae519c4e198f5" id="r_ga8cad323339ccb30f88dae519c4e198f5"><td class="memItemLeft"><a id="ga8cad323339ccb30f88dae519c4e198f5" name="ga8cad323339ccb30f88dae519c4e198f5"></a>
+typedef uint8_t&#160;</td><td class="memItemRight"><b>FontId</b></td></tr>
+<tr class="memdesc:ga8cad323339ccb30f88dae519c4e198f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">A font slot id. The face defines its slots as 0 to FONT_SLOTS_MAX-1 and the registry treats the id as a plain index. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga80e9c91268f57dc6bd9233afc9d7a19f" id="r_ga80e9c91268f57dc6bd9233afc9d7a19f"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga80e9c91268f57dc6bd9233afc9d7a19f">engine_init</a> (Window *window, <a class="el" href="#gafb4e0c889ad43fc740ce8968464eead4">EngineBuild</a> build)</td></tr>
+<tr class="memdesc:ga80e9c91268f57dc6bd9233afc9d7a19f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the slot layers for a face and paint them once.  <br /></td></tr>
+<tr class="memitem:ga371c44d7e8c48ce708a69bfd413a2a0e" id="r_ga371c44d7e8c48ce708a69bfd413a2a0e"><td class="memItemLeft"><a id="ga371c44d7e8c48ce708a69bfd413a2a0e" name="ga371c44d7e8c48ce708a69bfd413a2a0e"></a>
+void&#160;</td><td class="memItemRight"><b>engine_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga371c44d7e8c48ce708a69bfd413a2a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tear down the slot layers. <br /></td></tr>
+<tr class="memitem:ga878b25483298cd1601b2191e7eb9da87" id="r_ga878b25483298cd1601b2191e7eb9da87"><td class="memItemLeft"><a id="ga878b25483298cd1601b2191e7eb9da87" name="ga878b25483298cd1601b2191e7eb9da87"></a>
+void&#160;</td><td class="memItemRight"><b>engine_rebuild</b> (void)</td></tr>
+<tr class="memdesc:ga878b25483298cd1601b2191e7eb9da87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuild the slot layers (after a layout or theme change). <br /></td></tr>
+<tr class="memitem:gaec392c631ca5f1420f4ad730f2c0c8c5" id="r_gaec392c631ca5f1420f4ad730f2c0c8c5"><td class="memItemLeft"><a id="gaec392c631ca5f1420f4ad730f2c0c8c5" name="gaec392c631ca5f1420f4ad730f2c0c8c5"></a>
+void&#160;</td><td class="memItemRight"><b>engine_mark_dirty</b> (void)</td></tr>
+<tr class="memdesc:gaec392c631ca5f1420f4ad730f2c0c8c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repaint every slot: text-slots re-pull + fit, draw-slots mark dirty. <br /></td></tr>
+<tr class="memitem:ga8cfbff710717e1257d8545775d7171b0" id="r_ga8cfbff710717e1257d8545775d7171b0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga8cfbff710717e1257d8545775d7171b0">engine_mark_dirty_tags</a> (uint32_t changed)</td></tr>
+<tr class="memdesc:ga8cfbff710717e1257d8545775d7171b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repaint only the slots whose tags intersect <span class="tt">changed</span> (plus any slot with no tags). Lets a face route a store change to just the slots that read from it.  <br /></td></tr>
+<tr class="memitem:gad49c536818ff15a0e7535e258fbdd59b" id="r_gad49c536818ff15a0e7535e258fbdd59b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad49c536818ff15a0e7535e258fbdd59b">fonts_register</a> (<a class="el" href="#ga8cad323339ccb30f88dae519c4e198f5">FontId</a> id, GFont handle)</td></tr>
+<tr class="memdesc:gad49c536818ff15a0e7535e258fbdd59b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store a loaded font handle under its slot id.  <br /></td></tr>
+<tr class="memitem:gac0a1fd4baa979be69b65a646fd457ad8" id="r_gac0a1fd4baa979be69b65a646fd457ad8"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gac0a1fd4baa979be69b65a646fd457ad8">fonts_register_system</a> (<a class="el" href="#ga8cad323339ccb30f88dae519c4e198f5">FontId</a> id, GFont handle)</td></tr>
+<tr class="memdesc:gac0a1fd4baa979be69b65a646fd457ad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store a system font handle under its slot id, without taking ownership.  <br /></td></tr>
+<tr class="memitem:ga7a313b71a1524d1183f9163522710472" id="r_ga7a313b71a1524d1183f9163522710472"><td class="memItemLeft">GFont&#160;</td><td class="memItemRight"><a class="el" href="#ga7a313b71a1524d1183f9163522710472">fonts_get</a> (<a class="el" href="#ga8cad323339ccb30f88dae519c4e198f5">FontId</a> id)</td></tr>
+<tr class="memdesc:ga7a313b71a1524d1183f9163522710472"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resolve a slot id to its handle. Falls back to the system font on a miss.  <br /></td></tr>
+<tr class="memitem:gab7fb11d15d23d2ef37c4baa9db129ee1" id="r_gab7fb11d15d23d2ef37c4baa9db129ee1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gab7fb11d15d23d2ef37c4baa9db129ee1">fonts_unload_all</a> (void)</td></tr>
+<tr class="memdesc:gab7fb11d15d23d2ef37c4baa9db129ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unload every font the app owns and clear the registry.  <br /></td></tr>
+<tr class="memitem:ga7968af6a0c5eadec10e501121ec97760" id="r_ga7968af6a0c5eadec10e501121ec97760"><td class="memItemLeft">GBitmap *&#160;</td><td class="memItemRight"><a class="el" href="#ga7968af6a0c5eadec10e501121ec97760">icon_get</a> (uint32_t res)</td></tr>
+<tr class="memdesc:ga7968af6a0c5eadec10e501121ec97760"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hands back an icon picture from the cache, loading it the first time it is asked for.  <br /></td></tr>
+<tr class="memitem:gaa15abf7931b6be2b608974a6c263c56e" id="r_gaa15abf7931b6be2b608974a6c263c56e"><td class="memItemLeft">GSize&#160;</td><td class="memItemRight"><a class="el" href="#gaa15abf7931b6be2b608974a6c263c56e">icon_size</a> (uint32_t res)</td></tr>
+<tr class="memdesc:gaa15abf7931b6be2b608974a6c263c56e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of an icon in pixels. Gives back GSize(0,0) if it could not load.  <br /></td></tr>
+<tr class="memitem:ga2040f8e16081e8b48289641c6914c73f" id="r_ga2040f8e16081e8b48289641c6914c73f"><td class="memItemLeft"><a class="el" href="structIconMargins.html">IconMargins</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga2040f8e16081e8b48289641c6914c73f">icon_margins</a> (uint32_t res)</td></tr>
+<tr class="memdesc:ga2040f8e16081e8b48289641c6914c73f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The measured transparent margins of a cached icon. Loads and measures it the first time, then returns the cached numbers. All zero when auto-trim is off or the icon could not load.  <br /></td></tr>
+<tr class="memitem:gabad4c43378e5bd3628da4131b2343ad5" id="r_gabad4c43378e5bd3628da4131b2343ad5"><td class="memItemLeft"><a class="el" href="structIconMargins.html">IconMargins</a>&#160;</td><td class="memItemRight"><a class="el" href="#gabad4c43378e5bd3628da4131b2343ad5">icon_margins_of</a> (GBitmap *bmp)</td></tr>
+<tr class="memdesc:gabad4c43378e5bd3628da4131b2343ad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Measures the transparent margins of any bitmap, for icons that live outside the shared cache such as a weather picture that reloads as the weather changes. All zero when auto-trim is off or the bitmap is NULL.  <br /></td></tr>
+<tr class="memitem:gafa86e8ce9e0e424a0bb3b08e7dd3c04e" id="r_gafa86e8ce9e0e424a0bb3b08e7dd3c04e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gafa86e8ce9e0e424a0bb3b08e7dd3c04e">icon_tint</a> (GBitmap *bmp, GColor color)</td></tr>
+<tr class="memdesc:gafa86e8ce9e0e424a0bb3b08e7dd3c04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paints an icon a different colour. It only works on icons saved as little colour-table pictures. Other kinds it just leaves alone. The see-through pixels stay see-through so the edges keep looking clean.  <br /></td></tr>
+<tr class="memitem:gab859f1d276edd74cad316c2b811d79cc" id="r_gab859f1d276edd74cad316c2b811d79cc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gab859f1d276edd74cad316c2b811d79cc">icon_align_trim</a> (GAlign align, <a class="el" href="structIconMargins.html">IconMargins</a> margins, int *trim_dx, int *trim_dy)</td></tr>
+<tr class="memdesc:gab859f1d276edd74cad316c2b811d79cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The extra offset that pins the opaque box rather than the full bitmap at a given anchor. A right or bottom edge kills the trailing margin. A left or top edge kills the leading one. A centred axis splits the difference so the visible art centres.  <br /></td></tr>
+<tr class="memitem:ga3b5138fb45e8c6ce2ed2648318eefdab" id="r_ga3b5138fb45e8c6ce2ed2648318eefdab"><td class="memItemLeft"><a id="ga3b5138fb45e8c6ce2ed2648318eefdab" name="ga3b5138fb45e8c6ce2ed2648318eefdab"></a>
+void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
+<tr class="memdesc:ga3b5138fb45e8c6ce2ed2648318eefdab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frees every icon picture in the cache. <br /></td></tr>
+<tr class="memitem:ga5f1ce126b5f8ddfb48e78d1077355883" id="r_ga5f1ce126b5f8ddfb48e78d1077355883"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga5f1ce126b5f8ddfb48e78d1077355883">readout_time</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:ga5f1ce126b5f8ddfb48e78d1077355883"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the clock per the Time Format setting: 24h, 12h, system, or .beats.  <br /></td></tr>
+<tr class="memitem:gad7314f0630f01d77249d12b3f5018d20" id="r_gad7314f0630f01d77249d12b3f5018d20"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad7314f0630f01d77249d12b3f5018d20">readout_meridiem</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:gad7314f0630f01d77249d12b3f5018d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the AM/PM marker, or empty on a 24-hour or .beats clock.  <br /></td></tr>
+<tr class="memitem:ga27e66e5fb5efa50e5cd3a641ca95f3e1" id="r_ga27e66e5fb5efa50e5cd3a641ca95f3e1"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga27e66e5fb5efa50e5cd3a641ca95f3e1">readout_date</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:ga27e66e5fb5efa50e5cd3a641ca95f3e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the date in the chosen format, upper-cased.  <br /></td></tr>
+<tr class="memitem:gac815591cccd1783227eb1a656212c8c5" id="r_gac815591cccd1783227eb1a656212c8c5"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gac815591cccd1783227eb1a656212c8c5">readout_date_shows_beats</a> (void)</td></tr>
+<tr class="memdesc:gac815591cccd1783227eb1a656212c8c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the chosen date format ends in a .beats reading.  <br /></td></tr>
+<tr class="memitem:gab74d674a3402d0c3ccb145f54ee4d5dc" id="r_gab74d674a3402d0c3ccb145f54ee4d5dc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gab74d674a3402d0c3ccb145f54ee4d5dc">readout_hr</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:gab74d674a3402d0c3ccb145f54ee4d5dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the heart rate, or "--" when there is no reading.  <br /></td></tr>
+<tr class="memitem:ga46b62b70722c1a8885049b5dd237aa7e" id="r_ga46b62b70722c1a8885049b5dd237aa7e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga46b62b70722c1a8885049b5dd237aa7e">readout_steps</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:ga46b62b70722c1a8885049b5dd237aa7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the step count, or the distance walked per the Steps Mode setting.  <br /></td></tr>
+<tr class="memitem:gaee4e7d275341c91bdbae7a5adc7ddc09" id="r_gaee4e7d275341c91bdbae7a5adc7ddc09"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaee4e7d275341c91bdbae7a5adc7ddc09">readout_weather_temp</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:gaee4e7d275341c91bdbae7a5adc7ddc09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the temperature with its unit letter, or "--" when there is no reading.  <br /></td></tr>
+<tr class="memitem:ga5d4d51464278e6e297e35ecf92b88666" id="r_ga5d4d51464278e6e297e35ecf92b88666"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga5d4d51464278e6e297e35ecf92b88666">readout_weather_cond</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:ga5d4d51464278e6e297e35ecf92b88666"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the condition word, or "--" when there is none.  <br /></td></tr>
+<tr class="memitem:gaa2fe71cbe1755aae8977cad2d17e71ed" id="r_gaa2fe71cbe1755aae8977cad2d17e71ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaa2fe71cbe1755aae8977cad2d17e71ed">readout_lat</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:gaa2fe71cbe1755aae8977cad2d17e71ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the latitude string, or "--" when there is no fix.  <br /></td></tr>
+<tr class="memitem:gacea2f8a4dcf1bff5344807e02a4842aa" id="r_gacea2f8a4dcf1bff5344807e02a4842aa"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gacea2f8a4dcf1bff5344807e02a4842aa">readout_lon</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:gacea2f8a4dcf1bff5344807e02a4842aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the longitude string, or "--" when there is no fix.  <br /></td></tr>
+<tr class="memitem:ga67fe2814ada74f69f1420dc7ff186b59" id="r_ga67fe2814ada74f69f1420dc7ff186b59"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga67fe2814ada74f69f1420dc7ff186b59">wx_resource_for_code</a> (uint8_t code)</td></tr>
+<tr class="memdesc:ga67fe2814ada74f69f1420dc7ff186b59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the icon resource for a forecast condition code.  <br /></td></tr>
+<tr class="memitem:ga9a50b66845b71a795a1739d45b510875" id="r_ga9a50b66845b71a795a1739d45b510875"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga9a50b66845b71a795a1739d45b510875">wx_resource_for</a> (const char *condition)</td></tr>
+<tr class="memdesc:ga9a50b66845b71a795a1739d45b510875"><td class="mdescLeft">&#160;</td><td class="mdescRight">Look up the weather-icon resource for a condition abbreviation.  <br /></td></tr>
+<tr class="memitem:ga840331c50e64d3b0b831af1bb6c8b90d" id="r_ga840331c50e64d3b0b831af1bb6c8b90d"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga840331c50e64d3b0b831af1bb6c8b90d">wx_resource_for_forecast_code</a> (uint8_t code)</td></tr>
+<tr class="memdesc:ga840331c50e64d3b0b831af1bb6c8b90d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Look up the weather-icon resource for a forecast condition code.  <br /></td></tr>
+<tr class="memitem:ga7bdf911d493eb75876b96a13b80a6e41" id="r_ga7bdf911d493eb75876b96a13b80a6e41"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga7bdf911d493eb75876b96a13b80a6e41">wx_resource_for_table</a> (const char *condition)</td></tr>
+<tr class="memdesc:ga7bdf911d493eb75876b96a13b80a6e41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the icon resource for a condition token.  <br /></td></tr>
+<tr class="memitem:gae99f459f7d5cbdb4a1e65e0a87af42ed" id="r_gae99f459f7d5cbdb4a1e65e0a87af42ed"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#gae99f459f7d5cbdb4a1e65e0a87af42ed">wx_label_short</a> (const char *condition)</td></tr>
+<tr class="memdesc:gae99f459f7d5cbdb4a1e65e0a87af42ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compact display label for a condition token (e.g. "PCLDY").  <br /></td></tr>
+<tr class="memitem:ga61ef1487b9a0b61c43a630db94e9c5ce" id="r_ga61ef1487b9a0b61c43a630db94e9c5ce"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga61ef1487b9a0b61c43a630db94e9c5ce">wx_label_long</a> (const char *condition)</td></tr>
+<tr class="memdesc:ga61ef1487b9a0b61c43a630db94e9c5ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Full readable display label for a condition token (e.g. "Partly Cloudy").  <br /></td></tr>
+<tr class="memitem:ga1bbb76ca85f87f6fd82050dea891fc32" id="r_ga1bbb76ca85f87f6fd82050dea891fc32"><td class="memItemLeft">static const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga1bbb76ca85f87f6fd82050dea891fc32">wx_label_short_for_table</a> (const char *condition)</td></tr>
+<tr class="memdesc:ga1bbb76ca85f87f6fd82050dea891fc32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the short display label for a condition token.  <br /></td></tr>
+<tr class="memitem:ga86c728c4f0f87344e86363f79ba77dbc" id="r_ga86c728c4f0f87344e86363f79ba77dbc"><td class="memItemLeft">static const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga86c728c4f0f87344e86363f79ba77dbc">wx_label_long_for_table</a> (const char *condition)</td></tr>
+<tr class="memdesc:ga86c728c4f0f87344e86363f79ba77dbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the long display label for a condition token.  <br /></td></tr>
+<tr class="memitem:ga43295bc3eba00fc026a19f6533e2533b" id="r_ga43295bc3eba00fc026a19f6533e2533b"><td class="memItemLeft">TextLayer *&#160;</td><td class="memItemRight"><a class="el" href="#ga43295bc3eba00fc026a19f6533e2533b">zone_make_layer</a> (Layer *parent, const <a class="el" href="structZone.html">Zone</a> *zone)</td></tr>
+<tr class="memdesc:ga43295bc3eba00fc026a19f6533e2533b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a transparent text layer for a zone and attaches it to the parent layer.  <br /></td></tr>
+<tr class="memitem:ga9caa8b2be1e2c9459049c7e6a37d8f7b" id="r_ga9caa8b2be1e2c9459049c7e6a37d8f7b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga9caa8b2be1e2c9459049c7e6a37d8f7b">zone_set_text_fit</a> (TextLayer *layer, const <a class="el" href="structZone.html">Zone</a> *zone, const char *text)</td></tr>
+<tr class="memdesc:ga9caa8b2be1e2c9459049c7e6a37d8f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a text layer's text, stepping down through the zone's font tiers to find one the text fits in.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The slot engine, zones, fonts, icon cache, and weather icons and labels. </p>
+<p>Everything that puts pixels on the screen, shared by every face's layout.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ga36e1ce7a039108d509b546091b2f81ea" name="ga36e1ce7a039108d509b546091b2f81ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga36e1ce7a039108d509b546091b2f81ea">&#9670;&#160;</a></span>ENGINE_MAX_SLOTS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ENGINE_MAX_SLOTS&#160;&#160;&#160;10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Most slots a single face can declare. Ten is the ceiling of the largest layout a face builds here, so the slot arrays hold no dead entries. A face wanting more zones bumps this </p>
+
+</div>
+</div>
+<a id="ga4ca1872518ba74eea31ab554588e7398" name="ga4ca1872518ba74eea31ab554588e7398"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4ca1872518ba74eea31ab554588e7398">&#9670;&#160;</a></span>FONT_SLOTS_MAX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define FONT_SLOTS_MAX&#160;&#160;&#160;24</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Registry capacity. Sized to the face's slot count so the table wastes no memory. The face's <span class="tt">draw/fonts.h</span> checks <span class="tt">FONT_COUNT</span> against this at build time, so adding a slot past it fails the build with a clear message. Raise it by the same amount you grow the face. </p>
+
+</div>
+</div>
+<a id="ga0218b6d868d6c02e798e1f43e04a8d28" name="ga0218b6d868d6c02e798e1f43e04a8d28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0218b6d868d6c02e798e1f43e04a8d28">&#9670;&#160;</a></span>ICON_AUTOTRIM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ICON_AUTOTRIM&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Auto-trim measures each icon's see-through margin once on load so placement can follow the visible art. Set to 0 to pin the full bitmap box instead </p>
+
+</div>
+</div>
+<a id="gacd235799baa707d5f8b99169732c0625" name="gacd235799baa707d5f8b99169732c0625"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacd235799baa707d5f8b99169732c0625">&#9670;&#160;</a></span>ICON_TRIM_LOG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ICON_TRIM_LOG&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Logs each icon's measured N/E/S/W on first load so you can check the numbers. Off by default in the shared lib so a normal build stays quiet. A face can switch it on </p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga80e9c91268f57dc6bd9233afc9d7a19f" name="ga80e9c91268f57dc6bd9233afc9d7a19f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga80e9c91268f57dc6bd9233afc9d7a19f">&#9670;&#160;</a></span>engine_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void engine_init </td>
+          <td>(</td>
+          <td class="paramtype">Window *</td>          <td class="paramname"><span class="paramname"><em>window</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#gafb4e0c889ad43fc740ce8968464eead4">EngineBuild</a></td>          <td class="paramname"><span class="paramname"><em>build</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Build the slot layers for a face and paint them once. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">window</td><td>The main window. </td></tr>
+    <tr><td class="paramname">build</td><td>The face's slot-builder. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga8cfbff710717e1257d8545775d7171b0" name="ga8cfbff710717e1257d8545775d7171b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8cfbff710717e1257d8545775d7171b0">&#9670;&#160;</a></span>engine_mark_dirty_tags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void engine_mark_dirty_tags </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>changed</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Repaint only the slots whose tags intersect <span class="tt">changed</span> (plus any slot with no tags). Lets a face route a store change to just the slots that read from it. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">changed</td><td>The dependency bits that changed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga7a313b71a1524d1183f9163522710472" name="ga7a313b71a1524d1183f9163522710472"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7a313b71a1524d1183f9163522710472">&#9670;&#160;</a></span>fonts_get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GFont fonts_get </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga8cad323339ccb30f88dae519c4e198f5">FontId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resolve a slot id to its handle. Falls back to the system font on a miss. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The slot id. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The font handle. </dd></dl>
+
+</div>
+</div>
+<a id="gad49c536818ff15a0e7535e258fbdd59b" name="gad49c536818ff15a0e7535e258fbdd59b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad49c536818ff15a0e7535e258fbdd59b">&#9670;&#160;</a></span>fonts_register()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fonts_register </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga8cad323339ccb30f88dae519c4e198f5">FontId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">GFont</td>          <td class="paramname"><span class="paramname"><em>handle</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Store a loaded font handle under its slot id. </p>
+<p>This is for a handle the app loaded itself with <span class="tt">fonts_load_custom_font</span>, so the registry takes on freeing it in <span class="tt"><a class="el" href="#gab7fb11d15d23d2ef37c4baa9db129ee1" title="Unload every font the app owns and clear the registry.">fonts_unload_all</a></span>. A system font must go in through <span class="tt"><a class="el" href="#gac0a1fd4baa979be69b65a646fd457ad8" title="Store a system font handle under its slot id, without taking ownership.">fonts_register_system</a></span> instead, since the app never owned it, and unloading one is a fault at teardown.</p>
+<p>You keep the handle. Registering over a slot that already holds one just overwrites it and the old font stays loaded, so a face swapping a font at runtime needs to hang on to the old handle and unload it first. The same handle may safely sit in more than one slot, since <span class="tt"><a class="el" href="#gab7fb11d15d23d2ef37c4baa9db129ee1" title="Unload every font the app owns and clear the registry.">fonts_unload_all</a></span> clears every copy when it frees it.</p>
+<p>A NULL handle goes in like any other and <span class="tt"><a class="el" href="#ga7a313b71a1524d1183f9163522710472" title="Resolve a slot id to its handle. Falls back to the system font on a miss.">fonts_get</a></span> then reads that slot as empty and hands back the system font for the rest of the session. <span class="tt">fonts_load_custom_font</span> gives you NULL when it cannot load the resource, so passing that straight in quietly parks you on the fallback.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The slot id. </td></tr>
+    <tr><td class="paramname">handle</td><td>The loaded font handle. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gac0a1fd4baa979be69b65a646fd457ad8" name="gac0a1fd4baa979be69b65a646fd457ad8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac0a1fd4baa979be69b65a646fd457ad8">&#9670;&#160;</a></span>fonts_register_system()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fonts_register_system </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga8cad323339ccb30f88dae519c4e198f5">FontId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">GFont</td>          <td class="paramname"><span class="paramname"><em>handle</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Store a system font handle under its slot id, without taking ownership. </p>
+<p><span class="tt">fonts_get_system_font</span> hands back a handle the firmware owns, so the app must never unload it. Registering one through <span class="tt"><a class="el" href="#gad49c536818ff15a0e7535e258fbdd59b" title="Store a loaded font handle under its slot id.">fonts_register</a></span> would put it in the queue for <span class="tt"><a class="el" href="#gab7fb11d15d23d2ef37c4baa9db129ee1" title="Unload every font the app owns and clear the registry.">fonts_unload_all</a></span> and fault on the way out. This parks it in the slot and leaves it out of that sweep.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The slot id. </td></tr>
+    <tr><td class="paramname">handle</td><td>The system font handle. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gab7fb11d15d23d2ef37c4baa9db129ee1" name="gab7fb11d15d23d2ef37c4baa9db129ee1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab7fb11d15d23d2ef37c4baa9db129ee1">&#9670;&#160;</a></span>fonts_unload_all()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void fonts_unload_all </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Unload every font the app owns and clear the registry. </p>
+<p>Only handles registered through <span class="tt"><a class="el" href="#gad49c536818ff15a0e7535e258fbdd59b" title="Store a loaded font handle under its slot id.">fonts_register</a></span> are freed. System fonts parked with <span class="tt"><a class="el" href="#gac0a1fd4baa979be69b65a646fd457ad8" title="Store a system font handle under its slot id, without taking ownership.">fonts_register_system</a></span> are left alone, and a handle sitting in several slots is freed once. </p>
+
+</div>
+</div>
+<a id="gab859f1d276edd74cad316c2b811d79cc" name="gab859f1d276edd74cad316c2b811d79cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab859f1d276edd74cad316c2b811d79cc">&#9670;&#160;</a></span>icon_align_trim()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void icon_align_trim </td>
+          <td>(</td>
+          <td class="paramtype">GAlign</td>          <td class="paramname"><span class="paramname"><em>align</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structIconMargins.html">IconMargins</a></td>          <td class="paramname"><span class="paramname"><em>margins</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>trim_dx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>trim_dy</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The extra offset that pins the opaque box rather than the full bitmap at a given anchor. A right or bottom edge kills the trailing margin. A left or top edge kills the leading one. A centred axis splits the difference so the visible art centres. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">align</td><td>The anchor the icon is pinned at. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">margins</td><td>The icon's transparent margins. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">trim_dx</td><td>Output for the sideways offset. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">trim_dy</td><td>Output for the up and down offset. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga7968af6a0c5eadec10e501121ec97760" name="ga7968af6a0c5eadec10e501121ec97760"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7968af6a0c5eadec10e501121ec97760">&#9670;&#160;</a></span>icon_get()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GBitmap * icon_get </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>res</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hands back an icon picture from the cache, loading it the first time it is asked for. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">res</td><td>The resource id. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The cached picture, or NULL if it could not be loaded. </dd></dl>
+
+</div>
+</div>
+<a id="ga2040f8e16081e8b48289641c6914c73f" name="ga2040f8e16081e8b48289641c6914c73f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2040f8e16081e8b48289641c6914c73f">&#9670;&#160;</a></span>icon_margins()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structIconMargins.html">IconMargins</a> icon_margins </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>res</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The measured transparent margins of a cached icon. Loads and measures it the first time, then returns the cached numbers. All zero when auto-trim is off or the icon could not load. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">res</td><td>The resource id. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The N/E/S/W transparent margins. </dd></dl>
+
+</div>
+</div>
+<a id="gabad4c43378e5bd3628da4131b2343ad5" name="gabad4c43378e5bd3628da4131b2343ad5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabad4c43378e5bd3628da4131b2343ad5">&#9670;&#160;</a></span>icon_margins_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structIconMargins.html">IconMargins</a> icon_margins_of </td>
+          <td>(</td>
+          <td class="paramtype">GBitmap *</td>          <td class="paramname"><span class="paramname"><em>bmp</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Measures the transparent margins of any bitmap, for icons that live outside the shared cache such as a weather picture that reloads as the weather changes. All zero when auto-trim is off or the bitmap is NULL. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bmp</td><td>The bitmap to scan. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The N/E/S/W transparent margins. </dd></dl>
+
+</div>
+</div>
+<a id="gaa15abf7931b6be2b608974a6c263c56e" name="gaa15abf7931b6be2b608974a6c263c56e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa15abf7931b6be2b608974a6c263c56e">&#9670;&#160;</a></span>icon_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GSize icon_size </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>res</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The size of an icon in pixels. Gives back GSize(0,0) if it could not load. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">res</td><td>The resource id. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The size of the picture. </dd></dl>
+
+</div>
+</div>
+<a id="gafa86e8ce9e0e424a0bb3b08e7dd3c04e" name="gafa86e8ce9e0e424a0bb3b08e7dd3c04e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafa86e8ce9e0e424a0bb3b08e7dd3c04e">&#9670;&#160;</a></span>icon_tint()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void icon_tint </td>
+          <td>(</td>
+          <td class="paramtype">GBitmap *</td>          <td class="paramname"><span class="paramname"><em>bmp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">GColor</td>          <td class="paramname"><span class="paramname"><em>color</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Paints an icon a different colour. It only works on icons saved as little colour-table pictures. Other kinds it just leaves alone. The see-through pixels stay see-through so the edges keep looking clean. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bmp</td><td>The picture to recolour (nothing happens if it is NULL). </td></tr>
+    <tr><td class="paramname">color</td><td>The colour to paint it. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga27e66e5fb5efa50e5cd3a641ca95f3e1" name="ga27e66e5fb5efa50e5cd3a641ca95f3e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga27e66e5fb5efa50e5cd3a641ca95f3e1">&#9670;&#160;</a></span>readout_date()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_date </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the date in the chosen format, upper-cased. </p>
+<p>A format carrying the .beats token gets a reading written into it, so the date line can end in one (<span class="tt">0618.672</span>) alongside a normal clock.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gac815591cccd1783227eb1a656212c8c5" name="gac815591cccd1783227eb1a656212c8c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac815591cccd1783227eb1a656212c8c5">&#9670;&#160;</a></span>readout_date_shows_beats()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool readout_date_shows_beats </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the chosen date format ends in a .beats reading. </p>
+<p>A face asks this when it builds its <a class="el" href="structTimeConfig.html" title="The rules a face hands the store, built from its own settings so the store names no SETTING_*.">TimeConfig</a>. A beat is 86.4 seconds, so a date line carrying one needs the .beats ticker or it sits on a stale reading until the next minute.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if the date format carries the .beats token. </dd></dl>
+
+</div>
+</div>
+<a id="gab74d674a3402d0c3ccb145f54ee4d5dc" name="gab74d674a3402d0c3ccb145f54ee4d5dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab74d674a3402d0c3ccb145f54ee4d5dc">&#9670;&#160;</a></span>readout_hr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_hr </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the heart rate, or "--" when there is no reading. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaa2fe71cbe1755aae8977cad2d17e71ed" name="gaa2fe71cbe1755aae8977cad2d17e71ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa2fe71cbe1755aae8977cad2d17e71ed">&#9670;&#160;</a></span>readout_lat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_lat </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the latitude string, or "--" when there is no fix. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gacea2f8a4dcf1bff5344807e02a4842aa" name="gacea2f8a4dcf1bff5344807e02a4842aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacea2f8a4dcf1bff5344807e02a4842aa">&#9670;&#160;</a></span>readout_lon()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_lon </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the longitude string, or "--" when there is no fix. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gad7314f0630f01d77249d12b3f5018d20" name="gad7314f0630f01d77249d12b3f5018d20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad7314f0630f01d77249d12b3f5018d20">&#9670;&#160;</a></span>readout_meridiem()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_meridiem </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the AM/PM marker, or empty on a 24-hour or .beats clock. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga46b62b70722c1a8885049b5dd237aa7e" name="ga46b62b70722c1a8885049b5dd237aa7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga46b62b70722c1a8885049b5dd237aa7e">&#9670;&#160;</a></span>readout_steps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_steps </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the step count, or the distance walked per the Steps Mode setting. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga5f1ce126b5f8ddfb48e78d1077355883" name="ga5f1ce126b5f8ddfb48e78d1077355883"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5f1ce126b5f8ddfb48e78d1077355883">&#9670;&#160;</a></span>readout_time()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_time </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the clock per the Time Format setting: 24h, 12h, system, or .beats. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga5d4d51464278e6e297e35ecf92b88666" name="ga5d4d51464278e6e297e35ecf92b88666"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5d4d51464278e6e297e35ecf92b88666">&#9670;&#160;</a></span>readout_weather_cond()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_weather_cond </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the condition word, or "--" when there is none. </p>
+<p>The night marker is trimmed, so "CLEAR_NIGHT" reads as "CLEAR". The glyph still uses the full token.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaee4e7d275341c91bdbae7a5adc7ddc09" name="gaee4e7d275341c91bdbae7a5adc7ddc09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaee4e7d275341c91bdbae7a5adc7ddc09">&#9670;&#160;</a></span>readout_weather_temp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_weather_temp </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format the temperature with its unit letter, or "--" when there is no reading. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga61ef1487b9a0b61c43a630db94e9c5ce" name="ga61ef1487b9a0b61c43a630db94e9c5ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga61ef1487b9a0b61c43a630db94e9c5ce">&#9670;&#160;</a></span>wx_label_long()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * wx_label_long </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>condition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Full readable display label for a condition token (e.g. "Partly Cloudy"). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>The condition token string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The long label, or the fallback ("Unknown") when unrecognized. </dd></dl>
+
+</div>
+</div>
+<a id="ga86c728c4f0f87344e86363f79ba77dbc" name="ga86c728c4f0f87344e86363f79ba77dbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga86c728c4f0f87344e86363f79ba77dbc">&#9670;&#160;</a></span>wx_label_long_for_table()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * wx_label_long_for_table </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>condition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finds the long display label for a condition token. </p>
+<p>A <span class="tt">_NIGHT</span> token reads the same as its day form, so the suffix is dropped before the lookup. An unknown token, or a NULL one, reads "Unknown".</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>The condition token from the phone, such as <span class="tt">RAIN</span> or <span class="tt">RAIN_NIGHT</span>. May be NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The label, a string literal that stays valid for the life of the app. </dd></dl>
+
+</div>
+</div>
+<a id="gae99f459f7d5cbdb4a1e65e0a87af42ed" name="gae99f459f7d5cbdb4a1e65e0a87af42ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae99f459f7d5cbdb4a1e65e0a87af42ed">&#9670;&#160;</a></span>wx_label_short()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * wx_label_short </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>condition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compact display label for a condition token (e.g. "PCLDY"). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>The condition token string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The short label, or the fallback ("UNKNOWN") when unrecognized. </dd></dl>
+
+</div>
+</div>
+<a id="ga1bbb76ca85f87f6fd82050dea891fc32" name="ga1bbb76ca85f87f6fd82050dea891fc32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1bbb76ca85f87f6fd82050dea891fc32">&#9670;&#160;</a></span>wx_label_short_for_table()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * wx_label_short_for_table </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>condition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finds the short display label for a condition token. </p>
+<p>A <span class="tt">_NIGHT</span> token reads the same as its day form, so the suffix is dropped before the lookup. An unknown token, or a NULL one, reads "UNKNOWN".</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>The condition token from the phone, such as <span class="tt">RAIN</span> or <span class="tt">RAIN_NIGHT</span>. May be NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The label, a string literal that stays valid for the life of the app. </dd></dl>
+
+</div>
+</div>
+<a id="ga9a50b66845b71a795a1739d45b510875" name="ga9a50b66845b71a795a1739d45b510875"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9a50b66845b71a795a1739d45b510875">&#9670;&#160;</a></span>wx_resource_for()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t wx_resource_for </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>condition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Look up the weather-icon resource for a condition abbreviation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>The condition abbreviation string. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The corresponding resource ID. </dd></dl>
+
+</div>
+</div>
+<a id="ga67fe2814ada74f69f1420dc7ff186b59" name="ga67fe2814ada74f69f1420dc7ff186b59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga67fe2814ada74f69f1420dc7ff186b59">&#9670;&#160;</a></span>wx_resource_for_code()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t wx_resource_for_code </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>code</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finds the icon resource for a forecast condition code. </p>
+<p>The code is the condition's position in the shared vocabulary, with <span class="tt"><a class="el" href="wire__caps_8g_8h.html#abc4a5b3638a2e2195948cc82481cc705" title="Set on an hourly forecast code for a column after dark.">WX_FORECAST_NIGHT_BIT</a></span> set for an hour after dark. A night hour gets the night glyph where the condition has one. An unknown code, including the 255 the phone sends for a mystery sky, gets the <span class="tt">WEATHER_NOW_NA</span> icon.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td>The condition code, with the night bit set for an hour after dark. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The <span class="tt">RESOURCE_ID_ICON_*</span> resource to load. </dd></dl>
+
+</div>
+</div>
+<a id="ga840331c50e64d3b0b831af1bb6c8b90d" name="ga840331c50e64d3b0b831af1bb6c8b90d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga840331c50e64d3b0b831af1bb6c8b90d">&#9670;&#160;</a></span>wx_resource_for_forecast_code()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t wx_resource_for_forecast_code </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>code</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Look up the weather-icon resource for a forecast condition code. </p>
+<p>The forecast row carries each condition as a compact byte (its number in the shared list) rather than a token string. An unknown code lands on the <span class="tt">WI_NA</span> icon.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">code</td><td>The condition code, or UNKNOWN_CODE (255) for a mystery sky. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The corresponding resource ID. </dd></dl>
+
+</div>
+</div>
+<a id="ga7bdf911d493eb75876b96a13b80a6e41" name="ga7bdf911d493eb75876b96a13b80a6e41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7bdf911d493eb75876b96a13b80a6e41">&#9670;&#160;</a></span>wx_resource_for_table()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t wx_resource_for_table </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>condition</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finds the icon resource for a condition token. </p>
+<p>A token ending in <span class="tt">_NIGHT</span> gets its night glyph where the condition has one. An unknown token, or a NULL one, gets the <span class="tt">WEATHER_NOW_NA</span> icon.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">condition</td><td>The condition token from the phone, such as <span class="tt">RAIN</span> or <span class="tt">RAIN_NIGHT</span>. May be NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The <span class="tt">RESOURCE_ID_ICON_*</span> resource to load. </dd></dl>
+
+</div>
+</div>
+<a id="ga43295bc3eba00fc026a19f6533e2533b" name="ga43295bc3eba00fc026a19f6533e2533b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga43295bc3eba00fc026a19f6533e2533b">&#9670;&#160;</a></span>zone_make_layer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">TextLayer * zone_make_layer </td>
+          <td>(</td>
+          <td class="paramtype">Layer *</td>          <td class="paramname"><span class="paramname"><em>parent</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structZone.html">Zone</a> *</td>          <td class="paramname"><span class="paramname"><em>zone</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a transparent text layer for a zone and attaches it to the parent layer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">parent</td><td>The parent layer. </td></tr>
+    <tr><td class="paramname">zone</td><td>The zone properties. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The new text layer, or NULL when the heap had no room for it. A caller holding NULL has an empty slot, so it must check before passing the layer back in. </dd></dl>
+
+</div>
+</div>
+<a id="ga9caa8b2be1e2c9459049c7e6a37d8f7b" name="ga9caa8b2be1e2c9459049c7e6a37d8f7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9caa8b2be1e2c9459049c7e6a37d8f7b">&#9670;&#160;</a></span>zone_set_text_fit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void zone_set_text_fit </td>
+          <td>(</td>
+          <td class="paramtype">TextLayer *</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structZone.html">Zone</a> *</td>          <td class="paramname"><span class="paramname"><em>zone</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sets a text layer's text, stepping down through the zone's font tiers to find one the text fits in. </p>
+<p>It tries the main tier first, then each fallback tier in order, and uses the largest one whose text fits. A face skips a tier by leaving its rect zero-sized, since a zero-filled struct already reads that way. The main tier always exists. If the text fits nowhere, the smallest defined tier wins and the text layer trails an ellipsis as a last resort.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">layer</td><td>The text layer. </td></tr>
+    <tr><td class="paramname">zone</td><td>The zone specifying the fallback fonts and rects. </td></tr>
+    <tr><td class="paramname">text</td><td>The text to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

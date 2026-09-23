@@ -1,0 +1,340 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble Watchface Engine: c/pebble/ui/engine/engine.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble Watchface Engine</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.1.1" selected>v2.1.1</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble Watchface Engine: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('engine_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">engine.c File Reference<div class="ingroups"><a class="el" href="group__lib__ui.html">UI</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The skin-neutral slot engine. Builds one layer per slot and repaints them all on a store change.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="engine_8h_source.html">ui/engine/engine.h</a>&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:acea3c30698a26ada1bf81c4b8bff34a4" id="r_acea3c30698a26ada1bf81c4b8bff34a4"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#acea3c30698a26ada1bf81c4b8bff34a4">draw_update</a> (Layer *layer, GContext *ctx)</td></tr>
+<tr class="memdesc:acea3c30698a26ada1bf81c4b8bff34a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw-slot update proc: hand the module its own bounds.  <br /></td></tr>
+<tr class="memitem:a79a6b7fc5a64b226b38077e891474536" id="r_a79a6b7fc5a64b226b38077e891474536"><td class="memItemLeft"><a id="a79a6b7fc5a64b226b38077e891474536" name="a79a6b7fc5a64b226b38077e891474536"></a>
+static void&#160;</td><td class="memItemRight"><b>build</b> (void)</td></tr>
+<tr class="memdesc:a79a6b7fc5a64b226b38077e891474536"><td class="mdescLeft">&#160;</td><td class="mdescRight">Work out the current slots and make one layer per slot. <br /></td></tr>
+<tr class="memitem:aa52351d1dfae43c635aa490655abf35a" id="r_aa52351d1dfae43c635aa490655abf35a"><td class="memItemLeft"><a id="aa52351d1dfae43c635aa490655abf35a" name="aa52351d1dfae43c635aa490655abf35a"></a>
+static void&#160;</td><td class="memItemRight"><b>destroy</b> (void)</td></tr>
+<tr class="memdesc:aa52351d1dfae43c635aa490655abf35a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the slot layers. <br /></td></tr>
+<tr class="memitem:ga80e9c91268f57dc6bd9233afc9d7a19f" id="r_ga80e9c91268f57dc6bd9233afc9d7a19f"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f">engine_init</a> (Window *window, <a class="el" href="group__lib__ui.html#gafb4e0c889ad43fc740ce8968464eead4">EngineBuild</a> build_cb)</td></tr>
+<tr class="memdesc:ga80e9c91268f57dc6bd9233afc9d7a19f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the slot layers for a face and paint them once.  <br /></td></tr>
+<tr class="memitem:ga371c44d7e8c48ce708a69bfd413a2a0e" id="r_ga371c44d7e8c48ce708a69bfd413a2a0e"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>engine_deinit</b> (void)</td></tr>
+<tr class="memdesc:ga371c44d7e8c48ce708a69bfd413a2a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tear down the slot layers. <br /></td></tr>
+<tr class="memitem:ga878b25483298cd1601b2191e7eb9da87" id="r_ga878b25483298cd1601b2191e7eb9da87"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>engine_rebuild</b> (void)</td></tr>
+<tr class="memdesc:ga878b25483298cd1601b2191e7eb9da87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rebuild the slot layers (after a layout or theme change). <br /></td></tr>
+<tr class="memitem:aa951c14b92f78cf5e7dd25b4ebf47007" id="r_aa951c14b92f78cf5e7dd25b4ebf47007"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aa951c14b92f78cf5e7dd25b4ebf47007">repaint_slot</a> (uint8_t i)</td></tr>
+<tr class="memdesc:aa951c14b92f78cf5e7dd25b4ebf47007"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repaint one slot: a text-slot re-pulls and re-fits (skipping an unchanged string), a draw-slot marks its layer dirty.  <br /></td></tr>
+<tr class="memitem:gaec392c631ca5f1420f4ad730f2c0c8c5" id="r_gaec392c631ca5f1420f4ad730f2c0c8c5"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>engine_mark_dirty</b> (void)</td></tr>
+<tr class="memdesc:gaec392c631ca5f1420f4ad730f2c0c8c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repaint every slot: text-slots re-pull + fit, draw-slots mark dirty. <br /></td></tr>
+<tr class="memitem:ga8cfbff710717e1257d8545775d7171b0" id="r_ga8cfbff710717e1257d8545775d7171b0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__ui.html#ga8cfbff710717e1257d8545775d7171b0">engine_mark_dirty_tags</a> (uint32_t changed)</td></tr>
+<tr class="memdesc:ga8cfbff710717e1257d8545775d7171b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Repaint only the slots whose tags intersect <span class="tt">changed</span> (plus any slot with no tags). Lets a face route a store change to just the slots that read from it.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a3ddf81e700000ec6ae43c39a1be82d1c" id="r_a3ddf81e700000ec6ae43c39a1be82d1c"><td class="memItemLeft"><a id="a3ddf81e700000ec6ae43c39a1be82d1c" name="a3ddf81e700000ec6ae43c39a1be82d1c"></a>
+static Window *&#160;</td><td class="memItemRight"><b>s_window</b></td></tr>
+<tr class="memdesc:a3ddf81e700000ec6ae43c39a1be82d1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The window the slots are built in. <br /></td></tr>
+<tr class="memitem:ad322bae72e6bc943d51af5902a99a3ad" id="r_ad322bae72e6bc943d51af5902a99a3ad"><td class="memItemLeft"><a id="ad322bae72e6bc943d51af5902a99a3ad" name="ad322bae72e6bc943d51af5902a99a3ad"></a>
+static <a class="el" href="group__lib__ui.html#gafb4e0c889ad43fc740ce8968464eead4">EngineBuild</a>&#160;</td><td class="memItemRight"><b>s_build</b></td></tr>
+<tr class="memdesc:ad322bae72e6bc943d51af5902a99a3ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the face passed to the engine at init. <br /></td></tr>
+<tr class="memitem:a01fb1f0b7c05dba36e53d2dbb10399a0" id="r_a01fb1f0b7c05dba36e53d2dbb10399a0"><td class="memItemLeft"><a id="a01fb1f0b7c05dba36e53d2dbb10399a0" name="a01fb1f0b7c05dba36e53d2dbb10399a0"></a>
+static <a class="el" href="structEngineSlot.html">EngineSlot</a>&#160;</td><td class="memItemRight"><b>s_slots</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>]</td></tr>
+<tr class="memdesc:a01fb1f0b7c05dba36e53d2dbb10399a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The slots as the face defined them. <br /></td></tr>
+<tr class="memitem:a909c063122f3aa3d55132a57c933431d" id="r_a909c063122f3aa3d55132a57c933431d"><td class="memItemLeft"><a id="a909c063122f3aa3d55132a57c933431d" name="a909c063122f3aa3d55132a57c933431d"></a>
+static Layer *&#160;</td><td class="memItemRight"><b>s_layers</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>]</td></tr>
+<tr class="memdesc:a909c063122f3aa3d55132a57c933431d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw-slot layers, NULL for text-slots. <br /></td></tr>
+<tr class="memitem:ab6aacb721186c806b81243810c84db56" id="r_ab6aacb721186c806b81243810c84db56"><td class="memItemLeft"><a id="ab6aacb721186c806b81243810c84db56" name="ab6aacb721186c806b81243810c84db56"></a>
+static TextLayer *&#160;</td><td class="memItemRight"><b>s_text_layers</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>]</td></tr>
+<tr class="memdesc:ab6aacb721186c806b81243810c84db56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text-slot layers, NULL for draw-slots. <br /></td></tr>
+<tr class="memitem:a4d0081c02703d45434f7c88b613044ec" id="r_a4d0081c02703d45434f7c88b613044ec"><td class="memItemLeft"><a id="a4d0081c02703d45434f7c88b613044ec" name="a4d0081c02703d45434f7c88b613044ec"></a>
+static char&#160;</td><td class="memItemRight"><b>s_last_text</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>][24]</td></tr>
+<tr class="memdesc:a4d0081c02703d45434f7c88b613044ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last string set on each slot, so an unchanged one skips the re-fit. <br /></td></tr>
+<tr class="memitem:a7e54b2f45f314ed1fcc886592c28d8ea" id="r_a7e54b2f45f314ed1fcc886592c28d8ea"><td class="memItemLeft"><a id="a7e54b2f45f314ed1fcc886592c28d8ea" name="a7e54b2f45f314ed1fcc886592c28d8ea"></a>
+static uint8_t&#160;</td><td class="memItemRight"><b>s_count</b></td></tr>
+<tr class="memdesc:a7e54b2f45f314ed1fcc886592c28d8ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many slots are in use. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The skin-neutral slot engine. Builds one layer per slot and repaints them all on a store change. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="acea3c30698a26ada1bf81c4b8bff34a4" name="acea3c30698a26ada1bf81c4b8bff34a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acea3c30698a26ada1bf81c4b8bff34a4">&#9670;&#160;</a></span>draw_update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void draw_update </td>
+          <td>(</td>
+          <td class="paramtype">Layer *</td>          <td class="paramname"><span class="paramname"><em>layer</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">GContext *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Draw-slot update proc: hand the module its own bounds. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">layer</td><td>The slot layer (its data holds the slot index). </td></tr>
+    <tr><td class="paramname">ctx</td><td>The graphics context. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa951c14b92f78cf5e7dd25b4ebf47007" name="aa951c14b92f78cf5e7dd25b4ebf47007"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa951c14b92f78cf5e7dd25b4ebf47007">&#9670;&#160;</a></span>repaint_slot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void repaint_slot </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>i</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Repaint one slot: a text-slot re-pulls and re-fits (skipping an unchanged string), a draw-slot marks its layer dirty. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The slot index. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>ui</b></li><li class="navelem"><b>engine</b></li><li class="navelem"><a href="engine_8c.html">engine.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
