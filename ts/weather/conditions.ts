@@ -51,8 +51,8 @@ const UNKNOWN_CODE = 255;
 
 // high bit OR-ed onto an hourly forecast code to mark a night hour so the watch loads the
 // night glyph for that column. real indices are 0-11 so this bit is free. the C side mirrors
-// it as WX_FORECAST_NIGHT_BIT in ui/weather/icons.h. only the hourly strip sets it (the daily
-// strip is whole-day and stays on day glyphs)
+// it as WX_FORECAST_NIGHT_BIT in wire/wire_caps.g.h, generated from this file. only the hourly
+// strip sets it (the daily strip is whole-day and stays on day glyphs)
 const FORECAST_NIGHT_BIT = 0x80;
 
 // shown when a condition isn't recognized (the UNKNOWN token routes here)
