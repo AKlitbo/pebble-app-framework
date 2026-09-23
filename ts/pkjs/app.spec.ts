@@ -343,8 +343,8 @@ describe('retimeSettings', () => {
   });
 
   /**
-   * A field with nothing saved in it used to go out as an empty string, which the watch reads as
-   * zero minutes under no name, so a working Time Zone panel fell to UTC labelled TZ.
+   * A field with nothing saved in it must not go out as an empty string. The watch reads that as
+   * zero minutes under no name, so a working Time Zone panel falls to UTC labelled TZ.
    */
   test('drops a timezone field with nothing saved in it', () => {
     const dict = { 11: '' };

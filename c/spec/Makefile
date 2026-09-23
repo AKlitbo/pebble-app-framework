@@ -4,10 +4,12 @@
 # CI gate. The spec files never reach the watch: waf_helpers.py drops them from the
 # firmware glob (excl **/*.spec.c and spec/**).
 #
-# These cover lib/c/core only: date and moon and beats maths, number and text
+# Most of these cover lib/c/core: date and moon and beats maths, number and text
 # formatting, unit conversion. All of it plain arithmetic that needs no watch, which
-# is why there is no fake SDK here and why the suite runs in about a second.
-# Anything under lib/c/pebble talks to the SDK and is left to the device.
+# is why the suite runs in about a second. A unit under lib/c/pebble that decides
+# something on its own joins them, such as the outbox queue and the store poll, and
+# host/pebble.h stands in for the handful of SDK names those need. Anything that
+# would need persist, a dictionary or AppMessage faked is left to the device.
 
 CC      ?= cc
 # -Wno-unused-parameter keeps the SDK callback signatures (void *data and the like) quiet
