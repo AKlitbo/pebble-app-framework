@@ -37,12 +37,28 @@ describe('fillWscript', () => {
   test('fills every folder the real template asks for', () => {
     const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
 
-    const result = fillWscript(template, { engine: 'engine', face: 'watchfaces/mosaic/gridlock', familyCore: 'watchfaces/mosaic/core' });
+    const result = fillWscript(template, { engine: 'engine', face: 'watchfaces/mosaic/gridlock', familyCore: 'watchfaces/mosaic/core', watchface: true });
 
     expect(result).not.toContain('{{');
     expect(result).toContain("'engine': 'engine'");
     expect(result).toContain("'face': 'watchfaces/mosaic/gridlock'");
     expect(result).toContain("'family_core': 'watchfaces/mosaic/core'");
+  });
+
+  /**
+   * An app target that builds without -DBUILD_WATCHAPP compiles a face's launcher-only code out of
+   * it, which for Gridlock is the weather request it makes as it opens. The app then shows
+   * placeholders until the next half-hourly poll.
+   */
+  test.each([
+    [true, 'WATCHFACE = True'],
+    [false, 'WATCHFACE = False'],
+  ])('writes the watchface flag as %s the way python reads it', (watchface, expected) => {
+    const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
+
+    const result = fillWscript(template, { engine: 'engine', face: '.', familyCore: '', watchface });
+
+    expect(result).toContain(expected);
   });
 });
 

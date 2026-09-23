@@ -145,6 +145,7 @@ export interface SandboxDirs {
   engine: string;     // the engine, such as lib
   face: string;       // the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
   familyCore: string; // the face's family core, such as watchfaces/mosaic/core, or empty for none
+  watchface: boolean; // true for a face target, false for an app one, which builds with -DBUILD_WATCHAPP
 }
 
 /**
@@ -152,16 +153,19 @@ export interface SandboxDirs {
  *
  * The build runs from inside targets/<target>/, and everything it needs about where the engine, the
  * face and its family core are is written into the wscript here, so waf never goes looking for them.
+ * The watchface flag rides along, since it decides whether the target compiles with
+ * -DBUILD_WATCHAPP, and it is spelled the way Python reads a boolean.
  *
  * @param template The wscript template's text.
- * @param dirs The folders to fill in.
+ * @param dirs The folders to fill in, and what the target installs as.
  * @return The finished wscript.
  */
 export function fillWscript(template: string, dirs: SandboxDirs): string {
   return template
     .split('{{ENGINE_DIR}}').join(dirs.engine)
     .split('{{FACE_DIR}}').join(dirs.face)
-    .split('{{FAMILY_CORE_DIR}}').join(dirs.familyCore);
+    .split('{{FAMILY_CORE_DIR}}').join(dirs.familyCore)
+    .split('{{WATCHFACE}}').join(dirs.watchface ? 'True' : 'False');
 }
 
 /** Writes one target's sandbox: targets/<target name>/{package.json,wscript}. */
@@ -183,6 +187,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
     engine: ENGINE_REL,
     face: rel,
     familyCore: core ? path.relative(ROOT, core).split(path.sep).join('/') : '',
+    watchface: target.watchface,
   };
   fs.writeFileSync(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));
 
