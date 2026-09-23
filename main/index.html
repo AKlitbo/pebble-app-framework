@@ -58,7 +58,7 @@
         <div class="head-side">
           <div class="build">
             <b>v2.2.0</b><br />
-            main @ f7311fb<br />
+            main @ b9d1321<br />
             built 2026-09-23
           </div>
         </div>
@@ -71,7 +71,8 @@
             <div class="card-top"><span class="lang">C</span><span class="kind">Doxygen</span></div>
             <h2>Device API</h2>
             <p>
-              The half of the framework that runs on the watch. Panels, stores, the clock, and the message formats the phone sends.
+              The half of the framework that runs on the watch. Panels, stores, the clock, and the message formats the
+              phone sends.
             </p>
             <div class="card-foot"><span>c/core · c/pebble</span><span class="go">c/ →</span></div>
           </a>
@@ -217,7 +218,7 @@ npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
 npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
 npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-app-framework/blob/f7311fb32de73f263b368ca5233449eeddc5f9f2/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-app-framework/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
+<p>The <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-app-framework/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
 <h2 id="ci">CI</h2>
 <ul>
 <li><strong><code>framework-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>
