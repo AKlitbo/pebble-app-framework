@@ -1,0 +1,329 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: Globals</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.2.0" selected>v2.2.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('globals_defs.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="contents">
+<div class="textblock">Here is a list of all documented macros with links to the documentation:</div><br/>
+<div class="qindex"><a class="qindex" href="#index_a">A</a><div class="alphasepar"></div><a class="qindex" href="#index_b">B</a><div class="alphasepar"></div><a class="qindex" href="#index_c">C</a><div class="alphasepar"></div><a class="qindex" href="#index_d">D</a><div class="alphasepar"></div><a class="qindex" href="#index_e">E</a><div class="alphasepar"></div><a class="qindex" href="#index_f">F</a><div class="alphasepar"></div><a class="qindex" href="#index_h">H</a><div class="alphasepar"></div><a class="qindex" href="#index_i">I</a><div class="alphasepar"></div><a class="qindex" href="#index_k">K</a><div class="alphasepar"></div><a class="qindex" href="#index_m">M</a><div class="alphasepar"></div><a class="qindex" href="#index_o">O</a><div class="alphasepar"></div><a class="qindex" href="#index_p">P</a><div class="alphasepar"></div><a class="qindex" href="#index_r">R</a><div class="alphasepar"></div><a class="qindex" href="#index_s">S</a><div class="alphasepar"></div><a class="qindex" href="#index_t">T</a><div class="alphasepar"></div><a class="qindex" href="#index_w">W</a></div>
+
+
+<h3 class="doxsection"><a id="index_a" name="index_a"></a>- a -</h3><ul>
+<li>APPMESSAGE_CUSTOM_COLORS_MAX&#160;:&#160;<a class="el" href="group__lib__io.html#ga8bfcc8d396856901aeea684974fdb15c">appmessage.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_b" name="index_b"></a>- b -</h3><ul>
+<li>BEATS_TOKEN&#160;:&#160;<a class="el" href="beats_8h.html#ade6bb8e23f719514ba1b95799c33ca50">beats.h</a></li>
+<li>BEATS_TOKEN_LEN&#160;:&#160;<a class="el" href="beats_8h.html#a57ea4ea833a212d20c37d466acf54a09">beats.h</a></li>
+<li>BMT_UTC_OFFSET_S&#160;:&#160;<a class="el" href="beats_8h.html#a9351772e84923ba8b628942ab6b85161">beats.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_c" name="index_c"></a>- c -</h3><ul>
+<li>CAL_LOC_LEN&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#a2fce7543ff5feb8ce5149d89adbd38d8">wire_caps.g.h</a></li>
+<li>CAL_TITLE_LEN&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#aa8d4ff63a367c308464fcb26b8cadd02">wire_caps.g.h</a></li>
+<li>CALENDAR_FIRST_POLL_MS&#160;:&#160;<a class="el" href="calendar__store_8c.html#a73139d62bf8fca78148767c7d0c96938">calendar_store.c</a></li>
+<li>CALENDAR_MAX_SLOTS&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#abce35d4e05b918ebdb339cfbf8c87be2">wire_caps.g.h</a></li>
+<li>CALENDAR_PERSIST_SLOTS&#160;:&#160;<a class="el" href="calendar__store_8c.html#a6e53a2809a0e3f9ee7c3f806191d7c58">calendar_store.c</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_d" name="index_d"></a>- d -</h3><ul>
+<li>DAY_MINUTES&#160;:&#160;<a class="el" href="nightsched_8c.html#a27eb45d73274b31b564ec5e27236b745">nightsched.c</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_e" name="index_e"></a>- e -</h3><ul>
+<li>ENGINE_MAX_SLOTS&#160;:&#160;<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">engine.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_f" name="index_f"></a>- f -</h3><ul>
+<li>FONT_SLOTS_MAX&#160;:&#160;<a class="el" href="group__lib__ui.html#ga4ca1872518ba74eea31ab554588e7398">fonts.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_h" name="index_h"></a>- h -</h3><ul>
+<li>HOUR_DIGITS_MAX&#160;:&#160;<a class="el" href="clockstr_8c.html#a97c906274acb6bb6a085e9407f038b31">clockstr.c</a></li>
+<li>HR_HISTORY_MINUTES&#160;:&#160;<a class="el" href="health__store_8c.html#a565e5d788d520b3a16db7c546e9ee7b3">health_store.c</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_i" name="index_i"></a>- i -</h3><ul>
+<li>ICON_AUTOTRIM&#160;:&#160;<a class="el" href="group__lib__ui.html#ga0218b6d868d6c02e798e1f43e04a8d28">icon_cache.h</a></li>
+<li>ICON_CACHE_MAX&#160;:&#160;<a class="el" href="icon__cache_8c.html#a25fec78ed8dc40aafa0ee6173a93e661">icon_cache.c</a></li>
+<li>ICON_TRIM_LOG&#160;:&#160;<a class="el" href="group__lib__ui.html#gacd235799baa707d5f8b99169732c0625">icon_cache.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_k" name="index_k"></a>- k -</h3><ul>
+<li>KNOWN_BATTERY_DISPLAY&#160;:&#160;<a class="el" href="group__lib__settings.html#ga8060d99e4e1951c1e98e0e3c49e77db3">settings_catalog.h</a></li>
+<li>KNOWN_BLUETOOTH_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#ga5f8c5ebca9a4cae4d21ee7a6b8280fb8">settings_catalog.h</a></li>
+<li>KNOWN_BLUETOOTH_VIBE_CONNECT&#160;:&#160;<a class="el" href="group__lib__settings.html#ga3b7c73968d189a076bb660a5e654471b">settings_catalog.h</a></li>
+<li>KNOWN_BLUETOOTH_VIBE_DISCONNECT&#160;:&#160;<a class="el" href="group__lib__settings.html#ga1f3cdcddc8652b8560d494e04b4f4ae7">settings_catalog.h</a></li>
+<li>KNOWN_DATE_FORMAT&#160;:&#160;<a class="el" href="group__lib__settings.html#ga25c13546f27ddad133d5d8cbe348d84a">settings_catalog.h</a></li>
+<li>KNOWN_DISTANCE_UNIT&#160;:&#160;<a class="el" href="group__lib__settings.html#gace7412b22cb2958264322350c07c65cd">settings_catalog.h</a></li>
+<li>KNOWN_HOURLY_VIBE&#160;:&#160;<a class="el" href="group__lib__settings.html#ga841203aee583d7a932bc02a1f4517847">settings_catalog.h</a></li>
+<li>KNOWN_QUIET_TIME_ICON&#160;:&#160;<a class="el" href="group__lib__settings.html#ga85914fbaf222c55ef9c16f52c16fceb0">settings_catalog.h</a></li>
+<li>KNOWN_STEPS_MODE&#160;:&#160;<a class="el" href="group__lib__settings.html#ga019f574fbd717df373aa4f6a2fa623f7">settings_catalog.h</a></li>
+<li>KNOWN_TEMPERATURE_UNIT&#160;:&#160;<a class="el" href="group__lib__settings.html#gaeeceac8a6d66376b0fbb3b495e245a8c">settings_catalog.h</a></li>
+<li>KNOWN_THEME&#160;:&#160;<a class="el" href="group__lib__settings.html#ga0d7b14fdb5d548d8571799ed3b9f2325">settings_catalog.h</a></li>
+<li>KNOWN_TIME_FORMAT&#160;:&#160;<a class="el" href="group__lib__settings.html#ga51c9800159631adbf77eafe13eeb3d34">settings_catalog.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_m" name="index_m"></a>- m -</h3><ul>
+<li>MINUTES_PER_DAY&#160;:&#160;<a class="el" href="solar_8c.html#ae0f73032b15f3188a50b86f793afb7ab">solar.c</a></li>
+<li>MOON_EPOCH_UTC&#160;:&#160;<a class="el" href="group__lib__core.html#gaf586f63d0905b47c9548a10f0310bc81">moon.h</a></li>
+<li>MOON_SYNODIC_SEC&#160;:&#160;<a class="el" href="group__lib__core.html#ga550e4dc38f3305d3ad3dcd0dd394de94">moon.h</a></li>
+<li>MS_PER_BEAT&#160;:&#160;<a class="el" href="beats_8h.html#a0d6afbe4b8f974a909bafc6794fc6a55">beats.h</a></li>
+<li>MS_PER_DAY&#160;:&#160;<a class="el" href="beats_8h.html#a252dcc38a8013d69f8a9448187565604">beats.h</a></li>
+<li>MS_PER_SEC&#160;:&#160;<a class="el" href="beats_8h.html#a98c842b52ffe344288b6e38b12417baa">beats.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_o" name="index_o"></a>- o -</h3><ul>
+<li>OUTBOX_QUEUE_MAX&#160;:&#160;<a class="el" href="group__lib__io.html#gacb075235dabec7bf871cfc5698a42526">outbox_queue.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_p" name="index_p"></a>- p -</h3><ul>
+<li>POINT_COUNT&#160;:&#160;<a class="el" href="wind__dir_8c.html#ae4c22bd55836cfbafd815744656a35d6">wind_dir.c</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_r" name="index_r"></a>- r -</h3><ul>
+<li>REQUEST_RETRY_DELAY_MS&#160;:&#160;<a class="el" href="appmessage_8c.html#aa5fb091797fee70e44b207aad9233dd7">appmessage.c</a></li>
+<li>REQUEST_RETRY_MAX&#160;:&#160;<a class="el" href="appmessage_8c.html#a74e58c793ca8409dc757bf0059fff54d">appmessage.c</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_s" name="index_s"></a>- s -</h3><ul>
+<li>SECONDS_PER_MINUTE&#160;:&#160;<a class="el" href="timeband_8c.html#ae5e089b553f791f79d02046ff63f3cdb">timeband.c</a></li>
+<li>SECONDS_PER_STEP_HOUR&#160;:&#160;<a class="el" href="step__hours_8c.html#af8de678038c3651c67cfd413b51b1d4e">step_hours.c</a></li>
+<li>SECS_PER_DAY&#160;:&#160;<a class="el" href="beats_8h.html#ae6bc10904b2b09a717f1fb81cce017de">beats.h</a></li>
+<li>SECS_PER_HOUR&#160;:&#160;<a class="el" href="beats_8h.html#a11528d10d5838afd2d0ec2f5841167cf">beats.h</a></li>
+<li>SECS_PER_MIN&#160;:&#160;<a class="el" href="beats_8h.html#a5e7d1008e5b26253223a67794b77a806">beats.h</a></li>
+<li>STEP_CATCHUP_HOURS&#160;:&#160;<a class="el" href="health__store_8c.html#ae8aeac449ddb0996fbb979993bc46de9">health_store.c</a></li>
+<li>STEP_HOURS_PER_DAY&#160;:&#160;<a class="el" href="group__lib__core.html#gab582a8ca15586973977cd7f48de42fa2">step_hours.h</a></li>
+<li>STOCK_FIRST_POLL_MS&#160;:&#160;<a class="el" href="stock__store_8c.html#add7b6eb41b69d99664bcf9d324a8019d">stock_store.c</a></li>
+<li>STOCK_MAX_SLOTS&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#aa30008256f21f16b5c000b4f358a1709">wire_caps.g.h</a></li>
+<li>STOCK_SYMBOL_LEN&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#a12ebf366686d792fba83b752e39cb3f9">wire_caps.g.h</a></li>
+<li>STORE_CADENCE_MAX&#160;:&#160;<a class="el" href="group__lib__stores.html#ga60f6d598b8ff59f299aa4ded2e48b695">store_cadence.h</a></li>
+<li>STORE_TAG_CALENDAR&#160;:&#160;<a class="el" href="group__lib__stores.html#ga71057ac435b7b29a882b011053659d86">store_persist.h</a></li>
+<li>STORE_TAG_HEALTH&#160;:&#160;<a class="el" href="group__lib__stores.html#ga31737569cb65fc760932f244727a568d">store_persist.h</a></li>
+<li>STORE_TAG_LOCATION&#160;:&#160;<a class="el" href="group__lib__stores.html#gaa19bf75ee3cb87a3a31a97238f4dcf73">store_persist.h</a></li>
+<li>STORE_TAG_STOCK&#160;:&#160;<a class="el" href="group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676">store_persist.h</a></li>
+<li>STORE_TAG_WEATHER&#160;:&#160;<a class="el" href="group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867">store_persist.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_t" name="index_t"></a>- t -</h3><ul>
+<li>TIDE_PERIOD_MIN&#160;:&#160;<a class="el" href="group__lib__core.html#gaa01e1adc5b81c1d2cc14f870a42e5f3f">tide.h</a></li>
+<li>TIMEBAND_DAY_MINUTES&#160;:&#160;<a class="el" href="group__lib__core.html#gad3c2b297779efc19aa0c02f2e8635917">timeband.h</a></li>
+</ul>
+
+
+<h3 class="doxsection"><a id="index_w" name="index_w"></a>- w -</h3><ul>
+<li>WEATHER_BOOT_RETRIES&#160;:&#160;<a class="el" href="weather__store_8c.html#a3e000c92d82e89bbcb703377923e50fa">weather_store.c</a></li>
+<li>WEATHER_BOOT_RETRY_MS&#160;:&#160;<a class="el" href="weather__store_8c.html#aff467cb3eccd97fac6e8e0eb3dfb4ba7">weather_store.c</a></li>
+<li>WEATHER_FIRST_POLL_MS&#160;:&#160;<a class="el" href="weather__store_8c.html#a095baca2ac96275e14cbde3495f43b73">weather_store.c</a></li>
+<li>WEATHER_FORECAST_COLS&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#a102929a83f0e748a60db5079d778b530">wire_caps.g.h</a></li>
+<li>WEATHER_NO_TEMP&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">wire_caps.g.h</a></li>
+<li>WEATHER_SEED_EMPTY&#160;:&#160;<a class="el" href="group__lib__stores.html#gae0d84f2727ec304e5376009e5f7dcd18">weather_store.h</a></li>
+<li>WX_FORECAST_NIGHT_BIT&#160;:&#160;<a class="el" href="wire__caps_8g_8h.html#abc4a5b3638a2e2195948cc82481cc705">wire_caps.g.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

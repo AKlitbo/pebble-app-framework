@@ -1,0 +1,270 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: c/pebble/io/outbox_queue.h File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.2.0" selected>v2.2.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('outbox__queue_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">outbox_queue.h File Reference<div class="ingroups"><a class="el" href="group__lib__io.html">Data In and Out</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The outbox's work queue, its failed set, and the slot holding whatever is in flight.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+</div>
+<p><a href="outbox__queue_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:OutboxJob" id="r_OutboxJob"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structOutboxJob.html">OutboxJob</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One job waiting to go out, or already in flight.  <a href="structOutboxJob.html#details">More...</a><br /></td></tr>
+<tr class="memitem:OutboxQueue" id="r_OutboxQueue"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structOutboxQueue.html">OutboxQueue</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Everything the outbox is holding: what is waiting, what nacked, and what is out.  <a href="structOutboxQueue.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gacb075235dabec7bf871cfc5698a42526" id="r_gacb075235dabec7bf871cfc5698a42526"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_QUEUE_MAX</b>&#160;&#160;&#160;6</td></tr>
+<tr class="memdesc:gacb075235dabec7bf871cfc5698a42526"><td class="mdescLeft">&#160;</td><td class="mdescRight">Most jobs the work queue or the failed set holds at once. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga247b62ae1a0fa87cef6e3e8b7f738f17" id="r_ga247b62ae1a0fa87cef6e3e8b7f738f17"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> { <br />
+&#160;&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49">OUTBOX_WEATHER</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c">OUTBOX_SETTINGS</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a>
+, <br />
+&#160;&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga247b62ae1a0fa87cef6e3e8b7f738f17"><td class="mdescLeft">&#160;</td><td class="mdescRight">What an outbox job sends.  <a href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga2f6b6bbbefc2729e4f7e95a5f943bdec" id="r_ga2f6b6bbbefc2729e4f7e95a5f943bdec"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga2f6b6bbbefc2729e4f7e95a5f943bdec">outbox_is_request</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
+<tr class="memdesc:ga2f6b6bbbefc2729e4f7e95a5f943bdec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a kind is a request the watch makes, rather than a reply it sends back.  <br /></td></tr>
+<tr class="memitem:ga2c94fc09107a6527a82ec145fd784a9d" id="r_ga2c94fc09107a6527a82ec145fd784a9d"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d">outbox_busy</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
+<tr class="memdesc:ga2c94fc09107a6527a82ec145fd784a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether anything is in flight, which is what says the outbox is busy.  <br /></td></tr>
+<tr class="memitem:ga6f6fa750435ac4704bb55298be9b7e27" id="r_ga6f6fa750435ac4704bb55298be9b7e27"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
+<tr class="memdesc:ga6f6fa750435ac4704bb55298be9b7e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this kind is already somewhere in the outbox.  <br /></td></tr>
+<tr class="memitem:ga219aad77cbe9215d9c3cd1aacd33a457" id="r_ga219aad77cbe9215d9c3cd1aacd33a457"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga219aad77cbe9215d9c3cd1aacd33a457">outbox_push</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind, int retries)</td></tr>
+<tr class="memdesc:ga219aad77cbe9215d9c3cd1aacd33a457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a job to the work queue unless its kind is already pending.  <br /></td></tr>
+<tr class="memitem:gaa5025f0a1f281cb9b6b3f74c2a7f7481" id="r_gaa5025f0a1f281cb9b6b3f74c2a7f7481"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#gaa5025f0a1f281cb9b6b3f74c2a7f7481">outbox_pop_front</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
+<tr class="memdesc:gaa5025f0a1f281cb9b6b3f74c2a7f7481"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drop the front job off the work queue, shifting the rest forward.  <br /></td></tr>
+<tr class="memitem:ga821df0e180a04bb345ca338f3d6829e4" id="r_ga821df0e180a04bb345ca338f3d6829e4"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga821df0e180a04bb345ca338f3d6829e4">outbox_take_head</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
+<tr class="memdesc:ga821df0e180a04bb345ca338f3d6829e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take the head of the queue as the job now in flight.  <br /></td></tr>
+<tr class="memitem:gabf4958a2b2c2b9310e9c3dde7d76e18d" id="r_gabf4958a2b2c2b9310e9c3dde7d76e18d"><td class="memItemLeft">static <a class="el" href="structOutboxJob.html">OutboxJob</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#gabf4958a2b2c2b9310e9c3dde7d76e18d">outbox_release</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
+<tr class="memdesc:gabf4958a2b2c2b9310e9c3dde7d76e18d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark whatever was in flight as settled, whichever way it went.  <br /></td></tr>
+<tr class="memitem:ga1a93146eec16ce495449829a38274d31" id="r_ga1a93146eec16ce495449829a38274d31"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga1a93146eec16ce495449829a38274d31">outbox_hold_failed</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="structOutboxJob.html">OutboxJob</a> job)</td></tr>
+<tr class="memdesc:ga1a93146eec16ce495449829a38274d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hold a nacked request for the next pass, if it still has retries and is a real request.  <br /></td></tr>
+<tr class="memitem:ga66fb285ede9868f85fbaa10fe36ebbba" id="r_ga66fb285ede9868f85fbaa10fe36ebbba"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga66fb285ede9868f85fbaa10fe36ebbba">outbox_retry_pass</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
+<tr class="memdesc:ga66fb285ede9868f85fbaa10fe36ebbba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the whole failed set back into the work queue for another pass.  <br /></td></tr>
+<tr class="memitem:ga7a65d4b95956b231936a0de61759fca9" id="r_ga7a65d4b95956b231936a0de61759fca9"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9">outbox_clear</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
+<tr class="memdesc:ga7a65d4b95956b231936a0de61759fca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forget everything waiting, for a phone that is no longer there.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The outbox's work queue, its failed set, and the slot holding whatever is in flight. </p>
+<p>One AppMessage goes out at a time, so everything the watch wants to send queues here first. A request the phone nacks is held in the failed set and moved back for a later pass, because its pkjs was usually asleep and that first send is often what wakes it. Holding it means a whole poll is not lost to one asleep-phone nack.</p>
+<p>None of that needs the SDK. The transport owns one of these, does the sending and the timers, and asks here what to send next, which keeps the deciding testable on the host. </p>
+</div></div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><a href="outbox__queue_8h.html">outbox_queue.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

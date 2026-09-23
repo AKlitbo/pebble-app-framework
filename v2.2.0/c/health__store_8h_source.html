@@ -1,0 +1,295 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: c/pebble/io/stores/health_store.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.2.0" selected>v2.2.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('health__store_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">health_store.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="health__store_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;pebble.h&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span></div>
+<div class="foldopen" id="foldopen00020" data-start="{" data-end="};">
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structHealthConfig.html">   20</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structHealthConfig.html#aab7e2af6cac33f03edaefa0395c538e9">   22</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#aab7e2af6cac33f03edaefa0395c538e9">enabled</a>;      </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14">   23</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14">live</a>;         </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structHealthConfig.html#ab51a8038aeefea6ecc2daa83c85c54d0">   24</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#ab51a8038aeefea6ecc2daa83c85c54d0">hr_history</a>;   </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structHealthConfig.html#a9cb4f23e6be6dec63f49cb4707a8421b">   25</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#a9cb4f23e6be6dec63f49cb4707a8421b">step_history</a>; </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="comment">// the heart rate, steps and distance are read for every face. they are either cached by the</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="comment">// watch or free. these three are not, so each is only read for a face that shows it, and the</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="comment">// getter for one left off keeps returning the -1 that means no reading</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structHealthConfig.html#abc0f98aaaeadd8c236d39a08d7deebcf">   29</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#abc0f98aaaeadd8c236d39a08d7deebcf">sleep</a>;        </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="structHealthConfig.html#a843879d7b5ad5103735e75d662e3781b">   30</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#a843879d7b5ad5103735e75d662e3781b">active</a>;       </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="structHealthConfig.html#af6cc7bfa1e1468a1568965065272ec3a">   31</a></span>    <span class="keywordtype">bool</span>     <a class="code hl_variable" href="structHealthConfig.html#af6cc7bfa1e1468a1568965065272ec3a">calories</a>;     </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="structHealthConfig.html#a162f07256f08bd8dada6c12f6178cce0">   32</a></span>    uint32_t <a class="code hl_variable" href="structHealthConfig.html#a162f07256f08bd8dada6c12f6178cce0">persist_key</a>;  </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>} <a class="code hl_struct" href="structHealthConfig.html">HealthConfig</a>;</div>
+</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span></div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structHealthSeed.html">   38</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structHealthSeed.html#a164c62c872f758f093f13bb1772e3cbe">   40</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#a164c62c872f758f093f13bb1772e3cbe">hr</a>;         </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="structHealthSeed.html#a192572a06658ca20b3f0f436379b0c05">   41</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#a192572a06658ca20b3f0f436379b0c05">steps</a>;      </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structHealthSeed.html#aa6696d59b0ddcf768b8fd291bbc14119">   42</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#aa6696d59b0ddcf768b8fd291bbc14119">calories</a>;   </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="structHealthSeed.html#a8a4f5427747cc9c610f9a4d762f60e82">   43</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#a8a4f5427747cc9c610f9a4d762f60e82">sleep_min</a>;  </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structHealthSeed.html#a8be3ae0a2c011bad8f9bec3c4328b687">   44</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#a8be3ae0a2c011bad8f9bec3c4328b687">active_min</a>; </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="structHealthSeed.html#aa847d55e5639320abb08555d2507c30f">   45</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#aa847d55e5639320abb08555d2507c30f">distance_m</a>; </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="structHealthSeed.html#afd4cb3c261939fd333cfbd42c93ed85a">   46</a></span>    <span class="keyword">const</span> uint8_t *<a class="code hl_variable" href="structHealthSeed.html#afd4cb3c261939fd333cfbd42c93ed85a">hr_history</a>;   </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structHealthSeed.html#a1ed293dabaee597deaed84e6448b0eb0">   47</a></span>    <span class="keyword">const</span> uint16_t *<a class="code hl_variable" href="structHealthSeed.html#a1ed293dabaee597deaed84e6448b0eb0">step_hourly</a>; </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structHealthSeed.html#ae8ed84681436e54cc8f65a3270cea4e1">   48</a></span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="structHealthSeed.html#ae8ed84681436e54cc8f65a3270cea4e1">step_hours</a>;              </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>} <a class="code hl_struct" href="structHealthSeed.html">HealthSeed</a>;</div>
+</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__stores.html#gadb98993f8a5d2ea3ac0b99effab8b393">health_store_init</a>(<a class="code hl_struct" href="structHealthConfig.html">HealthConfig</a> cfg, <span class="keyword">const</span> <a class="code hl_struct" href="structHealthSeed.html">HealthSeed</a> *seed);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__stores.html#ga3d23a155e70dad9fd2ac23f2ec39775c">health_store_subscribe</a>(<span class="keywordtype">void</span> (*cb)(<span class="keywordtype">void</span>));</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="comment">// the store takes its own turn on the face&#39;s cadence (see store_cadence.h), registered at init,</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="comment">// so nothing here needs calling once a minute by hand</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>uint8_t *<a class="code hl_function" href="group__lib__stores.html#ga2db6e554fac24c95cdb2823cdb18bef0">health_store_hr_history</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keyword">const</span> uint16_t *<a class="code hl_function" href="group__lib__stores.html#ga34ce959b4e7f9802230c7e1319b3bf28">health_store_step_hourly</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#ga7f6eb32c1ad9a2a9ffa41d13dc507204">health_store_step_hours</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#gaebe919776f17167171641aeae6310796">health_store_hr</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#ga38cd6bed400162ebab1a2284484c4445">health_store_steps</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#gabe7efc42c8679e55ecb7804fb17895ec">health_store_calories</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#gaae218db51d5633570091919ba1e07ab4">health_store_sleep_min</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#ga1712c5d7441e81d5b804d19e112bdb3c">health_store_active_min</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__stores.html#ga82d8e5fff446bf3a7e20228c8cb49df9">health_store_distance_m</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
+<div class="ttc" id="agroup__lib__stores_html_ga1712c5d7441e81d5b804d19e112bdb3c"><div class="ttname"><a href="group__lib__stores.html#ga1712c5d7441e81d5b804d19e112bdb3c">health_store_active_min</a></div><div class="ttdeci">int health_store_active_min(void)</div><div class="ttdoc">The active minutes so far today, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> health_store.c:699</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga2db6e554fac24c95cdb2823cdb18bef0"><div class="ttname"><a href="group__lib__stores.html#ga2db6e554fac24c95cdb2823cdb18bef0">health_store_hr_history</a></div><div class="ttdeci">uint8_t * health_store_hr_history(void)</div><div class="ttdoc">The last hour of heart rate readings, one per minute (a 60 slot buffer). The store fills it on each u...</div><div class="ttdef"><b>Definition</b> health_store.c:690</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga34ce959b4e7f9802230c7e1319b3bf28"><div class="ttname"><a href="group__lib__stores.html#ga34ce959b4e7f9802230c7e1319b3bf28">health_store_step_hourly</a></div><div class="ttdeci">const uint16_t * health_store_step_hourly(void)</div><div class="ttdoc">Today&#39;s steps split into per-hour buckets, one slot per hour from midnight (24 slots)....</div><div class="ttdef"><b>Definition</b> health_store.c:692</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga38cd6bed400162ebab1a2284484c4445"><div class="ttname"><a href="group__lib__stores.html#ga38cd6bed400162ebab1a2284484c4445">health_store_steps</a></div><div class="ttdeci">int health_store_steps(void)</div><div class="ttdoc">The steps taken so far today, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> health_store.c:696</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga3d23a155e70dad9fd2ac23f2ec39775c"><div class="ttname"><a href="group__lib__stores.html#ga3d23a155e70dad9fd2ac23f2ec39775c">health_store_subscribe</a></div><div class="ttdeci">void health_store_subscribe(void(*cb)(void))</div><div class="ttdoc">Hand it the function to call when the numbers change (the screen redraw).</div><div class="ttdef"><b>Definition</b> health_store.c:574</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga7f6eb32c1ad9a2a9ffa41d13dc507204"><div class="ttname"><a href="group__lib__stores.html#ga7f6eb32c1ad9a2a9ffa41d13dc507204">health_store_step_hours</a></div><div class="ttdeci">int health_store_step_hours(void)</div><div class="ttdoc">How many of the hourly step buckets hold a real value (0 to 24). Steps count 0 as a real reading (a q...</div><div class="ttdef"><b>Definition</b> health_store.c:693</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga82d8e5fff446bf3a7e20228c8cb49df9"><div class="ttname"><a href="group__lib__stores.html#ga82d8e5fff446bf3a7e20228c8cb49df9">health_store_distance_m</a></div><div class="ttdeci">int health_store_distance_m(void)</div><div class="ttdoc">Today&#39;s walked distance in meters, or 0 if we cannot read it.</div><div class="ttdef"><b>Definition</b> health_store.c:700</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gaae218db51d5633570091919ba1e07ab4"><div class="ttname"><a href="group__lib__stores.html#gaae218db51d5633570091919ba1e07ab4">health_store_sleep_min</a></div><div class="ttdeci">int health_store_sleep_min(void)</div><div class="ttdoc">The minutes of sleep, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> health_store.c:698</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gabe7efc42c8679e55ecb7804fb17895ec"><div class="ttname"><a href="group__lib__stores.html#gabe7efc42c8679e55ecb7804fb17895ec">health_store_calories</a></div><div class="ttdeci">int health_store_calories(void)</div><div class="ttdoc">The active calories so far today, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> health_store.c:697</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gadb98993f8a5d2ea3ac0b99effab8b393"><div class="ttname"><a href="group__lib__stores.html#gadb98993f8a5d2ea3ac0b99effab8b393">health_store_init</a></div><div class="ttdeci">void health_store_init(HealthConfig cfg, const HealthSeed *seed)</div><div class="ttdoc">Start the store with its rules. Pass seed = NULL for normal use.</div><div class="ttdef"><b>Definition</b> health_store.c:579</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gaebe919776f17167171641aeae6310796"><div class="ttname"><a href="group__lib__stores.html#gaebe919776f17167171641aeae6310796">health_store_hr</a></div><div class="ttdeci">int health_store_hr(void)</div><div class="ttdoc">The heart rate in beats per minute, or -1 if we have not got one yet.</div><div class="ttdef"><b>Definition</b> health_store.c:695</div></div>
+<div class="ttc" id="astructHealthConfig_html"><div class="ttname"><a href="structHealthConfig.html">HealthConfig</a></div><div class="ttdoc">The rules a face hands the store.</div><div class="ttdef"><b>Definition</b> health_store.h:21</div></div>
+<div class="ttc" id="astructHealthConfig_html_a0d2006e2992c6532c1fab3102c8fda14"><div class="ttname"><a href="structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14">HealthConfig::live</a></div><div class="ttdeci">bool live</div><div class="ttdoc">True subscribes the health service and false just keeps the fake data for screenshots.</div><div class="ttdef"><b>Definition</b> health_store.h:23</div></div>
+<div class="ttc" id="astructHealthConfig_html_a162f07256f08bd8dada6c12f6178cce0"><div class="ttname"><a href="structHealthConfig.html#a162f07256f08bd8dada6c12f6178cce0">HealthConfig::persist_key</a></div><div class="ttdeci">uint32_t persist_key</div><div class="ttdoc">Slot for the saved history so the face owns the key instead of the store.</div><div class="ttdef"><b>Definition</b> health_store.h:32</div></div>
+<div class="ttc" id="astructHealthConfig_html_a843879d7b5ad5103735e75d662e3781b"><div class="ttname"><a href="structHealthConfig.html#a843879d7b5ad5103735e75d662e3781b">HealthConfig::active</a></div><div class="ttdeci">bool active</div><div class="ttdoc">Read the active minutes total.</div><div class="ttdef"><b>Definition</b> health_store.h:30</div></div>
+<div class="ttc" id="astructHealthConfig_html_a9cb4f23e6be6dec63f49cb4707a8421b"><div class="ttname"><a href="structHealthConfig.html#a9cb4f23e6be6dec63f49cb4707a8421b">HealthConfig::step_history</a></div><div class="ttdeci">bool step_history</div><div class="ttdoc">Keep the hour by hour step buckets, for a face that graphs them.</div><div class="ttdef"><b>Definition</b> health_store.h:25</div></div>
+<div class="ttc" id="astructHealthConfig_html_aab7e2af6cac33f03edaefa0395c538e9"><div class="ttname"><a href="structHealthConfig.html#aab7e2af6cac33f03edaefa0395c538e9">HealthConfig::enabled</a></div><div class="ttdeci">bool enabled</div><div class="ttdoc">False makes the store do nothing.</div><div class="ttdef"><b>Definition</b> health_store.h:22</div></div>
+<div class="ttc" id="astructHealthConfig_html_ab51a8038aeefea6ecc2daa83c85c54d0"><div class="ttname"><a href="structHealthConfig.html#ab51a8038aeefea6ecc2daa83c85c54d0">HealthConfig::hr_history</a></div><div class="ttdeci">bool hr_history</div><div class="ttdoc">Keep the rolling minute by minute heart rate window, for a face that graphs it.</div><div class="ttdef"><b>Definition</b> health_store.h:24</div></div>
+<div class="ttc" id="astructHealthConfig_html_abc0f98aaaeadd8c236d39a08d7deebcf"><div class="ttname"><a href="structHealthConfig.html#abc0f98aaaeadd8c236d39a08d7deebcf">HealthConfig::sleep</a></div><div class="ttdeci">bool sleep</div><div class="ttdoc">Read the sleep total.</div><div class="ttdef"><b>Definition</b> health_store.h:29</div></div>
+<div class="ttc" id="astructHealthConfig_html_af6cc7bfa1e1468a1568965065272ec3a"><div class="ttname"><a href="structHealthConfig.html#af6cc7bfa1e1468a1568965065272ec3a">HealthConfig::calories</a></div><div class="ttdeci">bool calories</div><div class="ttdoc">Read the active calories total.</div><div class="ttdef"><b>Definition</b> health_store.h:31</div></div>
+<div class="ttc" id="astructHealthSeed_html"><div class="ttname"><a href="structHealthSeed.html">HealthSeed</a></div><div class="ttdoc">Optional prefill, or pinned readings when live = false.</div><div class="ttdef"><b>Definition</b> health_store.h:39</div></div>
+<div class="ttc" id="astructHealthSeed_html_a164c62c872f758f093f13bb1772e3cbe"><div class="ttname"><a href="structHealthSeed.html#a164c62c872f758f093f13bb1772e3cbe">HealthSeed::hr</a></div><div class="ttdeci">int hr</div><div class="ttdoc">Heart rate in beats per minute.</div><div class="ttdef"><b>Definition</b> health_store.h:40</div></div>
+<div class="ttc" id="astructHealthSeed_html_a192572a06658ca20b3f0f436379b0c05"><div class="ttname"><a href="structHealthSeed.html#a192572a06658ca20b3f0f436379b0c05">HealthSeed::steps</a></div><div class="ttdeci">int steps</div><div class="ttdoc">Steps so far today.</div><div class="ttdef"><b>Definition</b> health_store.h:41</div></div>
+<div class="ttc" id="astructHealthSeed_html_a1ed293dabaee597deaed84e6448b0eb0"><div class="ttname"><a href="structHealthSeed.html#a1ed293dabaee597deaed84e6448b0eb0">HealthSeed::step_hourly</a></div><div class="ttdeci">const uint16_t * step_hourly</div><div class="ttdoc">Optional 24 slot hour by hour step curve, or NULL.</div><div class="ttdef"><b>Definition</b> health_store.h:47</div></div>
+<div class="ttc" id="astructHealthSeed_html_a8a4f5427747cc9c610f9a4d762f60e82"><div class="ttname"><a href="structHealthSeed.html#a8a4f5427747cc9c610f9a4d762f60e82">HealthSeed::sleep_min</a></div><div class="ttdeci">int sleep_min</div><div class="ttdoc">Minutes of sleep.</div><div class="ttdef"><b>Definition</b> health_store.h:43</div></div>
+<div class="ttc" id="astructHealthSeed_html_a8be3ae0a2c011bad8f9bec3c4328b687"><div class="ttname"><a href="structHealthSeed.html#a8be3ae0a2c011bad8f9bec3c4328b687">HealthSeed::active_min</a></div><div class="ttdeci">int active_min</div><div class="ttdoc">Active minutes so far today.</div><div class="ttdef"><b>Definition</b> health_store.h:44</div></div>
+<div class="ttc" id="astructHealthSeed_html_aa6696d59b0ddcf768b8fd291bbc14119"><div class="ttname"><a href="structHealthSeed.html#aa6696d59b0ddcf768b8fd291bbc14119">HealthSeed::calories</a></div><div class="ttdeci">int calories</div><div class="ttdoc">Active calories so far today.</div><div class="ttdef"><b>Definition</b> health_store.h:42</div></div>
+<div class="ttc" id="astructHealthSeed_html_aa847d55e5639320abb08555d2507c30f"><div class="ttname"><a href="structHealthSeed.html#aa847d55e5639320abb08555d2507c30f">HealthSeed::distance_m</a></div><div class="ttdeci">int distance_m</div><div class="ttdoc">Walked distance in meters.</div><div class="ttdef"><b>Definition</b> health_store.h:45</div></div>
+<div class="ttc" id="astructHealthSeed_html_ae8ed84681436e54cc8f65a3270cea4e1"><div class="ttname"><a href="structHealthSeed.html#ae8ed84681436e54cc8f65a3270cea4e1">HealthSeed::step_hours</a></div><div class="ttdeci">int step_hours</div><div class="ttdoc">How many of those hourly buckets are real (0 to 24).</div><div class="ttdef"><b>Definition</b> health_store.h:48</div></div>
+<div class="ttc" id="astructHealthSeed_html_afd4cb3c261939fd333cfbd42c93ed85a"><div class="ttname"><a href="structHealthSeed.html#afd4cb3c261939fd333cfbd42c93ed85a">HealthSeed::hr_history</a></div><div class="ttdeci">const uint8_t * hr_history</div><div class="ttdoc">Optional 60 slot minute by minute heart rate curve (0 means no reading), or NULL.</div><div class="ttdef"><b>Definition</b> health_store.h:46</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="health__store_8h.html">health_store.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

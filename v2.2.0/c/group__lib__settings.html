@@ -1,0 +1,1209 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: Settings</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v2.2.0" selected>v2.2.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__settings.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Settings </div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Loads, saves, and syncs a face's settings from its field table.  
+<a href="#details">More...</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Files</h2></td></tr>
+<tr class="memitem:c_2Fpebble_2Fsystem_2Fsettings_2Fsetting_5Fvalues_2Eh" id="r_c_2Fpebble_2Fsystem_2Fsettings_2Fsetting_5Fvalues_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="setting__values_8h.html">c/pebble/system/settings/setting_values.h</a></td></tr>
+<tr class="memdesc:setting__values_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Named values for the multi-choice settings. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fsystem_2Fsettings_2Fsettings_2Ec" id="r_c_2Fpebble_2Fsystem_2Fsettings_2Fsettings_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="settings_8c.html">c/pebble/system/settings/settings.c</a></td></tr>
+<tr class="memdesc:settings_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist API implementation. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fsystem_2Fsettings_2Fsettings_2Eh" id="r_c_2Fpebble_2Fsystem_2Fsettings_2Fsettings_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="settings_8h.html">c/pebble/system/settings/settings.h</a></td></tr>
+<tr class="memdesc:settings_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist API. A per-face <span class="tt"><a class="el" href="structSettingField.html" title="Blueprint for a single setting.">SettingField</a></span> table drives versioned load and save, sanitizing, the typed reads, and the AppMessage round trip, so the shared code never names or hardcodes a single field. <br /></td></tr>
+<tr class="memitem:c_2Fpebble_2Fsystem_2Fsettings_2Fsettings_5Fcatalog_2Eh" id="r_c_2Fpebble_2Fsystem_2Fsettings_2Fsettings_5Fcatalog_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="settings__catalog_8h.html">c/pebble/system/settings/settings_catalog.h</a></td></tr>
+<tr class="memdesc:settings__catalog_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared catalog of known settings. A <span class="tt">KNOWN_*</span> macro per setting bakes in its neutral wire key, encoding, bounds, default, and side effects. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:SettingField" id="r_SettingField"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSettingField.html">SettingField</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blueprint for a single setting.  <a href="structSettingField.html#details">More...</a><br /></td></tr>
+<tr class="memitem:SettingsSchema" id="r_SettingsSchema"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSettingsSchema.html">SettingsSchema</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A face's persistence identity.  <a href="structSettingsSchema.html#details">More...</a><br /></td></tr>
+<tr class="memitem:SettingsInbound" id="r_SettingsInbound"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSettingsInbound.html">SettingsInbound</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Carries what an inbound settings message changed, so the caller can react.  <a href="structSettingsInbound.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:gaeeceac8a6d66376b0fbb3b495e245a8c" id="r_gaeeceac8a6d66376b0fbb3b495e245a8c"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gaeeceac8a6d66376b0fbb3b495e245a8c">KNOWN_TEMPERATURE_UNIT</a>(off)</td></tr>
+<tr class="memdesc:gaeeceac8a6d66376b0fbb3b495e245a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Temperature Unit (Celsius or Fahrenheit).  <br /></td></tr>
+<tr class="memitem:ga25c13546f27ddad133d5d8cbe348d84a" id="r_ga25c13546f27ddad133d5d8cbe348d84a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga25c13546f27ddad133d5d8cbe348d84a">KNOWN_DATE_FORMAT</a>(off,  dflt)</td></tr>
+<tr class="memdesc:ga25c13546f27ddad133d5d8cbe348d84a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Date Format.  <br /></td></tr>
+<tr class="memitem:ga0d7b14fdb5d548d8571799ed3b9f2325" id="r_ga0d7b14fdb5d548d8571799ed3b9f2325"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0d7b14fdb5d548d8571799ed3b9f2325">KNOWN_THEME</a>(off,  count)</td></tr>
+<tr class="memdesc:ga0d7b14fdb5d548d8571799ed3b9f2325"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Theme.  <br /></td></tr>
+<tr class="memitem:ga019f574fbd717df373aa4f6a2fa623f7" id="r_ga019f574fbd717df373aa4f6a2fa623f7"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga019f574fbd717df373aa4f6a2fa623f7">KNOWN_STEPS_MODE</a>(off,  count)</td></tr>
+<tr class="memdesc:ga019f574fbd717df373aa4f6a2fa623f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Steps Mode.  <br /></td></tr>
+<tr class="memitem:gace7412b22cb2958264322350c07c65cd" id="r_gace7412b22cb2958264322350c07c65cd"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gace7412b22cb2958264322350c07c65cd">KNOWN_DISTANCE_UNIT</a>(off,  count)</td></tr>
+<tr class="memdesc:gace7412b22cb2958264322350c07c65cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Distance Unit.  <br /></td></tr>
+<tr class="memitem:ga51c9800159631adbf77eafe13eeb3d34" id="r_ga51c9800159631adbf77eafe13eeb3d34"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga51c9800159631adbf77eafe13eeb3d34">KNOWN_TIME_FORMAT</a>(off,  count)</td></tr>
+<tr class="memdesc:ga51c9800159631adbf77eafe13eeb3d34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Time Format.  <br /></td></tr>
+<tr class="memitem:ga5f8c5ebca9a4cae4d21ee7a6b8280fb8" id="r_ga5f8c5ebca9a4cae4d21ee7a6b8280fb8"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga5f8c5ebca9a4cae4d21ee7a6b8280fb8">KNOWN_BLUETOOTH_ICON</a>(off)</td></tr>
+<tr class="memdesc:ga5f8c5ebca9a4cae4d21ee7a6b8280fb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Bluetooth Icon.  <br /></td></tr>
+<tr class="memitem:ga85914fbaf222c55ef9c16f52c16fceb0" id="r_ga85914fbaf222c55ef9c16f52c16fceb0"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga85914fbaf222c55ef9c16f52c16fceb0">KNOWN_QUIET_TIME_ICON</a>(off)</td></tr>
+<tr class="memdesc:ga85914fbaf222c55ef9c16f52c16fceb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Quiet Time Icon.  <br /></td></tr>
+<tr class="memitem:ga3b7c73968d189a076bb660a5e654471b" id="r_ga3b7c73968d189a076bb660a5e654471b"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga3b7c73968d189a076bb660a5e654471b">KNOWN_BLUETOOTH_VIBE_CONNECT</a>(off,  count)</td></tr>
+<tr class="memdesc:ga3b7c73968d189a076bb660a5e654471b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Bluetooth Vibe Connect.  <br /></td></tr>
+<tr class="memitem:ga1f3cdcddc8652b8560d494e04b4f4ae7" id="r_ga1f3cdcddc8652b8560d494e04b4f4ae7"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga1f3cdcddc8652b8560d494e04b4f4ae7">KNOWN_BLUETOOTH_VIBE_DISCONNECT</a>(off,  count)</td></tr>
+<tr class="memdesc:ga1f3cdcddc8652b8560d494e04b4f4ae7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Bluetooth Vibe Disconnect.  <br /></td></tr>
+<tr class="memitem:ga841203aee583d7a932bc02a1f4517847" id="r_ga841203aee583d7a932bc02a1f4517847"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga841203aee583d7a932bc02a1f4517847">KNOWN_HOURLY_VIBE</a>(off,  count)</td></tr>
+<tr class="memdesc:ga841203aee583d7a932bc02a1f4517847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for the Hourly Vibration (a <a class="el" href="#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> fired at the top of each hour).  <br /></td></tr>
+<tr class="memitem:ga8060d99e4e1951c1e98e0e3c49e77db3" id="r_ga8060d99e4e1951c1e98e0e3c49e77db3"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga8060d99e4e1951c1e98e0e3c49e77db3">KNOWN_BATTERY_DISPLAY</a>(off,  count)</td></tr>
+<tr class="memdesc:ga8060d99e4e1951c1e98e0e3c49e77db3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Battery Display (icon + percent / icon / percent).  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga4c71229864f5dc765a8b70c2c971fb99" id="r_ga4c71229864f5dc765a8b70c2c971fb99"><td class="memItemLeft">typedef struct SettingsSchema&#160;</td><td class="memItemRight"><a class="el" href="#ga4c71229864f5dc765a8b70c2c971fb99">SettingsSchema</a></td></tr>
+<tr class="memdesc:ga4c71229864f5dc765a8b70c2c971fb99"><td class="mdescLeft">&#160;</td><td class="mdescRight">A face's persistence identity.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:ga25de3b313f6a766c08b5af9f3cac864d" id="r_ga25de3b313f6a766c08b5af9f3cac864d"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga25de3b313f6a766c08b5af9f3cac864d">TimeFormat</a> { <br />
+&#160;&#160;<a class="el" href="#gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485">TIME_FORMAT_SYSTEM</a> = 0
+, <a class="el" href="#gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763">TIME_FORMAT_12H</a> = 1
+, <a class="el" href="#gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79">TIME_FORMAT_24H</a> = 2
+, <a class="el" href="#gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5">TIME_FORMAT_BEATS</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="#gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468">TIME_FORMAT_12H_NO_LEAD</a> = 4
+, <a class="el" href="#gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f">TIME_FORMAT_COUNT</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga25de3b313f6a766c08b5af9f3cac864d"><td class="mdescLeft">&#160;</td><td class="mdescRight">SETTING_TIME_FORMAT choices.  <a href="#ga25de3b313f6a766c08b5af9f3cac864d">More...</a><br /></td></tr>
+<tr class="memitem:ga6e6066815d52058ba7571050020ca960" id="r_ga6e6066815d52058ba7571050020ca960"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga6e6066815d52058ba7571050020ca960">StepsMode</a> { <a class="el" href="#gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa">STEPS_MODE_STEPS</a> = 0
+, <a class="el" href="#gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe">STEPS_MODE_MILES</a> = 1
+, <a class="el" href="#gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf">STEPS_MODE_KM</a> = 2
+, <a class="el" href="#gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928">STEPS_MODE_COUNT</a>
+ }</td></tr>
+<tr class="memdesc:ga6e6066815d52058ba7571050020ca960"><td class="mdescLeft">&#160;</td><td class="mdescRight">SETTING_STEPS_MODE choices.  <a href="#ga6e6066815d52058ba7571050020ca960">More...</a><br /></td></tr>
+<tr class="memitem:ga4c67a7b952f3804e2bd056cf95c4161a" id="r_ga4c67a7b952f3804e2bd056cf95c4161a"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga4c67a7b952f3804e2bd056cf95c4161a">DistanceUnit</a> { <a class="el" href="#gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f">DISTANCE_UNIT_KM</a> = 0
+, <a class="el" href="#gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3">DISTANCE_UNIT_MILES</a> = 1
+, <a class="el" href="#gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9">DISTANCE_UNIT_COUNT</a>
+ }</td></tr>
+<tr class="memdesc:ga4c67a7b952f3804e2bd056cf95c4161a"><td class="mdescLeft">&#160;</td><td class="mdescRight">SETTING_DISTANCE_UNIT choices. The standalone Distance panel picks its own unit separate from the Steps panel's STEPS_MODE.  <a href="#ga4c67a7b952f3804e2bd056cf95c4161a">More...</a><br /></td></tr>
+<tr class="memitem:ga7b8aec224cacf74446d899e5eaab0819" id="r_ga7b8aec224cacf74446d899e5eaab0819"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga7b8aec224cacf74446d899e5eaab0819">VibeChoice</a> { <br />
+&#160;&#160;<a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a">VIBE_NONE</a> = 0
+, <a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052">VIBE_SHORT</a> = 1
+, <a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79">VIBE_LONG</a> = 2
+, <a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26">VIBE_DOUBLE</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="#gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856">VIBE_COUNT</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga7b8aec224cacf74446d899e5eaab0819"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bluetooth connect/disconnect vibe pattern choices.  <a href="#ga7b8aec224cacf74446d899e5eaab0819">More...</a><br /></td></tr>
+<tr class="memitem:gaaec2354b2ba9c2f927d81fc5daf6d24d" id="r_gaaec2354b2ba9c2f927d81fc5daf6d24d"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gaaec2354b2ba9c2f927d81fc5daf6d24d">BatteryDisplay</a> { <a class="el" href="#ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2">BATTERY_DISPLAY_BOTH</a> = 0
+, <a class="el" href="#ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357">BATTERY_DISPLAY_ICON</a> = 1
+, <a class="el" href="#ggaaec2354b2ba9c2f927d81fc5daf6d24dadb70a1bb92d4ea05d4d1ddf4b3f230d7">BATTERY_DISPLAY_PERCENT</a> = 2
+, <a class="el" href="#ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0">BATTERY_DISPLAY_COUNT</a>
+ }</td></tr>
+<tr class="memdesc:gaaec2354b2ba9c2f927d81fc5daf6d24d"><td class="mdescLeft">&#160;</td><td class="mdescRight">SETTING_BATTERY_DISPLAY choices: what the battery readout shows.  <a href="#gaaec2354b2ba9c2f927d81fc5daf6d24d">More...</a><br /></td></tr>
+<tr class="memitem:ga5b6861430c47031f602e2af972953f53" id="r_ga5b6861430c47031f602e2af972953f53"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> { <br />
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188">SETTING_TEMPERATURE_UNIT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">SETTING_DATE_FORMAT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2">SETTING_THEME</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4">SETTING_STEPS_MODE</a>
+, <br />
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">SETTING_DISTANCE_UNIT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf">SETTING_TIME_FORMAT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">SETTING_BLUETOOTH_ICON</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd">SETTING_QUIET_TIME_ICON</a>
+, <br />
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548">SETTING_BLUETOOTH_VIBE_CONNECT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0">SETTING_BLUETOOTH_VIBE_DISCONNECT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895">SETTING_HOURLY_VIBE</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a>
+, <br />
+&#160;&#160;<a class="el" href="#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a>
+, <a class="el" href="#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">SETTING_COUNT</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:ga5b6861430c47031f602e2af972953f53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identity of a known (shared) setting, used for typed reads and indexing.  <a href="#ga5b6861430c47031f602e2af972953f53">More...</a><br /></td></tr>
+<tr class="memitem:ga8dfa1a122b59a38c38cc2824be723338" id="r_ga8dfa1a122b59a38c38cc2824be723338"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga8dfa1a122b59a38c38cc2824be723338">SettingType</a> { <a class="el" href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a>
+, <a class="el" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>
+, <a class="el" href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>
+, <a class="el" href="#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3">SETTING_COLOR</a>
+ }</td></tr>
+<tr class="memdesc:ga8dfa1a122b59a38c38cc2824be723338"><td class="mdescLeft">&#160;</td><td class="mdescRight">How a setting encodes on the wire and how the sanitize pass clamps it.  <a href="#ga8dfa1a122b59a38c38cc2824be723338">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gabf78fb93dcb30f9c8f17cc2eaa9a934e" id="r_gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings_init</a> (const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *schema)</td></tr>
+<tr class="memdesc:gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a face's settings from a trusted blob, applying defaults first.  <br /></td></tr>
+<tr class="memitem:ga40b5dc5d02dfa2e8a630782dc5be7263" id="r_ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga40b5dc5d02dfa2e8a630782dc5be7263">settings_was_fresh</a> (void)</td></tr>
+<tr class="memdesc:ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults.  <br /></td></tr>
+<tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft"><a id="gab9d20e3758e874e18f045827a5cd29b3" name="gab9d20e3758e874e18f045827a5cd29b3"></a>
+void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
+<tr class="memdesc:gab9d20e3758e874e18f045827a5cd29b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persist the active face's structs under their keys (the whole chain). <br /></td></tr>
+<tr class="memitem:ga3751b197b3c6a12637ebdf7ebc0ea997" id="r_ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#ga3751b197b3c6a12637ebdf7ebc0ea997">settings_u8</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
+<tr class="memdesc:ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a known uint8/bool setting by id.  <br /></td></tr>
+<tr class="memitem:gab048a393e0f36aa1df969db0a34db046" id="r_gab048a393e0f36aa1df969db0a34db046"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#gab048a393e0f36aa1df969db0a34db046">settings_str</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
+<tr class="memdesc:gab048a393e0f36aa1df969db0a34db046"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a known string setting by id.  <br /></td></tr>
+<tr class="memitem:gaca6beaa8ac8e3de5499b406ebab187af" id="r_gaca6beaa8ac8e3de5499b406ebab187af"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaca6beaa8ac8e3de5499b406ebab187af">settings_set_u8</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id, uint8_t value)</td></tr>
+<tr class="memdesc:gaca6beaa8ac8e3de5499b406ebab187af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a known uint8 or enum setting by id. In memory only, does not persist.  <br /></td></tr>
+<tr class="memitem:ga7f6e82a36168e1d570748a8c18d0a30b" id="r_ga7f6e82a36168e1d570748a8c18d0a30b"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#ga7f6e82a36168e1d570748a8c18d0a30b">settings_enum_count</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
+<tr class="memdesc:ga7f6e82a36168e1d570748a8c18d0a30b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many values an enum setting allows (its sanitize ceiling).  <br /></td></tr>
+<tr class="memitem:gaa8498d8f013ff55cd4bf1308ddc8f12b" id="r_gaa8498d8f013ff55cd4bf1308ddc8f12b"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#gaa8498d8f013ff55cd4bf1308ddc8f12b">settings_serialized_size</a> (void)</td></tr>
+<tr class="memdesc:gaa8498d8f013ff55cd4bf1308ddc8f12b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many outbox bytes every field of the active face takes once written.  <br /></td></tr>
+<tr class="memitem:ga8a25e0c1aea6e4cb033cefa62a590458" id="r_ga8a25e0c1aea6e4cb033cefa62a590458"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga8a25e0c1aea6e4cb033cefa62a590458">settings_serialize</a> (DictionaryIterator *iter)</td></tr>
+<tr class="memdesc:ga8a25e0c1aea6e4cb033cefa62a590458"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write every field of the active face into an outbox iterator.  <br /></td></tr>
+<tr class="memitem:ga226c66180fb376a5888b279eca034417" id="r_ga226c66180fb376a5888b279eca034417"><td class="memItemLeft"><a class="el" href="structSettingsInbound.html">SettingsInbound</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga226c66180fb376a5888b279eca034417">settings_apply_inbox</a> (DictionaryIterator *iter)</td></tr>
+<tr class="memdesc:ga226c66180fb376a5888b279eca034417"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply any settings present in an inbox message to the active face.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Loads, saves, and syncs a face's settings from its field table. </p>
+<p>A face hands it a field table, and it handles persist and the phone sync without naming any single setting itself.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ga8060d99e4e1951c1e98e0e3c49e77db3" name="ga8060d99e4e1951c1e98e0e3c49e77db3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8060d99e4e1951c1e98e0e3c49e77db3">&#9670;&#160;</a></span>KNOWN_BATTERY_DISPLAY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_BATTERY_DISPLAY</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a>, .message_key = &amp;MESSAGE_KEY_BATTERY_DISPLAY, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a></div><div class="ttdeci">@ SETTING_BATTERY_DISPLAY</div><div class="ttdoc">What the battery readout shows.</div><div class="ttdef"><b>Definition</b> settings.h:36</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a></div><div class="ttdeci">@ SETTING_ENUM_U8</div><div class="ttdoc">Sent as text holding the number, since Clay sends selects as strings.</div><div class="ttdef"><b>Definition</b> settings.h:47</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Battery Display (icon + percent / icon / percent). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga5f8c5ebca9a4cae4d21ee7a6b8280fb8" name="ga5f8c5ebca9a4cae4d21ee7a6b8280fb8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5f8c5ebca9a4cae4d21ee7a6b8280fb8">&#9670;&#160;</a></span>KNOWN_BLUETOOTH_ICON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_BLUETOOTH_ICON</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">SETTING_BLUETOOTH_ICON</a>, .message_key = &amp;MESSAGE_KEY_CONNECTION_BLUETOOTH_ICON, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a>, .offset = (off), .default_num = 1 }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315">SETTING_BLUETOOTH_ICON</a></div><div class="ttdeci">@ SETTING_BLUETOOTH_ICON</div><div class="ttdoc">Whether the bluetooth icon shows.</div><div class="ttdef"><b>Definition</b> settings.h:31</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a></div><div class="ttdeci">@ SETTING_BOOL</div><div class="ttdoc">Sent as a byte, 0 or 1. default_num holds the default.</div><div class="ttdef"><b>Definition</b> settings.h:46</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Bluetooth Icon. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3b7c73968d189a076bb660a5e654471b" name="ga3b7c73968d189a076bb660a5e654471b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b7c73968d189a076bb660a5e654471b">&#9670;&#160;</a></span>KNOWN_BLUETOOTH_VIBE_CONNECT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_BLUETOOTH_VIBE_CONNECT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548">SETTING_BLUETOOTH_VIBE_CONNECT</a>, .message_key = &amp;MESSAGE_KEY_CONNECTION_VIBE_CONNECT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548">SETTING_BLUETOOTH_VIBE_CONNECT</a></div><div class="ttdeci">@ SETTING_BLUETOOTH_VIBE_CONNECT</div><div class="ttdoc">Vibe pattern to fire when the phone connects.</div><div class="ttdef"><b>Definition</b> settings.h:33</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Bluetooth Vibe Connect. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga1f3cdcddc8652b8560d494e04b4f4ae7" name="ga1f3cdcddc8652b8560d494e04b4f4ae7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1f3cdcddc8652b8560d494e04b4f4ae7">&#9670;&#160;</a></span>KNOWN_BLUETOOTH_VIBE_DISCONNECT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_BLUETOOTH_VIBE_DISCONNECT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0">SETTING_BLUETOOTH_VIBE_DISCONNECT</a>, .message_key = &amp;MESSAGE_KEY_CONNECTION_VIBE_DISCONNECT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0">SETTING_BLUETOOTH_VIBE_DISCONNECT</a></div><div class="ttdeci">@ SETTING_BLUETOOTH_VIBE_DISCONNECT</div><div class="ttdoc">Vibe pattern to fire when the phone drops.</div><div class="ttdef"><b>Definition</b> settings.h:34</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Bluetooth Vibe Disconnect. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga25c13546f27ddad133d5d8cbe348d84a" name="ga25c13546f27ddad133d5d8cbe348d84a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga25c13546f27ddad133d5d8cbe348d84a">&#9670;&#160;</a></span>KNOWN_DATE_FORMAT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_DATE_FORMAT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>dflt</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">SETTING_DATE_FORMAT</a>, .message_key = &amp;MESSAGE_KEY_CLOCK_DATE_FORMAT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a>, .offset = (off), .size = 16, .default_str = (dflt), \</div>
+<div class="line">  .affects_layout = <span class="keyword">true</span> }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75">SETTING_DATE_FORMAT</a></div><div class="ttdeci">@ SETTING_DATE_FORMAT</div><div class="ttdoc">The date line&#39;s format string.</div><div class="ttdef"><b>Definition</b> settings.h:26</div></div>
+<div class="ttc" id="agroup__lib__settings_html_gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345"><div class="ttname"><a href="#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345">SETTING_CSTRING</a></div><div class="ttdeci">@ SETTING_CSTRING</div><div class="ttdoc">Sent as text, copied into a fixed buffer.</div><div class="ttdef"><b>Definition</b> settings.h:48</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Date Format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">dflt</td><td>The default format string. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gace7412b22cb2958264322350c07c65cd" name="gace7412b22cb2958264322350c07c65cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gace7412b22cb2958264322350c07c65cd">&#9670;&#160;</a></span>KNOWN_DISTANCE_UNIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_DISTANCE_UNIT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">SETTING_DISTANCE_UNIT</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_DISTANCE_UNIT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19">SETTING_DISTANCE_UNIT</a></div><div class="ttdeci">@ SETTING_DISTANCE_UNIT</div><div class="ttdoc">Km or miles on the standalone Distance panel.</div><div class="ttdef"><b>Definition</b> settings.h:29</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Distance Unit. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga841203aee583d7a932bc02a1f4517847" name="ga841203aee583d7a932bc02a1f4517847"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga841203aee583d7a932bc02a1f4517847">&#9670;&#160;</a></span>KNOWN_HOURLY_VIBE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_HOURLY_VIBE</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895">SETTING_HOURLY_VIBE</a>, .message_key = &amp;MESSAGE_KEY_CLOCK_HOURLY_VIBE, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895">SETTING_HOURLY_VIBE</a></div><div class="ttdeci">@ SETTING_HOURLY_VIBE</div><div class="ttdoc">Vibe pattern to fire on the hour.</div><div class="ttdef"><b>Definition</b> settings.h:35</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Hourly Vibration (a <a class="el" href="#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> fired at the top of each hour). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga85914fbaf222c55ef9c16f52c16fceb0" name="ga85914fbaf222c55ef9c16f52c16fceb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga85914fbaf222c55ef9c16f52c16fceb0">&#9670;&#160;</a></span>KNOWN_QUIET_TIME_ICON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_QUIET_TIME_ICON</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd">SETTING_QUIET_TIME_ICON</a>, .message_key = &amp;MESSAGE_KEY_APPEARANCE_QUIET_TIME_ICON, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be">SETTING_BOOL</a>, .offset = (off), .default_num = 0 }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd">SETTING_QUIET_TIME_ICON</a></div><div class="ttdeci">@ SETTING_QUIET_TIME_ICON</div><div class="ttdoc">Whether the Quiet Time mark shows.</div><div class="ttdef"><b>Definition</b> settings.h:32</div></div>
+</div><!-- fragment -->
+<p>Setting definition for the Quiet Time Icon. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga019f574fbd717df373aa4f6a2fa623f7" name="ga019f574fbd717df373aa4f6a2fa623f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga019f574fbd717df373aa4f6a2fa623f7">&#9670;&#160;</a></span>KNOWN_STEPS_MODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_STEPS_MODE</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4">SETTING_STEPS_MODE</a>, .message_key = &amp;MESSAGE_KEY_HEALTH_STEPS_MODE, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4">SETTING_STEPS_MODE</a></div><div class="ttdeci">@ SETTING_STEPS_MODE</div><div class="ttdoc">Steps, miles, or km on the steps readout.</div><div class="ttdef"><b>Definition</b> settings.h:28</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Steps Mode. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaeeceac8a6d66376b0fbb3b495e245a8c" name="gaeeceac8a6d66376b0fbb3b495e245a8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaeeceac8a6d66376b0fbb3b495e245a8c">&#9670;&#160;</a></span>KNOWN_TEMPERATURE_UNIT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_TEMPERATURE_UNIT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188">SETTING_TEMPERATURE_UNIT</a>, .message_key = &amp;MESSAGE_KEY_WEATHER_TEMPERATURE_UNIT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = 2, .default_num = 0, \</div>
+<div class="line">  .affects_weather = <span class="keyword">true</span> }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188">SETTING_TEMPERATURE_UNIT</a></div><div class="ttdeci">@ SETTING_TEMPERATURE_UNIT</div><div class="ttdoc">Celsius or Fahrenheit.</div><div class="ttdef"><b>Definition</b> settings.h:25</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Temperature Unit (Celsius or Fahrenheit). </p>
+<p>Every face wires this the same way, so it takes no count: there are two units and there is never going to be a third. Changing it asks for fresh weather rather than converting what is already there, because the phone is what does the conversion.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga0d7b14fdb5d548d8571799ed3b9f2325" name="ga0d7b14fdb5d548d8571799ed3b9f2325"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0d7b14fdb5d548d8571799ed3b9f2325">&#9670;&#160;</a></span>KNOWN_THEME</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_THEME</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2">SETTING_THEME</a>, .message_key = &amp;MESSAGE_KEY_APPEARANCE_THEME, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2">SETTING_THEME</a></div><div class="ttdeci">@ SETTING_THEME</div><div class="ttdoc">Which theme is active.</div><div class="ttdef"><b>Definition</b> settings.h:27</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Theme. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga51c9800159631adbf77eafe13eeb3d34" name="ga51c9800159631adbf77eafe13eeb3d34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga51c9800159631adbf77eafe13eeb3d34">&#9670;&#160;</a></span>KNOWN_TIME_FORMAT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_TIME_FORMAT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf">SETTING_TIME_FORMAT</a>, .message_key = &amp;MESSAGE_KEY_CLOCK_TIME_FORMAT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count), \</div>
+<div class="line">  .affects_layout = <span class="keyword">true</span> }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf">SETTING_TIME_FORMAT</a></div><div class="ttdeci">@ SETTING_TIME_FORMAT</div><div class="ttdoc">Which TimeFormat the clock uses.</div><div class="ttdef"><b>Definition</b> settings.h:30</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Time Format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>The number of enum values. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="ga4c71229864f5dc765a8b70c2c971fb99" name="ga4c71229864f5dc765a8b70c2c971fb99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4c71229864f5dc765a8b70c2c971fb99">&#9670;&#160;</a></span>SettingsSchema</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct SettingsSchema SettingsSchema</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A face's persistence identity. </p>
+<p>Its storage key, current schema version, frozen v1 blob size, the face struct to load into (its first byte must be the uint8_t version), that struct's size, the field table that drives defaults/sanitize/serialisation, and an optional migration hook to rescue pre-versioned data.</p>
+<p>A face can persist more than one struct by chaining schemas through companion: each schema points to the next and the last one is NULL. settings_init walks the chain so load, save, serialise, and inbox decode all cover every schema. Each link owns its own key, version, and blob, so a domain (e.g. weather or a colour table) can sit in its own key instead of bloating the main one. The typed reads (settings_u8/str) index the whole chain and remember each field's owning schema, so a shared field (id &lt; SETTING_COUNT) can live in any link. </p>
+
+</div>
+</div>
+<a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
+<a id="gaaec2354b2ba9c2f927d81fc5daf6d24d" name="gaaec2354b2ba9c2f927d81fc5daf6d24d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaaec2354b2ba9c2f927d81fc5daf6d24d">&#9670;&#160;</a></span>BatteryDisplay</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#gaaec2354b2ba9c2f927d81fc5daf6d24d">BatteryDisplay</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SETTING_BATTERY_DISPLAY choices: what the battery readout shows. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2" name="ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2"></a>BATTERY_DISPLAY_BOTH&#160;</td><td class="fielddoc"><p>Icon and percent. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357" name="ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357"></a>BATTERY_DISPLAY_ICON&#160;</td><td class="fielddoc"><p>Icon only. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaaec2354b2ba9c2f927d81fc5daf6d24dadb70a1bb92d4ea05d4d1ddf4b3f230d7" name="ggaaec2354b2ba9c2f927d81fc5daf6d24dadb70a1bb92d4ea05d4d1ddf4b3f230d7"></a>BATTERY_DISPLAY_PERCENT&#160;</td><td class="fielddoc"><p>Percent only. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0" name="ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0"></a>BATTERY_DISPLAY_COUNT&#160;</td><td class="fielddoc"><p>How many choices this setting has. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga4c67a7b952f3804e2bd056cf95c4161a" name="ga4c67a7b952f3804e2bd056cf95c4161a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4c67a7b952f3804e2bd056cf95c4161a">&#9670;&#160;</a></span>DistanceUnit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga4c67a7b952f3804e2bd056cf95c4161a">DistanceUnit</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SETTING_DISTANCE_UNIT choices. The standalone Distance panel picks its own unit separate from the Steps panel's STEPS_MODE. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f" name="gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f"></a>DISTANCE_UNIT_KM&#160;</td><td class="fielddoc"><p>Kilometres. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3" name="gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3"></a>DISTANCE_UNIT_MILES&#160;</td><td class="fielddoc"><p>Miles. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9" name="gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9"></a>DISTANCE_UNIT_COUNT&#160;</td><td class="fielddoc"><p>How many choices this setting has. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga5b6861430c47031f602e2af972953f53" name="ga5b6861430c47031f602e2af972953f53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5b6861430c47031f602e2af972953f53">&#9670;&#160;</a></span>SettingId</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Identity of a known (shared) setting, used for typed reads and indexing. </p>
+<p>Face-only settings sit in the same field table but carry an id of SETTING_COUNT or greater, so they are serialised yet never indexed for a shared read. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188" name="gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188"></a>SETTING_TEMPERATURE_UNIT&#160;</td><td class="fielddoc"><p>Celsius or Fahrenheit. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75" name="gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75"></a>SETTING_DATE_FORMAT&#160;</td><td class="fielddoc"><p>The date line's format string. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2" name="gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2"></a>SETTING_THEME&#160;</td><td class="fielddoc"><p>Which theme is active. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4" name="gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4"></a>SETTING_STEPS_MODE&#160;</td><td class="fielddoc"><p>Steps, miles, or km on the steps readout. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19" name="gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19"></a>SETTING_DISTANCE_UNIT&#160;</td><td class="fielddoc"><p>Km or miles on the standalone Distance panel. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf" name="gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf"></a>SETTING_TIME_FORMAT&#160;</td><td class="fielddoc"><p>Which <a class="el" href="#ga25de3b313f6a766c08b5af9f3cac864d" title="SETTING_TIME_FORMAT choices.">TimeFormat</a> the clock uses. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315" name="gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315"></a>SETTING_BLUETOOTH_ICON&#160;</td><td class="fielddoc"><p>Whether the bluetooth icon shows. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd" name="gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd"></a>SETTING_QUIET_TIME_ICON&#160;</td><td class="fielddoc"><p>Whether the Quiet Time mark shows. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548" name="gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548"></a>SETTING_BLUETOOTH_VIBE_CONNECT&#160;</td><td class="fielddoc"><p>Vibe pattern to fire when the phone connects. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0" name="gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0"></a>SETTING_BLUETOOTH_VIBE_DISCONNECT&#160;</td><td class="fielddoc"><p>Vibe pattern to fire when the phone drops. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895" name="gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895"></a>SETTING_HOURLY_VIBE&#160;</td><td class="fielddoc"><p>Vibe pattern to fire on the hour. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276" name="gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276"></a>SETTING_BATTERY_DISPLAY&#160;</td><td class="fielddoc"><p>What the battery readout shows. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9" name="gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9"></a>SETTING_HEADER_FONT&#160;</td><td class="fielddoc"><p>Which font the panel header labels use, as an index into the face's header font table. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33" name="gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33"></a>SETTING_COUNT&#160;</td><td class="fielddoc"><p>How many known settings there are. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga8dfa1a122b59a38c38cc2824be723338" name="ga8dfa1a122b59a38c38cc2824be723338"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8dfa1a122b59a38c38cc2824be723338">&#9670;&#160;</a></span>SettingType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga8dfa1a122b59a38c38cc2824be723338">SettingType</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How a setting encodes on the wire and how the sanitize pass clamps it. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be" name="gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be"></a>SETTING_BOOL&#160;</td><td class="fielddoc"><p>Sent as a byte, 0 or 1. <span class="tt">default_num</span> holds the default. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066" name="gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066"></a>SETTING_ENUM_U8&#160;</td><td class="fielddoc"><p>Sent as text holding the number, since Clay sends selects as strings. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345" name="gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345"></a>SETTING_CSTRING&#160;</td><td class="fielddoc"><p>Sent as text, copied into a fixed buffer. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3" name="gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3"></a>SETTING_COLOR&#160;</td><td class="fielddoc"><p>Sent as a 0xRRGGBB number, stored as one opaque GColor byte. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga6e6066815d52058ba7571050020ca960" name="ga6e6066815d52058ba7571050020ca960"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6e6066815d52058ba7571050020ca960">&#9670;&#160;</a></span>StepsMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga6e6066815d52058ba7571050020ca960">StepsMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SETTING_STEPS_MODE choices. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa" name="gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa"></a>STEPS_MODE_STEPS&#160;</td><td class="fielddoc"><p>Shows the raw step count. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe" name="gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe"></a>STEPS_MODE_MILES&#160;</td><td class="fielddoc"><p>Shows the distance walked, in miles. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf" name="gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf"></a>STEPS_MODE_KM&#160;</td><td class="fielddoc"><p>Shows the distance walked, in kilometres. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928" name="gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928"></a>STEPS_MODE_COUNT&#160;</td><td class="fielddoc"><p>How many choices this setting has. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga25de3b313f6a766c08b5af9f3cac864d" name="ga25de3b313f6a766c08b5af9f3cac864d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga25de3b313f6a766c08b5af9f3cac864d">&#9670;&#160;</a></span>TimeFormat</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga25de3b313f6a766c08b5af9f3cac864d">TimeFormat</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SETTING_TIME_FORMAT choices. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485" name="gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485"></a>TIME_FORMAT_SYSTEM&#160;</td><td class="fielddoc"><p>Follows the watch's own 12 or 24 hour setting. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763" name="gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763"></a>TIME_FORMAT_12H&#160;</td><td class="fielddoc"><p>12 hour with a leading zero like 06:30 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79" name="gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79"></a>TIME_FORMAT_24H&#160;</td><td class="fielddoc"><p>24 hour clock </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5" name="gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5"></a>TIME_FORMAT_BEATS&#160;</td><td class="fielddoc"><p>Kept for the wire format. Not offered in the config. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468" name="gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468"></a>TIME_FORMAT_12H_NO_LEAD&#160;</td><td class="fielddoc"><p>12 hour without a leading zero like 6:30 </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f" name="gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f"></a>TIME_FORMAT_COUNT&#160;</td><td class="fielddoc"><p>How many choices this setting has. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="ga7b8aec224cacf74446d899e5eaab0819" name="ga7b8aec224cacf74446d899e5eaab0819"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7b8aec224cacf74446d899e5eaab0819">&#9670;&#160;</a></span>VibeChoice</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#ga7b8aec224cacf74446d899e5eaab0819">VibeChoice</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bluetooth connect/disconnect vibe pattern choices. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a" name="gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a"></a>VIBE_NONE&#160;</td><td class="fielddoc"><p>No vibration. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052" name="gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052"></a>VIBE_SHORT&#160;</td><td class="fielddoc"><p>A single short pulse. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79" name="gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79"></a>VIBE_LONG&#160;</td><td class="fielddoc"><p>A single long pulse. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26" name="gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26"></a>VIBE_DOUBLE&#160;</td><td class="fielddoc"><p>Two short pulses. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856" name="gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856"></a>VIBE_COUNT&#160;</td><td class="fielddoc"><p>How many choices this setting has. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga226c66180fb376a5888b279eca034417" name="ga226c66180fb376a5888b279eca034417"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga226c66180fb376a5888b279eca034417">&#9670;&#160;</a></span>settings_apply_inbox()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structSettingsInbound.html">SettingsInbound</a> settings_apply_inbox </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply any settings present in an inbox message to the active face. </p>
+<p>Decodes only. The caller persists and reacts based on the returned flags.</p>
+<p>A field already holding what the message carries is left alone and flags nothing. The config page sends the whole page on every save, so the flags say what moved rather than what turned up.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iter</td><td>The dictionary iterator to decode from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Which categories of setting changed. </dd></dl>
+
+</div>
+</div>
+<a id="ga7f6e82a36168e1d570748a8c18d0a30b" name="ga7f6e82a36168e1d570748a8c18d0a30b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7f6e82a36168e1d570748a8c18d0a30b">&#9670;&#160;</a></span>settings_enum_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t settings_enum_count </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How many values an enum setting allows (its sanitize ceiling). </p>
+<p>Lets a walk step through every option of an enum (e.g. every theme) without hand-counting.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The known enum setting. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value count, or 0 if the active face didn't subscribe to it. </dd></dl>
+
+</div>
+</div>
+<a id="gabf78fb93dcb30f9c8f17cc2eaa9a934e" name="gabf78fb93dcb30f9c8f17cc2eaa9a934e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e">&#9670;&#160;</a></span>settings_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void settings_init </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *</td>          <td class="paramname"><span class="paramname"><em>schema</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Load a face's settings from a trusted blob, applying defaults first. </p>
+<p>Walks the companion chain so every schema in it is loaded.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">schema</td><td>The head schema defining the face's settings. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga8a25e0c1aea6e4cb033cefa62a590458" name="ga8a25e0c1aea6e4cb033cefa62a590458"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8a25e0c1aea6e4cb033cefa62a590458">&#9670;&#160;</a></span>settings_serialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool settings_serialize </td>
+          <td>(</td>
+          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write every field of the active face into an outbox iterator. </p>
+<p>Stops at the first field that does not fit, so check settings_serialized_size first when the snapshot has to arrive whole.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">iter</td><td>The dictionary iterator to encode into. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when every field was written, false when the outbox ran out of room partway. </dd></dl>
+
+</div>
+</div>
+<a id="gaa8498d8f013ff55cd4bf1308ddc8f12b" name="gaa8498d8f013ff55cd4bf1308ddc8f12b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa8498d8f013ff55cd4bf1308ddc8f12b">&#9670;&#160;</a></span>settings_serialized_size()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t settings_serialized_size </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>How many outbox bytes every field of the active face takes once written. </p>
+<p>Counts each field's tuple header and value the same way settings_serialize writes them, so a caller can tell before it starts a message whether the whole snapshot fits.</p>
+<dl class="section return"><dt>Returns</dt><dd>The bytes the fields need, not counting the dictionary's own one byte header. </dd></dl>
+
+</div>
+</div>
+<a id="gaca6beaa8ac8e3de5499b406ebab187af" name="gaca6beaa8ac8e3de5499b406ebab187af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaca6beaa8ac8e3de5499b406ebab187af">&#9670;&#160;</a></span>settings_set_u8()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void settings_set_u8 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write a known uint8 or enum setting by id. In memory only, does not persist. </p>
+<p>The write-side mirror of <span class="tt"><a class="el" href="#ga3751b197b3c6a12637ebdf7ebc0ea997" title="Read a known uint8/bool setting by id.">settings_u8</a></span>. Does nothing if the active face isn't subscribed to the id. Used by the dev theme walk to force a theme without touching persistence.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The known setting to write. </td></tr>
+    <tr><td class="paramname">value</td><td>The value to store. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gab048a393e0f36aa1df969db0a34db046" name="gab048a393e0f36aa1df969db0a34db046"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab048a393e0f36aa1df969db0a34db046">&#9670;&#160;</a></span>settings_str()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * settings_str </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read a known string setting by id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The known setting to read. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The stored string, or "" if the active face did not subscribe to it. </dd></dl>
+
+</div>
+</div>
+<a id="ga3751b197b3c6a12637ebdf7ebc0ea997" name="ga3751b197b3c6a12637ebdf7ebc0ea997"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3751b197b3c6a12637ebdf7ebc0ea997">&#9670;&#160;</a></span>settings_u8()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t settings_u8 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a></td>          <td class="paramname"><span class="paramname"><em>id</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read a known uint8/bool setting by id. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The known setting to read. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The stored value, or 0 if the active face did not subscribe to it. </dd></dl>
+
+</div>
+</div>
+<a id="ga40b5dc5d02dfa2e8a630782dc5be7263" name="ga40b5dc5d02dfa2e8a630782dc5be7263"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga40b5dc5d02dfa2e8a630782dc5be7263">&#9670;&#160;</a></span>settings_was_fresh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool settings_was_fresh </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults. </p>
+<dl class="section return"><dt>Returns</dt><dd>true when the primary key had no blob at <span class="tt"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from a trusted blob, applying defaults first.">settings_init</a></span>. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
