@@ -58,8 +58,8 @@
         <div class="head-side">
           <div class="build">
             <b>v2.1.0</b><br />
-            main @ 86a2ac6<br />
-            built 2026-09-22
+            main @ 9146090<br />
+            built 2026-09-23
           </div>
         </div>
       </header>
@@ -102,7 +102,7 @@
             <div class="card-top"><span class="lang">TS</span><span class="kind">Vitest v8</span></div>
             <h2>TypeScript Specs</h2>
             <p>Which lines of the phone runtime and the build tools the Vitest suite reaches.</p>
-            <div class="pixels" title="80.8% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">80.8% of lines</span></div>
+            <div class="pixels" title="82.4% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">82.4% of lines</span></div>
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>
@@ -124,7 +124,7 @@
 <p><strong>Engine Code</strong></p>
 <ul>
 <li><strong><code>c/</code></strong>: the device engine. <code>c/core/</code> is pure and host-testable. <code>c/pebble/</code> needs the SDK. <code>c/spec/</code> holds the host test harness.</li>
-<li><strong><code>ts/</code></strong>: the PebbleKit JS runtime (weather, stocks, calendar, Clay).</li>
+<li><strong><code>ts/</code></strong>: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its <code>testing/</code> folder holds helpers the TypeScript specs share and never ships to a face.</li>
 <li><strong><code>py/</code></strong>: the waf helpers that stage and build a face.</li>
 <li><strong><code>css/</code></strong>: the Pebble-64 colour palette the frame backgrounds use.</li>
 </ul>
@@ -132,7 +132,6 @@
 <ul>
 <li><strong><code>tools/</code></strong>: manifest, pkjs, icon, frame, thumbnail and Clay component generators.</li>
 <li><strong><code>config/</code></strong>: the shared tsconfig, eslint and vitest setup.</li>
-<li><strong><code>testing/</code></strong>: helpers the TypeScript specs share.</li>
 <li><strong><code>.githooks/</code></strong>: the pre-commit hook that runs lint and typecheck.</li>
 <li><strong><code>build.sh</code></strong>: builds a face&#39;s <code>.pbw</code> from WSL with the Pebble SDK installed.</li>
 </ul>
@@ -218,7 +217,7 @@ npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
 npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
 npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/86a2ac6b49e48c3b9694cf5a2e2d736a3be2c7d7/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
+<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/9146090342e9735b97212adb7fe7274556d10f77/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
 <h2 id="ci">CI</h2>
 <ul>
 <li><strong><code>engine-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>

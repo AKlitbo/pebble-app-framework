@@ -66,9 +66,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.66% </span>
+                <span class="strong">46.15% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>10/24</span>
+                <span class='fraction'>12/26</span>
             </div>
         
             
@@ -331,7 +331,12 @@
 <a name='L230'></a><a href='#L230'>230</a>
 <a name='L231'></a><a href='#L231'>231</a>
 <a name='L232'></a><a href='#L232'>232</a>
-<a name='L233'></a><a href='#L233'>233</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -491,28 +496,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -710,6 +720,7 @@ export interface SandboxDirs {
   engine: string;     // the engine, such as lib
   face: string;       // the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
   familyCore: string; // the face's family core, such as watchfaces/mosaic/core, or empty for none
+  watchface: boolean; // true for a face target, false for an app one, which builds with -DBUILD_WATCHAPP
 }
 &nbsp;
 /**
@@ -717,16 +728,19 @@ export interface SandboxDirs {
  *
  * The build runs from inside targets/&lt;target&gt;/, and everything it needs about where the engine, the
  * face and its family core are is written into the wscript here, so waf never goes looking for them.
+ * The watchface flag rides along, since it decides whether the target compiles with
+ * -DBUILD_WATCHAPP, and it is spelled the way Python reads a boolean.
  *
  * @param template The wscript template's text.
- * @param dirs The folders to fill in.
+ * @param dirs The folders to fill in, and what the target installs as.
  * @return The finished wscript.
  */
 export function fillWscript(template: string, dirs: SandboxDirs): string {
   return template
     .split('{{ENGINE_DIR}}').join(dirs.engine)
     .split('{{FACE_DIR}}').join(dirs.face)
-    .split('{{FAMILY_CORE_DIR}}').join(dirs.familyCore);
+    .split('{{FAMILY_CORE_DIR}}').join(dirs.familyCore)
+    .split('{{WATCHFACE}}').join(dirs.watchface ? 'True' : 'False');
 }
 &nbsp;
 /** Writes one target's sandbox: targets/&lt;target name&gt;/{package.json,wscript}. */
@@ -748,6 +762,7 @@ function <span class="fstat-no" title="function not covered" >writeTarget(f</spa
     engine: ENGINE_REL,
     face: rel,
     familyCore: core ? path.relative(ROOT, core).split(path.sep).join('/') : '',
+    watchface: target.watchface,
   };
 <span class="cstat-no" title="statement not covered" >  fs.writeFileSync(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));</span>
 &nbsp;
@@ -802,7 +817,7 @@ function <span class="fstat-no" title="function not covered" >main() {</span>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-22T14:07:51.436Z
+                at 2026-09-23T02:10:33.026Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

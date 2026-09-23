@@ -53,15 +53,19 @@
         <h1>Changelog</h1>
         <div class="readme"><p>All notable API changes to the Pebble Watchface Engine are documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="211-unreleased">[2.1.1] - Unreleased</h2>
+<h2 id="211-unreleased"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.1.0...v2.1.1">2.1.1</a> - Unreleased</h2>
 <h3 id="changed">Changed</h3>
 <ul>
 <li>The <code>locationsearch</code> prompt to pick a city again now draws as a callout, with an accent bar and a badge. A face can repaint it through <code>.loc-note</code>.</li>
 </ul>
 <h3 id="fixed">Fixed</h3>
 <ul>
-<li>Fixed a timezone key never being seeded back from the watch, so the config page opened on an empty field when the phone had nothing saved. The place name now comes back and the picker asks for the city again.</li>
+<li>Fixed a timezone key never being seeded back from the watch, so the config page opened on an empty field when the phone had nothing saved. The place name now comes back and the picker asks for the city again. The watch&#39;s value only fills a field the phone has nothing saved in, so a saved place keeps its zone.</li>
 <li>Fixed an empty timezone key being sent to the watch, which reads it as zero minutes under no name. The key is now left out until a place is saved.</li>
+<li>Fixed a city picked in a <code>locationsearch</code> timezone field saving as UTC when the page was saved before the zone lookup answered, or while offline. The pick now takes its zone from the geocoder result straight away, and the prompt to pick again shows when the result has none.</li>
+<li>Fixed a moved occurrence of one recurring iCal event replacing the occurrence of every other recurring event at the same time, and showing once for each of them. <code>parseIcal</code> now relates a <code>RECURRENCE-ID</code> VEVENT only to the event with the same UID.</li>
+<li>Fixed an older calendar fetch that answered last overwriting a newer one, such as the old feed showing after the iCal URL changed. Only the newest fetch&#39;s answer is sent to the watch.</li>
+<li>Fixed <code>-DBUILD_WATCHAPP</code> never being passed, so an app target built as though it were a watchface. A face&#39;s <code>#ifdef BUILD_WATCHAPP</code> code now reaches the app, which for Gridlock is the weather request it makes as it opens. Run <code>npm run build:manifests</code> to rewrite the sandboxes, which <code>build.sh</code> and CI already do.</li>
 </ul>
 <h2 id="210-2026-09-20"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
 <h3 id="added">Added</h3>
