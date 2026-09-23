@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed an empty timezone key being sent to the watch, which reads it as zero minutes under no name. The key is now left out until a place is saved.
 - Fixed a city picked in a `locationsearch` timezone field saving as UTC when the page was saved before the zone lookup answered, or while offline. The pick now takes its zone from the geocoder result straight away, and the prompt to pick again shows when the result has none.
 - Fixed a moved occurrence of one recurring iCal event replacing the occurrence of every other recurring event at the same time, and showing once for each of them. `parseIcal` now relates a `RECURRENCE-ID` VEVENT only to the event with the same UID.
+- Fixed an older calendar fetch that answered last overwriting a newer one, such as the old feed showing after the iCal URL changed. Only the newest fetch's answer is sent to the watch.
 
 ## [2.1.0] - 2026-09-20
 

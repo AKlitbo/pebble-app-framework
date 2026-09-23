@@ -24,6 +24,10 @@ import type { Feature } from '../pkjs/feature';
 const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
   let urlBeforeConfig: string | null = null;
 
+  // counts fetches, so only the newest one reaches the watch. a tick, a watch request, and a URL
+  // change can each start one while another is still out, and they can answer in any order
+  let fetches = 0;
+
   // the strip the watch holds, so an unchanged refresh skips the redundant BLE wake. forgotten on
   // ready and on a watch-initiated request so the watch always gets a fresh answer
   const sender = createDedupedSender<number[]>(
@@ -51,13 +55,16 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
   /**
    * Fetches the iCal feed, parses it, and sends the packed strip to the watch. Skipped for faces
    * that do not declare the calendar key. With no URL set the watch gets an empty agenda instead,
-   * so one left over from a removed feed does not stay behind.
+   * so one left over from a removed feed does not stay behind. An answer that lands after a newer
+   * fetch started is dropped, so an old feed cannot overwrite a new one.
    */
   function getCalendar() {
     // a face that does not declare the strip key never shows a calendar so skip the fetch
     if (messageKeys.CALENDAR_STRIP === undefined) {
       return;
     }
+
+    const myFetch = ++fetches;
 
     const url = calendarUrl();
     if (!url) {
@@ -72,6 +79,11 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
 
     console.log('Calendar: fetching feed');
     request(bustedUrl, (error, body) => {
+      // a newer fetch is out or already answered, so this one says nothing current
+      if (myFetch !== fetches) {
+        return;
+      }
+
       if (error) {
         console.error('Calendar fetch failed: ' + error);
         return;

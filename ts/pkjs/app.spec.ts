@@ -826,6 +826,30 @@ describe('startPebbleApp stock and calendar', () => {
     expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
   });
 
+  /**
+   * A tick, a watch request, and a URL change can each start a fetch while another is still out.
+   * Sending whichever answers last put an older copy of the agenda over a newer one until the next
+   * tick, such as the old feed showing after the URL was changed.
+   */
+  test('drops a feed answer that lands after a newer fetch started', () => {
+    // a day out from the faked now, so the event sits inside the agenda's window
+    const stamp = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    const withEvent = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:' + stamp +
+      '\r\nSUMMARY:Dentist\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    listeners.ready();
+    listeners.appmessage({ payload: { CALENDAR_REQUEST: 1 } });
+    const [older, newer] = sent.filter((request) => request.url.startsWith(FEED_URL));
+
+    newer.respond(200, withEvent);
+    older.respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
+
+    const result = sendsOf('CALENDAR_STRIP');
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).not.toEqual([0]);
+  });
+
   /** Removing the feed has to clear the watch too, or the old agenda outlives the setting that made it. */
   test('sends an empty agenda when no feed is set', () => {
     start({});
