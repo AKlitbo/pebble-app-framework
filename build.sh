@@ -3,13 +3,13 @@
 # watchfaces/, at the top level or one deeper inside a family folder. Run from WSL.
 # Regenerates the manifest from the face's config/pebble.appinfo.json and compiles
 # the TypeScript pkjs into targets/<target>/emit/, then runs pebble build in that sandbox.
-#   <engine>/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
-#   <engine>/build.sh all               build every face in the repo
-#   <engine>/build.sh <face> --clean    pebble clean first (needed after a messageKey change)
+#   <framework>/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
+#   <framework>/build.sh all               build every face in the repo
+#   <framework>/build.sh <face> --clean    pebble clean first (needed after a messageKey change)
 # Any other args forward to pebble build (e.g. lib/build.sh lcars-stardate --debug).
 set -euo pipefail
 engine="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# the engine is mounted one folder down in the repo of faces, and the faces and build sandboxes live there
+# the framework is mounted one folder down in the repo of faces, and the faces and build sandboxes live there
 here="$(cd "$engine/.." && pwd)"
 node_ts=(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON)
 
@@ -41,7 +41,7 @@ build_face() {
   targets=$("${node_ts[@]}" "$engine/tools/manifest/build-manifests.ts" --targets "$face")
 
   for target in $targets; do
-    # compile the TypeScript pkjs runtime (the face's src/pkjs and the engine's ts/) into
+    # compile the TypeScript pkjs runtime (the face's src/pkjs and the framework's ts/) into
     # targets/<target>/emit/, the gitignored tree the Pebble bundler reads. the .ts is the
     # source of truth, so this runs before every build
     "${node_ts[@]}" "$engine/tools/pkjs/build-pkjs.ts" "$target" "$face"
@@ -55,7 +55,7 @@ build_face() {
   done
 }
 
-# the faces come from the engine's own lookup, the same one every other tool uses
+# the faces come from the framework's own lookup, the same one every other tool uses
 face_names() {
   "${node_ts[@]}" "$engine/tools/manifest/build-manifests.ts" --faces
 }

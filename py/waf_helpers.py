@@ -1,13 +1,13 @@
 """
 The helpers every build target's wscript shares. A wscript is generated from
-tools/waf/wscript.template by build-manifests.ts, which fills in where the engine, the face and
+tools/waf/wscript.template by build-manifests.ts, which fills in where the framework, the face and
 its family core sit. The wscript imports this module directly and calls stage_shared_sources,
 build_conditions and build_face with those folders. waf runs the wscript as part of build.sh,
 once per sandbox under targets/<target>/.
 
 Every folder in the source dict the wscript passes is relative to the repo root:
 
-    engine       the engine, such as lib
+    engine       the framework, such as lib
     face         the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
     family_core  the face's family core, such as watchfaces/mosaic/core, or empty for none
 """
@@ -37,8 +37,8 @@ def _family_name(source):
 def build_conditions(ctx, source):
     """
     Regenerate the weather lookup tables (icons_table.g.h and friends) from the shared condition
-    vocabulary in the engine's ts/weather/conditions.ts. It runs the engine copy staged into this
-    sandbox, so the tables regenerate for this build without touching the engine checkout itself.
+    vocabulary in the framework's ts/weather/conditions.ts. It runs the framework copy staged into this
+    sandbox, so the tables regenerate for this build without touching the framework checkout itself.
     Non-fatal: the generated headers are committed, so a node-less environment still builds with
     the last ones.
     """
@@ -55,12 +55,12 @@ def build_conditions(ctx, source):
 
 def stage_shared_sources(ctx, source):
     """
-    Mirror the face's src/ and resources/, the engine, and the family core into this build folder
-    (targets/<target>/) so the SDK sees a normal, self-contained project. The engine is staged under
+    Mirror the face's src/ and resources/, the framework, and the family core into this build folder
+    (targets/<target>/) so the SDK sees a normal, self-contained project. The framework is staged under
     its own folder name, the same one the face's imports use.
 
     emit/ is not staged. build:pkjs writes it straight into this sandbox (targets/<target>/emit)
-    keeping the source tree's shape, so the entry's relative requires into the engine's ts/ already
+    keeping the source tree's shape, so the entry's relative requires into the framework's ts/ already
     resolve here.
 
     Only files whose size or mtime differ are copied, and mtimes are preserved, so an
@@ -79,7 +79,7 @@ def stage_shared_sources(ctx, source):
     }
 
     # a face nested inside a family folder also gets that family's core: code shared by a handful
-    # of related faces but not by all of them, so it cannot live in the engine. it is staged under
+    # of related faces but not by all of them, so it cannot live in the framework. it is staged under
     # the family's own name, and that name is a path segment the build synthesises rather than one
     # anybody types, which is what keeps a family header from colliding with a face-local folder
     family = _family_name(source)
@@ -151,12 +151,12 @@ def _needs_copy(src_file, dst_file):
 
 def build_face(ctx, source, extra_cflags=None):
     """
-    The build: resolve include paths, collect the face's C and JS plus the engine's, compile the
+    The build: resolve include paths, collect the face's C and JS plus the framework's, compile the
     app per target platform, bundle with PebbleKit JS, and archive the .pbw afterward.
     extra_cflags are appended to every platform's CFLAGS (the watchapp build passes
     -DBUILD_WATCHAPP).
     """
-    # the engine as staged into this sandbox. its c/core/ is pure (SDK-free and host-testable) and
+    # the framework as staged into this sandbox. its c/core/ is pure (SDK-free and host-testable) and
     # its c/pebble/ needs the SDK. the PebbleKit JS is compiled out of its ts/ into emit/ before
     # the build, so only the C comes from here
     engine_dir = ctx.path.find_dir(source['engine'])
@@ -169,7 +169,7 @@ def build_face(ctx, source, extra_cflags=None):
     # this face's own sources (grid engine, widgets, main, theme)
     local_c = ctx.path.find_dir('src/c')
 
-    # only the engine's two C roots and the face-local dir are on the include path. every shared
+    # only the framework's two C roots and the face-local dir are on the include path. every shared
     # header is included with its folder relative to a root (e.g. "ui/engine/engine.h" or
     # "clock/beats.h") so moving a folder never touches this list
     include_paths = [

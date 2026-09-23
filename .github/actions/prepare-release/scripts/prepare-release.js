@@ -2,11 +2,11 @@
  * Checks a pushed face release tag against the tree it points at, and writes the release notes.
  *
  * Everything that can stop a release is checked here, before the SDK install and the build, so a typo in a
- * tag costs seconds rather than a build. The engine has to sit exactly on an engine tag, the face the tag
+ * tag costs seconds rather than a build. The framework has to sit exactly on a framework tag, the face the tag
  * names has to exist with that version in its appinfo, its changelog entry has to be dated and written, and
  * the tag cannot already be released.
  *
- * The face is found with the engine's own tools/faces.ts, so a face at the repo root and one under
+ * The face is found with the framework's own tools/faces.ts, so a face at the repo root and one under
  * watchfaces/ are found the same way the build finds them. That file is TypeScript, and the Node that
  * github-script runs on loads it directly.
  */
@@ -17,7 +17,7 @@ const { pathToFileURL } = require('node:url');
 const { fail, step, firstLine, markdownTable } = require('../../../shared/lib');
 const { splitTag, readChangelogEntry, isDated } = require('./lib');
 
-// this script sits in .github/actions/prepare-release/scripts/ inside the engine
+// this script sits in .github/actions/prepare-release/scripts/ inside the framework
 const ENGINE = path.resolve(__dirname, '..', '..', '..', '..');
 
 module.exports = step(async ({ core, exec }) => {
@@ -25,11 +25,11 @@ module.exports = step(async ({ core, exec }) => {
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
   const repo = process.env.GITHUB_REPOSITORY ? ['--repo', process.env.GITHUB_REPOSITORY] : [];
 
-  // a release ships on a named engine version. day to day commits can sit between tags, releases cannot
+  // a release ships on a named framework version. day to day commits can sit between tags, releases cannot
   const described = await exec.getExecOutput('git', ['-C', ENGINE, 'describe', '--exact-match', '--tags'], { ignoreReturnCode: true, silent: true });
   if (described.exitCode !== 0) {
     const head = await exec.getExecOutput('git', ['-C', ENGINE, 'rev-parse', '--short', 'HEAD'], { ignoreReturnCode: true, silent: true });
-    fail(`The engine is at ${head.stdout.trim() || 'a commit git could not name'}, which is not an engine tag. Move lib to an engine tag before releasing.`);
+    fail(`The framework is at ${head.stdout.trim() || 'a commit git could not name'}, which is not a framework tag. Move lib to a framework tag before releasing.`);
   }
   const engineTag = described.stdout.trim();
 
@@ -92,8 +92,8 @@ module.exports = step(async ({ core, exec }) => {
   const summary = [
     `## Releasing ${title}`,
     '',
-    markdownTable(['Face', 'Version', 'Engine', 'Changelog'], [[face.name, parts.version, engineTag, `${changelogRel} (${entry.date})`]]),
+    markdownTable(['Face', 'Version', 'Framework', 'Changelog'], [[face.name, parts.version, engineTag, `${changelogRel} (${entry.date})`]]),
   ];
   await core.summary.addRaw(summary.join('\n'), true).write();
-  core.info(`${tag} is ready to release on engine ${engineTag}.`);
+  core.info(`${tag} is ready to release on framework ${engineTag}.`);
 });

@@ -4,7 +4,7 @@
  * The copy step runs between tsc and the Pebble build to place any committed Clay *.g.js
  * components into emit/ beside the compiled output. These specs pin what findGenerated hands
  * the copy: only .g.js files under src/pkjs, and never a clay/builder piece. They run against a
- * small face under fixtures/, and again against every real face where the engine is mounted.
+ * small face under fixtures/, and again against every real face where the framework is mounted.
  */
 
 import fs from 'node:fs';

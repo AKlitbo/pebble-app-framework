@@ -1,6 +1,6 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "name": "Pebble Watchface Engine: Phone API",
+  "name": "Pebble App Framework: Phone API",
   "entryPoints": ["../ts"],
   "entryPointStrategy": "expand",
   "exclude": ["../ts/**/*.spec.ts", "../ts/**/*.d.ts", "../ts/clay/builder/**", "../ts/testing/**"],

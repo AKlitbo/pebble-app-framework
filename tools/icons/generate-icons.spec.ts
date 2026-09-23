@@ -10,7 +10,7 @@
  *
  * The last group checks the media block a face has committed still matches its icons.json. The
  * rendered PNGs are not checked, since re-rasterising them needs sharp and takes real time, but the
- * media array is the half the C side reads its RESOURCE_ID names from. It runs where the engine is
+ * media array is the half the C side reads its RESOURCE_ID names from. It runs where the framework is
  * mounted beside faces that declare icons.
  */
 

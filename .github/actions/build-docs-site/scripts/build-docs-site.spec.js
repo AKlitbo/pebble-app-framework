@@ -14,7 +14,7 @@ import buildDocsSite from './build-docs-site.js';
 const ESC = String.fromCharCode(27);
 
 const TYPEDOC_WARNINGS = [
-  `${ESC}[93m[warning]${ESC}[0m StartOptions, defined in pebble-watchface-engine/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation`,
+  `${ESC}[93m[warning]${ESC}[0m StartOptions, defined in pebble-app-framework/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation`,
   `${ESC}[93m[warning]${ESC}[0m The entry point ../ts/missing.ts does not exist`,
   `${ESC}[93m[warning]${ESC}[0m Found 0 errors and 2 warnings`,
 ].join('\n');
@@ -82,7 +82,7 @@ describe('build-docs-site', () => {
     const { core } = await build({ results: { typedoc: { exitCode: 4, stdout: TYPEDOC_WARNINGS } } });
 
     expect(core.warning).toHaveBeenCalledWith(
-      'StartOptions, defined in pebble-watchface-engine/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation',
+      'StartOptions, defined in pebble-app-framework/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation',
       { title: 'TypeDoc Warning', file: 'ts/pkjs/app.ts' }
     );
     expect(core.setFailed).toHaveBeenCalledWith('TypeDoc reported 2 warning(s). The docs only publish from a build with none.');

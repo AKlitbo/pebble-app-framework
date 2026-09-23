@@ -5,7 +5,7 @@
 # reviewer waiting. This is the same gate, one step earlier.
 #
 # Install once:  git config core.hooksPath .githooks
-# In a repo that mounts the engine at lib/:  git config core.hooksPath lib/.githooks
+# In a repo that mounts the framework at lib/:  git config core.hooksPath lib/.githooks
 # Skip on purpose (a WIP commit):  git commit --no-verify
 #
 # No `npm test` on purpose. The whole suite on every commit trains you to reach for

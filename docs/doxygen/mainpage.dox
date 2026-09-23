@@ -1,7 +1,7 @@
 /**
  * @mainpage Device API
  *
- * The half of the engine that runs on the watch. @c c/core is plain C that builds and tests on any
+ * The half of the framework that runs on the watch. @c c/core is plain C that builds and tests on any
  * machine, and @c c/pebble is the part that talks to the Pebble SDK.
  *
  * The README, the licences, and the coverage reports are on the

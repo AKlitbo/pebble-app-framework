@@ -1,7 +1,7 @@
 {
-  "name": "pebble-watchface-engine-docs",
+  "name": "pebble-app-framework-docs",
   "author": "Null Syntax",
-  "description": "The tools that build the engine's docs site. Kept out of the engine's own package.json so a repo of faces never installs them.",
+  "description": "The tools that build the framework's docs site. Kept out of the framework's own package.json so a repo of faces never installs them.",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
   "engines": {

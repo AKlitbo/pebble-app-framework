@@ -5,7 +5,7 @@
 // TypeDoc colours its output when it thinks a terminal is watching, as in ESC[93m[warning]ESC[0m
 // the escape is built from its character code, since lint refuses a control character inside a regex
 const COLOUR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
-// [warning] StartOptions, defined in pebble-watchface-engine/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation
+// [warning] StartOptions, defined in pebble-app-framework/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation
 const LINE = /^\[(warning|error)\] (.*)$/;
 // [warning] Found 0 errors and 1 warnings
 const TALLY = /^Found \d+ errors? and \d+ warnings?$/;

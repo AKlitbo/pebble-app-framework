@@ -151,7 +151,7 @@ describe.skipIf(COMMITTING_FACES.length === 0)('generated asset', () => {
   /**
    * The per-face checks below come from what the discovery found, so a discovery that quietly
    * returned nothing would leave this suite green with nothing in it. Every face that commits the
-   * asset has to be found by its thumbnails folder. They run where the engine is mounted beside
+   * asset has to be found by its thumbnails folder. They run where the framework is mounted beside
    * faces that commit the asset.
    */
   test('covers every face that commits a thumbnail asset', () => {

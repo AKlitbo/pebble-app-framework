@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pebble Watchface Engine</title>
+    <title>Pebble App Framework</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <script src="theme.js"></script>
     <script src="versions.js"></script>
@@ -21,7 +21,7 @@
       <header class="site-head">
         <img class="logo" src="logo.svg" alt="" width="56" height="56" />
         <div class="head-text">
-          <h1>Pebble Watchface Engine</h1>
+          <h1>Pebble App Framework</h1>
           <p class="tagline">{{tagline}}</p>
         </div>
         <div class="head-side">
@@ -40,7 +40,7 @@
             <div class="card-top"><span class="lang">C</span><span class="kind">Doxygen</span></div>
             <h2>Device API</h2>
             <p>
-              The engine that runs on the watch. Panels, stores, the clock, and the message formats the phone sends.
+              The half of the framework that runs on the watch. Panels, stores, the clock, and the message formats the phone sends.
             </p>
             <div class="card-foot"><span>c/core · c/pebble</span><span class="go">c/ →</span></div>
           </a>
@@ -61,7 +61,7 @@
           <a class="card" href="coverage/c/">
             <div class="card-top"><span class="lang">C</span><span class="kind">gcovr</span></div>
             <h2>Host C Specs</h2>
-            <p>Which lines of the engine's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
+            <p>Which lines of the framework's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
             {{coverageC}}
             <div class="card-foot"><span>make -C c/spec coverage</span><span class="go">coverage/c/ →</span></div>
           </a>

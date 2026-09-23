@@ -1,6 +1,6 @@
-name: Engine CI
+name: Framework CI
 
-# the engine's own checks, run on every PR and on main
+# the framework's own checks, run on every PR and on main
 # each check runs through an action in .github/actions/, which puts each failure on its line in the PR and
 # the totals on the job summary
 on:
@@ -14,7 +14,7 @@ on:
 
 # a newer push to the same branch or PR makes the run already going pointless
 concurrency:
-  group: engine-ci-${{ github.ref }}
+  group: framework-ci-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -50,7 +50,7 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      # the checks over real faces skip here and run in the repos that mount the engine
+      # the checks over real faces skip here and run in the repos that mount the framework
       - name: Test
         uses: ./.github/actions/verify-vitest
 
@@ -91,7 +91,7 @@ jobs:
       - name: Check the Docs Site Formatting
         run: npm --prefix docs run format:check
 
-      # the engine's own config leaves plain JavaScript out, so the site's browser script is linted here
+      # the framework's own config leaves plain JavaScript out, so the site's browser script is linted here
       - name: Lint the Docs Site Script
         run: npm --prefix docs run lint
 

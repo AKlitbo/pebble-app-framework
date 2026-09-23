@@ -83,8 +83,8 @@ describe('prepare-release', () => {
     expect(core.setOutput).toHaveBeenCalledWith('face', 'gridlock');
   });
 
-  /** A release on an untagged engine ships code that no engine version names, so nobody can say what it was built on. */
-  test('stops when the engine is not on a tag', async () => {
+  /** A release on an untagged framework ships code that no framework version names, so nobody can say what it was built on. */
+  test('stops when the framework is not on a tag', async () => {
     writeFace('.');
 
     const { core } = await prepare(({ command, args }) => {
@@ -94,7 +94,7 @@ describe('prepare-release', () => {
       return command === 'git' ? { stdout: '2f22717\n' } : {};
     });
 
-    expect(core.setFailed).toHaveBeenCalledWith('The engine is at 2f22717, which is not an engine tag. Move lib to an engine tag before releasing.');
+    expect(core.setFailed).toHaveBeenCalledWith('The framework is at 2f22717, which is not a framework tag. Move lib to a framework tag before releasing.');
   });
 
   /** A tag typed with the wrong version would publish a release whose name disagrees with what the watch reports. */

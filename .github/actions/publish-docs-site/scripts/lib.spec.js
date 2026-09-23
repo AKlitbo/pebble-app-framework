@@ -41,7 +41,7 @@ describe('listVersions', () => {
     expect(result.versions).toEqual(['v1.2.0', 'v1.2.0-rc.10', 'v1.2.0-rc.2', 'v1.1.0']);
   });
 
-  /** The front page opening a release candidate would show docs for an engine no face can move to yet. */
+  /** The front page opening a release candidate would show docs for a framework no face can move to yet. */
   test('skips a newer release candidate when picking the latest', () => {
     const result = listVersions(['main', 'v2.0.0', 'v2.1.0-rc.1']);
 
@@ -75,8 +75,8 @@ describe('redirectPage', () => {
 describe('pushWasBeaten', () => {
   /** Both are what git prints when another publish pushed after this one fetched, and a fresh try fixes them. */
   test.each([
-    " ! [rejected]        HEAD -> gh-pages (fetch first)\nerror: failed to push some refs to 'https://github.com/AKlitbo/pebble-watchface-engine'",
-    " ! [rejected]        HEAD -> gh-pages (non-fast-forward)\nerror: failed to push some refs to 'https://github.com/AKlitbo/pebble-watchface-engine'",
+    " ! [rejected]        HEAD -> gh-pages (fetch first)\nerror: failed to push some refs to 'https://github.com/AKlitbo/pebble-app-framework'",
+    " ! [rejected]        HEAD -> gh-pages (non-fast-forward)\nerror: failed to push some refs to 'https://github.com/AKlitbo/pebble-app-framework'",
   ])('reads a rejected push as beaten', (stderr) => {
     const result = pushWasBeaten(stderr);
 
@@ -85,7 +85,7 @@ describe('pushWasBeaten', () => {
 
   /** Retrying a push the token cannot make would spend every try and bury the real message under the last one. */
   test('does not read a refused token as beaten', () => {
-    const stderr = "remote: Permission to AKlitbo/pebble-watchface-engine.git denied to github-actions[bot].\nfatal: unable to access 'https://github.com/AKlitbo/pebble-watchface-engine/': The requested URL returned error: 403";
+    const stderr = "remote: Permission to AKlitbo/pebble-app-framework.git denied to github-actions[bot].\nfatal: unable to access 'https://github.com/AKlitbo/pebble-app-framework/': The requested URL returned error: 403";
 
     const result = pushWasBeaten(stderr);
 

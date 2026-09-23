@@ -27,12 +27,12 @@ const HOME = { root: '', commit: 'abc1234' };
 describe('splitTitle', () => {
   /** A title left in the body would print the project name a second time under the site header. */
   test('takes the level one heading off the top', () => {
-    const markdown = '# Pebble Watchface Engine\n\nThe shared engine.\n\n## Layout\n\nThe tree.\n';
+    const markdown = '# Pebble App Framework\n\nThe shared framework.\n\n## Layout\n\nThe tree.\n';
 
     const result = splitTitle(markdown);
 
-    expect(result.title).toBe('Pebble Watchface Engine');
-    expect(result.body.trim()).toBe('The shared engine.\n\n## Layout\n\nThe tree.');
+    expect(result.title).toBe('Pebble App Framework');
+    expect(result.body.trim()).toBe('The shared framework.\n\n## Layout\n\nThe tree.');
   });
 
   /** A file that opens on a section keeps it, so a changelog missing its title still shows in full. */
@@ -48,11 +48,11 @@ describe('splitTitle', () => {
 describe('takeIntro', () => {
   /** The intro is the header tagline, so leaving it in the body would print it twice on the home page. */
   test('takes the first paragraph as the intro', () => {
-    const markdown = '\nThe shared engine.\n\n## Layout\n\nThe tree.\n';
+    const markdown = '\nThe shared framework.\n\n## Layout\n\nThe tree.\n';
 
     const result = takeIntro(markdown);
 
-    expect(result.intro).toBe('The shared engine.');
+    expect(result.intro).toBe('The shared framework.');
     expect(result.rest.trim()).toBe('## Layout\n\nThe tree.');
   });
 
@@ -85,12 +85,12 @@ describe('rewriteLink', () => {
   test('sends any other repo path to GitHub at the commit', () => {
     const result = rewriteLink('./docs/doxygen/awesome/LICENSE', HOME);
 
-    expect(result).toBe('https://github.com/AKlitbo/pebble-watchface-engine/blob/abc1234/docs/doxygen/awesome/LICENSE');
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/docs/doxygen/awesome/LICENSE');
   });
 
   /** Rewriting a full URL or an anchor would break a link that already works. */
   test.each([
-    'https://aklitbo.github.io/pebble-watchface-engine/',
+    'https://aklitbo.github.io/pebble-app-framework/',
     '#using-it',
     'mailto:someone@example.com',
   ])('leaves %s alone', (href) => {
@@ -113,7 +113,7 @@ describe('renderMarkdown', () => {
 
   /** The section list beside the README follows its sections, not every heading inside them. */
   test('lists only level two headings as sections', () => {
-    const markdown = '## Layout\n\n### Engine Code\n\n## Using It\n';
+    const markdown = '## Layout\n\n### Framework Code\n\n## Using It\n';
 
     const result = renderMarkdown(markdown, HOME);
 
@@ -239,7 +239,7 @@ describe('rootFor', () => {
 });
 
 describe('renderSiteBar', () => {
-  const TEMPLATE = '<nav class="site-bar"><a class="site-bar-home" href="{{root}}index.html">Pebble Watchface Engine</a><select class="site-bar-version" data-root="{{root}}"><option value="{{version}}">{{version}}</option></select><a data-section="c" href="{{root}}c/index.html">Device API</a><a data-section="coverage-c" href="{{root}}coverage/c/index.html">C Coverage</a><a href="{{repoUrl}}">GitHub</a>{{themeToggle}}</nav>';
+  const TEMPLATE = '<nav class="site-bar"><a class="site-bar-home" href="{{root}}index.html">Pebble App Framework</a><select class="site-bar-version" data-root="{{root}}"><option value="{{version}}">{{version}}</option></select><a data-section="c" href="{{root}}c/index.html">Device API</a><a data-section="coverage-c" href="{{root}}coverage/c/index.html">C Coverage</a><a href="{{repoUrl}}">GitHub</a>{{themeToggle}}</nav>';
   const BUILD = { themeToggle: '<button></button>', version: 'main' };
 
   /** The bar is the only thing that tells a reader which part of the site they are in. */
@@ -261,8 +261,8 @@ describe('renderSiteBar', () => {
   test('keeps every link but GitHub relative to the page', () => {
     const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../../', section: 'c' });
 
-    expect(result).toContain('<a class="site-bar-home" href="../../index.html">Pebble Watchface Engine</a>');
-    expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-watchface-engine">GitHub</a>');
+    expect(result).toContain('<a class="site-bar-home" href="../../index.html">Pebble App Framework</a>');
+    expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-app-framework">GitHub</a>');
   });
 });
 

@@ -6,7 +6,7 @@
  * unless RUN_LIVE_WEATHER=1, RUN_LIVE_STOCK=1 or RUN_LIVE_CALENDAR=1 is set along with any
  * key the provider needs, so the default run is offline and deterministic.
  *
- * Works from the engine on its own and from a repo mounting it at lib/.
+ * Works from the framework on its own and from a repo mounting it at lib/.
  *
  * Run via npm test, or npm run test:watch and test:coverage.
  */
@@ -17,7 +17,7 @@ import { defineConfig } from 'vitest/config';
 // where the watch's ical.js actually lives. ts/calendar/icaljs.d.ts describes it but the source
 // tree has no such file. the build copies ical.js's prebuilt ES5 CommonJS bundle into emit/ beside
 // the compiled calendar code, so the specs aim at that same bundle and run what the watch runs.
-// it sits in the engine's own node_modules on its own, and in the mounting repo's once npm
+// it sits in the framework's own node_modules on its own, and in the mounting repo's once npm
 // workspaces hoist it there
 const ICALJS_REL = path.join('node_modules', 'ical.js', 'dist', 'ical.es5.min.cjs');
 const ICALJS_CANDIDATES = [
@@ -26,7 +26,7 @@ const ICALJS_CANDIDATES = [
 ];
 const ICALJS = ICALJS_CANDIDATES.find((candidate) => fs.existsSync(candidate)) ?? ICALJS_CANDIDATES[0];
 
-// the engine's folder as seen from wherever the run starts. empty in the engine on its own, and
+// the framework's folder as seen from wherever the run starts. empty in the framework on its own, and
 // whatever name a repo of faces mounts it under otherwise
 const ENGINE_REL = path.relative(process.cwd(), path.resolve(import.meta.dirname, '..')).split(path.sep).join('/');
 const ENGINE_PREFIX = ENGINE_REL ? `${ENGINE_REL}/` : '';
@@ -53,7 +53,7 @@ export default defineConfig({
       reporter: ['text', 'html', 'json-summary'],
       reportsDirectory: 'coverage',
       // every tree that has specs so the number covers the whole suite, whether the run starts
-      // in the engine or in a repo mounting it
+      // in the framework or in a repo mounting it
       include: [
         `${ENGINE_PREFIX}ts/**`, `${ENGINE_PREFIX}tools/**`,
         'src/pkjs/**', 'src/tools/**',

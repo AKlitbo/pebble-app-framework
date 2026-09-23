@@ -1,8 +1,8 @@
-# Pebble Watchface Engine - Docs
+# Pebble App Framework Docs
 
-Everything that builds the engine's docs site, with a package of its own so a repo of faces never installs those tools.
+Everything that builds the framework's docs site, with a package of its own so a repo of faces never installs those tools.
 
-The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test suite, and a home page built from the README, the changelog, the notices, and the licences. Main and each release tag publish it to [GitHub Pages](https://aklitbo.github.io/pebble-watchface-engine/), and a picker in the shared bar moves between the versions.
+The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test suite, and a home page built from the README, the changelog, the notices, and the licences. Main and each release tag publish it to [GitHub Pages](https://aklitbo.github.io/pebble-app-framework/), and a picker in the shared bar moves between the versions.
 
 ## Layout
 
@@ -12,7 +12,7 @@ The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverag
 * **`tools/`**: `render.ts` turns the repo's markdown into html and `build-site.ts` writes the pages, then puts the shared bar on every page the other tools wrote.
 * **`site/dist/`**: the built site, which git ignores.
 
-The package here holds TypeDoc, marked and Prettier, alongside `tsconfig.json`, `vitest.config.ts`, `eslint.config.ts` and the two Prettier files. The engine's own `package.json` carries none of them, so a repo of faces mounting the engine installs nothing from this folder.
+The package here holds TypeDoc, marked and Prettier, alongside `tsconfig.json`, `vitest.config.ts`, `eslint.config.ts` and the two Prettier files. The framework's own `package.json` carries none of them, so a repo of faces mounting the framework installs nothing from this folder.
 
 ## Building It
 
@@ -35,12 +35,12 @@ CI does the same through the `build-docs-site` action, which runs after `build-d
 
 ```sh
 npm --prefix docs run test          # the renderer specs
-npm --prefix docs run lint          # site/theme.js, which the engine's own lint leaves out
+npm --prefix docs run lint          # site/theme.js, which the framework's own lint leaves out
 npm --prefix docs run typecheck
 npm --prefix docs run format:check  # or format to fix the templates, stylesheets and theme script
 ```
 
-The engine's own Vitest run and typecheck skip this folder, since what is here needs the packages installed above.
+The framework's own Vitest run and typecheck skip this folder, since what is here needs the packages installed above.
 
 ## The Shared Bar
 

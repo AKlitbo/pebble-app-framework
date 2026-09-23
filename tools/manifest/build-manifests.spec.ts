@@ -4,7 +4,7 @@
  * buildMedia owns the per-target media list: which entry gets the menuIcon flag, and the
  * deep-clone that keeps one target's flag from bleeding onto the other. buildManifest is the
  * package.json wire shape pebble build reads. fillWscript is the only place a sandbox learns where
- * its engine and face sit. main()'s file I/O is glue, left to the build.
+ * its framework and face sit. main()'s file I/O is glue, left to the build.
  */
 
 import fs from 'node:fs';

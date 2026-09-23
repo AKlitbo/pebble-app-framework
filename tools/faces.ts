@@ -39,7 +39,7 @@ function byName(first: Face, second: Face): number {
 
 /**
  * Every face in a repo. Takes the repo root, so the lookup works on a fixture as well as on the
- * repo mounting the engine.
+ * repo mounting the framework.
  *
  * @param root The repo root to search from.
  * @return Every face found, ordered by name.
@@ -105,7 +105,7 @@ export function familyCoreFor(root: string, rel: string): string | null {
 }
 
 /**
- * Every face in the repo mounting the engine. An engine checked out on its own holds none.
+ * Every face in the repo mounting the framework. A framework checked out on its own holds none.
  *
  * @return Every face found, ordered by name.
  */

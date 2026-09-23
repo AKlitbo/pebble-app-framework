@@ -10,7 +10,7 @@
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },
-  // the engine's own specs, then the faces of a repo mounting it at lib/, at its root or under watchfaces/
+  // the framework's own specs, then the faces of a repo mounting it at lib/, at its root or under watchfaces/
   // the two .d.ts files declare globals the specs use without importing them
   "include": [
     "../**/*.spec.ts",

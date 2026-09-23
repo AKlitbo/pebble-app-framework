@@ -7,8 +7,8 @@
  */
 import { Marked, type Token } from 'marked';
 
-/** Where the engine lives on GitHub. A link to a repo file with no page on the site opens it here. */
-export const REPO_URL = 'https://github.com/AKlitbo/pebble-watchface-engine';
+/** Where the framework lives on GitHub. A link to a repo file with no page on the site opens it here. */
+export const REPO_URL = 'https://github.com/AKlitbo/pebble-app-framework';
 
 // the repo files that have a page of their own on the site, by their path from the repo root
 const SITE_PAGES = new Map<string, string>([
@@ -361,7 +361,7 @@ export function renderSiteBar(template: string, options: SiteBarOptions): string
 /**
  * Points the links in a coverage page at folders that have had the dot taken off their names.
  *
- * Vitest lays its report out like the source tree, so the engine's action scripts land under
+ * Vitest lays its report out like the source tree, so the framework's action scripts land under
  * coverage/ts/.github/. GitHub Pages leaves out every .github folder when it packs the site, and each of
  * those pages 404s. build-site.ts renames the folder without its dot, and this moves the links to match.
  *

@@ -142,7 +142,7 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
 
 /** Where one sandbox's sources sit, each folder relative to the repo root with forward slashes. */
 export interface SandboxDirs {
-  engine: string;     // the engine, such as lib
+  engine: string;     // the framework, such as lib
   face: string;       // the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
   familyCore: string; // the face's family core, such as watchfaces/mosaic/core, or empty for none
   watchface: boolean; // true for a face target, false for an app one, which builds with -DBUILD_WATCHAPP
@@ -151,7 +151,7 @@ export interface SandboxDirs {
 /**
  * Fills the wscript template in with where one sandbox's sources sit.
  *
- * The build runs from inside targets/<target>/, and everything it needs about where the engine, the
+ * The build runs from inside targets/<target>/, and everything it needs about where the framework, the
  * face and its family core are is written into the wscript here, so waf never goes looking for them.
  * The watchface flag rides along, since it decides whether the target compiles with
  * -DBUILD_WATCHAPP, and it is spelled the way Python reads a boolean.
@@ -180,7 +180,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
 
   // the waf entry point has to exist before `pebble build` runs in this sandbox. the sandbox is
   // named after the target, but its sources are the face's, and one face can feed several targets,
-  // so the wscript is told where the face, its family core and the engine sit
+  // so the wscript is told where the face, its family core and the framework sit
   const rel = faceRelative(face);
   const core = familyCoreFor(ROOT, rel);
   const dirs: SandboxDirs = {

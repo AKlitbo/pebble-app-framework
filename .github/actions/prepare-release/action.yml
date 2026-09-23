@@ -1,6 +1,6 @@
 name: Prepare Release
 description: >
-  Checks a pushed face release tag before anything is built. The engine has to sit on an engine tag, the face
+  Checks a pushed face release tag before anything is built. The framework has to sit on a framework tag, the face
   the tag names has to exist with that version in its appinfo, its changelog entry has to be dated and
   written, and the tag cannot already be released. Writes the release notes from that changelog entry. Works
   for a face at the repo root and for one under watchfaces/.
@@ -29,7 +29,7 @@ outputs:
     description: The release notes, written from the face's changelog entry.
     value: ${{ steps.prepare.outputs.notes-file }}
   engine-tag:
-    description: The engine tag the release builds on.
+    description: The framework tag the release builds on.
     value: ${{ steps.prepare.outputs.engine-tag }}
 
 runs:

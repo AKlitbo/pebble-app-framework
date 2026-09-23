@@ -8,7 +8,7 @@
  *
  * The staleness checks regenerate every component a face commits and compare it
  * to the committed file, so an edited piece cannot ship without its `npm run gen:clay`.
- * They run where the engine is mounted beside faces that commit components.
+ * They run where the framework is mounted beside faces that commit components.
  */
 
 import fs from 'node:fs';

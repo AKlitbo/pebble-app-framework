@@ -1,8 +1,14 @@
 # Changelog
 
-All notable API changes to the Pebble Watchface Engine are documented in this file.
+All notable API changes to the Pebble App Framework are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Changed
+
+- Renamed the repo to `pebble-app-framework`, and its package to match. GitHub redirects the old URL, so a face's `.gitmodules` keeps working. Point it at `https://github.com/AKlitbo/pebble-app-framework.git` and run `git submodule sync`. A face moving `lib` to this release has to run `npm install` and commit `package-lock.json`, because the lock names the `lib` workspace and its `node_modules` link after the package. `npm ci`, and so CI, fails until it does.
 
 ## [2.1.1] - 2026-09-22
 

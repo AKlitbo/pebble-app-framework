@@ -4,11 +4,11 @@
 #
 # Waf build rules for one build target. build-manifests.ts fills in the three
 # folders below when it writes this sandbox (targets/<target>/), so the build
-# never has to work out where the engine or the face sits.
+# never has to work out where the framework or the face sits.
 #
-# Stage the face's sources, its family core and the engine into this folder,
+# Stage the face's sources, its family core and the framework into this folder,
 # then hand the build (sources, per-platform compile, bundle, .pbw archive) to
-# the engine's py/waf_helpers.py. Only those three folders differ between
+# the framework's py/waf_helpers.py. Only those three folders differ between
 # targets, which is why this is generated rather than committed per face.
 # ==============================================================================
 import os.path
@@ -44,7 +44,7 @@ def configure(ctx):
 
 
 def build(ctx):
-    # load the shared waf helpers from the engine at the repo root. the staged copy of the engine
+    # load the shared waf helpers from the framework at the repo root. the staged copy of the framework
     # here does not exist until stage_shared_sources runs, so load from the real one
     helpers = os.path.join(ctx.path.parent.parent.abspath(), SOURCE['engine'], 'py')
     if helpers not in sys.path:

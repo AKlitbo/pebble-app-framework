@@ -3,7 +3,7 @@
  *
  * Every build tool finds a face through here, so a face the lookup misses never builds, and one it
  * misnames builds into the wrong sandbox and releases under the wrong tag. The fixtures cover the
- * repo shapes the engine supports: one face at the root, and several under watchfaces/ with a
+ * repo shapes the framework supports: one face at the root, and several under watchfaces/ with a
  * family among them.
  */
 
@@ -33,7 +33,7 @@ describe('findFaces', () => {
     ]);
   });
 
-  /** A folder holding no faces, like an engine on its own, has nothing to build. */
+  /** A folder holding no faces, like a framework on its own, has nothing to build. */
   test('finds nothing in a folder with no faces', () => {
     const result = findFaces(WORKSPACES);
 

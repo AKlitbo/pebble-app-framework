@@ -1,9 +1,9 @@
 /**
  * ESLint flat config for the docs site's browser script.
  *
- * The engine's own config ignores plain JavaScript apart from the action scripts, so nothing checked
- * site/theme.js. This config covers it on its own, through npm --prefix docs run lint and the engine CI's
- * lint job, and leaves the engine's run as it is.
+ * The framework's own config ignores plain JavaScript apart from the action scripts, so nothing checked
+ * site/theme.js. This config covers it on its own, through npm --prefix docs run lint and the framework CI's
+ * lint job, and leaves the framework's run as it is.
  *
  * Prettier formats the same file, so there are no style rules here. Only the correctness ones.
  *
@@ -25,7 +25,7 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
-      // empty catch blocks are permitted, and an unused catch binding is too, the same as the engine's own config
+      // empty catch blocks are permitted, and an unused catch binding is too, the same as the framework's own config
       'no-empty': ['error', { allowEmptyCatch: true }],
       'no-unused-vars': [
         'error',

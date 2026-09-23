@@ -2,7 +2,7 @@
  * Publishes a face release with every .pbw its build made, each named for what it installs on.
  *
  * A face can build more than one target, such as a watchface and a watchapp from one source, so the targets
- * come from the engine's build-manifests.ts the same way build.sh gets them. Each pbw is copied out under
+ * come from the framework's build-manifests.ts the same way build.sh gets them. Each pbw is copied out under
  * its release name and gh creates the release with all of them in one call. A target with no pbw stops
  * before gh runs, so a release never goes out missing one.
  */
@@ -12,7 +12,7 @@ const path = require('node:path');
 const { fail, step, firstLine, markdownTable } = require('../../../shared/lib');
 const { assetName } = require('./lib');
 
-// this script sits in .github/actions/publish-release/scripts/ inside the engine
+// this script sits in .github/actions/publish-release/scripts/ inside the framework
 const ENGINE = path.resolve(__dirname, '..', '..', '..', '..');
 
 module.exports = step(async ({ core, exec }) => {
