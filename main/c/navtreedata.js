@@ -24,7 +24,7 @@
 */
 var NAVTREE =
 [
-  [ "Pebble Watchface Engine", "index.html", [
+  [ "Pebble App Framework", "index.html", [
     [ "Device API", "index.html", null ],
     [ "Topics", "topics.html", "topics" ],
     [ "Data Structures", "annotated.html", [

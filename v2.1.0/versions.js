@@ -45,7 +45,7 @@
   }
 
   function attach(select) {
-    // the version's own folder, such as .../pebble-watchface-engine/v2.0.0/
+    // the version's own folder, such as .../pebble-app-framework/v2.0.0/
     var site = new URL(select.getAttribute('data-root') || '', location.href);
     var current = select.value;
 

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pebble Watchface Engine</title>
+    <title>Pebble App Framework</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <script src="theme.js"></script>
     <script src="versions.js"></script>
@@ -19,7 +19,7 @@
     <nav class="site-bar" aria-label="Docs site">
   <a class="site-bar-home" href="index.html">
     <img src="logo.svg" alt="" width="22" height="22" />
-    <span>Pebble Watchface Engine</span>
+    <span>Pebble App Framework</span>
   </a>
   <select class="site-bar-version" aria-label="Docs version" data-root="" disabled>
     <option value="v2.1.0" selected>v2.1.0</option>
@@ -30,7 +30,7 @@
     <a data-section="coverage-c" href="coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="coverage/ts/index.html">TS Coverage</a>
   </div>
-  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
     <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
       <path
         d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
@@ -52,7 +52,7 @@
       <header class="site-head">
         <img class="logo" src="logo.svg" alt="" width="56" height="56" />
         <div class="head-text">
-          <h1>Pebble Watchface Engine</h1>
+          <h1>Pebble App Framework</h1>
           <p class="tagline">The shared engine behind my Pebble watchfaces. It holds the device C, the PebbleKit JS runtime and Clay config pieces, the waf build helpers, and the generators and build tooling every face uses.</p>
         </div>
         <div class="head-side">
@@ -147,7 +147,7 @@
 </ul>
 <h2 id="using-it">Using It</h2>
 <p>The engine does not build on its own. It is mounted as a git submodule one folder down inside a repo of faces, most often at <code>lib/</code>, and that repo lists the folder as an npm workspace so the engine&#39;s dependencies install once. A repo holding one face keeps it at the root, laid out like a plain Pebble project with <code>config/</code>, <code>src/</code> and <code>resources/</code>. A repo of several keeps each at <code>watchfaces/&lt;face&gt;/</code>, or at <code>watchfaces/&lt;family&gt;/&lt;face&gt;/</code> beside the code the family shares.</p>
-<pre><code class="language-sh">git submodule add https://github.com/AKlitbo/pebble-watchface-engine.git lib
+<pre><code class="language-sh">git submodule add https://github.com/AKlitbo/pebble-app-framework.git lib
 git config core.hooksPath lib/.githooks
 npm install
 bash lib/build.sh &lt;face&gt;</code></pre>
@@ -218,7 +218,7 @@ npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
 npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
 npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-watchface-engine/blob/4a9a4a7621d40b03b857048dd802ca4770ab2b90/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-watchface-engine/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
+<p>The <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4a9a4a7621d40b03b857048dd802ca4770ab2b90/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-app-framework/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
 <h2 id="ci">CI</h2>
 <ul>
 <li><strong><code>engine-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>
@@ -250,7 +250,7 @@ npm --prefix docs run site     <span class="cmt"># the home page and the pages a
     </div>
   </div>
   <div class="foot-base">
-    <a href="https://github.com/AKlitbo/pebble-watchface-engine">AKlitbo/pebble-watchface-engine</a>
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
     <span>Built from v2.1.0</span>
   </div>
 </footer>

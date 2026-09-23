@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Changelog · Pebble Watchface Engine</title>
+    <title>Changelog · Pebble App Framework</title>
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <script src="../theme.js"></script>
     <script src="../versions.js"></script>
@@ -19,7 +19,7 @@
     <nav class="site-bar" aria-label="Docs site">
   <a class="site-bar-home" href="../index.html">
     <img src="../logo.svg" alt="" width="22" height="22" />
-    <span>Pebble Watchface Engine</span>
+    <span>Pebble App Framework</span>
   </a>
   <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
     <option value="v2.1.1" selected>v2.1.1</option>
@@ -30,7 +30,7 @@
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
   </div>
-  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-watchface-engine">
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
     <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
       <path
         d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
@@ -51,9 +51,9 @@
     <div class="wrap">
       <main class="page">
         <h1>Changelog</h1>
-        <div class="readme"><p>All notable API changes to the Pebble Watchface Engine are documented in this file.</p>
+        <div class="readme"><p>All notable API changes to the Pebble App Framework are documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="211-2026-09-22"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.1.0...v2.1.1">2.1.1</a> - 2026-09-22</h2>
+<h2 id="211-2026-09-22"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v2.1.0...v2.1.1">2.1.1</a> - 2026-09-22</h2>
 <h3 id="changed">Changed</h3>
 <ul>
 <li>The <code>locationsearch</code> prompt to pick a city again now draws as a callout, with an accent bar and a badge. A face can repaint it through <code>.loc-note</code>.</li>
@@ -67,14 +67,14 @@
 <li>Fixed an older calendar fetch that answered last overwriting a newer one, such as the old feed showing after the iCal URL changed. Only the newest fetch&#39;s answer is sent to the watch.</li>
 <li>Fixed <code>-DBUILD_WATCHAPP</code> never being passed, so an app target built as though it were a watchface. A face&#39;s <code>#ifdef BUILD_WATCHAPP</code> code now reaches the app, which for Gridlock is the weather request it makes as it opens. Run <code>npm run build:manifests</code> to rewrite the sandboxes, which <code>build.sh</code> and CI already do.</li>
 </ul>
-<h2 id="210-2026-09-20"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
+<h2 id="210-2026-09-20"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Added <code>layout_has_any_block</code> in <code>c/core/layout/layout_string.h</code>, which says whether a layout wire string holds a placeable block. The catalog bound comes in as an argument.</li>
 <li>Added <code>layout_role_pick</code> in <code>c/core/layout/layout_role.h</code>, which picks between a face&#39;s day, night and Quiet Time layouts. A trigger with no layout assigned falls through to the next one rather than drawing an empty grid.</li>
 <li>Added time zones to a <code>locationsearch</code> field on a timezone key. It matches UTC, a zone name, or a typed offset such as <code>utc+05:30</code> as well as a city, and a zone pick persists <code>{label, offset, tz, fixed}</code> with no coordinates.</li>
 </ul>
-<h2 id="200-2026-09-17"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.1.0...v2.0.0">2.0.0</a> - 2026-09-17</h2>
+<h2 id="200-2026-09-17"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v1.1.0...v2.0.0">2.0.0</a> - 2026-09-17</h2>
 <h3 id="added-2">Added</h3>
 <ul>
 <li>Added <code>node-version</code> and <code>sdk-version</code> inputs to the <code>setup-pebble</code> action. Both are optional and default to Node 24 and the latest SDK.</li>
@@ -123,12 +123,12 @@
 <li>Fixed <code>readout_weather_cond</code> cutting a condition token at the first underscore rather than at a trailing <code>_NIGHT</code>. It now reads the generated label table, which applies the same rule as the phone.</li>
 <li>Fixed <code>ICON_AUTOTRIM</code> and <code>ICON_TRIM_LOG</code> being impossible to override. They are <code>#ifndef</code>-guarded now, so a face can set either one before including <code>icon_cache.h</code> as the header always claimed.</li>
 </ul>
-<h2 id="110-2026-09-12"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.0.0...v1.1.0">1.1.0</a> - 2026-09-12</h2>
+<h2 id="110-2026-09-12"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v1.0.0...v1.1.0">1.1.0</a> - 2026-09-12</h2>
 <h3 id="added-3">Added</h3>
 <ul>
 <li>Added support for a repo that holds a single face at its root, laid out like a plain Pebble project with <code>config/</code>, <code>src/</code> and <code>resources/</code>. The build and the face release find that face by the name in its <code>config/pebble.appinfo.json</code>, and its changelog sits at the repo root.</li>
 </ul>
-<h2 id="100-2026-09-12"><a href="https://github.com/AKlitbo/pebble-watchface-engine/releases/tag/v1.0.0">1.0.0</a> - 2026-09-12</h2>
+<h2 id="100-2026-09-12"><a href="https://github.com/AKlitbo/pebble-app-framework/releases/tag/v1.0.0">1.0.0</a> - 2026-09-12</h2>
 <h3 id="added-4">Added</h3>
 <ul>
 <li>First release of the engine as its own repo, split out of the shared <code>lib/</code> in pebble-watchfaces.</li>
@@ -150,7 +150,7 @@
     </div>
   </div>
   <div class="foot-base">
-    <a href="https://github.com/AKlitbo/pebble-watchface-engine">AKlitbo/pebble-watchface-engine</a>
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
     <span>Built from v2.1.1</span>
   </div>
 </footer>
