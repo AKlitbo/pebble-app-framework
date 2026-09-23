@@ -13,8 +13,8 @@
 # Because DEV_FORCE_TIME pins the clock, the same state renders byte-identical, so
 # sha256 is a reliable identity + "back to start" signal.
 #
-# Run from WSL, from the repo root:
-#   tools/dev/tap-walk.sh --target=gridlock-face
+# Run from WSL, from the root of a face repo that mounts the engine at lib/:
+#   lib/tools/dev/tap-walk.sh --target=gridlock-face
 #
 # The target is the build sandbox name, which is the face name for most faces and the
 # per-target name for a face that ships several (gridlock-face, gridlock-app).

@@ -7,11 +7,13 @@
  * shows you the console error when the page refuses to render, which on the watch just looks like
  * a settings screen that never appears. That is the real reason it earns its keep.
  *
- * Run once:   node tools/dev/clay-preview.ts <face>
- * Keep fresh: node tools/dev/clay-preview.ts <face> --watch   (then refresh the browser)
- * As a user:  node tools/dev/clay-preview.ts <face> --settings=saved.json
+ * Run from the root of a face repo, where `npm run dev:clay` points at lib/tools/dev/clay-preview.ts.
  *
- * Opens to: tools/dev/clay-preview.html
+ * Run once:   npm run dev:clay -- <face>
+ * Keep fresh: npm run dev:clay -- <face> --watch   (then refresh the browser)
+ * As a user:  npm run dev:clay -- <face> --settings=saved.json
+ *
+ * Opens to: lib/tools/dev/clay-preview.html
  *
  * --settings seeds the page from a { messageKey: value } file, which is what "open the settings on
  * a watch you have already configured" actually means. Without it every preview is a brand new

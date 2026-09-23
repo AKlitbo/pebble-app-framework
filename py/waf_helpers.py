@@ -195,9 +195,10 @@ def build_face(ctx, source, extra_cflags=None):
     if family_dir:
         c_sources += family_dir.ant_glob('**/*.c', excl=['**/*.spec.c'])
 
-    # emit/ is build:pkjs output and holds nothing but the JS the watch ships: the specs
-    # and the clay/builder pieces are dropped at the tsc level (config/tsconfig.pkjs.json),
-    # and the generated *.g.js components are copied in beside it. so the whole tree goes
+    # emit/ is build:pkjs output and holds nothing but the JS the watch ships. the specs,
+    # the spec helpers, and the clay/builder pieces are left out by the tsconfig that
+    # tools/pkjs/build-pkjs.ts writes, and the generated *.g.js components are copied in
+    # beside it. so the whole tree goes
     js_sources = ctx.path.ant_glob('emit/**/*.js')
 
     binaries = []

@@ -22,5 +22,8 @@ Thumbs.db
 .vscode/
 .idea/
 
+# the API keys the live specs read
+.env
+
 # the local Clay settings preview, rebuilt by tools/dev/clay-preview.ts on demand
 clay-preview.html
