@@ -875,6 +875,138 @@ describe('startPebbleApp stock and calendar', () => {
   });
 });
 
+describe('startPebbleApp settings restore', () => {
+  type Listener = (event?: unknown) => void;
+  type LoadFn = (request: string, ...args: unknown[]) => unknown;
+
+  // a face that declares SETTINGS_FRESH, which is what turns the seed into the two-way restore.
+  // no weather or strip key, so a ready starts no fetch and the only sends are the restore's
+  const restoreKeys = {
+    SETTINGS_REQUEST: 'SETTINGS_REQUEST',
+    SETTINGS_FRESH: 'SETTINGS_FRESH',
+    CLOCK_DATE_FORMAT: 'CLOCK_DATE_FORMAT',
+    APPEARANCE_THEME: 'APPEARANCE_THEME',
+  };
+
+  class FakeClay {
+    registerComponent() {}
+    // the real Clay turns the saved config into the dict a Save sends, so the fake hands the
+    // config straight back and a restore shows up as those values reaching the watch
+    getSettings(json: string) {
+      return JSON.parse(json);
+    }
+    generateUrl() {
+      return '';
+    }
+  }
+
+  function fakeModule(id: string): unknown {
+    if (id === 'message_keys') {
+      return restoreKeys;
+    }
+    if (id === '@rebble/clay/src/js/index') {
+      return FakeClay;
+    }
+    return undefined;
+  }
+
+  const moduleInternal = Module as unknown as { _load: LoadFn };
+  const host = globalThis as unknown as Record<string, unknown>;
+  let originalLoad: LoadFn;
+  let listeners: Record<string, Listener>;
+  const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
+
+  /** The watch's reply to SETTINGS_REQUEST, carrying its own settings and whether it booted empty. */
+  function watchReplies(fresh: boolean, dateFormat: string) {
+    listeners.appmessage({ payload: { SETTINGS_FRESH: fresh ? 1 : 0, CLOCK_DATE_FORMAT: dateFormat, APPEARANCE_THEME: 2 } });
+  }
+
+  /** What the phone has saved now. */
+  function stored(key: string) {
+    return JSON.parse(localStorage.getItem('clay-settings') as string)[key];
+  }
+
+  /** Every dict sent to the watch that carries settings rather than a request. */
+  function restoreSends() {
+    return sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_DATE_FORMAT' in dict).map(([dict]) => dict);
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    installFakeXhr();
+    sendAppMessage.mockClear();
+    listeners = {};
+
+    host.Pebble = {
+      addEventListener: (type: string, handler: Listener) => {
+        listeners[type] = handler;
+      },
+      sendAppMessage,
+      openURL: () => {},
+    };
+
+    originalLoad = moduleInternal._load;
+    moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
+      return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
+    };
+  });
+
+  afterEach(() => {
+    moduleInternal._load = originalLoad;
+    delete host.Pebble;
+    vi.useRealTimers();
+  });
+
+  /**
+   * An install or an update can wipe the watch's own settings. The phone still holds them, so they
+   * go back to the watch. Seeding the other way instead would take the watch's defaults as the
+   * truth and throw away everything the wearer had set.
+   */
+  test('pushes the phone config back to a watch that booted with no settings', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5' }));
+    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    listeners.ready();
+
+    watchReplies(true, '%Y-%m-%d');
+
+    const result = restoreSends();
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5' });
+    expect(stored('CLOCK_DATE_FORMAT')).toBe('%d.%m.%Y');
+  });
+
+  /**
+   * A phone that lost its store, through a new phone or the app's data being cleared, has nothing
+   * to push. The watch is the only copy left, so the config page has to open on what the watch is
+   * showing rather than on the face's defaults.
+   */
+  test('seeds from the watch when the phone has nothing saved', () => {
+    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    listeners.ready();
+
+    watchReplies(false, '%Y-%m-%d');
+
+    expect(stored('CLOCK_DATE_FORMAT')).toBe('%Y-%m-%d');
+    expect(restoreSends()).toHaveLength(0);
+  });
+
+  /**
+   * With settings on both sides the phone is the truth and the watch already agrees, so a launch
+   * must change neither. Seeding here would overwrite the phone from a watch that is a save behind.
+   */
+  test('leaves both sides alone when each already has settings', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
+    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    listeners.ready();
+
+    watchReplies(false, '%Y-%m-%d');
+
+    expect(stored('CLOCK_DATE_FORMAT')).toBe('%d.%m.%Y');
+    expect(restoreSends()).toHaveLength(0);
+  });
+});
+
 describe('collectDefaults', () => {
   /** The defaults seed the store before the config page opens, so a dropped pair opens a setting on nothing. */
   test('collects every messageKey with a default, recursing into nested items', () => {
