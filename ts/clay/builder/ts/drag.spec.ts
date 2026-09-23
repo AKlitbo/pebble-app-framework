@@ -5,7 +5,10 @@
  * A builder that lifts a placed item out of its model has nothing on screen holding it, so which
  * callback runs at the end decides whether that item comes back or is gone. A release away from
  * any target means remove it, while a pointer taken away mid drag means put it back, and telling
- * those two apart is the whole of what is pinned here.
+ * those two apart is most of what is pinned here.
+ *
+ * The rest is the two ends of an armed press. The threshold is what keeps a tap on a placed block
+ * from grabbing it, and the drop over an allowed target is the only way anything is ever placed.
  */
 
 import { describe, test, expect, beforeEach, vi } from 'vitest';
@@ -32,6 +35,76 @@ function specWith(extra: Partial<DragSpec<string, number>> = {}) {
 
 beforeEach(() => {
   document.body.innerHTML = '';
+});
+
+/**
+ * A document of its own for one drag.
+ *
+ * createDrag leaves its listeners on the document for the life of the config page, so two drags
+ * sharing one document both answer the same move and a press armed in one test reaches the next.
+ */
+function ownDocument(): Document {
+  return document.implementation.createHTMLDocument('');
+}
+
+/** A pointer move to a point, which is all the engine reads off the event. */
+function pointerMove(doc: Document, x: number, y: number): void {
+  doc.dispatchEvent(new MouseEvent('pointermove', { clientX: x, clientY: y }));
+}
+
+/** A release at a point. */
+function pointerUp(doc: Document, x: number, y: number): void {
+  doc.dispatchEvent(new MouseEvent('pointerup', { clientX: x, clientY: y }));
+}
+
+describe('arm', () => {
+  /**
+   * A press that has not travelled is a tap. Lifting on it would make every touch of a placed
+   * block pull it out of the grid, which on a touchscreen reads as a builder that grabs at
+   * everything.
+   */
+  test('leaves a press that has not passed the threshold armed', () => {
+    const lift = vi.fn();
+    const spec = specWith({ lift: lift });
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.arm('panel', pointerDown());
+    pointerMove(doc, 10, 0);
+
+    expect(lift).not.toHaveBeenCalled();
+    expect(doc.body.children).toHaveLength(0);
+  });
+
+  /** Past the threshold the press is a real drag, so the item comes out of the model and a ghost follows the finger. */
+  test('lifts and begins the drag once the press passes the threshold', () => {
+    const lift = vi.fn();
+    const spec = specWith({ lift: lift });
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.arm('panel', pointerDown());
+    pointerMove(doc, 11, 0);
+
+    expect(lift).toHaveBeenCalledWith('panel');
+    expect(doc.body.children).toHaveLength(1);
+  });
+
+  /**
+   * Releasing a press that never travelled must touch nothing. Running dropOutside on it would
+   * delete the block the user only tapped.
+   */
+  test('leaves the model alone when an armed press is released as a tap', () => {
+    const spec = specWith();
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.arm('panel', pointerDown());
+    pointerUp(doc, 2, 2);
+
+    expect(spec.drop).not.toHaveBeenCalled();
+    expect(spec.dropOutside).not.toHaveBeenCalled();
+  });
 });
 
 describe('pointercancel', () => {
@@ -84,5 +157,34 @@ describe('pointerup', () => {
 
     expect(spec.dropOutside).toHaveBeenCalledWith('panel');
     expect(cancel).not.toHaveBeenCalled();
+  });
+
+  /** The one way anything is ever placed in a builder, so the target under the release has to reach drop. */
+  test('commits a release over a target that allows the payload', () => {
+    const spec = specWith({ hitTest: () => 3, allows: () => true });
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.start('panel', pointerDown());
+    pointerUp(doc, 40, 40);
+
+    expect(spec.drop).toHaveBeenCalledWith('panel', 3);
+    expect(spec.dropOutside).not.toHaveBeenCalled();
+  });
+
+  /**
+   * A target that refuses this payload, such as a cell too small for the block, is not a drop. The
+   * release goes to dropOutside, so a block dragged onto a spot it cannot fit is not wedged there.
+   */
+  test('sends a release over a target that refuses the payload to dropOutside', () => {
+    const spec = specWith({ hitTest: () => 3, allows: () => false });
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.start('panel', pointerDown());
+    pointerUp(doc, 40, 40);
+
+    expect(spec.dropOutside).toHaveBeenCalledWith('panel');
+    expect(spec.drop).not.toHaveBeenCalled();
   });
 });
