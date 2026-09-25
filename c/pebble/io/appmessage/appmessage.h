@@ -164,11 +164,22 @@ void appmessage_set_custom_colors_provider(CustomColorsProvider cb); /**< @brief
 void appmessage_on_inbox_complete(InboxCompleteHandler cb);      /**< @brief Fires once after a whole inbox is handled */
 
 /**
- * @brief Register the SDK callbacks and open the inbox/outbox.
+ * @brief Register the SDK callbacks and open the inbox and outbox.
  *
- * Call after the channel handlers are installed.
+ * Call after settings_init and after the channel handlers are installed. The outbox is sized from
+ * the face's settings table, counting every string at its full buffer, so it needs nothing from the
+ * face.
+ *
+ * The inbox is the face's to size, because the biggest message in is the settings page's save and
+ * Clay sends every message key in it, including ones the watch never reads. Add up the longest
+ * value each key on the settings page can hold plus 7 bytes of header per key, and leave some room
+ * over. A message bigger than the inbox is dropped whole and logged with its reason, so a settings
+ * save that never lands is the sign the number is too small.
+ *
+ * @param inbox_size The inbox buffer in bytes. Anything over the platform maximum opens at the
+ *   maximum.
  */
-void appmessage_open(void);
+void appmessage_open(uint32_t inbox_size);
 
 /**
  * @brief Asks the phone for a fresh weather reading. The weather store calls this on its

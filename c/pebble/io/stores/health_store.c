@@ -183,50 +183,41 @@ static HealthMinuteData *scratch_take(int records)
 /**
  * @brief Fill the rolling heart rate window by reading the watch's own minute log.
  *
- * Used once at launch to backfill the window from whatever the watch already logged.
- *
- * @param[out] history_out The window to fill, oldest reading first. Left untouched if NULL.
- * @param max_records How many slots @p history_out holds, capped to HR_HISTORY_MINUTES.
+ * Used once at launch to backfill the window from whatever the watch already logged. The window
+ * comes out oldest reading first.
  */
-static void read_hr_history(uint8_t *history_out, int max_records)
+static void read_hr_history(void)
 {
 #if defined(PBL_HEALTH)
-    if (max_records <= 0 || !history_out) return;
+    uint8_t *history = s_state.hr_history;
+    memset(history, 0, HR_HISTORY_MINUTES);
 
-    // the store only ever asks for the 60 minute window so cap the query to the batch
-    if (max_records > HR_HISTORY_MINUTES)
-    {
-        max_records = HR_HISTORY_MINUTES;
-    }
-
-    memset(history_out, 0, max_records);
-
-    HealthMinuteData *scratch = scratch_take(max_records);
+    HealthMinuteData *scratch = scratch_take(HR_HISTORY_MINUTES);
     if (!scratch)
     {
         return; // no room for the records, so leave the window zeroed and let live readings fill it
     }
 
     time_t end = time(NULL);
-    time_t start = end - (max_records * SECONDS_PER_MINUTE);
+    time_t start = end - (HR_HISTORY_MINUTES * SECONDS_PER_MINUTE);
 
-    uint32_t records_read = health_service_get_minute_history(scratch, max_records, &start, &end);
+    uint32_t records_read = health_service_get_minute_history(scratch, HR_HISTORY_MINUTES, &start, &end);
 
     // the service is handed the room it has and documents that it returns that many or fewer, but
     // that is its promise rather than something checked here. more than asked for would put offset
-    // below zero and the fill would run backwards out of the front of history_out, so take its word
+    // below zero and the fill would run backwards out of the front of the window, so take its word
     // no further than the buffer goes
-    if (records_read > (uint32_t)max_records)
+    if (records_read > HR_HISTORY_MINUTES)
     {
-        records_read = (uint32_t)max_records;
+        records_read = HR_HISTORY_MINUTES;
     }
 
     // the readings come back oldest first and the graph wants them ending at now, so a short read
     // sits at the back and leaves the front zeroed
-    int offset = max_records - (int)records_read;
+    int offset = HR_HISTORY_MINUTES - (int)records_read;
     for (uint32_t i = 0; i < records_read; i++)
     {
-        history_out[offset + i] = scratch[i].is_invalid ? 0 : scratch[i].heart_rate_bpm;
+        history[offset + i] = scratch[i].is_invalid ? 0 : scratch[i].heart_rate_bpm;
     }
 
     free(scratch);
@@ -669,7 +660,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
                 // first launch with nothing saved: backfill from whatever the watch already logged
                 // so the chart is not empty, then let the live readings extend it from here
                 s_state.hr_last_min = time(NULL) / SECONDS_PER_MINUTE;
-                read_hr_history(s_state.hr_history, HR_HISTORY_MINUTES);
+                read_hr_history();
             }
         }
 

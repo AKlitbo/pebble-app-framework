@@ -275,6 +275,22 @@ function startPebbleApp(options: StartOptions): void {
     }
   }
 
+  /**
+   * Builds the dict for a save or a restore from the settings page.
+   *
+   * A face with SETTINGS_FRESH sends the key along with it. That is how the watch tells the page's
+   * message apart from anything else carrying a setting, such as the time zone push on every ready.
+   * Only the page's message ends a fresh watch, so a push landing first cannot stop the restore.
+   */
+  function pageSettings(json: string): AppMessageDict {
+    const dict = retimeSettings(clay.getSettings(json), messageKeys, Date.now());
+    if (messageKeys.SETTINGS_FRESH !== undefined) {
+      dict[messageKeys.SETTINGS_FRESH] = 0;
+    }
+
+    return dict;
+  }
+
   // one AppMessage may be in flight at a time, so every send is serialized through this queue
   const queueSend = createSendQueue((dict, onOk, onFail) => Pebble.sendAppMessage(dict, onOk, onFail));
 
@@ -358,7 +374,7 @@ function startPebbleApp(options: StartOptions): void {
 
         if (watchFresh && phoneHasConfig) {
           // restore the watch from our saved config using the same dict a Save would send
-          queueSend(retimeSettings(clay.getSettings(JSON.stringify(config)), messageKeys, Date.now()));
+          queueSend(pageSettings(JSON.stringify(config)));
         } else if (!phoneHasConfig) {
           // nothing saved on the phone yet so recover it from the watch instead
           seedFromWatch(payload);
@@ -386,7 +402,7 @@ function startPebbleApp(options: StartOptions): void {
 
     // send the saved settings to the watch through the queue. Clay's auto-handling would send this
     // directly and let it collide with an in-flight send (dropping the whole save with no retry)
-    queueSend(retimeSettings(clay.getSettings(event.response), messageKeys, Date.now()));
+    queueSend(pageSettings(event.response));
 
     // each feature refetches when one of its own settings changed
     features.forEach((feature) => feature.configSaved?.());

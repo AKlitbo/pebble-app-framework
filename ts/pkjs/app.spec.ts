@@ -932,6 +932,32 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
+   * The watch only ends fresh on a message marked as the settings page's. An unmarked restore would
+   * sit in memory, never reach flash, and the watch would ask to be restored again on every launch.
+   */
+  test('marks the restore as the settings page message', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
+    app.startPebbleApp({ clayConfig: [] });
+    pebble.fire('ready');
+
+    watchReplies(true, '%Y-%m-%d');
+
+    expect(restoreSends()[0]).toMatchObject({ SETTINGS_FRESH: 0 });
+  });
+
+  /**
+   * A save from the settings page is the other message that ends fresh. Unmarked, a watch that lost
+   * its restore would keep the save only until the next relaunch.
+   */
+  test('marks a save from the settings page', () => {
+    app.startPebbleApp({ clayConfig: [] });
+
+    pebble.fire('webviewclosed', { response: JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }) });
+
+    expect(restoreSends()[0]).toMatchObject({ CLOCK_DATE_FORMAT: '%d.%m.%Y', SETTINGS_FRESH: 0 });
+  });
+
+  /**
    * A phone that lost its store, through a new phone or the app's data being cleared, has nothing
    * to push. The watch is the only copy left, so the config page has to open on what the watch is
    * showing rather than on the face's defaults.

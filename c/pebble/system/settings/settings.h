@@ -119,7 +119,8 @@ void settings_init(const SettingsSchema *schema);
  * install or an update. Lets the phone know it should push its own config back rather than
  * trust the watch's defaults.
  *
- * @return true when the primary key had no blob at `settings_init`.
+ * @return true when the primary key had no blob at `settings_init` and no settings page message has
+ * landed since.
  */
 bool settings_was_fresh(void);
 
@@ -127,6 +128,14 @@ bool settings_was_fresh(void);
  * @brief Persist the active face's structs under their keys (the whole chain).
  */
 void settings_save(void);
+
+/**
+ * @brief Clears settings_was_fresh once a save or restore from the settings page has been saved.
+ *
+ * Only that message counts. Anything else the phone sends while the watch is fresh stays in
+ * memory, so the phone still sees a fresh watch and pushes its whole config back.
+ */
+void settings_mark_restored(void);
 
 /**
  * @brief Read a known uint8/bool setting by id.
@@ -166,20 +175,20 @@ void settings_set_u8(SettingId id, uint8_t value);
 uint8_t settings_enum_count(SettingId id);
 
 /**
- * @brief How many outbox bytes every field of the active face takes once written.
+ * @brief The most outbox bytes every field of the active face could ever take once written.
  *
- * Counts each field's tuple header and value the same way settings_serialize writes them, so a
- * caller can tell before it starts a message whether the whole snapshot fits.
+ * Counts each string as filling its whole buffer, so no later settings change can outgrow it. The
+ * transport sizes its outbox from this when it opens.
  *
- * @return The bytes the fields need, not counting the dictionary's own one byte header.
+ * @return The bytes the fields could need, not counting the dictionary's own one byte header.
  */
-uint32_t settings_serialized_size(void);
+uint32_t settings_serialized_size_max(void);
 
 /**
  * @brief Write every field of the active face into an outbox iterator.
  *
- * Stops at the first field that does not fit, so check settings_serialized_size first when the
- * snapshot has to arrive whole.
+ * Stops at the first field that does not fit. The transport opens its outbox at
+ * settings_serialized_size_max, so the whole snapshot fits.
  *
  * @param iter The dictionary iterator to encode into.
  * @return True when every field was written, false when the outbox ran out of room partway.

@@ -17,10 +17,11 @@
 /// Head of the schema chain registered by settings_init, the primary plus any companions
 static const SettingsSchema *s_primary;
 /**
- * @brief True when the primary key had no saved blob at init.
+ * @brief True when the primary key had no saved blob at init, and no settings page message has landed since.
  *
  * That means storage was wiped by a fresh install or an update. It tells the phone to push its own
- * config back rather than the watch seeding from defaults.
+ * config back rather than the watch seeding from defaults. It clears once the settings page's
+ * save or restore has landed and been saved.
  */
 static bool s_was_fresh;
 /// Known fields indexed by id for typed reads, drawn from every schema in the chain
@@ -347,6 +348,12 @@ void settings_save(void)
     {
         save_schema(schema);
     }
+
+}
+
+void settings_mark_restored(void)
+{
+    s_was_fresh = false;
 }
 
 uint8_t settings_u8(SettingId id)
@@ -389,30 +396,27 @@ static void enum_text(uint8_t value, char *buf, size_t size)
 }
 
 /**
- * @brief How many bytes one field's value takes on the wire, written the way settings_serialize writes it.
+ * @brief The most bytes one field's value could take on the wire, written the way
+ * settings_serialize writes it.
  *
- * @param schema The schema the field belongs to.
+ * A string counts as filling its whole buffer, and an enum as the three digits plus terminator any
+ * uint8_t fits in.
+ *
  * @param field The field to measure.
  * @return The value's size, without its tuple header.
  */
-static uint32_t field_value_size(const SettingsSchema *schema, const SettingField *field)
+static uint32_t field_value_size_max(const SettingField *field)
 {
-    uint8_t *byte = (uint8_t *)field_ptr(schema, field);
-
     switch (field->type)
     {
         case SETTING_BOOL:
             return sizeof(uint8_t);
 
         case SETTING_ENUM_U8:
-        {
-            char buf[4];
-            enum_text(*byte, buf, sizeof(buf));
-            return strlen(buf) + 1;
-        }
+            return sizeof("255");
 
         case SETTING_CSTRING:
-            return strlen((char *)byte) + 1;
+            return field->size;
 
         case SETTING_COLOR:
             return sizeof(uint32_t);
@@ -421,7 +425,7 @@ static uint32_t field_value_size(const SettingsSchema *schema, const SettingFiel
     return 0;
 }
 
-uint32_t settings_serialized_size(void)
+uint32_t settings_serialized_size_max(void)
 {
     uint32_t size = 0;
     for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
@@ -430,7 +434,7 @@ uint32_t settings_serialized_size(void)
         {
             // the SDK's own formula for one tuple, less the one byte header that belongs to the
             // whole dictionary rather than to any field
-            uint32_t value_size = field_value_size(schema, &schema->fields[i]);
+            uint32_t value_size = field_value_size_max(&schema->fields[i]);
             size += dict_calc_buffer_size(1, value_size) - dict_calc_buffer_size(0);
         }
     }

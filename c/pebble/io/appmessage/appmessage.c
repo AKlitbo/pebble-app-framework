@@ -108,19 +108,6 @@ static bool write_settings(DictionaryIterator *iter);
  */
 static bool send_job(OutboxKind kind)
 {
-    // the phone reads a settings reply as the watch's whole snapshot, so a reply that cannot fit
-    // whole is never started. half of one would seed the config page with the rest missing
-    if (kind == OUTBOX_SETTINGS)
-    {
-        uint32_t needed = settings_reply_size();
-        if (needed > s_outbox_size)
-        {
-            APP_LOG(APP_LOG_LEVEL_ERROR, "settings reply needs %d bytes but the outbox holds %d",
-                    (int)needed, (int)s_outbox_size);
-            return false;
-        }
-    }
-
     DictionaryIterator *iter;
     if (app_message_outbox_begin(&iter) != APP_MSG_OK)
     {
@@ -147,9 +134,10 @@ static bool send_job(OutboxKind kind)
         case OUTBOX_SETTINGS:
             if (!write_settings(iter))
             {
-                // the size was checked before the outbox was started, so this only happens if that
-                // count and the writes ever disagree. empty the message rather than send part of a
-                // snapshot, and still send it so the outbox is left ready for the next job
+                // the outbox is opened at the reply's largest size, so this only happens when that
+                // is more than the platform allows, which appmessage_open logs. the phone reads a
+                // reply as the whole snapshot, and half of one would seed the config page with the
+                // rest missing. so empty it, and still send it so the outbox is left ready
                 const uint8_t *start = (const uint8_t *)iter->dictionary;
                 dict_write_begin(iter, (uint8_t *)start, (uint16_t)((const uint8_t *)iter->end - start));
             }
@@ -162,19 +150,15 @@ static bool send_job(OutboxKind kind)
 }
 
 /**
- * @brief Add a job to the work queue unless its kind is already pending, then pump.
+ * @brief Add a job to the work queue unless its kind is already pending, then pump either way.
  *
  * @param kind The job kind to send.
  * @param retries Retry passes left if the first send nacks (0 for the settings reply).
  */
 static void enqueue(OutboxKind kind, int retries)
 {
-    // a poll that repeats just keeps the one already waiting, and leaves the queue untouched
-    if (outbox_pending(&s_outbox, kind))
-    {
-        return;
-    }
-
+    // outbox_push turns away a kind that is already waiting, so a poll that repeats keeps the one
+    // already queued. the pump still runs, which only sends when the outbox is free
     outbox_push(&s_outbox, kind, retries);
     pump();
 }
@@ -270,25 +254,23 @@ void appmessage_request_calendar(void)
 }
 
 /**
- * @brief How many outbox bytes the settings reply takes, counting everything write_settings writes.
+ * @brief The most outbox bytes the settings reply could take, counting everything write_settings
+ * writes. The outbox is opened at this, so no settings change can outgrow it later.
  *
  * @return The whole message's size, the dictionary's own header included.
  */
 static uint32_t settings_reply_size(void)
 {
-    uint32_t size = dict_calc_buffer_size(0) + settings_serialized_size();
+    uint32_t size = dict_calc_buffer_size(0) + settings_serialized_size_max();
 
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
     size += dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) - dict_calc_buffer_size(0);
 #endif
 
 #if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
-    if (s_handlers.custom_colors_provider)
-    {
-        char combined[APPMESSAGE_CUSTOM_COLORS_MAX];
-        s_handlers.custom_colors_provider(combined, sizeof(combined));
-        size += dict_calc_buffer_size(1, (uint32_t)(strlen(combined) + 1)) - dict_calc_buffer_size(0);
-    }
+    // counted whether or not a provider is set yet, so the order a face registers the provider and
+    // opens the transport in makes no difference
+    size += dict_calc_buffer_size(1, (uint32_t)APPMESSAGE_CUSTOM_COLORS_MAX) - dict_calc_buffer_size(0);
 #endif
 
     return size;
@@ -336,6 +318,9 @@ static void send_settings(void)
     enqueue(OUTBOX_SETTINGS, 0);
 }
 
+// only a face with one of the byte strips calls this, and a face with none would warn it goes unused
+#if defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_HOURLY) || defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_DAILY) || \
+    defined(HAS_MESSAGE_KEY_STOCK_STRIP) || defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
 /**
  * @brief Find a byte array tuple by key and hand its bytes to a handler.
  *
@@ -360,6 +345,7 @@ static void dispatch_bytes(DictionaryIterator *iter, uint32_t key,
         cb(tuple->value->data, tuple->length);
     }
 }
+#endif
 
 /**
  * @brief Apply an inbox message: weather, coords, and any changed settings.
@@ -561,14 +547,32 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     SettingsInbound settings = settings_apply_inbox(iterator);
     bool moved = settings.changed || custom_changed;
 
-    // a watch that booted with nothing saved writes the phone's restore even when every value in it
-    // already matches a default, because the key existing is what stops the watch asking to be
-    // restored on the next launch. the settings reply is not a request, so a nacked one is never
-    // retried, and reporting fresh again is the only thing that recovers a restore that went missing
-    if (moved || settings_was_fresh())
+    bool save = moved;
+#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+    // the phone marks a save or a restore from its settings page by sending SETTINGS_FRESH along
+    // with it. while the watch is fresh only that message writes to flash, and it always does, since
+    // the key existing is what stops the watch asking to be restored on the next launch.
+    // anything else that lands first stays in memory. the time zone push on every ready carries a
+    // settings field too, and saving it would end fresh before the restore arrived. the phone would
+    // then see a watch with settings and never restore it
+    bool page = dict_find(iterator, MESSAGE_KEY_SETTINGS_FRESH) != NULL;
+    if (settings_was_fresh())
+    {
+        save = page;
+    }
+#endif
+
+    if (save)
     {
         settings_save();
     }
+
+#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+    if (page)
+    {
+        settings_mark_restored();
+    }
+#endif
 
     if (moved)
     {
@@ -599,7 +603,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
  */
 static void inbox_dropped_callback(AppMessageResult reason, void *context)
 {
-    APP_LOG(APP_LOG_LEVEL_ERROR, "Message Dropped!");
+    // a message bigger than the inbox is dropped whole with APP_MSG_BUFFER_OVERFLOW, which is the
+    // sign a face's inbox size is too small for its settings page
+    APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped: %d", (int)reason);
 }
 
 /**
@@ -637,16 +643,50 @@ static void outbox_sent_callback(DictionaryIterator *iter, void *context)
     pump();
 }
 
-void appmessage_open(void)
+void appmessage_open(uint32_t inbox_size)
 {
     app_message_register_inbox_received(inbox_received_callback);
     app_message_register_inbox_dropped(inbox_dropped_callback);
     app_message_register_outbox_failed(outbox_failed_callback);
     app_message_register_outbox_sent(outbox_sent_callback);
-    // Clay sends every setting in one message on save, and that dict is large and variable: the
-    // calendar URL, custom colours, saved-layout slots, api keys, and vibe patterns can add up
-    // past 2KB. a message bigger than the inbox is dropped whole, so open both buffers at the
-    // platform maximum rather than guess a fixed size (the outbox carries the settings seed back)
-    s_outbox_size = app_message_outbox_size_maximum();
-    app_message_open(app_message_inbox_size_maximum(), s_outbox_size);
+
+    // the biggest thing the watch sends is the settings reply, and every string in it is counted at
+    // its full buffer, so no settings change can outgrow the outbox later. a face with no settings
+    // at all still needs room for a one byte request
+    uint32_t outbox_size = settings_reply_size();
+    uint32_t request_size = dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t));
+    if (outbox_size < request_size)
+    {
+        outbox_size = request_size;
+    }
+
+    // both buffers come off the heap, and the platform maximum is the most the SDK will open
+    uint32_t outbox_max = app_message_outbox_size_maximum();
+    uint32_t inbox_max = app_message_inbox_size_maximum();
+    s_outbox_size = outbox_size < outbox_max ? outbox_size : outbox_max;
+    if (outbox_size > outbox_max)
+    {
+        // a settings table this big could write a reply the outbox cannot hold, and one that
+        // does not fit goes out empty
+        APP_LOG(APP_LOG_LEVEL_ERROR, "settings reply %d over outbox %d", (int)outbox_size, (int)outbox_max);
+    }
+    if (inbox_size > inbox_max)
+    {
+        inbox_size = inbox_max;
+    }
+
+    // an inbox under the SDK minimum would drop every message the phone sends
+    if (inbox_size < APP_MESSAGE_INBOX_SIZE_MINIMUM)
+    {
+        inbox_size = APP_MESSAGE_INBOX_SIZE_MINIMUM;
+    }
+
+    // a failed open leaves every message in both directions going nowhere, so say so rather than
+    // leave the panels on placeholders with no clue why
+    AppMessageResult result = app_message_open(inbox_size, s_outbox_size);
+    if (result != APP_MSG_OK)
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "open failed %d in %d out %d",
+                (int)result, (int)inbox_size, (int)s_outbox_size);
+    }
 }
