@@ -235,6 +235,9 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
   entry('WEATHER_NO_TEMP', caps.FORECAST_NO_TEMP, 'A column with no reading, so the watch draws a placeholder');
   lines.push('');
   entry('WX_FORECAST_NIGHT_BIT', `0x${nightBit.toString(16).toUpperCase()}`, 'Set on an hourly forecast code for a column after dark');
+  lines.push('');
+  entry('SETTINGS_REQUEST_FULL', caps.SETTINGS_REQUEST_FULL, 'A settings request for the watch\'s whole snapshot');
+  entry('SETTINGS_REQUEST_FRESH', caps.SETTINGS_REQUEST_FRESH, 'A settings request for only whether the watch booted empty');
 
   lines.push('');
   return lines.join('\n');

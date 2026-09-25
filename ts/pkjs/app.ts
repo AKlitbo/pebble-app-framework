@@ -14,6 +14,7 @@ import locationComponent from '../clay/location-component';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { getConfig, readValue } from './settings-store';
+import { WIRE_CAPS } from './wire';
 import type { Feature, FeatureHooks } from './feature';
 import type { ClayConfigItem } from '../clay/types';
 
@@ -21,9 +22,6 @@ import type { ClayConfigItem } from '../clay/types';
 export interface StartOptions {
   clayConfig: ClayConfigItem[];
   components?: unknown[];
-  seedKeys?: string[];
-  seedColorKeys?: string[];
-  seedBoolKeys?: string[];
   customClay?: unknown;
   // the parts of the runtime only some faces use, such as weather, stocks, and the calendar
   features?: Feature[];
@@ -107,71 +105,122 @@ export function retimeSettings(dict: AppMessageDict, messageKeys: any, nowMs: nu
   return dict;
 }
 
-// settings we copy from the watch payload into the Clay store
-// accept is an optional type guard and coerce an optional transform (default is copy as-is)
-const SEED_FIELDS: Array<{ key: string; accept?: (value: any) => boolean; coerce?: (value: any) => any }> = [
-  // temperature unit is a select so it seeds through seedKeys as a "0"/"1" string not here
-  { key: 'CLOCK_DATE_FORMAT', accept: isString },
-  { key: 'APPEARANCE_THEME', accept: isEnum, coerce: String },
-  { key: 'HEALTH_STEPS_MODE', accept: isEnum, coerce: String },
-  { key: 'CLOCK_TIME_FORMAT', accept: isEnum, coerce: String },
-  { key: 'CONNECTION_BLUETOOTH_ICON', coerce: asBool },
-  { key: 'CONNECTION_VIBE_CONNECT', accept: isEnum, coerce: String },
-  { key: 'CONNECTION_VIBE_DISCONNECT', accept: isEnum, coerce: String },
-];
+/**
+ * Walks the settings page and records the type of every item that has a message key.
+ *
+ * @param items The Clay config items, sections included.
+ * @param into The map to fill, from message key name to item type.
+ * @return The same map.
+ */
+function itemTypes(items: ClayConfigItem[], into: Record<string, string> = {}): Record<string, string> {
+  items.forEach((item) => {
+    if (item.messageKey) {
+      into[item.messageKey] = item.type;
+    }
+    if (item.items) {
+      itemTypes(item.items, into);
+    }
+  });
+  return into;
+}
+
+/**
+ * How many decimal places each slider's step carries, keyed by message key name. Clay scales a
+ * slider's value up by that many places on the way to the watch, so 1.5 on a step of 0.1 goes as 15.
+ */
+function sliderPrecisions(items: ClayConfigItem[], into: Record<string, number> = {}): Record<string, number> {
+  items.forEach((item) => {
+    if (item.type === 'slider' && item.messageKey && typeof item.step === 'number') {
+      const decimals = String(item.step).split('.')[1];
+      into[item.messageKey] = decimals ? decimals.length : 0;
+    }
+    if (item.items) {
+      sliderPrecisions(item.items, into);
+    }
+  });
+  return into;
+}
+
+/**
+ * Puts the saved settings back in the shape the settings page hands Clay on a save.
+ *
+ * Clay stores each setting as a bare value, but `getSettings` reads the page's `{ value }` wrapper
+ * off anything that is an object. Handed the stored settings as they are, it read `.value` off a
+ * checkboxgroup's array and dropped the setting from the phone for good, and sent a slider unscaled
+ * so 1.5 reached the watch as 1. Wrapping every value, with each slider's precision, gives the
+ * restore the same dict a save sends.
+ *
+ * @param config The settings as Clay stored them.
+ * @param clayConfig The face's settings page, which holds each slider's step.
+ * @return The settings wrapped the way the settings page returns them.
+ */
+export function wrapStoredConfig(config: Record<string, any>, clayConfig: ClayConfigItem[]): Record<string, any> {
+  const precisions = sliderPrecisions(clayConfig);
+  const wrapped: Record<string, any> = {};
+
+  Object.keys(config).forEach((name) => {
+    wrapped[name] = name in precisions ? { value: config[name], precision: precisions[name] } : { value: config[name] };
+  });
+  return wrapped;
+}
+
+/**
+ * Turns one value off the watch into the form its settings page item stores, or undefined when it
+ * should not seed.
+ *
+ * The watch sends a toggle as 0 or 1 and a colour as a number, and Clay wants a real boolean and a
+ * number back. A slider holds a number too. Everything else a page offers, a select, an input, or a
+ * face's own builder, is stored as a string, and a select's value arrives as its number.
+ *
+ * @param type The settings page item's type.
+ * @param value The value the watch sent.
+ * @return The value to store, or undefined to leave the setting alone.
+ */
+export function seedValue(type: string, value: any): any {
+  switch (type) {
+    case 'toggle':
+      return typeof value === 'number' ? asBool(value) : undefined;
+    case 'color':
+      return typeof value === 'number' ? value : undefined;
+    case 'slider':
+      return isEnum(value) && value !== '' && !isNaN(Number(value)) ? Number(value) : undefined;
+    case 'locationsearch':
+      // a time zone field seeds on its own below, and any other place needs coordinates the
+      // watch never keeps
+      return undefined;
+    default:
+      return isEnum(value) ? String(value) : undefined;
+  }
+}
 
 /**
  * Seeds the Clay store from the watch's current settings so the config opens
  * with the real values instead of defaults. The watch persist is the source of
  * truth, since the phone's clay-settings can be empty or stale after an update.
+ *
+ * Every setting the watch sends that the settings page has an item for is seeded, in the form that
+ * item stores. A key with no item, such as the reply's own marker, is left out.
+ *
  * A timezone field is the one exception. It only seeds when the phone has nothing
  * saved for it, since the watch's copy has lost the zone the phone's still holds.
  *
  * @param messageKeys The face's message_keys map.
  * @param payload The watch's AppMessage payload to seed from.
- * @param seedKeys Extra select-type face keys to seed as their string form.
- * @param seedColorKeys Extra colour-type face keys to seed as numbers.
- * @param seedBoolKeys Extra toggle-type face keys to seed as booleans.
+ * @param clayConfig The face's settings page, which says what each key holds.
  */
-export function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[], seedColorKeys?: string[], seedBoolKeys?: string[]): void {
+export function seedConfigFromWatch(messageKeys: any, payload: any, clayConfig: ClayConfigItem[]): void {
   const config = getConfig();
+  const types = itemTypes(clayConfig);
 
-  SEED_FIELDS.forEach((field) => {
-    const messageKey = messageKeys[field.key];
-    if (!(messageKey in payload)) {
+  Object.keys(types).forEach((name) => {
+    const messageKey = messageKeys[name];
+    if (messageKey === undefined || !(messageKey in payload)) {
       return;
     }
 
-    const value = payload[messageKey];
-    if (field.accept && !field.accept(value)) {
-      return;
-    }
-
-    config[field.key] = field.coerce ? field.coerce(value) : value;
-  });
-
-  // extra face keys (like layout rows and goals) are all selects so they
-  // seed as the string form Clay expects
-  (seedKeys || []).forEach((key) => {
-    const messageKey = messageKeys[key];
-    if (messageKey in payload && isEnum(payload[messageKey])) {
-      config[key] = String(payload[messageKey]);
-    }
-  });
-
-  // the other two wire shapes a face key can take. a colour has to stay a number because Clay's
-  // picker reads a string as hex, and a toggle rides as 0/1 but sets from a real boolean
-  (seedColorKeys || []).forEach((key) => {
-    const messageKey = messageKeys[key];
-    if (messageKey in payload && typeof payload[messageKey] === 'number') {
-      config[key] = payload[messageKey];
-    }
-  });
-
-  (seedBoolKeys || []).forEach((key) => {
-    const messageKey = messageKeys[key];
-    if (messageKey in payload) {
-      config[key] = asBool(payload[messageKey]);
+    const value = seedValue(types[name], payload[messageKey]);
+    if (value !== undefined) {
+      config[name] = value;
     }
   });
 
@@ -327,7 +376,11 @@ function startPebbleApp(options: StartOptions): void {
   // app lifecycle listeners
   Pebble.addEventListener('ready', () => {
     console.log('PebbleKit JS Ready!');
-    queueSend({ [messageKeys.SETTINGS_REQUEST]: 1 });
+
+    // a face with the fresh flag and settings already on the phone only needs to know whether the
+    // watch booted empty, so it asks for that one field. anything else seeds from the whole snapshot
+    const freshOnly = messageKeys.SETTINGS_FRESH !== undefined && Object.keys(getConfig()).length > 0;
+    queueSend({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
 
     // a watch that just rebooted holds no timezones, so every one goes out again
     lastTimezoneValues = {};
@@ -355,14 +408,14 @@ function startPebbleApp(options: StartOptions): void {
       }
     });
 
-    // both restore paths seed the same way, so the face's key lists are named once here rather
-    // than repeated at each call
+    // both restore paths seed the same way, so it is written once here
     const seedFromWatch = (from: any) => {
-      seedConfigFromWatch(messageKeys, from, options.seedKeys, options.seedColorKeys, options.seedBoolKeys);
+      seedConfigFromWatch(messageKeys, from, clayConfig);
     };
 
-    // the watch's reply to our SETTINGS_REQUEST carries its current settings
-    if (messageKeys.CLOCK_DATE_FORMAT in payload || messageKeys.APPEARANCE_THEME in payload) {
+    // the watch's reply to our SETTINGS_REQUEST carries the request key back as its marker, so a
+    // face is recognised whichever settings it declares
+    if (messageKeys.SETTINGS_REQUEST in payload) {
       // faces that declare SETTINGS_FRESH get the two-way restore: the watch flags when it booted
       // with no saved settings (wiped by an install or update) so we push our own config back
       // instead of letting its defaults seed over ours. faces without the key keep the old seed
@@ -373,7 +426,7 @@ function startPebbleApp(options: StartOptions): void {
 
         if (watchFresh && phoneHasConfig) {
           // restore the watch from our saved config using the same dict a Save would send
-          queueSend(pageSettings(JSON.stringify(config)));
+          queueSend(pageSettings(JSON.stringify(wrapStoredConfig(config, clayConfig))));
         } else if (!phoneHasConfig) {
           // nothing saved on the phone yet so recover it from the watch instead
           seedFromWatch(payload);

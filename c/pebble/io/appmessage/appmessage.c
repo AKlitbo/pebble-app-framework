@@ -14,6 +14,7 @@
 #include "math/scale.h"
 #include "text/cstring_fit.h"
 #include "system/settings/settings.h"
+#include "wire/wire_caps.g.h"
 #include <limits.h>
 
 // a face has weather when it declares all four of these. the watch asks with the first and reads a
@@ -98,12 +99,12 @@ void appmessage_add_inbox_complete(InboxCompleteHandler cb)
  * stock and calendar requests plus the settings reply) goes through one queue. It sends the head,
  * waits for its sent or failed callback, then sends the next, and drains a pass at a time.
  *
- * A request the phone nacks is held in a failed set and retried on a later pass. Its pkjs was
- * usually asleep, and that first send is often what wakes it. Holding it back means a whole poll is
- * not lost to one asleep-phone nack and left stale until the next interval.
+ * A job the phone nacks is held in a failed set and retried on a later pass. Its pkjs was usually
+ * asleep or busy, and that first send is often what wakes it. Holding it back means a whole poll is
+ * not lost to one nack and left stale until the next interval, and neither is a settings reply.
  * @{
  */
-#define REQUEST_RETRY_MAX 3          ///< Retry passes a nacked request gets before it is dropped
+#define REQUEST_RETRY_MAX 3          ///< Retry passes a nacked job gets before it is dropped
 #define REQUEST_RETRY_DELAY_MS 5000  ///< Delay before the next retry pass, in ms
 /** @} */
 
@@ -116,6 +117,35 @@ static uint32_t settings_reply_size(void);
 static bool write_settings(DictionaryIterator *iter);
 
 /**
+ * @brief Whether this face declares the key a kind is sent under.
+ *
+ * @param kind The job kind to check.
+ * @return True when send_job has something to write for @p kind.
+ */
+static bool kind_has_key(OutboxKind kind)
+{
+    switch (kind)
+    {
+#if defined(APPMESSAGE_HAS_WEATHER)
+        case OUTBOX_WEATHER:
+#endif
+#if defined(HAS_MESSAGE_KEY_STOCK_REQUEST)
+        case OUTBOX_STOCK:
+#endif
+#if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
+        case OUTBOX_CALENDAR:
+#endif
+#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+        case OUTBOX_FRESH:
+#endif
+        case OUTBOX_SETTINGS:
+            return true;
+        default:
+            return false;
+    }
+}
+
+/**
  * @brief Build the message for @p kind and hand it to the outbox.
  *
  * @param kind The job kind to send.
@@ -123,8 +153,10 @@ static bool write_settings(DictionaryIterator *iter);
  */
 static bool send_job(OutboxKind kind)
 {
+    // checked before the outbox opens. an opened outbox that is never sent stays half written, and
+    // every later begin fails, which would stop every request and reply for the rest of the session
     DictionaryIterator *iter;
-    if (app_message_outbox_begin(&iter) != APP_MSG_OK)
+    if (!kind_has_key(kind) || app_message_outbox_begin(&iter) != APP_MSG_OK)
     {
         return false;
     }
@@ -146,6 +178,13 @@ static bool send_job(OutboxKind kind)
             dict_write_uint8(iter, MESSAGE_KEY_CALENDAR_REQUEST, 1);
             break;
 #endif
+#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+        case OUTBOX_FRESH:
+            // the request key rides back as the marker the phone knows a settings reply by
+            dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_REQUEST, SETTINGS_REQUEST_FRESH);
+            dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_FRESH, settings_was_fresh() ? 1 : 0);
+            break;
+#endif
         case OUTBOX_SETTINGS:
             if (!write_settings(iter))
             {
@@ -158,7 +197,7 @@ static bool send_job(OutboxKind kind)
             }
             break;
         default:
-            return false; // a face that doesn't declare the key never asks for that kind
+            break; // kind_has_key already turned away a kind with no key
     }
 
     return app_message_outbox_send() == APP_MSG_OK;
@@ -168,7 +207,7 @@ static bool send_job(OutboxKind kind)
  * @brief Add a job to the work queue unless its kind is already pending, then pump either way.
  *
  * @param kind The job kind to send.
- * @param retries Retry passes left if the first send nacks (0 for the settings reply).
+ * @param retries Retry passes left if the first send nacks.
  */
 static void enqueue(OutboxKind kind, int retries)
 {
@@ -276,7 +315,8 @@ void appmessage_request_calendar(void)
  */
 static uint32_t settings_reply_size(void)
 {
-    uint32_t size = dict_calc_buffer_size(0) + settings_serialized_size_max();
+    // the dictionary's header, the request marker, and the fields
+    uint32_t size = dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) + settings_serialized_size_max();
 
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
     size += dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) - dict_calc_buffer_size(0);
@@ -319,15 +359,19 @@ static bool custom_colors_match(const char *custom)
 /**
  * @brief Write the settings reply payload into the outbox iterator.
  *
- * The watch persist is the source of truth so Clay can seed its store from it. Carries the current
- * settings, a fresh flag, and the custom colours. settings_reply_size counts the same three things.
+ * The watch persist is the source of truth so Clay can seed its store from it. Carries the request
+ * key as a marker, the current settings, a fresh flag, and the custom colours. settings_reply_size
+ * counts the same four things.
  *
  * @param iter The outbox iterator to write into.
  * @return True when all of it was written, false when the outbox ran out of room partway.
  */
 static bool write_settings(DictionaryIterator *iter)
 {
-    bool written = settings_serialize(iter);
+    // the request key rides back as the marker the phone knows a settings reply by, so it never has
+    // to guess from which settings happen to be in the message
+    bool written = dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_REQUEST, SETTINGS_REQUEST_FULL) == DICT_OK;
+    written = settings_serialize(iter) && written;
 
     // tell the phone whether we booted with no saved settings (wiped by an install/update), so it
     // can push its own config back instead of letting these defaults seed over it
@@ -355,7 +399,10 @@ static bool write_settings(DictionaryIterator *iter)
  */
 static void send_settings(void)
 {
-    enqueue(OUTBOX_SETTINGS, 0);
+    // the phone asks for settings once per launch, so a reply lost to a busy phone at cold boot
+    // would leave a wiped watch on defaults all session. it is rebuilt on every send, so a retry
+    // always carries the settings as they are now
+    enqueue(OUTBOX_SETTINGS, REQUEST_RETRY_MAX);
 }
 
 // only a face with one of the byte strips calls this, and a face with none would warn it goes unused
@@ -395,9 +442,19 @@ static void dispatch_bytes(DictionaryIterator *iter, uint32_t key,
  */
 static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 {
-    // the phone asks for the watch's settings on launch to seed Clay so reply and stop
-    if (dict_find(iterator, MESSAGE_KEY_SETTINGS_REQUEST))
+    // the phone asks for the watch's settings on launch, so reply and stop. a phone that already
+    // holds settings only asks whether the watch booted empty, which is one field rather than the
+    // whole table
+    Tuple *request = dict_find(iterator, MESSAGE_KEY_SETTINGS_REQUEST);
+    if (request)
     {
+#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+        if (tuple_int_or(request, SETTINGS_REQUEST_FULL) == SETTINGS_REQUEST_FRESH)
+        {
+            enqueue(OUTBOX_FRESH, REQUEST_RETRY_MAX);
+            return;
+        }
+#endif
         send_settings();
         return;
     }
@@ -648,8 +705,8 @@ static void inbox_dropped_callback(AppMessageResult reason, void *context)
 /**
  * @brief Outbox send was nacked (usually the phone's pkjs is asleep).
  *
- * Frees the outbox and holds a real request for a later retry pass, then pumps the rest of the
- * queue. The settings reply is not held.
+ * Frees the outbox and holds the job for a later retry pass while it has retries left, then pumps
+ * the rest of the queue.
  *
  * @param iter The dictionary iterator.
  * @param reason The reason the message failed.

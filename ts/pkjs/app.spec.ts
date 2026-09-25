@@ -17,7 +17,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import app, { collectDefaults, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS } from './app';
+import app, { collectDefaults, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, wrapStoredConfig } from './app';
+import { WIRE_CAPS } from './wire';
 import stocks from '../stock/feature';
 import calendar from '../calendar/feature';
 import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
@@ -81,6 +82,18 @@ describe('app imports', () => {
 });
 
 describe('seedConfigFromWatch', () => {
+  // a settings page with one of every kind of item the seed tells apart, one of them in a section
+  const page = [
+    { type: 'select', messageKey: 'CLOCK_DATE_FORMAT' },
+    { type: 'select', messageKey: 'APPEARANCE_THEME' },
+    { type: 'section', items: [{ type: 'select', messageKey: 'WEATHER_TEMPERATURE_UNIT' }] },
+    { type: 'toggle', messageKey: 'APPEARANCE_FACE_COLORS' },
+    { type: 'color', messageKey: 'APPEARANCE_REEL_COLOR' },
+    { type: 'slider', messageKey: 'STOCK_POLL' },
+    { type: 'layoutBuilder', messageKey: 'LAYOUT' },
+    { type: 'locationsearch', messageKey: 'LOCATION_NAME' },
+  ];
+
   beforeEach(() => {
     localStorage.clear();
   });
@@ -90,48 +103,47 @@ describe('seedConfigFromWatch', () => {
     return JSON.parse(localStorage.getItem('clay-settings'))[key];
   }
 
-  /** A valid date format string from the watch must seed the config so it opens with the real value. */
-  test('copies a valid string CLOCK_DATE_FORMAT into the store', () => {
-    seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: '%Y.%m.%d' });
+  /** Whether anything was persisted under a key. */
+  function seeded(key: string) {
+    return key in JSON.parse(localStorage.getItem('clay-settings'));
+  }
+
+  /** A date format string from the watch must seed the config so it opens with the real value. */
+  test('copies a select that arrived as a string', () => {
+    seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: '%Y.%m.%d' }, page);
 
     const result = stored('CLOCK_DATE_FORMAT');
 
     expect(result).toBe('%Y.%m.%d');
   });
 
-  /** A non-string CLOCK_DATE_FORMAT is corrupt and must be skipped, not seeded as junk. */
-  test('skips a non-string CLOCK_DATE_FORMAT', () => {
-    seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: 42 });
-
-    const result = 'CLOCK_DATE_FORMAT' in JSON.parse(localStorage.getItem('clay-settings'));
-
-    expect(result).toBe(false);
-  });
-
-  /** A numeric enum (the on-wire form) must be stringified to match Clay's option values. */
-  test('stringifies a numeric enum value', () => {
-    seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: 3 });
+  /** A select rides as its number, and Clay's options are strings, so it has to be stringified. */
+  test('stringifies a select that arrived as a number', () => {
+    seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: 3 }, page);
 
     const result = stored('APPEARANCE_THEME');
 
     expect(result).toBe('3');
   });
 
-  /** A non-primitive enum is malformed and must be skipped. */
-  test('skips an enum value that is neither string nor number', () => {
-    seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: { nested: true } });
+  /** A value that is neither a string nor a number is malformed and must be skipped. */
+  test('skips a value that is neither a string nor a number', () => {
+    seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: { nested: true } }, page);
 
-    const result = 'APPEARANCE_THEME' in JSON.parse(localStorage.getItem('clay-settings'));
+    const result = seeded('APPEARANCE_THEME');
 
     expect(result).toBe(false);
   });
 
-  /** Temperature unit is a select, so it seeds through seedKeys as the "0"/"1" string Clay expects. */
+  /**
+   * The temperature unit only seeded on a face that listed it by hand, so six faces opened their
+   * settings on Celsius whatever the watch was set to. An item nested in a section has to seed too.
+   */
   test.each([
     [1, '1'],
     [0, '0'],
-  ])('seeds WEATHER_TEMPERATURE_UNIT %s as the string "%s" via seedKeys', (value, expected) => {
-    seedConfigFromWatch(messageKeys, { WEATHER_TEMPERATURE_UNIT: value }, ['WEATHER_TEMPERATURE_UNIT']);
+  ])('seeds a select inside a section, %s as "%s"', (value, expected) => {
+    seedConfigFromWatch(messageKeys, { WEATHER_TEMPERATURE_UNIT: value }, page);
 
     const result = stored('WEATHER_TEMPERATURE_UNIT');
 
@@ -139,8 +151,8 @@ describe('seedConfigFromWatch', () => {
   });
 
   /** Clay's colour picker reads a string as hex, so a colour has to stay the number the watch sent. */
-  test('seeds a colour key as a number via seedColorKeys', () => {
-    seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 0xFF0000 }, [], ['APPEARANCE_REEL_COLOR']);
+  test('seeds a colour as a number', () => {
+    seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 0xFF0000 }, page);
 
     const result = stored('APPEARANCE_REEL_COLOR');
 
@@ -148,10 +160,10 @@ describe('seedConfigFromWatch', () => {
   });
 
   /** A colour that arrived as anything but a number is malformed and must be skipped. */
-  test('skips a colour key that is not a number', () => {
-    seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 'ff0000' }, [], ['APPEARANCE_REEL_COLOR']);
+  test('skips a colour that is not a number', () => {
+    seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 'ff0000' }, page);
 
-    const result = 'APPEARANCE_REEL_COLOR' in JSON.parse(localStorage.getItem('clay-settings'));
+    const result = seeded('APPEARANCE_REEL_COLOR');
 
     expect(result).toBe(false);
   });
@@ -160,39 +172,51 @@ describe('seedConfigFromWatch', () => {
   test.each([
     [1, true],
     [0, false],
-  ])('seeds a bool key %s as %s via seedBoolKeys', (value, expected) => {
-    seedConfigFromWatch(messageKeys, { APPEARANCE_FACE_COLORS: value }, [], [], ['APPEARANCE_FACE_COLORS']);
+  ])('seeds a toggle %s as %s', (value, expected) => {
+    seedConfigFromWatch(messageKeys, { APPEARANCE_FACE_COLORS: value }, page);
 
     const result = stored('APPEARANCE_FACE_COLORS');
 
     expect(result).toBe(expected);
   });
 
-  /** A dropped field (or wrong coercion) in the seed table silently stops seeding that setting, so its config page opens on the default. */
-  test('seeds every supported field from a full payload', () => {
-    seedConfigFromWatch(messageKeys, {
-      WEATHER_TEMPERATURE_UNIT: 1,
-      CLOCK_DATE_FORMAT: '%a %d %b',
-      APPEARANCE_THEME: 2,
-      HEALTH_STEPS_MODE: 1,
-      CLOCK_TIME_FORMAT: 0,
-      CONNECTION_BLUETOOTH_ICON: 0,
-      CONNECTION_VIBE_CONNECT: 3,
-      CONNECTION_VIBE_DISCONNECT: 1,
-    }, ['WEATHER_TEMPERATURE_UNIT']);
+  /** A slider holds a number, and the watch may send it as its text, so it seeds as the number. */
+  test('seeds a slider as a number', () => {
+    seedConfigFromWatch(messageKeys, { STOCK_POLL: '30' }, page);
+
+    const result = stored('STOCK_POLL');
+
+    expect(result).toBe(30);
+  });
+
+  /** A face's own builder stores its string, so the layout comes back as the watch holds it. */
+  test('seeds a custom builder as its string', () => {
+    seedConfigFromWatch(messageKeys, { LAYOUT: '2,0,0,2,2' }, page);
+
+    const result = stored('LAYOUT');
+
+    expect(result).toBe('2,0,0,2,2');
+  });
+
+  /**
+   * A saved place needs its coordinates, which the watch never keeps. Seeding the name alone would
+   * leave the weather fetching for a place with no position.
+   */
+  test('skips a place field', () => {
+    seedConfigFromWatch(messageKeys, { LOCATION_NAME: 'Phoenix' }, page);
+
+    const result = seeded('LOCATION_NAME');
+
+    expect(result).toBe(false);
+  });
+
+  /** The reply's marker and fresh flag have no item on the page, so they must not land in the store. */
+  test('skips a key the settings page has no item for', () => {
+    seedConfigFromWatch(messageKeys, { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 0 }, page);
 
     const result = JSON.parse(localStorage.getItem('clay-settings'));
 
-    expect(result).toEqual({
-      WEATHER_TEMPERATURE_UNIT: '1',
-      CLOCK_DATE_FORMAT: '%a %d %b',
-      APPEARANCE_THEME: '2',
-      HEALTH_STEPS_MODE: '1',
-      CLOCK_TIME_FORMAT: '0',
-      CONNECTION_BLUETOOTH_ICON: false,
-      CONNECTION_VIBE_CONNECT: '3',
-      CONNECTION_VIBE_DISCONNECT: '1',
-    });
+    expect(result).toEqual({});
   });
 
   /**
@@ -201,7 +225,7 @@ describe('seedConfigFromWatch', () => {
    * Saving from there sent nothing back and the panel dropped to UTC.
    */
   test('seeds a timezone field from the watch', () => {
-    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' });
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' }, []);
 
     const result = stored('CLOCK_TIMEZONE_1');
 
@@ -210,9 +234,9 @@ describe('seedConfigFromWatch', () => {
 
   /** A face may name a key TIMEZONE for something that holds no place, so only a string seeds. */
   test('skips a timezone key that did not arrive as a string', () => {
-    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 });
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 }, []);
 
-    const result = 'CLOCK_TIMEZONE_1' in JSON.parse(localStorage.getItem('clay-settings'));
+    const result = seeded('CLOCK_TIMEZONE_1');
 
     expect(result).toBe(false);
   });
@@ -226,11 +250,34 @@ describe('seedConfigFromWatch', () => {
     const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: saved }));
 
-    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' });
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' }, []);
 
     const result = stored('CLOCK_TIMEZONE_1');
 
     expect(result).toBe(saved);
+  });
+});
+
+describe('wrapStoredConfig', () => {
+  /**
+   * Clay reads `.value` off any object it is handed. A checkboxgroup's bare array has none, so the
+   * restore dropped the setting and Clay wrote the phone's copy back without it.
+   */
+  test('keeps an array whole inside the wrapper', () => {
+    const config = { DAYS: ['mon', 'wed'] };
+
+    const result = wrapStoredConfig(config, []);
+
+    expect(result.DAYS).toEqual({ value: ['mon', 'wed'] });
+  });
+
+  /** A slider stepping in tenths goes to the watch scaled by ten, so 1.5 left unscaled reached it as 1. */
+  test('gives a slider the precision its step carries', () => {
+    const page = [{ type: 'section', items: [{ type: 'slider', messageKey: 'RATE', step: 0.1 }] }];
+
+    const result = wrapStoredConfig({ RATE: 1.5 }, page);
+
+    expect(result.RATE).toEqual({ value: 1.5, precision: 1 });
   });
 });
 
@@ -712,10 +759,17 @@ describe('startPebbleApp settings restore', () => {
 
   class FakeClay {
     registerComponent() {}
-    // the real Clay turns the saved config into the dict a Save sends, so the fake hands the
-    // config straight back and a restore shows up as those values reaching the watch
+    // the real Clay reads the page's { value } wrapper off each setting and turns the result into
+    // the dict a Save sends, so the fake unwraps the same way and a restore shows up as those
+    // values reaching the watch
     getSettings(json: string) {
-      return JSON.parse(json);
+      const settings = JSON.parse(json);
+      const dict: Record<string, unknown> = {};
+      Object.keys(settings).forEach((key) => {
+        const setting = settings[key];
+        dict[key] = setting && typeof setting === 'object' ? setting.value : setting;
+      });
+      return dict;
     }
     generateUrl() {
       return '';
@@ -735,9 +789,16 @@ describe('startPebbleApp settings restore', () => {
   let pebble: FakePebble;
   let restoreLoad: () => void;
 
-  /** The watch's reply to SETTINGS_REQUEST, carrying its own settings and whether it booted empty. */
+  /** The watch's reply to SETTINGS_REQUEST, marked by the request key, carrying its settings and whether it booted empty. */
   function watchReplies(fresh: boolean, dateFormat: string) {
-    pebble.fire('appmessage', { payload: { SETTINGS_FRESH: fresh ? 1 : 0, CLOCK_DATE_FORMAT: dateFormat, APPEARANCE_THEME: 2 } });
+    const payload = { SETTINGS_REQUEST: 1, SETTINGS_FRESH: fresh ? 1 : 0, CLOCK_DATE_FORMAT: dateFormat, APPEARANCE_THEME: 2 };
+    pebble.fire('appmessage', { payload });
+  }
+
+  /** The request the phone sent on ready, by its value. */
+  function requestSent() {
+    const requests = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'SETTINGS_REQUEST' in dict);
+    return requests.map(([dict]) => dict.SETTINGS_REQUEST);
   }
 
   /** What the phone has saved now. */
@@ -783,6 +844,43 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
+   * A phone that already has settings only needs to know whether the watch booted empty. Asking for
+   * the whole snapshot sent the watch's full table over Bluetooth on every phone start, only for the
+   * phone to throw it away.
+   */
+  test('asks only for the fresh flag when the phone already has settings', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
+    app.startPebbleApp({ clayConfig: [] });
+
+    pebble.fire('ready');
+
+    expect(requestSent()).toEqual([WIRE_CAPS.SETTINGS_REQUEST_FRESH]);
+  });
+
+  /** A phone with nothing saved seeds from the watch, so it still asks for the whole snapshot. */
+  test('asks for the whole snapshot when the phone has nothing saved', () => {
+    app.startPebbleApp({ clayConfig: [] });
+
+    pebble.fire('ready');
+
+    expect(requestSent()).toEqual([WIRE_CAPS.SETTINGS_REQUEST_FULL]);
+  });
+
+  /**
+   * The short reply carries only the marker and the fresh flag, and a fresh watch still has to be
+   * restored from it. Spotting the reply by which settings it held would miss this one entirely.
+   */
+  test('restores a fresh watch from the short reply', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
+    app.startPebbleApp({ clayConfig: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 1 } });
+
+    expect(restoreSends()).toHaveLength(1);
+  });
+
+  /**
    * The watch only ends fresh on a message marked as the settings page's. An unmarked restore would
    * sit in memory, never reach flash, and the watch would ask to be restored again on every launch.
    */
@@ -814,7 +912,7 @@ describe('startPebbleApp settings restore', () => {
    * showing rather than on the face's defaults.
    */
   test('seeds from the watch when the phone has nothing saved', () => {
-    app.startPebbleApp({ clayConfig: [] });
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }] });
     pebble.fire('ready');
 
     watchReplies(false, '%Y-%m-%d');

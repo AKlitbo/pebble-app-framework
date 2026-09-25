@@ -354,6 +354,41 @@ void test_cstring_is_clean_accepts_a_space(void)
     TEST_ASSERT_TRUE(result);
 }
 
+/**
+ * @brief An empty setting whose default is empty is its value, not damage.
+ *
+ * Reading it as damage healed it on every launch, so the whole settings blob went back to flash
+ * every time the face opened.
+ */
+void test_cstring_setting_is_clean_keeps_an_empty_default(void)
+{
+    char s[8] = "";
+
+    bool result = cstring_setting_is_clean(s, sizeof(s), "");
+
+    TEST_ASSERT_TRUE(result);
+}
+
+/** @brief An empty setting with a real default is what a wiped blob reads like, so it is healed. */
+void test_cstring_setting_is_clean_refuses_empty_with_a_real_default(void)
+{
+    char s[8] = "";
+
+    bool result = cstring_setting_is_clean(s, sizeof(s), "0");
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief Damage is still damage when the default is empty, so a control byte is refused. */
+void test_cstring_setting_is_clean_refuses_damage_with_an_empty_default(void)
+{
+    char s[8] = "a\x01";
+
+    bool result = cstring_setting_is_clean(s, sizeof(s), "");
+
+    TEST_ASSERT_FALSE(result);
+}
+
 /** @brief An empty string says nothing, so there is nothing to keep. */
 void test_cstring_is_clean_refuses_an_empty_string(void)
 {
@@ -422,6 +457,9 @@ int main(void)
     RUN_TEST(test_cstring_is_clean_refuses_a_control_byte);
     RUN_TEST(test_cstring_is_clean_refuses_del);
     RUN_TEST(test_cstring_is_clean_accepts_a_space);
+    RUN_TEST(test_cstring_setting_is_clean_keeps_an_empty_default);
+    RUN_TEST(test_cstring_setting_is_clean_refuses_empty_with_a_real_default);
+    RUN_TEST(test_cstring_setting_is_clean_refuses_damage_with_an_empty_default);
     RUN_TEST(test_cstring_is_clean_refuses_an_empty_string);
     RUN_TEST(test_cstring_is_clean_refuses_one_that_never_ends);
     RUN_TEST(test_cstring_is_clean_accepts_ending_on_the_last_byte);

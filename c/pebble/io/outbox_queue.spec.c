@@ -151,18 +151,30 @@ void test_a_nacked_request_is_held_for_the_next_pass(void)
 }
 
 /**
- * @brief The settings reply is never retried.
+ * @brief A nacked settings reply is held for the next pass.
  *
- * It answers something the phone asked for, so the phone asks again if it needs to. Retrying it
- * would send the watch's snapshot at a moment the phone is no longer waiting for one.
+ * The phone asks once per launch, so a reply lost to a busy phone at cold boot left a wiped watch
+ * on defaults all session.
  */
-void test_a_nacked_settings_reply_is_not_held(void)
+void test_a_nacked_settings_reply_is_held_for_the_next_pass(void)
 {
     OutboxJob nacked = {.kind = OUTBOX_SETTINGS, .retries_left = RETRIES};
 
     outbox_hold_failed(&outbox, nacked);
 
-    TEST_ASSERT_EQUAL_INT(0, outbox.failed_len);
+    TEST_ASSERT_EQUAL_INT(1, outbox.failed_len);
+    TEST_ASSERT_EQUAL_INT(OUTBOX_SETTINGS, outbox.failed[0].kind);
+}
+
+/** @brief The short fresh reply is what tells the phone to restore a wiped watch, so it is held too. */
+void test_a_nacked_fresh_reply_is_held_for_the_next_pass(void)
+{
+    OutboxJob nacked = {.kind = OUTBOX_FRESH, .retries_left = RETRIES};
+
+    outbox_hold_failed(&outbox, nacked);
+
+    TEST_ASSERT_EQUAL_INT(1, outbox.failed_len);
+    TEST_ASSERT_EQUAL_INT(OUTBOX_FRESH, outbox.failed[0].kind);
 }
 
 /** Without a floor on the retries one unsendable request would bounce between the two sets forever. */
@@ -291,7 +303,8 @@ int main(void)
     RUN_TEST(test_a_different_kind_still_queues);
     RUN_TEST(test_releasing_returns_the_job_that_was_in_flight);
     RUN_TEST(test_a_nacked_request_is_held_for_the_next_pass);
-    RUN_TEST(test_a_nacked_settings_reply_is_not_held);
+    RUN_TEST(test_a_nacked_settings_reply_is_held_for_the_next_pass);
+    RUN_TEST(test_a_nacked_fresh_reply_is_held_for_the_next_pass);
     RUN_TEST(test_a_request_out_of_retries_is_dropped);
     RUN_TEST(test_a_retry_pass_moves_every_held_request_back);
     RUN_TEST(test_a_request_stops_being_held_once_its_retries_run_out);

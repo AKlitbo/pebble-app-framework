@@ -32,6 +32,8 @@ export interface ClayConfigItem {
   moduleThumbnails?: unknown;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
+  /** slider only: the gap between values. Its decimal places are how far Clay scales the value up for the watch. */
+  step?: number;
 }
 
 /**

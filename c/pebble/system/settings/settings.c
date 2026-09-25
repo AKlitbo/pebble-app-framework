@@ -180,8 +180,9 @@ static void apply_defaults(const SettingsSchema *schema)
 /**
  * @brief Clamp a damaged cstring back to its default.
  *
- * Valid means NUL-terminated within the buffer, non-empty, and free of control bytes. A place
- * name can arrive as UTF-8, so anything from 0x20 up counts as text and is left alone.
+ * Valid means NUL-terminated within the buffer, free of control bytes, and non-empty unless the
+ * field's own default is empty. A place name can arrive as UTF-8, so anything from 0x20 up counts
+ * as text and is left alone.
  *
  * @param schema The schema that owns the field.
  * @param field The setting field to sanitize.
@@ -191,7 +192,7 @@ static bool sanitize_cstring(const SettingsSchema *schema, const SettingField *f
 {
     char *str = (char *)field_ptr(schema, field);
 
-    if (cstring_is_clean(str, field->size))
+    if (cstring_setting_is_clean(str, field->size, field->default_str))
     {
         return false;
     }
@@ -302,7 +303,7 @@ static void load_schema(const SettingsSchema *schema)
         uint8_t version = get_version(schema);
         if (version >= 1 && version <= schema->version)
         {
-            // NOTE: non-append schema changes (reorder/remove/retype) need a per-version fixup here
+            // TODO: non-append schema changes (reorder/remove/retype) need a per-version fixup here
             bool healed = sanitize(schema);
 
             // re-save if we upgraded an older version or had to repair a damaged field
@@ -529,17 +530,31 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
                     break;
                 }
 
-                case SETTING_ENUM_U8:  // arrives as a cstring so atoi it
+                case SETTING_ENUM_U8:
                 {
-                    // atoi reads until it finds a terminator, so it has to be handed a string that
-                    // has one inside itself. a raw tuple is only the phone's word for that
+                    // a select arrives as a cstring, unless the page asks Clay to send it as an
+                    // integer. atoi reads until it finds a terminator, so it has to be handed a
+                    // string that has one inside itself. a raw tuple is only the phone's word for that
+                    int value;
                     const char *digits = tuple_str_or(tuple, NULL);
-                    if (!digits)
+                    if (digits)
                     {
-                        continue;
+                        // atoi reads text that does not start with a digit as 0, the first choice, so an
+                        // empty select or a word is left alone rather than taken
+                        if (digits[0] < '0' || digits[0] > '9')
+                        {
+                            continue;
+                        }
+                        value = atoi(digits);
                     }
-
-                    int value = atoi(digits);
+                    else
+                    {
+                        value = (int)tuple_int_or(tuple, -1);
+                        if (value == -1)
+                        {
+                            continue;  // neither text nor a number, so nothing to take
+                        }
+                    }
                     if (value < 0 || value >= field->enum_count)
                     {
                         value = (int)field->default_num;  // out-of-range from the phone so clamp to default
@@ -556,10 +571,13 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
 
                 case SETTING_CSTRING:
                 {
+                    // an empty save only means "no value" for a field whose default is empty, such as a
+                    // picker whose None is "". any other field keeps what it holds rather than blanking
                     const char *value = tuple_str_or(tuple, NULL);
-                    if (!value || value[0] == '\0')
+                    bool empty_is_a_value = !field->default_str || field->default_str[0] == '\0';
+                    if (!value || (value[0] == '\0' && !empty_is_a_value))
                     {
-                        continue;  // nothing to store, so don't flag a change
+                        continue;
                     }
 
                     if (cstring_fit_same((const char *)ptr, value, field->size))

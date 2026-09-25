@@ -36,6 +36,10 @@ export const WIRE_CAPS = {
   CALENDAR_LOC_MAX: 16,
   /** A forecast column with no reading ships this marker so the watch draws a placeholder. */
   FORECAST_NO_TEMP: -1000,
+  /** A settings request for the watch's whole snapshot, to seed the settings page from. */
+  SETTINGS_REQUEST_FULL: 1,
+  /** A settings request for only whether the watch booted with nothing saved. */
+  SETTINGS_REQUEST_FRESH: 2,
 } as const;
 
 const FORECAST_MAX_COLS = WIRE_CAPS.FORECAST_MAX_COLS;

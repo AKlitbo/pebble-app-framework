@@ -144,3 +144,14 @@ bool cstring_is_clean(const char *s, uint16_t size)
 
     return false;  // ran out of room without ever ending
 }
+
+bool cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str)
+{
+    bool empty_is_a_value = !default_str || default_str[0] == '\0';
+    if (empty_is_a_value && s && size > 0 && s[0] == '\0')
+    {
+        return true;
+    }
+
+    return cstring_is_clean(s, size);
+}

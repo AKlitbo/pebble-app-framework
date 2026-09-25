@@ -93,4 +93,18 @@ void copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len);
  */
 bool cstring_is_clean(const char *s, uint16_t size);
 
+/**
+ * @brief Whether a saved text setting reads as one, where an empty setting can be the real value.
+ *
+ * A setting whose default is empty, such as a picker whose "None" is "", holds nothing on
+ * purpose, so empty is a value for it and not damage. Any other setting keeps the cstring_is_clean
+ * rule, since an empty one there is what a wiped blob reads like.
+ *
+ * @param s The bytes to look at.
+ * @param size How much room they have.
+ * @param default_str The setting's default, or NULL for none.
+ * @return Whether the setting is worth keeping.
+ */
+bool cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str);
+
 /** @} */

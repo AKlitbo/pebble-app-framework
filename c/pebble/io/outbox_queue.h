@@ -3,9 +3,9 @@
  * @brief The outbox's work queue, its failed set, and the slot holding whatever is in flight.
  *
  * One AppMessage goes out at a time, so everything the watch wants to send queues here first. A
- * request the phone nacks is held in the failed set and moved back for a later pass, because its
- * pkjs was usually asleep and that first send is often what wakes it. Holding it means a whole poll
- * is not lost to one asleep-phone nack.
+ * job the phone nacks is held in the failed set and moved back for a later pass, because its pkjs
+ * was usually asleep or busy and that first send is often what wakes it. Holding it means a whole
+ * poll, or the one settings reply a launch gets, is not lost to one nack.
  *
  * None of that needs the SDK. The transport owns one of these, does the sending and the timers, and
  * asks here what to send next, which keeps the deciding testable on the host.
@@ -31,6 +31,7 @@ typedef enum
     OUTBOX_NONE,     ///< The zero value, so a default-initialized job slot reads as nothing rather than a real request
     OUTBOX_WEATHER,  ///< A weather request
     OUTBOX_SETTINGS, ///< The settings reply
+    OUTBOX_FRESH,    ///< The short settings reply, only whether the watch booted with nothing saved
     OUTBOX_STOCK,    ///< A stock request
     OUTBOX_CALENDAR  ///< A calendar request
 } OutboxKind;
@@ -41,7 +42,7 @@ typedef enum
 typedef struct
 {
     OutboxKind kind;         ///< What this job sends
-    int        retries_left; ///< Retry passes left after a failed send (0 for the settings reply)
+    int        retries_left; ///< Retry passes left after a failed send
 } OutboxJob;
 
 /**
@@ -57,20 +58,6 @@ typedef struct
     int       failed_len;               ///< How many jobs are in the failed set
     OutboxJob inflight;                 ///< The job in flight, OUTBOX_NONE when nothing is out
 } OutboxQueue;
-
-/**
- * @brief Whether a kind is a request the watch makes, rather than a reply it sends back.
- *
- * Only a request is worth retrying. The settings reply answers something the phone already asked
- * for, so the phone asks again if it needs to.
- *
- * @param kind The job kind.
- * @return True for a request the watch raised itself.
- */
-static inline bool outbox_is_request(OutboxKind kind)
-{
-    return kind == OUTBOX_WEATHER || kind == OUTBOX_STOCK || kind == OUTBOX_CALENDAR;
-}
 
 /**
  * @brief Whether anything is in flight, which is what says the outbox is busy.
@@ -131,7 +118,7 @@ static inline bool outbox_pending(const OutboxQueue *outbox, OutboxKind kind)
  *
  * @param outbox The outbox to add to.
  * @param kind The job kind to send.
- * @param retries Retry passes left if the first send nacks (0 for the settings reply).
+ * @param retries Retry passes left if the first send nacks.
  * @return True when the job was added, false when it was already pending or the queue is full.
  */
 static inline bool outbox_push(OutboxQueue *outbox, OutboxKind kind, int retries)
@@ -198,14 +185,14 @@ static inline OutboxJob outbox_release(OutboxQueue *outbox)
 }
 
 /**
- * @brief Hold a nacked request for the next pass, if it still has retries and is a real request.
+ * @brief Hold a nacked job for the next pass, if it still has retries.
  *
  * @param outbox The outbox to hold it in.
  * @param job The job that just nacked.
  */
 static inline void outbox_hold_failed(OutboxQueue *outbox, OutboxJob job)
 {
-    if (!outbox_is_request(job.kind) || job.retries_left <= 0)
+    if (job.retries_left <= 0)
     {
         return;
     }
