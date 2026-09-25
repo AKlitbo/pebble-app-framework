@@ -192,7 +192,9 @@ static inline OutboxJob outbox_release(OutboxQueue *outbox)
  */
 static inline void outbox_hold_failed(OutboxQueue *outbox, OutboxJob job)
 {
-    if (job.retries_left <= 0)
+    // a failure reported once the slot is already free comes with no job, and holding it would
+    // queue a send for nothing ahead of the real requests
+    if (job.kind == OUTBOX_NONE || job.retries_left <= 0)
     {
         return;
     }

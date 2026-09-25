@@ -8,7 +8,7 @@
  * of step with it and quietly turn a passing test into a wrong watch.
  *
  * That is the whole line. A source that wants a real SDK call tested is a source this cannot help,
- * and it stays on the device. See the README for why.
+ * and it stays on the device.
  */
 #pragma once
 #include <stdbool.h>

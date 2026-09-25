@@ -24,7 +24,7 @@ void setUp(void)
 
 void tearDown(void) {}
 
-/** A zeroed outbox has to read as idle, since that is the state the transport starts in. */
+/** @brief A zeroed outbox has to read as idle, since that is the state the transport starts in. */
 void test_a_fresh_outbox_is_not_busy(void)
 {
     bool result = outbox_busy(&outbox);
@@ -32,7 +32,7 @@ void test_a_fresh_outbox_is_not_busy(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** Only the in-flight slot marks the outbox busy. A queued job is waiting, not out. */
+/** @brief Only the in-flight slot marks the outbox busy. A queued job is waiting, not out. */
 void test_a_queued_job_does_not_make_the_outbox_busy(void)
 {
     outbox_push(&outbox, OUTBOX_WEATHER, RETRIES);
@@ -42,7 +42,7 @@ void test_a_queued_job_does_not_make_the_outbox_busy(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** Taking the head is what says a send is out, and it is what holds the next one back. */
+/** @brief Taking the head is what says a send is out, and it is what holds the next one back. */
 void test_taking_the_head_makes_the_outbox_busy(void)
 {
     outbox_push(&outbox, OUTBOX_WEATHER, RETRIES);
@@ -69,7 +69,7 @@ void test_a_kind_already_queued_is_not_queued_again(void)
     TEST_ASSERT_EQUAL_INT(1, outbox.queue_len);
 }
 
-/** The same guard has to cover the job already out, or a re-ask doubles up mid-send. */
+/** @brief The same guard has to cover the job already out, or a re-ask doubles up mid-send. */
 void test_a_kind_in_flight_is_not_queued_again(void)
 {
     outbox_push(&outbox, OUTBOX_WEATHER, RETRIES);
@@ -81,7 +81,7 @@ void test_a_kind_in_flight_is_not_queued_again(void)
     TEST_ASSERT_EQUAL_INT(0, outbox.queue_len);
 }
 
-/** And the failed set too, or a re-ask queues a copy of something already waiting to retry. */
+/** @brief And the failed set too, or a re-ask queues a copy of something already waiting to retry. */
 void test_a_kind_held_after_a_nack_is_not_queued_again(void)
 {
     OutboxJob nacked = {.kind = OUTBOX_STOCK, .retries_left = RETRIES};
@@ -92,7 +92,7 @@ void test_a_kind_held_after_a_nack_is_not_queued_again(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** An idle outbox must not answer that OUTBOX_NONE is pending, since its empty slots read as that. */
+/** @brief An idle outbox must not answer that OUTBOX_NONE is pending, since its empty slots read as that. */
 void test_an_idle_outbox_has_no_pending_none(void)
 {
     bool result = outbox_pending(&outbox, OUTBOX_NONE);
@@ -100,7 +100,7 @@ void test_an_idle_outbox_has_no_pending_none(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** Taking the head of an empty queue would put a stale job in the flight slot and wedge the outbox. */
+/** @brief Taking the head of an empty queue would put a stale job in the flight slot and wedge the outbox. */
 void test_taking_the_head_of_an_empty_queue_does_nothing(void)
 {
     outbox.queue[0].kind = OUTBOX_WEATHER;  // left behind by a clear
@@ -110,7 +110,7 @@ void test_taking_the_head_of_an_empty_queue_does_nothing(void)
     TEST_ASSERT_FALSE(outbox_busy(&outbox));
 }
 
-/** A different kind is a different request and must still get through. */
+/** @brief A different kind is a different request and must still get through. */
 void test_a_different_kind_still_queues(void)
 {
     outbox_push(&outbox, OUTBOX_WEATHER, RETRIES);
@@ -139,7 +139,7 @@ void test_releasing_returns_the_job_that_was_in_flight(void)
     TEST_ASSERT_FALSE(outbox_busy(&outbox));
 }
 
-/** A nacked request is held so a later pass can send it again. */
+/** @brief A nacked request is held so a later pass can send it again. */
 void test_a_nacked_request_is_held_for_the_next_pass(void)
 {
     OutboxJob nacked = {.kind = OUTBOX_WEATHER, .retries_left = RETRIES};
@@ -177,7 +177,22 @@ void test_a_nacked_fresh_reply_is_held_for_the_next_pass(void)
     TEST_ASSERT_EQUAL_INT(OUTBOX_FRESH, outbox.failed[0].kind);
 }
 
-/** Without a floor on the retries one unsendable request would bounce between the two sets forever. */
+/**
+ * @brief A failure reported once the slot is already free comes with no job, and is not held.
+ *
+ * Holding it queued a send for nothing that each retry pass sent, failed, and held again, ahead of
+ * the real requests.
+ */
+void test_an_empty_job_is_not_held(void)
+{
+    OutboxJob nothing = {.kind = OUTBOX_NONE, .retries_left = RETRIES};
+
+    outbox_hold_failed(&outbox, nothing);
+
+    TEST_ASSERT_EQUAL_INT(0, outbox.failed_len);
+}
+
+/** @brief Without a floor on the retries one unsendable request would bounce between the two sets forever. */
 void test_a_request_out_of_retries_is_dropped(void)
 {
     OutboxJob spent = {.kind = OUTBOX_WEATHER, .retries_left = 0};
@@ -187,7 +202,7 @@ void test_a_request_out_of_retries_is_dropped(void)
     TEST_ASSERT_EQUAL_INT(0, outbox.failed_len);
 }
 
-/** The retry pass is what actually sends a held request again, so it has to move the whole set. */
+/** @brief The retry pass is what actually sends a held request again, so it has to move the whole set. */
 void test_a_retry_pass_moves_every_held_request_back(void)
 {
     OutboxJob weather = {.kind = OUTBOX_WEATHER, .retries_left = RETRIES};
@@ -203,7 +218,7 @@ void test_a_retry_pass_moves_every_held_request_back(void)
     TEST_ASSERT_EQUAL_INT(OUTBOX_WEATHER, outbox.queue[0].kind);
 }
 
-/** A request that keeps nacking has to run out, or it is retried for the life of the app. */
+/** @brief A request that keeps nacking has to run out, or it is retried for the life of the app. */
 void test_a_request_stops_being_held_once_its_retries_run_out(void)
 {
     OutboxJob job = {.kind = OUTBOX_WEATHER, .retries_left = RETRIES};
@@ -223,7 +238,7 @@ void test_a_request_stops_being_held_once_its_retries_run_out(void)
     TEST_ASSERT_EQUAL_INT(0, job.retries_left);
 }
 
-/** The head goes out first, so popping has to keep the rest in the order they were asked for. */
+/** @brief The head goes out first, so popping has to keep the rest in the order they were asked for. */
 void test_popping_the_head_keeps_the_rest_in_order(void)
 {
     outbox_push(&outbox, OUTBOX_WEATHER, RETRIES);
@@ -237,7 +252,7 @@ void test_popping_the_head_keeps_the_rest_in_order(void)
     TEST_ASSERT_EQUAL_INT(OUTBOX_CALENDAR, outbox.queue[1].kind);
 }
 
-/** Popping an empty queue must not walk the length negative and read off the front of the array. */
+/** @brief Popping an empty queue must not walk the length negative and read off the front of the array. */
 void test_popping_an_empty_queue_leaves_it_empty(void)
 {
     outbox_pop_front(&outbox);
@@ -305,6 +320,7 @@ int main(void)
     RUN_TEST(test_a_nacked_request_is_held_for_the_next_pass);
     RUN_TEST(test_a_nacked_settings_reply_is_held_for_the_next_pass);
     RUN_TEST(test_a_nacked_fresh_reply_is_held_for_the_next_pass);
+    RUN_TEST(test_an_empty_job_is_not_held);
     RUN_TEST(test_a_request_out_of_retries_is_dropped);
     RUN_TEST(test_a_retry_pass_moves_every_held_request_back);
     RUN_TEST(test_a_request_stops_being_held_once_its_retries_run_out);

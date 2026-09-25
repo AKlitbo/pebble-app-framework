@@ -132,7 +132,8 @@ void test_no_night_look_is_never_night(void)
 /** @brief Solar runs sunset round to sunrise, so a face set to follow the sun switches on real dark rather than a fixed guess. */
 void test_solar_runs_from_sunset_to_sunrise(void)
 {
-    // sunrise 06:00, sunset 20:00. 21:00 is after dark, 12:00 is not
+    // sunrise 06:00, sunset 20:00
+    // 21:00 is after dark, 12:00 is not
     TEST_ASSERT_TRUE(night_schedule_active(NIGHT_SCHED_SOLAR, 1260, 360, 1200, 0, 0, true));
     TEST_ASSERT_FALSE(night_schedule_active(NIGHT_SCHED_SOLAR, 720, 360, 1200, 0, 0, true));
 }
@@ -166,7 +167,8 @@ void test_solar_falls_back_when_only_one_sun_reading_is_missing(void)
 /** @brief Fixed ignores the sun even when it is there to be read, or choosing your own times silently gets you solar. */
 void test_fixed_ignores_the_sun(void)
 {
-    // sun says night at 21:00, the fixed pair says day
+    // sun says night at 21:00
+    // the fixed pair says day
     bool result = night_schedule_active(NIGHT_SCHED_FIXED, 1260, 360, 1200,
                                         DAY_START, DAY_END, true);
 

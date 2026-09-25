@@ -137,8 +137,9 @@ static int read_hr(void)
 /**
  * @brief Sum a metric over today, or return the fallback when it is unavailable.
  *
- * Steps and distance pass 0 as their fallback, since a real zero reads fine. The rest pass -1
- * so a panel can tell "no data yet" apart from a real zero and show a placeholder.
+ * Distance passes 0 as its fallback, and a panel tells no data from a real zero by the steps
+ * count. The rest, steps included, pass -1 so a panel can tell "no data yet" apart from a real
+ * zero and show a placeholder.
  *
  * @param metric The health metric to sum.
  * @param fallback Returned when the metric is unavailable.
@@ -183,10 +184,12 @@ static HealthMinuteData *scratch_take(int records)
 #endif
 
 /**
- * @brief Fill the rolling heart rate window by reading the watch's own minute log.
+ * @brief Fill the empty minutes of the heart rate window from the watch's own minute log.
  *
- * Used once at launch to backfill the window from whatever the watch already logged. The window
- * comes out oldest reading first, with each reading in the slot for its own minute.
+ * Used at launch, on an empty window or on a restored one slid forward over the time the face was
+ * away, so the minutes spent in a watchapp show what the watch logged. A minute that already holds
+ * a reading keeps it, since the live readings can be more frequent than the log. Each reading lands
+ * in the slot for its own minute.
  *
  * @param now_min The minute the window's last slot holds, the same one the live readings write.
  */
@@ -194,12 +197,11 @@ static void read_hr_history(time_t now_min)
 {
 #if defined(PBL_HEALTH)
     uint8_t *history = s_state.hr_history;
-    memset(history, 0, HR_HISTORY_MINUTES);
 
     HealthMinuteData *scratch = scratch_take(HR_HISTORY_MINUTES);
     if (!scratch)
     {
-        return; // no room for the records, so leave the window zeroed and let live readings fill it
+        return; // no room for the records, so leave the window as it is and let live readings fill it
     }
 
     // ask for exactly the window's minutes. a start partway through a minute counts from that
@@ -228,7 +230,7 @@ static void read_hr_history(time_t now_min)
         {
             break; // the records run in order, so nothing after this fits either
         }
-        if (slot >= 0 && !scratch[i].is_invalid)
+        if (slot >= 0 && !scratch[i].is_invalid && history[slot] == 0)
         {
             history[slot] = scratch[i].heart_rate_bpm;
         }
@@ -297,7 +299,10 @@ static void read_step_hourly(void)
     // turn an hour rolls over, and the run since midnight on the first turn after a launch
     if (s_settled_hours < cur_hour)
     {
-        HealthMinuteData *scratch = scratch_take(STEP_CATCHUP_HOURS * MINUTES_PER_HOUR);
+        // room for one hour more than a batch spans on the wall clock, since the batch holding the
+        // hour the clocks go back through runs an hour longer in real time
+        const uint32_t room = (STEP_CATCHUP_HOURS + 1) * MINUTES_PER_HOUR;
+        HealthMinuteData *scratch = scratch_take(room);
         if (!scratch)
         {
             return; // no room, so leave the buckets as they are and try again next turn
@@ -319,7 +324,14 @@ static void read_step_hourly(void)
             time_t q_start = hour_start(&local, h);
             time_t q_end = want_end;
 
-            uint32_t asked = (uint32_t)(span * MINUTES_PER_HOUR);
+            // the batch's real length rather than its wall hours. asking for only its wall hours
+            // left the last hour of a clocks-back batch empty and settled, and the current hour's bar
+            // took its steps
+            uint32_t asked = (uint32_t)((want_end - q_start) / SECONDS_PER_MINUTE);
+            if (asked > room)
+            {
+                asked = room;
+            }
             uint32_t got = health_service_get_minute_history(scratch, asked, &q_start, &q_end);
 
             // same guard as the backfill: trust the promise no further than the buffer goes
@@ -526,8 +538,9 @@ static void refresh_activity(bool force)
         s_state.calories = read_sum_today(HealthMetricActiveKCalories, -1);
     }
 
-    // the watch keeps the step count to hand so that one is cheap. the distance is not
-    s_state.steps = read_sum_today(HealthMetricStepCount, 0);
+    // the watch keeps the step count to hand so that one is cheap. the distance is not. no reading
+    // stays -1 like the other counts, so a watch with Health off shows a placeholder rather than 0
+    s_state.steps = read_sum_today(HealthMetricStepCount, -1);
     if (s_distance)
     {
         s_state.distance_m = read_sum_today(HealthMetricWalkedDistanceMeters, 0);
@@ -588,6 +601,9 @@ static void notify_if_moved(uint32_t before)
  */
 static void on_health_event(HealthEventType event, void *context)
 {
+    // the state is summed before and after even when the minute gate reads nothing. that is two
+    // passes over a couple of hundred bytes on an event that comes about once a minute, which costs
+    // less than the bytes a gate that reports back would add
     uint32_t before = store_sum(&s_state, sizeof(s_state));
 
     switch (event)
@@ -716,19 +732,20 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
         // of the watch's minute log, so it is worth skipping outright for a face that does not
         if (s_hr_history)
         {
+            time_t now_min = time(NULL) / SECONDS_PER_MINUTE;
             if (s_state.hr_last_min != 0)
             {
-                // restored an earlier graph, so just slide it forward over the time we were away
-                // (and it clears itself if that was over an hour)
-                hr_history_advance(time(NULL) / SECONDS_PER_MINUTE);
+                // restored an earlier graph, so slide it forward over the time we were away (it
+                // clears itself if that was over an hour), then fill that gap from the log
+                hr_history_advance(now_min);
             }
             else
             {
-                // first launch with nothing saved: backfill from whatever the watch already logged
-                // so the chart is not empty, then let the live readings extend it from here
-                s_state.hr_last_min = time(NULL) / SECONDS_PER_MINUTE;
-                read_hr_history(s_state.hr_last_min);
+                // first launch with nothing saved, so the whole window comes from the log
+                memset(s_state.hr_history, 0, HR_HISTORY_MINUTES);
+                s_state.hr_last_min = now_min;
             }
+            read_hr_history(now_min);
         }
 
         // seed the first reading before any event lands. these are cheap, a peek and a handful of

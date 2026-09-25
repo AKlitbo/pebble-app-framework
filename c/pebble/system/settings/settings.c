@@ -317,10 +317,14 @@ static void load_schema(const SettingsSchema *schema)
         }
     }
 
-    // unrecognized size or bad version: reset (the bad read may have clobbered the blob)
+    // unrecognized size or bad version: reset (the bad read may have clobbered the blob). the saved
+    // settings are gone just as a wipe leaves them, such as after going back to an older build, so
+    // the watch counts as fresh and the phone restores it. the key is removed rather than written
+    // with the defaults, so a relaunch before the restore lands still boots fresh and asks again
     apply_defaults(schema);
     set_version(schema, schema->version);
-    save_schema(schema);
+    persist_delete(schema->key);
+    s_was_fresh = true;
 }
 
 void settings_init(const SettingsSchema *head)
@@ -328,12 +332,18 @@ void settings_init(const SettingsSchema *head)
     s_primary = head;
     build_index();
 
-    // a wipe clears every key, so the primary being absent means we booted with no saved settings
-    s_was_fresh = !persist_exists(head->key);
+    // a wipe clears every key, and a reset removes the blob it could not read, so any schema in the
+    // chain with no saved blob means some settings are on their defaults and the phone should restore
+    // them. a companion a new build adds counts too, which costs one restore of what the phone holds
+    s_was_fresh = false;
 
     // load every schema in the chain (the primary plus any companions)
     for (const SettingsSchema *schema = head; schema; schema = schema->companion)
     {
+        if (!persist_exists(schema->key))
+        {
+            s_was_fresh = true;
+        }
         load_schema(schema);
     }
 }
@@ -357,6 +367,10 @@ void settings_mark_restored(void)
     s_was_fresh = false;
 }
 
+// the typed reads index by id with no range check. every shared setting has an id below
+// SETTING_COUNT, and a face's own fields, marked SETTING_COUNT, are read from the face's own struct
+// rather than through here. a check on every read would cost bytes on every face to guard a call
+// none of them makes
 uint8_t settings_u8(SettingId id)
 {
     const SettingField *field = s_by_id[id];

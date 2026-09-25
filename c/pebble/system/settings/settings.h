@@ -59,7 +59,7 @@ typedef struct
     SettingType type;             ///< Drives both the wire encoding and the cleanup pass
     uint16_t    offset;           ///< Where this field sits in the owning face's struct
     uint16_t    size;             ///< Buffer size, for SETTING_CSTRING only
-    uint8_t     enum_count;       ///< Highest allowed value, for SETTING_ENUM_U8 only
+    uint8_t     enum_count;       ///< How many values are allowed, so the highest is one less, for SETTING_ENUM_U8 only
     uint32_t    default_num;      ///< Default on a fresh install for BOOL and ENUM_U8, and the 0xRRGGBB colour for COLOR
     const char *default_str;      ///< Default on a fresh install for CSTRING
     bool        affects_layout;   ///< A change re-renders the clock, for the date and time formats
@@ -119,8 +119,8 @@ void settings_init(const SettingsSchema *schema);
  * install or an update. Lets the phone know it should push its own config back rather than
  * trust the watch's defaults.
  *
- * @return true when the primary key had no blob at `settings_init` and no settings page message has
- * landed since.
+ * @return true when any schema in the chain had no blob at `settings_init`, or one was reset for a
+ * blob it could not read, and no settings page message has landed since.
  */
 bool settings_was_fresh(void);
 

@@ -14,11 +14,11 @@
 #include "io/stores/health_store.h"
 #include "io/stores/weather_store.h"
 #include "io/stores/location_store.h"
-#include "ui/weather/labels.h"
 #include "system/settings/settings.h"
 #include "system/settings/setting_values.h"
 #include "system/units/units.h"
 #include "text/text_case.h"
+#include "weather/wx_label.h"
 
 void readout_time(char *out, size_t n)
 {
@@ -110,8 +110,14 @@ void readout_hr(char *out, size_t n)
 
 void readout_steps(char *out, size_t n)
 {
+    // no reading yet, or Health is off. the distance falls back to 0 rather than -1, so the steps
+    // count is what tells a quiet day from no data in either mode
     uint8_t mode = settings_u8(SETTING_STEPS_MODE);
-    if (mode == STEPS_MODE_MILES || mode == STEPS_MODE_KM)
+    if (health_store_steps() < 0)
+    {
+        snprintf(out, n, "--");
+    }
+    else if (mode == STEPS_MODE_MILES || mode == STEPS_MODE_KM)
     {
         units_format_distance(out, n, health_store_distance_m(), mode == STEPS_MODE_MILES);
     }
@@ -138,9 +144,6 @@ void readout_weather_temp(char *out, size_t n)
 
 void readout_weather_cond(char *out, size_t n)
 {
-    // wx_label_short answers with the day word for a night token, so the marker comes off by the
-    // rule the generator wrote rather than by a second one spelled out here. cutting at the first
-    // underscore, as this did, is a looser rule that only holds while no token contains one
     const char *cond = weather_store_cond();
     if (cond[0] == '\0')
     {
@@ -148,7 +151,8 @@ void readout_weather_cond(char *out, size_t n)
         return;
     }
 
-    snprintf(out, n, "%s", wx_label_short(cond));
+    // the token is the word already, less its night suffix
+    wx_label_short(out, n, cond);
 }
 
 void readout_lat(char *out, size_t n)

@@ -18,7 +18,7 @@
 void setUp(void) {}
 void tearDown(void) {}
 
-/** A string that fits has to land whole, or the field holds something the user never typed. */
+/** @brief A string that fits has to land whole, or the field holds something the user never typed. */
 void test_a_string_that_fits_is_copied_whole(void)
 {
     char field[FIELD] = "";
@@ -28,7 +28,7 @@ void test_a_string_that_fits_is_copied_whole(void)
     TEST_ASSERT_EQUAL_STRING("abc", field);
 }
 
-/** A string too long keeps only what fits, and the terminator has to survive the trim. */
+/** @brief A string too long keeps only what fits, and the terminator has to survive the trim. */
 void test_a_string_too_long_is_cut_to_the_buffer(void)
 {
     char field[FIELD] = "";
@@ -38,7 +38,7 @@ void test_a_string_too_long_is_cut_to_the_buffer(void)
     TEST_ASSERT_EQUAL_STRING("abcde", field);
 }
 
-/** A NULL empties the field rather than leaving whatever was there. */
+/** @brief A NULL empties the field rather than leaving whatever was there. */
 void test_a_null_empties_the_field(void)
 {
     char field[FIELD] = "abc";
@@ -48,7 +48,7 @@ void test_a_null_empties_the_field(void)
     TEST_ASSERT_EQUAL_STRING("", field);
 }
 
-/** The same string is no change, which is what stops a save re-reacting to a setting nobody touched. */
+/** @brief The same string is no change, which is what stops a save re-reacting to a setting nobody touched. */
 void test_the_same_string_is_not_a_change(void)
 {
     bool result = cstring_fit_same("abc", "abc", FIELD);
@@ -56,7 +56,7 @@ void test_the_same_string_is_not_a_change(void)
     TEST_ASSERT_TRUE(result);
 }
 
-/** A different string is a change, or the watch keeps the old value with no way to notice. */
+/** @brief A different string is a change, or the watch keeps the old value with no way to notice. */
 void test_a_different_string_is_a_change(void)
 {
     bool result = cstring_fit_same("abc", "abd", FIELD);
@@ -78,7 +78,7 @@ void test_an_over_long_value_matching_the_trimmed_field_is_not_a_change(void)
     TEST_ASSERT_TRUE(result);
 }
 
-/** An over-long value that differs inside what would be kept is still a change. */
+/** @brief An over-long value that differs inside what would be kept is still a change. */
 void test_an_over_long_value_differing_inside_the_buffer_is_a_change(void)
 {
     bool result = cstring_fit_same("abcde", "abcXefgh", FIELD);
@@ -86,7 +86,7 @@ void test_an_over_long_value_differing_inside_the_buffer_is_a_change(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** A shorter string is a change even though it matches as far as it goes. */
+/** @brief A shorter string is a change even though it matches as far as it goes. */
 void test_a_shorter_string_is_a_change(void)
 {
     bool result = cstring_fit_same("abc", "ab", FIELD);
@@ -94,7 +94,7 @@ void test_a_shorter_string_is_a_change(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** Filling the field exactly is the boundary the trim is measured against. */
+/** @brief Filling the field exactly is the boundary the trim is measured against. */
 void test_a_value_filling_the_field_exactly_is_not_a_change(void)
 {
     bool result = cstring_fit_same("abcde", "abcde", FIELD);
@@ -102,7 +102,7 @@ void test_a_value_filling_the_field_exactly_is_not_a_change(void)
     TEST_ASSERT_TRUE(result);
 }
 
-/** Emptying a field the user cleared has to read as a change, or the old value stays. */
+/** @brief Emptying a field the user cleared has to read as a change, or the old value stays. */
 void test_clearing_a_filled_field_is_a_change(void)
 {
     bool result = cstring_fit_same("abc", "", FIELD);
@@ -110,7 +110,7 @@ void test_clearing_a_filled_field_is_a_change(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** A field with nowhere to write cannot move, so nothing counts as a change to it. */
+/** @brief A field with nowhere to write cannot move, so nothing counts as a change to it. */
 void test_a_zero_sized_field_never_changes(void)
 {
     bool result = cstring_fit_same("", "abc", 0);
@@ -118,7 +118,7 @@ void test_a_zero_sized_field_never_changes(void)
     TEST_ASSERT_TRUE(result);
 }
 
-/** A zero-sized buffer must not be written to at all, since there is not even room for a terminator. */
+/** @brief A zero-sized buffer must not be written to at all, since there is not even room for a terminator. */
 void test_a_zero_sized_field_is_left_alone(void)
 {
     char guard[2] = {'x', 'y'};

@@ -11,13 +11,23 @@
 #include "math/scale.h"
 #include "text/cstring_fit.h"
 
+#define SECONDS_PER_READING_HOUR 3600
+#define SECONDS_PER_READING_DAY  86400
+#define MINUTES_PER_READING_DAY  1440
+
 /** A number the message left out, as the store's own no-data value. */
 static int or_none(int value, int none)
 {
     return value == INT_MIN ? none : value;
 }
 
-bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, time_t now)
+/** A time of day in minutes, or -1 for one the message left out or one no clock can read. */
+static int16_t day_minute_or_none(int value)
+{
+    return (value >= 0 && value < MINUTES_PER_READING_DAY) ? (int16_t)value : -1;
+}
+
+bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)
 {
     bool kept = false;
 
@@ -27,6 +37,7 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, time_
     {
         state->temp = (int16_t)clamp_int(msg->temp, -99, 199);
         cstring_fit(state->cond, msg->cond ? msg->cond : "--", sizeof(state->cond));
+        cstring_fit(state->cond_label, msg->cond_label ? msg->cond_label : "", sizeof(state->cond_label));
         kept = true;
     }
 
@@ -35,8 +46,8 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, time_
         state->humidity = or_none(msg->humidity, -1);
         state->wind_kmh = or_none(msg->wind_kmh, -1);
         cstring_fit(state->wind_dir, msg->wind_dir ? msg->wind_dir : "", sizeof(state->wind_dir));
-        cstring_fit(state->sunrise, msg->sunrise ? msg->sunrise : "", sizeof(state->sunrise));
-        cstring_fit(state->sunset, msg->sunset ? msg->sunset : "", sizeof(state->sunset));
+        state->sunrise = day_minute_or_none(msg->sunrise);
+        state->sunset = day_minute_or_none(msg->sunset);
         kept = true;
     }
 
@@ -46,6 +57,7 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, time_
         state->temp_max = or_none(msg->temp_max, WEATHER_NO_TEMP);
         state->temp_min = or_none(msg->temp_min, WEATHER_NO_TEMP);
         state->precip_chance = or_none(msg->precip_chance, -1);
+        state->forecast_day = clock->day_start;
         kept = true;
     }
 
@@ -58,19 +70,30 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, time_
     }
 
     // the decoders only write a strip that reads clean, so a bad one leaves the last good row
+    // each strip that reads clean records where its first column starts, which says later how much
+    // of it has gone by. the first hourly column is the hour with its base hour nearest now, up to
+    // 12 hours behind or 11 ahead. the first daily column is the day with its weekday nearest today,
+    // up to 3 days either way, so a late evening strip that starts tomorrow is whole until then.
+    // a strip that lands late starts behind the clock, and reading it as nearly a whole cycle ahead
+    // would mean it never ages
     if (msg->hourly && weather_hourly_decode(msg->hourly, msg->hourly_len, &state->hourly))
     {
+        int ahead = (state->hourly.base_hour - clock->hour + 36) % 24 - 12;
+        state->hourly_first = clock->now - clock->minute * 60 - clock->second +
+                              (time_t)ahead * SECONDS_PER_READING_HOUR;
         kept = true;
     }
 
     if (msg->daily && weather_daily_decode(msg->daily, msg->daily_len, &state->daily))
     {
+        int ahead = (state->daily.base_weekday - clock->wday + 10) % 7 - 3;
+        state->daily_first = clock->day_start + (time_t)ahead * SECONDS_PER_READING_DAY;
         kept = true;
     }
 
     if (kept)
     {
-        state->last_sync = now;
+        state->last_sync = clock->now;
     }
 
     return kept;

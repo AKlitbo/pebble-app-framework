@@ -24,7 +24,7 @@ typedef enum
     TIME_FORMAT_SYSTEM      = 0,  ///< Follows the watch's own 12 or 24 hour setting
     TIME_FORMAT_12H         = 1,  ///< 12 hour with a leading zero like 06:30
     TIME_FORMAT_24H         = 2,  ///< 24 hour clock
-    TIME_FORMAT_BEATS       = 3,  ///< Kept for the wire format. Not offered in the config
+    TIME_FORMAT_BEATS       = 3,  ///< Swatch Internet Time, offered as .beats on the settings page
     TIME_FORMAT_12H_NO_LEAD = 4,  ///< 12 hour without a leading zero like 6:30
     TIME_FORMAT_COUNT             ///< How many choices this setting has
 } TimeFormat;

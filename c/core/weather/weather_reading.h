@@ -48,8 +48,9 @@ typedef struct
     int            humidity;      ///< Percent humidity
     int            wind_kmh;      ///< Wind speed in km/h
     const char    *wind_dir;      ///< Wind direction, such as "NW"
-    const char    *sunrise;       ///< Sunrise time, such as "06:30"
-    const char    *sunset;        ///< Sunset time, such as "21:30"
+    const char    *cond_label;    ///< The sky in words, such as "Partly Cloudy", or NULL for a face with no key for it
+    int            sunrise;       ///< Sunrise as minutes past local midnight
+    int            sunset;        ///< Sunset as minutes past local midnight
     int            uv;            ///< UV index
     int            temp_max;      ///< Today's high
     int            temp_min;      ///< Today's low
@@ -74,11 +75,12 @@ typedef struct
     uint8_t tag;          ///< The store's tag, so a restore can tell this blob from another shape
     int16_t temp;         ///< Current temperature in the user's unit (WEATHER_NO_TEMP when none)
     char   cond[32];      ///< Short word for the sky, such as "SUNNY"
+    char   cond_label[20]; ///< The sky in words, such as "Partly Cloudy", empty when the phone sent none
     int    humidity;      ///< Percent humidity, -1 when none
     int    wind_kmh;      ///< Wind speed in km/h, -1 when none
     char   wind_dir[4];   ///< Wind direction like "NW"
-    char   sunrise[8];    ///< Sunrise time like "06:30"
-    char   sunset[8];     ///< Sunset time like "21:30"
+    int16_t sunrise;      ///< Sunrise as minutes past local midnight, -1 when none
+    int16_t sunset;       ///< Sunset as minutes past local midnight, -1 when none
     int    uv;            ///< UV index (-1 when none)
     int    temp_max;      ///< Today's high (WEATHER_NO_TEMP when none)
     int    temp_min;      ///< Today's low (WEATHER_NO_TEMP when none)
@@ -86,10 +88,30 @@ typedef struct
     int    feels_like;    ///< Apparent temperature (WEATHER_NO_TEMP when none)
     int    pressure;      ///< Sea level pressure in hPa (-1 when none)
     int    dew_point;     ///< Dew point temperature (WEATHER_NO_TEMP when none)
+    time_t forecast_day;  ///< Local midnight of the day the high, low, UV, and rain chance came, or 0
     WeatherHourly hourly; ///< The hourly forecast strip (`count` 0 when none)
+    time_t hourly_first;  ///< When the hourly strip's first column starts, or 0 when none came
+    time_t daily_first;   ///< Local midnight of the daily strip's first day, or 0 when none came
     WeatherDaily  daily;  ///< The 7-day forecast strip (`count` 0 when none)
     time_t last_sync;     ///< When the last reading landed, or 0 for never
 } WeatherState;
+
+/**
+ * @brief The watch's clock at the moment a message lands, broken apart.
+ *
+ * Taken apart by the store, since breaking a time_t apart means localtime and the SDK owns that.
+ * The midnight has to be the SDK's own, from time_start_of_today, because working it back from the
+ * hour and minute is an hour out on a day the clocks change.
+ */
+typedef struct
+{
+    time_t  now;       ///< The time the message landed
+    time_t  day_start; ///< Local midnight of today
+    uint8_t hour;      ///< The local hour, 0 to 23
+    uint8_t minute;    ///< The local minute, 0 to 59
+    uint8_t second;    ///< The local second, 0 to 59
+    uint8_t wday;      ///< The local weekday, 0 for Sunday
+} WeatherClock;
 
 /**
  * @brief Put a message's readings into the kept weather.
@@ -99,12 +121,16 @@ typedef struct
  * temperatures. A failed fetch keeps the last good temperature and sky. A strip that does not
  * read clean keeps the last good row.
  *
+ * Each strip that reads clean records where its first column starts, and the high, low, UV, and
+ * rain chance record the day they came, so the store can tell later what has gone by.
+ *
  * @param state The kept weather, updated in place.
  * @param msg The message.
- * @param now The time to stamp as the last sync when anything was kept.
+ * @param clock The watch's clock as the message landed. Its time is stamped as the last sync when
+ *   anything was kept.
  * @return Whether anything was kept, which is when the face needs a redraw and a save.
  */
-bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, time_t now);
+bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock);
 
 /**
  * @brief Convert every temperature in the kept weather to the other unit.

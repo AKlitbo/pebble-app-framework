@@ -5,7 +5,6 @@
  * Reads the framework's ts/weather/conditions.ts and ts/pkjs/wire.ts, the two tables the phone owns,
  * and writes
  *   c/pebble/ui/weather/icons_table.g.h          (token  -> icon resource)
- *   c/pebble/ui/weather/labels_table.g.h         (token  -> short/long display label)
  *   c/core/wire/wire_caps.g.h                    (the strip caps both sides bound against)
  *
  * Each header carries its own Doxygen blocks, so the generated lookups show up in the framework docs
@@ -26,7 +25,6 @@ import { ENGINE, WORKSPACE } from './paths.ts';
 
 const WEATHER_DIR = path.join(ENGINE, 'c', 'pebble', 'ui', 'weather');
 const ICONS_OUT = path.join(WEATHER_DIR, 'icons_table.g.h');
-const LABELS_OUT = path.join(WEATHER_DIR, 'labels_table.g.h');
 const WIRE_CAPS_OUT = path.join(ENGINE, 'c', 'core', 'wire', 'wire_caps.g.h');
 
 /**
@@ -120,88 +118,6 @@ export function buildIconsTable({ fallback, conditions }: ConditionVocabulary) {
 }
 
 /**
- * Builds one C label-lookup function (short or long) from the vocabulary.
- *
- * A night token reuses its day label, so the emitted function strips a trailing
- * "_NIGHT" from the input, then does one token -> label branch per condition
- * (half the branches of a day+night table). The suffix strip is a manual tail
- * compare (no strstr, which would pull in a big libc routine). Pure string transform.
- *
- * fnName is the C function name to emit, field is 'labelShort' or 'labelLong',
- * and fallbackText is the label returned for an unrecognized or null token. The
- * field also picks the wording of the emitted doc block.
- */
-function buildLabelFn({ conditions }: ConditionVocabulary, fnName: string, field: 'labelShort' | 'labelLong', fallbackText: string) {
-  const kind = field === 'labelShort' ? 'short' : 'long';
-  const lines = [
-    '/**',
-    ` * @brief Finds the ${kind} display label for a condition token.`,
-    ' *',
-    ' * A `_NIGHT` token reads the same as its day form, so the suffix is dropped before the lookup.',
-    ` * An unknown token, or a NULL one, reads "${fallbackText}".`,
-    ' *',
-    ' * @param condition The condition token from the phone, such as `RAIN` or `RAIN_NIGHT`. May be NULL.',
-    ' * @return The label, a string literal that stays valid for the life of the app.',
-    ' *',
-    ' * @ingroup lib_ui',
-    ' */',
-    `static const char *${fnName}(const char *condition)`,
-    '{',
-    '    if (!condition)',
-    '    {',
-    `        return "${fallbackText}";`,
-    '    }',
-    '',
-    '    // a night token reuses its day label, so drop a trailing "_NIGHT" before the lookup',
-    '    char base[24];',
-    '    size_t len = strlen(condition);',
-    '    if (len > 6 && !strcmp(condition + len - 6, "_NIGHT"))',
-    '    {',
-    '        len -= 6;',
-    '    }',
-    '    if (len >= sizeof(base))',
-    '    {',
-    '        len = sizeof(base) - 1;',
-    '    }',
-    '    memcpy(base, condition, len);',
-    "    base[len] = '\\0';",
-    '',
-  ];
-
-  for (const condition of conditions) {
-    const label = condition[field];
-    lines.push(`    if (!strcmp(base, "${condition.token}"))`);
-    lines.push('    {');
-    lines.push(`        return "${label}";`);
-    lines.push('    }');
-    lines.push('');
-  }
-
-  lines.push(`    return "${fallbackText}";`);
-  lines.push('}');
-  lines.push('');
-
-  return lines;
-}
-
-/**
- * Builds the C label-lookup source (both short and long functions).
- *
- * @param vocabulary The fallback labels plus the token/label rows to build the lookups from.
- * @return The generated C source for labels_table.g.h.
- */
-export function buildLabelsTable(vocabulary: ConditionVocabulary) {
-  const { fallback } = vocabulary;
-
-  const lines = bannerLines('labels_table.g.h', 'Condition token to short and long display label lookups.');
-  lines.push('#include <string.h>', '');
-  lines.push(...buildLabelFn(vocabulary, 'wx_label_short_for_table', 'labelShort', fallback.labelShort));
-  lines.push(...buildLabelFn(vocabulary, 'wx_label_long_for_table', 'labelLong', fallback.labelLong));
-
-  return lines.join('\n');
-}
-
-/**
  * Builds the shared wire caps header.
  *
  * Each text cap gains one for the terminator the C buffer has to hold, which is the one place that
@@ -220,8 +136,10 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
     'lib_core'
   );
 
+  // a negative value is wrapped, so a macro written as -WEATHER_NO_TEMP reads as a minus and not --
   const entry = (name: string, value: number | string, brief: string) => {
-    lines.push(`#define ${name} ${value} ///< ${brief}`);
+    const text = typeof value === 'number' && value < 0 ? `(${value})` : value;
+    lines.push(`#define ${name} ${text} ///< ${brief}`);
   };
 
   entry('STOCK_MAX_SLOTS', caps.STOCK_MAX_SLOTS, 'How many tickers the watchlist strip carries');
@@ -258,7 +176,6 @@ export interface GeneratedHeader {
  */
 export const GENERATED: GeneratedHeader[] = [
   { out: ICONS_OUT, build: () => buildIconsTable(conditionVocabulary) },
-  { out: LABELS_OUT, build: () => buildLabelsTable(conditionVocabulary) },
   { out: WIRE_CAPS_OUT, build: () => buildWireCaps(WIRE_CAPS, conditionVocabulary.FORECAST_NIGHT_BIT) },
 ];
 

@@ -25,7 +25,7 @@
 #define CAL_LOC_LEN 17 ///< An event location, 16 characters plus its terminator
 
 #define WEATHER_FORECAST_COLS 8 ///< How many columns a forecast strip carries
-#define WEATHER_NO_TEMP -1000 ///< A column with no reading, so the watch draws a placeholder
+#define WEATHER_NO_TEMP (-1000) ///< A column with no reading, so the watch draws a placeholder
 
 #define WX_FORECAST_NIGHT_BIT 0x80 ///< Set on an hourly forecast code for a column after dark
 

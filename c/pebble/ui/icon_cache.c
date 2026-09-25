@@ -215,11 +215,10 @@ static IconEntry *icon_entry(uint32_t res)
     }
     else
     {
-        // full, so the coldest entry gives up its slot.
-        // this is safe only because a caller never holds a bitmap from one icon across a lookup
-        // of a different one: it draws what it asked for, and the only call it makes in between
-        // is icon_margins for the SAME res, which hits and evicts nothing. keep it that way, or
-        // a caller could end up drawing a bitmap that was freed underneath it
+        // full, so the coldest entry gives up its slot and its bitmap is freed. a caller draws what
+        // it asked for straight away, and the only call it makes in between is icon_margins for the
+        // same res, which hits and evicts nothing. so nothing still points at the freed bitmap, and
+        // the cache never keeps a held icon alive, which would cost the heap it is sized to save
         entry = &s_cache[0];
         for (uint8_t i = 1; i < ICON_CACHE_MAX; i++)
         {

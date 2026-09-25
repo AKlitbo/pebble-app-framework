@@ -89,6 +89,9 @@ static void persist_save(void)
         snap.event[i] = s_state.strip.event[i];
     }
     snap.last_sync = s_state.last_sync;
+    // a failed write is not retried. it means the watch's storage is full, which a retry on the next
+    // reply would not change, and the next reply that differs writes again. a retry flag would cost
+    // bytes on every face
     store_save_changed(s_persist_key, &snap, sizeof(snap), STORE_READING_SIZE(snap, last_sync),
                        STORE_TAG_CALENDAR, &s_saved_sum);
 }
@@ -203,8 +206,9 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
 
 void calendar_store_reconfigure(CalendarConfig cfg)
 {
-    // an empty store catches up right away, and one holding data waits for its deadline
-    store_fetch_reconfigure(&s_fetch, cfg.poll_min, cfg.live, time(NULL), s_state.strip.count == 0);
+    // a store that never heard from the phone catches up right away, and one holding an answer
+    // waits for its deadline. an empty answer, such as a cleared list, is still an answer
+    store_fetch_reconfigure(&s_fetch, cfg.poll_min, cfg.live, time(NULL), s_state.last_sync == 0);
 }
 
 const CalendarStrip *calendar_store_strip(void)

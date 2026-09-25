@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildIconsTable, buildLabelsTable, GENERATED } from './build-conditions';
+import { buildIconsTable, GENERATED } from './build-conditions';
 import vocabulary from '../ts/weather/conditions.ts';
 import type { ConditionEntry, ConditionFallback } from '../ts/weather/conditions.ts';
 
@@ -177,56 +177,6 @@ describe('codeFor', () => {
     const result = vocabulary.codeFor(token);
 
     expect(result).toBe(UNKNOWN_WIRE_CODE);
-  });
-});
-
-describe('buildLabelsTable', () => {
-  /** A roomy face shows labelLong. A wrong/dropped mapping renders "Unknown" instead of "Partly Cloudy". */
-  test('maps each token to its short and long label', () => {
-    const source = buildLabelsTable({
-      fallback: FALLBACK,
-      conditions: [{ token: 'PCLDY', resource: 'WI_PARTLY_CLOUDY', labelShort: 'PCLDY', labelLong: 'Partly Cloudy' }],
-    });
-
-    expect(source).toContain('    if (!strcmp(base, "PCLDY"))\n    {\n        return "PCLDY";\n    }');
-    expect(source).toContain('    if (!strcmp(base, "PCLDY"))\n    {\n        return "Partly Cloudy";\n    }');
-  });
-
-  /** A night token resolves to its day label by stripping a trailing "_NIGHT" before the
-   *  lookup (not a separate branch), so the table stays half the size. */
-  test('strips a night token to its day label instead of emitting a separate branch', () => {
-    const source = buildLabelsTable({
-      fallback: FALLBACK,
-      conditions: [{ token: 'RAIN', resource: 'WI_RAIN', nightResource: 'WI_NIGHT_RAIN', labelShort: 'RAIN', labelLong: 'Rain' }],
-    });
-
-    expect(source).toContain('!strcmp(condition + len - 6, "_NIGHT")'); // strips the suffix
-    expect(source).not.toContain('"RAIN_NIGHT"');                        // no separate night branch
-    expect(source.match(/return "Rain";/g)).toHaveLength(1);             // day branch only
-  });
-
-  /** Both lookup functions must fall back to the configured labels for an unknown/null token. */
-  test('ends each function with the configured fallback label', () => {
-    const source = buildLabelsTable({
-      fallback: FALLBACK,
-      conditions: [{ token: 'RAIN', resource: 'WI_RAIN', labelShort: 'RAIN', labelLong: 'Rain' }],
-    });
-
-    expect(source).toContain('const char *wx_label_short_for_table');
-    expect(source).toContain('const char *wx_label_long_for_table');
-    expect(source).toContain('return "UNKNOWN";');
-    expect(source).toContain('return "Unknown";');
-  });
-
-  /** Every shipped condition must reach both label tables. A dropped one renders the fallback. */
-  test('covers every condition in the real vocabulary', () => {
-    const source = buildLabelsTable(vocabulary);
-
-    for (const { token, labelShort, labelLong } of vocabulary.conditions) {
-      expect(source).toContain(`!strcmp(base, "${token}")`);
-      expect(source).toContain(`return "${labelShort}";`);
-      expect(source).toContain(`return "${labelLong}";`);
-    }
   });
 });
 

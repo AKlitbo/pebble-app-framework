@@ -29,12 +29,11 @@ uint8_t forecast_hours_past(int32_t seconds_into_strip, uint8_t step_hours, uint
 /**
  * @brief How many of a daily strip's columns are days before today.
  *
- * @param days_since_arrival Whole days from the day the strip arrived to today.
- * @param first_day_ahead Days from the arrival day to the strip's first column, 0 when the strip
- *   starts on the day it arrived.
+ * @param days_since_first Whole days from the strip's first day to today. Zero or less means the
+ *   strip starts today or later.
  * @param count How many columns the strip holds.
  * @return How many columns from the front are before today, at most @p count.
  */
-uint8_t forecast_days_past(int days_since_arrival, uint8_t first_day_ahead, uint8_t count);
+uint8_t forecast_days_past(int days_since_first, uint8_t count);
 
 /** @} */

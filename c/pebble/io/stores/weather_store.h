@@ -39,8 +39,9 @@ typedef struct
     int         humidity;  ///< Percent, -1 for none
     int         wind_kmh;  ///< Wind in km/h, -1 for none
     const char *wind_dir;  ///< Wind direction like "NW", empty for none
-    const char *sunrise;   ///< Sunrise time like "06:30", empty for none
-    const char *sunset;    ///< Sunset time like "21:30", empty for none
+    const char *cond_label; ///< The sky in words like "Partly Cloudy", NULL or empty for none
+    int16_t     sunrise;   ///< Sunrise as minutes past midnight, -1 for none
+    int16_t     sunset;    ///< Sunset as minutes past midnight, -1 for none
     int         uv;        ///< UV index, -1 for none
     int         temp_max;  ///< Today's high, WEATHER_NO_TEMP for none
     int         temp_min;  ///< Today's low, WEATHER_NO_TEMP for none
@@ -62,7 +63,7 @@ typedef struct
 #define WEATHER_SEED_EMPTY ((WeatherSeed){                       \
     .temp = WEATHER_NO_TEMP, .cond = "",                         \
     .humidity = -1, .wind_kmh = -1, .wind_dir = "",             \
-    .sunrise = "", .sunset = "", .uv = -1,                       \
+    .cond_label = NULL, .sunrise = -1, .sunset = -1, .uv = -1,   \
     .temp_max = WEATHER_NO_TEMP, .temp_min = WEATHER_NO_TEMP,   \
     .precip_chance = -1,                                         \
     .feels_like = WEATHER_NO_TEMP, .pressure = -1,               \
@@ -94,6 +95,13 @@ int         weather_store_temp(void);
 /** @brief The short word for the sky, or empty if we have not got one yet. */
 const char *weather_store_cond(void);
 
+/**
+ * @brief The sky in words, such as "Partly Cloudy", for a face that declares WEATHER_CONDITION_LABEL.
+ *
+ * @return The label, or empty when the phone sent none.
+ */
+const char *weather_store_cond_label(void);
+
 /** @brief The humidity in percent, or -1 if we have not got one yet. */
 int         weather_store_humidity(void);
 
@@ -103,11 +111,11 @@ int         weather_store_wind_kmh(void);
 /** @brief The wind direction like "NW", or empty if we have not got one yet. */
 const char *weather_store_wind_dir(void);
 
-/** @brief The sunrise time like "06:30", or empty if we have not got one yet. */
-const char *weather_store_sunrise(void);
+/** @brief Sunrise as minutes past midnight, or -1 if we have not got one yet. */
+int weather_store_sunrise(void);
 
-/** @brief The sunset time like "21:30", or empty if we have not got one yet. */
-const char *weather_store_sunset(void);
+/** @brief Sunset as minutes past midnight, or -1 if we have not got one yet. */
+int weather_store_sunset(void);
 
 /** @brief How warm it feels, or WEATHER_NO_TEMP if we have not got one yet. */
 int         weather_store_feels_like(void);
@@ -118,16 +126,16 @@ int         weather_store_pressure(void);
 /** @brief The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet. */
 int         weather_store_dew_point(void);
 
-/** @brief The UV index, or -1 if we have not got one yet. */
+/** @brief Today's UV index, or -1 if we have not got one yet or the day it came is over. */
 int         weather_store_uv(void);
 
-/** @brief Today's high, or WEATHER_NO_TEMP if we have not got one yet. */
+/** @brief Today's high, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. */
 int         weather_store_temp_max(void);
 
-/** @brief Today's low, or WEATHER_NO_TEMP if we have not got one yet. */
+/** @brief Today's low, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. */
 int         weather_store_temp_min(void);
 
-/** @brief The chance of rain in percent, or -1 if we have not got one yet. */
+/** @brief Today's chance of rain in percent, or -1 if we have not got one yet or the day it came is over. */
 int         weather_store_precip_chance(void);
 
 /**

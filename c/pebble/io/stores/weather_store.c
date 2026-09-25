@@ -48,19 +48,14 @@
  */
 static WeatherState s_state;
 // the blob's size and where it ends are its saved format, so a relaunch after an update reads
-// what the last version wrote. on the watch that is 184 bytes with the sync time last
-_Static_assert(sizeof(WeatherState) == 184, "weather state must keep its saved layout");
-_Static_assert(offsetof(WeatherState, last_sync) == 180, "weather state must keep its saved layout");
+// what the last version wrote. on the watch that is 204 bytes with the sync time last. a change
+// that keeps the size still needs a new STORE_TAG_WEATHER, or an old blob reads as the new one
+_Static_assert(sizeof(WeatherState) == 204, "weather state must keep its saved layout");
+_Static_assert(offsetof(WeatherState, last_sync) == 200, "weather state must keep its saved layout");
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "weather state must fit one persist key");
 
 static void (*s_cb)(void);     ///< Called whenever a reading changes, so the face can redraw
 static int s_boot_retries;     ///< Short cold-boot re-asks used so far, until the first reading lands
-// when each strip last arrived, kept in memory only. a strip stays when the forecast half of a fetch
-// fails while the current reading still lands, so the time the strip came is what says how much of
-// it has gone by. a relaunch starts them from the saved sync time, which is close enough, since each
-// strip's own base hour and weekday pin which hours and days its columns are
-static time_t s_hourly_at;
-static time_t s_daily_at;
 
 static StoreFetch s_fetch;   ///< The interval, the boot re-ask timer, and when the next poll is due. Live gates the cache too
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved reading
@@ -76,15 +71,14 @@ static uint32_t s_saved_sum;   ///< Sum of the reading last written, so a reply 
  */
 static void reset_state(void)
 {
-    s_hourly_at = 0;
-    s_daily_at = 0;
     s_state.temp = WEATHER_NO_TEMP;
     s_state.cond[0] = '\0';
+    s_state.cond_label[0] = '\0';
     s_state.humidity = -1;
     s_state.wind_kmh = -1;
     s_state.wind_dir[0] = '\0';
-    s_state.sunrise[0] = '\0';
-    s_state.sunset[0] = '\0';
+    s_state.sunrise = -1;
+    s_state.sunset = -1;
     s_state.uv = -1;
     s_state.temp_max = WEATHER_NO_TEMP;
     s_state.temp_min = WEATHER_NO_TEMP;
@@ -92,8 +86,11 @@ static void reset_state(void)
     s_state.feels_like = WEATHER_NO_TEMP;
     s_state.pressure = -1;
     s_state.dew_point = WEATHER_NO_TEMP;
+    s_state.forecast_day = 0;
     s_state.hourly.count = 0;
+    s_state.hourly_first = 0;
     s_state.daily.count = 0;
+    s_state.daily_first = 0;
     s_state.last_sync = 0;
 }
 
@@ -170,8 +167,9 @@ static void apply_seed(const WeatherSeed *seed)
     s_state.humidity = seed->humidity;
     s_state.wind_kmh = seed->wind_kmh;
     cstring_fit(s_state.wind_dir, seed->wind_dir ? seed->wind_dir : "", sizeof(s_state.wind_dir));
-    cstring_fit(s_state.sunrise, seed->sunrise ? seed->sunrise : "", sizeof(s_state.sunrise));
-    cstring_fit(s_state.sunset, seed->sunset ? seed->sunset : "", sizeof(s_state.sunset));
+    cstring_fit(s_state.cond_label, seed->cond_label ? seed->cond_label : "", sizeof(s_state.cond_label));
+    s_state.sunrise = seed->sunrise;
+    s_state.sunset = seed->sunset;
     s_state.uv = seed->uv;
     s_state.temp_max = seed->temp_max;
     s_state.temp_min = seed->temp_min;
@@ -179,6 +177,9 @@ static void apply_seed(const WeatherSeed *seed)
     s_state.feels_like = seed->feels_like;
     s_state.pressure = seed->pressure;
     s_state.dew_point = seed->dew_point;
+
+    // today's, or a screenshot would show dashes for the high, low, UV, and rain chance
+    s_state.forecast_day = time_start_of_today();
     if (seed->forecast_hourly)
     {
         s_state.hourly = *seed->forecast_hourly;
@@ -209,17 +210,19 @@ static void on_weather(const WeatherMessage *msg)
         s_heard = true;
     }
 
+    // the clock broken apart here, since the reading's own code cannot call localtime. the midnight
+    // is the SDK's, which the day checks below compare against. it is worked out first and the
+    // broken-apart clock is copied, since the midnight lookup can reuse localtime's buffer
     time_t now = time(NULL);
-    if (msg->hourly)
-    {
-        s_hourly_at = now;
-    }
-    if (msg->daily)
-    {
-        s_daily_at = now;
-    }
+    time_t day_start = time_start_of_today();
+    struct tm at = *localtime(&now);
+    WeatherClock clock = {
+        .now = now, .day_start = day_start,
+        .hour = (uint8_t)at.tm_hour, .minute = (uint8_t)at.tm_min, .second = (uint8_t)at.tm_sec,
+        .wday = (uint8_t)at.tm_wday,
+    };
 
-    if (weather_reading_apply(&s_state, msg, now))
+    if (weather_reading_apply(&s_state, msg, &clock))
     {
         mark_dirty();
         s_changed = true;
@@ -263,9 +266,11 @@ static void boot_fire(void *data)
     }
     appmessage_request_weather();
 
+    // a restored reading, or out of tries, so the deadline takes over. a first ask lost before the
+    // phone JS was up needs no retry here, since the phone fetches weather itself once it starts
     if (s_fetch.poll.poll_min <= 0 || s_state.last_sync != 0 || s_boot_retries >= WEATHER_BOOT_RETRIES)
     {
-        return;  // a restored reading, or out of tries. the deadline has it from here
+        return;
     }
 
     s_boot_retries++;
@@ -337,19 +342,16 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 
             // the strings come back off flash too, so each gets an end of its own before it is printed
             s_state.cond[sizeof(s_state.cond) - 1] = '\0';
+            s_state.cond_label[sizeof(s_state.cond_label) - 1] = '\0';
             s_state.wind_dir[sizeof(s_state.wind_dir) - 1] = '\0';
-            s_state.sunrise[sizeof(s_state.sunrise) - 1] = '\0';
-            s_state.sunset[sizeof(s_state.sunset) - 1] = '\0';
-
-            // the strips arrived no later than the reading they were saved with
-            s_hourly_at = s_state.last_sync;
-            s_daily_at = s_state.last_sync;
         }
     }
 
     // one fetch shortly after launch so the face is not blank while the first deadline is still
     // coming, re-asked on a short cadence until the phone answers. poll_min 0 disables polling,
-    // matching reconfigure
+    // matching reconfigure. this is store_fetch_start written out, since the first timer runs the
+    // boot re-asks rather than a plain fetch, and a callback slot in StoreFetch for it would cost
+    // bytes on every store
     bool polling = store_poll_set(&s_fetch.poll, cfg.poll_min, cfg.live, time(NULL));
     store_fetch_stop(&s_fetch);
     if (polling)
@@ -367,16 +369,29 @@ void weather_store_reconfigure(WeatherConfig cfg)
 }
 
 int         weather_store_temp(void)          { return s_state.temp; }
+/**
+ * @brief Whether the high, low, UV, and rain chance are today's.
+ *
+ * They are only good for the day they came. For some providers they ride on a second request, and
+ * when only that one fails the rest of the reading keeps landing, so without this yesterday's high
+ * and low would show as today's.
+ */
+static bool forecast_today(void)
+{
+    return s_state.forecast_day != 0 && s_state.forecast_day == time_start_of_today();
+}
+
 const char *weather_store_cond(void)          { return s_state.cond; }
+const char *weather_store_cond_label(void)    { return s_state.cond_label; }
 int         weather_store_humidity(void)      { return s_state.humidity; }
 int         weather_store_wind_kmh(void)      { return s_state.wind_kmh; }
 const char *weather_store_wind_dir(void)      { return s_state.wind_dir; }
-const char *weather_store_sunrise(void)       { return s_state.sunrise; }
-const char *weather_store_sunset(void)        { return s_state.sunset; }
-int         weather_store_uv(void)            { return s_state.uv; }
-int         weather_store_temp_max(void)      { return s_state.temp_max; }
-int         weather_store_temp_min(void)      { return s_state.temp_min; }
-int         weather_store_precip_chance(void) { return s_state.precip_chance; }
+int         weather_store_sunrise(void)       { return s_state.sunrise; }
+int         weather_store_sunset(void)        { return s_state.sunset; }
+int         weather_store_uv(void)            { return forecast_today() ? s_state.uv : -1; }
+int         weather_store_temp_max(void)      { return forecast_today() ? s_state.temp_max : WEATHER_NO_TEMP; }
+int         weather_store_temp_min(void)      { return forecast_today() ? s_state.temp_min : WEATHER_NO_TEMP; }
+int         weather_store_precip_chance(void) { return forecast_today() ? s_state.precip_chance : -1; }
 int         weather_store_feels_like(void)    { return s_state.feels_like; }
 int         weather_store_pressure(void)      { return s_state.pressure; }
 int         weather_store_dew_point(void)     { return s_state.dew_point; }
@@ -386,21 +401,16 @@ const WeatherHourly *weather_store_forecast_hourly(void)
     // the hours already over come off the strip itself, since nothing reads them again. a seeded
     // store holds fixtures for a pinned clock, so only a live one ages its strip
     WeatherHourly *strip = &s_state.hourly;
-    if (s_fetch.poll.live && s_hourly_at != 0 && strip->count != 0)
+    if (s_fetch.poll.live && s_state.hourly_first != 0)
     {
-        // the first column's hour is the next time the clock reads base_hour at or after the strip came
-        struct tm *at = localtime(&s_hourly_at);
-        time_t first = s_hourly_at - at->tm_min * SECONDS_PER_MINUTE - at->tm_sec +
-                       (time_t)((strip->base_hour - at->tm_hour + 24) % 24) * SECONDS_PER_HOUR;
-        uint8_t over = forecast_hours_past((int32_t)(time(NULL) - first), strip->step_hours, strip->count);
+        uint8_t over = forecast_hours_past((int32_t)(time(NULL) - s_state.hourly_first), strip->step_hours,
+                                           strip->count);
         if (over != 0)
         {
             strip->count -= over;
             strip->base_hour = (uint8_t)((strip->base_hour + over * strip->step_hours) % 24);
             memmove(strip->col, strip->col + over, sizeof(strip->col[0]) * strip->count);
-
-            // counted from the new first column, so the sum never has to reach past a day
-            s_hourly_at = first + (time_t)over * strip->step_hours * SECONDS_PER_HOUR;
+            s_state.hourly_first += (time_t)over * strip->step_hours * SECONDS_PER_HOUR;
         }
     }
     return strip;
@@ -409,22 +419,18 @@ const WeatherHourly *weather_store_forecast_hourly(void)
 const WeatherDaily *weather_store_forecast_daily(void)
 {
     WeatherDaily *strip = &s_state.daily;
-    if (s_fetch.poll.live && s_daily_at != 0 && strip->count != 0)
+    if (s_fetch.poll.live && s_state.daily_first != 0)
     {
-        // whole days from the arrival day to today, rounded so a day the clocks change still counts as one
-        struct tm *at = localtime(&s_daily_at);
-        time_t arrival_day = s_daily_at - at->tm_hour * SECONDS_PER_HOUR - at->tm_min * SECONDS_PER_MINUTE - at->tm_sec;
-        uint8_t first_ahead = (uint8_t)((strip->base_weekday - at->tm_wday + 7) % 7);
-        int days = (int)((time_start_of_today() - arrival_day + SECONDS_PER_DAY / 2) / SECONDS_PER_DAY);
-        uint8_t over = forecast_days_past(days, first_ahead, strip->count);
+        // whole days from the first column to today, rounded so a day the clocks change still counts as one
+        time_t today = time_start_of_today();
+        int days = (int)((today - s_state.daily_first + SECONDS_PER_DAY / 2) / SECONDS_PER_DAY);
+        uint8_t over = forecast_days_past(days, strip->count);
         if (over != 0)
         {
             strip->count -= over;
             strip->base_weekday = (uint8_t)((strip->base_weekday + over) % 7);
             memmove(strip->col, strip->col + over, sizeof(strip->col[0]) * strip->count);
-
-            // the strip now starts today, so it counts from today
-            s_daily_at = time(NULL);
+            s_state.daily_first = today;
         }
     }
     return strip;

@@ -17,6 +17,10 @@
 /**
  * @brief Copy a string into a fixed buffer, keeping only what fits and always terminating it.
  *
+ * The cut counts bytes, so a character that takes more than one byte can be split at it. The fonts
+ * carry only the characters a face shows, which a character past ASCII is not, so it draws as a box
+ * whether it is cut or whole, and walking back to a character boundary would cost bytes for nothing.
+ *
  * @param dst The buffer to write into.
  * @param src The string to copy, or NULL to empty the buffer.
  * @param size The buffer's size, terminator included.

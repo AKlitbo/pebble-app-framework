@@ -19,12 +19,11 @@ uint8_t forecast_hours_past(int32_t seconds_into_strip, uint8_t step_hours, uint
     return over < count ? (uint8_t)over : count;
 }
 
-uint8_t forecast_days_past(int days_since_arrival, uint8_t first_day_ahead, uint8_t count)
+uint8_t forecast_days_past(int days_since_first, uint8_t count)
 {
-    int over = days_since_arrival - first_day_ahead;
-    if (over <= 0)
+    if (days_since_first <= 0)
     {
         return 0;
     }
-    return over < count ? (uint8_t)over : count;
+    return days_since_first < count ? (uint8_t)days_since_first : count;
 }

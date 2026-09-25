@@ -11,6 +11,10 @@ bool store_save_changed(uint32_t key, void *state, size_t size, size_t reading_s
                         uint32_t *saved_sum)
 {
     *(uint8_t *)state = tag;
+
+    // only the reading is compared, not the sync time after it, so an unchanged reply writes nothing
+    // and the saved sync time stays at the last real change. a relaunch reads the reading as older
+    // than it is and can refetch once after a reconnect, which costs less than a flash write per reply
     uint32_t sum = store_sum(state, reading_size);
     if (sum == *saved_sum)
     {

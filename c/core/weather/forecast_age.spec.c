@@ -53,31 +53,26 @@ void test_forecast_hours_past_stops_at_the_count(void)
     TEST_ASSERT_EQUAL_UINT8(16, result);
 }
 
-/** @brief A daily strip that arrived today has no day over, or today's column goes missing. */
+/** @brief A daily strip that starts today has no day over, or today's column goes missing. */
 void test_forecast_days_past_keeps_today(void)
 {
-    uint8_t result = forecast_days_past(0, 0, 8);
+    uint8_t result = forecast_days_past(0, 8);
 
     TEST_ASSERT_EQUAL_UINT8(0, result);
 }
 
-/** @brief A strip from yesterday drops yesterday, so the row starts on today. */
+/** @brief A strip whose first day was yesterday drops yesterday, so the row starts on today. */
 void test_forecast_days_past_drops_yesterday(void)
 {
-    uint8_t result = forecast_days_past(1, 0, 8);
+    uint8_t result = forecast_days_past(1, 8);
 
     TEST_ASSERT_EQUAL_UINT8(1, result);
 }
 
-/**
- * @brief A strip that started on the day after it arrived loses nothing on that day.
- *
- * A late evening fetch can open the strip on tomorrow, and counting from the arrival day would
- * drop tomorrow as soon as it came.
- */
-void test_forecast_days_past_counts_from_the_first_column(void)
+/** @brief A strip whose first day is still to come loses nothing, so a late evening strip that opens on tomorrow stays whole. */
+void test_forecast_days_past_before_the_strip_starts(void)
 {
-    uint8_t result = forecast_days_past(1, 1, 8);
+    uint8_t result = forecast_days_past(-1, 8);
 
     TEST_ASSERT_EQUAL_UINT8(0, result);
 }
@@ -85,7 +80,7 @@ void test_forecast_days_past_counts_from_the_first_column(void)
 /** @brief A strip older than all its days is over whole, never more than it holds. */
 void test_forecast_days_past_stops_at_the_count(void)
 {
-    uint8_t result = forecast_days_past(20, 0, 8);
+    uint8_t result = forecast_days_past(20, 8);
 
     TEST_ASSERT_EQUAL_UINT8(8, result);
 }
@@ -101,7 +96,7 @@ int main(void)
     RUN_TEST(test_forecast_hours_past_stops_at_the_count);
     RUN_TEST(test_forecast_days_past_keeps_today);
     RUN_TEST(test_forecast_days_past_drops_yesterday);
-    RUN_TEST(test_forecast_days_past_counts_from_the_first_column);
+    RUN_TEST(test_forecast_days_past_before_the_strip_starts);
     RUN_TEST(test_forecast_days_past_stops_at_the_count);
 
     return UNITY_END();

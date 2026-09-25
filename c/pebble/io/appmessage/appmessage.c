@@ -42,6 +42,21 @@
 #endif
 #endif
 
+// each weather group below is read whole, so a face that declares only part of one would get
+// none of it and leave those panels on dashes with nothing to say why. the build stops instead
+#if (defined(HAS_MESSAGE_KEY_WEATHER_HUMIDITY) || defined(HAS_MESSAGE_KEY_WEATHER_WIND_SPEED) || defined(HAS_MESSAGE_KEY_WEATHER_WIND_DIR) || defined(HAS_MESSAGE_KEY_WEATHER_SUNRISE) || defined(HAS_MESSAGE_KEY_WEATHER_SUNSET)) && \
+    !(defined(HAS_MESSAGE_KEY_WEATHER_HUMIDITY) && defined(HAS_MESSAGE_KEY_WEATHER_WIND_SPEED) && defined(HAS_MESSAGE_KEY_WEATHER_WIND_DIR) && defined(HAS_MESSAGE_KEY_WEATHER_SUNRISE) && defined(HAS_MESSAGE_KEY_WEATHER_SUNSET))
+#error "the weather extras need all of WEATHER_HUMIDITY, WEATHER_WIND_SPEED, WEATHER_WIND_DIR, WEATHER_SUNRISE, and WEATHER_SUNSET in messageKeys"
+#endif
+#if (defined(HAS_MESSAGE_KEY_WEATHER_UV_INDEX) || defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MAX) || defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MIN) || defined(HAS_MESSAGE_KEY_WEATHER_PRECIP_CHANCE)) && \
+    !(defined(HAS_MESSAGE_KEY_WEATHER_UV_INDEX) && defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MAX) && defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MIN) && defined(HAS_MESSAGE_KEY_WEATHER_PRECIP_CHANCE))
+#error "today's forecast need all of WEATHER_UV_INDEX, WEATHER_TEMP_MAX, WEATHER_TEMP_MIN, and WEATHER_PRECIP_CHANCE in messageKeys"
+#endif
+#if (defined(HAS_MESSAGE_KEY_WEATHER_FEELS_LIKE) || defined(HAS_MESSAGE_KEY_WEATHER_PRESSURE) || defined(HAS_MESSAGE_KEY_WEATHER_DEW_POINT)) && \
+    !(defined(HAS_MESSAGE_KEY_WEATHER_FEELS_LIKE) && defined(HAS_MESSAGE_KEY_WEATHER_PRESSURE) && defined(HAS_MESSAGE_KEY_WEATHER_DEW_POINT))
+#error "the air readings need all of WEATHER_FEELS_LIKE, WEATHER_PRESSURE, and WEATHER_DEW_POINT in messageKeys"
+#endif
+
 /**
  * @var s_handlers
  * @brief The registered channel handlers. Each one stays NULL until a consumer opts in.
@@ -340,9 +355,11 @@ static bool custom_colors_match(const char *custom)
         return false;
     }
 
+    // only as much as the face can hold is compared, so a longer string whose held part matches
+    // does not count as a change on every save
     char held[APPMESSAGE_CUSTOM_COLORS_MAX];
     s_handlers.custom_colors_provider(held, sizeof(held));
-    return strcmp(custom, held) == 0;
+    return strncmp(custom, held, sizeof(held) - 1) == 0;
 }
 #endif
 
@@ -462,6 +479,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
             .temp = INT_MIN, .humidity = INT_MIN, .wind_kmh = INT_MIN, .uv = INT_MIN,
             .temp_max = INT_MIN, .temp_min = INT_MIN, .precip_chance = INT_MIN,
             .feels_like = INT_MIN, .pressure = INT_MIN, .dew_point = INT_MIN,
+            .sunrise = INT_MIN, .sunset = INT_MIN,
         };
 
         Tuple *temp_t = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMPERATURE);
@@ -474,6 +492,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
             msg.ok = tuple_int_or(dict_find(iterator, MESSAGE_KEY_WEATHER_OK), 0) == 1;
             msg.temp = tuple_int_or(temp_t, 0);
             msg.cond = cond;
+#if defined(HAS_MESSAGE_KEY_WEATHER_CONDITION_LABEL)
+            // the sky in words, which only a face that shows it declares a key for
+            msg.cond_label = tuple_str_or(dict_find(iterator, MESSAGE_KEY_WEATHER_CONDITION_LABEL), NULL);
+#endif
             if (!msg.ok)
             {
                 APP_LOG(APP_LOG_LEVEL_INFO, "Weather Unavailable: %s", cond);
@@ -495,8 +517,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
             msg.humidity = tuple_int_or(humidity_t, INT_MIN);
             msg.wind_kmh = tuple_int_or(wind_spd_t, INT_MIN);
             msg.wind_dir = tuple_str_or(wind_dir_t, NULL);
-            msg.sunrise = tuple_str_or(sunrise_t, NULL);
-            msg.sunset = tuple_str_or(sunset_t, NULL);
+            msg.sunrise = tuple_int_or(sunrise_t, INT_MIN);
+            msg.sunset = tuple_int_or(sunset_t, INT_MIN);
         }
 #endif
 
@@ -566,15 +588,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 #endif
 
     // coordinates arrive pre-formatted as dash strings like "33-44" and "-112-07". a fix is the
-    // pair, so both keys have to be there. one on its own would hand the store an empty string
-    // for the other half and blank a good coordinate
+    // pair, so both have to be there and both have to be strings. one missing, or one a face's
+    // formatter sent as a number, would hand the store an empty half and blank a good coordinate
 #if defined(HAS_MESSAGE_KEY_LOCATION_LATITUDE) && defined(HAS_MESSAGE_KEY_LOCATION_LONGITUDE)
-    Tuple *lat_t = dict_find(iterator, MESSAGE_KEY_LOCATION_LATITUDE);
-    Tuple *lon_t = dict_find(iterator, MESSAGE_KEY_LOCATION_LONGITUDE);
-    if (lat_t && lon_t && s_handlers.on_coords)
+    const char *lat = tuple_str_or(dict_find(iterator, MESSAGE_KEY_LOCATION_LATITUDE), NULL);
+    const char *lon = tuple_str_or(dict_find(iterator, MESSAGE_KEY_LOCATION_LONGITUDE), NULL);
+    if (lat && lon && s_handlers.on_coords)
     {
-        const char *lat = tuple_str_or(lat_t, "");
-        const char *lon = tuple_str_or(lon_t, "");
         s_handlers.on_coords(lat, lon);
     }
 #endif
@@ -606,6 +626,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     SettingsInbound settings = settings_apply_inbox(iterator);
     bool moved = settings.changed || custom_changed;
 
+    // a custom colour change saves too. a face keeps its colours in storage-only schemas in the
+    // chain, so the save is what writes them. every schema is rewritten, which costs a write per
+    // blob on a save the wearer made by hand, where a checksum per schema would cost bytes on every face
     bool save = moved;
     bool restoring = false;
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
@@ -615,11 +638,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // anything else that lands first stays in memory. the time zone push on every ready carries a
     // settings field too, and saving it would end fresh before the restore arrived. the phone would
     // then see a watch with settings and never restore it
-    bool page = dict_find(iterator, MESSAGE_KEY_SETTINGS_FRESH) != NULL;
+    // the value tells a restore, 1, from a save on the page, 0. a restore brings the unit the
+    // reading in hand was fetched in, and a first save on a fresh watch is the wearer switching
+    Tuple *page_t = dict_find(iterator, MESSAGE_KEY_SETTINGS_FRESH);
+    bool page = page_t != NULL;
+    restoring = page && tuple_int_or(page_t, 0) == 1;
     if (settings_was_fresh())
     {
         save = page;
-        restoring = page;
     }
 #endif
 
