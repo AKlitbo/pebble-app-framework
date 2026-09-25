@@ -4,6 +4,22 @@ All notable API changes to the Pebble App Framework are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Added `requests` to a feature's hooks, naming the watch requests it answers. The phone logs one warning when the watch sends a request no listed feature answers.
+
+### Changed
+
+- **Breaking:** Weather is now an opt-in feature. Import it from `lib/ts/weather/feature` and pass `features: [weather]` to `startPebbleApp`. Faces that omit it no longer bundle the weather providers. The settings page's default intro no longer mentions weather.
+- A face without weather no longer needs the `WEATHER_*` or `LOCATION_*` message keys. A face with weather declares `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK` as before, and one that declares only some of them fails to build, with each missing key named. The coordinate keys are optional, and a face without them gets no coordinates. A pair where either half is not a string is ignored rather than blanking the saved fix. A face without weather must not use `KNOWN_TEMPERATURE_UNIT`, which reads `WEATHER_TEMPERATURE_UNIT`. The same holds for each group of extra readings: the humidity, wind, and sun times, today's high, low, UV, and rain chance, and the feels-like, pressure, and dew point. A face that declares only part of a group now fails to build rather than getting none of it.
+
+### Removed
+
+- **Breaking:** Removed `formatCoords` from `startPebbleApp`'s options. Pass the formatter to `weather.withCoords` instead. It still runs on every weather result, a failed one included, so a face can show its own text when there is no fix.
+- **Breaking:** Removed `location.timeZone` from `buildConfig`. Pass the new `clock: { timeZone: true }` instead, which puts the alternate time zone picker in the Clock section rather than Location Settings. It needs the `CLOCK_TIMEZONE_1` key and works without weather, and the saved zone is kept since the key is the same. `buildConfig` logs a warning if a face still passes `location.timeZone`.
+
 ## [2.2.0] - 2026-09-23
 
 ### Changed
@@ -92,6 +108,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v2.2.0...HEAD
 [2.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...v2.1.0

@@ -1,9 +1,9 @@
 /**
  * What a feature gets from the app, and what it hands back.
  *
- * A feature is a part of the phone runtime that only some faces use, such as stocks or the calendar. A
- * face opts in by passing it to startPebbleApp. A face that does not never imports it, so its code and
- * the libraries behind it stay out of that face's bundle.
+ * A feature is a part of the phone runtime that only some faces use, such as weather, stocks, or the
+ * calendar. A face opts in by passing it to startPebbleApp. A face that does not never imports it, so
+ * its code and the libraries behind it stay out of that face's bundle.
  */
 
 /** What the app shares with every feature it starts. */
@@ -20,11 +20,20 @@ export interface FeatureContext {
 
 /** The moments in the app's life a feature can act on. Every hook is optional. */
 export interface FeatureHooks {
-  /** PebbleKit JS is ready, and the settings request and the weather fetch have gone out. */
+  /**
+   * The watch's request keys this feature answers, by name, such as WEATHER_REQUEST. The app logs
+   * one warning for a request no listed feature answers, which is how a face that declares a
+   * feature's keys but never opted into it finds out.
+   */
+  requests?: string[];
+  /** PebbleKit JS is ready, and the settings request has gone out. */
   ready?(): void;
   /** A message arrived from the watch. */
   message?(payload: Record<string, number | string>): void;
-  /** The background refresh ticked. slow is true on the ticks weather refetches on too. */
+  /**
+   * The background refresh ticked. slow is true on the less frequent ticks, the ones meant for data
+   * that changes slowly, such as weather.
+   */
   refresh?(slow: boolean): void;
   /** The settings page is about to open, while the old settings are still the saved ones. */
   configOpened?(): void;

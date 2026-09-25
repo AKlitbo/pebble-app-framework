@@ -14,6 +14,31 @@
 #include "system/settings/settings.h"
 #include <limits.h>
 
+// a face has weather when it declares all four of these. the watch asks with the first and reads a
+// reading off the other three, so all four are one decision. the ok flag is the one that tells a
+// failed fetch from a reading, and a face without it would show "NO GPS" as a live 0 degrees.
+// a face that declares none opted out of weather and builds without it. a face that declares only
+// some has a typo or a gap, which would otherwise build and go wrong on the watch, so the build
+// stops and names each missing key
+#if defined(HAS_MESSAGE_KEY_WEATHER_REQUEST) && defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE) && \
+    defined(HAS_MESSAGE_KEY_WEATHER_CONDITIONS) && defined(HAS_MESSAGE_KEY_WEATHER_OK)
+#define APPMESSAGE_HAS_WEATHER 1
+#elif defined(HAS_MESSAGE_KEY_WEATHER_REQUEST) || defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE) || \
+    defined(HAS_MESSAGE_KEY_WEATHER_CONDITIONS) || defined(HAS_MESSAGE_KEY_WEATHER_OK)
+#if !defined(HAS_MESSAGE_KEY_WEATHER_REQUEST)
+#error "weather needs WEATHER_REQUEST in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
+#endif
+#if !defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE)
+#error "weather needs WEATHER_TEMPERATURE in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
+#endif
+#if !defined(HAS_MESSAGE_KEY_WEATHER_CONDITIONS)
+#error "weather needs WEATHER_CONDITIONS in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
+#endif
+#if !defined(HAS_MESSAGE_KEY_WEATHER_OK)
+#error "weather needs WEATHER_OK in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
+#endif
+#endif
+
 /**
  * @var s_handlers
  * @brief The registered channel handlers. Each one stays NULL until a consumer opts in.
@@ -104,9 +129,11 @@ static bool send_job(OutboxKind kind)
 
     switch (kind)
     {
+#if defined(APPMESSAGE_HAS_WEATHER)
         case OUTBOX_WEATHER:
             dict_write_uint8(iter, MESSAGE_KEY_WEATHER_REQUEST, 1);
             break;
+#endif
 #if defined(HAS_MESSAGE_KEY_STOCK_REQUEST)
         case OUTBOX_STOCK:
             dict_write_uint8(iter, MESSAGE_KEY_STOCK_REQUEST, 1);
@@ -214,7 +241,18 @@ static void pump(void)
 
 void appmessage_request_weather(void)
 {
+#if defined(APPMESSAGE_HAS_WEATHER)
     enqueue(OUTBOX_WEATHER, REQUEST_RETRY_MAX);
+#else
+    // a face that starts the weather store live without declaring the keys asks on every poll and
+    // never hears back, so say so once rather than leave the panels on placeholders with no clue
+    static bool s_warned = false;
+    if (!s_warned)
+    {
+        s_warned = true;
+        APP_LOG(APP_LOG_LEVEL_WARNING, "Weather asked for, but this face declares no weather keys");
+    }
+#endif
 }
 
 void appmessage_request_stock(void)
@@ -338,6 +376,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         return;
     }
 
+    // a face that opts out of weather leaves this whole block out with its keys
+#if defined(APPMESSAGE_HAS_WEATHER)
     Tuple *temp_tuple = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMPERATURE);
     Tuple *conditions_tuple = dict_find(iterator, MESSAGE_KEY_WEATHER_CONDITIONS);
     Tuple *wx_ok_tuple = dict_find(iterator, MESSAGE_KEY_WEATHER_OK);
@@ -351,9 +391,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
     if (temp_is_int && conditions)
     {
-        // missing ok flag (older JS) is treated as a real reading. one that is there but does not
-        // read as an int is not: a fallback of 0 keeps a malformed flag on the unavailable side
-        bool wx_ok = !wx_ok_tuple || tuple_int_or(wx_ok_tuple, 0) == 1;
+        // only a flag that reads as 1 makes this a real reading. a missing or malformed one keeps it
+        // on the unavailable side, so a failed fetch's status text never shows as a live 0 degrees
+        bool wx_ok = wx_ok_tuple && tuple_int_or(wx_ok_tuple, 0) == 1;
 
         static char conditions_buffer[32];
 
@@ -382,6 +422,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
             }
         }
     }
+#endif
 
     // extra weather readings only for faces that declare the keys
     // the keys are absent from other faces' message_keys so guard the whole block
@@ -473,6 +514,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // coordinates arrive pre-formatted as dash strings like "33-44" and "-112-07". a fix is the
     // pair, so both keys have to be there. one on its own would hand the store an empty string
     // for the other half and blank a good coordinate
+#if defined(HAS_MESSAGE_KEY_LOCATION_LATITUDE) && defined(HAS_MESSAGE_KEY_LOCATION_LONGITUDE)
     Tuple *lat_t = dict_find(iterator, MESSAGE_KEY_LOCATION_LATITUDE);
     Tuple *lon_t = dict_find(iterator, MESSAGE_KEY_LOCATION_LONGITUDE);
     if (lat_t && lon_t && s_handlers.on_coords)
@@ -481,6 +523,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         const char *lon = tuple_str_or(lon_t, "");
         s_handlers.on_coords(lat, lon);
     }
+#endif
 
 #if defined(HAS_MESSAGE_KEY_LOCATION_NAME)
     Tuple *loc_name_t = dict_find(iterator, MESSAGE_KEY_LOCATION_NAME);

@@ -384,7 +384,7 @@ export default {
     function resolveOffset(place: GeoPlace) {
       const myPick = picks;
       const xhr = new XMLHttpRequest();
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + place.latitude + '&longitude=' + place.longitude + '&current_weather=true&timezone=auto';
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + place.latitude + '&longitude=' + place.longitude + '&timezone=auto';
 
       xhr.onload = function() {
         if (myPick !== picks) {

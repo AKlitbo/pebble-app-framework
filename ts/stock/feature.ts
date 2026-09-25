@@ -283,6 +283,8 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
   }
 
   return {
+    requests: ['STOCK_REQUEST'],
+
     ready() {
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
       sender.forget();

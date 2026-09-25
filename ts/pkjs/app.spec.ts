@@ -2,9 +2,10 @@
 /**
  * Specs for the shared PebbleKit JS bootstrap.
  *
- * This module is the only copy of the weather/settings glue both faces run, so
- * the hardening it carries (HTTP-status handling, untrusted-payload guards,
- * coordinate range checks, the change-gated refetch, and the one-at-a-time weather round) is tested here once.
+ * This module is the only copy of the settings glue every face runs, so the hardening
+ * it carries (HTTP-status handling, untrusted-payload guards, the settings restore, and
+ * the timezone push) is tested here once, along with how each feature plugs into the
+ * app's lifecycle. The weather feature's own helpers have specs beside it.
  *
  * The webview globals (localStorage) come from jsdom. XMLHttpRequest is stubbed
  * so nothing touches the network. Clay and the per-face `message_keys` alias are
@@ -13,11 +14,15 @@
  * specs stub both through the module loader and drive the app with a fake Pebble.
  */
 
+import fs from 'node:fs';
 import Module from 'node:module';
+import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import app from './app';
 import stocks from '../stock/feature';
 import calendar from '../calendar/feature';
+import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
+import type { Feature } from './feature';
 
 // stands in for the per-face generated message_keys: each key name maps to
 // itself so payloads and stored config use readable string keys
@@ -69,6 +74,55 @@ function installFakeXhr() {
   return sent;
 }
 
+/**
+ * Every source file a module reaches at runtime, following relative imports, re-exports, and
+ * requires out from it. Type-only imports are left out, since tsc drops them from the emitted JS.
+ */
+function runtimeGraph(entry: string): string[] {
+  const seen = new Set<string>();
+
+  const visit = (file: string) => {
+    if (seen.has(file)) {
+      return;
+    }
+
+    seen.add(file);
+    const source = fs.readFileSync(file, 'utf8');
+    const specs = [
+      ...[...source.matchAll(/^\s*(?:import|export)(?!\s+type\b)[^;]*?\bfrom\s+['"]([^'"]+)['"]/gm)].map((match) => match[1]),
+      ...[...source.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((match) => match[1]),
+      ...[...source.matchAll(/\brequire\(\s*['"]([^'"]+)['"]\s*\)/g)].map((match) => match[1]),
+    ];
+
+    for (const spec of specs.filter((name) => name.startsWith('.'))) {
+      const base = path.resolve(path.dirname(file), spec);
+      const target = [base, `${base}.ts`, path.join(base, 'index.ts')].find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+
+      if (target) {
+        visit(target);
+      }
+    }
+  };
+
+  visit(entry);
+  return [...seen];
+}
+
+describe('app imports', () => {
+  /**
+   * The Pebble bundler follows requires from a face's entry, so a runtime import of the weather code
+   * anywhere below app.ts would put every provider in every face's bundle, including a face that
+   * never opts in.
+   */
+  test('reaches no weather code at runtime', () => {
+    const weatherDir = path.join(import.meta.dirname, '..', 'weather') + path.sep;
+
+    const result = runtimeGraph(path.join(import.meta.dirname, 'app.ts')).filter((file) => file.startsWith(weatherDir));
+
+    expect(result).toEqual([]);
+  });
+});
+
 describe('request', () => {
   /** A successful response must reach the callback as data with no error. */
   test('reports a 2xx response as success with the body', () => {
@@ -112,65 +166,6 @@ describe('request', () => {
     sent[0].timeOut();
 
     expect(callback).toHaveBeenCalledWith('timeout');
-  });
-});
-
-describe('validCoord', () => {
-  /** An in-range pair is the only thing that should be forwarded to a provider. */
-  test('accepts an in-range coordinate pair', () => {
-    const result = app.validCoord(33.4, -112);
-
-    expect(result).toBe(true);
-  });
-
-  /** Out-of-range or non-numeric coordinates must be rejected before they reach the network. */
-  test.each([
-    ['latitude too high', 91, 0],
-    ['latitude too low', -91, 0],
-    ['longitude too high', 0, 181],
-    ['longitude too low', 0, -181],
-    ['non-numeric latitude', '33', -112],
-    ['missing longitude', 33, undefined],
-  ])('rejects %s', (label, lat, lon) => {
-    const result = app.validCoord(lat, lon);
-
-    expect(result).toBe(false);
-  });
-});
-
-describe('getManualLocation', () => {
-  /** A valid saved place must yield its coordinates and label so the watch fetches the right city. */
-  test('returns coordinates and label for an in-range saved location', () => {
-    const config = { LOCATION_NAME: JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix' }) };
-
-    const result = app.getManualLocation(config);
-
-    expect(result).toEqual({ coords: { lat: 33.4, lon: -112 }, label: 'Phoenix' });
-  });
-
-  /** An out-of-range blob must be treated as no manual location, never forwarded verbatim. */
-  test('rejects an out-of-range saved coordinate', () => {
-    const config = { LOCATION_NAME: JSON.stringify({ lat: 999, lon: -112, label: 'Bad' }) };
-
-    const result = app.getManualLocation(config);
-
-    expect(result).toBeNull();
-  });
-
-  /** Malformed JSON must not throw and must fall back to no location. */
-  test('returns null for a malformed saved value', () => {
-    const config = { LOCATION_NAME: 'not json' };
-
-    const result = app.getManualLocation(config);
-
-    expect(result).toBeNull();
-  });
-
-  /** An unset location must be null so the caller falls back to GPS or a no-location status. */
-  test('returns null when no location is saved', () => {
-    const result = app.getManualLocation({});
-
-    expect(result).toBeNull();
   });
 });
 
@@ -364,207 +359,6 @@ describe('retimeSettings', () => {
   });
 });
 
-describe('weatherSettingsSnapshot', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  /** The snapshot must JSON-encode the stored weather keys so a later save can be diffed by content. */
-  test('json-encodes the weather keys read from the store', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
-
-    const result = app.weatherSettingsSnapshot();
-
-    expect(result[app.WEATHER_KEYS.indexOf('WEATHER_PROVIDER')]).toBe('"owm"');
-  });
-});
-
-describe('weatherSettingsChanged', () => {
-  /** With no snapshot (the page never reported opening) the safe default is to refetch. */
-  test('returns true when there is no prior snapshot', () => {
-    const result = app.weatherSettingsChanged(null, ['"metric"']);
-
-    expect(result).toBe(true);
-  });
-
-  /** Identical snapshots mean only non-weather settings changed, so no refetch. */
-  test('returns false when every weather key is unchanged', () => {
-    const before = app.WEATHER_KEYS.map(() => '"same"');
-
-    const result = app.weatherSettingsChanged(before, before.slice());
-
-    expect(result).toBe(false);
-  });
-
-  /** A single differing weather key must trigger a refetch. */
-  test('returns true when a weather key differs', () => {
-    const before = app.WEATHER_KEYS.map(() => '"a"');
-    const after = before.slice();
-    after[0] = '"b"';
-
-    const result = app.weatherSettingsChanged(before, after);
-
-    expect(result).toBe(true);
-  });
-});
-
-describe('weatherRetryDelayMs', () => {
-  /** A successful fetch that still scheduled a retry would re-poll the provider for no reason. */
-  test('returns null when the fetch succeeded', () => {
-    const result = app.weatherRetryDelayMs(true, 0);
-
-    expect(result).toBe(null);
-  });
-
-  /** Without the first retry a cold-launch miss sits blank until the 30-min poll. */
-  test('returns the first delay when the first attempt failed', () => {
-    const result = app.weatherRetryDelayMs(false, 0);
-
-    expect(result).toBe(5000);
-  });
-
-  /** The second attempt must back off further so a still-warming gps gets more time. */
-  test('returns the longer delay for the second attempt', () => {
-    const result = app.weatherRetryDelayMs(false, 1);
-
-    expect(result).toBe(15000);
-  });
-
-  /** Uncapped retries would loop forever on a genuinely bad key or a dead feed. */
-  test('returns null once the attempts are used up', () => {
-    const result = app.weatherRetryDelayMs(false, 2);
-
-    expect(result).toBe(null);
-  });
-});
-
-describe('runWeatherRound', () => {
-  // a fresh round state for each test. it is the object getWeather carries in the closure
-  function freshState() {
-    return { inFlight: false, round: 0 };
-  }
-
-  type FakeResult = { ok: boolean; temperature?: number };
-
-  // a fetch that holds each result callback open so a spec decides when and how it lands
-  function heldFetches() {
-    const callbacks: Array<(result: FakeResult) => void> = [];
-    const deps = {
-      fetchWeather: (onResult: (result: FakeResult) => void) => callbacks.push(onResult),
-      sendWeather: vi.fn(),
-      timeoutMs: 60000,
-    };
-    return { callbacks, deps };
-  }
-
-  beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-    vi.useRealTimers();
-  });
-
-  /** The watch re-asks every 3s until its first reading lands, and each ask must not start another gps fix and provider fetch. */
-  test('ignores an unforced round while a fetch is running', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-
-    app.runWeatherRound(state, false, deps);
-    app.runWeatherRound(state, false, deps);
-
-    expect(callbacks).toHaveLength(1);
-  });
-
-  /** An ask landing between a failed fetch and its retry must not start a second retry chain. */
-  test('ignores an unforced round while a retry is waiting', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-    app.runWeatherRound(state, false, deps);
-    callbacks[0]({ ok: false });
-
-    app.runWeatherRound(state, false, deps);
-
-    expect(callbacks).toHaveLength(1);
-
-    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[0]);
-
-    expect(callbacks).toHaveLength(2);
-  });
-
-  /** A weather setting change must replace a running round, and the old round's late result must not reach the watch. */
-  test('lets a forced round replace a running one and ignores the old result', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-    app.runWeatherRound(state, false, deps);
-
-    app.runWeatherRound(state, true, deps);
-    callbacks[0]({ ok: true, temperature: 1 });
-    callbacks[1]({ ok: true, temperature: 2 });
-
-    expect(deps.sendWeather).toHaveBeenCalledTimes(1);
-    expect(deps.sendWeather).toHaveBeenCalledWith({ ok: true, temperature: 2 });
-    expect(state.inFlight).toBe(false);
-  });
-
-  /** A round replaced while it waits on a retry must not fire that retry later. */
-  test('drops the pending retry when a forced round replaces it', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-    app.runWeatherRound(state, false, deps);
-    callbacks[0]({ ok: false });
-
-    app.runWeatherRound(state, true, deps);
-    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[0]);
-
-    expect(callbacks).toHaveLength(2);
-  });
-
-  /** A fetch that never calls back must not hold off every later ask for the rest of the JS session. */
-  test('frees the round via the watchdog when a fetch never calls back', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-    app.runWeatherRound(state, false, deps);
-
-    vi.advanceTimersByTime(deps.timeoutMs);
-    app.runWeatherRound(state, false, deps);
-
-    expect(callbacks).toHaveLength(2);
-  });
-
-  /** Once the retries are used up the next ask has to be free to try again. */
-  test('frees the round once the retries are used up', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-    app.runWeatherRound(state, false, deps);
-
-    callbacks[0]({ ok: false });
-    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[0]);
-    callbacks[1]({ ok: false });
-    vi.advanceTimersByTime(app.WEATHER_RETRY_DELAYS_MS[1]);
-    callbacks[2]({ ok: false });
-
-    expect(deps.sendWeather).toHaveBeenCalledTimes(3);
-    expect(state.inFlight).toBe(false);
-  });
-
-  /** A send that throws, say on a dict the bridge refuses, must not leave the round in flight or every later ask is dropped until the JS restarts. */
-  test('frees the round when sending the result throws', () => {
-    const state = freshState();
-    const { callbacks, deps } = heldFetches();
-    deps.sendWeather.mockImplementation(() => {
-      throw new Error('bad dict');
-    });
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    app.runWeatherRound(state, false, deps);
-
-    callbacks[0]({ ok: true });
-
-    expect(state.inFlight).toBe(false);
-  });
-});
-
 describe('startPebbleApp weather', () => {
   type Listener = (event?: unknown) => void;
   type LoadFn = (request: string, ...args: unknown[]) => unknown;
@@ -588,10 +382,13 @@ describe('startPebbleApp weather', () => {
     }
   }
 
+  // the keys the face under test declares. a spec that drops one sets this before it starts the app
+  let keys: Record<string, string> = weatherKeys;
+
   // stands in for the two modules startPebbleApp requires lazily
   function fakeModule(id: string): unknown {
     if (id === 'message_keys') {
-      return weatherKeys;
+      return keys;
     }
     if (id === '@rebble/clay/src/js/index') {
       return FakeClay;
@@ -602,7 +399,7 @@ describe('startPebbleApp weather', () => {
   const moduleInternal = Module as unknown as { _load: LoadFn };
   const host = globalThis as unknown as Record<string, unknown>;
   let originalLoad: LoadFn;
-  let listeners: Record<string, Listener>;
+  let listeners: Record<string, Listener[]>;
   let sent: ReturnType<typeof installFakeXhr>;
   const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
 
@@ -623,8 +420,19 @@ describe('startPebbleApp weather', () => {
     return sendAppMessage.mock.calls.filter(([dict]) => 'WEATHER_OK' in dict);
   }
 
+  // the real Pebble keeps every listener registered for an event, so the fake does too. a spec that
+  // started a second app by mistake would then see both answer rather than the last one only
+  function fire(type: string, event?: unknown) {
+    (listeners[type] || []).forEach((handler) => handler(event));
+  }
+
   function askForWeather() {
-    listeners.appmessage({ payload: { WEATHER_REQUEST: 1 } });
+    fire('appmessage', { payload: { WEATHER_REQUEST: 1 } });
+  }
+
+  /** Starts one app for the spec, with the features the face under test opts into. */
+  function start(features: Feature[]) {
+    app.startPebbleApp({ clayConfig: [], features });
   }
 
   beforeEach(() => {
@@ -634,10 +442,11 @@ describe('startPebbleApp weather', () => {
     sent = installFakeXhr();
     sendAppMessage.mockClear();
     listeners = {};
+    keys = weatherKeys;
 
     host.Pebble = {
       addEventListener: (type: string, handler: Listener) => {
-        listeners[type] = handler;
+        listeners[type] = [...(listeners[type] || []), handler];
       },
       sendAppMessage,
       openURL: () => {},
@@ -648,18 +457,20 @@ describe('startPebbleApp weather', () => {
       return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
     };
 
-    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
   });
 
   afterEach(() => {
     moduleInternal._load = originalLoad;
     delete host.Pebble;
+    // the location specs stub this, and a stub left behind would steer a later spec's gps path
+    Reflect.deleteProperty(navigator, 'geolocation');
     vi.useRealTimers();
   });
 
   /** The watch re-asks every 3s until its first reading lands, and those asks must not each start a provider fetch. */
   test('starts no second fetch when the watch asks during a running one', () => {
-    listeners.ready();
+    start([weather]);
+    fire('ready');
 
     askForWeather();
     askForWeather();
@@ -670,7 +481,8 @@ describe('startPebbleApp weather', () => {
 
   /** Dropping the watch's ask is only safe if the fetch already running still answers it. */
   test('sends the running fetch result to the watch that asked', () => {
-    listeners.ready();
+    start([weather]);
+    fire('ready');
     askForWeather();
 
     sent[0].respond(200, currentBody(21));
@@ -682,10 +494,11 @@ describe('startPebbleApp weather', () => {
 
   /** A new city must be fetched straight away, and the old city's late reading must never reach the watch. */
   test('lets a weather settings change replace a running fetch', () => {
-    listeners.ready();
-    listeners.showConfiguration();
+    start([weather]);
+    fire('ready');
+    fire('showConfiguration');
     saveCity('Tucson', 32.2);
-    listeners.webviewclosed({ response: '{}' });
+    fire('webviewclosed', { response: '{}' });
     vi.advanceTimersByTime(app.SETTINGS_REFETCH_DELAY_MS);
 
     sent[0].respond(200, currentBody(10));
@@ -696,13 +509,155 @@ describe('startPebbleApp weather', () => {
     expect(sends).toHaveLength(1);
     expect(sends[0][0]).toMatchObject({ WEATHER_TEMPERATURE: 30 });
   });
+
+  /**
+   * A face shows its own text when there is no fix, such as Radar Array's NO LOCK. The formatter
+   * has to run on a failed result too, or the watch would keep showing the last good fix.
+   */
+  test('runs the coordinate formatter on a failed fetch', () => {
+    const formatCoords = vi.fn((_keys: Record<string, number>, result: { lat?: number }) => ({ LAT: result.lat === undefined ? 'NO LOCK' : String(result.lat) }));
+    start([weather.withCoords(formatCoords)]);
+    fire('ready');
+
+    sent[0].respond(500, '{}');
+
+    const sends = weatherSends();
+    expect(sends[0][0]).toMatchObject({ WEATHER_OK: 0, LAT: 'NO LOCK' });
+  });
+
+  /** A good reading carries its coordinates, and a face that shows them must get them. */
+  test('adds the formatted coordinates to a good reading', () => {
+    start([weather.withCoords((_keys, result) => ({ LAT: String(result.lat) }))]);
+    fire('ready');
+
+    sent[0].respond(200, currentBody(21));
+
+    const sends = weatherSends();
+    expect(sends[0][0]).toMatchObject({ WEATHER_OK: 1, LAT: '33.4' });
+  });
+
+  /** Weather is opt-in, so a face that lists no features must never fetch it or send a reading. */
+  test('fetches and sends no weather for a face that lists no features', () => {
+    start([]);
+    fire('ready');
+    askForWeather();
+
+    expect(sent).toHaveLength(0);
+    expect(weatherSends()).toHaveLength(0);
+  });
+
+  /**
+   * The watch only asks for and reads weather with every one of WEATHER_MESSAGE_KEYS declared. A face
+   * that opted in but is missing one would otherwise spend provider quota on readings nothing shows.
+   */
+  test('fetches nothing and says why when an opted-in face is missing a weather key', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const rest: Record<string, string> = { ...weatherKeys };
+    delete rest.WEATHER_CONDITIONS;
+    keys = rest;
+    start([weather]);
+
+    fire('ready');
+
+    expect(sent).toHaveLength(0);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('WEATHER_CONDITIONS'));
+    warn.mockRestore();
+  });
+
+  /**
+   * A watch that rebooted has empty stores and asks again while the phone still holds the dict it
+   * last sent. Without the dedupe cache forgotten on that ask, the same reading would be skipped
+   * and the rebooted watch would sit on placeholders.
+   */
+  test('sends the same reading again when the watch asks for it', () => {
+    start([weather]);
+    fire('ready');
+    sent[0].respond(200, currentBody(21));
+
+    askForWeather();
+    sent[1].respond(200, currentBody(21));
+
+    expect(weatherSends()).toHaveLength(2);
+  });
+
+  /** The phone JS restarting is the other time the watch may hold nothing, so ready forgets the last dict too. */
+  test('sends the same reading again after a fresh ready', () => {
+    start([weather]);
+    fire('ready');
+    sent[0].respond(200, currentBody(21));
+
+    fire('ready');
+    sent[1].respond(200, currentBody(21));
+
+    expect(weatherSends()).toHaveLength(2);
+  });
+
+  /** With GPS off and no city saved there is nothing to fetch for, and the panel has to say so rather than stay blank. */
+  test('sends a No Location status when GPS is off and no city is saved', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'openmeteo', LOCATION_USE_GPS: false }));
+    start([weather]);
+
+    fire('ready');
+
+    expect(sent).toHaveLength(0);
+    expect(weatherSends()[0][0]).toMatchObject({ WEATHER_OK: 0, WEATHER_CONDITIONS: 'NO LOCATION' });
+  });
+
+  /** A phone with no location service and the fallback off must get a status, not a silent wait. */
+  test('sends a No GPS status when GPS is unavailable and the fallback is off', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'openmeteo', LOCATION_USE_GPS: true, LOCATION_GPS_FALLBACK: false }));
+    Object.defineProperty(navigator, 'geolocation', { value: undefined, configurable: true });
+    start([weather]);
+
+    fire('ready');
+
+    expect(weatherSends()[0][0]).toMatchObject({ WEATHER_OK: 0, WEATHER_CONDITIONS: 'NO GPS' });
+  });
+
+  /**
+   * The Pebble app's geolocation can hang and never call back. Without the watchdog a user with the
+   * fallback on would get nothing, so once it fires the saved city is fetched instead.
+   */
+  test('falls back to the saved city when a GPS lookup never answers', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({
+      WEATHER_PROVIDER: 'openmeteo',
+      LOCATION_USE_GPS: true,
+      LOCATION_GPS_FALLBACK: true,
+      LOCATION_NAME: JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix' }),
+    }));
+    Object.defineProperty(navigator, 'geolocation', { value: { getCurrentPosition: () => {} }, configurable: true });
+    start([weather]);
+    fire('ready');
+
+    vi.advanceTimersByTime(GPS_WATCHDOG_MS);
+
+    expect(sent).toHaveLength(1);
+    expect(sent[0].url).toContain('latitude=33.4');
+  });
+
+  /**
+   * A face that updated the framework and forgot to list weather keeps its watch asking, and the phone
+   * would ignore every ask. One warning in the log points at the missing opt-in.
+   */
+  test('warns once when the watch asks for weather that no listed feature answers', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    start([]);
+
+    askForWeather();
+    askForWeather();
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('WEATHER_REQUEST'));
+    warn.mockRestore();
+  });
 });
 
 describe('startPebbleApp stock and calendar', () => {
   type Listener = (event?: unknown) => void;
   type LoadFn = (request: string, ...args: unknown[]) => unknown;
 
-  // the keys Gridlock declares for the two strips, plus the weather ones every ready sends through
+  // the keys Gridlock declares for the two strips, and its weather keys. these specs start no weather
+  // feature, so no weather goes out whatever the face declares
   const stripKeys = {
     SETTINGS_REQUEST: 'SETTINGS_REQUEST',
     WEATHER_REQUEST: 'WEATHER_REQUEST',
@@ -753,7 +708,7 @@ describe('startPebbleApp stock and calendar', () => {
   function start(settings: Record<string, unknown>, savedStrip: number[] | null = null, features = [stocks, calendar]) {
     localStorage.setItem('clay-settings', JSON.stringify(settings));
     localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs: 0, strip: savedStrip }));
-    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}), features });
+    app.startPebbleApp({ clayConfig: [], features });
   }
 
   // every value sent to the watch under one key, in the order it went
@@ -965,7 +920,7 @@ describe('startPebbleApp settings restore', () => {
    */
   test('pushes the phone config back to a watch that booted with no settings', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5' }));
-    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    app.startPebbleApp({ clayConfig: [] });
     listeners.ready();
 
     watchReplies(true, '%Y-%m-%d');
@@ -982,7 +937,7 @@ describe('startPebbleApp settings restore', () => {
    * showing rather than on the face's defaults.
    */
   test('seeds from the watch when the phone has nothing saved', () => {
-    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    app.startPebbleApp({ clayConfig: [] });
     listeners.ready();
 
     watchReplies(false, '%Y-%m-%d');
@@ -997,7 +952,7 @@ describe('startPebbleApp settings restore', () => {
    */
   test('leaves both sides alone when each already has settings', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
-    app.startPebbleApp({ clayConfig: [], formatCoords: () => ({}) });
+    app.startPebbleApp({ clayConfig: [] });
     listeners.ready();
 
     watchReplies(false, '%Y-%m-%d');

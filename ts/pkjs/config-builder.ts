@@ -33,7 +33,10 @@ export interface ConfigBuilderOptions {
    * passes e.g. ['NOT_PLATFORM_GABBRO'] and Clay drops the control on that platform for it,
    * rather than every face losing it. */
   steps?: { label?: string; description?: string; capabilities?: string[] };
-  location?: { gpsDefault?: boolean; timeZone?: boolean };
+  /** timeZone adds the alternate time zone picker to the Clock section, for a face with a second
+   * clock. It needs the CLOCK_TIMEZONE_1 key, and works with or without weather. */
+  clock?: { timeZone?: boolean };
+  location?: { gpsDefault?: boolean };
   weather?: unknown;
   temperature?: unknown;
   battery?: { label?: string; description?: string };
@@ -94,7 +97,8 @@ const vibeOptions = [
  * Optional sections (present = included, omitted = excluded):
  *   theme       { label?, description?, options? }  the theme picker. options is the theme list,
  *                                                   and a picker given none has nothing to offer
- *   location    { gpsDefault?, timeZone? }
+ *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
+ *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
  *   weather     {}                               marker, adds the provider picker to the Weather section
  *   temperature {}                               marker, adds the unit dropdown to the Weather section
  *
@@ -114,7 +118,7 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     },
     {
       'type': 'text',
-      'defaultValue': options.intro || 'Personalize your layout, dial in your weather preferences, and make this watchface your own.',
+      'defaultValue': options.intro || 'Personalize your layout and make this watchface your own.',
     },
     {
       'type': 'section',
@@ -220,6 +224,21 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     ...(options.clockItems || []),
   ];
 
+  // the search writes the place or zone it saved, and the pkjs side turns that into the minutes
+  // from UTC and the name a second clock needs. only faces with a readout for it ask for the
+  // control
+  if (options.clock && options.clock.timeZone) {
+    clockItems.push({
+      'type': 'locationsearch',
+      'messageKey': 'CLOCK_TIMEZONE_1',
+      'label': 'Alternate Time Zone',
+      'description': 'Sets the time shown by the alternate time zone readout. Search a city, a zone name such as Europe/London, or type UTC or an offset like UTC+05:30.',
+      'attributes': {
+        'placeholder': 'e.g. Phoenix, UTC, or Europe/London',
+      },
+    });
+  }
+
   if (options.hourlyVibe) {
     clockItems.push({
       'type': 'select',
@@ -282,6 +301,12 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     'items': healthItems,
   });
 
+  // the type no longer allows it, but an options object built in a variable gets past that check, and
+  // the picker would then vanish from the page without a word
+  if (options.location && (options.location as { timeZone?: unknown }).timeZone) {
+    console.warn('buildConfig: location.timeZone is gone. Pass clock: { timeZone: true } for the time zone picker');
+  }
+
   if (options.location) {
     const locationItems: ClayConfigItem[] = [
       {
@@ -311,21 +336,6 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
         },
       },
     ];
-
-    // the search writes the place or zone it saved, and the pkjs side turns that into the minutes
-    // from UTC and the name a second clock needs. only faces with a readout for it ask for the
-    // control
-    if (options.location.timeZone) {
-      locationItems.push({
-        'type': 'locationsearch',
-        'messageKey': 'CLOCK_TIMEZONE_1',
-        'label': 'Alternate Time Zone',
-        'description': 'Sets the time shown by the alternate time zone readout. Search a city, a zone name such as Europe/London, or type UTC or an offset like UTC+05:30.',
-        'attributes': {
-          'placeholder': 'e.g. Phoenix, UTC, or Europe/London',
-        },
-      });
-    }
 
     config.push({
       'type': 'section',

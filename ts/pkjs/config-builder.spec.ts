@@ -7,7 +7,7 @@
  * the presence of its key. Both are easy to break silently in a refactor.
  */
 
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import buildConfig from './config-builder';
 import type { ClayConfigItem } from '../clay/types';
 
@@ -164,6 +164,47 @@ describe('buildConfig per-section values', () => {
     const gpsToggle = findItemByKey(config, 'LOCATION_USE_GPS');
 
     expect(gpsToggle.defaultValue).toBe(true);
+  });
+});
+
+describe('buildConfig time zone picker', () => {
+  /**
+   * A second clock does not need weather, so the picker has to come from the Clock section. A face
+   * with no location section would otherwise have no way to set it.
+   */
+  test('adds the picker to the Clock section when the clock asks for it', () => {
+    const config = buildConfig({ theme: minimalTheme, clock: { timeZone: true } });
+
+    const clockSection = config.find((item) => item.type === 'section' && item.items?.[0]?.defaultValue === 'Clock');
+
+    expect(findItemByKey(clockSection?.items ?? [], 'CLOCK_TIMEZONE_1')?.type).toBe('locationsearch');
+  });
+
+  /** The picker needs the CLOCK_TIMEZONE_1 key, so a face that does not ask must not get an item it cannot save. */
+  test.each([
+    ['no clock option', { location: {} }],
+    ['an empty clock option', { clock: {} }],
+    ['timeZone set to false', { clock: { timeZone: false } }],
+  ])('leaves the picker out with %s', (_label, options) => {
+    const config = buildConfig({ theme: minimalTheme, ...options });
+
+    const result = collectMessageKeys(config);
+
+    expect(result).not.toContain('CLOCK_TIMEZONE_1');
+  });
+
+  /**
+   * An options object built in a variable gets past the type check, so a face still passing
+   * location.timeZone would lose its picker with nothing said. The warning names the new option.
+   */
+  test('warns when a face still passes location.timeZone', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const options = { theme: minimalTheme, location: { gpsDefault: false, timeZone: true } };
+
+    buildConfig(options);
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('clock: { timeZone: true }'));
+    warn.mockRestore();
   });
 });
 

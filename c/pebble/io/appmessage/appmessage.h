@@ -172,7 +172,10 @@ void appmessage_open(void);
 
 /**
  * @brief Asks the phone for a fresh weather reading. The weather store calls this on its
- * turn on the shared cadence.
+ * turn on the shared cadence. On a face that does not declare the weather keys it sends
+ * nothing and logs one warning the first time it is called. The weather keys are
+ * WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK, and a face that
+ * declares only some of them fails to build, with each missing one named.
  */
 void appmessage_request_weather(void);
 

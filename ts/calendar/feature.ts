@@ -108,6 +108,8 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
   }
 
   return {
+    requests: ['CALENDAR_REQUEST'],
+
     ready() {
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
       sender.forget();
