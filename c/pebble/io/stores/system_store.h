@@ -30,7 +30,6 @@ typedef void (*BtVibePolicy)(bool connected);
  */
 typedef struct
 {
-    bool enabled;      ///< False makes the store do nothing
     bool live;         ///< True subscribes the services and false just keeps the fake data for screenshots
     BtVibePolicy vibe; ///< Buzz policy for a bluetooth change, or NULL for silent
 } SystemConfig;
@@ -49,7 +48,7 @@ typedef struct
 /**
  * @brief Start the store with its rules. Pass seed = NULL for normal use.
  *
- * @param cfg The rules (enabled / live / vibe policy).
+ * @param cfg The rules (live / vibe policy).
  * @param seed Optional prefill, or NULL.
  */
 void system_store_init(SystemConfig cfg, const SystemSeed *seed);

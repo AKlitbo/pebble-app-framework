@@ -6,6 +6,7 @@
  * @ingroup lib_ui
  */
 #include "ui/engine/engine.h"
+#include "text/cstring_fit.h"
 
 #include <string.h>
 
@@ -126,8 +127,7 @@ static void repaint_slot(uint8_t i)
         // between minutes) so skip the pixel-width fit + relayout unless it changed
         if (strcmp(buf, s_last_text[i]) != 0)
         {
-            strncpy(s_last_text[i], buf, sizeof(s_last_text[i]) - 1);
-            s_last_text[i][sizeof(s_last_text[i]) - 1] = '\0';
+            cstring_fit(s_last_text[i], buf, sizeof(s_last_text[i]));
 
             // hand the TextLayer the persistent buffer not the local one. the layer
             // holds the pointer and doesn't copy the string

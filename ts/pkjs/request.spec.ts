@@ -2,8 +2,9 @@
 /**
  * Specs for the HTTP GET every fetch on the phone goes through.
  *
- * The four callbacks the SDK fires are the easy half and are covered where the app's own request
- * is. What is pinned here is the half that exists because the Pebble app's XHR cannot be trusted:
+ * The four callbacks the SDK fires come first: a success, an HTTP error that still carries its
+ * body, a transport failure, and a timeout. The rest is the half that exists because the Pebble
+ * app's XHR cannot be trusted:
  * the watchdog that answers a request the SDK never reports on, the guard that keeps a late reply
  * from calling back a second time, and a send that throws before anything is in flight. A caller
  * that never hears back leaves the watch blank with no retry, so each one is the difference
@@ -96,5 +97,51 @@ describe('request', () => {
 
     expect(attempt).not.toThrow();
     expect(callback).toHaveBeenCalledWith('send error');
+  });
+});
+
+describe('request callbacks', () => {
+  /** A successful response must reach the callback as data with no error. */
+  test('reports a 2xx response as success with the body', () => {
+    const sent = installFakeXhr();
+    const callback = vi.fn();
+
+    request('https://example', callback);
+    sent[0].respond(200, '{"ok":1}');
+
+    expect(callback).toHaveBeenCalledWith(null, '{"ok":1}');
+  });
+
+  /** A non-2xx must be flagged as an error while still forwarding the body so a provider can read a structured error. */
+  test('reports a non-2xx as an http error but still forwards the body', () => {
+    const sent = installFakeXhr();
+    const callback = vi.fn();
+
+    request('https://example', callback);
+    sent[0].respond(404, '{"cod":404}');
+
+    expect(callback).toHaveBeenCalledWith('http 404', '{"cod":404}');
+  });
+
+  /** A transport failure must surface as a network error, never a silent success. */
+  test('reports a transport failure as a network error', () => {
+    const sent = installFakeXhr();
+    const callback = vi.fn();
+
+    request('https://example', callback);
+    sent[0].fail();
+
+    expect(callback).toHaveBeenCalledWith('network error');
+  });
+
+  /** A timeout must surface distinctly so the caller can show a clear status. */
+  test('reports a timeout', () => {
+    const sent = installFakeXhr();
+    const callback = vi.fn();
+
+    request('https://example', callback);
+    sent[0].timeOut();
+
+    expect(callback).toHaveBeenCalledWith('timeout');
   });
 });

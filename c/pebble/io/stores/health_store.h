@@ -19,7 +19,6 @@
  */
 typedef struct
 {
-    bool     enabled;      ///< False makes the store do nothing
     bool     live;         ///< True subscribes the health service and false just keeps the fake data for screenshots
     bool     hr_history;   ///< Keep the rolling minute by minute heart rate window, for a face that graphs it
     bool     step_history; ///< Keep the hour by hour step buckets, for a face that graphs them
@@ -51,7 +50,7 @@ typedef struct
 /**
  * @brief Start the store with its rules. Pass seed = NULL for normal use.
  *
- * @param cfg The rules (enabled / live).
+ * @param cfg The rules (live).
  * @param seed Optional prefill, or NULL.
  */
 void health_store_init(HealthConfig cfg, const HealthSeed *seed);

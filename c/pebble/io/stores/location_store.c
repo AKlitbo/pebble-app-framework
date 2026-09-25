@@ -13,6 +13,7 @@
 
 #include "io/appmessage/appmessage.h"
 #include "wire/coords.h"
+#include "text/cstring_fit.h"
 
 /**
  * @var s_persist_key
@@ -64,8 +65,8 @@ static void set(const char *lat, const char *lon)
 {
     char next_lat[sizeof(s_state.lat)];
     char next_lon[sizeof(s_state.lon)];
-    snprintf(next_lat, sizeof(next_lat), "%s", lat ? lat : "");
-    snprintf(next_lon, sizeof(next_lon), "%s", lon ? lon : "");
+    cstring_fit(next_lat, lat ? lat : "", sizeof(next_lat));
+    cstring_fit(next_lon, lon ? lon : "", sizeof(next_lon));
 
     // the phone sends the coords with every weather push and a wearer standing still sends the
     // same two strings each time, so an unmoved fix skips the write rather than wearing the flash
@@ -74,8 +75,8 @@ static void set(const char *lat, const char *lon)
         return;
     }
 
-    snprintf(s_state.lat, sizeof(s_state.lat), "%s", next_lat);
-    snprintf(s_state.lon, sizeof(s_state.lon), "%s", next_lon);
+    cstring_fit(s_state.lat, next_lat, sizeof(s_state.lat));
+    cstring_fit(s_state.lon, next_lon, sizeof(s_state.lon));
     persist_save();
     if (s_cb) s_cb();
 }
@@ -101,11 +102,6 @@ void location_store_init(LocationConfig cfg, const LocationSeed *seed)
         // restore the last good fix so a relaunch shows it right away. s_cb is still NULL so no
         // redraw fires here, but the first paint (window push) re-pulls every readout
         store_restore(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
-    }
-
-    if (!cfg.enabled)
-    {
-        return;
     }
 
     if (cfg.live)

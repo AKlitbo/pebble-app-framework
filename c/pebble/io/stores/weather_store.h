@@ -1,7 +1,7 @@
 /**
  * @file weather_store.h
  * @brief Active weather store. It owns the appmessage weather channels and its place on the
- * shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally
+ * shared cadence, so a face just hands it the rules (live / poll interval), optionally
  * seeds it, then reads the values and subscribes for repaints. The phone data flows straight
  * in and nobody wires it.
  *
@@ -23,7 +23,6 @@
  */
 typedef struct
 {
-    bool     enabled;     ///< False makes the store do nothing (no channels and no polling)
     bool     live;        ///< True subscribes the channels and polls. False just keeps the fake data for screenshots
     int      poll_min;    ///< Minutes between weather requests (e.g. 10, 20, 30)
     uint32_t persist_key; ///< Slot for the last good reading so the face owns the key instead of the store
@@ -73,7 +72,7 @@ typedef struct
 /**
  * @brief Start the store with its rules. Pass seed = NULL for normal use.
  *
- * @param cfg The rules (enabled / live / poll interval).
+ * @param cfg The rules (live / poll interval).
  * @param seed Optional prefill, or NULL.
  */
 void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed);

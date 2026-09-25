@@ -24,7 +24,6 @@
  */
 typedef struct
 {
-    bool enabled;     ///< False makes the store do nothing
     bool live;        ///< True runs the tickers and false freezes the clock for screenshots
     bool minute_tick; ///< Run the minute tick (clock date and most readouts)
     bool beats;       ///< Also run the 86.4 second .beats timer for a live .beats readout
@@ -33,7 +32,7 @@ typedef struct
 /**
  * @brief Start the store with its rules. Pass seed = NULL to start from the current time.
  *
- * @param cfg The rules (enabled / live / cadence).
+ * @param cfg The rules (live / cadence).
  * @param seed Optional time to pin (dev/screenshots), or NULL for the current time.
  */
 void time_store_init(TimeConfig cfg, const struct tm *seed);

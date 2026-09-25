@@ -15,6 +15,7 @@
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
 #include "io/stores/store_poll.h"
+#include "text/cstring_fit.h"
 
 /**
  * @brief Delay before the first fetch after launch, in ms.
@@ -69,7 +70,7 @@ static AppTimer *s_timer;      ///< The short boot re-ask only. The recurring po
 static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
 static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
 static int s_boot_retries;     ///< Short cold-boot re-asks used so far, until the first reading lands
-static bool s_live;            ///< True once the store is enabled on a live face, so the cache is worth reading and writing and the cadence turn runs
+static bool s_live;            ///< True on a live face, so the cache is worth reading and writing and the cadence turn runs
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved reading
 static bool s_dirty;           ///< A channel touched the state this inbox, so persist_flush writes it once
 
@@ -157,7 +158,7 @@ static void persist_flush(void)
 static void set_current(int temp, const char *cond)
 {
     s_state.temp = (int16_t)temp;
-    snprintf(s_state.cond, sizeof(s_state.cond), "%s", cond ? cond : "--");
+    cstring_fit(s_state.cond, cond ? cond : "--", sizeof(s_state.cond));
     mark_synced();
 }
 
@@ -173,12 +174,12 @@ static void set_current(int temp, const char *cond)
 static void apply_seed(const WeatherSeed *seed)
 {
     s_state.temp = seed->temp;
-    snprintf(s_state.cond, sizeof(s_state.cond), "%s", seed->cond ? seed->cond : "--");
+    cstring_fit(s_state.cond, seed->cond ? seed->cond : "--", sizeof(s_state.cond));
     s_state.humidity = seed->humidity;
     s_state.wind_kmh = seed->wind_kmh;
-    snprintf(s_state.wind_dir, sizeof(s_state.wind_dir), "%s", seed->wind_dir ? seed->wind_dir : "");
-    snprintf(s_state.sunrise, sizeof(s_state.sunrise), "%s", seed->sunrise ? seed->sunrise : "");
-    snprintf(s_state.sunset, sizeof(s_state.sunset), "%s", seed->sunset ? seed->sunset : "");
+    cstring_fit(s_state.wind_dir, seed->wind_dir ? seed->wind_dir : "", sizeof(s_state.wind_dir));
+    cstring_fit(s_state.sunrise, seed->sunrise ? seed->sunrise : "", sizeof(s_state.sunrise));
+    cstring_fit(s_state.sunset, seed->sunset ? seed->sunset : "", sizeof(s_state.sunset));
     s_state.uv = seed->uv;
     s_state.temp_max = seed->temp_max;
     s_state.temp_min = seed->temp_min;
@@ -224,9 +225,9 @@ static void on_extra(int humidity, int wind_kmh, const char *dir, const char *su
 {
     s_state.humidity = humidity;
     s_state.wind_kmh = wind_kmh;
-    snprintf(s_state.wind_dir, sizeof(s_state.wind_dir), "%s", dir ? dir : "");
-    snprintf(s_state.sunrise, sizeof(s_state.sunrise), "%s", sunrise ? sunrise : "");
-    snprintf(s_state.sunset, sizeof(s_state.sunset), "%s", sunset ? sunset : "");
+    cstring_fit(s_state.wind_dir, dir ? dir : "", sizeof(s_state.wind_dir));
+    cstring_fit(s_state.sunrise, sunrise ? sunrise : "", sizeof(s_state.sunrise));
+    cstring_fit(s_state.sunset, sunset ? sunset : "", sizeof(s_state.sunset));
     mark_synced();
 }
 
@@ -348,7 +349,7 @@ void weather_store_subscribe(void (*cb)(void))
 
 void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 {
-    s_live = false; // only a store that is enabled AND live goes live, see the guard below
+    s_live = false; // only a live store goes live, see the guard below
     s_persist_key = cfg.persist_key;
     reset_state();
     s_poll_min = cfg.poll_min;
@@ -358,9 +359,9 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 
     if (cfg.live)
     {
-        // the store owns every weather channel and claims them whether or not the store is enabled,
-        // so a face that turns it on after init still gets the reply to its poll. a face seeding
-        // fixtures passes live = false and stays unsubscribed, so a real push cannot overwrite it
+        // the store owns every weather channel and claims them here, so a face that turns polling on
+        // later through reconfigure still gets the reply to its poll. a face seeding fixtures passes
+        // live = false and stays unsubscribed, so a real push cannot overwrite it
         appmessage_on_weather(on_weather);
         appmessage_on_weather_extra(on_extra);
         appmessage_on_weather_forecast(on_forecast);
@@ -397,11 +398,6 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
         }
     }
 
-    if (!cfg.enabled)
-    {
-        return;
-    }
-
     if (cfg.live)
     {
         s_live = true;
@@ -420,7 +416,7 @@ void weather_store_reconfigure(WeatherConfig cfg)
 {
     s_poll_min = cfg.poll_min;
     // s_live gates the cadence turn, so switching the store off here has to clear it
-    s_live = cfg.enabled && cfg.live;
+    s_live = cfg.live;
 
     // take the new interval from the next boundary on (no immediate fetch. a real interval change
     // is rare, and the reading in hand is still good)

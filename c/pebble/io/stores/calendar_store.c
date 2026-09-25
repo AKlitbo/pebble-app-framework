@@ -59,7 +59,7 @@ static void (*s_cb)(void);     ///< Called whenever the agenda changes, so the f
 static AppTimer *s_timer;      ///< The catch-up fetch only. The recurring poll rides the cadence
 static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
 static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
-static bool s_live;            ///< True once the store is enabled on a live face. It gates the cadence turn
+static bool s_live;            ///< True on a live face. It gates the cadence turn
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved strip
 
 // --- state writers (internal: only the channel handler + the seed touch these) ---
@@ -186,7 +186,7 @@ void calendar_store_subscribe(void (*cb)(void))
 
 void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
 {
-    s_live = false; // only a store that is enabled AND live goes live, see the guard below
+    s_live = false; // only a live store goes live, see the guard below
     s_persist_key = cfg.persist_key;
     reset_state();
     s_poll_min = cfg.poll_min;
@@ -196,9 +196,9 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
 
     if (cfg.live)
     {
-        // the store owns the calendar channel and claims it whether or not the store is enabled, so
-        // a face that turns it on after init still gets the reply to its poll. a face seeding fixtures
-        // passes live = false and stays unsubscribed, so a real push cannot overwrite what it pinned
+        // the store owns the calendar channel and claims it here, so a face that turns polling on
+        // later through reconfigure still gets the reply to its poll. a face seeding fixtures passes
+        // live = false and stays unsubscribed, so a real push cannot overwrite what it pinned
         appmessage_on_calendar_strip(on_calendar_strip);
     }
 
@@ -223,11 +223,6 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
         }
     }
 
-    if (!cfg.enabled)
-    {
-        return;
-    }
-
     if (cfg.live)
     {
         s_live = true;
@@ -246,7 +241,7 @@ void calendar_store_reconfigure(CalendarConfig cfg)
 {
     s_poll_min = cfg.poll_min;
     // s_live gates the cadence turn, so switching the store off here has to clear it
-    s_live = cfg.enabled && cfg.live;
+    s_live = cfg.live;
 
     stop_polling();
     if (s_live && s_poll_min > 0)

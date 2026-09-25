@@ -6,11 +6,12 @@
  * worth pinning are the ones a reader cannot check by eye: that the queue holds the next send
  * until the current one settles, that a nack retries the same head rather than skipping it, that
  * a send nobody ever acks or nacks still frees the queue, and that a settled send cannot settle
- * twice.
+ * twice. The deduped sender on top of it is pinned for the one transition that matters, a failed
+ * send that has to go out again.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createSendQueue, SEND_RETRIES, SEND_RETRY_MS, SEND_WATCHDOG_MS } from './send-queue';
+import { createDedupedSender, createSendQueue, SEND_RETRIES, SEND_RETRY_MS, SEND_WATCHDOG_MS } from './send-queue';
 import type { SendFn } from './send-queue';
 
 /** A captured send, kept so a spec can ack or nack it whenever it likes. */
@@ -279,5 +280,44 @@ describe('createSendQueue', () => {
 
     expect(first.calls).toHaveLength(1);
     expect(second.calls).toHaveLength(1);
+  });
+});
+
+describe('createDedupedSender', () => {
+  /** A dedupe sender that records what it was handed, so a spec can fail a send after the fact. */
+  function recordingDedupe() {
+    const fails: Array<() => void> = [];
+    const sent: AppMessageDict[] = [];
+    const queueSend = (dict: AppMessageDict, _onOk?: () => void, onFail?: () => void) => {
+      sent.push(dict);
+      fails.push(onFail || (() => {}));
+    };
+    const sender = createDedupedSender<number[]>(queueSend, (bytes) => ({ STRIP: bytes }), (bytes) => bytes.join(','), 'Test');
+
+    return { fails, sent, sender };
+  }
+
+  /** An unchanged strip would otherwise cost the watch a BLE wake on every refresh. */
+  test('skips a push with the same key as the last one', () => {
+    const { sent, sender } = recordingDedupe();
+
+    sender.push([1, 2, 3]);
+    sender.push([1, 2, 3]);
+
+    expect(sent).toHaveLength(1);
+  });
+
+  /**
+   * A send that failed never reached the watch. Holding onto its key would skip the retry with the
+   * same strip, and the face stays blank until the values happen to move.
+   */
+  test('sends the same strip again after the last send failed', () => {
+    const { fails, sent, sender } = recordingDedupe();
+
+    sender.push([1, 2, 3]);
+    fails[0]();
+    sender.push([1, 2, 3]);
+
+    expect(sent).toHaveLength(2);
   });
 });

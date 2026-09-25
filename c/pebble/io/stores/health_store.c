@@ -629,11 +629,6 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
         }
     }
 
-    if (!cfg.enabled)
-    {
-        return;
-    }
-
     if (cfg.live)
     {
         s_live = true;

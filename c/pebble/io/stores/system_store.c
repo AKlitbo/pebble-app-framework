@@ -45,7 +45,9 @@ static void set_battery(int level, bool charging)
  */
 static void set_bluetooth(bool connected)
 {
+    // the new state goes in first, so a reconnect handler that reads the store sees it connected
     bool was_connected = s_state.bluetooth_connected;
+    s_state.bluetooth_connected = connected;
 
     // hand a real transition to the face's policy. the first reading only seeds the state
     if (s_bt_initialized && was_connected != connected && s_vibe)
@@ -61,7 +63,6 @@ static void set_bluetooth(bool connected)
     }
 
     s_bt_initialized = true;
-    s_state.bluetooth_connected = connected;
     if (s_cb) s_cb();
 }
 
@@ -116,11 +117,6 @@ void system_store_init(SystemConfig cfg, const SystemSeed *seed)
         s_state.charging = seed->charging;
         s_state.bluetooth_connected = seed->bluetooth;
         s_seed_alarm = seed->next_alarm;
-    }
-
-    if (!cfg.enabled)
-    {
-        return;
     }
 
     if (cfg.live)

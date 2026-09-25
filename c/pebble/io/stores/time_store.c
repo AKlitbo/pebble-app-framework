@@ -124,11 +124,6 @@ void time_store_init(TimeConfig cfg, const struct tm *seed)
         s_tm = *localtime(&now);
     }
 
-    if (!cfg.enabled)
-    {
-        return;
-    }
-
     if (cfg.live)
     {
         start_ticker();
@@ -140,7 +135,7 @@ void time_store_reconfigure(TimeConfig cfg)
     s_minute = cfg.minute_tick;
     s_beats = cfg.beats;
 
-    if (cfg.enabled && cfg.live)
+    if (cfg.live)
     {
         start_ticker();  // swaps to the right cadence
     }

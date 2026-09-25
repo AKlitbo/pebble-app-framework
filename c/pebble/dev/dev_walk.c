@@ -113,20 +113,20 @@ static void apply_shot(uint8_t index)
     pinned.tm_hour = s_hour;
     pinned.tm_min = shot->minute;
     pinned.tm_sec = 0;
-    time_store_init((TimeConfig){.enabled = true, .live = false, .minute_tick = false, .beats = false}, &pinned);
+    time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
 
     WeatherSeed wx = WEATHER_SEED_EMPTY;
     wx.temp = shot->temp;
     wx.cond = shot->cond;
-    weather_store_init((WeatherConfig){.enabled = true, .live = false, .poll_min = 0}, &wx);
+    weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
 
     HealthSeed health = {.hr = shot->hr, .steps = shot->steps, .calories = s_default.calories,
                          .sleep_min = s_default.sleep_min, .active_min = s_default.active_min,
                          .distance_m = s_default.distance_m};
-    health_store_init((HealthConfig){.enabled = true, .live = false}, &health);
+    health_store_init((HealthConfig){.live = false}, &health);
 
     SystemSeed system = {.battery = shot->battery, .charging = false, .bluetooth = shot->bluetooth};
-    system_store_init((SystemConfig){.enabled = true, .live = false, .vibe = NULL}, &system);
+    system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
 
     // this does nothing on a face that never subscribed to the id
     // that is fine, since it only moves for the faces that actually draw the mark
@@ -164,25 +164,25 @@ void dev_walk_seed_stores(int hour, int min)
     pinned.tm_hour = hour;
     pinned.tm_min = min;
     pinned.tm_sec = 0;
-    time_store_init((TimeConfig){.enabled = true, .live = false, .minute_tick = false, .beats = false}, &pinned);
+    time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
 
     // spread the empty seed so every reading the fixture does not set (humidity, wind, uv, …)
     // reads as "--" rather than a bogus 0
     WeatherSeed wx = WEATHER_SEED_EMPTY;
     wx.temp = s_default.temp;
     wx.cond = s_default.cond;
-    weather_store_init((WeatherConfig){.enabled = true, .live = false, .poll_min = 0}, &wx);
+    weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
 
     HealthSeed health = {.hr = s_default.hr, .steps = s_default.steps, .calories = s_default.calories,
                          .sleep_min = s_default.sleep_min, .active_min = s_default.active_min,
                          .distance_m = s_default.distance_m};
-    health_store_init((HealthConfig){.enabled = true, .live = false}, &health);
+    health_store_init((HealthConfig){.live = false}, &health);
 
     SystemSeed system = {.battery = s_default.battery, .charging = false, .bluetooth = s_default.bluetooth};
-    system_store_init((SystemConfig){.enabled = true, .live = false, .vibe = NULL}, &system);
+    system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
 
     LocationSeed location = {.lat = s_default.lat, .lon = s_default.lon};
-    location_store_init((LocationConfig){.enabled = true, .live = false}, &location);
+    location_store_init((LocationConfig){.live = false}, &location);
 }
 
 void dev_walk_init(DevWalkMode mode, void (*apply_theme)(void))

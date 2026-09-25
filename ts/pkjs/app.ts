@@ -13,8 +13,7 @@
 import locationComponent from '../clay/location-component';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
-import { request } from './request';
-import { getConfig, readBool, readValue } from './settings-store';
+import { getConfig, readValue } from './settings-store';
 import type { Feature, FeatureHooks } from './feature';
 import type { ClayConfigItem } from '../clay/types';
 
@@ -31,7 +30,7 @@ export interface StartOptions {
 }
 
 // how long after the config page closes a changed setting waits to refetch
-const SETTINGS_REFETCH_DELAY_MS = 250;
+export const SETTINGS_REFETCH_DELAY_MS = 250;
 
 /**
  * Walks the Clay config items and builds a map from each item's message key to its
@@ -41,7 +40,7 @@ const SETTINGS_REFETCH_DELAY_MS = 250;
  * @param items The Clay config items to walk, including any nested items.
  * @return A map from message key to default value.
  */
-function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
+export function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
   return items.reduce((defaults: Record<string, any>, item) => {
     if (item.messageKey && item.defaultValue !== undefined) {
       defaults[item.messageKey] = item.defaultValue;
@@ -91,7 +90,7 @@ function timezoneFieldsIn(messageKeys: any): Array<{ name: string; key: number }
  * @param nowMs The time to read each zone's offset at.
  * @return The same dict, with each timezone field rewritten or dropped.
  */
-function retimeSettings(dict: AppMessageDict, messageKeys: any, nowMs: number): AppMessageDict {
+export function retimeSettings(dict: AppMessageDict, messageKeys: any, nowMs: number): AppMessageDict {
   timezoneFieldsIn(messageKeys).forEach((field) => {
     if (typeof dict[field.key] !== 'string') {
       return;
@@ -134,7 +133,7 @@ const SEED_FIELDS: Array<{ key: string; accept?: (value: any) => boolean; coerce
  * @param seedColorKeys Extra colour-type face keys to seed as numbers.
  * @param seedBoolKeys Extra toggle-type face keys to seed as booleans.
  */
-function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[], seedColorKeys?: string[], seedBoolKeys?: string[]): void {
+export function seedConfigFromWatch(messageKeys: any, payload: any, seedKeys?: string[], seedColorKeys?: string[], seedBoolKeys?: string[]): void {
   const config = getConfig();
 
   SEED_FIELDS.forEach((field) => {
@@ -411,12 +410,4 @@ function startPebbleApp(options: StartOptions): void {
 
 export default {
   startPebbleApp,
-  collectDefaults,
-  request,
-  getConfig,
-  readValue,
-  readBool,
-  seedConfigFromWatch,
-  retimeSettings,
-  SETTINGS_REFETCH_DELAY_MS,
 };

@@ -12,12 +12,18 @@
 /**
  * @brief How many distinct icons the cache holds at once.
  *
- * A face's reachable set runs well past this. The moon panel alone rotates 28 small and 28 large
- * glyphs through a lunar month, and the forecast strip adds a day and night glyph per condition. So
- * the cache drops its coldest entry to make room rather than filling up and turning every later
- * icon into a blank.
+ * It has to cover every icon one redraw touches. The busiest layout built so far is two eight
+ * column forecast strips with a pair of two icon panels under them, which is 20, so 24 leaves a
+ * little room. Past that the cache still works but thrashes. A redraw walks its icons in the same
+ * order every time, so the coldest entry is always the next one wanted, and every lookup reloads
+ * the resource and rescans its margins. A reload that fails on a busy heap leaves that icon blank.
+ *
+ * Icons nothing draws any more, such as the moon glyphs of days gone by, are what gets dropped. A
+ * face that draws more at once sets its own cap before this file is compiled.
  */
-#define ICON_CACHE_MAX 64
+#ifndef ICON_CACHE_MAX
+#define ICON_CACHE_MAX 24
+#endif
 
 /**
  * @brief One cached icon. Its resource id, the loaded picture, and the extra state `icon_tint`

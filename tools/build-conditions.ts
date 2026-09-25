@@ -5,7 +5,6 @@
  * Reads the framework's ts/weather/conditions.ts and ts/pkjs/wire.ts, the two tables the phone owns,
  * and writes
  *   c/pebble/ui/weather/icons_table.g.h          (token  -> icon resource)
- *   c/pebble/ui/weather/icon_codes_table.g.h     (wire code -> icon resource)
  *   c/pebble/ui/weather/labels_table.g.h         (token  -> short/long display label)
  *   c/core/wire/wire_caps.g.h                    (the strip caps both sides bound against)
  *
@@ -25,7 +24,6 @@ import type { ConditionVocabulary } from '../ts/weather/conditions.ts';
 
 const WEATHER_DIR = path.resolve(import.meta.dirname, '..', 'c', 'pebble', 'ui', 'weather');
 const ICONS_OUT = path.join(WEATHER_DIR, 'icons_table.g.h');
-const ICON_CODES_OUT = path.join(WEATHER_DIR, 'icon_codes_table.g.h');
 const LABELS_OUT = path.join(WEATHER_DIR, 'labels_table.g.h');
 const WIRE_CAPS_OUT = path.resolve(import.meta.dirname, '..', 'c', 'core', 'wire', 'wire_caps.g.h');
 
@@ -115,64 +113,6 @@ export function buildIconsTable({ fallback, conditions }: ConditionVocabulary) {
   lines.push(`    return ${fallbackResource};`);
   lines.push('}');
   lines.push('');
-
-  return lines.join('\n');
-}
-
-/**
- * Builds the C code-lookup source from a condition vocabulary.
- *
- * The forecast row ships each condition as a single byte (its index in the
- * conditions array), optionally OR-ed with WX_FORECAST_NIGHT_BIT for an hour
- * after dark. This emits a switch on the base index that returns the night icon
- * when the bit is set (and the row has one) or the day icon otherwise. An index
- * that doesn't match a row falls back to the fallback glyph, which also covers
- * the UNKNOWN_CODE (255) the JS side sends for a mystery condition. Pure string
- * transform so it can be tested without the filesystem.
- *
- * @param vocabulary The fallback icon plus the token/resource/night rows to build the lookup from.
- * @return The generated C source for icon_codes_table.g.h.
- */
-export function buildIconCodesTable({ fallback, conditions }: ConditionVocabulary) {
-  const fallbackResource = `RESOURCE_ID_ICON_${fallback.resource}`;
-
-  const lines = bannerLines('icon_codes_table.g.h', 'Forecast condition code to weather icon resource lookup.');
-  lines.push(
-    '#include "ui/weather/icons.h"',
-    '',
-    '/**',
-    ' * @brief Finds the icon resource for a forecast condition code.',
-    ' *',
-    ' * The code is the condition\'s position in the shared vocabulary, with `WX_FORECAST_NIGHT_BIT`',
-    ' * set for an hour after dark. A night hour gets the night glyph where the condition has one.',
-    ` * An unknown code, including the 255 the phone sends for a mystery sky, gets the \`${fallback.resource}\` icon.`,
-    ' *',
-    ' * @param code The condition code, with the night bit set for an hour after dark.',
-    ' * @return The `RESOURCE_ID_ICON_*` resource to load.',
-    ' *',
-    ' * @ingroup lib_ui',
-    ' */',
-    'static uint32_t wx_resource_for_code(uint8_t code)',
-    '{',
-    '    bool night = (code & WX_FORECAST_NIGHT_BIT) != 0;',
-    '    switch (code & ~WX_FORECAST_NIGHT_BIT)',
-    '    {'
-  );
-
-  conditions.forEach(({ resource, nightResource }, index) => {
-    const day = `RESOURCE_ID_ICON_${resource}`;
-    const value = nightResource
-      ? `night ? RESOURCE_ID_ICON_${nightResource} : ${day}`
-      : day;
-    lines.push(`    case ${index}: return ${value};`);
-  });
-
-  lines.push(
-    `    default: return ${fallbackResource};`,
-    '    }',
-    '}',
-    ''
-  );
 
   return lines.join('\n');
 }
@@ -313,7 +253,6 @@ export interface GeneratedHeader {
  */
 export const GENERATED: GeneratedHeader[] = [
   { out: ICONS_OUT, build: () => buildIconsTable(conditionVocabulary) },
-  { out: ICON_CODES_OUT, build: () => buildIconCodesTable(conditionVocabulary) },
   { out: LABELS_OUT, build: () => buildLabelsTable(conditionVocabulary) },
   { out: WIRE_CAPS_OUT, build: () => buildWireCaps(WIRE_CAPS, conditionVocabulary.FORECAST_NIGHT_BIT) },
 ];

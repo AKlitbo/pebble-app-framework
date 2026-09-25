@@ -253,27 +253,4 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
   return bytes;
 }
 
-/**
- * True when two packed strips are byte-for-byte identical, so a redundant push
- * to the watch can be skipped. Two nulls count as equal.
- *
- * @param left One packed strip, or null.
- * @param right The other packed strip, or null.
- * @return True when the two are the same length and hold the same bytes.
- */
-function bytesEqual(left: number[] | null, right: number[] | null): boolean {
-  if (left === right) {
-    return true;
-  }
-  if (!left || !right || left.length !== right.length) {
-    return false;
-  }
-  for (let index = 0; index < left.length; index++) {
-    if (left[index] !== right[index]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-export default { packForecastHourly, packForecastDaily, packStockStrip, packCalendarStrip, bytesEqual, toAscii, STOCK_MAX_SLOTS };
+export default { packForecastHourly, packForecastDaily, packStockStrip, packCalendarStrip, toAscii, STOCK_MAX_SLOTS };

@@ -45,8 +45,8 @@ export interface ConditionVocabulary {
   conditions: ConditionEntry[];
 }
 
-// wire code for a condition the watch doesn't recognise. the C wx_resource_for_code
-// sends this to the WEATHER_NOW_NA fallback glyph. real conditions ride as their array index
+// wire code for a condition the watch doesn't recognise, which a face draws as its fallback
+// glyph. real conditions ride as their array index
 const UNKNOWN_CODE = 255;
 
 // high bit OR-ed onto an hourly forecast code to mark a night hour so the watch loads the

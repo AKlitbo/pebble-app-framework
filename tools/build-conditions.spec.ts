@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildIconsTable, buildIconCodesTable, buildLabelsTable, GENERATED } from './build-conditions';
+import { buildIconsTable, buildLabelsTable, GENERATED } from './build-conditions';
 import vocabulary from '../ts/weather/conditions.ts';
 import type { ConditionEntry, ConditionFallback } from '../ts/weather/conditions.ts';
 
@@ -177,60 +177,6 @@ describe('codeFor', () => {
     const result = vocabulary.codeFor(token);
 
     expect(result).toBe(UNKNOWN_WIRE_CODE);
-  });
-});
-
-describe('buildIconCodesTable', () => {
-  /** The switch index is the wire code, so a case mapped to the wrong resource draws the wrong sky. */
-  test('emits a case mapping each code to its day icon resource', () => {
-    const source = buildIconCodesTable({
-      fallback: FALLBACK,
-      conditions: [row('CLEAR', 'WI_CLEAR'), row('RAIN', 'WI_RAIN')],
-    });
-
-    expect(source).toContain('    case 0: return RESOURCE_ID_ICON_WI_CLEAR;');
-    expect(source).toContain('    case 1: return RESOURCE_ID_ICON_WI_RAIN;');
-  });
-
-  /** A night-capable row must branch on the night bit, else a dark hour still draws the day sun. */
-  test('emits a night ternary picking the night resource for a night-capable row', () => {
-    const source = buildIconCodesTable({
-      fallback: FALLBACK,
-      conditions: [row('CLEAR', 'WI_CLEAR', 'WI_NIGHT_CLEAR')],
-    });
-
-    expect(source).toContain('    case 0: return night ? RESOURCE_ID_ICON_WI_NIGHT_CLEAR : RESOURCE_ID_ICON_WI_CLEAR;');
-  });
-
-  /** The switch must mask off the night bit or the night codes (128+) run off the end to WI_NA. */
-  test('decodes the night bit before switching on the code', () => {
-    const source = buildIconCodesTable({ fallback: FALLBACK, conditions: [row('CLEAR', 'WI_CLEAR')] });
-
-    expect(source).toContain('bool night = (code & WX_FORECAST_NIGHT_BIT) != 0;');
-    expect(source).toContain('switch (code & ~WX_FORECAST_NIGHT_BIT)');
-  });
-
-  /** An out-of-range or UNKNOWN_CODE byte must fall back to WI_NA instead of running off the switch. */
-  test('defaults unknown codes to the configured fallback resource', () => {
-    const source = buildIconCodesTable({
-      fallback: FALLBACK,
-      conditions: [row('CLEAR', 'WI_CLEAR')],
-    });
-
-    expect(source).toContain('    default: return RESOURCE_ID_ICON_WI_NA;');
-  });
-
-  /** A case numbered off the pinned wire code is how the C and JS sides disagree about a column. */
-  test('numbers cases so they line up with the pinned wire codes', () => {
-    const source = buildIconCodesTable(vocabulary);
-
-    WIRE_CODES.forEach(([token, code]) => {
-      const entry = vocabulary.conditions[code];
-
-      expect(entry.token).toBe(token);
-      // every real condition ships a night glyph so the case is the night ternary
-      expect(source).toContain(`    case ${code}: return night ? RESOURCE_ID_ICON_${entry.nightResource} : RESOURCE_ID_ICON_${entry.resource};`);
-    });
   });
 });
 

@@ -2,7 +2,7 @@
  * @file calendar_store.h
  * @brief Active calendar store. It owns the appmessage calendar channel and its place on the
  * shared cadence,
- * so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then
+ * so a face just hands it the rules (live / poll interval), optionally seeds it, then
  * reads the events and subscribes for repaints. The phone data flows straight in and nobody
  * wires it.
  *
@@ -24,7 +24,6 @@
  */
 typedef struct
 {
-    bool     enabled;     ///< False makes the store do nothing (no channel and no polling)
     bool     live;        ///< True subscribes the channel and polls. False just keeps the fake data for screenshots
     int      poll_min;    ///< Minutes between calendar requests
     uint32_t persist_key; ///< Slot for the last good strip so the face owns the key instead of the store
@@ -41,7 +40,7 @@ typedef struct
 /**
  * @brief Start the store with its rules. Pass seed = NULL for normal use.
  *
- * @param cfg The rules (enabled / live / poll interval).
+ * @param cfg The rules (live / poll interval).
  * @param seed Optional prefill, or NULL.
  */
 void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed);

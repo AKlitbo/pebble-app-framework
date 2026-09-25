@@ -5,6 +5,7 @@
  * @ingroup lib_core
  */
 #include "text/number_format.h"
+#include "text/cstring_fit.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -60,8 +61,7 @@ void number_group(char *buffer, size_t size, int value)
 
     out[w] = '\0';
 
-    strncpy(buffer, out, size - 1);
-    buffer[size - 1] = '\0';
+    cstring_fit(buffer, out, size);
 }
 
 void fmt_int_or_dash(char *buffer, size_t size, int value, const char *fmt)

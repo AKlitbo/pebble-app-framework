@@ -193,7 +193,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
   const sender = createDedupedSender<number[]>(
     queueSend,
     (bytes) => ({ [messageKeys.STOCK_STRIP]: bytes }),
-    wire.bytesEqual,
+    (bytes) => bytes.join(','),
     'Stocks'
   );
 

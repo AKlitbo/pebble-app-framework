@@ -33,7 +33,7 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
   const sender = createDedupedSender<number[]>(
     queueSend,
     (bytes) => ({ [messageKeys.CALENDAR_STRIP]: bytes }),
-    wire.bytesEqual,
+    (bytes) => bytes.join(','),
     'Calendar'
   );
 

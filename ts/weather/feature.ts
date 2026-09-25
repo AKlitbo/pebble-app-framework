@@ -279,7 +279,7 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
   const sender = createDedupedSender<AppMessageDict>(
     queueSend,
     (dict) => dict,
-    (left, right) => JSON.stringify(left) === JSON.stringify(right),
+    (dict) => JSON.stringify(dict),
     'Weather'
   );
 

@@ -11,6 +11,7 @@
 #include "io/outbox_queue.h"
 #include "io/tuple_read.h"
 #include "math/scale.h"
+#include "text/cstring_fit.h"
 #include "system/settings/settings.h"
 #include <limits.h>
 
@@ -383,7 +384,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
         static char conditions_buffer[32];
 
-        snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions);
+        cstring_fit(conditions_buffer, conditions, sizeof(conditions_buffer));
 
         if (wx_ok)
         {
@@ -670,16 +671,8 @@ void appmessage_open(uint32_t inbox_size)
         // does not fit goes out empty
         APP_LOG(APP_LOG_LEVEL_ERROR, "settings reply %d over outbox %d", (int)outbox_size, (int)outbox_max);
     }
-    if (inbox_size > inbox_max)
-    {
-        inbox_size = inbox_max;
-    }
-
     // an inbox under the SDK minimum would drop every message the phone sends
-    if (inbox_size < APP_MESSAGE_INBOX_SIZE_MINIMUM)
-    {
-        inbox_size = APP_MESSAGE_INBOX_SIZE_MINIMUM;
-    }
+    inbox_size = (uint32_t)clamp_int((int)inbox_size, APP_MESSAGE_INBOX_SIZE_MINIMUM, (int)inbox_max);
 
     // a failed open leaves every message in both directions going nowhere, so say so rather than
     // leave the panels on placeholders with no clue why

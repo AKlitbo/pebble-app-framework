@@ -3,8 +3,8 @@
  * Specs for the shared PebbleKit JS bootstrap.
  *
  * This module is the only copy of the settings glue every face runs, so the hardening
- * it carries (HTTP-status handling, untrusted-payload guards, the settings restore, and
- * the timezone push) is tested here once, along with how each feature plugs into the
+ * it carries (untrusted-payload guards, the settings restore, and the timezone push) is
+ * tested here once, along with how each feature plugs into the
  * app's lifecycle. The weather feature's own helpers have specs beside it.
  *
  * The webview globals (localStorage) come from jsdom. XMLHttpRequest is stubbed
@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import app from './app';
+import app, { collectDefaults, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS } from './app';
 import stocks from '../stock/feature';
 import calendar from '../calendar/feature';
 import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
@@ -80,52 +80,6 @@ describe('app imports', () => {
   });
 });
 
-describe('request', () => {
-  /** A successful response must reach the callback as data with no error. */
-  test('reports a 2xx response as success with the body', () => {
-    const sent = installFakeXhr();
-    const callback = vi.fn();
-
-    app.request('https://example', callback);
-    sent[0].respond(200, '{"ok":1}');
-
-    expect(callback).toHaveBeenCalledWith(null, '{"ok":1}');
-  });
-
-  /** A non-2xx must be flagged as an error while still forwarding the body so a provider can read a structured error. */
-  test('reports a non-2xx as an http error but still forwards the body', () => {
-    const sent = installFakeXhr();
-    const callback = vi.fn();
-
-    app.request('https://example', callback);
-    sent[0].respond(404, '{"cod":404}');
-
-    expect(callback).toHaveBeenCalledWith('http 404', '{"cod":404}');
-  });
-
-  /** A transport failure must surface as a network error, never a silent success. */
-  test('reports a transport failure as a network error', () => {
-    const sent = installFakeXhr();
-    const callback = vi.fn();
-
-    app.request('https://example', callback);
-    sent[0].fail();
-
-    expect(callback).toHaveBeenCalledWith('network error');
-  });
-
-  /** A timeout must surface distinctly so the caller can show a clear status. */
-  test('reports a timeout', () => {
-    const sent = installFakeXhr();
-    const callback = vi.fn();
-
-    app.request('https://example', callback);
-    sent[0].timeOut();
-
-    expect(callback).toHaveBeenCalledWith('timeout');
-  });
-});
-
 describe('seedConfigFromWatch', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -138,7 +92,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A valid date format string from the watch must seed the config so it opens with the real value. */
   test('copies a valid string CLOCK_DATE_FORMAT into the store', () => {
-    app.seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: '%Y.%m.%d' });
+    seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: '%Y.%m.%d' });
 
     const result = stored('CLOCK_DATE_FORMAT');
 
@@ -147,7 +101,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A non-string CLOCK_DATE_FORMAT is corrupt and must be skipped, not seeded as junk. */
   test('skips a non-string CLOCK_DATE_FORMAT', () => {
-    app.seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: 42 });
+    seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: 42 });
 
     const result = 'CLOCK_DATE_FORMAT' in JSON.parse(localStorage.getItem('clay-settings'));
 
@@ -156,7 +110,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A numeric enum (the on-wire form) must be stringified to match Clay's option values. */
   test('stringifies a numeric enum value', () => {
-    app.seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: 3 });
+    seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: 3 });
 
     const result = stored('APPEARANCE_THEME');
 
@@ -165,7 +119,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A non-primitive enum is malformed and must be skipped. */
   test('skips an enum value that is neither string nor number', () => {
-    app.seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: { nested: true } });
+    seedConfigFromWatch(messageKeys, { APPEARANCE_THEME: { nested: true } });
 
     const result = 'APPEARANCE_THEME' in JSON.parse(localStorage.getItem('clay-settings'));
 
@@ -177,7 +131,7 @@ describe('seedConfigFromWatch', () => {
     [1, '1'],
     [0, '0'],
   ])('seeds WEATHER_TEMPERATURE_UNIT %s as the string "%s" via seedKeys', (value, expected) => {
-    app.seedConfigFromWatch(messageKeys, { WEATHER_TEMPERATURE_UNIT: value }, ['WEATHER_TEMPERATURE_UNIT']);
+    seedConfigFromWatch(messageKeys, { WEATHER_TEMPERATURE_UNIT: value }, ['WEATHER_TEMPERATURE_UNIT']);
 
     const result = stored('WEATHER_TEMPERATURE_UNIT');
 
@@ -186,7 +140,7 @@ describe('seedConfigFromWatch', () => {
 
   /** Clay's colour picker reads a string as hex, so a colour has to stay the number the watch sent. */
   test('seeds a colour key as a number via seedColorKeys', () => {
-    app.seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 0xFF0000 }, [], ['APPEARANCE_REEL_COLOR']);
+    seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 0xFF0000 }, [], ['APPEARANCE_REEL_COLOR']);
 
     const result = stored('APPEARANCE_REEL_COLOR');
 
@@ -195,7 +149,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A colour that arrived as anything but a number is malformed and must be skipped. */
   test('skips a colour key that is not a number', () => {
-    app.seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 'ff0000' }, [], ['APPEARANCE_REEL_COLOR']);
+    seedConfigFromWatch(messageKeys, { APPEARANCE_REEL_COLOR: 'ff0000' }, [], ['APPEARANCE_REEL_COLOR']);
 
     const result = 'APPEARANCE_REEL_COLOR' in JSON.parse(localStorage.getItem('clay-settings'));
 
@@ -207,7 +161,7 @@ describe('seedConfigFromWatch', () => {
     [1, true],
     [0, false],
   ])('seeds a bool key %s as %s via seedBoolKeys', (value, expected) => {
-    app.seedConfigFromWatch(messageKeys, { APPEARANCE_FACE_COLORS: value }, [], [], ['APPEARANCE_FACE_COLORS']);
+    seedConfigFromWatch(messageKeys, { APPEARANCE_FACE_COLORS: value }, [], [], ['APPEARANCE_FACE_COLORS']);
 
     const result = stored('APPEARANCE_FACE_COLORS');
 
@@ -216,7 +170,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A dropped field (or wrong coercion) in the seed table silently stops seeding that setting, so its config page opens on the default. */
   test('seeds every supported field from a full payload', () => {
-    app.seedConfigFromWatch(messageKeys, {
+    seedConfigFromWatch(messageKeys, {
       WEATHER_TEMPERATURE_UNIT: 1,
       CLOCK_DATE_FORMAT: '%a %d %b',
       APPEARANCE_THEME: 2,
@@ -247,7 +201,7 @@ describe('seedConfigFromWatch', () => {
    * Saving from there sent nothing back and the panel dropped to UTC.
    */
   test('seeds a timezone field from the watch', () => {
-    app.seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' });
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' });
 
     const result = stored('CLOCK_TIMEZONE_1');
 
@@ -256,7 +210,7 @@ describe('seedConfigFromWatch', () => {
 
   /** A face may name a key TIMEZONE for something that holds no place, so only a string seeds. */
   test('skips a timezone key that did not arrive as a string', () => {
-    app.seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 });
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 });
 
     const result = 'CLOCK_TIMEZONE_1' in JSON.parse(localStorage.getItem('clay-settings'));
 
@@ -272,7 +226,7 @@ describe('seedConfigFromWatch', () => {
     const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: saved }));
 
-    app.seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' });
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' });
 
     const result = stored('CLOCK_TIMEZONE_1');
 
@@ -289,7 +243,7 @@ describe('retimeSettings', () => {
   test('rewrites a saved place into the offset it reads today', () => {
     const dict = { 11: JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' }) };
 
-    const result = app.retimeSettings(dict, timezoneKeys, nowMs);
+    const result = retimeSettings(dict, timezoneKeys, nowMs);
 
     expect(result[11]).toBe('60,London');
   });
@@ -301,7 +255,7 @@ describe('retimeSettings', () => {
   test('drops a timezone field with nothing saved in it', () => {
     const dict = { 11: '' };
 
-    const result = app.retimeSettings(dict, timezoneKeys, nowMs);
+    const result = retimeSettings(dict, timezoneKeys, nowMs);
 
     expect(11 in result).toBe(false);
   });
@@ -310,7 +264,7 @@ describe('retimeSettings', () => {
   test('leaves a timezone key that is not a string alone', () => {
     const dict = { 11: 3 };
 
-    const result = app.retimeSettings(dict, timezoneKeys, nowMs);
+    const result = retimeSettings(dict, timezoneKeys, nowMs);
 
     expect(result[11]).toBe(3);
   });
@@ -434,7 +388,7 @@ describe('startPebbleApp weather', () => {
     fire('showConfiguration');
     saveCity('Tucson', 32.2);
     fire('webviewclosed', { response: '{}' });
-    vi.advanceTimersByTime(app.SETTINGS_REFETCH_DELAY_MS);
+    vi.advanceTimersByTime(SETTINGS_REFETCH_DELAY_MS);
 
     sent[0].respond(200, currentBody(10));
     sent[1].respond(200, currentBody(30));
@@ -893,7 +847,7 @@ describe('collectDefaults', () => {
       { type: 'section', items: [{ type: 'slider', messageKey: 'STOCK_POLL', defaultValue: 5 }] },
     ];
 
-    const result = app.collectDefaults(items);
+    const result = collectDefaults(items);
 
     expect(result).toEqual({ WEATHER_PROVIDER: 'openmeteo', STOCK_POLL: 5 });
   });
@@ -905,96 +859,8 @@ describe('collectDefaults', () => {
       { type: 'input', messageKey: 'STOCK_API_KEY' },
     ];
 
-    const result = app.collectDefaults(items);
+    const result = collectDefaults(items);
 
     expect(result).toEqual({});
-  });
-});
-
-describe('getConfig', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  /** The persisted settings must parse back out or every read falls through to defaults. */
-  test('returns the parsed clay settings', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
-
-    const result = app.getConfig();
-
-    expect(result).toEqual({ WEATHER_PROVIDER: 'owm' });
-  });
-
-  /** With nothing saved the store must read as an empty object, never null that a caller dots into. */
-  test('returns an empty object when nothing is saved', () => {
-    const result = app.getConfig();
-
-    expect(result).toEqual({});
-  });
-
-  /** A corrupt blob must not throw: it falls back to empty so the app still starts. */
-  test('returns an empty object on corrupt json', () => {
-    localStorage.setItem('clay-settings', '{ not valid');
-
-    const result = app.getConfig();
-
-    expect(result).toEqual({});
-  });
-});
-
-describe('readValue', () => {
-  /** A plain stored value must pass straight through. */
-  test('returns a primitive value unchanged', () => {
-    const result = app.readValue('finnhub', 'fallback');
-
-    expect(result).toBe('finnhub');
-  });
-
-  /** Clay wraps some values as {value}, so the wrapper must be unwrapped or the setting reads as an object. */
-  test('unwraps a Clay value wrapper', () => {
-    const result = app.readValue({ value: '3' }, 'fallback');
-
-    expect(result).toBe('3');
-  });
-
-  /** An empty string, null, or undefined must take the fallback so a blank setting uses its default. */
-  test.each([
-    ['empty string', ''],
-    ['null', null],
-    ['undefined', undefined],
-  ])('falls back on an empty value (%s)', (label, value) => {
-    const result = app.readValue(value, 'fallback');
-
-    expect(result).toBe('fallback');
-  });
-
-  /** Zero is a real reading, not an empty value, so it must not be swallowed by the fallback. */
-  test('keeps a zero value rather than taking the fallback', () => {
-    const result = app.readValue(0, 5);
-
-    expect(result).toBe(0);
-  });
-});
-
-describe('readBool', () => {
-  /** The truthy wire forms (true, "true", 1, "1") must all read as true or a toggle silently stays off. */
-  test.each([true, 'true', 1, '1'])('reads %s as true', (value) => {
-    const result = app.readBool(value, false);
-
-    expect(result).toBe(true);
-  });
-
-  /** Anything else, including the string "0", must read as false so an off toggle stays off. */
-  test.each([false, 'false', 0, '0'])('reads %s as false', (value) => {
-    const result = app.readBool(value, true);
-
-    expect(result).toBe(false);
-  });
-
-  /** An unset setting must take the fallback so a defaulted-on toggle starts on. */
-  test('applies the fallback when the value is unset', () => {
-    const result = app.readBool(undefined, true);
-
-    expect(result).toBe(true);
   });
 });

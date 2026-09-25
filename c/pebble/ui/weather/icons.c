@@ -17,16 +17,10 @@
 #if defined(HAS_WEATHER_ICONS)
 
 #include "ui/weather/icons_table.g.h"
-#include "ui/weather/icon_codes_table.g.h"
 
 uint32_t wx_resource_for(const char *condition)
 {
     return wx_resource_for_table(condition);
-}
-
-uint32_t wx_resource_for_forecast_code(uint8_t code)
-{
-    return wx_resource_for_code(code);
 }
 
 #endif  // HAS_WEATHER_ICONS

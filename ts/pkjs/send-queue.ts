@@ -119,34 +119,36 @@ export interface DedupedSender<T> {
 /**
  * Wraps a queueSend so the same payload is not sent twice in a row.
  *
- * Every push costs a BLE wake whether or not the reading moved, so the payload the watch took is
- * kept and an identical one is dropped. The half worth spelling out is the failure: a send that
- * nacked its way to the retry cap never reached the watch, so what was kept is thrown away and
- * the next push goes out again. Recording it on the way in instead would leave the face blank
+ * Every push costs a BLE wake whether or not the reading moved, so the key of the payload the
+ * watch took is kept and a push with the same key is dropped. Holding the key rather than the
+ * payload means each push works its key out once. The half worth spelling out is the failure. A
+ * send that nacked its way to the retry cap never reached the watch, so what was kept is thrown
+ * away and the next push goes out again. Recording it on the way in instead would leave the face blank
  * until the values happened to move.
  *
  * @param queueSend The queue every send goes through.
  * @param build Turns the payload into the dict for the watch.
- * @param same Whether two payloads are the same reading. Defaults to identity.
+ * @param key Turns the payload into a string that matches only for the same reading.
  * @param label What to call this sender in the log.
  * @return The sender, holding what the watch last took.
  */
 export function createDedupedSender<T>(
   queueSend: QueueSendFn,
   build: (value: T) => AppMessageDict,
-  same: (left: T, right: T) => boolean,
+  key: (value: T) => string,
   label: string
 ): DedupedSender<T> {
-  let held: T | null = null;
+  let held: string | null = null;
 
   return {
     push(value: T): void {
-      if (held !== null && same(value, held)) {
+      const next = key(value);
+      if (next === held) {
         console.log(`${label}: unchanged, skipping send`);
         return;
       }
 
-      held = value;
+      held = next;
 
       queueSend(
         build(value),
