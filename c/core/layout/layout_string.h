@@ -20,6 +20,20 @@
  * @{
  */
 
+/// The biggest number a layout field holds. Nothing the builder writes comes close
+#define LAYOUT_INT_MAX 9999
+
+/**
+ * @brief Reads a run of digits and moves the cursor past them.
+ *
+ * A number past LAYOUT_INT_MAX comes back as -1 rather than overflowing, since only a corrupt
+ * string holds one. Its digits are still skipped, so the cursor lands on the next field either way.
+ *
+ * @param cursor The cursor, moved past the digits.
+ * @return The value read, 0 when there are no digits, or -1 when it is too big.
+ */
+int layout_parse_int(const char **cursor);
+
 /**
  * @brief Whether a layout string holds at least one placeable block.
  *

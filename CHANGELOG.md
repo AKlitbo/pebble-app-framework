@@ -9,16 +9,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added `requests` to a feature's hooks, naming the watch requests it answers. The phone logs one warning when the watch sends a request no listed feature answers.
+- Added `layout_parse_int` in `c/core/layout/layout_string.h`, which reads one layout field and gives -1 for a number past `LAYOUT_INT_MAX` rather than overflowing. A face that parses layout strings itself can call it in place of its own copy.
 
 ### Changed
 
+- `timeband_clip` now works out its minutes in 32-bit maths, so a face that clips spans onto a window no longer links libgcc's 64-bit division, about 750 bytes of watch binary.
 - **Breaking:** Weather is now an opt-in feature. Import it from `lib/ts/weather/feature` and pass `features: [weather]` to `startPebbleApp`. Faces that omit it no longer bundle the weather providers. The settings page's default intro no longer mentions weather.
 - A face without weather no longer needs the `WEATHER_*` or `LOCATION_*` message keys. A face with weather declares `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK` as before, and one that declares only some of them fails to build, with each missing key named. The coordinate keys are optional, and a face without them gets no coordinates. A pair where either half is not a string is ignored rather than blanking the saved fix. A face without weather must not use `KNOWN_TEMPERATURE_UNIT`, which reads `WEATHER_TEMPERATURE_UNIT`. The same holds for each group of extra readings: the humidity, wind, and sun times, today's high, low, UV, and rain chance, and the feels-like, pressure, and dew point. A face that declares only part of a group now fails to build rather than getting none of it.
+- **Breaking:** `timeband_window_epoch` now takes the clock as an epoch in place of today's midnight, and counts back from it. Pass `now` and the wall clock's minute of the day. A window on the morning the clocks change now starts at the right hour, and one that has not opened yet, such as a forecast strip starting at the next hour, is today's rather than yesterday's.
 
 ### Removed
 
 - **Breaking:** Removed `formatCoords` from `startPebbleApp`'s options. Pass the formatter to `weather.withCoords` instead. It still runs on every weather result, a failed one included, so a face can show its own text when there is no fix.
 - **Breaking:** Removed `location.timeZone` from `buildConfig`. Pass the new `clock: { timeZone: true }` instead, which puts the alternate time zone picker in the Clock section rather than Location Settings. It needs the `CLOCK_TIMEZONE_1` key and works without weather, and the saved zone is kept since the key is the same. `buildConfig` logs a warning if a face still passes `location.timeZone`.
+
+### Fixed
+
+- Fixed `solar_day_progress`, `solar_night_progress`, and `solar_next_event` when sunset falls after midnight, as in a high latitude summer. Daytime read as night and the next event read as a sunrise hours away. Equal sunrise and sunset times, and readings outside the day, now return no data.
+- Fixed `fmt_hundredths` and `fmt_pct_signed` printing garbage for `INT_MIN`. A stock price comes off the wire as an int32, so a corrupt saved strip can hold it.
+- Fixed `layout_has_any_block` overflowing on a corrupt module number of ten or more digits, which could wrap onto a real module and count an empty layout as placed.
+- Fixed `moon_days_to_phase` returning 30 right on the new moon. It now returns 0 to 29, and the half day after the moon counts as now as well as the half day before.
+- Fixed `timeband_rolling` putting now just past the far end when the lead was as long as the window. The lead is now pinned to the window's last minute, so the window always holds the moment it was built around.
 
 ## [2.2.0] - 2026-09-23
 

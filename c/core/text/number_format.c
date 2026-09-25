@@ -7,8 +7,21 @@
 #include "text/number_format.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+
+/**
+ * @brief The size of a number without its sign, as an unsigned value.
+ *
+ * abs() on INT_MIN has no answer that fits an int, and the stock price comes straight off the wire.
+ * Doing the negation in unsigned maths gives the right size for every int, INT_MIN included.
+ *
+ * @param value The number to take the size of.
+ * @return The value with its sign dropped.
+ */
+static unsigned int magnitude_of(int value)
+{
+    return value < 0 ? 0u - (unsigned int)value : (unsigned int)value;
+}
 
 void number_group(char *buffer, size_t size, int value)
 {
@@ -20,8 +33,7 @@ void number_group(char *buffer, size_t size, int value)
     // strip the sign into an unsigned magnitude so INT_MIN stays well-defined
     // then walk the digits inserting separators
     char digits[16];
-    unsigned int magnitude = (value < 0) ? -(unsigned int)value : (unsigned int)value;
-    snprintf(digits, sizeof(digits), "%u", magnitude);
+    snprintf(digits, sizeof(digits), "%u", magnitude_of(value));
 
     size_t len = strlen(digits);
     char out[24];
@@ -69,18 +81,18 @@ void fmt_hundredths(char *buffer, size_t size, int value)
     // pull the sign out front so a value between -1 and 0 still shows the minus, since the whole
     // part would be 0 and would otherwise drop it
     const char *sign = value < 0 ? "-" : "";
-    int magnitude = abs(value);
+    unsigned int magnitude = magnitude_of(value);
 
-    snprintf(buffer, size, "%s%d.%02d", sign, magnitude / 100, magnitude % 100);
+    snprintf(buffer, size, "%s%u.%02u", sign, magnitude / 100, magnitude % 100);
 }
 
 void fmt_pct_signed(char *buffer, size_t size, int value)
 {
     // same reason as above, plus a gain wears its plus so the direction reads without the colour
     const char *sign = value > 0 ? "+" : (value < 0 ? "-" : "");
-    int magnitude = abs(value);
+    unsigned int magnitude = magnitude_of(value);
 
-    snprintf(buffer, size, "%s%d.%02d%%", sign, magnitude / 100, magnitude % 100);
+    snprintf(buffer, size, "%s%u.%02u%%", sign, magnitude / 100, magnitude % 100);
 }
 
 void copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)

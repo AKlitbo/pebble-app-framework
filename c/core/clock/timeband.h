@@ -42,7 +42,8 @@ TimeBand timeband_full_day(void);
  *
  * @param now_min The moment to place, minutes past midnight.
  * @param span_min How long the window runs, pinned to 1..1440.
- * @param lead_min How far into it the moment sits, pinned to 0..span_min.
+ * @param lead_min How far into it the moment sits, pinned to 0..span_min - 1. The window's last
+ *   minute is the furthest in, since its far end belongs to whatever comes next.
  * @return The window, its start wrapped into 0..1439.
  */
 TimeBand timeband_rolling(int now_min, int span_min, int lead_min);
@@ -144,15 +145,22 @@ int timeband_clip_daily(TimeBand band, int from_min, int to_min,
 /**
  * @brief The epoch the window's first minute sits at.
  *
- * A window whose start is later in the day than it is now began yesterday, which is where a rolling
- * window lands every time it crosses midnight. Midnight is handed over rather than worked out here,
- * so this needs no localtime and tests off the watch.
+ * It counts back from now rather than forward from midnight. A day the clocks change on is an hour
+ * short or long, so midnight plus the window's start would land an hour off, while the minutes
+ * between the window's start and now are the same real minutes on any day. A rolling window that
+ * crossed midnight opened yesterday, which counting back finds without being told.
+ *
+ * A window that has not opened yet, such as a forecast strip starting at the next hour, is the one
+ * coming up later today.
+ *
+ * The clock is handed over both ways rather than worked out here, so this needs no localtime and
+ * tests off the watch.
  *
  * @param band The window.
- * @param midnight The epoch of today's midnight.
- * @param now_min The clock, minutes past midnight.
+ * @param now The clock as an epoch.
+ * @param now_min The same moment on the wall clock, minutes past midnight.
  * @return The epoch of the window's first minute.
  */
-time_t timeband_window_epoch(TimeBand band, time_t midnight, int now_min);
+time_t timeband_window_epoch(TimeBand band, time_t now, int now_min);
 
 /** @} */

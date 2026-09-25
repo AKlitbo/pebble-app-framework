@@ -84,6 +84,66 @@ void test_junk_is_empty(void)
     TEST_ASSERT_FALSE(result);
 }
 
+/**
+ * @brief A number too big for an int is refused rather than wrapped onto a real module.
+ *
+ * 4294967298 wraps to 2 in 32-bit maths, so an overflowing parse turned a corrupt record into a
+ * placed block and the face swapped to a layout that was never built.
+ */
+void test_a_module_number_too_big_does_not_count(void)
+{
+    bool result = layout_has_any_block("4294967298,0,0,2,2", TYPES);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A field reads as its number, and the cursor stops on what follows it. */
+void test_parse_int_reads_a_field_and_stops_after_it(void)
+{
+    const char *cursor = "12,3";
+
+    int result = layout_parse_int(&cursor);
+
+    TEST_ASSERT_EQUAL_INT(12, result);
+    TEST_ASSERT_EQUAL_STRING(",3", cursor);
+}
+
+/** @brief No digits is a zero, the same as the empty module, rather than junk. */
+void test_parse_int_with_no_digits_is_zero(void)
+{
+    const char *cursor = ",3";
+
+    int result = layout_parse_int(&cursor);
+
+    TEST_ASSERT_EQUAL_INT(0, result);
+}
+
+/** @brief The cap itself is still a number, so the check does not cut a real field short. */
+void test_parse_int_keeps_the_biggest_field(void)
+{
+    const char *cursor = "9999";
+
+    int result = layout_parse_int(&cursor);
+
+    TEST_ASSERT_EQUAL_INT(LAYOUT_INT_MAX, result);
+}
+
+/**
+ * @brief A number past the cap is -1, and every one of its digits is still skipped.
+ *
+ * Stopping partway would leave the rest of the digits to be read as the next field, so one bad
+ * number would shift every field after it.
+ */
+void test_parse_int_refuses_a_number_past_the_cap_and_skips_it(void)
+{
+    const char *cursor = "99999999999,3";
+
+    int result = layout_parse_int(&cursor);
+
+    TEST_ASSERT_EQUAL_INT(-1, result);
+    TEST_ASSERT_EQUAL_STRING(",3", cursor);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -95,5 +155,10 @@ int main(void)
     RUN_TEST(test_a_later_record_is_still_found);
     RUN_TEST(test_module_zero_does_not_count);
     RUN_TEST(test_junk_is_empty);
+    RUN_TEST(test_a_module_number_too_big_does_not_count);
+    RUN_TEST(test_parse_int_reads_a_field_and_stops_after_it);
+    RUN_TEST(test_parse_int_with_no_digits_is_zero);
+    RUN_TEST(test_parse_int_keeps_the_biggest_field);
+    RUN_TEST(test_parse_int_refuses_a_number_past_the_cap_and_skips_it);
     return UNITY_END();
 }

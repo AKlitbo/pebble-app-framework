@@ -164,6 +164,21 @@ void test_fmt_hundredths_pads_the_fraction(void)
     TEST_ASSERT_EQUAL_STRING("9.09", buffer);
 }
 
+/**
+ * @brief The most negative int prints its real value rather than garbage.
+ *
+ * A stock price arrives as an int32 off the wire, so a corrupt saved strip can hold INT_MIN.
+ * abs() has no int answer for it, and the price slot read as nonsense.
+ */
+void test_fmt_hundredths_handles_int_min(void)
+{
+    char buffer[16];
+
+    fmt_hundredths(buffer, sizeof(buffer), INT_MIN);
+
+    TEST_ASSERT_EQUAL_STRING("-21474836.48", buffer);
+}
+
 /** @brief A gain wears a plus so the direction reads without needing the colour. */
 void test_fmt_pct_signed_marks_a_gain(void)
 {
@@ -182,6 +197,16 @@ void test_fmt_pct_signed_marks_a_small_loss(void)
     fmt_pct_signed(buffer, sizeof(buffer), -47);
 
     TEST_ASSERT_EQUAL_STRING("-0.47%", buffer);
+}
+
+/** @brief The most negative int prints as a real percentage, same trap as the price. */
+void test_fmt_pct_signed_handles_int_min(void)
+{
+    char buffer[16];
+
+    fmt_pct_signed(buffer, sizeof(buffer), INT_MIN);
+
+    TEST_ASSERT_EQUAL_STRING("-21474836.48%", buffer);
 }
 
 /** @brief Flat is neither up nor down, so it wears no sign at all. */
@@ -381,8 +406,10 @@ int main(void)
     RUN_TEST(test_fmt_hundredths_writes_two_decimals);
     RUN_TEST(test_fmt_hundredths_keeps_the_sign_under_one_unit);
     RUN_TEST(test_fmt_hundredths_pads_the_fraction);
+    RUN_TEST(test_fmt_hundredths_handles_int_min);
     RUN_TEST(test_fmt_pct_signed_marks_a_gain);
     RUN_TEST(test_fmt_pct_signed_marks_a_small_loss);
+    RUN_TEST(test_fmt_pct_signed_handles_int_min);
     RUN_TEST(test_fmt_pct_signed_leaves_flat_unsigned);
     RUN_TEST(test_copy_bounded_copies_what_fits);
     RUN_TEST(test_copy_bounded_cuts_what_does_not_fit);

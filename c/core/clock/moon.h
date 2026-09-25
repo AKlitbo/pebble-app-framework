@@ -55,9 +55,11 @@ const char *moon_phase_name(time_t utc);
 /**
  * @brief How many days until the next full or new moon, rounded to the nearest whole day.
  *
+ * Within half a day of the moon, before or after, it counts as now.
+ *
  * @param utc The time to read, as a UTC timestamp.
  * @param to_full True counts to the next full moon, false to the next new moon.
- * @return The days to wait (0 means it is about now, up to 30).
+ * @return The days to wait, 0 to 29, where 0 means it is about now.
  */
 int moon_days_to_phase(time_t utc, bool to_full);
 

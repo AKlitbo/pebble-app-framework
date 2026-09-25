@@ -147,6 +147,34 @@ void test_moon_days_to_new_at_full_is_15(void)
 }
 
 /**
+ * @brief Right on the new moon the wait reads 0, not a whole cycle.
+ *
+ * The age is 0 there, which put the next new moon 29.53 days out and rounded to 30.
+ */
+void test_moon_days_to_new_at_new_is_zero(void)
+{
+    int result = moon_days_to_phase(MOON_EPOCH_UTC, false);
+
+    TEST_ASSERT_EQUAL_INT(0, result);
+}
+
+/** @brief A full moon six hours ago is still tonight's, so it reads now rather than 29 days. */
+void test_moon_days_to_full_just_after_full_is_zero(void)
+{
+    int result = moon_days_to_phase(MOON_EPOCH_UTC + MOON_HALF_SEC + 6 * 3600, true);
+
+    TEST_ASSERT_EQUAL_INT(0, result);
+}
+
+/** @brief Past the half day after the full moon, the wait moves on to the next one and reads 29. */
+void test_moon_days_to_full_past_the_half_day_is_the_next_moon(void)
+{
+    int result = moon_days_to_phase(MOON_EPOCH_UTC + MOON_HALF_SEC + 13 * 3600, true);
+
+    TEST_ASSERT_EQUAL_INT(29, result);
+}
+
+/**
  * @brief A negative count returns 0 as well, rather than a negative index.
  *
  * Half a cycle in, a count of -8 rounds to -3, and a caller indexing its glyph table with that
@@ -188,6 +216,9 @@ int main(void)
     RUN_TEST(test_moon_days_to_full_wraps_past_the_target);
     RUN_TEST(test_moon_days_to_new_at_full_is_15);
     RUN_TEST(test_moon_days_to_new_just_before_new_is_zero);
+    RUN_TEST(test_moon_days_to_new_at_new_is_zero);
+    RUN_TEST(test_moon_days_to_full_just_after_full_is_zero);
+    RUN_TEST(test_moon_days_to_full_past_the_half_day_is_the_next_moon);
 
     return UNITY_END();
 }

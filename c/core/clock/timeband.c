@@ -30,14 +30,14 @@ static int wrap_day(int minutes)
  * @param seconds The count, which may be negative.
  * @return The count in minutes.
  */
-static int floor_minutes(long long seconds)
+static int floor_minutes(int seconds)
 {
-    long long minutes = seconds / SECONDS_PER_MINUTE;
+    int minutes = seconds / SECONDS_PER_MINUTE;
     if (seconds % SECONDS_PER_MINUTE != 0 && seconds < 0)
     {
         minutes--;
     }
-    return (int)minutes;
+    return minutes;
 }
 
 /**
@@ -47,14 +47,14 @@ static int floor_minutes(long long seconds)
  * @param seconds The count, which may be negative.
  * @return The count in minutes.
  */
-static int ceil_minutes(long long seconds)
+static int ceil_minutes(int seconds)
 {
-    long long minutes = seconds / SECONDS_PER_MINUTE;
+    int minutes = seconds / SECONDS_PER_MINUTE;
     if (seconds % SECONDS_PER_MINUTE != 0 && seconds > 0)
     {
         minutes++;
     }
-    return (int)minutes;
+    return minutes;
 }
 
 TimeBand timeband_full_day(void)
@@ -65,7 +65,8 @@ TimeBand timeband_full_day(void)
 TimeBand timeband_rolling(int now_min, int span_min, int lead_min)
 {
     int span = clamp_int(span_min, 1, TIMEBAND_DAY_MINUTES);
-    int lead = clamp_int(lead_min, 0, span);
+    // the far end belongs to the next window, so the last minute is as far in as the moment can sit
+    int lead = clamp_int(lead_min, 0, span - 1);
 
     return (TimeBand){.start_min = wrap_day(now_min - lead), .span_min = span};
 }
@@ -135,8 +136,10 @@ bool timeband_clip(TimeBand band, time_t window_epoch, time_t start, time_t end,
     time_t first = start < window_epoch ? window_epoch : start;
     time_t last = occupied_end > window_end ? window_end : occupied_end;
 
-    int from = floor_minutes((long long)first - (long long)window_epoch);
-    int to = ceil_minutes((long long)last - (long long)window_epoch);
+    // both ends are pinned inside the window, so each is at most a day of seconds past its start
+    // an int holds that, and the watch then needs no 64-bit division. that is 754 bytes of libgcc
+    int from = floor_minutes((int)(first - window_epoch));
+    int to = ceil_minutes((int)(last - window_epoch));
 
     if (to <= from)
     {
@@ -192,16 +195,20 @@ int timeband_clip_daily(TimeBand band, int from_min, int to_min,
     return written;
 }
 
-time_t timeband_window_epoch(TimeBand band, time_t midnight, int now_min)
+time_t timeband_window_epoch(TimeBand band, time_t now, int now_min)
 {
-    time_t epoch = midnight + (time_t)band.start_min * SECONDS_PER_MINUTE;
+    // the top of the current minute. every time zone sits a whole number of minutes off UTC, so
+    // the seconds on the epoch are the seconds on the wall clock too
+    time_t minute_start = now - now % SECONDS_PER_MINUTE;
 
-    // a window that opens later in the day than it is now opened yesterday, which is where a
-    // rolling one lands every time it crosses midnight
-    if (band.start_min > wrap_day(now_min))
+    // while the window is open, its start is that many real minutes back
+    int in = timeband_offset(band, now_min);
+    if (in >= 0)
     {
-        epoch -= (time_t)TIMEBAND_DAY_MINUTES * SECONDS_PER_MINUTE;
+        return minute_start - (time_t)in * SECONDS_PER_MINUTE;
     }
 
-    return epoch;
+    // not open yet, so it opens this many minutes ahead
+    int ahead = wrap_day(band.start_min - now_min);
+    return minute_start + (time_t)ahead * SECONDS_PER_MINUTE;
 }

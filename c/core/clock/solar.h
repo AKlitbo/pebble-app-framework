@@ -5,7 +5,12 @@
  * Sunrise, sunset, and now all arrive as minutes past midnight, so this is pure arithmetic with no
  * watch behind it. Reading the phone's strings and the clock is the caller's job. Handing over the
  * three numbers is the seam. Any reading of -1 means the caller had nothing, and every function
- * here answers "no data" for it rather than doing maths on a missing time.
+ * here answers "no data" for it rather than doing maths on a missing time. Sunrise and sunset on
+ * the same minute count as no data too, since a sun that never sets and one that never rises can
+ * both arrive that way.
+ *
+ * The daylight is measured forward round the clock from sunrise, so a sunset after midnight, as in
+ * a high latitude summer, works the same as an ordinary one.
  *
  * @ingroup lib_core
  */
@@ -23,21 +28,20 @@
  * @param rise Sunrise, minutes past midnight, or -1 for no data.
  * @param set Sunset, minutes past midnight, or -1 for no data.
  * @param now The clock, minutes past midnight, or -1 for no data.
- * @return The progress from 0 to 100, or -1 when it is night, a reading is missing, or sunset
- *   does not come after sunrise, so the caller can hide the sun rather than pin it to an end.
+ * @return The progress from 0 to 100, or -1 when it is night or there is no data, so the caller
+ *   can hide the sun rather than pin it to an end.
  */
 int solar_day_progress(int rise, int set, int now);
 
 /**
  * @brief How far through the night it is, from 0 at sunset to 100 at the next sunrise.
  *
- * The night straddles midnight, so the span runs from sunset up over midnight to tomorrow's
- * sunrise, and a "now" in the small hours is measured as if it sat after today's sunset.
+ * The night usually straddles midnight, so the span runs from sunset round to the next sunrise.
  *
  * @param rise Sunrise, minutes past midnight, or -1 for no data.
  * @param set Sunset, minutes past midnight, or -1 for no data.
  * @param now The clock, minutes past midnight, or -1 for no data.
- * @return The progress from 0 to 100, or -1 when it is day or a reading is missing, so the caller
+ * @return The progress from 0 to 100, or -1 when it is day or there is no data, so the caller
  *   knows to draw the sun instead of the moon.
  */
 int solar_night_progress(int rise, int set, int now);
@@ -52,7 +56,7 @@ int solar_night_progress(int rise, int set, int now);
  * @param set Sunset, minutes past midnight, or -1 for no data.
  * @param now The clock, minutes past midnight, or -1 for no data.
  * @param is_sunrise Receives whether the next event is a sunrise. Untouched when there is no data.
- * @return Minutes until the event, or -1 when a reading is missing.
+ * @return Minutes until the event, or -1 when there is no data.
  */
 int solar_next_event(int rise, int set, int now, bool *is_sunrise);
 

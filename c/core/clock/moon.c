@@ -54,6 +54,18 @@ int moon_days_to_phase(time_t utc, bool to_full)
         // just past the target so the next one is almost a whole cycle away
         until += MOON_SYNODIC_SEC;
     }
+    if (until >= MOON_SYNODIC_SEC)
+    {
+        // right on the new moon the age is 0, which puts the target a whole cycle out
+        until -= MOON_SYNODIC_SEC;
+    }
+
+    // half a day either side of the moon counts as now. a moon that was full six hours ago is
+    // still tonight's, and rounding a nearly whole cycle would read 30
+    if (until > MOON_SYNODIC_SEC - 43200)
+    {
+        return 0;
+    }
 
     // whole days rounded to the nearest so half a day out still reads right
     return (int)((until + 43200) / 86400);

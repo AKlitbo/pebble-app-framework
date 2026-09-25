@@ -103,12 +103,19 @@ void test_rolling_pins_a_span_of_nothing(void)
     TEST_ASSERT_EQUAL_INT(1, result.span_min);
 }
 
-/** @brief Asking for a moment further in than the window is long pins it to the far end. */
+/**
+ * @brief Asking for a moment further in than the window is long pins it to the last minute.
+ *
+ * Pinned to the span itself, now sat on the far end, which belongs to the next window. The window
+ * built around now did not hold it, so the now marker was not drawn.
+ */
 void test_rolling_pins_a_lead_past_the_span(void)
 {
-    TimeBand result = timeband_rolling(600, 120, 500);
+    TimeBand band = timeband_rolling(600, 120, 500);
 
-    TEST_ASSERT_EQUAL_INT(480, result.start_min);
+    int result = timeband_offset(band, 600);
+
+    TEST_ASSERT_EQUAL_INT(119, result);
 }
 
 /** @brief A window built from an hour opens on that hour, or the whole strip is drawn shifted from the times labelling it. */
@@ -353,24 +360,66 @@ void test_clip_daily_honours_the_room_it_is_given(void)
     TEST_ASSERT_EQUAL_INT(0, pieces[0].from);
 }
 
-/** @brief A window that opened earlier today sits on today's midnight. */
+/** @brief A window that opened earlier today starts that many minutes back from now. */
 void test_window_epoch_today(void)
 {
     TimeBand band = {.start_min = 480, .span_min = 600};
 
-    time_t result = timeband_window_epoch(band, 86400, 600);
+    time_t result = timeband_window_epoch(band, 86400 + 600 * 60, 600);
 
     TEST_ASSERT_EQUAL_INT(86400 + 480 * 60, (int)result);
 }
 
-/** @brief One that opens later in the day than it is now opened yesterday. */
+/** @brief A rolling window that crossed midnight opened yesterday evening. */
 void test_window_epoch_yesterday_when_it_wrapped(void)
 {
     TimeBand band = {.start_min = EVENING_START, .span_min = EVENING_SPAN};
 
-    time_t result = timeband_window_epoch(band, 86400, 30);
+    time_t result = timeband_window_epoch(band, 86400 + 30 * 60, 30);
 
-    TEST_ASSERT_EQUAL_INT(86400 + EVENING_START * 60 - 86400, (int)result);
+    TEST_ASSERT_EQUAL_INT(86400 - 120 * 60, (int)result);
+}
+
+/** @brief The seconds into the current minute do not move the start off the top of a minute. */
+void test_window_epoch_drops_the_seconds(void)
+{
+    TimeBand band = {.start_min = 480, .span_min = 600};
+
+    time_t result = timeband_window_epoch(band, 86400 + 600 * 60 + 42, 600);
+
+    TEST_ASSERT_EQUAL_INT(86400 + 480 * 60, (int)result);
+}
+
+/**
+ * @brief On the morning the clocks go forward, a window from 10:00 still starts at 10:00.
+ *
+ * That day is only 23 hours long, so midnight plus ten hours is 11:00 on the wall. Counting back
+ * from now gives the real 10:00. Here midnight is epoch 0 and the clocks jumped at 02:00, so 10:30
+ * on the wall is only 9.5 hours past midnight.
+ */
+void test_window_epoch_holds_across_a_clock_change(void)
+{
+    TimeBand band = timeband_from_hour(10, 480);
+    time_t now = 570 * 60;
+
+    time_t result = timeband_window_epoch(band, now, 630);
+
+    TEST_ASSERT_EQUAL_INT(540 * 60, (int)result);
+}
+
+/**
+ * @brief A window that opens later today is today's, not yesterday's.
+ *
+ * An hourly forecast strip starting at the next hour has not opened yet. Read as yesterday's, every
+ * event and reading on it would land a day early.
+ */
+void test_window_epoch_not_open_yet_is_later_today(void)
+{
+    TimeBand band = timeband_from_hour(11, 480);
+
+    time_t result = timeband_window_epoch(band, 86400 + 650 * 60, 650);
+
+    TEST_ASSERT_EQUAL_INT(86400 + 660 * 60, (int)result);
 }
 
 int main(void)
@@ -409,6 +458,9 @@ int main(void)
     RUN_TEST(test_clip_daily_honours_the_room_it_is_given);
     RUN_TEST(test_window_epoch_today);
     RUN_TEST(test_window_epoch_yesterday_when_it_wrapped);
+    RUN_TEST(test_window_epoch_drops_the_seconds);
+    RUN_TEST(test_window_epoch_holds_across_a_clock_change);
+    RUN_TEST(test_window_epoch_not_open_yet_is_later_today);
 
     return UNITY_END();
 }
