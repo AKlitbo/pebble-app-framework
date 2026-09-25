@@ -18,11 +18,29 @@ describe('parseSymbols', () => {
     expect(result).toEqual(['AAPL', 'MSFT', 'TSLA']);
   });
 
-  /** A junk entry (spaces, digits, too long) must be dropped so it never reaches the provider. */
+  /** A junk entry (inner spaces, stray symbols, too long) must be dropped so it never reaches the provider. */
   test('drops entries that are not valid tickers', () => {
-    const result = parseSymbols('AAPL, 123, ,TOOLONGSYMBOLXX, BRK.B');
+    const result = parseSymbols('AAPL, BRK B, ,TOOLONGSYMBOLXXXX, A$B, BRK.B');
 
     expect(result).toEqual(['AAPL', 'BRK.B']);
+  });
+
+  /**
+   * The providers sell global coverage, but a letters-only filter left Tokyo, Hong Kong, index,
+   * currency, and crypto symbols out, so their slot sat empty with nothing on the settings page to
+   * say why.
+   */
+  test.each([
+    ['7203.t', '7203.T'],
+    ['0700.HK', '0700.HK'],
+    ['^gspc', '^GSPC'],
+    ['EURUSD=X', 'EURUSD=X'],
+    ['btc/usd', 'BTC/USD'],
+    ['BINANCE:BTCUSDT', 'BINANCE:BTCUSDT'],
+  ])('keeps %s', (raw, expected) => {
+    const result = parseSymbols(raw);
+
+    expect(result).toEqual([expected]);
   });
 
   /** A punctuation-only entry has no letter, so it must be dropped before it wastes a provider call. */

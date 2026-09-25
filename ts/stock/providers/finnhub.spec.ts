@@ -105,6 +105,25 @@ describe('finnhub provider', () => {
       expect(result.status).toBe('RATE LIMIT');
     });
 
+    /**
+     * The free plan answers 403 for a symbol outside the US, such as SHOP.TO. Read as Net Error it
+     * looked like a connection problem that never cleared, when the fix is a US symbol or another plan.
+     */
+    test('maps a 403 to No Access', () => {
+      const body = JSON.stringify({ error: "You don't have access to this resource." });
+
+      const result = run(BASE, replying({ err: 'http 403', body }, []));
+
+      expect(result.status).toBe('NO ACCESS');
+    });
+
+    /** A bodyless 403 is the same plan limit, so it must not fall through to Net Error either. */
+    test('maps a bodyless 403 to No Access', () => {
+      const result = run(BASE, replying({ err: 'http 403', body: '' }, []));
+
+      expect(result.status).toBe('NO ACCESS');
+    });
+
     /** Some wrappers return a 200 with the error in the body, so a limit message must still read as Rate Limit. */
     test('maps a limit message in a 200 body to Rate Limit', () => {
       const result = run(BASE, replying({ err: null, body: '{"error":"API limit reached. Try again later."}' }, []));

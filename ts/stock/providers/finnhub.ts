@@ -46,6 +46,11 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
       if (String(err).indexOf('429') !== -1) {
         return done(util.status('Rate Limit'));
       }
+      // the free plan answers 403 for any symbol outside the US, which is a plan limit the
+      // wearer can act on rather than a connection problem
+      if (String(err).indexOf('403') !== -1) {
+        return done(util.status('No Access'));
+      }
       return done(util.status('Net Error'));
     }
 

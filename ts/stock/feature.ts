@@ -36,10 +36,11 @@ export interface StockDeps {
 /** The stock settings that mean a refetch is worth it after the config closes. */
 export const STOCK_KEYS = ['STOCK_PROVIDER', 'STOCK_API_KEY', 'STOCK_SYMBOLS'];
 
-// a ticker is upper letters plus dot and dash (BRK.B and other suffixes) up to 12 long.
-// the lookahead demands at least one letter so a punctuation-only entry (a "." or "-") can't
-// slip through and burn a provider call on a bogus symbol
-const STOCK_SYMBOL_RE = /^(?=.*[A-Z])[A-Z.-]{1,12}$/;
+// a ticker is upper letters and digits plus the punctuation the providers use, up to 15 long.
+// that covers 7203.T and 0700.HK, ^GSPC, EURUSD=X, BTC/USD, and BINANCE:BTCUSDT. the lookahead
+// wants at least one letter or digit, so a punctuation-only entry (a "." or "-") can't burn a
+// provider call on a bogus symbol. the watch shows the first 11 characters of a longer one
+const STOCK_SYMBOL_RE = /^(?=.*[A-Z0-9])[A-Z0-9.^=/:_-]{1,15}$/;
 
 // backstop for a stock round whose last quote never calls back: without it the in-flight
 // flag would stay stuck and block every future fetch. set above the 15s per-request timeout

@@ -54,6 +54,15 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
       if (code === 429 || message.indexOf('limit') !== -1 || message.indexOf('credits') !== -1) {
         return done(util.status('Rate Limit'));
       }
+      // a server error says nothing about the key, so it reads as a round that was not answered and
+      // the last good quotes stay
+      if (code >= 500) {
+        return done(util.status('Net Error'));
+      }
+      // a symbol the plan does not cover, the same as Finnhub's free plan outside the US
+      if (code === 403) {
+        return done(util.status('No Access'));
+      }
       if (code === 404 || message.indexOf('not found') !== -1) {
         return done(util.status('No Symbol'));
       }

@@ -116,6 +116,27 @@ describe('twelvedata provider', () => {
       expect(result.status).toBe('INVALID KEY');
     });
 
+    /**
+     * A server error read as INVALID KEY, which shut the quota gate and put a key error over the
+     * saved quotes for a problem on Twelve Data's side.
+     */
+    test('maps a 5xx error body to Net Error', () => {
+      const body = JSON.stringify({ code: 500, message: 'Internal server error', status: 'error' });
+
+      const result = run(BASE, replying(body, []));
+
+      expect(result.status).toBe('NET ERROR');
+    });
+
+    /** A symbol outside the plan is not a bad key, and the wearer can only fix it by changing plan or symbol. */
+    test('maps a 403 plan error to No Access', () => {
+      const body = JSON.stringify({ code: 403, message: '**symbol** 7203 is available starting with Grow', status: 'error' });
+
+      const result = run(BASE, replying(body, []));
+
+      expect(result.status).toBe('NO ACCESS');
+    });
+
     /** A hit cap must win over the No Symbol check so a throttled read never looks empty. */
     test('checks the error body before the quote', () => {
       const body = JSON.stringify({ code: 429, message: 'out of API credits', status: 'error', close: '1.0' });
