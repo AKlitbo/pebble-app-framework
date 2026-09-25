@@ -2,12 +2,16 @@
 // build-pkjs.ts generates a per-face targets/<face>/tsconfig.pkjs.json that extends this and
 // supplies rootDir/outDir/include for the face being built. run via npm run build:pkjs -- <face>.
 // the only tsconfig here that emits rather than just checks.
+// comments are dropped from the emit, since nothing on the phone reads them and they only make the
+// bundle bigger. the framework's ts/ carries no licence header that has to ship. ical.js keeps its
+// own, since it is copied in unchanged rather than compiled
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": false,
-    "allowJs": false
+    "allowJs": false,
+    "removeComments": true
   }
 }

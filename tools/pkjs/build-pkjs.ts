@@ -22,29 +22,23 @@
  * emit/src/pkjs/index.js for a face at the repo root, beside the framework's emit/<framework folder>/ts/**.
  * The wscript tells waf_helpers.build_face which of those the entry is.
  *
- * A target's sources default to its own name, but a face that ships several targets passes
- * the source face as a second argument.
+ * A face that ships several targets (Gridlock's watchface and watchapp) compiles once. The emit tree
+ * does not depend on the target, so the first target's emit/ is copied whole into each of the others.
  *
- * Run via `npm run build:pkjs -- <target> [sourceFace]`, and by build.sh before every Pebble build.
+ * Run via `npm run build:pkjs -- <face>`, and by build.sh before every Pebble build.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { faceRelative } from '../faces.ts';
-import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
+import { appinfoPath, faceRelative } from '../faces.ts';
+import { resolveTargets } from '../manifest/build-manifests.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE, icaljsBundle } from '../paths.ts';
 
 const requireHost = createRequire(import.meta.url);
 
 const ROOT = WORKSPACE;
 const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'config', 'tsconfig.pkjs.json');
-
-// the package is ESM behind an `exports` map and the SDK bundles with webpack 1, which reads
-// neither, so asking for it by name would resolve its ESM build and break. the package ships a
-// prebuilt ES5 CommonJS file for exactly this, and it lands where the framework's
-// ts/calendar/icaljs.d.ts says it does. keeping it a file of its own is also what MPL 2.0 asks of
-// a larger work
-const ICALJS_FROM = path.join(ROOT, 'node_modules', 'ical.js', 'dist', 'ical.es5.min.cjs');
 
 /**
  * The paths this tool reads and writes. The sandbox is named after the build target. Its
@@ -243,33 +237,66 @@ export function copyIcalJs(p: FacePaths): boolean {
   if (!requires(path.join(p.emitPkjs, 'index.js'), path.join(path.dirname(p.icaljsTo), 'ical.js'))) {
     return false;
   }
-  if (!fs.existsSync(ICALJS_FROM)) {
-    throw new Error(`ical.js is missing at ${path.relative(ROOT, ICALJS_FROM)}, run npm install`);
+
+  // the package is ESM behind an `exports` map and the SDK bundles with webpack 1, which reads
+  // neither, so asking for it by name would resolve its ESM build and break. the package ships a
+  // prebuilt ES5 CommonJS file for exactly this, and it lands where the framework's
+  // ts/calendar/icaljs.d.ts says it does. keeping it a file of its own is also what MPL 2.0 asks of
+  // a larger work
+  const from = icaljsBundle();
+  if (!from || !fs.existsSync(from)) {
+    throw new Error('ical.js is missing from node_modules, run npm install');
   }
   fs.mkdirSync(path.dirname(p.icaljsTo), { recursive: true });
-  fs.copyFileSync(ICALJS_FROM, p.icaljsTo);
+  fs.copyFileSync(from, p.icaljsTo);
   return true;
 }
 
+/** What building a face's pkjs did, for the one line build.sh prints. */
+export interface FaceBuild {
+  targets: string[];
+  generated: string[];
+  icaljs: boolean;
+}
+
+/**
+ * Builds emit/ for every target a face declares.
+ *
+ * The first target compiles. Every other one gets a copy of that emit/, since the tree keeps the
+ * source's shape and each sandbox sits at the same depth, so the files come out the same byte for
+ * byte. Only the compiling target gets a tsconfig written.
+ *
+ * @param face The face whose targets to build.
+ * @return The targets built, the generated components copied, and whether ical.js went in.
+ */
+export function buildFace(face: string): FaceBuild {
+  const targets = resolveTargets(JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8'))).map((target) => target.name);
+  const [first, ...rest] = targets.map((target) => facePaths(target, face));
+
+  cleanEmit(first);
+  writeTsconfig(face, first);
+  compile(first);
+  const generated = copyGenerated(first);
+  const icaljs = copyIcalJs(first);
+
+  for (const p of rest) {
+    cleanEmit(p);
+    fs.cpSync(first.emit, p.emit, { recursive: true });
+  }
+
+  return { targets, generated, icaljs };
+}
+
 function main(): void {
-  const target = process.argv[2];
-  // the sandbox is the target; its sources are the source face. they match for a single-target
-  // face, so the second arg is optional and defaults to the target name
-  const sourceFace = process.argv[3] || target;
-  if (!target) {
-    console.error('usage: build-pkjs.ts <target> [sourceFace]');
+  const face = process.argv[2];
+  if (!face) {
+    console.error('usage: build-pkjs.ts <face>');
     process.exit(1);
   }
 
-  const p = facePaths(target, sourceFace);
-  cleanEmit(p);
-  writeTsconfig(sourceFace, p);
-  compile(p);
-  const names = copyGenerated(p);
-  const copiedIcal = copyIcalJs(p);
-
-  const where = path.relative(ROOT, p.emitPkjs).split(path.sep).join('/');
-  console.log(`built ${target} emit/ and copied ${names.length} generated components into ${where}/${copiedIcal ? ', plus ical.js' : ''}`);
+  const built = buildFace(face);
+  const where = path.relative(ROOT, facePaths(built.targets[0], face).emitPkjs).split(path.sep).join('/');
+  console.log(`built emit/ for ${built.targets.join(', ')} and copied ${built.generated.length} generated components into ${where}/${built.icaljs ? ', plus ical.js' : ''}`);
 }
 
 if (import.meta.main) {

@@ -7,6 +7,10 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { createRequire } from 'node:module';
+
+/** Where a face keeps its appinfo, relative to the face's own folder. */
+export const APPINFO_REL = path.join('config', 'pebble.appinfo.json');
 
 /** Whether a folder's package.json lists a workspace by name, in the plain list form or under packages. */
 function listsWorkspace(dir: string, name: string): boolean {
@@ -34,7 +38,7 @@ function listsWorkspace(dir: string, name: string): boolean {
 export function workspaceFor(engine: string): string {
   const parent = path.dirname(engine);
   const holdsFaces = fs.existsSync(path.join(parent, 'watchfaces'))
-    || fs.existsSync(path.join(parent, 'config', 'pebble.appinfo.json'));
+    || fs.existsSync(path.join(parent, APPINFO_REL));
   return holdsFaces && listsWorkspace(parent, path.basename(engine)) ? parent : engine;
 }
 
@@ -53,3 +57,21 @@ export const MOUNTED = WORKSPACE !== ENGINE;
  * a build uses this rather than assuming a name.
  */
 export const ENGINE_REL = path.relative(WORKSPACE, ENGINE).split(path.sep).join('/') || '.';
+
+/**
+ * Where ical.js's prebuilt ES5 CommonJS file sits, found the way node finds the package from the
+ * framework: its own node_modules first, then the mounting repo's once npm workspaces hoist it.
+ *
+ * The package's `exports` map blocks asking for the file by its subpath, so this resolves the
+ * package's `require` entry, which sits in the same dist/ folder.
+ *
+ * @return The file's absolute path, or null when ical.js is not installed.
+ */
+export function icaljsBundle(): string | null {
+  try {
+    const entry = createRequire(path.join(ENGINE, 'package.json')).resolve('ical.js');
+    return path.join(path.dirname(entry), 'ical.es5.min.cjs');
+  } catch {
+    return null;
+  }
+}

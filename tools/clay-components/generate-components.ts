@@ -101,28 +101,29 @@ function resolveIn(roots: Roots, rel: string): string | null {
 }
 
 /**
- * The same piece as it would sit under every other root, for the esbuild fallback.
+ * Where a path inside any root's builder dir could come from, in precedence order.
  *
- * Returns candidates rather than one path, because with three roots a miss under the face can be
- * satisfied by either the family or lib.
+ * The path is taken back to its place below the builder dir and tried under every root, face
+ * first, whichever root the import was written in. A path outside every builder dir only has the
+ * one place it names.
  *
- * @param roots The roots to swap between.
- * @param full The full path to the piece under its current root.
- * @return The same relative path under each of the other roots.
+ * @param roots The roots to try it under.
+ * @param full The full path an import resolved to.
+ * @return The same relative path under each root, face first, or just the path itself.
  */
-function swapRoot(roots: Roots, full: string): string[] {
+function inPrecedence(roots: Roots, full: string): string[] {
   const all = rootList(roots);
 
   for (const from of all) {
     const rel = path.relative(builderDir(from), full);
-    if (rel.startsWith('..')) {
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
       continue;
     }
 
-    return all.filter((to) => to !== from).map((to) => path.join(builderDir(to), rel));
+    return all.map((to) => path.join(builderDir(to), rel));
   }
 
-  return [];
+  return [full];
 }
 
 /** One component's build recipe: which pieces to bundle and what to emit. */
@@ -201,11 +202,12 @@ function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string)
 }
 
 /**
- * Lets a piece under one root import a file that only exists under another.
+ * Resolves every relative import inside a builder dir through the roots, face first.
  *
  * A shared piece can name a face-specific neighbour (the layout builder's geometry, say, or that
- * face's presets) and a face piece can name a shared one. esbuild is handed the miss and retries
- * it under the other roots, so no side has to spell out where the others live.
+ * face's presets) and a face piece can name a shared one, so no side has to spell out where the
+ * others live. A face's own copy wins even when a core or lib piece is the one importing it, the
+ * same way the manifests themselves shadow each other.
  *
  * There is no bail on a missing core: a face in no family still reaches lib through here.
  *
@@ -222,9 +224,8 @@ function overlayPlugin(roots: Roots): esbuild.Plugin {
         }
 
         const wanted = path.resolve(args.resolveDir, args.path);
-        const candidates = [wanted, ...swapRoot(roots, wanted)];
 
-        for (const candidate of candidates) {
+        for (const candidate of inPrecedence(roots, wanted)) {
           for (const suffix of ['', '.ts', '.js', '.json', '/index.ts', '/index.js']) {
             const full = candidate + suffix;
             if (fs.existsSync(full) && fs.statSync(full).isFile()) {
@@ -257,6 +258,9 @@ async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: 
       loader: 'js',
     },
     plugins: [overlayPlugin(roots)],
+    // esbuild names each bundled module in a comment relative to this folder. left to default it
+    // is wherever the command ran from, and a run from a subfolder would rewrite every path
+    absWorkingDir: ROOT,
     bundle: true,
     format: 'iife',
     globalName: '__clayComponent',
@@ -270,6 +274,10 @@ async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: 
 
 /**
  * Trims blank edges and indents every non empty line for the initialize body.
+ *
+ * The indent reaches the lines inside a multi-line template literal too, which would change that
+ * string. No builder piece holds one, and keeping them apart means parsing the bundle, where the
+ * indent only has to keep the generated file readable.
  *
  * @param text The block to indent.
  * @param indent The indent to add to each non empty line.
@@ -302,16 +310,33 @@ function buildTemplate(templatePath: string): string {
  * collapsed, punctuation tightened. The source files stay pretty, only the
  * inlined copy shrinks.
  *
+ * A quoted string, such as a content value or an attribute selector, is kept as written, since
+ * squeezing the spaces or commas inside it changes the text it shows or what it matches.
+ *
  * @param css The stylesheet source to squeeze.
  * @return The squeezed stylesheet, ready to inline.
  */
 function minifyCss(css: string): string {
-  return css
-    .replace(/\/\*[^]*?\*\//g, '')
+  // comments and quoted strings come out in one pass, so a quote inside a comment cannot start a
+  // string. each string waits under a marker the squeeze cannot touch and goes back after it
+  const strings: string[] = [];
+  const held = css.replace(/\/\*[^]*?\*\/|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g, (match) => {
+    if (match.startsWith('/*')) {
+      return '';
+    }
+    strings.push(match);
+    return `@@css-string-${strings.length - 1}@@`;
+  });
+
+  return held
     .replace(/\s+/g, ' ')
-    .replace(/\s*([{}:;,>])\s*/g, '$1')
+    // a space before a colon can be a descendant selector, as in .grid :first-child, so only the
+    // space after one comes out
+    .replace(/\s*([{};,>])\s*/g, '$1')
+    .replace(/:\s+/g, ':')
     .replace(/;\}/g, '}')
-    .trim();
+    .trim()
+    .replace(/@@css-string-(\d+)@@/g, (marker, index: string) => strings[Number(index)]);
 }
 
 /**
@@ -418,7 +443,7 @@ export {
   builderDir,
   rootsFor,
   resolveIn,
-  swapRoot,
+  inPrecedence,
   overlayPlugin,
   findManifests,
   findInitPiece,

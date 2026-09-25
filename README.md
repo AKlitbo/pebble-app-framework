@@ -6,7 +6,7 @@ The shared framework behind my Pebble watchfaces and watchapps. It holds the dev
 
 **Framework Code**
 
-* **`c/`**: the device code. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/spec/` holds the host test harness.
+* **`c/`**: the device code. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/dev/` is the screenshot harness, which no release build links. `c/spec/` holds the host test harness.
 * **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its `testing/` folder holds helpers the TypeScript specs share and never ships to a face.
 * **`py/`**: the waf helpers that stage and build a face.
 * **`css/`**: the Pebble-64 colour palette the frame backgrounds use.
@@ -47,8 +47,9 @@ A repo of faces reaches the framework's tools through scripts in its own `packag
 | `gen:icons` | `tools/icons/generate-icons.ts` | optional |
 | `gen:frame` | `tools/frame/generate-frame.ts` | required, then the frame |
 | `dev:clay` | `tools/dev/clay-preview.ts` | required |
+| `typecheck` | `tools/typecheck.ts` | none |
 
-The folder can have any name, as long as it sits straight under the repo root and the repo's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore.
+The folder can have any name, as long as it sits straight under the repo root and the repo's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework's C into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore.
 
 Each repo pins an exact framework commit, so a framework change reaches a face only when that repo moves its `lib` pointer.
 

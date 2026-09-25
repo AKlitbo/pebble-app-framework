@@ -6,9 +6,9 @@
 # folders below when it writes this sandbox (targets/<target>/), so the build
 # never has to work out where the framework or the face sits.
 #
-# Stage the face's sources, its family core and the framework into this folder,
-# then hand the build (sources, per-platform compile, bundle, .pbw archive) to
-# the framework's py/waf_helpers.py. Only those three folders differ between
+# Stage the face's sources, its family core and the framework's C into this
+# folder, then hand the build (sources, per-platform compile, bundle, .pbw
+# archive) to the framework's py/waf_helpers.py. Only those three folders differ between
 # targets, which is why this is generated rather than committed per face.
 # ==============================================================================
 import os.path
@@ -58,5 +58,4 @@ def build(ctx):
 
     ctx.load('pebble_sdk')
 
-    waf_helpers.build_conditions(ctx, SOURCE)
     waf_helpers.build_face(ctx, SOURCE, [] if WATCHFACE else ['-DBUILD_WATCHAPP'])

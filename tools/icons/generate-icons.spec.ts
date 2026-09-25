@@ -19,7 +19,7 @@ import path from 'node:path';
 import { describe, test, expect } from 'vitest';
 import { whiten, resourceName, buildMedia, replaceMediaArray } from './generate-icons';
 import type { IconManifest } from './generate-icons';
-import { listFaceNames, faceDir } from '../faces';
+import { appinfoPath, listFaceNames, faceDir } from '../faces';
 
 describe('whiten', () => {
   /** A black fill left untouched renders an invisible glyph on the watch's dark face. */
@@ -110,6 +110,18 @@ describe('buildMedia', () => {
     expect(result.map((entry) => entry.name)).toEqual(['ICON_WI_CLEAR', 'ICON_BLUETOOTH']);
   });
 
+  /**
+   * An icon packed in a set format or only for some platforms loses that on a re-gen otherwise,
+   * and the next build packs it in the default format with nothing to say so.
+   */
+  test('keeps the extra fields an existing icon entry carries', () => {
+    const media = [{ type: 'bitmap', name: 'ICON_BLUETOOTH', file: 'icons/bluetooth.png', memoryFormat: '1Bit' }];
+
+    const result = buildMedia(media, manifest);
+
+    expect(result[1]).toEqual({ type: 'bitmap', name: 'ICON_BLUETOOTH', file: 'icons/bluetooth.png', memoryFormat: '1Bit' });
+  });
+
   /** Backgrounds and fonts are not the generator's to touch, so they keep their place around the icon block. */
   test('keeps non-icon entries in order with icons landing where the first icon sat', () => {
     const media = [
@@ -164,6 +176,20 @@ describe('replaceMediaArray', () => {
     expect(JSON.parse(result)).toHaveProperty('resources.media');
   });
 
+  /**
+   * A bitmap that is not an icon keeps every field it had. Writing only type, name, and file
+   * dropped a background's memoryFormat and targetPlatforms on every gen:icons run, so it came
+   * back at the wrong colour depth or on platforms it was never meant for.
+   */
+  test('keeps the extra fields on a bitmap that is not an icon', () => {
+    const raw = '{ "media": [] }';
+    const background = { type: 'bitmap', name: 'IMAGE_BG', file: 'bg.png', memoryFormat: 'Smallest', targetPlatforms: ['emery'] };
+
+    const result = replaceMediaArray(raw, [background]);
+
+    expect(JSON.parse(result).media).toEqual([background]);
+  });
+
   /** The splice must survive an array-valued field inside an entry rather than closing the media array early. */
   test('does not stop at a nested array inside an entry', () => {
     const raw = '{ "media": [ { "type": "font", "name": "F", "file": "f.ttf", "targetPlatforms": ["emery"] } ] }';
@@ -189,11 +215,6 @@ describe('replaceMediaArray', () => {
 /** Where a face declares the icons it wants. */
 function manifestPath(face: string): string {
   return path.join(faceDir(face), 'resources', 'icons.json');
-}
-
-/** The config the generator rewrites, whose media array names every resource the C side loads. */
-function appinfoPath(face: string): string {
-  return path.join(faceDir(face), 'config', 'pebble.appinfo.json');
 }
 
 /** The media array out of a face's config, wherever that config keeps it. */

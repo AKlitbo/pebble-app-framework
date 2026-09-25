@@ -3,10 +3,6 @@
 // run by npm run typecheck. gen:<face>:clay is what actually bundles those pieces
 {
   "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "lib": ["ES2020", "DOM"],
-    "noEmit": true
-  },
   "include": ["../../src/pkjs/clay/builder/**/*.ts", "../../watchfaces/**/pkjs/clay/builder/**/*.ts", "../ts/clay/builder/**/*.ts"],
   "exclude": ["../../node_modules", "../../**/*.spec.ts", "../../**/*.manifest.ts"]
 }

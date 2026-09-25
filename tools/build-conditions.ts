@@ -11,21 +11,23 @@
  * Each header carries its own Doxygen blocks, so the generated lookups show up in the framework docs
  * like any hand-written file.
  *
- * It only touches the filesystem, with no npm dependencies, so each face's wscript can run it
- * under the SDK's node with no node_modules install.
+ * The headers are committed. The host C suite and Doxygen read them straight from the tree, a face
+ * build compiles them as they are, and the spec fails when one no longer matches its source. A header
+ * whose contents would not change is left alone.
  *
- * Run via `npm run build:conditions`, or automatically by each face's build.
+ * Run via `npm run build:conditions` after editing either source.
  */
-import fs from 'node:fs';
 import path from 'node:path';
 import conditionVocabulary from '../ts/weather/conditions.ts';
 import { WIRE_CAPS } from '../ts/pkjs/wire.ts';
 import type { ConditionVocabulary } from '../ts/weather/conditions.ts';
+import { writeIfChanged } from './files.ts';
+import { ENGINE, WORKSPACE } from './paths.ts';
 
-const WEATHER_DIR = path.resolve(import.meta.dirname, '..', 'c', 'pebble', 'ui', 'weather');
+const WEATHER_DIR = path.join(ENGINE, 'c', 'pebble', 'ui', 'weather');
 const ICONS_OUT = path.join(WEATHER_DIR, 'icons_table.g.h');
 const LABELS_OUT = path.join(WEATHER_DIR, 'labels_table.g.h');
-const WIRE_CAPS_OUT = path.resolve(import.meta.dirname, '..', 'c', 'core', 'wire', 'wire_caps.g.h');
+const WIRE_CAPS_OUT = path.join(ENGINE, 'c', 'core', 'wire', 'wire_caps.g.h');
 
 /**
  * The auto-generated banner, the Doxygen file block, and `#pragma once` every emitted header opens
@@ -257,14 +259,13 @@ export const GENERATED: GeneratedHeader[] = [
   { out: WIRE_CAPS_OUT, build: () => buildWireCaps(WIRE_CAPS, conditionVocabulary.FORECAST_NIGHT_BIT) },
 ];
 
-/** Writes every generated header from its source and logs what it wrote. */
+/** Writes every generated header that changed from its source and logs which ones it wrote. */
 function main() {
-  const root = path.resolve(import.meta.dirname, '..', '..');
+  const written = GENERATED.filter((header) => writeIfChanged(header.out, header.build()))
+    .map((header) => path.relative(WORKSPACE, header.out).split(path.sep).join('/'));
 
-  GENERATED.forEach((header) => fs.writeFileSync(header.out, header.build()));
-
-  const written = GENERATED.map((header) => path.relative(root, header.out)).join(', ');
-  console.log(`generated ${written} (${conditionVocabulary.conditions.length} conditions)`);
+  const count = conditionVocabulary.conditions.length;
+  console.log(written.length ? `generated ${written.join(', ')} (${count} conditions)` : `every header already matches (${count} conditions)`);
 }
 
 if (import.meta.main) {

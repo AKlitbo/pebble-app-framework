@@ -12,7 +12,7 @@
     "test": "vitest run --config config/vitest.config.ts",
     "test:coverage": "vitest run --config config/vitest.config.ts --coverage",
     "lint": "eslint . --config config/eslint.config.ts",
-    "typecheck": "tsc -p tsconfig.json && tsc -p config/tsconfig.builder.json && tsc -p config/tsconfig.tools.json && tsc -p config/tsconfig.spec.json",
+    "typecheck": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/typecheck.ts",
     "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts"
   },
   "devDependencies": {

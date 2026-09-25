@@ -34,7 +34,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
 import type { MediaEntry } from '../manifest/build-manifests.ts';
-import { faceDir as resolveFaceDir, listFaceNames } from '../faces.ts';
+import { appinfoPath, faceDir, listFaceNames } from '../faces.ts';
 import { WORKSPACE } from '../paths.ts';
 
 /** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */
@@ -45,11 +45,6 @@ export type IconManifest = Record<string, IconSpec>;
 
 const ROOT = WORKSPACE;
 const VENDOR = path.resolve(ROOT, 'vendor');
-
-/** The face's folder, which owns its resources/ and config/pebble.appinfo.json. */
-function faceRoot(face: string): string {
-  return resolveFaceDir(face);
-}
 
 // manifest svg key -> the vendor subdir holding those svgs
 const VENDOR_DIRS: Record<string, string> = {
@@ -189,14 +184,18 @@ function isIconEntry(entry: MediaEntry): boolean {
  * Merges a manifest's icons into an existing media array. Non-icon entries (fonts,
  * background images) keep their place and order. The icon block is replaced in
  * full and lands where the first old icon sat (or just before the fonts on a face
- * that had none). Pure so it can be tested without touching disk.
+ * that had none). An icon the old block already had keeps its own extra fields, such
+ * as a `memoryFormat` or `targetPlatforms`, while its path points at the face's own
+ * render. Pure so it can be tested without touching disk.
  *
  * @param media The face's current media array.
  * @param manifest The face's icons.json manifest.
  * @return The media array with its icon block replaced from the manifest.
  */
 export function buildMedia(media: MediaEntry[], manifest: IconManifest): MediaEntry[] {
+  const previous = new Map(media.filter(isIconEntry).map((entry) => [entry.name, entry]));
   const icons: MediaEntry[] = Object.keys(manifest).map((name) => ({
+    ...previous.get(resourceName(name)),
     type: 'bitmap',
     name: resourceName(name),
     file: `icons/${name}.png`,
@@ -215,10 +214,15 @@ export function buildMedia(media: MediaEntry[], manifest: IconManifest): MediaEn
 }
 
 // serialize one media entry. bitmaps ride on a single line for a scannable list
-// fonts keep their multi-line block so their extra fields (like characterRegex) stay put
+// fonts keep their multi-line block so their extra fields (like characterRegex) stay put.
+// every field a bitmap has goes on its line, so a background's memoryFormat or
+// targetPlatforms survives. type, name, and file lead so a plain entry reads the same as always
 function formatEntry(entry: MediaEntry, indent: string): string {
   if (entry.type === 'bitmap') {
-    return `${indent}{ "type": "bitmap", "name": "${entry.name}", "file": "${entry.file}" }`;
+    const lead = ['type', 'name', 'file'].filter((key) => key in entry);
+    const keys = [...lead, ...Object.keys(entry).filter((key) => lead.indexOf(key) === -1)];
+    const fields = keys.map((key) => `${JSON.stringify(key)}: ${JSON.stringify((entry as Record<string, unknown>)[key])}`);
+    return `${indent}{ ${fields.join(', ')} }`;
   }
 
   return JSON.stringify(entry, null, 2)
@@ -296,29 +300,42 @@ function syncMedia(pkgPath: string, manifest: IconManifest): void {
   fs.writeFileSync(pkgPath, replaceMediaArray(raw, buildMedia(media, manifest)));
 }
 
+// how many icons render at once. each one is a few sharp passes and a pixel scan, and a face
+// can ask for over a hundred, so one at a time leaves most of the machine idle
+const RENDER_CONCURRENCY = 8;
+
 // render every icon a manifest asks for into the face's resources/icons dir
-async function renderFace(faceDir: string, manifest: IconManifest): Promise<number> {
-  const outDir = path.join(faceDir, 'resources', 'icons');
+async function renderFace(dir: string, manifest: IconManifest): Promise<number> {
+  const outDir = path.join(dir, 'resources', 'icons');
   await fs.promises.mkdir(outDir, { recursive: true });
 
-  for (const [name, spec] of Object.entries(manifest)) {
-    const src = svgPath(spec.svg);
-    try {
-      await fs.promises.access(src);
-    } catch {
-      throw new Error(`Missing source: ${src} (for ${name})`);
+  const entries = Object.entries(manifest);
+  let next = 0;
+
+  // each worker takes the next icon off the shared list until none are left
+  const worker = async (): Promise<void> => {
+    while (next < entries.length) {
+      const [name, spec] = entries[next++];
+      const src = svgPath(spec.svg);
+      try {
+        await fs.promises.access(src);
+      } catch {
+        throw new Error(`Missing source: ${src} (for ${name})`);
+      }
+
+      const svg = await fs.promises.readFile(src, 'utf8');
+      await render(whiten(svg), spec.size, path.join(outDir, `${name}.png`), { trim: Boolean(spec.trim) });
     }
+  };
 
-    const svg = await fs.promises.readFile(src, 'utf8');
-    await render(whiten(svg), spec.size, path.join(outDir, `${name}.png`), { trim: Boolean(spec.trim) });
-  }
+  await Promise.all(Array.from({ length: Math.min(RENDER_CONCURRENCY, entries.length) }, worker));
 
-  return Object.keys(manifest).length;
+  return entries.length;
 }
 
 /** Renders every icon a face's manifest asks for, then syncs its media list from the same manifest. */
 async function iconsFor(face: string): Promise<void> {
-  const dir = faceRoot(face);
+  const dir = faceDir(face);
   // resources (icons.json + rendered PNGs) and the appinfo live under the face dir
   const manifestPath = path.join(dir, 'resources', 'icons.json');
   if (!fs.existsSync(manifestPath)) {
@@ -329,7 +346,7 @@ async function iconsFor(face: string): Promise<void> {
   const rendered = await renderFace(dir, manifest);
   // the media list is synced into the face's appinfo. its package.json is regenerated from
   // it at build time (or with npm run build:manifests -- <face>)
-  syncMedia(path.join(dir, 'config', 'pebble.appinfo.json'), manifest);
+  syncMedia(appinfoPath(face), manifest);
 
   console.log(`Rendered ${rendered} icons for ${face}.`);
 }
@@ -337,7 +354,7 @@ async function iconsFor(face: string): Promise<void> {
 /** Renders the icons for the face named on the command line, or for every face with a resources/icons.json. */
 async function main(): Promise<void> {
   const face = process.argv[2];
-  const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(path.join(faceRoot(name), 'resources', 'icons.json')));
+  const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(path.join(faceDir(name), 'resources', 'icons.json')));
   for (const name of faces) {
     await iconsFor(name);
   }

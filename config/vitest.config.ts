@@ -10,21 +10,18 @@
  *
  * Run via npm test, or npm run test:watch and test:coverage.
  */
-import fs from 'node:fs';
 import path from 'node:path';
 import { defineConfig } from 'vitest/config';
+import { icaljsBundle } from '../tools/paths.ts';
 
 // where the watch's ical.js actually lives. ts/calendar/icaljs.d.ts describes it but the source
 // tree has no such file. the build copies ical.js's prebuilt ES5 CommonJS bundle into emit/ beside
 // the compiled calendar code, so the specs aim at that same bundle and run what the watch runs.
-// it sits in the framework's own node_modules on its own, and in the mounting repo's once npm
-// workspaces hoist it there
-const ICALJS_REL = path.join('node_modules', 'ical.js', 'dist', 'ical.es5.min.cjs');
-const ICALJS_CANDIDATES = [
-  path.resolve(import.meta.dirname, '..', ICALJS_REL),
-  path.resolve(import.meta.dirname, '..', '..', ICALJS_REL),
-];
-const ICALJS = ICALJS_CANDIDATES.find((candidate) => fs.existsSync(candidate)) ?? ICALJS_CANDIDATES[0];
+// the lookup is the one the build uses, so the specs and the build can never find different copies
+const ICALJS = icaljsBundle();
+if (!ICALJS) {
+  throw new Error('ical.js is not installed, run npm install');
+}
 
 // the framework's folder as seen from wherever the run starts. empty in the framework on its own, and
 // whatever name a repo of faces mounts it under otherwise
@@ -45,6 +42,9 @@ export default defineConfig({
     exclude: ['**/node_modules/**', '**/build/**', 'targets/**', `${ENGINE_PREFIX}docs/**`],
     // dotenv/config reads .env for the live-API vars
     setupFiles: ['dotenv/config'],
+    // a zone whose clocks change, so a spec built from local dates runs across daylight saving
+    // wherever it runs. a UTC runner, or a zone that never changes, passed the old all-day sum too
+    env: { TZ: 'America/Toronto' },
     // generous enough to cover a live API round-trip when those blocks are on
     testTimeout: 15000,
     // text for the console. html for the pages site. json-summary for the landing-page percent

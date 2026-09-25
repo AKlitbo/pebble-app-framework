@@ -11,8 +11,11 @@
  * They run where the framework is mounted beside faces that commit components.
  */
 
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { describe, test, expect } from 'vitest';
 import { listFaceNames, faceDir } from '../faces';
@@ -24,6 +27,7 @@ import {
   buildEntrySource,
   minifyCss,
   buildComponentSource,
+  inPrecedence,
 } from './generate-components';
 
 // the manifests are loaded by path, the same way the generator does it
@@ -31,6 +35,9 @@ const requireManifest = createRequire(import.meta.url);
 
 // a face-shaped folder holding one small recipe, laid out the way the generator reads a face
 const FIXTURE_FACE = path.join(import.meta.dirname, 'fixtures', 'face');
+
+// the generator itself, for the spec that has to run it in a node of its own
+const GENERATOR = path.join(import.meta.dirname, 'generate-components.ts');
 
 /** The fixture's builder roots, shaped the way rootsFor builds them for a face in no family. */
 const FIXTURE_ROOTS = {
@@ -87,6 +94,43 @@ describe('buildEntrySource', () => {
   });
 });
 
+describe('inPrecedence', () => {
+  // three made-up roots laid out the way rootsFor builds them for a face in a family. nothing is read
+  // from disk, so the folders never have to exist
+  const base = path.resolve('/repo');
+  const ROOTS = {
+    face: { base: path.join(base, 'watchfaces', 'mosaic', 'gridlock', 'src'), builder: path.join('pkjs', 'clay', 'builder') },
+    core: { base: path.join(base, 'watchfaces', 'mosaic', 'core'), builder: path.join('pkjs', 'clay', 'builder') },
+    lib: { base: path.join(base, 'lib', 'ts'), builder: path.join('clay', 'builder') },
+    faceRoot: path.join(base, 'watchfaces', 'mosaic', 'gridlock'),
+  };
+
+  /**
+   * A core piece importing ./presets has to get the face's presets when the face has its own. Trying
+   * the importer's own folder first would hand it core's copy, and the face's override would never ship.
+   */
+  test('tries a core import under the face first', () => {
+    const wanted = path.join(base, 'watchfaces', 'mosaic', 'core', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets');
+
+    const result = inPrecedence(ROOTS, wanted);
+
+    expect(result).toEqual([
+      path.join(base, 'watchfaces', 'mosaic', 'gridlock', 'src', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets'),
+      wanted,
+      path.join(base, 'lib', 'ts', 'clay', 'builder', 'ts', 'layout', 'presets'),
+    ]);
+  });
+
+  /** A piece reaching outside every builder dir names one real file, so there is nothing to shadow. */
+  test('leaves a path outside every builder dir alone', () => {
+    const wanted = path.join(base, 'lib', 'ts', 'clay', 'location-component');
+
+    const result = inPrecedence(ROOTS, wanted);
+
+    expect(result).toEqual([wanted]);
+  });
+});
+
 describe('minifyCss', () => {
   /** An over-eager squeeze that eats a space inside a value breaks the rule on the config page. */
   test('strips comments and tightens punctuation without touching values', () => {
@@ -95,6 +139,18 @@ describe('minifyCss', () => {
     const result = minifyCss(css);
 
     expect(result).toBe('.a>.b:active{color:#fff;border:1px solid rgba(0,0,0,0.6)}');
+  });
+
+  /**
+   * The squeeze ran inside quoted strings too, so a content value of "A, B" showed as "A,B" and an
+   * attribute selector with a space in it stopped matching.
+   */
+  test('keeps quoted strings as written', () => {
+    const css = '.a::after {\n  content: "A, B";\n}\n[title="a  b"] { color: #fff; }\n';
+
+    const result = minifyCss(css);
+
+    expect(result).toBe('.a::after{content:"A, B"}[title="a  b"]{color:#fff}');
   });
 });
 
@@ -116,6 +172,28 @@ describe('buildComponentSource', () => {
 
     expect(result.source).toContain(`template: ${JSON.stringify('<div class="sample"><span class="sample-label"></span></div>')}`);
     expect(result.source).toContain(`style: ${JSON.stringify('.sample{color:#fff}')}`);
+  });
+
+  /**
+   * The output names each bundled module by path, and those paths used to follow the folder the
+   * command ran from. A run from a subfolder rewrote every committed component and failed the
+   * staleness check below with nothing really changed.
+   */
+  test('gives the same source whatever folder it runs from', async () => {
+    const { manifestPath } = fixtureManifest();
+    const expected = (await buildComponentSource(manifestPath, FIXTURE_ROOTS)).source;
+    // esbuild reads the working folder once as it loads, so only a fresh node started somewhere
+    // else shows the difference. a chdir in this process would not reach it
+    const script = [
+      `import { buildComponentSource } from ${JSON.stringify(pathToFileURL(GENERATOR).href)};`,
+      `const result = await buildComponentSource(${JSON.stringify(manifestPath)}, ${JSON.stringify(FIXTURE_ROOTS)});`,
+      'process.stdout.write(result.source);',
+    ].join('\n');
+    const args = ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', '--input-type=module', '-e', script];
+
+    const result = execFileSync(process.execPath, args, { cwd: os.tmpdir(), encoding: 'utf8' });
+
+    expect(result).toBe(expected);
   });
 
   /** The pkjs build copies components out of the face, so one landing anywhere else never ships. */

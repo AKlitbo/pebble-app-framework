@@ -14,6 +14,7 @@ import { findFaces, familyCoreFor } from './faces';
 const WORKSPACES = path.join(import.meta.dirname, 'fixtures', 'workspaces');
 const ONE_FACE = path.join(WORKSPACES, 'one-face');
 const MANY_FACES = path.join(WORKSPACES, 'many-faces');
+const CLASHING_FACES = path.join(WORKSPACES, 'clashing-faces');
 
 describe('findFaces', () => {
   /** The root folder is named after wherever the repo was cloned, so the name has to come from the appinfo. */
@@ -31,6 +32,16 @@ describe('findFaces', () => {
       { name: 'alpha', rel: 'watchfaces/alpha' },
       { name: 'beta', rel: 'watchfaces/family/beta' },
     ]);
+  });
+
+  /**
+   * Two families can each hold a face with the same folder name. Both builds would share one sandbox
+   * and one release tag, and the lookup quietly picked one, so the clash has to stop the tools.
+   */
+  test('refuses two faces with the same name', () => {
+    const result = () => findFaces(CLASHING_FACES);
+
+    expect(result).toThrow(/two faces are named "clock"/);
   });
 
   /** A folder holding no faces, like a framework on its own, has nothing to build. */

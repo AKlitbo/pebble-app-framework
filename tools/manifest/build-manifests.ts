@@ -11,13 +11,14 @@
  * sandbox targets/<target name>/, so there is one manifest per target rather than per face.
  * The manifest is a gitignored build input written as plain JSON. Nobody reads it by hand.
  * `pebble build` needs package.json to exist before it runs, so each build regenerates it
- * via build.sh.
+ * via build.sh. A file whose contents would not change is left alone, so its mtime does too.
  *
  * Usage: node tools/manifest/build-manifests.ts --faces | [--targets] <face>
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { faceDir, faceRelative, familyCoreFor, listFaceNames } from '../faces.ts';
+import { appinfoPath, faceRelative, familyCoreFor, listFaceNames } from '../faces.ts';
+import { writeIfChanged } from '../files.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
 
 const ROOT = WORKSPACE;
@@ -27,19 +28,20 @@ const ROOT_PKG = path.join(ROOT, 'package.json');
 // report "This project is very outdated" instead of anything useful
 const WSCRIPT_TEMPLATE = path.join(ENGINE, 'tools', 'waf', 'wscript.template');
 
-/** A face's config/pebble.appinfo.json. */
-function appinfoPath(face: string): string {
-  return path.join(faceDir(face), 'config', 'pebble.appinfo.json');
-}
-
 /**
  * One entry in config/pebble.appinfo.json's resources.media: a bitmap or font the SDK
  * packs. generate-icons.ts rewrites the bitmap rows, so it reads this shape too.
  */
 export type MediaEntry = { type: string; name: string; file?: string; menuIcon?: boolean; [key: string]: unknown };
 
-/** The per-face build identity: the bits that make a manifest a watchface or a watchapp. */
-type Target = { name: string; watchface: boolean; menuIcon?: string };
+/**
+ * The per-face build identity: the bits that make a manifest a watchface or a watchapp.
+ *
+ * A target shares the face's uuid unless it names its own. Sharing one means the watch holds only
+ * one of the face's targets at a time and they share the phone's saved settings. A uuid of its own
+ * lets a target be installed beside the others, with settings of its own.
+ */
+type Target = { name: string; watchface: boolean; menuIcon?: string; uuid?: string };
 
 /**
  * The shared Pebble fields common to every face. This is what building a manifest reads.
@@ -128,7 +130,7 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
     private: true,
     pebble: {
       displayName: config.displayName,
-      uuid: config.uuid,
+      uuid: target.uuid || config.uuid,
       sdkVersion: config.sdkVersion,
       enableMultiJS: config.enableMultiJS,
       targetPlatforms: config.targetPlatforms,
@@ -168,15 +170,19 @@ export function fillWscript(template: string, dirs: SandboxDirs): string {
     .split('{{WATCHFACE}}').join(dirs.watchface ? 'True' : 'False');
 }
 
-/** Writes one target's sandbox: targets/<target name>/{package.json,wscript}. */
-function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target): void {
+/**
+ * Writes one target's sandbox: targets/<target name>/{package.json,wscript}.
+ *
+ * @return The sandbox's absolute path.
+ */
+function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target): string {
   // the face's own version wins. the root package.json is the fallback and still owns the author
   const version = config.version || rootPkg.version;
   const manifest = buildManifest(config, { author: rootPkg.author, version }, target);
 
   const outDir = path.join(ROOT, 'targets', target.name);
   fs.mkdirSync(outDir, { recursive: true });
-  fs.writeFileSync(path.join(outDir, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
+  writeIfChanged(path.join(outDir, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
 
   // the waf entry point has to exist before `pebble build` runs in this sandbox. the sandbox is
   // named after the target, but its sources are the face's, and one face can feed several targets,
@@ -189,13 +195,16 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
     familyCore: core ? path.relative(ROOT, core).split(path.sep).join('/') : '',
     watchface: target.watchface,
   };
-  fs.writeFileSync(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));
+  writeIfChanged(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));
 
-  console.log(`Wrote targets/${target.name}/package.json and wscript (source face ${face} ${version}, watchface=${target.watchface}).`);
+  // stdout carries only the sandbox paths build.sh reads back, so the note goes to stderr
+  console.error(`Sandbox targets/${target.name} is ready (source face ${face} ${version}, watchface=${target.watchface}).`);
+  return outDir;
 }
 
 /**
- * Writes every target sandbox for a face. With --targets it prints the face's sandbox names instead,
+ * Writes every target sandbox for a face and prints each sandbox's absolute path, one per line, so
+ * build.sh writes and finds them in one run. With --targets it only prints the face's target names,
  * and with --faces every face in the repo, one per line, so build.sh can check a name and loop over
  * them with the same lookup every other tool uses.
  */
@@ -228,7 +237,7 @@ function main() {
 
   const rootPkg: RootPkg = JSON.parse(fs.readFileSync(ROOT_PKG, 'utf8'));
   for (const target of targets) {
-    writeTarget(face, config, rootPkg, target);
+    console.log(writeTarget(face, config, rootPkg, target));
   }
 }
 

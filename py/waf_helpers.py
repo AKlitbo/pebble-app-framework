@@ -1,9 +1,9 @@
 """
 The helpers every build target's wscript shares. A wscript is generated from
 tools/waf/wscript.template by build-manifests.ts, which fills in where the framework, the face and
-its family core sit. The wscript imports this module directly and calls stage_shared_sources,
-build_conditions and build_face with those folders. waf runs the wscript as part of build.sh,
-once per sandbox under targets/<target>/.
+its family core sit. The wscript imports this module directly and calls stage_shared_sources and
+build_face with those folders. waf runs the wscript as part of build.sh, once per sandbox under
+targets/<target>/.
 
 Every folder in the source dict the wscript passes is relative to the repo root:
 
@@ -34,30 +34,18 @@ def _family_name(source):
     return os.path.basename(os.path.dirname(os.path.normpath(source['family_core'])))
 
 
-def build_conditions(ctx, source):
-    """
-    Regenerate the weather lookup tables (icons_table.g.h and friends) from the shared condition
-    vocabulary in the framework's ts/weather/conditions.ts. It runs the framework copy staged into this
-    sandbox, so the tables regenerate for this build without touching the framework checkout itself.
-    Non-fatal: the generated headers are committed, so a node-less environment still builds with
-    the last ones.
-    """
-    from waflib import Logs
-
-    # the tools are ESM .ts in a package with no "type", which is what keeps the tsc-emitted
-    # runtime .js CommonJS for the bundler. node detects the module type from the syntax and
-    # warns about it, so silence just that warning rather than declare a type
-    script = ctx.path.find_node(source['engine'] + '/tools/build-conditions.ts')
-    cmd = ['node', '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', script.abspath()] if script else None
-    if script and ctx.exec_command(cmd) != 0:
-        Logs.warn('build-conditions: node unavailable; using committed icons_table.g.h')
+# the framework's C roots the build compiles. everything else in the framework (its ts/, tools/,
+# docs, specs and git metadata) stays out of the sandbox, since the PebbleKit JS reaches the build
+# already compiled into emit/
+ENGINE_C_ROOTS = ('core', 'pebble', 'dev')
 
 
 def stage_shared_sources(ctx, source):
     """
-    Mirror the face's src/ and resources/, the framework, and the family core into this build folder
-    (targets/<target>/) so the SDK sees a normal, self-contained project. The framework is staged under
-    its own folder name, the same one the face's imports use.
+    Mirror the face's src/ and resources/, the framework's C, and the family core into this build
+    folder (targets/<target>/) so the SDK sees a normal, self-contained project. The framework's
+    c/core, c/pebble and c/dev are staged under its own folder name, the same one the face's imports use,
+    and nothing else of the framework is.
 
     emit/ is not staged. build:pkjs writes it straight into this sandbox (targets/<target>/emit)
     keeping the source tree's shape, so the entry's relative requires into the framework's ts/ already
@@ -65,18 +53,28 @@ def stage_shared_sources(ctx, source):
 
     Only files whose size or mtime differ are copied, and mtimes are preserved, so an
     untouched rebuild does not force a full recompile. Staged files whose source is
-    gone are dropped.
+    gone are dropped, and so are the host specs (*.spec.c), which never reach the watch.
+
+    The weather tables under c/ are generated but committed, so the build compiles them as they
+    are. The framework's spec fails when one no longer matches its source.
     """
+    # the framework is always mounted in a folder of its own. staged at the sandbox root, cutting
+    # it back to its C below would take the face's own sources with it
+    if os.path.normpath(source['engine']) in ('.', ''):
+        ctx.fatal('The framework has to sit in a folder of its own, not at the repo root.')
+
     repo_root = _repo_root(ctx).abspath()
     face_root = os.path.normpath(os.path.join(repo_root, source['face']))
     if not os.path.isfile(os.path.join(face_root, 'config', 'pebble.appinfo.json')):
         ctx.fatal('No face at "{}". Run build-manifests.ts again to rewrite this sandbox.'.format(source['face']))
 
+    engine_root = os.path.join(repo_root, source['engine'])
     sources = {
         'src': os.path.join(face_root, 'src'),
         'resources': os.path.join(face_root, 'resources'),
-        source['engine']: os.path.join(repo_root, source['engine']),
     }
+    for name in ENGINE_C_ROOTS:
+        sources[os.path.join(source['engine'], 'c', name)] = os.path.join(engine_root, 'c', name)
 
     # a face nested inside a family folder also gets that family's core: code shared by a handful
     # of related faces but not by all of them, so it cannot live in the framework. it is staged under
@@ -87,26 +85,48 @@ def stage_shared_sources(ctx, source):
         sources[os.path.join('family', family)] = os.path.join(repo_root, source['family_core'], 'c')
 
     for name, src_dir in sources.items():
+        dst = os.path.join(ctx.path.abspath(), name)
+        _refuse_link(ctx, dst)
         if os.path.isdir(src_dir):
-            _mirror_tree(src_dir, os.path.join(ctx.path.abspath(), name))
+            _mirror_tree(src_dir, dst)
 
-    _drop_stale_families(ctx.path.abspath(), family)
+    # _mirror_tree only prunes inside the one root it is handed, so anything else already in the
+    # sandbox is cut back to what this build staged. that covers a family the face has left too
+    staged_engine = os.path.join(ctx.path.abspath(), source['engine'])
+    _keep_only(ctx, staged_engine, {'c'})
+    _keep_only(ctx, os.path.join(staged_engine, 'c'), set(ENGINE_C_ROOTS))
+    _keep_only(ctx, os.path.join(ctx.path.abspath(), 'family'), {family} if family else set())
 
 
-def _drop_stale_families(sandbox, family):
-    """
-    Drop any staged family that is not this face's any more.
+def _refuse_link(ctx, folder):
+    """Stop the build if a sandbox folder, or any folder above it in the sandbox, is a link. Staging or pruning through it would write into its target, which could be the real framework."""
+    sandbox = ctx.path.abspath()
+    path = sandbox
+    for part in os.path.relpath(folder, sandbox).split(os.sep):
+        path = os.path.join(path, part)
+        if os.path.islink(path):
+            ctx.fatal('{} is a link, not a folder of its own. Delete it and build again.'.format(path))
 
-    _mirror_tree only prunes inside the one root it is handed, so a face that changed families
-    or left one would keep the old tree staged and the build would go on compiling it.
-    """
-    staged = os.path.join(sandbox, 'family')
-    if not os.path.isdir(staged):
+
+def _keep_only(ctx, folder, names):
+    """Delete everything directly inside folder whose name is not in names. A missing folder is fine."""
+    _refuse_link(ctx, folder)
+    if not os.path.isdir(folder):
         return
 
-    for name in os.listdir(staged):
-        if name != family:
-            shutil.rmtree(os.path.join(staged, name), ignore_errors=True)
+    for name in os.listdir(folder):
+        if name in names:
+            continue
+        path = os.path.join(folder, name)
+        if os.path.isdir(path) and not os.path.islink(path):
+            shutil.rmtree(path)
+        else:
+            os.remove(path)
+
+
+def _staged(name):
+    """Whether a source file belongs in the sandbox. A host spec never does."""
+    return not name.endswith('.spec.c')
 
 
 def _mirror_tree(src, dst):
@@ -121,6 +141,8 @@ def _mirror_tree(src, dst):
         if not os.path.isdir(dst_root):
             os.makedirs(dst_root)
         for name in files:
+            if not _staged(name):
+                continue
             src_file = os.path.join(root, name)
             dst_file = os.path.join(dst_root, name)
             if _needs_copy(src_file, dst_file):
@@ -131,7 +153,7 @@ def _mirror_tree(src, dst):
         rel = os.path.relpath(root, dst)
         src_root = src if rel == '.' else os.path.join(src, rel)
         for name in files:
-            if not os.path.exists(os.path.join(src_root, name)):
+            if not _staged(name) or not os.path.exists(os.path.join(src_root, name)):
                 os.remove(os.path.join(root, name))
         for name in dirs:
             staged = os.path.join(root, name)
@@ -149,6 +171,66 @@ def _needs_copy(src_file, dst_file):
             or int(src_stat.st_mtime) != int(dst_stat.st_mtime))
 
 
+def _read_manifest(ctx):
+    """
+    The sandbox's package.json, which build-manifests.ts wrote from the face's appinfo. The feature
+    flags come out of it, so a missing or broken one stops the build rather than quietly building the
+    face with every optional feature off.
+    """
+    pkg_node = ctx.path.find_node('package.json')
+    if not pkg_node:
+        ctx.fatal('No package.json in this sandbox. Run build-manifests.ts again to rewrite it.')
+
+    try:
+        with open(pkg_node.abspath(), 'r') as pkg_f:
+            return json.load(pkg_f)
+    except (OSError, ValueError) as error:
+        ctx.fatal('Could not read {}: {}'.format(pkg_node.abspath(), error))
+
+
+def _feature_cflags(ctx, manifest):
+    """
+    The -D flags that switch the framework's optional C on for this face, worked out from the
+    message keys it declares and the resources it ships. A manifest in a shape this does not
+    expect stops the build, since skipping it would compile the face with the features off.
+    """
+    pebble = manifest.get('pebble')
+    if not isinstance(pebble, dict):
+        ctx.fatal('package.json has no pebble block.')
+
+    cflags = []
+
+    # the SDK takes messageKeys as a list of names or as a map of name to id
+    mkeys = pebble.get('messageKeys', [])
+    if isinstance(mkeys, dict):
+        mkeys = list(mkeys.keys())
+    if not isinstance(mkeys, list) or not all(isinstance(mk, str) for mk in mkeys):
+        ctx.fatal('package.json messageKeys has to be a list of names or a map of name to id.')
+    # an array key such as SLOT[4] is declared by its name, so the count comes off the macro
+    for mk in mkeys:
+        cflags.append('-DHAS_MESSAGE_KEY_' + mk.split('[')[0] + '=1')
+
+    media = pebble.get('resources', {}).get('media', [])
+    if not isinstance(media, list) or not all(isinstance(m, dict) for m in media):
+        ctx.fatal('package.json resources.media has to be a list of resources.')
+    names = set(m.get('name') for m in media)
+
+    # the shared weather-icon lookup (lib/c/.../ui/weather/icons.c) is gated on
+    # HAS_WEATHER_ICONS. it references the ICON_WEATHER_NOW_* set via generated
+    # tables, so only a face that ships those icons should compile it. the whole
+    # set travels together, so the always-present fallback is a reliable proxy.
+    if 'ICON_WEATHER_NOW_NA' in names:
+        cflags.append('-DHAS_WEATHER_ICONS=1')
+
+    # a face that bundles both Quiet Time marks can draw the slot either way, the way
+    # bluetooth does. one that only ships the muted one draws it when it applies and
+    # leaves the slot empty otherwise
+    if 'ICON_QUIET_ON' in names:
+        cflags.append('-DHAS_QUIET_PAIR=1')
+
+    return cflags
+
+
 def build_face(ctx, source, extra_cflags=None):
     """
     The build: resolve include paths, collect the face's C and JS plus the framework's, compile the
@@ -156,9 +238,9 @@ def build_face(ctx, source, extra_cflags=None):
     extra_cflags are appended to every platform's CFLAGS (the watchapp build passes
     -DBUILD_WATCHAPP).
     """
-    # the framework as staged into this sandbox. its c/core/ is pure (SDK-free and host-testable) and
-    # its c/pebble/ needs the SDK. the PebbleKit JS is compiled out of its ts/ into emit/ before
-    # the build, so only the C comes from here
+    # the framework as staged into this sandbox. its c/core/ is pure (SDK-free and host-testable),
+    # its c/pebble/ needs the SDK, and its c/dev/ is the screenshot harness. the PebbleKit JS is
+    # compiled out of its ts/ into emit/ before the build, so only the C comes from here
     engine_dir = ctx.path.find_dir(source['engine'])
     if not engine_dir:
         ctx.fatal('The engine is not staged at "{}" in this sandbox.'.format(source['engine']))
@@ -169,12 +251,14 @@ def build_face(ctx, source, extra_cflags=None):
     # this face's own sources (grid engine, widgets, main, theme)
     local_c = ctx.path.find_dir('src/c')
 
-    # only the framework's two C roots and the face-local dir are on the include path. every shared
-    # header is included with its folder relative to a root (e.g. "ui/engine/engine.h" or
-    # "clock/beats.h") so moving a folder never touches this list
+    # the framework's C roots and the face-local dir are on the include path. every shared header is
+    # included with its folder relative to a root (e.g. "ui/engine/engine.h" or "clock/beats.h") so
+    # moving a folder never touches this list. c/ itself is a root too, so the dev harness keeps its
+    # "dev/" prefix without being one more root of its own
     include_paths = [
         lib_c_core.abspath(),
         lib_c_pebble.abspath(),
+        lib_c.abspath(),
         local_c.abspath()
     ]
 
@@ -186,11 +270,10 @@ def build_face(ctx, source, extra_cflags=None):
     if family_dir:
         include_paths.append(family_dir.abspath())
 
-    # one glob recurses the whole shared tree: lib/c/core/ (pure) + lib/c/pebble/ (SDK).
-    # drop the colocated host tests (*.spec.c) and the vendored test harness (spec/) so
-    # they never spend a byte on the watch
-    c_sources = ctx.path.ant_glob('src/c/**/*.c') + lib_c.ant_glob(
-        '**/*.c', excl=['**/*.spec.c', 'spec/**'])
+    # one glob recurses the whole shared tree: lib/c/core/ (pure), lib/c/pebble/ (SDK), and
+    # lib/c/dev/ (the harness, which the linker drops from any face that never calls it).
+    # the framework's host specs are never staged, so none of them reach the watch
+    c_sources = ctx.path.ant_glob('src/c/**/*.c') + lib_c.ant_glob('**/*.c')
 
     if family_dir:
         c_sources += family_dir.ant_glob('**/*.c', excl=['**/*.spec.c'])
@@ -204,39 +287,7 @@ def build_face(ctx, source, extra_cflags=None):
     binaries = []
     cached_env = ctx.env
 
-    cflags = []
-    pkg_node = ctx.path.find_node('package.json')
-    if pkg_node:
-        try:
-            with open(pkg_node.abspath(), 'r') as pkg_f:
-                pkg_data = json.load(pkg_f)
-                mkeys = pkg_data.get('pebble', {}).get('messageKeys', [])
-                if isinstance(mkeys, list):
-                    for mk in mkeys:
-                        if isinstance(mk, str):
-                            cflags.append('-DHAS_MESSAGE_KEY_' + mk + '=1')
-                elif isinstance(mkeys, dict):
-                    for mk in mkeys.keys():
-                        cflags.append('-DHAS_MESSAGE_KEY_' + mk + '=1')
-
-                # the shared weather-icon lookup (lib/c/.../ui/weather/icons.c) is gated on
-                # HAS_WEATHER_ICONS. it references the ICON_WEATHER_NOW_* set via generated
-                # tables, so only a face that ships those icons should compile it. the whole
-                # set travels together, so the always-present fallback is a reliable proxy.
-                media = pkg_data.get('pebble', {}).get('resources', {}).get('media', [])
-                if isinstance(media, list) and any(
-                        isinstance(m, dict) and m.get('name') == 'ICON_WEATHER_NOW_NA' for m in media):
-                    cflags.append('-DHAS_WEATHER_ICONS=1')
-
-                # a face that bundles both Quiet Time marks can draw the slot either way, the way
-                # bluetooth does. one that only ships the muted one draws it when it applies and
-                # leaves the slot empty otherwise
-                if isinstance(media, list) and any(
-                        isinstance(m, dict) and m.get('name') == 'ICON_QUIET_ON' for m in media):
-                    cflags.append('-DHAS_QUIET_PAIR=1')
-        except Exception:
-            pass
-
+    cflags = _feature_cflags(ctx, _read_manifest(ctx))
     if extra_cflags:
         cflags.extend(extra_cflags)
 

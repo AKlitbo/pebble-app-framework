@@ -119,6 +119,17 @@ describe('buildManifest', () => {
     expect(result.version).toBe('1.2.3');
   });
 
+  /** A target with its own uuid is how a face and its app install side by side, so the override has to reach the manifest. */
+  test('takes a uuid the target names over the shared one', () => {
+    const config = makeConfig();
+    const rootPkg = { author: 'x', version: '0' };
+    const target = { name: 'app', watchface: false, uuid: '11111111-2222-3333-4444-555555555555' };
+
+    const result = buildManifest(config, rootPkg, target);
+
+    expect(result.pebble.uuid).toBe('11111111-2222-3333-4444-555555555555');
+  });
+
   /** The watchface flag lives at pebble.watchapp.watchface, and wrong nesting installs an app as a face or vice versa. */
   test('nests the watchface flag under pebble.watchapp', () => {
     const config = makeConfig();

@@ -17,13 +17,11 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { WORKSPACE } from './paths.ts';
-
-const APPINFO = path.join('config', 'pebble.appinfo.json');
+import { APPINFO_REL, WORKSPACE } from './paths.ts';
 
 /** Whether a directory is a face rather than, say, a family's shared core. */
 function isFace(dir: string): boolean {
-  return fs.existsSync(path.join(dir, APPINFO));
+  return fs.existsSync(path.join(dir, APPINFO_REL));
 }
 
 /** One face: its name, and its directory relative to the repo root (`.` for a face at the root). */
@@ -41,6 +39,9 @@ function byName(first: Face, second: Face): number {
  * Every face in a repo. Takes the repo root, so the lookup works on a fixture as well as on the
  * repo mounting the framework.
  *
+ * A face's name is its build target, its sandbox under targets/, and its release tag, so two faces
+ * with the same name are refused rather than left for the lookup to pick one of them.
+ *
  * @param root The repo root to search from.
  * @return Every face found, ordered by name.
  */
@@ -48,9 +49,9 @@ export function findFaces(root: string): Face[] {
   const found: Face[] = [];
 
   if (isFace(root)) {
-    const appinfo = JSON.parse(fs.readFileSync(path.join(root, APPINFO), 'utf8'));
+    const appinfo = JSON.parse(fs.readFileSync(path.join(root, APPINFO_REL), 'utf8'));
     if (!appinfo.name) {
-      throw new Error(`the face at the repo root needs a name in its ${APPINFO}`);
+      throw new Error(`the face at the repo root needs a name in its ${APPINFO_REL}`);
     }
     found.push({ name: appinfo.name, rel: '.' });
   }
@@ -76,6 +77,15 @@ export function findFaces(root: string): Face[] {
         found.push({ name: child.name, rel: `watchfaces/${entry.name}/${child.name}` });
       }
     }
+  }
+
+  const seen = new Map<string, string>();
+  for (const face of found) {
+    const first = seen.get(face.name);
+    if (first !== undefined) {
+      throw new Error(`two faces are named "${face.name}", at ${first} and ${face.rel}. A face's name has to be unique in the repo`);
+    }
+    seen.set(face.name, face.rel);
   }
 
   return found.sort(byName);
@@ -104,13 +114,22 @@ export function familyCoreFor(root: string, rel: string): string | null {
   return fs.existsSync(core) ? core : null;
 }
 
+// the faces do not move while a tool runs, and one build asks for them several times over
+let workspaceFaces: Face[] | null = null;
+
 /**
  * Every face in the repo mounting the framework. A framework checked out on its own holds none.
+ *
+ * The lookup runs once per process and the answer is kept, so a tool that asks for a face by name
+ * again and again walks watchfaces/ only once.
  *
  * @return Every face found, ordered by name.
  */
 export function listFaces(): Face[] {
-  return findFaces(WORKSPACE);
+  if (!workspaceFaces) {
+    workspaceFaces = findFaces(WORKSPACE);
+  }
+  return workspaceFaces;
 }
 
 /**
@@ -131,7 +150,7 @@ export function listFaceNames(): string[] {
 export function faceRelative(face: string): string {
   const match = listFaces().find((entry) => entry.name === face);
   if (!match) {
-    throw new Error(`no such face: ${face} (no ${APPINFO} at the repo root or under watchfaces/ names it)`);
+    throw new Error(`no such face: ${face} (no ${APPINFO_REL} at the repo root or under watchfaces/ names it)`);
   }
   return match.rel;
 }
@@ -144,6 +163,16 @@ export function faceRelative(face: string): string {
  */
 export function faceDir(face: string): string {
   return path.join(WORKSPACE, faceRelative(face));
+}
+
+/**
+ * A face's config/pebble.appinfo.json, by name.
+ *
+ * @param face The face's name.
+ * @return The appinfo's absolute path.
+ */
+export function appinfoPath(face: string): string {
+  return path.join(faceDir(face), APPINFO_REL);
 }
 
 /**
