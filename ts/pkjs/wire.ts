@@ -79,16 +79,26 @@ function int16Bytes(value: number | null | undefined): number[] {
 }
 
 /**
+ * Whether a code point only shapes the one before it: an accent, a joiner, a variation selector, a
+ * skin tone, a keycap, or one of the tag letters that spell out a flag such as Scotland's.
+ */
+function isModifier(code: number): boolean {
+  return (code >= 0x0300 && code <= 0x036f) || code === 0x200d || (code >= 0xfe00 && code <= 0xfe0f) ||
+    (code >= 0x1f3fb && code <= 0x1f3ff) || code === 0x20e3 || (code >= 0xe0020 && code <= 0xe007f);
+}
+
+/**
  * Flattens text to printable ASCII, which is all the watch fonts carry a glyph for.
  *
- * NFD splits a letter from its accent, so dropping the accent leaves the plain letter behind and
- * Reunion spelled with one goes over as Reunion. Anything else ASCII has no room for becomes a
- * question mark.
+ * Each character is read on its own. NFD splits a letter from its accent, so dropping the accent
+ * leaves the plain letter behind and Reunion spelled with one goes over as Reunion. Anything else
+ * ASCII has no room for becomes one question mark.
  *
- * The split can hand back more characters than it was given, as it does for Hangul, so the result
- * is measured against the field it is going into. Measuring it against the length it started with
- * would cut the tail off anything mixing those letters with ASCII, leaving a meeting called
- * "<Hangul> Standup" as "??? Stand".
+ * The walk goes by code point, so an emoji is one character rather than the two halves JS stores
+ * it as. The pieces that only shape the character before them are dropped, and so is whatever a
+ * joiner glues on, so a family emoji built from several people is still one question mark. A flag
+ * is a pair of letters that reads as one, and goes over as one too. The field on the watch only holds
+ * 24, so each extra mark would cost the title a real letter.
  *
  * @param text The text to flatten.
  * @param max How many characters the field on the watch holds. Left out, the result runs on.
@@ -96,16 +106,33 @@ function int16Bytes(value: number | null | undefined): number[] {
  */
 function toAscii(text: string, max?: number): string {
   const limit = max === undefined ? Infinity : max;
-  const split = text.normalize('NFD');
   let out = '';
+  let joined = false;
+  let flagOpen = false;
 
-  for (let i = 0; i < split.length && out.length < limit; i++) {
-    const code = split.charCodeAt(i);
-    if (code >= 0x0300 && code <= 0x036f) {
-      continue; // an accent on its own, and the letter it sat on is already in hand
+  for (let i = 0; i < text.length && out.length < limit;) {
+    const code = text.codePointAt(i) as number;
+    i += code > 0xffff ? 2 : 1;
+
+    if (isModifier(code)) {
+      joined = code === 0x200d;
+      continue;
+    }
+    if (joined) {
+      joined = false;
+      continue; // glued onto the one before, so already counted
     }
 
-    out += (code >= 0x20 && code <= 0x7e) ? split.charAt(i) : '?';
+    const isFlagHalf = code >= 0x1f1e6 && code <= 0x1f1ff;
+    if (isFlagHalf && flagOpen) {
+      flagOpen = false;
+      continue;
+    }
+    flagOpen = isFlagHalf;
+
+    // an accented letter splits into the letter and its accent, and only the letter is kept
+    const plain = String.fromCodePoint(code).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    out += /^[\x20-\x7e]+$/.test(plain) ? plain.slice(0, limit - out.length) : '?';
   }
 
   return out;

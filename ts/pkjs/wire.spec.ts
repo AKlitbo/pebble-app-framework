@@ -315,21 +315,87 @@ describe('packCalendarStrip', () => {
     expect(title).toBe('????');
   });
 
-  /** Hangul splits into more characters than it was given, and a title that grew past the buffer would overrun the store. */
-  test('caps a title that splits into more characters at the buffer', () => {
-    const bytes = wire.packCalendarStrip([{ ...event, title: '한'.repeat(24), location: '' }]);
+  /** A title longer than the buffer in characters with no ASCII form must still be capped, or the wire overruns the store. */
+  test('caps a title of characters with no ASCII form at the buffer', () => {
+    const bytes = wire.packCalendarStrip([{ ...event, title: '한'.repeat(40), location: '' }]);
 
     expect(bytes[10]).toBe(24);
   });
 
-  /** Measuring the split text against the length it started with cut the tail off, so this title reached the watch as "??? Stand". */
-  test('keeps the ASCII tail of a title that mixes scripts', () => {
+  /** A Hangul syllable split into three letters and cost three of the 24, so a mixed title lost its tail. */
+  test('writes one question mark for each character with no ASCII form', () => {
     const bytes = wire.packCalendarStrip([{ ...event, title: '한 Standup', location: '' }]);
 
     const titleLen = bytes[10];
     const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
 
-    expect(title).toBe('??? Standup');
+    expect(title).toBe('? Standup');
+  });
+
+  /** JS stores an emoji as two halves, so a birthday reached the watch as "??Birthday" and used up two letters. */
+  test('writes one question mark for an emoji', () => {
+    const bytes = wire.packCalendarStrip([{ ...event, title: '\u{1F382} Birthday', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('? Birthday');
+  });
+
+  /** A family emoji is several people glued by joiners, and each piece became its own question mark. */
+  test('writes one question mark for an emoji built from several', () => {
+    const family = '\u{1F468}\u200D\u{1F469}\u200D\u{1F467}';
+    const bytes = wire.packCalendarStrip([{ ...event, title: family + ' Dinner', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('? Dinner');
+  });
+
+  /** A skin tone and a variation selector only shape the emoji before them, so they add nothing. */
+  test('drops the pieces that only shape an emoji', () => {
+    const wave = '\u{1F44B}\u{1F3FD}';
+    const heart = '\u2764\uFE0F';
+    const bytes = wire.packCalendarStrip([{ ...event, title: wave + heart + ' Hi', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('?? Hi');
+  });
+
+  /** Scotland's flag is a black flag followed by six hidden tag letters, and each tag became its own question mark. */
+  test('writes one question mark for a flag spelled with tags', () => {
+    const scotland = '\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}';
+    const bytes = wire.packCalendarStrip([{ ...event, title: scotland + ' Trip', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('? Trip');
+  });
+
+  /** A keycap is a plain digit with a mark that draws the key around it, so the digit is what the watch can show. */
+  test('keeps the digit of a keycap', () => {
+    const one = '1\uFE0F\u20E3';
+    const bytes = wire.packCalendarStrip([{ ...event, title: one + ' on 1', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('1 on 1');
+  });
+
+  /** A flag is two letters that read as one, so it goes over as one question mark rather than two. */
+  test('writes one question mark for a flag', () => {
+    const canada = '\u{1F1E8}\u{1F1E6}';
+    const bytes = wire.packCalendarStrip([{ ...event, title: canada + ' Day', location: '' }]);
+
+    const titleLen = bytes[10];
+    const title = String.fromCharCode(...bytes.slice(11, 11 + titleLen));
+
+    expect(title).toBe('? Day');
   });
 
   /** More events than the strip can hold must be capped so the wire never overruns the store. */

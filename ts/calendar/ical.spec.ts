@@ -14,7 +14,7 @@
  * because a feed is the only input this ever gets and the reading of it is a library's job now.
  */
 
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi, afterEach } from 'vitest';
 import ical from './ical';
 import { fetchRequest } from '../testing/fetch-request';
 
@@ -487,6 +487,85 @@ describe('parseIcal recurring events', () => {
   });
 });
 
+describe('parseIcal cancelled events', () => {
+  /** Outlook keeps a cancelled meeting in the feed marked CANCELLED, and the watch showed it as still on. */
+  test('leaves a cancelled event off the agenda', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:sync@example.com\r\nDTSTART:20260711T150000Z\r\nDTEND:20260711T160000Z\r\n' +
+      'STATUS:CANCELLED\r\nSUMMARY:Sync\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * One occurrence of a series can be cancelled by an override carrying the status. It replaced the
+   * slot like a move does, so the cancelled meeting stayed on the agenda and the free/busy panel.
+   */
+  test('leaves a gap where one occurrence of a series is cancelled', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=DAILY\r\nSUMMARY:Gym\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T090000Z\r\nDTEND:20260713T093000Z\r\nSTATUS:CANCELLED\r\nSUMMARY:Gym\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    const starts = result.map((event) => event.startEpoch);
+    expect(starts).toContain(Math.floor(Date.UTC(2026, 6, 12, 9, 0, 0) / 1000));
+    expect(starts).not.toContain(Math.floor(Date.UTC(2026, 6, 13, 9, 0, 0) / 1000));
+    expect(starts).toContain(Math.floor(Date.UTC(2026, 6, 14, 9, 0, 0) / 1000));
+  });
+
+  /** A cancelled series takes its moved occurrences with it, rather than leaving them as loose events. */
+  test('drops the moved occurrences of a cancelled series', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=MO\r\nSTATUS:CANCELLED\r\nSUMMARY:Gym\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T180000Z\r\nDTEND:20260713T183000Z\r\nSUMMARY:Gym moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result).toEqual([]);
+  });
+
+  /** An override whose series is not in the feed reads on its own, so a cancelled one has to be dropped on its own too. */
+  test('leaves a cancelled occurrence off when its series is not in the feed', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:lost@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T090000Z\r\nDTEND:20260713T093000Z\r\nSTATUS:CANCELLED\r\nSUMMARY:Orphan\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result).toEqual([]);
+  });
+});
+
+describe('parseIcal busy series', () => {
+  /**
+   * The walk stops a series at the event cap, and stopping it straight away skipped the occurrences
+   * moved into the week from further out, even ones sooner than most of those kept.
+   */
+  test('keeps an occurrence moved into the window after the cap fills', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:ping@example.com\r\nDTSTART:20260710T130000Z\r\nDTEND:20260710T131000Z\r\n' +
+      'RRULE:FREQ=HOURLY\r\nSUMMARY:Ping\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:ping@example.com\r\nRECURRENCE-ID:20260720T130000Z\r\n' +
+      'DTSTART:20260710T123000Z\r\nDTEND:20260710T124000Z\r\nSUMMARY:Ping moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result.map((event) => event.title)).toContain('Ping moved');
+  });
+});
+
 describe('parseIcal all-day events', () => {
   /** An all-day date must flag allDay and span a full day, or the agenda tries to show a time. */
   test('reads a date-only event as all-day spanning 24h', () => {
@@ -498,6 +577,21 @@ describe('parseIcal all-day events', () => {
     expect(result[0].allDay).toBe(true);
     expect(result[0].startEpoch).toBe(start);
     expect(result[0].endEpoch).toBe(start + 24 * 60 * 60);
+  });
+
+  /**
+   * The day the clocks go forward is 23 hours long. Ending an all-day event 24 hours after its start
+   * ran it an hour into the next day, where it shaded the Timeline and stayed on the agenda. Both
+   * ends are local midnights, so this holds in any zone and fails on the old sum wherever the clocks
+   * change.
+   */
+  test('ends an all-day event on the next midnight across a clock change', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:20260308\r\nSUMMARY:Daylight saving\r\nEND:VEVENT\r\n');
+    const now = Math.floor(new Date(2026, 2, 7, 12, 0, 0).getTime() / 1000);
+
+    const result = ical.parseIcal(source, now);
+
+    expect(result[0].endEpoch).toBe(Math.floor(new Date(2026, 2, 9, 0, 0, 0).getTime() / 1000));
   });
 });
 
@@ -541,6 +635,25 @@ describe('parseIcal window and ordering', () => {
     const titles = result.map((event) => event.title);
     expect(titles).toEqual(['Coming up', 'Later this week']);
   });
+
+  /**
+   * The window ended six days on from the fetch rather than at the end of the sixth day, so a
+   * morning fetch kept an event on that last morning and dropped one on its evening.
+   */
+  test('keeps the whole of the sixth day ahead and nothing after it', () => {
+    const utc = (date: Date) => date.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    const today = new Date(NOW * 1000);
+    const lastEvening = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6, 20, 0, 0);
+    const pastTheEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7, 0, 30, 0);
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:' + utc(lastEvening) + '\r\nSUMMARY:Last evening\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nDTSTART:' + utc(pastTheEnd) + '\r\nSUMMARY:Past the end\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result.map((event) => event.title)).toEqual(['Last evening']);
+  });
 });
 
 /**
@@ -551,6 +664,58 @@ describe('parseIcal window and ordering', () => {
  * a calendar that works. The answers come from a real calendar, not from any implementation.
  * July 2026 opens on a Wednesday, so its Tuesdays are 7/14/21/28 and its Sundays 5/12/19/26.
  */
+describe('parseIcal moved occurrences off the walk', () => {
+  /**
+   * A rule edited after one of its meetings was moved no longer makes the moved one's old slot.
+   * Only moves from past the window were looked up, so this week's moved meeting never showed.
+   */
+  test('keeps a moved occurrence whose old slot the rule no longer makes', () => {
+    const ics = feed(
+      'BEGIN:VEVENT\r\nUID:s\r\nDTSTART:20260701T090000Z\r\nDTEND:20260701T093000Z\r\nRRULE:FREQ=DAILY\r\nSUMMARY:Standup\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:s\r\nRECURRENCE-ID:20260711T100000Z\r\nDTSTART:20260711T150000Z\r\nDTEND:20260711T153000Z\r\nSUMMARY:Moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(ics, NOW);
+
+    expect(result.map((event) => event.title)).toContain('Moved');
+  });
+});
+
+describe('parseIcal unreadable events', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /**
+   * ical.js throws on a rule it cannot walk. The throw ran out of the whole parse, so one bad event
+   * kept the watch on the old agenda for as long as it stayed in the feed.
+   */
+  test('keeps the rest of the feed when one rule cannot be walked', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const ics = feed(
+      'BEGIN:VEVENT\r\nUID:bad\r\nDTSTART:20260701T090000Z\r\nRRULE:FREQ=WEEKLY;BYMONTHDAY=3\r\nSUMMARY:Bad\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:good\r\nDTSTART:20260711T090000Z\r\nDTEND:20260711T100000Z\r\nSUMMARY:Good\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(ics, NOW);
+
+    expect(result.map((event) => event.title)).toEqual(['Good']);
+  });
+
+  /** An event with no start throws as soon as it is read, and must cost only itself. */
+  test('keeps the rest of the feed when one event has no start', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const ics = feed(
+      'BEGIN:VEVENT\r\nUID:nostart\r\nSUMMARY:Nowhere\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:good\r\nDTSTART:20260711T090000Z\r\nDTEND:20260711T100000Z\r\nSUMMARY:Good\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(ics, NOW);
+
+    expect(result.map((event) => event.title)).toEqual(['Good']);
+  });
+});
+
 describe('parseIcal awkward recurrences', () => {
   const rule = (dtstart: string, rrule: string) => feed(
     'BEGIN:VEVENT\r\nUID:r\r\nDTSTART:' + dtstart + '\r\nRRULE:' + rrule + '\r\nSUMMARY:R\r\nEND:VEVENT\r\n'
