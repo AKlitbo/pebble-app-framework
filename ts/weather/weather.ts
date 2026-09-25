@@ -9,6 +9,7 @@
 import openMeteo from './providers/openmeteo';
 import owm from './providers/owm';
 import weatherApi from './providers/weatherapi';
+import { pickProvider } from '../pkjs/providers';
 import type { RequestFn, DoneFn, WeatherOpts } from './util';
 
 /** A provider module: the one fetch entry the dispatcher calls. */
@@ -31,16 +32,9 @@ const PROVIDERS: Record<string, WeatherProvider> = {
  * @param done Called with the weather result.
  */
 function fetchWeather(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
-  const key = String(opts.provider || '').toLowerCase();
-  const provider = PROVIDERS[key];
-  if (!provider) {
-    // an unknown provider would quietly fall back to open-meteo and hide the mistake so log it
-    console.log(`Unknown weather provider "${opts.provider}", using open-meteo`);
-  }
-
   // each provider attaches its own forecast strip when the face asks for one so the
   // dispatcher just routes and hands the result straight back
-  (provider || openMeteo).fetch(opts, request, done);
+  pickProvider(PROVIDERS, opts.provider, 'openmeteo', 'weather').fetch(opts, request, done);
 }
 
 export default { fetchWeather };

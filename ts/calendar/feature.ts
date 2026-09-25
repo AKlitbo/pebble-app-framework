@@ -9,9 +9,10 @@ import ical from './ical';
 import type { CalendarEvent } from './ical';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
-import { request } from '../pkjs/request';
-import { getConfig, readValue } from '../pkjs/settings-store';
+import { request, cacheBust } from '../pkjs/request';
+import { getConfig, readValue, watchSettings } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
+import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 
 /**
  * Starts the calendar feature for a face.
@@ -22,24 +23,29 @@ import type { Feature } from '../pkjs/feature';
  *   settings page.
  */
 const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
-  let urlBeforeConfig: string | null = null;
+  const feedSetting = watchSettings(['CALENDAR_ICS_URL']);
 
-  // counts fetches, so only the newest one reaches the watch. a tick, a watch request, and a URL
-  // change can each start one while another is still out, and they can answer in any order
+  // counts fetches, so only the newest one reaches the watch. a URL change starts one while
+  // another is still out, and the two can answer in any order
   let fetches = 0;
+
+  // a feed download is still out. request() settles every call within its watchdog, so it clears
+  let inFlight = false;
+
+  // who asked lately, so a slow tick or a watch ask does not fetch what another just did
+  const asks = createAsks();
 
   // the strip the watch holds, so an unchanged refresh skips the redundant BLE wake. forgotten on
   // ready and on a watch-initiated request so the watch always gets a fresh answer
-  const sender = createDedupedSender<number[]>(
-    queueSend,
-    (bytes) => ({ [messageKeys.CALENDAR_STRIP]: bytes }),
-    (bytes) => bytes.join(','),
-    'Calendar'
-  );
+  const sender = createDedupedSender(queueSend, 'Calendar');
 
   /** Reads the current iCal feed URL from the Clay config. */
   function calendarUrl(): string {
-    return String(readValue(getConfig().CALENDAR_ICS_URL, defaults.CALENDAR_ICS_URL || '')).trim();
+    const url = String(readValue(getConfig().CALENDAR_ICS_URL, defaults.CALENDAR_ICS_URL || '')).trim();
+
+    // a Subscribe link, such as an iCloud public calendar, starts webcal://, which is https to
+    // every calendar app. the phone's request knows no such scheme and fails on it every time
+    return url.replace(/^webcal:\/\//i, 'https://');
   }
 
   /** Sends the packed agenda to the watch, unless the watch holds it already. An empty list clears it. */
@@ -49,22 +55,32 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
       return;
     }
 
-    sender.push(bytes);
+    sender.push({ [messageKeys.CALENDAR_STRIP]: bytes });
   }
 
   /**
    * Fetches the iCal feed, parses it, and sends the packed strip to the watch. Skipped for faces
    * that do not declare the calendar key. With no URL set the watch gets an empty agenda instead,
-   * so one left over from a removed feed does not stay behind. An answer that lands after a newer
-   * fetch started is dropped, so an old feed cannot overwrite a new one.
+   * so one left over from a removed feed does not stay behind. While a download is out, an unforced
+   * call starts no second one, since the one out answers it. A forced call, for a changed URL, starts
+   * its own anyway, and an answer that lands after it is dropped so an old feed cannot overwrite a new one.
    */
-  function getCalendar() {
+  function getCalendar(force?: boolean) {
     // a face that does not declare the strip key never shows a calendar so skip the fetch
     if (messageKeys.CALENDAR_STRIP === undefined) {
       return;
     }
 
+    if (inFlight && !force) {
+      return;
+    }
+
     const myFetch = ++fetches;
+
+    // a newer fetch takes over from any still out, whose answer the count check below drops, so
+    // nothing is left holding the gate. without this, clearing the feed while a download was out
+    // left the gate shut for the rest of the session
+    inFlight = false;
 
     const url = calendarUrl();
     if (!url) {
@@ -75,14 +91,17 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
     // bust any HTTP cache the phone keeps for this GET: a unique query param makes every poll a
     // fresh URL so an edited event is not hidden behind a stale cached copy. Google ignores the
     // extra param and still serves the feed
-    const bustedUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + '_=' + Date.now();
+    const bustedUrl = cacheBust(url, Date.now());
 
     console.log('Calendar: fetching feed');
+    inFlight = true;
     request(bustedUrl, (error, body) => {
       // a newer fetch is out or already answered, so this one says nothing current
       if (myFetch !== fetches) {
         return;
       }
+
+      inFlight = false;
 
       if (error) {
         console.error('Calendar fetch failed: ' + error);
@@ -113,32 +132,38 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
     ready() {
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
       sender.forget();
-      getCalendar();
+
+      if (askShouldFetch(asks)) {
+        getCalendar();
+      }
     },
 
     message(payload) {
       if (payload[messageKeys.CALENDAR_REQUEST]) {
         sender.forget();
+
+        if (askShouldFetch(asks)) {
+          getCalendar();
+        }
+      }
+    },
+
+    // the watch asks on the refresh interval the wearer picked, so the phone only fills in on the
+    // slow ticks it has not covered
+    refresh(slow) {
+      if (slow && slowTickShouldFetch(asks)) {
         getCalendar();
       }
     },
 
-    // an agenda changes whenever the feed does, so the calendar refreshes on every tick
-    refresh() {
-      getCalendar();
-    },
-
     configOpened() {
-      urlBeforeConfig = calendarUrl();
+      feedSetting.opened();
     },
 
     configSaved() {
-      const before = urlBeforeConfig;
-      urlBeforeConfig = null;
-
       // a changed iCal URL refetches straight away, so a new feed shows without waiting for the next poll
-      if (before !== calendarUrl()) {
-        setTimeout(getCalendar, refetchDelayMs);
+      if (feedSetting.changed()) {
+        refetchAfterSave(asks, refetchDelayMs, () => getCalendar(true));
       }
     },
   };

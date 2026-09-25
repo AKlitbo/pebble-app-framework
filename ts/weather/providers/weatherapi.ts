@@ -6,6 +6,7 @@
  */
 
 import util from '../util';
+import { joinCalls } from '../../pkjs/providers';
 import openMeteo from './openmeteo';
 import type { RequestFn, DoneFn, WeatherOpts, WeatherResult, ForecastCols } from '../util';
 
@@ -161,21 +162,16 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   // becoming a fragile follow-up request. Open-Meteo needs coordinates so a place-name-only
   // lookup just goes without a strip
   const withForecast = opts.wantForecast && opts.coords;
-  let pending = withForecast ? 2 : 1;
   let result: WeatherResult | null = null;
   let forecast: ForecastCols | null = null;
 
-  const tryDone = () => {
-    if (--pending > 0) {
-      return;
-    }
-
+  const tryDone = joinCalls(withForecast ? 2 : 1, () => {
     if (result && result.ok && forecast) {
       util.attachForecast(result, forecast);
     }
 
     done(result as WeatherResult);
-  };
+  });
 
   util.requestJson<WeatherApiResponse>(url, request, (status) => {
     result = status;

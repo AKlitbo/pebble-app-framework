@@ -632,6 +632,7 @@ describe('startPebbleApp stock and calendar', () => {
   let sent: ReturnType<typeof installFakeXhr>;
 
   const FEED_URL = 'https://example.com/calendar.ics';
+  const OTHER_FEED_URL = 'https://example.com/other.ics';
 
   // saves the settings and the stock cache the app reads when it starts, then starts it with the
   // features a face like Gridlock opts into
@@ -678,6 +679,29 @@ describe('startPebbleApp stock and calendar', () => {
     expect(JSON.parse(localStorage.getItem('stock-cache') as string).strip).toBeNull();
   });
 
+  /**
+   * A symbol change whose forced fetch failed left the old strip kept. The next request the quota
+   * gate held sent the removed tickers back over the error strip, where they stayed till the gate
+   * opened, which for Alpha Vantage is tomorrow.
+   */
+  test('does not bring back the old tickers after a failed fetch for new ones', () => {
+    // a Wednesday morning in New York, when Alpha Vantage's gate is shut on anything unforced
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 15, 0));
+    start({ STOCK_PROVIDER: 'alphavantage', STOCK_SYMBOLS: 'AAPL' }, SAVED_STRIP, [stocks]);
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_SYMBOLS: 'TSLA' }));
+    pebble.fire('webviewclosed', { response: '{}' });
+    vi.advanceTimersByTime(SETTINGS_REFETCH_DELAY_MS);
+    sent.forEach((request) => request.respond(500, ''));
+
+    pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+
+    const result = sendsOf('STOCK_STRIP');
+    expect(result[0]).toEqual(SAVED_STRIP);
+    expect(result[result.length - 1]).not.toEqual(SAVED_STRIP);
+  });
+
   /** Deleting every upcoming event has to clear the watch, or the deleted events stay on the agenda for good. */
   test('sends an empty agenda when the feed has nothing coming up', () => {
     start({ CALENDAR_ICS_URL: FEED_URL });
@@ -699,9 +723,9 @@ describe('startPebbleApp stock and calendar', () => {
   });
 
   /**
-   * A tick, a watch request, and a URL change can each start a fetch while another is still out.
-   * Sending whichever answers last put an older copy of the agenda over a newer one until the next
-   * tick, such as the old feed showing after the URL was changed.
+   * A URL change starts a fetch while the old feed's download is still out, and the two can answer
+   * in any order. Sending whichever answers last put the old feed's agenda over the new one until
+   * the next refresh.
    */
   test('drops a feed answer that lands after a newer fetch started', () => {
     // a day out from the faked now, so the event sits inside the agenda's window
@@ -710,8 +734,12 @@ describe('startPebbleApp stock and calendar', () => {
       '\r\nSUMMARY:Dentist\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
     start({ CALENDAR_ICS_URL: FEED_URL });
     pebble.fire('ready');
-    pebble.fire('appmessage', { payload: { CALENDAR_REQUEST: 1 } });
-    const [older, newer] = sent.filter((request) => request.url.startsWith(FEED_URL));
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ CALENDAR_ICS_URL: OTHER_FEED_URL }));
+    pebble.fire('webviewclosed', { response: '{}' });
+    vi.advanceTimersByTime(SETTINGS_REFETCH_DELAY_MS);
+    const older = feedRequest();
+    const newer = sent.find((request) => request.url.startsWith(OTHER_FEED_URL)) as (typeof sent)[number];
 
     newer.respond(200, withEvent);
     older.respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
@@ -720,6 +748,69 @@ describe('startPebbleApp stock and calendar', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).not.toEqual([0]);
+  });
+
+  /**
+   * The watch asks as the phone comes up, so every launch downloaded and parsed the whole feed twice.
+   * The download already out answers the ask.
+   */
+  test('starts no second download for a watch ask while one is out', () => {
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    pebble.fire('ready');
+    pebble.fire('appmessage', { payload: { CALENDAR_REQUEST: 1 } });
+
+    feedRequest().respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
+
+    const downloads = sent.filter((request) => request.url.startsWith(FEED_URL));
+    expect(downloads).toHaveLength(1);
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
+  });
+
+  /**
+   * The phone downloaded the whole feed on every 5 minute tick, whatever refresh interval the wearer
+   * picked for the watch. It now leaves the refresh to the watch's asks, and fills in with a download
+   * on a slow tick only once the watch has gone quiet.
+   */
+  test('leaves the refresh to the watch until it stops asking', () => {
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    pebble.fire('ready');
+    feedRequest().respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
+
+    // the phone's refresh ticks every 5 minutes and every sixth one is slow
+    vi.advanceTimersByTime(30 * 60 * 1000);
+    const afterHalfHour = sent.filter((request) => request.url.startsWith(FEED_URL)).length;
+    vi.advanceTimersByTime(30 * 60 * 1000);
+    const afterHour = sent.filter((request) => request.url.startsWith(FEED_URL)).length;
+
+    expect(afterHalfHour).toBe(1);
+    expect(afterHour).toBe(2);
+  });
+
+  /** Clearing the feed while a download is out must not leave every later refresh doing nothing. */
+  test('keeps refreshing after the feed is cleared mid download', () => {
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({}));
+    pebble.fire('webviewclosed', { response: '{}' });
+    vi.advanceTimersByTime(SETTINGS_REFETCH_DELAY_MS);
+    feedRequest().respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
+    localStorage.setItem('clay-settings', JSON.stringify({ CALENDAR_ICS_URL: OTHER_FEED_URL }));
+
+    pebble.fire('appmessage', { payload: { CALENDAR_REQUEST: 1 } });
+
+    const result = sent.filter((request) => request.url.startsWith(OTHER_FEED_URL));
+    expect(result).toHaveLength(1);
+  });
+
+  /** An iCloud Subscribe link starts webcal://, which the phone cannot fetch, so the agenda never filled. */
+  test('fetches a webcal link over https', () => {
+    start({ CALENDAR_ICS_URL: 'webcal://example.com/calendar.ics' });
+
+    pebble.fire('ready');
+
+    const result = sent.map((request) => request.url);
+    expect(result.some((url) => url.startsWith(FEED_URL))).toBe(true);
   });
 
   /** Removing the feed has to clear the watch too, or the old agenda outlives the setting that made it. */

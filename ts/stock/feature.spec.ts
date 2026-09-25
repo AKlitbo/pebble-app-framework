@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 /**
  * Specs for the stock feature's decisions.
  *
@@ -7,7 +6,7 @@
  * the parts worth pinning. The wiring into the app's lifecycle is covered with the app's own specs.
  */
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { parseSymbols, runStockRound, stockSettingsChanged, stockSettingsSnapshot, STOCK_KEYS } from './feature';
+import { parseSymbols, runStockRound } from './feature';
 import type { StockQuote } from './util';
 
 describe('parseSymbols', () => {
@@ -77,6 +76,32 @@ describe('runStockRound', () => {
 
     expect(state.inFlight).toBe(false);
     expect(sendStocks).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * A mistyped ticker answers NO SYMBOL on every call, and each call still counts on a metered plan.
+   * Leaving that round unrecorded let every watch poll through the gate, which spent Alpha
+   * Vantage's whole day of calls on a symbol that could never answer.
+   */
+  test('records the time of a round the provider answered with nothing good', () => {
+    const state = freshState();
+    const noSymbol: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'NO SYMBOL' };
+    const deps = { fetchQuote: (_symbol: string, done: (quote: StockQuote) => void) => done(noSymbol), sendStocks: vi.fn(), now: () => 500, timeoutMs: 1000 };
+
+    runStockRound(state, ['APPL'], false, deps);
+
+    expect(state.lastFetchMs).toBe(500);
+  });
+
+  /** A network blip never reached the provider and spent nothing, so the next poll must be free to retry. */
+  test('leaves a round the provider never answered unrecorded', () => {
+    const state = freshState();
+    const netError: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'NET ERROR' };
+    const deps = { fetchQuote: (_symbol: string, done: (quote: StockQuote) => void) => done(netError), sendStocks: vi.fn(), now: () => 500, timeoutMs: 1000 };
+
+    runStockRound(state, ['AAPL'], false, deps);
+
+    expect(state.lastFetchMs).toBe(0);
   });
 
   describe('while a round is in flight', () => {
@@ -178,63 +203,5 @@ describe('runStockRound', () => {
 
     expect(state.lastFetchMs).toBe(4242);
     expect(state.lastAsOf).toBe('2026-07-01');
-  });
-
-  /** An all-failed round must leave the gate unstamped so the next poll retries instead of freezing the watchlist on a transient error. */
-  test('does not stamp the gate when every quote failed', () => {
-    const state = freshState();
-    const deps = {
-      fetchQuote: (symbol: string, onQuote: (q: StockQuote) => void) => onQuote({ ok: false, symbol: '', status: 'RATE LIMIT', price: 0, change: 0, changePercent: 0, asOf: '' }),
-      sendStocks: vi.fn(), now: () => 4242, timeoutMs: 1000,
-    };
-
-    runStockRound(state, ['AAPL'], false, deps);
-
-    expect(state.lastFetchMs).toBe(0);
-    expect(state.inFlight).toBe(false);
-  });
-});
-
-describe('stockSettingsSnapshot', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  /** The snapshot must JSON-encode the stored stock keys so a later save can be diffed by content. */
-  test('json-encodes the stock keys read from the store', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'finnhub' }));
-
-    const result = stockSettingsSnapshot();
-
-    expect(result[STOCK_KEYS.indexOf('STOCK_PROVIDER')]).toBe('"finnhub"');
-  });
-});
-
-describe('stockSettingsChanged', () => {
-  /** With no snapshot (the page never reported opening) the safe default is to refetch. */
-  test('returns true when there is no prior snapshot', () => {
-    const result = stockSettingsChanged(null, ['"finnhub"']);
-
-    expect(result).toBe(true);
-  });
-
-  /** Identical snapshots mean only non-stock settings changed, so no refetch. */
-  test('returns false when every stock key is unchanged', () => {
-    const before = STOCK_KEYS.map(() => '"same"');
-
-    const result = stockSettingsChanged(before, before.slice());
-
-    expect(result).toBe(false);
-  });
-
-  /** A single differing stock key must trigger a refetch. */
-  test('returns true when a stock key differs', () => {
-    const before = STOCK_KEYS.map(() => '"a"');
-    const after = before.slice();
-    after[0] = '"b"';
-
-    const result = stockSettingsChanged(before, after);
-
-    expect(result).toBe(true);
   });
 });

@@ -9,6 +9,7 @@ import finnhub from './providers/finnhub';
 import alphavantage from './providers/alphavantage';
 import yahoo from './providers/yahoo';
 import twelvedata from './providers/twelvedata';
+import { pickProvider } from '../pkjs/providers';
 import type { RequestFn, DoneFn, StockOpts } from './util';
 
 /** A provider module: the one fetch entry the dispatcher calls. */
@@ -32,14 +33,7 @@ const PROVIDERS: Record<string, StockProvider> = {
  * @param done Called once with the finished quote result.
  */
 function fetchQuote(opts: StockOpts, request: RequestFn, done: DoneFn): void {
-  const key = String(opts.provider || '').toLowerCase();
-  const provider = PROVIDERS[key];
-  if (!provider) {
-    // an unknown provider would quietly fall back to finnhub and hide the mistake so log it
-    console.log(`Unknown stock provider "${opts.provider}", using finnhub`);
-  }
-
-  (provider || finnhub).fetch(opts, request, done);
+  pickProvider(PROVIDERS, opts.provider, 'finnhub', 'stock').fetch(opts, request, done);
 }
 
 export default { fetchQuote };

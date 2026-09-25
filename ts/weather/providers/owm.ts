@@ -6,6 +6,7 @@
  */
 
 import util from '../util';
+import { joinCalls } from '../../pkjs/providers';
 import openMeteo from './openmeteo';
 import type { RequestFn, DoneFn, WeatherOpts, WeatherResult } from '../util';
 import type { OpenMeteoResponse } from './openmeteo';
@@ -51,20 +52,14 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   const url = `${OWM_WEATHER_API}?lat=${lat}&lon=${lon}&units=${units}&appid=${encodedKey}`;
 
   // OWM's free endpoint carries no UV, dew point or forecast, so Open-Meteo is asked for those
-  // at the same time rather than after. request() holds a watchdog that settles every call, so
-  // both arms always report and the join always closes. weatherapi borrows its strip the same way
+  // at the same time rather than after. weatherapi borrows its strip the same way
   // a face showing none of those skips the Open-Meteo call entirely
   const borrowed = Object.keys(openMeteo.parseExtras(null));
   const needOpenMeteo = opts.wantForecast || !opts.fields || opts.fields.some((field) => borrowed.includes(field));
-  let pending = needOpenMeteo ? 2 : 1;
   let result: WeatherResult | null = null;
   let extras: OpenMeteoResponse | null = null;
 
-  const tryDone = () => {
-    if (--pending > 0) {
-      return;
-    }
-
+  const tryDone = joinCalls(needOpenMeteo ? 2 : 1, () => {
     if (result && result.ok && extras) {
       util.attachExtras(result, openMeteo.parseExtras(extras));
       if (opts.wantForecast) {
@@ -73,7 +68,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     }
 
     done(result as WeatherResult);
-  };
+  });
 
   if (needOpenMeteo) {
     util.requestJson<OpenMeteoResponse>(openMeteo.extrasUrl(opts), request, () => tryDone(), (om) => {

@@ -9,10 +9,14 @@
  * from calling back a second time, and a send that throws before anything is in flight. A caller
  * that never hears back leaves the watch blank with no retry, so each one is the difference
  * between a slow answer and no answer at all.
+ *
+ * The JSON layer the providers share sits on top. It must hand every reply on with its error, since
+ * a bodyless 401 or 429 is only readable off the error, and it must bust the cache on every call.
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { request } from './request';
+import { request, safeParse, cacheBust, requestJson } from './request';
+import type { RequestFn } from './request';
 import { installFakeXhr } from '../testing/xhr';
 
 describe('request', () => {
@@ -143,5 +147,74 @@ describe('request callbacks', () => {
     sent[0].timeOut();
 
     expect(callback).toHaveBeenCalledWith('timeout');
+  });
+});
+
+describe('safeParse', () => {
+  /** A valid body must parse so the reading can be shown. */
+  test('parses valid JSON into an object', () => {
+    const result = safeParse('{"temp":12}');
+
+    expect(result).toEqual({ temp: 12 });
+  });
+
+  /** A malformed body must yield null (not throw) so the caller can show an error state. */
+  test('returns null for malformed JSON instead of throwing', () => {
+    const result = safeParse('not json');
+
+    expect(result).toBeNull();
+  });
+});
+
+describe('cacheBust', () => {
+  /** A URL that already has a query must take the stamp with & or the provider reads a mangled last param. */
+  test.each([
+    ['https://x', 'https://x?_=1000'],
+    ['https://x?symbol=AAPL', 'https://x?symbol=AAPL&_=1000'],
+  ])('stamps %s', (url, expected) => {
+    const result = cacheBust(url, 1000);
+
+    expect(result).toBe(expected);
+  });
+});
+
+describe('requestJson', () => {
+  /** A stub that answers every call the same and records what it was asked for. */
+  function answering(err: string | null, body?: string) {
+    const calls: string[] = [];
+    const stub: RequestFn = (url, callback) => {
+      calls.push(url);
+      callback(err, body);
+    };
+    return { calls, stub };
+  }
+
+  /** A 401 with an empty body is how a bad key shows, so the error must still reach the provider. */
+  test('hands on the error of a reply with no readable body', () => {
+    const { stub } = answering('http 401', '');
+    const seen: Array<[string | null, unknown]> = [];
+
+    requestJson('https://x', stub, (err, json) => seen.push([err, json]));
+
+    expect(seen).toEqual([['http 401', null]]);
+  });
+
+  /** A provider's own error JSON rides on a 4xx, so the body must come through beside the error. */
+  test('hands on the parsed body beside the error', () => {
+    const { stub } = answering('http 429', '{"message":"slow down"}');
+    const seen: Array<[string | null, unknown]> = [];
+
+    requestJson('https://x', stub, (err, json) => seen.push([err, json]));
+
+    expect(seen).toEqual([['http 429', { message: 'slow down' }]]);
+  });
+
+  /** Every call goes out stamped, so a proxy cannot serve last hour's reading. */
+  test('busts the cache on the request it sends', () => {
+    const { calls, stub } = answering(null, '{}');
+
+    requestJson('https://x?a=1', stub, () => {});
+
+    expect(calls[0]).toMatch(/^https:\/\/x\?a=1&_=\d+$/);
   });
 });

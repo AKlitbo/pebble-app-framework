@@ -52,6 +52,25 @@ describe('createSendQueue', () => {
   });
 
   /**
+   * A dict the phone cannot encode throws out of the send. The throw escaped into the settings save,
+   * so the features never heard about the save, and the queue sat blocked until the watchdog.
+   */
+  test('counts a send that throws as a failed one and keeps the throw inside', () => {
+    let attempts = 0;
+    const onFail = vi.fn();
+    const queueSend = createSendQueue(() => {
+      attempts++;
+      throw new Error('unknown key');
+    });
+
+    queueSend({ a: 1 }, undefined, onFail);
+    vi.advanceTimersByTime(SEND_RETRY_MS * SEND_RETRIES);
+
+    expect(attempts).toBe(SEND_RETRIES);
+    expect(onFail).toHaveBeenCalledTimes(1);
+  });
+
+  /**
    * The bug this queue exists for. Two sends racing at cold boot means PebbleKit drops the loser
    * with no retry, so the face sits blank until some later send happens to get through.
    */
@@ -292,31 +311,31 @@ describe('createDedupedSender', () => {
       sent.push(dict);
       fails.push(onFail || (() => {}));
     };
-    const sender = createDedupedSender<number[]>(queueSend, (bytes) => ({ STRIP: bytes }), (bytes) => bytes.join(','), 'Test');
+    const sender = createDedupedSender(queueSend, 'Test');
 
     return { fails, sent, sender };
   }
 
   /** An unchanged strip would otherwise cost the watch a BLE wake on every refresh. */
-  test('skips a push with the same key as the last one', () => {
+  test('skips a push with the same contents as the last one', () => {
     const { sent, sender } = recordingDedupe();
 
-    sender.push([1, 2, 3]);
-    sender.push([1, 2, 3]);
+    sender.push({ STRIP: [1, 2, 3] });
+    sender.push({ STRIP: [1, 2, 3] });
 
     expect(sent).toHaveLength(1);
   });
 
   /**
-   * A send that failed never reached the watch. Holding onto its key would skip the retry with the
+   * A send that failed never reached the watch. Holding onto it would skip the retry with the
    * same strip, and the face stays blank until the values happen to move.
    */
   test('sends the same strip again after the last send failed', () => {
     const { fails, sent, sender } = recordingDedupe();
 
-    sender.push([1, 2, 3]);
+    sender.push({ STRIP: [1, 2, 3] });
     fails[0]();
-    sender.push([1, 2, 3]);
+    sender.push({ STRIP: [1, 2, 3] });
 
     expect(sent).toHaveLength(2);
   });

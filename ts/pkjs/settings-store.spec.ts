@@ -5,11 +5,12 @@
  * Every part of the runtime reads settings through these, so a value read wrong here is read
  * wrong everywhere. The cases worth pinning are the stored blob that is missing or will not parse,
  * Clay's habit of wrapping a value in an object, and a real zero or false that must not be
- * mistaken for unset.
+ * mistaken for unset. The settings watch decides whether a save refetches, so a miss there either
+ * leaves a new city unfetched or spends a provider call on every theme change.
  */
 
 import { describe, test, expect, beforeEach } from 'vitest';
-import { getConfig, readBool, readValue } from './settings-store';
+import { getConfig, readBool, readValue, watchSettings } from './settings-store';
 
 describe('getConfig', () => {
   beforeEach(() => {
@@ -94,6 +95,45 @@ describe('readBool', () => {
   /** An unset setting must take the fallback so a defaulted-on toggle starts on. */
   test('applies the fallback when the value is unset', () => {
     const result = readBool(undefined, true);
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('watchSettings', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  /** A save that only touched the theme must not spend a provider call on a refetch. */
+  test('reports no change when only other settings moved', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', THEME: 1 }));
+    const watch = watchSettings(['WEATHER_PROVIDER']);
+    watch.opened();
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', THEME: 2 }));
+
+    const result = watch.changed();
+
+    expect(result).toBe(false);
+  });
+
+  /** A new provider has to be fetched straight away rather than on the next poll. */
+  test('reports a change when a watched setting moved', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
+    const watch = watchSettings(['WEATHER_PROVIDER']);
+    watch.opened();
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'openmeteo' }));
+
+    const result = watch.changed();
+
+    expect(result).toBe(true);
+  });
+
+  /** With no snapshot the page never reported opening, so the safe answer is to refetch. */
+  test('reports a change when the page never reported opening', () => {
+    const watch = watchSettings(['WEATHER_PROVIDER']);
+
+    const result = watch.changed();
 
     expect(result).toBe(true);
   });

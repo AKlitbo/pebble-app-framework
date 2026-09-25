@@ -304,22 +304,6 @@ describe('hmFrom12Hour', () => {
   });
 });
 
-describe('safeParse', () => {
-  /** A valid body must parse so the reading can be shown. */
-  test('parses valid JSON into an object', () => {
-    const result = util.safeParse('{"temp":12}');
-
-    expect(result).toEqual({ temp: 12 });
-  });
-
-  /** A malformed body must yield null (not throw) so the caller can show an error state. */
-  test('returns null for malformed JSON instead of throwing', () => {
-    const result = util.safeParse('not json');
-
-    expect(result).toBeNull();
-  });
-});
-
 describe('requestJson', () => {
   /** A structured error body (e.g. a provider's 401 JSON) must still reach the provider so it can classify it, not be swallowed as a network error. */
   test('hands a parseable body to onJson even when the request reported an http error', () => {

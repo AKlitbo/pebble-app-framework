@@ -1,25 +1,17 @@
-// @vitest-environment jsdom
 /**
  * Specs for the weather feature's own helpers.
  *
- * The coordinate checks, the saved-city reader, the change-gated refetch, the one-at-a-time
- * weather round, and who gets to fetch between the watch and the phone are the parts a reader
- * cannot check by eye. The settings snapshot reads the Clay
- * store in localStorage, which jsdom provides. How the feature plugs into the app's lifecycle is
- * covered with the app's own specs.
+ * The coordinate checks, the saved-city reader, the retry delays, and the one-at-a-time weather
+ * round are the parts a reader cannot check by eye. How the feature plugs into the app's lifecycle
+ * is covered with the app's own specs.
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   validCoord,
   getManualLocation,
-  weatherSettingsSnapshot,
-  weatherSettingsChanged,
   weatherRetryDelayMs,
   runWeatherRound,
-  askShouldFetch,
-  slowTickShouldFetch,
-  WEATHER_KEYS,
   WEATHER_RETRY_DELAYS_MS,
 } from './feature';
 
@@ -79,50 +71,6 @@ describe('getManualLocation', () => {
     const result = getManualLocation({});
 
     expect(result).toBeNull();
-  });
-});
-
-describe('weatherSettingsSnapshot', () => {
-  beforeEach(() => {
-    localStorage.clear();
-  });
-
-  /** The snapshot must JSON-encode the stored weather keys so a later save can be diffed by content. */
-  test('json-encodes the weather keys read from the store', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
-
-    const result = weatherSettingsSnapshot();
-
-    expect(result[WEATHER_KEYS.indexOf('WEATHER_PROVIDER')]).toBe('"owm"');
-  });
-});
-
-describe('weatherSettingsChanged', () => {
-  /** With no snapshot (the page never reported opening) the safe default is to refetch. */
-  test('returns true when there is no prior snapshot', () => {
-    const result = weatherSettingsChanged(null, ['"metric"']);
-
-    expect(result).toBe(true);
-  });
-
-  /** Identical snapshots mean only non-weather settings changed, so no refetch. */
-  test('returns false when every weather key is unchanged', () => {
-    const before = WEATHER_KEYS.map(() => '"same"');
-
-    const result = weatherSettingsChanged(before, before.slice());
-
-    expect(result).toBe(false);
-  });
-
-  /** A single differing weather key must trigger a refetch. */
-  test('returns true when a weather key differs', () => {
-    const before = WEATHER_KEYS.map(() => '"a"');
-    const after = before.slice();
-    after[0] = '"b"';
-
-    const result = weatherSettingsChanged(before, after);
-
-    expect(result).toBe(true);
   });
 });
 
@@ -280,40 +228,5 @@ describe('runWeatherRound', () => {
     callbacks[0]({ ok: true });
 
     expect(state.inFlight).toBe(false);
-  });
-});
-
-describe('weather asks', () => {
-  /**
-   * Saving a new temperature unit refetched twice. The phone forced a refetch after the save, and
-   * the watch asked as well once it took the new unit, each with its own gps fix and provider call.
-   */
-  test('folds a watch ask into the refetch a settings save has pending', () => {
-    const asks = { sinceSlowTick: false, savePending: true };
-
-    const result = askShouldFetch(asks);
-
-    expect(result).toBe(false);
-  });
-
-  /** The watch polls every 30 minutes and the phone ticked every 30 too, so each reading was fetched once per end. */
-  test('skips the slow tick that follows a watch ask', () => {
-    const asks = { sinceSlowTick: false, savePending: false };
-    askShouldFetch(asks);
-
-    const result = slowTickShouldFetch(asks);
-
-    expect(result).toBe(false);
-  });
-
-  /** A watch out of range stops asking, and the phone has to keep the reading fresh on its own. */
-  test('fetches on the next slow tick once the watch stops asking', () => {
-    const asks = { sinceSlowTick: false, savePending: false };
-    askShouldFetch(asks);
-    slowTickShouldFetch(asks);
-
-    const result = slowTickShouldFetch(asks);
-
-    expect(result).toBe(true);
   });
 });

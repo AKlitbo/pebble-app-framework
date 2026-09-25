@@ -9,14 +9,16 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include <limits.h>
 
 #include "io/appmessage/appmessage.h"
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
-#include "io/stores/store_poll.h"
+#include "io/stores/store_fetch.h"
 #include "text/cstring_fit.h"
+#include "weather/forecast_age.h"
 #include "weather/weather_reading.h"
 
 /**
@@ -52,9 +54,15 @@ _Static_assert(offsetof(WeatherState, last_sync) == 180, "weather state must kee
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "weather state must fit one persist key");
 
 static void (*s_cb)(void);     ///< Called whenever a reading changes, so the face can redraw
-static AppTimer *s_timer;      ///< The short boot re-ask only. The recurring poll rides the cadence
 static int s_boot_retries;     ///< Short cold-boot re-asks used so far, until the first reading lands
-static StorePoll s_poll;     ///< The interval, and when it is next due. Live gates the cache as well as the cadence turn
+// when each strip last arrived, kept in memory only. a strip stays when the forecast half of a fetch
+// fails while the current reading still lands, so the time the strip came is what says how much of
+// it has gone by. a relaunch starts them from the saved sync time, which is close enough, since each
+// strip's own base hour and weekday pin which hours and days its columns are
+static time_t s_hourly_at;
+static time_t s_daily_at;
+
+static StoreFetch s_fetch;   ///< The interval, the boot re-ask timer, and when the next poll is due. Live gates the cache too
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved reading
 static bool s_dirty;           ///< A channel touched the state this inbox, so persist_flush writes it once
 static bool s_changed;         ///< A channel touched the state this inbox, so the face repaints once at the end
@@ -68,6 +76,8 @@ static uint32_t s_saved_sum;   ///< Sum of the reading last written, so a reply 
  */
 static void reset_state(void)
 {
+    s_hourly_at = 0;
+    s_daily_at = 0;
     s_state.temp = WEATHER_NO_TEMP;
     s_state.cond[0] = '\0';
     s_state.humidity = -1;
@@ -112,7 +122,7 @@ static void persist_flush(void)
     {
         return;
     }
-    if (!s_poll.live)
+    if (!s_fetch.poll.live)
     {
         s_dirty = false;
         return;
@@ -199,7 +209,17 @@ static void on_weather(const WeatherMessage *msg)
         s_heard = true;
     }
 
-    if (weather_reading_apply(&s_state, msg, time(NULL)))
+    time_t now = time(NULL);
+    if (msg->hourly)
+    {
+        s_hourly_at = now;
+    }
+    if (msg->daily)
+    {
+        s_daily_at = now;
+    }
+
+    if (weather_reading_apply(&s_state, msg, now))
     {
         mark_dirty();
         s_changed = true;
@@ -233,7 +253,7 @@ static void on_unit_changed(bool fahrenheit)
  */
 static void boot_fire(void *data)
 {
-    s_timer = NULL;
+    s_fetch.timer = NULL;
 
     // the phone already answered, so a request now would only start another round on it. checked
     // before sending, since a reply can land between two re-asks
@@ -243,25 +263,13 @@ static void boot_fire(void *data)
     }
     appmessage_request_weather();
 
-    if (s_poll.poll_min <= 0 || s_state.last_sync != 0 || s_boot_retries >= WEATHER_BOOT_RETRIES)
+    if (s_fetch.poll.poll_min <= 0 || s_state.last_sync != 0 || s_boot_retries >= WEATHER_BOOT_RETRIES)
     {
         return;  // a restored reading, or out of tries. the deadline has it from here
     }
 
     s_boot_retries++;
-    s_timer = app_timer_register(WEATHER_BOOT_RETRY_MS, boot_fire, NULL);
-}
-
-/**
- * @brief Cancel the boot re-ask timer, if one is armed.
- */
-static void stop_polling(void)
-{
-    if (s_timer)
-    {
-        app_timer_cancel(s_timer);
-        s_timer = NULL;
-    }
+    s_fetch.timer = app_timer_register(WEATHER_BOOT_RETRY_MS, boot_fire, NULL);
 }
 
 /**
@@ -269,10 +277,7 @@ static void stop_polling(void)
  */
 static void cadence_poll(void)
 {
-    if (store_poll_turn(&s_poll, time(NULL)))
-    {
-        appmessage_request_weather();
-    }
+    store_fetch_turn(&s_fetch, time(NULL));
 }
 
 // --- public API ---
@@ -284,7 +289,9 @@ void weather_store_subscribe(void (*cb)(void))
 
 void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 {
-    s_poll.live = false; // only a live store goes live, see store_poll_set below
+    s_fetch.poll.live = false; // only a live store goes live, see store_poll_set below
+    s_fetch.request = appmessage_request_weather;
+    s_fetch.first_ms = WEATHER_FIRST_POLL_MS;
     s_persist_key = cfg.persist_key;
     reset_state();
     // the live flag is the gate the cadence turn reads, so registering here is harmless either way
@@ -333,32 +340,30 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
             s_state.wind_dir[sizeof(s_state.wind_dir) - 1] = '\0';
             s_state.sunrise[sizeof(s_state.sunrise) - 1] = '\0';
             s_state.sunset[sizeof(s_state.sunset) - 1] = '\0';
+
+            // the strips arrived no later than the reading they were saved with
+            s_hourly_at = s_state.last_sync;
+            s_daily_at = s_state.last_sync;
         }
     }
 
-    bool polling = store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL));
-    if (cfg.live)
+    // one fetch shortly after launch so the face is not blank while the first deadline is still
+    // coming, re-asked on a short cadence until the phone answers. poll_min 0 disables polling,
+    // matching reconfigure
+    bool polling = store_poll_set(&s_fetch.poll, cfg.poll_min, cfg.live, time(NULL));
+    store_fetch_stop(&s_fetch);
+    if (polling)
     {
-        // one fetch shortly after launch so the face is not blank while the first deadline is
-        // still coming. poll_min 0 disables polling, matching reconfigure
-        stop_polling();
-        if (polling)
-        {
-            s_timer = app_timer_register(WEATHER_FIRST_POLL_MS, boot_fire, NULL);
-        }
+        s_fetch.timer = app_timer_register(WEATHER_FIRST_POLL_MS, boot_fire, NULL);
     }
 }
 
 void weather_store_reconfigure(WeatherConfig cfg)
 {
-    // take the new interval from the next boundary on (no immediate fetch. a real interval change
-    // is rare, and the reading in hand is still good). switching the store off clears the live
-    // flag, which stops the cadence turn too, and drops the boot re-asks. a store that keeps
-    // polling keeps them, since they are what fills a cold launch
-    if (!store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL)))
-    {
-        stop_polling();
-    }
+    // a store with no reading catches up right away, and one holding a reading waits for its
+    // deadline. the catch-up is a single ask rather than the boot re-asks, since those stop once
+    // the phone has answered at all, a failed answer included
+    store_fetch_reconfigure(&s_fetch, cfg.poll_min, cfg.live, time(NULL), s_state.last_sync == 0);
 }
 
 int         weather_store_temp(void)          { return s_state.temp; }
@@ -376,8 +381,54 @@ int         weather_store_feels_like(void)    { return s_state.feels_like; }
 int         weather_store_pressure(void)      { return s_state.pressure; }
 int         weather_store_dew_point(void)     { return s_state.dew_point; }
 
-const WeatherHourly *weather_store_forecast_hourly(void) { return &s_state.hourly; }
-const WeatherDaily  *weather_store_forecast_daily(void)  { return &s_state.daily; }
+const WeatherHourly *weather_store_forecast_hourly(void)
+{
+    // the hours already over come off the strip itself, since nothing reads them again. a seeded
+    // store holds fixtures for a pinned clock, so only a live one ages its strip
+    WeatherHourly *strip = &s_state.hourly;
+    if (s_fetch.poll.live && s_hourly_at != 0 && strip->count != 0)
+    {
+        // the first column's hour is the next time the clock reads base_hour at or after the strip came
+        struct tm *at = localtime(&s_hourly_at);
+        time_t first = s_hourly_at - at->tm_min * SECONDS_PER_MINUTE - at->tm_sec +
+                       (time_t)((strip->base_hour - at->tm_hour + 24) % 24) * SECONDS_PER_HOUR;
+        uint8_t over = forecast_hours_past((int32_t)(time(NULL) - first), strip->step_hours, strip->count);
+        if (over != 0)
+        {
+            strip->count -= over;
+            strip->base_hour = (uint8_t)((strip->base_hour + over * strip->step_hours) % 24);
+            memmove(strip->col, strip->col + over, sizeof(strip->col[0]) * strip->count);
+
+            // counted from the new first column, so the sum never has to reach past a day
+            s_hourly_at = first + (time_t)over * strip->step_hours * SECONDS_PER_HOUR;
+        }
+    }
+    return strip;
+}
+
+const WeatherDaily *weather_store_forecast_daily(void)
+{
+    WeatherDaily *strip = &s_state.daily;
+    if (s_fetch.poll.live && s_daily_at != 0 && strip->count != 0)
+    {
+        // whole days from the arrival day to today, rounded so a day the clocks change still counts as one
+        struct tm *at = localtime(&s_daily_at);
+        time_t arrival_day = s_daily_at - at->tm_hour * SECONDS_PER_HOUR - at->tm_min * SECONDS_PER_MINUTE - at->tm_sec;
+        uint8_t first_ahead = (uint8_t)((strip->base_weekday - at->tm_wday + 7) % 7);
+        int days = (int)((time_start_of_today() - arrival_day + SECONDS_PER_DAY / 2) / SECONDS_PER_DAY);
+        uint8_t over = forecast_days_past(days, first_ahead, strip->count);
+        if (over != 0)
+        {
+            strip->count -= over;
+            strip->base_weekday = (uint8_t)((strip->base_weekday + over) % 7);
+            memmove(strip->col, strip->col + over, sizeof(strip->col[0]) * strip->count);
+
+            // the strip now starts today, so it counts from today
+            s_daily_at = time(NULL);
+        }
+    }
+    return strip;
+}
 
 int weather_store_age_s(void)
 {

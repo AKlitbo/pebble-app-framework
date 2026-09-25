@@ -12,7 +12,7 @@
 #include "io/appmessage/appmessage.h"
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
-#include "io/stores/store_poll.h"
+#include "io/stores/store_fetch.h"
 
 /**
  * @brief Delay before the first fetch after launch, in ms.
@@ -56,8 +56,7 @@ typedef struct
 _Static_assert(sizeof(CalendarPersist) <= PERSIST_DATA_MAX_LENGTH, "calendar snapshot must fit one persist key");
 
 static void (*s_cb)(void);     ///< Called whenever the agenda changes, so the face can redraw
-static AppTimer *s_timer;      ///< The catch-up fetch only. The recurring poll rides the cadence
-static StorePoll s_poll;     ///< The interval, whether the store is live, and when it is next due
+static StoreFetch s_fetch;   ///< The interval, the catch-up fetch, and when the next poll is due
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved strip
 static uint32_t s_saved_sum;   ///< Sum of the reading last written, so a reply that changes nothing is not written again
 
@@ -77,7 +76,7 @@ static void reset_state(void)
  */
 static void persist_save(void)
 {
-    if (!s_poll.live)
+    if (!s_fetch.poll.live)
     {
         return;
     }
@@ -139,37 +138,11 @@ static void on_calendar_strip(const uint8_t *buf, uint16_t len)
 // --- polling ---
 
 /**
- * @brief The one-shot catch-up fetch, used at launch and after a settings save.
- *
- * @param data The timer context (unused).
- */
-static void catch_up_fire(void *data)
-{
-    s_timer = NULL;
-    appmessage_request_calendar();
-}
-
-/**
- * @brief Cancel the catch-up fetch timer, if one is armed.
- */
-static void stop_polling(void)
-{
-    if (s_timer)
-    {
-        app_timer_cancel(s_timer);
-        s_timer = NULL;
-    }
-}
-
-/**
  * @brief The store's turn on the face's cadence: poll when the deadline has come round.
  */
 static void cadence_poll(void)
 {
-    if (store_poll_turn(&s_poll, time(NULL)))
-    {
-        appmessage_request_calendar();
-    }
+    store_fetch_turn(&s_fetch, time(NULL));
 }
 
 // --- public API ---
@@ -181,7 +154,9 @@ void calendar_store_subscribe(void (*cb)(void))
 
 void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
 {
-    s_poll.live = false; // only a live store goes live, see store_poll_set below
+    s_fetch.poll.live = false; // only a live store goes live, see store_fetch_start below
+    s_fetch.request = appmessage_request_calendar;
+    s_fetch.first_ms = CALENDAR_FIRST_POLL_MS;
     s_persist_key = cfg.persist_key;
     reset_state();
     // the live flag is the gate the cadence turn reads, so registering here is harmless either way
@@ -221,38 +196,15 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
         }
     }
 
-    bool polling = store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL));
-    if (cfg.live)
-    {
-        // one fetch shortly after launch so the agenda is not blank while the first deadline is
-        // still coming. poll_min 0 disables polling, matching reconfigure
-        stop_polling();
-        if (polling)
-        {
-            s_timer = app_timer_register(CALENDAR_FIRST_POLL_MS, catch_up_fire, NULL);
-        }
-    }
+    // one fetch shortly after launch so the store is not blank while the first deadline is still
+    // coming. poll_min 0 disables polling, matching reconfigure
+    store_fetch_start(&s_fetch, cfg.poll_min, cfg.live, time(NULL));
 }
 
 void calendar_store_reconfigure(CalendarConfig cfg)
 {
-    // switching the store off clears the live flag, which stops the cadence turn too, and drops any
-    // fetch still waiting. a store that keeps polling keeps its launch fetch, since a settings push
-    // that lands in the first second would otherwise cancel it and leave a restored agenda stale
-    // until the next deadline
-    if (!store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL)))
-    {
-        stop_polling();
-        return;
-    }
-
-    // an empty store has nothing to draw, so catch up right away. one that already holds an
-    // agenda waits for its deadline, so a save that only touched colours does not refetch
-    // the whole feed. the phone refetches on its own when the feed's address changes
-    if (!s_timer && s_state.strip.count == 0)
-    {
-        s_timer = app_timer_register(CALENDAR_FIRST_POLL_MS, catch_up_fire, NULL);
-    }
+    // an empty store catches up right away, and one holding data waits for its deadline
+    store_fetch_reconfigure(&s_fetch, cfg.poll_min, cfg.live, time(NULL), s_state.strip.count == 0);
 }
 
 const CalendarStrip *calendar_store_strip(void)

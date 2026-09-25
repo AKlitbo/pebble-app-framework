@@ -17,21 +17,14 @@ import type { WeatherResult } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
-import { getConfig, readBool, readValue, settingsChanged, settingsSnapshot } from '../pkjs/settings-store';
+import { getConfig, readBool, readValue, watchSettings } from '../pkjs/settings-store';
 import type { Feature, FeatureContext, FeatureHooks } from '../pkjs/feature';
+import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 
 /** The weather round state runWeatherRound carries between calls. */
 export interface WeatherState {
   inFlight: boolean;
   round: number;
-}
-
-/** Who has asked for weather lately, read and updated in place by the feature's hooks. */
-export interface WeatherAsks {
-  /** The watch asked, or the phone came up, since the last slow tick. */
-  sinceSlowTick: boolean;
-  /** A weather setting was saved and its forced refetch has not run yet. */
-  savePending: boolean;
 }
 
 /** The helpers runWeatherRound needs, passed in so the specs can swap them. */
@@ -145,26 +138,6 @@ export function getManualLocation(config: any): { coords: { lat: number; lon: nu
 }
 
 /**
- * Snapshots the weather-relevant settings.
- *
- * @return The current weather settings, JSON-encoded so they compare by content.
- */
-export function weatherSettingsSnapshot(): string[] {
-  return settingsSnapshot(WEATHER_KEYS);
-}
-
-/**
- * Reports whether any weather-relevant setting changed between two snapshots.
- *
- * @param before The snapshot taken before the config page opened, or null when none was taken.
- * @param after The snapshot taken after the config page closed.
- * @return True when a weather setting changed, or when there was no before snapshot to compare.
- */
-export function weatherSettingsChanged(before: string[] | null, after: string[]): boolean {
-  return settingsChanged(WEATHER_KEYS, before, after);
-}
-
-/**
  * Decides how long to wait before retrying a weather fetch, or null when no retry
  * should run. A successful fetch never retries, and the attempts are capped.
  *
@@ -251,40 +224,6 @@ export function runWeatherRound(state: WeatherState, force: boolean, deps: Weath
 }
 
 /**
- * Decides whether a watch ask, or the phone coming up, should start a fetch.
- *
- * Saving a weather setting schedules a forced refetch, and the watch asks as well once it takes
- * the new settings. An ask that lands before the refetch runs is folded into it, or the two would
- * race and fetch twice. Either way the ask counts towards skipping the next slow tick.
- *
- * @param asks The ask state to read and update in place.
- * @return True when the ask should start a fetch.
- */
-export function askShouldFetch(asks: WeatherAsks): boolean {
-  asks.sinceSlowTick = true;
-
-  return !asks.savePending;
-}
-
-/**
- * Decides whether a slow tick should start a fetch.
- *
- * The watch polls on its own clock at the same 30 minutes, so a tick that follows one of its asks
- * would only fetch the same weather again. The tick fetches when nothing asked since the last one,
- * such as a watch out of range.
- *
- * @param asks The ask state to read and update in place.
- * @return True when the tick should start a fetch.
- */
-export function slowTickShouldFetch(asks: WeatherAsks): boolean {
-  const due = !asks.sinceSlowTick;
-
-  asks.sinceSlowTick = false;
-
-  return due;
-}
-
-/**
  * Starts the weather feature for a face, with or without the coordinate keys.
  *
  * @param context What the app shares: the face's message keys, its config defaults, the send queue,
@@ -306,22 +245,17 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     return { requests: ['WEATHER_REQUEST'] };
   }
 
-  let settingsBeforeConfig: string[] | null = null;
+  const weatherSettings = watchSettings(WEATHER_KEYS);
 
   // weather round state mutated in place by runWeatherRound
   const state: WeatherState = { inFlight: false, round: 0 };
 
   // who asked lately, so a slow tick or a watch ask does not fetch what another just did
-  const asks: WeatherAsks = { sinceSlowTick: false, savePending: false };
+  const asks = createAsks();
 
   // the weather dict the watch holds, so an unchanged refresh skips the redundant BLE wake.
   // forgotten on ready and on a watch-initiated request so the watch always gets a fresh answer
-  const sender = createDedupedSender<AppMessageDict>(
-    queueSend,
-    (dict) => dict,
-    (dict) => JSON.stringify(dict),
-    'Weather'
-  );
+  const sender = createDedupedSender(queueSend, 'Weather');
 
   /** Sends a weather result to the watch. */
   function sendWeather(result: any) {
@@ -365,8 +299,6 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       Object.assign(dict, formatCoords(messageKeys, result));
     }
 
-    // a compound dict rather than one strip, so what is compared is a serialized signature of the
-    // whole thing rather than a byte run
     sender.push(dict);
   }
 
@@ -517,26 +449,16 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     // Clay saves the new settings before the app's webviewclosed handler runs, so the old values
     // are captured here while the page is still open
     configOpened() {
-      settingsBeforeConfig = weatherSettingsSnapshot();
+      weatherSettings.opened();
     },
 
     // only refetch when a weather setting actually changed, since refetching on every save (theme
     // or vibe) is wasted. the watch asks too once it takes a changed weather setting, and that ask
     // is folded into this refetch
     configSaved() {
-      const before = settingsBeforeConfig;
-
-      settingsBeforeConfig = null;
-
-      if (weatherSettingsChanged(before, weatherSettingsSnapshot())) {
-        asks.savePending = true;
-
+      if (weatherSettings.changed()) {
         // forced so it replaces a round still fetching with the old location or provider
-        setTimeout(() => {
-          asks.savePending = false;
-          asks.sinceSlowTick = true;
-          getWeather(true);
-        }, refetchDelayMs);
+        refetchAfterSave(asks, refetchDelayMs, () => getWeather(true));
       }
     },
   };

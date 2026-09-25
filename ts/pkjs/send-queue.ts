@@ -97,7 +97,14 @@ export function createSendQueue(send: SendFn): QueueSendFn {
     };
 
     const watchdog = setTimeout(() => settle(false), SEND_WATCHDOG_MS);
-    send(item.dict, () => settle(true), () => settle(false));
+
+    // a dict the phone cannot encode makes the send throw rather than nack. counted as a failed send,
+    // so the throw does not escape into whoever queued something and the queue moves on
+    try {
+      send(item.dict, () => settle(true), () => settle(false));
+    } catch (error) {
+      settle(false);
+    }
   }
 
   /** Adds one message to the queue and kicks off sending if nothing else is in flight. */
@@ -107,42 +114,35 @@ export function createSendQueue(send: SendFn): QueueSendFn {
   };
 }
 
-/** Sends one kind of payload to the watch, skipping a send the watch already holds. */
-export interface DedupedSender<T> {
-  /** Sends the payload, unless it matches the one the watch took last. */
-  push(value: T): void;
+/** Sends one kind of message to the watch, skipping a send the watch already holds. */
+export interface DedupedSender {
+  /** Sends the dict, unless it matches the one the watch took last. */
+  push(dict: AppMessageDict): void;
 
   /** Forgets what the watch holds, so the next push goes out whatever it carries. */
   forget(): void;
 }
 
 /**
- * Wraps a queueSend so the same payload is not sent twice in a row.
+ * Wraps a queueSend so the same dict is not sent twice in a row.
  *
- * Every push costs a BLE wake whether or not the reading moved, so the key of the payload the
- * watch took is kept and a push with the same key is dropped. Holding the key rather than the
- * payload means each push works its key out once. The half worth spelling out is the failure. A
- * send that nacked its way to the retry cap never reached the watch, so what was kept is thrown
- * away and the next push goes out again. Recording it on the way in instead would leave the face blank
- * until the values happened to move.
+ * Every push costs a BLE wake whether or not the reading moved, so the JSON of the dict the watch
+ * took is kept and a push with the same JSON is dropped. Holding the JSON rather than the dict means
+ * each push works it out once. The half worth spelling out is the failure. A send that nacked its
+ * way to the retry cap never reached the watch, so what was kept is thrown away and the next push
+ * goes out again. Recording it on the way in instead would leave the face blank until the values
+ * happened to move.
  *
  * @param queueSend The queue every send goes through.
- * @param build Turns the payload into the dict for the watch.
- * @param key Turns the payload into a string that matches only for the same reading.
  * @param label What to call this sender in the log.
  * @return The sender, holding what the watch last took.
  */
-export function createDedupedSender<T>(
-  queueSend: QueueSendFn,
-  build: (value: T) => AppMessageDict,
-  key: (value: T) => string,
-  label: string
-): DedupedSender<T> {
+export function createDedupedSender(queueSend: QueueSendFn, label: string): DedupedSender {
   let held: string | null = null;
 
   return {
-    push(value: T): void {
-      const next = key(value);
+    push(dict: AppMessageDict): void {
+      const next = JSON.stringify(dict);
       if (next === held) {
         console.log(`${label}: unchanged, skipping send`);
         return;
@@ -151,7 +151,7 @@ export function createDedupedSender<T>(
       held = next;
 
       queueSend(
-        build(value),
+        dict,
         () => {
           console.log(`${label}: sent to Pebble`);
         },

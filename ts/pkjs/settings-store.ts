@@ -85,3 +85,36 @@ export function settingsChanged(keys: string[], before: string[] | null, after: 
   // walks the key list rather than the snapshot so a short after array cannot cut the diff early
   return keys.some((key, index) => after[index] !== before[index]);
 }
+
+/** Watches some settings across one visit to the settings page. */
+export interface SettingsWatch {
+  /** The page is opening, so the saved values are still the old ones. Snapshots them. */
+  opened(): void;
+  /** The page closed and saved. Reports whether any watched setting moved, and forgets the snapshot. */
+  changed(): boolean;
+}
+
+/**
+ * Watches a list of settings across a visit to the settings page, so a feature refetches only when
+ * one of its own settings moved rather than on every save.
+ *
+ * @param keys The settings to watch, by message key.
+ * @return The watch. Call opened when the page opens and changed once it has saved.
+ */
+export function watchSettings(keys: string[]): SettingsWatch {
+  let before: string[] | null = null;
+
+  return {
+    opened() {
+      before = settingsSnapshot(keys);
+    },
+
+    changed() {
+      const snapshot = before;
+
+      before = null;
+
+      return settingsChanged(keys, snapshot, settingsSnapshot(keys));
+    },
+  };
+}

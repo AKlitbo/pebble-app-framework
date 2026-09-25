@@ -130,10 +130,24 @@ int         weather_store_temp_min(void);
 /** @brief The chance of rain in percent, or -1 if we have not got one yet. */
 int         weather_store_precip_chance(void);
 
-/** @brief The hourly forecast strip. `count` is 0 until a reading lands. */
+/**
+ * @brief The hourly forecast strip, starting at the hour now.
+ *
+ * A strip can outlive the fetch that brought it, when only the forecast half of a later fetch
+ * fails. Columns whose hour is over come off the front as it is read, and `base_hour` moves with
+ * them, so a column is never labelled with an hour already gone.
+ *
+ * @return The strip. `count` is 0 until a reading lands, or once every column is over.
+ */
 const WeatherHourly *weather_store_forecast_hourly(void);
 
-/** @brief The 7-day forecast strip. `count` is 0 until a reading lands. */
+/**
+ * @brief The daily forecast strip, starting today.
+ *
+ * Days before today come off the front as it is read, and `base_weekday` moves with them.
+ *
+ * @return The strip. `count` is 0 until a reading lands, or once every day is over.
+ */
 const WeatherDaily *weather_store_forecast_daily(void);
 
 /** @brief How many seconds since the last reading turned up, or -1 if we have none. */

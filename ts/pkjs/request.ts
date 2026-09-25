@@ -1,6 +1,10 @@
 /**
- * The HTTP GET every fetch on the phone goes through, shared by the app and the features it starts.
+ * The HTTP GET every fetch on the phone goes through, shared by the app and the features it starts,
+ * plus the JSON handling the weather and stock providers put on top of it.
  */
+
+/** An HTTP GET the caller supplies, so the specs can swap in a fake. */
+export type RequestFn = (url: string, callback: (err: string | null, body?: string) => void) => void;
 
 /**
  * Fetches a URL with an HTTP GET and reports the result through a callback rather
@@ -61,4 +65,52 @@ export function request(url: string, callback: (err: string | null, body?: strin
   } catch (error) {
     finish('send error');
   }
+}
+
+/**
+ * Parses a JSON string, returning null on failure. The result is the raw unknown JSON, so a
+ * provider casts it to its own response shape.
+ *
+ * @param body The raw response body to parse.
+ * @return The parsed JSON, or null when the body is not valid JSON.
+ */
+export function safeParse(body: string): unknown {
+  try {
+    return JSON.parse(body);
+  } catch (error) {
+    return null;
+  }
+}
+
+/**
+ * Adds a query param that changes on every call, so no HTTP cache between the phone and the
+ * provider can hand back an old reply. Providers ignore the extra param.
+ *
+ * @param url The URL to fetch.
+ * @param nowMs The time to stamp it with, normally Date.now().
+ * @return The URL with its `_=` stamp added.
+ */
+export function cacheBust(url: string, nowMs: number): string {
+  const separator = url.indexOf('?') === -1 ? '?' : '&';
+
+  return `${url}${separator}_=${nowMs}`;
+}
+
+/**
+ * Fetches a URL past any cache and parses the reply as JSON.
+ *
+ * onJson hears every reply, with the request error beside the parsed body. The body is null when
+ * there was none or it did not parse. That way a provider can still read a bodyless 401 or 429 off
+ * the error, and each feature picks its own status for a reply it cannot read.
+ *
+ * @param url The URL to fetch. A cache busting param is added before the request goes out.
+ * @param get The HTTP GET to use, normally request.
+ * @param onJson Called once with the request error, or null, and the parsed body, or null.
+ */
+export function requestJson<T = unknown>(url: string, get: RequestFn, onJson: (err: string | null, json: T | null) => void): void {
+  get(cacheBust(url, Date.now()), (err, body) => {
+    const json = body ? safeParse(body) : null;
+
+    onJson(err, json ? (json as T) : null);
+  });
 }

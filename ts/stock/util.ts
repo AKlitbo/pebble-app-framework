@@ -7,6 +7,8 @@
  */
 
 import { zoneParts } from '../pkjs/timezone';
+import { requestJson as sharedRequestJson } from '../pkjs/request';
+import type { RequestFn } from '../pkjs/request';
 
 /** One normalized quote result (or a status/error when ok is false). */
 export interface StockQuote {
@@ -26,8 +28,7 @@ export interface StockOpts {
   symbol?: string;
 }
 
-/** An HTTP GET the caller supplies, so the specs can swap in a fake. */
-export type RequestFn = (url: string, callback: (err: string | null, body?: string) => void) => void;
+export type { RequestFn } from '../pkjs/request';
 
 /** Called once with the finished quote result. */
 export type DoneFn = (result: StockQuote) => void;
@@ -36,21 +37,6 @@ export type DoneFn = (result: StockQuote) => void;
 export type BeginResult =
   | { symbol: string; encodedKey: string; error?: undefined }
   | { error: StockQuote; symbol?: undefined; encodedKey?: undefined };
-
-/**
- * Parses a JSON string, returning null on failure. The result is the raw unknown JSON, so a
- * provider casts it to its own quote shape.
- *
- * @param body The raw HTTP response body to parse.
- * @return The parsed JSON, or null if the body was not valid JSON.
- */
-function safeParse(body: string): unknown {
-  try {
-    return JSON.parse(body);
-  } catch (error) {
-    return null;
-  }
-}
 
 /**
  * Performs an HTTP GET and shared response handling.
@@ -68,23 +54,14 @@ function safeParse(body: string): unknown {
  * @param onJson Called with the request error and the parsed JSON, or a null body, whenever there is something to read.
  */
 function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn, onJson: (err: string | null, json: T | null) => void): void {
-  // cachebust so a proxy can't hand us a stale quote
-  const separator = url.indexOf('?') === -1 ? '?' : '&';
-  const freshUrl = `${url}${separator}_=${Date.now()}`;
-
-  request(freshUrl, (err, body) => {
-    const json = body ? safeParse(body) : null;
-    if (json) {
-      return onJson(err, json as T);
+  sharedRequestJson<T>(url, request, (err, json) => {
+    // an http status with no readable body still lets a provider read a bodyless 401 or 429
+    // no body and no status at all is a genuine network fault
+    if (json || err) {
+      return onJson(err, json);
     }
 
-    // no readable body. an http status still lets a provider read a bodyless
-    // 401/429 so pass it through. no status at all is a genuine network fault
-    if (err) {
-      return onJson(err, null);
-    }
-
-    return done(status('NET ERROR'));
+    done(status('NET ERROR'));
   });
 }
 
@@ -210,7 +187,6 @@ function status(text: string): StockQuote {
 }
 
 export default {
-  safeParse,
   requestJson,
   begin,
   isoDateFromUnix,

@@ -44,6 +44,15 @@ describe('fetchQuote dispatcher', () => {
     expect(calls[0]).toContain(ENDPOINT.finnhub);
   });
 
+  /** A name that only exists on every object's prototype must fall back too, not crash calling .fetch on a built-in. */
+  test.each(['constructor', '__proto__'])('falls back to finnhub for %s', (provider) => {
+    const calls: string[] = [];
+
+    stock.fetchQuote({ ...BASE, provider }, replying('{}', calls), () => {});
+
+    expect(calls[0]).toContain(ENDPOINT.finnhub);
+  });
+
   /** A missing provider (no config yet) must also fall back to finnhub, not crash on undefined. */
   test('falls back to finnhub when no provider is given', () => {
     const calls: string[] = [];

@@ -14,8 +14,9 @@ import type { StockQuote } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
-import { getConfig, readValue, settingsChanged, settingsSnapshot } from '../pkjs/settings-store';
+import { getConfig, readValue, watchSettings } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
+import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 
 /** Fetch state carried across stock rounds, mutated in place by runStockRound. */
 export interface StockState {
@@ -62,25 +63,8 @@ export function parseSymbols(raw: unknown): string[] {
     .slice(0, wire.STOCK_MAX_SLOTS);
 }
 
-/**
- * Snapshots the stock-relevant settings.
- *
- * @return The current stock settings, JSON-encoded so they compare by content.
- */
-export function stockSettingsSnapshot(): string[] {
-  return settingsSnapshot(STOCK_KEYS);
-}
-
-/**
- * Reports whether any stock-relevant setting changed between two snapshots.
- *
- * @param before The snapshot taken before the config page opened, or null when none was taken.
- * @param after The snapshot taken after the config page closed.
- * @return True when a stock setting changed, or when there was no before snapshot to compare.
- */
-export function stockSettingsChanged(before: string[] | null, after: string[]): boolean {
-  return settingsChanged(STOCK_KEYS, before, after);
-}
+// the statuses a quote carries when the provider was never reached, so no call was spent
+const UNANSWERED = ['ERR', 'NET ERROR'];
 
 /**
  * Runs one stock-fetch round: fires a quote per symbol, collects them in display
@@ -128,13 +112,18 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
     clearTimeout(watchdog);
     state.inFlight = false;
 
-    // record the finish time only when at least one quote came back good so a round that failed
-    // outright (a network blip) can retry on the next poll instead of freezing the
-    // watchlist. record the trading day too so Alpha Vantage knows once it holds today
+    // a good quote records when the fetch finished, and the trading day so Alpha Vantage knows once
+    // it holds today. a round where the provider answered with nothing good, such as NO SYMBOL for a
+    // mistyped ticker or RATE LIMIT, still records the time, since every one of those answers spent
+    // a call on a metered plan. only a round the provider never answered, a network blip, goes
+    // unrecorded, so it retries on the next poll
     const firstGood = results.find((quote) => quote && quote.ok);
+    const answered = results.some((quote) => quote && (quote.ok || !UNANSWERED.includes(quote.status || '')));
     if (firstGood) {
       state.lastFetchMs = deps.now();
       state.lastAsOf = firstGood.asOf || '';
+    } else if (answered) {
+      state.lastFetchMs = deps.now();
     }
     deps.sendStocks(results);
   }
@@ -175,7 +164,7 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
  *   settings page.
  */
 const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
-  let settingsBeforeConfig: string[] | null = null;
+  const stockSettings = watchSettings(STOCK_KEYS);
 
   // fetch state carried across stock rounds and mutated in place by runStockRound. the two
   // throttle stamps come back off the phone because this JS is killed and restarted at will and
@@ -190,15 +179,13 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
 
   // the strip the watch holds, so an unchanged refresh skips the redundant BLE wake. forgotten on
   // ready and on a watch-initiated request so the watch always gets a fresh answer
-  const sender = createDedupedSender<number[]>(
-    queueSend,
-    (bytes) => ({ [messageKeys.STOCK_STRIP]: bytes }),
-    (bytes) => bytes.join(','),
-    'Stocks'
-  );
+  const sender = createDedupedSender(queueSend, 'Stocks');
 
   // what the watch was last handed, so a held fetch can push it again rather than leave it blank
   let lastStockBytes: number[] | null = null;
+
+  // who asked lately, so a slow tick or a watch ask does not fetch what another just did
+  const asks = createAsks();
 
   /** Sends already-packed watchlist bytes to the watch, unless the watch holds them already. */
   function pushStockBytes(bytes: number[] | null) {
@@ -207,7 +194,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     }
 
     lastStockBytes = bytes;
-    sender.push(bytes);
+    sender.push({ [messageKeys.STOCK_STRIP]: bytes });
   }
 
   /** Sends the packed watchlist strip to the watch, and keeps it for the next run. */
@@ -226,6 +213,20 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
         strip: bytes,
       });
     }
+  }
+
+  /**
+   * Forgets the strip kept for a shut quota gate and the throttle stamps that go with it.
+   *
+   * Both describe quotes for the old symbols, provider, or key. Keeping them meant a forced fetch
+   * that failed after a symbol change left the old strip to go back to the watch on the next held
+   * request, and the stamps holding the gate shut on quotes nobody asked for any more.
+   */
+  function forgetStrip() {
+    savedStrip = null;
+    stockState.lastFetchMs = 0;
+    stockState.lastAsOf = '';
+    stockCache.save(localStorage, { lastAsOf: '', lastFetchMs: 0, strip: null });
   }
 
   /**
@@ -290,6 +291,10 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
       sender.forget();
 
+      if (!askShouldFetch(asks)) {
+        return;
+      }
+
       // the gate outlives a restart so it can hold on the very first fetch of a run. a watch that
       // just rebooted with an empty store would sit blank till the gate opened, which for Alpha
       // Vantage is tomorrow, so hand it the strip off the phone instead
@@ -307,6 +312,12 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       // quota gate like any other routine fetch. only a settings change forces past it
       const held = lastStockBytes;
       sender.forget();
+
+      // a save's forced refetch is about to answer, so this ask waits for it
+      if (!askShouldFetch(asks)) {
+        return;
+      }
+
       if (!getStocks()) {
         // the gate held the fetch back, so the watch gets the last strip worth showing rather than
         // sitting blank until the gate opens. the phone only saves a strip with a real quote in it,
@@ -315,24 +326,22 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       }
     },
 
-    // quotes move slowly, so stocks only refresh on the slow ticks
+    // quotes move slowly, so stocks only refresh on the slow ticks nothing else has covered
     refresh(slow) {
-      if (slow) {
+      if (slow && slowTickShouldFetch(asks)) {
         getStocks();
       }
     },
 
     configOpened() {
-      settingsBeforeConfig = stockSettingsSnapshot();
+      stockSettings.opened();
     },
 
     configSaved() {
-      const before = settingsBeforeConfig;
-      settingsBeforeConfig = null;
-
       // forced, since a changed provider, key or symbol list is worth a fetch past the quota gate
-      if (stockSettingsChanged(before, stockSettingsSnapshot())) {
-        setTimeout(() => getStocks(true), refetchDelayMs);
+      if (stockSettings.changed()) {
+        forgetStrip();
+        refetchAfterSave(asks, refetchDelayMs, () => getStocks(true));
       }
     },
   };

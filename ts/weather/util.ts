@@ -6,6 +6,8 @@
  */
 
 import conditions from './conditions';
+import { requestJson as sharedRequestJson } from '../pkjs/request';
+import type { RequestFn } from '../pkjs/request';
 
 /** A resolved latitude/longitude pair. */
 export interface WeatherCoords {
@@ -69,8 +71,7 @@ export interface WeatherOpts {
   fields?: string[];
 }
 
-/** An HTTP GET the caller supplies, so the specs can swap in a fake. */
-export type RequestFn = (url: string, callback: (err: string | null, body?: string) => void) => void;
+export type { RequestFn } from '../pkjs/request';
 
 /** Called once with the finished weather result. */
 export type DoneFn = (result: WeatherResult) => void;
@@ -342,21 +343,6 @@ function attachForecast(result: WeatherResult, forecast: ForecastCols | null | u
 }
 
 /**
- * Parses a JSON string, returning null on failure. The result is the raw
- * unknown JSON, so a provider casts it to its own response shape.
- *
- * @param body The raw response body to parse.
- * @return The parsed JSON, or null when the body is not valid JSON.
- */
-function safeParse(body: string): unknown {
-  try {
-    return JSON.parse(body);
-  } catch (error) {
-    return null;
-  }
-}
-
-/**
  * Performs an HTTP GET and shared response handling.
  *
  * A parseable body always goes to onJson, so a provider can read its own error
@@ -370,21 +356,12 @@ function safeParse(body: string): unknown {
  * @param onJson Called with the parsed body when it parses.
  */
 function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn, onJson: (json: T) => void): void {
-  // cachebust
-  const separator = url.indexOf('?') === -1 ? '?' : '&';
-  const freshUrl = `${url}${separator}_=${Date.now()}`;
-
-  request(freshUrl, (err, body) => {
-    const json = body ? safeParse(body) : null;
+  sharedRequestJson<T>(url, request, (err, json) => {
     if (json) {
-      return onJson(json as T);
+      return onJson(json);
     }
 
-    if (err) {
-      return done(status('NET ERROR'));
-    }
-
-    return done(status('BAD WX DATA'));
+    done(status(err ? 'NET ERROR' : 'BAD WX DATA'));
   });
 }
 
@@ -461,7 +438,6 @@ export default {
   hmFrom12Hour,
   attachExtras,
   attachForecast,
-  safeParse,
   requestJson,
   ok,
   status,

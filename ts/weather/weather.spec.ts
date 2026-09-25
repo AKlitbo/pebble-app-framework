@@ -47,6 +47,15 @@ describe('fetchWeather dispatcher', () => {
     expect(calls[0]).toContain(ENDPOINT.openmeteo);
   });
 
+  /** A name that only exists on every object's prototype must fall back too, not crash calling .fetch on a built-in. */
+  test.each(['constructor', '__proto__'])('falls back to Open-Meteo for %s', (provider) => {
+    const calls: string[] = [];
+
+    weather.fetchWeather({ ...BASE, provider }, replying('{}', calls), () => {});
+
+    expect(calls[0]).toContain(ENDPOINT.openmeteo);
+  });
+
   /** A missing provider (no config yet) must also fall back to Open-Meteo, not crash on undefined. */
   test('falls back to Open-Meteo when no provider is given', () => {
     const calls: string[] = [];
