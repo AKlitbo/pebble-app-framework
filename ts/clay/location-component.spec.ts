@@ -35,6 +35,7 @@ function mount(config?: ClayComponentContext['config']) {
     hidden: root.querySelector('.loc-value') as HTMLInputElement,
     list: root.querySelector('.loc-list') as HTMLElement,
     note: root.querySelector('.loc-note') as HTMLElement,
+    unpicked: root.querySelector('.loc-unpicked') as HTMLElement,
   };
 }
 
@@ -374,6 +375,45 @@ describe('initialize', () => {
     expect(mounted.hidden.value).toBe('');
   });
 
+  /**
+   * Typing clears the saved place, so a city typed and saved without a tap on the list saved as
+   * nothing while the box still showed the name. The prompt is the only sign of that.
+   */
+  test('prompts to pick from the list while typed text is not a pick', () => {
+    const mounted = mount();
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Phoenix');
+
+    expect(mounted.unpicked.style.display).toBe('block');
+  });
+
+  /** A prompt still up after the tap that answers it reads as a page that ignored the pick. */
+  test('hides the pick prompt once a place is picked', () => {
+    const mounted = mount();
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Phoenix');
+    vi.advanceTimersByTime(300);
+    xhrs[0].respond(200, JSON.stringify({ results: [
+      { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
+    ] }));
+    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(mounted.unpicked.style.display).toBe('none');
+  });
+
+  /** An emptied box is how a place gets cleared on purpose, so it saves as nothing without a prompt. */
+  test('stays quiet when the box is emptied', () => {
+    const mounted = mount();
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'Phoenix');
+    type(mounted.query, '');
+
+    expect(mounted.unpicked.style.display).toBe('none');
+  });
+
   /** Rapid keystrokes must collapse into one request, not one per character that floods the geocoder. */
   test('coalesces rapid keystrokes into a single request', () => {
     const mounted = mount();
@@ -515,6 +555,56 @@ describe('zone search', () => {
 
     expect(result).toEqual({ label: 'UTC', offset: 0, tz: 'UTC', fixed: false });
     expect(xhrs).toHaveLength(0);
+  });
+
+  /**
+   * The zone's wall clock and "now" have to come from one reading. Read twice across a minute
+   * rollover, Berlin's hint came out as UTC+00:59 and stayed that way for the life of the page.
+   */
+  test('reads the clock once for a zone hint across a minute rollover', () => {
+    // the last millisecond of a minute on a January morning, when Berlin is UTC+01:00. any
+    // second read of the clock lands a millisecond on, in the next minute
+    const lastMs = Date.UTC(2026, 0, 15, 11, 59, 59, 999);
+    vi.setSystemTime(lastMs);
+    const now = vi.spyOn(Date, 'now').mockReturnValue(lastMs + 1);
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'berlin');
+    const row = mounted.list.querySelector('.loc-item-zone');
+
+    expect(row.textContent).toBe('Europe/BerlinUTC+01:00');
+    now.mockRestore();
+  });
+
+  /**
+   * A zone tapped inside the 300 ms debounce still had a search queued behind it. The search
+   * reopened the list over the picked row, and a stray tap there overwrote the pick.
+   */
+  test('keeps the list shut when a zone is tapped before the search runs', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    vi.advanceTimersByTime(300);
+
+    expect(xhrs).toHaveLength(0);
+    expect(mounted.list.classList.contains('show')).toBe(false);
+  });
+
+  /** The same reopening from a geocoder answer that lands after the zone was already tapped. */
+  test('keeps the list shut when the geocoder answers after a zone is tapped', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+    vi.advanceTimersByTime(300);
+    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Utcubamba', latitude: 1, longitude: 2 }] }));
+
+    expect(mounted.list.classList.contains('show')).toBe(false);
+    expect(mounted.list.children).toHaveLength(0);
   });
 
   /**

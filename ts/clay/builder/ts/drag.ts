@@ -75,10 +75,16 @@ export interface DragSpec<TPayload, TTarget> {
 
 /** The two ways a face starts a drag. */
 export interface DragHandle<TPayload> {
-  /** Begin at once. For a palette item, where a press means nothing else. */
+  /**
+   * Begin at once. For a palette item, where a press means nothing else. A drag already under way
+   * is cancelled first, so its ghost goes and a lifted item is put back.
+   */
   start(payload: TPayload, event: PointerEvent): void;
 
-  /** Arm, and begin only once the pointer has moved far enough to not be a tap. */
+  /**
+   * Arm, and begin only once the pointer has moved far enough to not be a tap. A drag already
+   * under way is cancelled first, the same as for start.
+   */
   arm(payload: TPayload, event: PointerEvent): void;
 }
 
@@ -104,6 +110,9 @@ export function createDrag<TPayload, TTarget>(
   let armed: { payload: TPayload; x: number; y: number } | null = null;
   // a drag actually under way
   let active: { payload: TPayload; ghost: HTMLElement } | null = null;
+  // the finger that owns the press or the drag. a second finger on the screen sends its own
+  // moves and releases, and following them would jump the ghost across and drop it there
+  let owner: number | undefined;
 
   /** Puts the ghost at the given point, anchored by its corner or centred under it, per the spec. */
   function place(ghost: HTMLElement, x: number, y: number): void {
@@ -116,6 +125,11 @@ export function createDrag<TPayload, TTarget>(
     const box = ghost.getBoundingClientRect();
     ghost.style.left = x - box.width / 2 + 'px';
     ghost.style.top = y - box.height / 2 + 'px';
+  }
+
+  /** Whether an event comes from some other finger than the one that owns the press or the drag. */
+  function foreign(event: PointerEvent): boolean {
+    return (armed !== null || active !== null) && event.pointerId !== owner;
   }
 
   /** Starts an active drag: builds the ghost, drops it onto the page, and places it at the pointer. */
@@ -151,7 +165,35 @@ export function createDrag<TPayload, TTarget>(
     spec.highlight(null, null, false);
   }
 
+  /**
+   * Ends a drag that was never released anywhere. Whatever was lifted is the face's to put back,
+   * so it goes to cancel, or to dropOutside for a spec without one.
+   */
+  function abandon(): void {
+    if (!armed && !active) {
+      return;
+    }
+
+    const payload = active && active.payload;
+    end();
+
+    if (payload === null || payload === undefined) {
+      return;
+    }
+
+    if (spec.cancel) {
+      spec.cancel(payload);
+      return;
+    }
+
+    spec.dropOutside(payload);
+  }
+
   doc.addEventListener('pointermove', (event) => {
+    if (foreign(event)) {
+      return;
+    }
+
     // an armed press only becomes a drag once it has clearly stopped being a tap
     if (armed) {
       const moved = Math.abs(event.clientX - armed.x) > threshold
@@ -174,6 +216,10 @@ export function createDrag<TPayload, TTarget>(
   });
 
   doc.addEventListener('pointerup', (event) => {
+    if (foreign(event)) {
+      return;
+    }
+
     if (!active) {
       // a press that never travelled is a tap, so drop the arming and leave the model alone
       armed = null;
@@ -192,30 +238,26 @@ export function createDrag<TPayload, TTarget>(
     spec.dropOutside(payload);
   });
 
-  doc.addEventListener('pointercancel', () => {
-    // a cancelled drag is not a drop. whatever was lifted is the face's to put back
-    const payload = active && active.payload;
-    end();
-
-    if (payload === null || payload === undefined) {
+  doc.addEventListener('pointercancel', (event) => {
+    if (foreign(event)) {
       return;
     }
 
-    if (spec.cancel) {
-      spec.cancel(payload);
-      return;
-    }
-
-    spec.dropOutside(payload);
+    // a cancelled drag is not a drop
+    abandon();
   });
 
   return {
     start(payload: TPayload, event: PointerEvent): void {
+      abandon();
+      owner = event.pointerId;
       begin(payload, event.clientX, event.clientY);
       event.preventDefault();
     },
 
     arm(payload: TPayload, event: PointerEvent): void {
+      abandon();
+      owner = event.pointerId;
       armed = { payload: payload, x: event.clientX, y: event.clientY };
       event.preventDefault();
     },

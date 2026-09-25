@@ -73,6 +73,7 @@ export default {
     '  </label>',
     '  <div class="description" style="display:none;"></div>',
     '  <div class="loc-note" style="display:none;">Pick this city again so its clock follows daylight saving.</div>',
+    '  <div class="loc-note loc-unpicked" style="display:none;">Pick a place from the list to save it.</div>',
     '  <input type="hidden" class="loc-value">',
     '</div>',
   ].join(''),
@@ -174,6 +175,7 @@ export default {
     const hiddenEl = root.querySelector('.loc-value') as HTMLInputElement;
     const listEl = root.querySelector('.loc-list') as HTMLElement;
     const noteEl = root.querySelector('.loc-note') as HTMLElement;
+    const unpickedEl = root.querySelector('.loc-unpicked') as HTMLElement;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let seq = 0;
     // counts every pick and edit, so a zone lookup that answers after the user moved on leaves
@@ -243,6 +245,9 @@ export default {
         return offsets[zone];
       }
 
+      // one reading of the clock for both sides, or a minute rolling over between two reads
+      // leaves the offset a minute short for as long as the page stays open
+      const now = Date.now();
       let minutes = 0;
       try {
         const parts = new Intl.DateTimeFormat('en-CA', {
@@ -253,7 +258,7 @@ export default {
           hour: '2-digit',
           minute: '2-digit',
           hour12: false,
-        }).formatToParts(new Date());
+        }).formatToParts(new Date(now));
 
         const at: Record<string, string> = {};
         parts.forEach(function(part) { at[part.type] = part.value; });
@@ -261,7 +266,6 @@ export default {
         // midnight comes back as hour 24 in some engines, so fold it onto the day it belongs to
         const hour = Number(at.hour) % 24;
         const wall = Date.UTC(Number(at.year), Number(at.month) - 1, Number(at.day), hour, Number(at.minute));
-        const now = Date.now();
         if (isFinite(wall)) {
           minutes = Math.round((wall - Math.floor(now / 60000) * 60000) / 60000);
         }
@@ -377,6 +381,20 @@ export default {
     }
 
     /**
+     * Closes the dropdown for good after a pick. The debounced search and any geocoder call still
+     * out would otherwise redraw the list over the picked row, and a stray tap there overwrites
+     * the pick.
+     */
+    function closeList() {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = null;
+      seq++;
+      hideList();
+    }
+
+    /**
      * Looks up the selected place's zone and its offset today, and stores both alongside the
      * coordinates. The zone is the half that lasts, since the pkjs side reads the offset off it
      * again every time a timezone field goes to the watch.
@@ -460,7 +478,8 @@ export default {
           });
 
           noteEl.style.display = 'none';
-          hideList();
+          unpickedEl.style.display = 'none';
+          closeList();
         });
         listEl.appendChild(item);
       });
@@ -488,9 +507,10 @@ export default {
 
           // typing hid the prompt, so a timezone field puts it back until a zone turns up
           noteEl.style.display = (wantsZone && !zone) ? 'block' : 'none';
+          unpickedEl.style.display = 'none';
 
           resolveOffset(place);
-          hideList();
+          closeList();
         });
         listEl.appendChild(item);
       });
@@ -551,6 +571,10 @@ export default {
       picks++;
       noteEl.style.display = 'none';
       const query = (queryEl.value || '').trim();
+
+      // typing clears the saved place, so a name that never gets picked from the list saves as
+      // nothing. the prompt says so while the box holds text that is not a pick
+      unpickedEl.style.display = query ? 'block' : 'none';
 
       if (timer) {
         clearTimeout(timer);

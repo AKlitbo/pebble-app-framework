@@ -16,8 +16,15 @@ import { createDrag } from './drag';
 import type { DragSpec } from './drag';
 
 /** A pointerdown the handle can start from. jsdom has no PointerEvent, and only these are read. */
-function pointerDown(): PointerEvent {
-  return { clientX: 0, clientY: 0, preventDefault: () => {} } as unknown as PointerEvent;
+function pointerDown(pointerId?: number): PointerEvent {
+  return { clientX: 0, clientY: 0, pointerId: pointerId, preventDefault: () => {} } as unknown as PointerEvent;
+}
+
+/** A pointer event from one finger. jsdom's MouseEvent has no pointerId, so it is added afterwards. */
+function fingerEvent(doc: Document, type: string, pointerId: number, x: number, y: number): void {
+  const event = new MouseEvent(type, { clientX: x, clientY: y });
+  Object.defineProperty(event, 'pointerId', { value: pointerId });
+  doc.dispatchEvent(event);
 }
 
 /** The smallest spec that answers everything createDrag calls, with the finishers spied on. */
@@ -186,5 +193,40 @@ describe('pointerup', () => {
 
     expect(spec.dropOutside).toHaveBeenCalledWith('panel');
     expect(spec.drop).not.toHaveBeenCalled();
+  });
+});
+
+describe('a second finger', () => {
+  /**
+   * A second finger on the screen sends its own moves and releases. Following them jumped the
+   * ghost to that finger and dropped the panel wherever it lifted.
+   */
+  test('leaves the drag to the finger that started it', () => {
+    const spec = specWith({ hitTest: () => 3, allows: () => true });
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.start('panel', pointerDown(1));
+    fingerEvent(doc, 'pointerup', 2, 40, 40);
+
+    expect(spec.drop).not.toHaveBeenCalled();
+    expect(doc.body.children).toHaveLength(1);
+  });
+
+  /**
+   * A new drag starting over one still under way replaced it and left the old ghost stuck on the
+   * page, with the lifted item never put back.
+   */
+  test('cancels the drag under way before starting another', () => {
+    const cancel = vi.fn();
+    const spec = specWith({ cancel: cancel });
+    const doc = ownDocument();
+    const drag = createDrag<string, number>(spec, doc);
+
+    drag.start('panel', pointerDown(1));
+    drag.start('clock', pointerDown(2));
+
+    expect(cancel).toHaveBeenCalledWith('panel');
+    expect(doc.body.children).toHaveLength(1);
   });
 });
