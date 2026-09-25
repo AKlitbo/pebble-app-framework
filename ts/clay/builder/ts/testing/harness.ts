@@ -16,10 +16,14 @@ interface Manipulator {
   get(this: BoundContext): string;
 }
 
-/** A Clay custom component definition, shaped the way its generated .g.js exports it. */
+/**
+ * A Clay custom component definition, shaped the way its generated .g.js exports it. The
+ * manipulator is either the component's own pair or the name of one of Clay's built-in ones,
+ * such as 'val'.
+ */
 export interface ClayComponentDefinition {
   template: string;
-  manipulator: Manipulator;
+  manipulator: Manipulator | string;
   initialize(this: BoundContext): void;
 }
 
@@ -44,6 +48,9 @@ export interface Mounted {
 /**
  * Mounts a component and returns the bound context plus its root element.
  *
+ * A component on one of Clay's built-in manipulators gets no set or get, since Clay supplies
+ * those itself and there is nothing of the component's own to bind.
+ *
  * @param component The component definition to mount, the way its generated .g.js exports it.
  * @param config The page item's own config to bind the component's methods to, if it needs one.
  * @return The bound context and root element, ready for a spec to drive.
@@ -54,8 +61,10 @@ export function mount(component: ClayComponentDefinition, config?: Record<string
   const root = holder.firstChild as HTMLElement;
 
   const ctx = { $element: [root], config: config || {}, trigger: vi.fn() } as BoundContext;
-  ctx.set = component.manipulator.set.bind(ctx);
-  ctx.get = component.manipulator.get.bind(ctx);
+  if (typeof component.manipulator !== 'string') {
+    ctx.set = component.manipulator.set.bind(ctx);
+    ctx.get = component.manipulator.get.bind(ctx);
+  }
   ctx.initialize = component.initialize.bind(ctx);
 
   return { ctx, root };

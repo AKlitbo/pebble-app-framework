@@ -11,34 +11,20 @@ import { describe, test, expect, vi } from 'vitest';
 import buildConfig from './config-builder';
 import type { ClayConfigItem } from '../clay/types';
 
-/** Collects every messageKey the config publishes, across top-level items and sections. */
+/** Collects every messageKey the config publishes, at any depth, so a nested item is not missed. */
 function collectMessageKeys(config: ClayConfigItem[]): string[] {
-  const keys = [];
-
-  for (const entry of config) {
-    if (entry.messageKey) {
-      keys.push(entry.messageKey);
-    }
-    for (const item of entry.items || []) {
-      if (item.messageKey) {
-        keys.push(item.messageKey);
-      }
-    }
-  }
-
-  return keys;
+  return config.flatMap((entry) => [
+    ...(entry.messageKey ? [entry.messageKey] : []),
+    ...collectMessageKeys(entry.items || []),
+  ]);
 }
 
-/** Finds a config item by its messageKey, searching inside sections. */
+/** Finds a config item by its messageKey, at any depth. */
 function findItemByKey(config: ClayConfigItem[], messageKey: string): ClayConfigItem | undefined {
   for (const entry of config) {
-    if (entry.messageKey === messageKey) {
-      return entry;
-    }
-    for (const item of entry.items || []) {
-      if (item.messageKey === messageKey) {
-        return item;
-      }
+    const found = entry.messageKey === messageKey ? entry : findItemByKey(entry.items || [], messageKey);
+    if (found) {
+      return found;
     }
   }
 

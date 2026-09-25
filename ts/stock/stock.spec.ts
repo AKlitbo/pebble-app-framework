@@ -12,7 +12,7 @@
 
 import { describe, test, expect } from 'vitest';
 import stock from './stock';
-import type { RequestFn } from './util';
+import { replying } from '../testing/routing';
 
 /** The endpoint each provider hits. The fingerprint that tells them apart. */
 const ENDPOINT = {
@@ -22,17 +22,6 @@ const ENDPOINT = {
   twelvedata: 'api.twelvedata.com/quote',
 };
 
-/**
- * Stub request that records the requested url, then feeds back an empty body so
- * the routed provider finishes without a network call.
- */
-function routing(calls: string[]): RequestFn {
-  return (url, callback) => {
-    calls.push(url);
-    callback(null, '{}');
-  };
-}
-
 const BASE = { key: 'k', symbol: 'AAPL' };
 
 describe('fetchQuote dispatcher', () => {
@@ -40,7 +29,7 @@ describe('fetchQuote dispatcher', () => {
   test.each(['finnhub', 'alphavantage', 'yahoo', 'twelvedata'])('routes provider "%s" to its endpoint', (name) => {
     const calls: string[] = [];
 
-    stock.fetchQuote({ ...BASE, provider: name }, routing(calls), () => {});
+    stock.fetchQuote({ ...BASE, provider: name }, replying('{}', calls), () => {});
 
     expect(calls.length).toBeGreaterThanOrEqual(1);
     expect(calls[0]).toContain(ENDPOINT[name]);
@@ -50,7 +39,7 @@ describe('fetchQuote dispatcher', () => {
   test('falls back to finnhub for an unknown provider', () => {
     const calls: string[] = [];
 
-    stock.fetchQuote({ ...BASE, provider: 'definitely-not-a-provider' }, routing(calls), () => {});
+    stock.fetchQuote({ ...BASE, provider: 'definitely-not-a-provider' }, replying('{}', calls), () => {});
 
     expect(calls[0]).toContain(ENDPOINT.finnhub);
   });
@@ -59,7 +48,7 @@ describe('fetchQuote dispatcher', () => {
   test('falls back to finnhub when no provider is given', () => {
     const calls: string[] = [];
 
-    stock.fetchQuote({ ...BASE, provider: undefined }, routing(calls), () => {});
+    stock.fetchQuote({ ...BASE, provider: undefined }, replying('{}', calls), () => {});
 
     expect(calls[0]).toContain(ENDPOINT.finnhub);
   });
@@ -68,7 +57,7 @@ describe('fetchQuote dispatcher', () => {
   test('passes the symbol through to the routed provider', () => {
     const calls: string[] = [];
 
-    stock.fetchQuote({ ...BASE, provider: 'finnhub', symbol: 'MSFT' }, routing(calls), () => {});
+    stock.fetchQuote({ ...BASE, provider: 'finnhub', symbol: 'MSFT' }, replying('{}', calls), () => {});
 
     expect(calls[0]).toContain('symbol=MSFT');
   });

@@ -9,6 +9,7 @@
  */
 #include "unity.h"
 
+#include "pack_le.h"
 #include "wire/stock_wire.h"
 
 #include <string.h>
@@ -20,18 +21,10 @@ void tearDown(void) {}
 static uint16_t put_slot(uint8_t *buffer, uint16_t offset, bool ok, int32_t price, int16_t pct,
                          const char *symbol)
 {
-    buffer[offset++] = ok ? 1 : 0;
-    buffer[offset++] = price & 0xFF;
-    buffer[offset++] = (price >> 8) & 0xFF;
-    buffer[offset++] = (price >> 16) & 0xFF;
-    buffer[offset++] = (price >> 24) & 0xFF;
-    buffer[offset++] = pct & 0xFF;
-    buffer[offset++] = (pct >> 8) & 0xFF;
-
-    uint8_t len = (uint8_t)strlen(symbol);
-    buffer[offset++] = len;
-    memcpy(buffer + offset, symbol, len);
-    return offset + len;
+    offset = put_u8(buffer, offset, ok ? 1 : 0);
+    offset = put_i32_le(buffer, offset, price);
+    offset = put_i16_le(buffer, offset, pct);
+    return put_text(buffer, offset, symbol);
 }
 
 /** @brief A clean pair of quotes must unpack fully or the watchlist shows blanks. */

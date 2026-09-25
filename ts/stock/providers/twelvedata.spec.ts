@@ -9,15 +9,8 @@
 import { describe, test, expect } from 'vitest';
 import twelvedata from './twelvedata';
 import { fetchRequest } from '../../testing/fetch-request';
+import { replying } from '../../testing/routing';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
-
-/** Stub `request` that records the requested url and replies with a canned body. */
-function replying(body: string, calls: string[]): RequestFn {
-  return (url, callback) => {
-    calls.push(url);
-    callback(null, body);
-  };
-}
 
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: StockOpts, request: RequestFn): StockQuote {

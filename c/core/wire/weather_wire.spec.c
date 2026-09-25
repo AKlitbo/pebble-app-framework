@@ -9,6 +9,7 @@
  */
 #include "unity.h"
 
+#include "pack_le.h"
 #include "wire/weather_wire.h"
 
 void setUp(void) {}
@@ -17,21 +18,16 @@ void tearDown(void) {}
 // build one hourly column: [code][temp int16 LE]
 static uint16_t put_hour(uint8_t *buffer, uint16_t offset, uint8_t code, int16_t temp)
 {
-    buffer[offset++] = code;
-    buffer[offset++] = temp & 0xFF;
-    buffer[offset++] = (temp >> 8) & 0xFF;
-    return offset;
+    offset = put_u8(buffer, offset, code);
+    return put_i16_le(buffer, offset, temp);
 }
 
 // build one daily column: [code][max int16 LE][min int16 LE]
 static uint16_t put_day(uint8_t *buffer, uint16_t offset, uint8_t code, int16_t hi, int16_t lo)
 {
-    buffer[offset++] = code;
-    buffer[offset++] = hi & 0xFF;
-    buffer[offset++] = (hi >> 8) & 0xFF;
-    buffer[offset++] = lo & 0xFF;
-    buffer[offset++] = (lo >> 8) & 0xFF;
-    return offset;
+    offset = put_u8(buffer, offset, code);
+    offset = put_i16_le(buffer, offset, hi);
+    return put_i16_le(buffer, offset, lo);
 }
 
 /** @brief A clean hourly strip must unpack whole or the forecast row draws blanks. */

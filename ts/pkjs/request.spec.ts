@@ -12,47 +12,7 @@
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { request } from './request';
-
-/** The request the code under test opened, with the handlers it hung on it. */
-interface OpenedXhr {
-  url: string;
-  status: number;
-  responseText: string;
-  timeout: number;
-  onload?: () => void;
-  onerror?: () => void;
-  ontimeout?: () => void;
-}
-
-/**
- * Stands in for the phone's XMLHttpRequest and hands back every request opened, so a spec can
- * answer one late, or never.
- */
-function installFakeXhr(onSend?: () => void) {
-  const opened: OpenedXhr[] = [];
-
-  class FakeXhr {
-    url = '';
-    status = 0;
-    responseText = '';
-    timeout = 0;
-    onload?: () => void;
-    onerror?: () => void;
-    ontimeout?: () => void;
-
-    open(_method: string, url: string) {
-      this.url = url;
-    }
-
-    send() {
-      opened.push(this);
-      onSend?.();
-    }
-  }
-
-  global.XMLHttpRequest = FakeXhr as unknown as typeof XMLHttpRequest;
-  return opened;
-}
+import { installFakeXhr } from '../testing/xhr';
 
 describe('request', () => {
   beforeEach(() => {

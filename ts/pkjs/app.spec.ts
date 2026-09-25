@@ -15,7 +15,6 @@
  */
 
 import fs from 'node:fs';
-import Module from 'node:module';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import app from './app';
@@ -23,56 +22,14 @@ import stocks from '../stock/feature';
 import calendar from '../calendar/feature';
 import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
 import type { Feature } from './feature';
+import { installFakeXhr } from '../testing/xhr';
+import { stubModuleLoad } from '../testing/module-load';
+import { withFakePebble } from '../testing/pebble';
+import type { FakePebble } from '../testing/pebble';
 
 // stands in for the per-face generated message_keys: each key name maps to
 // itself so payloads and stored config use readable string keys
 const messageKeys = new Proxy({}, { get: (_target, prop) => prop });
-
-/**
- * Captures every XMLHttpRequest the code opens and lets a spec drive the
- * response, an error, or a timeout. Returns the list of requests sent so
- * far, in the order they were opened.
- */
-function installFakeXhr() {
-  const sent: FakeXhr[] = [];
-
-  class FakeXhr {
-    method = '';
-    url = '';
-    status = 0;
-    responseText = '';
-    // app.ts hangs these on the request, so the fake has to model them
-    onload?: () => void;
-    onerror?: () => void;
-    ontimeout?: () => void;
-
-    open(method: string, url: string) {
-      this.method = method;
-      this.url = url;
-    }
-
-    send() {
-      sent.push(this);
-    }
-
-    respond(httpStatus: number, body: string) {
-      this.status = httpStatus;
-      this.responseText = body;
-      this.onload?.();
-    }
-
-    fail() {
-      this.onerror?.();
-    }
-
-    timeOut() {
-      this.ontimeout?.();
-    }
-  }
-
-  global.XMLHttpRequest = FakeXhr as unknown as typeof XMLHttpRequest;
-  return sent;
-}
 
 /**
  * Every source file a module reaches at runtime, following relative imports, re-exports, and
@@ -360,9 +317,6 @@ describe('retimeSettings', () => {
 });
 
 describe('startPebbleApp weather', () => {
-  type Listener = (event?: unknown) => void;
-  type LoadFn = (request: string, ...args: unknown[]) => unknown;
-
   // only the keys the weather path reads. no stock or calendar key, so those fetches stay off
   const weatherKeys = {
     SETTINGS_REQUEST: 'SETTINGS_REQUEST',
@@ -396,12 +350,9 @@ describe('startPebbleApp weather', () => {
     return undefined;
   }
 
-  const moduleInternal = Module as unknown as { _load: LoadFn };
-  const host = globalThis as unknown as Record<string, unknown>;
-  let originalLoad: LoadFn;
-  let listeners: Record<string, Listener[]>;
+  let pebble: FakePebble;
+  let restoreLoad: () => void;
   let sent: ReturnType<typeof installFakeXhr>;
-  const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
 
   // a saved manual city with gps off, so every fetch is exactly one open-meteo request
   function saveCity(label: string, lat: number) {
@@ -417,13 +368,11 @@ describe('startPebbleApp weather', () => {
   }
 
   function weatherSends() {
-    return sendAppMessage.mock.calls.filter(([dict]) => 'WEATHER_OK' in dict);
+    return pebble.sendAppMessage.mock.calls.filter(([dict]) => 'WEATHER_OK' in dict);
   }
 
-  // the real Pebble keeps every listener registered for an event, so the fake does too. a spec that
-  // started a second app by mistake would then see both answer rather than the last one only
   function fire(type: string, event?: unknown) {
-    (listeners[type] || []).forEach((handler) => handler(event));
+    pebble.fire(type, event);
   }
 
   function askForWeather() {
@@ -440,28 +389,14 @@ describe('startPebbleApp weather', () => {
     localStorage.clear();
     saveCity('Phoenix', 33.4);
     sent = installFakeXhr();
-    sendAppMessage.mockClear();
-    listeners = {};
     keys = weatherKeys;
-
-    host.Pebble = {
-      addEventListener: (type: string, handler: Listener) => {
-        listeners[type] = [...(listeners[type] || []), handler];
-      },
-      sendAppMessage,
-      openURL: () => {},
-    };
-
-    originalLoad = moduleInternal._load;
-    moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
-      return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
-    };
-
+    pebble = withFakePebble();
+    restoreLoad = stubModuleLoad(fakeModule);
   });
 
   afterEach(() => {
-    moduleInternal._load = originalLoad;
-    delete host.Pebble;
+    restoreLoad();
+    pebble.restore();
     // the location specs stub this, and a stub left behind would steer a later spec's gps path
     Reflect.deleteProperty(navigator, 'geolocation');
     vi.useRealTimers();
@@ -653,9 +588,6 @@ describe('startPebbleApp weather', () => {
 });
 
 describe('startPebbleApp stock and calendar', () => {
-  type Listener = (event?: unknown) => void;
-  type LoadFn = (request: string, ...args: unknown[]) => unknown;
-
   // the keys Gridlock declares for the two strips, and its weather keys. these specs start no weather
   // feature, so no weather goes out whatever the face declares
   const stripKeys = {
@@ -694,12 +626,9 @@ describe('startPebbleApp stock and calendar', () => {
     return undefined;
   }
 
-  const moduleInternal = Module as unknown as { _load: LoadFn };
-  const host = globalThis as unknown as Record<string, unknown>;
-  let originalLoad: LoadFn;
-  let listeners: Record<string, Listener>;
+  let pebble: FakePebble;
+  let restoreLoad: () => void;
   let sent: ReturnType<typeof installFakeXhr>;
-  const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
 
   const FEED_URL = 'https://example.com/calendar.ics';
 
@@ -713,7 +642,7 @@ describe('startPebbleApp stock and calendar', () => {
 
   // every value sent to the watch under one key, in the order it went
   function sendsOf(key: string) {
-    return sendAppMessage.mock.calls.filter(([dict]) => key in dict).map(([dict]) => dict[key]);
+    return pebble.sendAppMessage.mock.calls.filter(([dict]) => key in dict).map(([dict]) => dict[key]);
   }
 
   // the request the calendar fetch opened for the feed
@@ -725,26 +654,13 @@ describe('startPebbleApp stock and calendar', () => {
     vi.useFakeTimers();
     localStorage.clear();
     sent = installFakeXhr();
-    sendAppMessage.mockClear();
-    listeners = {};
-
-    host.Pebble = {
-      addEventListener: (type: string, handler: Listener) => {
-        listeners[type] = handler;
-      },
-      sendAppMessage,
-      openURL: () => {},
-    };
-
-    originalLoad = moduleInternal._load;
-    moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
-      return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
-    };
+    pebble = withFakePebble();
+    restoreLoad = stubModuleLoad(fakeModule);
   });
 
   afterEach(() => {
-    moduleInternal._load = originalLoad;
-    delete host.Pebble;
+    restoreLoad();
+    pebble.restore();
     vi.useRealTimers();
   });
 
@@ -755,7 +671,7 @@ describe('startPebbleApp stock and calendar', () => {
   test('sends an empty watchlist rather than the saved one when no symbols are set', () => {
     start({}, SAVED_STRIP);
 
-    listeners.ready();
+    pebble.fire('ready');
 
     expect(sendsOf('STOCK_STRIP')).toEqual([[0]]);
     expect(JSON.parse(localStorage.getItem('stock-cache') as string).strip).toBeNull();
@@ -764,7 +680,7 @@ describe('startPebbleApp stock and calendar', () => {
   /** Deleting every upcoming event has to clear the watch, or the deleted events stay on the agenda for good. */
   test('sends an empty agenda when the feed has nothing coming up', () => {
     start({ CALENDAR_ICS_URL: FEED_URL });
-    listeners.ready();
+    pebble.fire('ready');
 
     feedRequest().respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
 
@@ -774,7 +690,7 @@ describe('startPebbleApp stock and calendar', () => {
   /** An error page says nothing about the calendar, and reading it as empty would wipe a real agenda off the watch. */
   test('keeps the agenda when the feed does not read as iCal', () => {
     start({ CALENDAR_ICS_URL: FEED_URL });
-    listeners.ready();
+    pebble.fire('ready');
 
     feedRequest().respond(200, '<html>sign in</html>');
 
@@ -792,8 +708,8 @@ describe('startPebbleApp stock and calendar', () => {
     const withEvent = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:' + stamp +
       '\r\nSUMMARY:Dentist\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
     start({ CALENDAR_ICS_URL: FEED_URL });
-    listeners.ready();
-    listeners.appmessage({ payload: { CALENDAR_REQUEST: 1 } });
+    pebble.fire('ready');
+    pebble.fire('appmessage', { payload: { CALENDAR_REQUEST: 1 } });
     const [older, newer] = sent.filter((request) => request.url.startsWith(FEED_URL));
 
     newer.respond(200, withEvent);
@@ -809,7 +725,7 @@ describe('startPebbleApp stock and calendar', () => {
   test('sends an empty agenda when no feed is set', () => {
     start({});
 
-    listeners.ready();
+    pebble.fire('ready');
 
     expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
   });
@@ -821,8 +737,8 @@ describe('startPebbleApp stock and calendar', () => {
   test('sends no stock or calendar strip for a face that lists no features', () => {
     start({ CALENDAR_ICS_URL: FEED_URL, STOCK_SYMBOLS: 'AAPL' }, SAVED_STRIP, []);
 
-    listeners.ready();
-    listeners.appmessage({ payload: { STOCK_REQUEST: 1, CALENDAR_REQUEST: 1 } });
+    pebble.fire('ready');
+    pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1, CALENDAR_REQUEST: 1 } });
 
     expect(sendsOf('STOCK_STRIP')).toEqual([]);
     expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
@@ -831,9 +747,6 @@ describe('startPebbleApp stock and calendar', () => {
 });
 
 describe('startPebbleApp settings restore', () => {
-  type Listener = (event?: unknown) => void;
-  type LoadFn = (request: string, ...args: unknown[]) => unknown;
-
   // a face that declares SETTINGS_FRESH, which is what turns the seed into the two-way restore.
   // no weather or strip key, so a ready starts no fetch and the only sends are the restore's
   const restoreKeys = {
@@ -865,15 +778,12 @@ describe('startPebbleApp settings restore', () => {
     return undefined;
   }
 
-  const moduleInternal = Module as unknown as { _load: LoadFn };
-  const host = globalThis as unknown as Record<string, unknown>;
-  let originalLoad: LoadFn;
-  let listeners: Record<string, Listener>;
-  const sendAppMessage = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => onOk?.());
+  let pebble: FakePebble;
+  let restoreLoad: () => void;
 
   /** The watch's reply to SETTINGS_REQUEST, carrying its own settings and whether it booted empty. */
   function watchReplies(fresh: boolean, dateFormat: string) {
-    listeners.appmessage({ payload: { SETTINGS_FRESH: fresh ? 1 : 0, CLOCK_DATE_FORMAT: dateFormat, APPEARANCE_THEME: 2 } });
+    pebble.fire('appmessage', { payload: { SETTINGS_FRESH: fresh ? 1 : 0, CLOCK_DATE_FORMAT: dateFormat, APPEARANCE_THEME: 2 } });
   }
 
   /** What the phone has saved now. */
@@ -883,33 +793,20 @@ describe('startPebbleApp settings restore', () => {
 
   /** Every dict sent to the watch that carries settings rather than a request. */
   function restoreSends() {
-    return sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_DATE_FORMAT' in dict).map(([dict]) => dict);
+    return pebble.sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_DATE_FORMAT' in dict).map(([dict]) => dict);
   }
 
   beforeEach(() => {
     vi.useFakeTimers();
     localStorage.clear();
     installFakeXhr();
-    sendAppMessage.mockClear();
-    listeners = {};
-
-    host.Pebble = {
-      addEventListener: (type: string, handler: Listener) => {
-        listeners[type] = handler;
-      },
-      sendAppMessage,
-      openURL: () => {},
-    };
-
-    originalLoad = moduleInternal._load;
-    moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
-      return fakeModule(request) ?? originalLoad.apply(this, [request, ...args]);
-    };
+    pebble = withFakePebble();
+    restoreLoad = stubModuleLoad(fakeModule);
   });
 
   afterEach(() => {
-    moduleInternal._load = originalLoad;
-    delete host.Pebble;
+    restoreLoad();
+    pebble.restore();
     vi.useRealTimers();
   });
 
@@ -921,7 +818,7 @@ describe('startPebbleApp settings restore', () => {
   test('pushes the phone config back to a watch that booted with no settings', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5' }));
     app.startPebbleApp({ clayConfig: [] });
-    listeners.ready();
+    pebble.fire('ready');
 
     watchReplies(true, '%Y-%m-%d');
 
@@ -964,7 +861,7 @@ describe('startPebbleApp settings restore', () => {
    */
   test('seeds from the watch when the phone has nothing saved', () => {
     app.startPebbleApp({ clayConfig: [] });
-    listeners.ready();
+    pebble.fire('ready');
 
     watchReplies(false, '%Y-%m-%d');
 
@@ -979,7 +876,7 @@ describe('startPebbleApp settings restore', () => {
   test('leaves both sides alone when each already has settings', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
     app.startPebbleApp({ clayConfig: [] });
-    listeners.ready();
+    pebble.fire('ready');
 
     watchReplies(false, '%Y-%m-%d');
 

@@ -16,30 +16,17 @@ import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import component from './location-component';
 import type { ClayComponentContext } from './location-component';
 import { fetchRequest } from '../testing/fetch-request';
-
-/** The context Clay binds to, plus the handles the specs drive the component through. */
-interface MountedContext extends ClayComponentContext {
-  set(value: string): void;
-  get(): string;
-  initialize(): void;
-}
+import { installFakeXhr } from '../testing/xhr';
+import * as harness from './builder/ts/testing/harness';
+import type { ClayComponentDefinition } from './builder/ts/testing/harness';
 
 /**
- * Builds a component the way Clay does.
+ * Mounts the component the way Clay does, plus the elements the specs assert against.
  *
- * A root from the template, with set/get/initialize bound to a context
- * exposing $element and config. Returns that context and the elements
- * the specs assert against.
+ * The component's own context type is narrower than the harness's, so the cast only widens it.
  */
 function mount(config?: ClayComponentContext['config']) {
-  const holder = document.createElement('div');
-  holder.innerHTML = component.template;
-  const root = holder.firstChild as HTMLElement;
-
-  const ctx = { $element: [root], config: config || {} } as MountedContext;
-  ctx.set = component.manipulator.set.bind(ctx);
-  ctx.get = component.manipulator.get.bind(ctx);
-  ctx.initialize = component.initialize.bind(ctx);
+  const { ctx, root } = harness.mount(component as unknown as ClayComponentDefinition, config);
 
   return {
     ctx,
@@ -49,57 +36,6 @@ function mount(config?: ClayComponentContext['config']) {
     list: root.querySelector('.loc-list') as HTMLElement,
     note: root.querySelector('.loc-note') as HTMLElement,
   };
-}
-
-/**
- * Captures every XMLHttpRequest the component opens, so a spec can inspect the url and hand
- * back a canned geocoder response without touching the network. Returns the list of requests
- * sent so far, in the order they were opened.
- */
-function installFakeXhr() {
-  const sent: FakeXhr[] = [];
-
-  class FakeXhr {
-    method = '';
-    url = '';
-    status = 0;
-    responseText = '';
-    // the component hangs these on the request, so the fake has to model them
-    onload?: () => void;
-    onerror?: () => void;
-
-    open(method: string, url: string) {
-      this.method = method;
-      this.url = url;
-    }
-
-    send() {
-      sent.push(this);
-    }
-
-    /**
-     * Drives the response the component is waiting on.
-     */
-    respond(body: string, status?: number) {
-      this.status = status === undefined ? 200 : status;
-      this.responseText = body;
-      if (this.onload) {
-        this.onload();
-      }
-    }
-
-    /**
-     * Drives a network failure the component is waiting on.
-     */
-    error() {
-      if (this.onerror) {
-        this.onerror();
-      }
-    }
-  }
-
-  global.XMLHttpRequest = FakeXhr as unknown as typeof XMLHttpRequest;
-  return sent;
 }
 
 /**
@@ -285,7 +221,7 @@ describe('initialize', () => {
     type(mounted.query, 'evil');
     vi.advanceTimersByTime(300);
 
-    xhrs[0].respond(JSON.stringify({ results: [{ name: evil, latitude: 1, longitude: 2 }] }));
+    xhrs[0].respond(200, JSON.stringify({ results: [{ name: evil, latitude: 1, longitude: 2 }] }));
 
     const images = mounted.list.querySelectorAll('img');
     const text = mounted.list.querySelector('.loc-item').textContent;
@@ -302,7 +238,7 @@ describe('initialize', () => {
     type(mounted.query, 'city');
     vi.advanceTimersByTime(300);
 
-    xhrs[0].respond(JSON.stringify({ results: [
+    xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 1, longitude: 2 },
       { name: 'Berlin', latitude: 3, longitude: 4 },
     ] }));
@@ -319,12 +255,12 @@ describe('initialize', () => {
 
     type(mounted.query, 'Phoenix');
     vi.advanceTimersByTime(300);
-    xhrs[0].respond(JSON.stringify({ results: [
+    xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
 
     mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: 3600, timezone: 'America/Phoenix' }));
+    xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: 3600, timezone: 'America/Phoenix' }));
 
     const saved = JSON.parse(mounted.hidden.value);
 
@@ -353,7 +289,7 @@ describe('initialize', () => {
 
     type(mounted.query, 'Phoenix');
     vi.advanceTimersByTime(300);
-    xhrs[0].respond(JSON.stringify({ results: [
+    xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
     // the place row, since a timezone field lists America/Phoenix above it and picking that one
@@ -374,7 +310,7 @@ describe('initialize', () => {
 
     type(mounted.query, 'Tokyo');
     vi.advanceTimersByTime(300);
-    xhrs[0].respond(JSON.stringify({ results: [
+    xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Tokyo', country: 'Japan', latitude: 35.7, longitude: 139.7, timezone: 'Asia/Tokyo' },
     ] }));
     mounted.list.querySelector('.loc-item:not(.loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -393,15 +329,15 @@ describe('initialize', () => {
 
     type(mounted.query, 'Springfield');
     vi.advanceTimersByTime(300);
-    xhrs[0].respond(JSON.stringify({ results: [
+    xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
       { name: 'Springfield', admin1: 'Missouri', latitude: 37.2, longitude: -93.3 },
     ] }));
     const items = mounted.list.querySelectorAll('.loc-item');
     items[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     items[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    xhrs[2].respond(JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
-    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
+    xhrs[2].respond(200, JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
+    xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -415,12 +351,12 @@ describe('initialize', () => {
 
     type(mounted.query, 'Springfield');
     vi.advanceTimersByTime(300);
-    xhrs[0].respond(JSON.stringify({ results: [
+    xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
     ] }));
     mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     type(mounted.query, 'Spr');
-    xhrs[1].respond(JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
+    xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
 
     const result = mounted.hidden.value;
 
@@ -465,8 +401,8 @@ describe('initialize', () => {
     vi.advanceTimersByTime(300);
 
     // the newer "Phoenix" request resolves first then the stale "Pho" one lands
-    xhrs[1].respond(JSON.stringify({ results: [{ name: 'Phoenix', latitude: 1, longitude: 2 }] }));
-    xhrs[0].respond(JSON.stringify({ results: [{ name: 'Phonsavan', latitude: 3, longitude: 4 }] }));
+    xhrs[1].respond(200, JSON.stringify({ results: [{ name: 'Phoenix', latitude: 1, longitude: 2 }] }));
+    xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Phonsavan', latitude: 3, longitude: 4 }] }));
 
     const items = mounted.list.querySelectorAll('.loc-item');
 
@@ -482,7 +418,7 @@ describe('initialize', () => {
     type(mounted.query, 'Phoenix');
     vi.advanceTimersByTime(300);
 
-    const fail = () => xhrs[0].error();
+    const fail = () => xhrs[0].fail();
 
     expect(fail).not.toThrow();
     expect(mounted.list.classList.contains('show')).toBe(false);
@@ -496,7 +432,7 @@ describe('initialize', () => {
     type(mounted.query, 'Phoenix');
     vi.advanceTimersByTime(300);
 
-    xhrs[0].respond(JSON.stringify({ results: [{ name: 'Phoenix', latitude: 1, longitude: 2 }] }));
+    xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Phoenix', latitude: 1, longitude: 2 }] }));
 
     expect(mounted.list.classList.contains('show')).toBe(true);
 
@@ -656,7 +592,7 @@ describe('zone search', () => {
 
     type(mounted.query, 'Berlin');
     vi.advanceTimersByTime(300);
-    xhrs[0].respond(JSON.stringify({ results: [{ name: 'Berlin', country: 'DE', latitude: 52.5, longitude: 13.4 }] }));
+    xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Berlin', country: 'DE', latitude: 52.5, longitude: 13.4 }] }));
 
     const result = mounted.list.querySelector('.loc-item:not(.loc-item-zone)');
 
@@ -682,7 +618,7 @@ describe('zone search', () => {
 
     type(mounted.query, 'utc');
     vi.advanceTimersByTime(300);
-    xhrs[0].error();
+    xhrs[0].fail();
 
     const result = zoneRows(mounted);
 

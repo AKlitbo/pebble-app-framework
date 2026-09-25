@@ -12,7 +12,7 @@
 
 import { describe, test, expect } from 'vitest';
 import weather from './weather';
-import type { RequestFn } from './util';
+import { replying } from '../testing/routing';
 
 /**
  * The endpoint each provider hits. The fingerprint that tells them apart.
@@ -23,19 +23,6 @@ const ENDPOINT = {
   weatherapi: '/v1/forecast.json',
 };
 
-/**
- * Stub request that records the requested url, then feeds back an empty body.
- *
- * So the routed provider finishes without a network call.
- *
- */
-function routing(calls: string[]): RequestFn {
-  return (url, callback) => {
-    calls.push(url);
-    callback(null, '{}');
-  };
-}
-
 const BASE = { key: 'k', place: 'London', coords: { lat: 40, lon: -73 }, fahrenheit: false };
 
 describe('fetchWeather dispatcher', () => {
@@ -43,7 +30,7 @@ describe('fetchWeather dispatcher', () => {
   test.each(['openmeteo', 'owm', 'weatherapi'])('routes provider "%s" to its endpoint', (name) => {
     const calls: string[] = [];
 
-    weather.fetchWeather({ ...BASE, provider: name }, routing(calls), () => {});
+    weather.fetchWeather({ ...BASE, provider: name }, replying('{}', calls), () => {});
 
     // a provider that borrows from Open-Meteo sends both arms in one pass, so the routed call is
     // the one to look for rather than the first one out
@@ -55,7 +42,7 @@ describe('fetchWeather dispatcher', () => {
   test('falls back to Open-Meteo for an unknown provider', () => {
     const calls: string[] = [];
 
-    weather.fetchWeather({ ...BASE, provider: 'definitely-not-a-provider' }, routing(calls), () => {});
+    weather.fetchWeather({ ...BASE, provider: 'definitely-not-a-provider' }, replying('{}', calls), () => {});
 
     expect(calls[0]).toContain(ENDPOINT.openmeteo);
   });
@@ -64,7 +51,7 @@ describe('fetchWeather dispatcher', () => {
   test('falls back to Open-Meteo when no provider is given', () => {
     const calls: string[] = [];
 
-    weather.fetchWeather({ ...BASE, provider: undefined }, routing(calls), () => {});
+    weather.fetchWeather({ ...BASE, provider: undefined }, replying('{}', calls), () => {});
 
     expect(calls[0]).toContain(ENDPOINT.openmeteo);
   });
@@ -73,7 +60,7 @@ describe('fetchWeather dispatcher', () => {
   test('passes the request coordinates through to the routed provider', () => {
     const calls: string[] = [];
 
-    weather.fetchWeather({ ...BASE, provider: 'openmeteo' }, routing(calls), () => {});
+    weather.fetchWeather({ ...BASE, provider: 'openmeteo' }, replying('{}', calls), () => {});
 
     expect(calls[0]).toMatch(/latitude=40&longitude=-73/);
   });

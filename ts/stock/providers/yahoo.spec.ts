@@ -9,15 +9,8 @@
 import { describe, test, expect } from 'vitest';
 import yahoo from './yahoo';
 import { fetchRequest } from '../../testing/fetch-request';
+import { replying } from '../../testing/routing';
 import type { RequestFn, StockOpts, StockQuote } from '../util';
-
-/** Stub `request` that records the requested url and replies with a canned error and body. */
-function replying(response: { err?: string | null; body?: string }, calls: string[]): RequestFn {
-  return (url, callback) => {
-    calls.push(url);
-    callback(response.err || null, response.body);
-  };
-}
 
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: StockOpts, request: RequestFn): StockQuote {

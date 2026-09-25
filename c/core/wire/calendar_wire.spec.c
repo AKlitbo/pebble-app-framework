@@ -9,6 +9,7 @@
  */
 #include "unity.h"
 
+#include "pack_le.h"
 #include "wire/calendar_wire.h"
 
 #include <string.h>
@@ -16,34 +17,15 @@
 void setUp(void) {}
 void tearDown(void) {}
 
-// packs a little-endian int32 into the buffer and returns the offset just past it
-static uint16_t put_u32(uint8_t *buffer, uint16_t offset, int32_t value)
-{
-    buffer[offset++] = value & 0xFF;
-    buffer[offset++] = (value >> 8) & 0xFF;
-    buffer[offset++] = (value >> 16) & 0xFF;
-    buffer[offset++] = (value >> 24) & 0xFF;
-    return offset;
-}
-
 // build one wire event: [start i32 LE][end i32 LE][flags][titleLen][title][locLen][loc]
 static uint16_t put_event(uint8_t *buffer, uint16_t offset, int32_t start, int32_t end,
                           bool all_day, const char *title, const char *location)
 {
-    offset = put_u32(buffer, offset, start);
-    offset = put_u32(buffer, offset, end);
-    buffer[offset++] = all_day ? 1 : 0;
-
-    uint8_t title_len = (uint8_t)strlen(title);
-    buffer[offset++] = title_len;
-    memcpy(buffer + offset, title, title_len);
-    offset += title_len;
-
-    uint8_t loc_len = (uint8_t)strlen(location);
-    buffer[offset++] = loc_len;
-    memcpy(buffer + offset, location, loc_len);
-    offset += loc_len;
-    return offset;
+    offset = put_i32_le(buffer, offset, start);
+    offset = put_i32_le(buffer, offset, end);
+    offset = put_u8(buffer, offset, all_day ? 1 : 0);
+    offset = put_text(buffer, offset, title);
+    return put_text(buffer, offset, location);
 }
 
 /** @brief A clean event must unpack fully or the agenda shows a blank row. */
@@ -129,8 +111,8 @@ void test_refuses_a_title_past_the_message(void)
     uint8_t buffer[32];
     uint16_t len = 0;
     buffer[len++] = 1;
-    len = put_u32(buffer, len, 1700000000);
-    len = put_u32(buffer, len, 1700003600);
+    len = put_i32_le(buffer, len, 1700000000);
+    len = put_i32_le(buffer, len, 1700003600);
     buffer[len++] = 0;   // flags
     buffer[len++] = 40;  // titleLen lies: 40 bytes claimed
     buffer[len++] = 'H';
@@ -148,8 +130,8 @@ void test_refuses_a_location_past_the_message(void)
     uint8_t buffer[32];
     uint16_t len = 0;
     buffer[len++] = 1;
-    len = put_u32(buffer, len, 1700000000);
-    len = put_u32(buffer, len, 1700003600);
+    len = put_i32_le(buffer, len, 1700000000);
+    len = put_i32_le(buffer, len, 1700003600);
     buffer[len++] = 0;   // flags
     buffer[len++] = 2;   // titleLen
     buffer[len++] = 'H';
@@ -243,8 +225,8 @@ void test_refuses_a_message_that_stops_after_the_title(void)
     uint8_t buffer[32];
     uint16_t len = 0;
     buffer[len++] = 1;
-    len = put_u32(buffer, len, 1700000000);
-    len = put_u32(buffer, len, 1700003600);
+    len = put_i32_le(buffer, len, 1700000000);
+    len = put_i32_le(buffer, len, 1700003600);
     buffer[len++] = 0;   // flags
     buffer[len++] = 2;   // titleLen
     buffer[len++] = 'H';

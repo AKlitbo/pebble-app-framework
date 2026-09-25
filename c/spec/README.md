@@ -25,6 +25,8 @@ A few units under `lib/c/pebble` sit on the near side of that line anyway. `stor
 
 `make` compiles each spec against the whole of `lib/c/core` plus its own sibling `.c` when it has one, so a spec for a header-only unit needs no source and a spec outside `core` needs no Makefile entry either.
 
+`host/pack_le.h` holds the little-endian writers the wire specs build their messages with, one byte, a 16 or 32-bit value, or a length-prefixed string at a time. The watch only ever reads these layouts, so the writers live here rather than beside the readers in `bytes_le.h`.
+
 ## Unity (Third-Party)
 
 `unity/` is a vendored copy of the [Unity](https://github.com/ThrowTheSwitch/Unity) test framework, kept verbatim. Each file carries its own MIT copyright header.
