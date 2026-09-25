@@ -6,8 +6,9 @@
  * stubbed and calls are recorded so the URL and sequencing can be asserted.
  */
 
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi, afterEach } from 'vitest';
 import openmeteo from './openmeteo';
+import util from '../util';
 import conditions from '../conditions';
 import { fetchRequest } from '../../testing/fetch-request';
 import { routing } from '../../testing/routing';
@@ -25,7 +26,55 @@ function run(opts: WeatherOpts, request: RequestFn): WeatherResult {
 const COORDS = { key: '', coords: { lat: 40, lon: -73 }, fahrenheit: false, wantForecast: true };
 const FC_OK = JSON.stringify({ current: { temperature_2m: 13.4, weather_code: 61 } });
 
+// the phone's offset from UTC in minutes, pinned so a spec gives the same answer on any machine
+const TORONTO_SUMMER = -240;
+const TOKYO = 540;
+
+/** Pins the phone's zone for one spec, whatever zone the machine running it is in. */
+function onPhoneAt(offsetMinutes: number) {
+  return vi.spyOn(util, 'phoneOffsetMinutes').mockReturnValue(offsetMinutes);
+}
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe('parseExtras', () => {
+  /**
+   * Asked in New York's zone for a Tokyo phone past its midnight, the first day is New York's
+   * Saturday, and the watch showed its high and low as the phone's Sunday.
+   */
+  test('reads the high and low from the phone today in the location zone', () => {
+    onPhoneAt(TOKYO);
+    const json = {
+      utc_offset_seconds: -14400,
+      current: { time: '2026-07-04T20:15' },
+      daily: {
+        time: ['2026-07-04', '2026-07-05'],
+        temperature_2m_max: [30, 25], temperature_2m_min: [20, 15],
+        precipitation_probability_max: [10, 60],
+      },
+    };
+
+    const result = openmeteo.parseExtras(json);
+
+    expect(result).toMatchObject({ tempMax: 25, tempMin: 15, precipChance: 60 });
+  });
+
+  /** A city already on the phone's tomorrow holds no reading for today, and tomorrow's is not today's. */
+  test('leaves the high and low out when the location zone holds no phone today', () => {
+    onPhoneAt(TORONTO_SUMMER);
+    const json = {
+      utc_offset_seconds: 32400,
+      current: { time: '2026-07-05T09:15' },
+      daily: { time: ['2026-07-05'], temperature_2m_max: [30], temperature_2m_min: [20], precipitation_probability_max: [10] },
+    };
+
+    const result = openmeteo.parseExtras(json);
+
+    expect(result).toMatchObject({ tempMax: undefined, tempMin: undefined, precipChance: undefined });
+  });
+
   /** The shared Open-Meteo extras map (also used by the OWM hybrid) must read each documented path, raw. */
   test('pulls uv, dew point and the daily forecast from a response', () => {
     const json = {
@@ -296,6 +345,96 @@ describe('parseForecast', () => {
   });
 });
 
+describe('parseForecast in the location zone', () => {
+  /**
+   * The bug this pins. Asked in Tokyo's zone for a phone in Toronto, the strip came back on Tokyo's
+   * clock, so the watch placed its first column most of a day ahead and never aged it.
+   */
+  test('moves the hourly base hour onto the phone clock', () => {
+    const spy = onPhoneAt(TORONTO_SUMMER);
+    const json = {
+      utc_offset_seconds: 32400,
+      current: { time: '2026-07-05T09:15' },
+      hourly: {
+        time: ['2026-07-05T09:00', '2026-07-05T10:00', '2026-07-05T11:00'],
+        temperature_2m: [20, 21, 22],
+        weather_code: [0, 61, 0],
+      },
+    };
+
+    const result = openmeteo.parseForecast(json);
+
+    expect(result.hourly.baseHour).toBe(21);
+    expect(result.hourly.cols[0]).toEqual({ code: conditions.codeFor('RAIN'), temp: 21 });
+    expect(spy).toHaveBeenCalledWith(Date.UTC(2026, 6, 5, 0, 15));
+  });
+
+  /** A Saturday the Tokyo phone has finished with sat on the watch as six days ahead and never aged. */
+  test('drops the daily days the phone has already finished with', () => {
+    onPhoneAt(TOKYO);
+    const json = {
+      utc_offset_seconds: -14400,
+      current: { time: '2026-07-04T20:15' },
+      daily: { time: ['2026-07-04', '2026-07-05', '2026-07-06'], weather_code: [0, 61, 0] },
+    };
+
+    const result = openmeteo.parseForecast(json);
+
+    expect(result.daily.baseWeekday).toBe(0);
+    expect(result.daily.cols).toHaveLength(2);
+    expect(result.daily.cols[0].code).toBe(conditions.codeFor('RAIN'));
+  });
+
+  /** A city a day ahead starts on the phone's tomorrow, and the watch holds that whole until then. */
+  test('keeps a strip that starts on the phone tomorrow', () => {
+    onPhoneAt(TORONTO_SUMMER);
+    const json = {
+      utc_offset_seconds: 32400,
+      current: { time: '2026-07-05T09:15' },
+      daily: { time: ['2026-07-05', '2026-07-06'], weather_code: [0, 0] },
+    };
+
+    const result = openmeteo.parseForecast(json);
+
+    expect(result.daily.baseWeekday).toBe(0);
+    expect(result.daily.cols).toHaveLength(2);
+  });
+
+  /**
+   * India's columns land at half past on a Toronto phone. Rounding up would label the first column
+   * an hour after the watch's own hour, and the strip would age a column early.
+   */
+  test('rounds a half hour zone down to the hour', () => {
+    onPhoneAt(TORONTO_SUMMER);
+    const json = {
+      utc_offset_seconds: 19800,
+      current: { time: '2026-07-05T09:15' },
+      hourly: { time: ['2026-07-05T10:00', '2026-07-05T11:00'], temperature_2m: [30, 31], weather_code: [0, 0] },
+    };
+
+    const result = openmeteo.parseForecast(json);
+
+    expect(result.hourly.baseHour).toBe(0);
+  });
+
+  /** Asked in the phone's own zone, which is the usual case, the strip must come through untouched. */
+  test('leaves a response in the phone zone alone', () => {
+    onPhoneAt(TORONTO_SUMMER);
+    const json = {
+      utc_offset_seconds: -14400,
+      current: { time: '2026-07-04T09:15' },
+      hourly: { time: ['2026-07-04T10:00'], temperature_2m: [20], weather_code: [0] },
+      daily: { time: ['2026-07-04', '2026-07-05'], weather_code: [0, 0] },
+    };
+
+    const result = openmeteo.parseForecast(json);
+
+    expect(result.hourly.baseHour).toBe(10);
+    expect(result.daily.baseWeekday).toBe(6);
+    expect(result.daily.cols).toHaveLength(2);
+  });
+});
+
 describe('openmeteo provider', () => {
   describe('guard clauses', () => {
     /** With no coordinates there is nothing to look up. */
@@ -337,6 +476,32 @@ describe('openmeteo provider', () => {
       run({ ...COORDS, wantForecast: false }, routing({ [FC]: { body: FC_OK } }, calls));
 
       expect(calls[0]).not.toContain(param);
+    });
+
+    /**
+     * Asked in the location's own zone, a manual city in another zone sent sunrise and the forecast's
+     * first hour on its clock, and the watch read them hours off on its own.
+     */
+    test('asks in the phone zone when the options carry one', () => {
+      const calls: string[] = [];
+
+      run({ ...COORDS, zone: 'America/Toronto' }, routing({ [FC]: { body: FC_OK } }, calls));
+
+      expect(calls[0]).toContain('timezone=America%2FToronto');
+    });
+
+    /** A zone name Open-Meteo does not know failed the whole request, so it asks again in the location's zone. */
+    test('asks again in the location zone when the phone zone is refused', () => {
+      const calls: string[] = [];
+      const refused = JSON.stringify({ error: true, reason: 'Invalid timezone' });
+
+      const result = run({ ...COORDS, zone: 'Mars/Base' }, routing({
+        'timezone=Mars%2FBase': { body: refused },
+        'timezone=auto': { body: FC_OK },
+      }, calls));
+
+      expect(calls).toHaveLength(2);
+      expect(result.ok).toBe(true);
     });
 
     /** The extras (humidity, wind, sunrise/sunset) must be asked for, else they never arrive. */
@@ -479,8 +644,26 @@ describe('openmeteo provider', () => {
       expect(result.windKmh).toBe(12);
       expect(result.windDir).toBe('NW');
       expect(result.uvIndex).toBe(5);
-      expect(result.sunrise).toBe('06:30');
-      expect(result.sunset).toBe('21:30');
+      expect(result.sunrise).toBe(6 * 60 + 30);
+      expect(result.sunset).toBe(21 * 60 + 30);
+    });
+
+    /**
+     * Every other provider sends sun times on the phone's clock. Asked in Tokyo's zone for a Toronto
+     * phone, sunrise came through on Tokyo's clock and the night schedule flipped the face hours off.
+     */
+    test('moves sunrise and sunset onto the phone clock in the location zone', () => {
+      onPhoneAt(TORONTO_SUMMER);
+      const body = JSON.stringify({
+        utc_offset_seconds: 32400,
+        current: { time: '2026-07-05T09:15', temperature_2m: 25, weather_code: 0 },
+        daily: { sunrise: ['2026-07-05T04:30'], sunset: ['2026-07-05T19:00'] },
+      });
+
+      const result = run(COORDS, routing({ [FC]: { body } }, []));
+
+      expect(result.sunrise).toBe(15 * 60 + 30);
+      expect(result.sunset).toBe(6 * 60);
     });
 
     /** Feels-like and pressure must be read from their documented current fields and rounded. */
@@ -643,6 +826,37 @@ describe('fetchForecast', () => {
     const result = runForecast({ coords: { lat: 40, lon: -73 }, fahrenheit: false }, routing({ [FC]: { body } }, []));
 
     expect(result).toBeNull();
+  });
+
+  /**
+   * The forecast OWM and WeatherAPI borrow sends the phone's zone too. With no retry, a zone name
+   * Open-Meteo refused left their forecast strips empty on every fetch.
+   */
+  test('asks again in the location zone when the phone zone is refused', () => {
+    const calls: string[] = [];
+    const refused = JSON.stringify({ error: true, reason: 'Invalid timezone' });
+
+    const result = runForecast({ coords: { lat: 40, lon: -73 }, fahrenheit: false, zone: 'Mars/Base' }, routing({
+      'timezone=Mars%2FBase': { body: refused },
+      'timezone=auto': { body: FORECAST_BODY },
+    }, calls));
+
+    expect(calls).toHaveLength(2);
+    expect(result.hourly.cols).toHaveLength(2);
+  });
+
+  /** A glitch column value reached the watch as it came and drew 32767 in a three digit column. */
+  test('holds the strip temperatures to the watch bounds', () => {
+    const body = JSON.stringify({
+      current: { time: '2026-07-05T09:00' },
+      hourly: { time: ['2026-07-05T09:00'], temperature_2m: [40000], weather_code: [0] },
+      daily: { time: ['2026-07-05'], temperature_2m_max: [250], temperature_2m_min: [-150], weather_code: [0] },
+    });
+
+    const result = runForecast({ coords: { lat: 40, lon: -73 }, fahrenheit: false }, routing({ [FC]: { body } }, []));
+
+    expect(result.hourly.cols[0].temp).toBe(199);
+    expect(result.daily.cols[0]).toMatchObject({ tempMax: 199, tempMin: -99 });
   });
 
   /** A good response must parse into the hourly and daily strips or the borrowing provider's forecast row stays blank. */

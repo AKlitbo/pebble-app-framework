@@ -71,7 +71,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   });
 
   if (needOpenMeteo) {
-    util.requestJson<OpenMeteoResponse>(openMeteo.extrasUrl(opts), request, () => tryDone(), (om) => {
+    openMeteo.requestZoned(opts, openMeteo.extrasUrl, request, () => tryDone(), (om) => {
       extras = om;
       tryDone();
     });
@@ -86,7 +86,8 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     const cod = Number(json.cod);
     if (Number.isFinite(cod) && cod !== 200) {
       console.log('owm api error:', json.message);
-      result = util.status(cod === 401 ? 'Invalid Key' : 'API Error');
+      // a 429 is the key's call cap, which another try seconds later only spends more of
+      result = util.status(cod === 401 ? 'Invalid Key' : cod === 429 ? 'Rate Limit' : 'API Error');
       return tryDone();
     }
 
@@ -127,8 +128,9 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
         windDir: util.degToCompass(wind.deg),
         feelsLike: json.main.feels_like,
         pressure: json.main.pressure,
-        sunrise: util.hmFromUnix(sys.sunrise, json.timezone),
-        sunset: util.hmFromUnix(sys.sunset, json.timezone),
+        // read on the phone's clock, which the watch keeps, rather than the location's
+        sunrise: util.minutesFromUnix(sys.sunrise),
+        sunset: util.minutesFromUnix(sys.sunset),
       }
     );
 

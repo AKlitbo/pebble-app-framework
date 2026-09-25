@@ -226,81 +226,126 @@ describe('degToCompass', () => {
   });
 });
 
-describe('hmFromIso', () => {
-  /** The clock portion of a local ISO timestamp must be read out verbatim. */
-  test('extracts HH:MM from an ISO timestamp', () => {
-    const result = util.hmFromIso('2026-06-26T06:30');
+describe('minutesFromIso', () => {
+  /** The clock portion of a local ISO timestamp is the time of day the watch shows, in minutes. */
+  test('reads the minutes past midnight from an ISO timestamp', () => {
+    const result = util.minutesFromIso('2026-06-26T06:30');
 
-    expect(result).toBe('06:30');
+    expect(result).toBe(6 * 60 + 30);
   });
 
-  /** A malformed or missing timestamp must yield '' so the watch shows a placeholder. */
-  test.each([['nope'], [''], [null], [undefined]])('returns empty for an unusable timestamp (%s)', (input) => {
-    const result = util.hmFromIso(input);
+  /** A malformed or missing timestamp must yield null so the watch shows a placeholder. */
+  test.each([['nope'], [''], [null], [undefined]])('returns null for an unusable timestamp (%s)', (input) => {
+    const result = util.minutesFromIso(input);
 
-    expect(result).toBe('');
-  });
-});
-
-describe('hmFromUnix', () => {
-  /** A UTC unix time plus the location offset must read out as the local clock. */
-  test('formats unix UTC plus offset as local HH:MM', () => {
-    // epoch (00:00 UTC) + 6h30m offset = 06:30 local
-    const result = util.hmFromUnix(0, 6 * 3600 + 30 * 60);
-
-    expect(result).toBe('06:30');
-  });
-
-  /** A negative offset must roll the clock back into the previous hours. */
-  test('applies a negative offset', () => {
-    // one day past the epoch (00:00 UTC), seven hours back lands at 17:00 the day before
-    const result = util.hmFromUnix(24 * 3600, -7 * 3600);
-
-    expect(result).toBe('17:00');
-  });
-
-  /** A missing value must yield '' rather than "NaN:NaN". */
-  test.each([
-    [undefined, 0],
-    [1782432000, undefined],
-  ])('returns empty when a value is missing (unix=%s, offset=%s)', (unix, offset) => {
-    const result = util.hmFromUnix(unix, offset);
-
-    expect(result).toBe('');
+    expect(result).toBe(null);
   });
 });
 
-describe('hmFrom12Hour', () => {
-  /** A botched 12-hour parse shows WeatherAPI's sunrise/sunset at the wrong time on the watch. */
+describe('minutesFromUnix', () => {
+  /**
+   * A sun time read on the location's clock showed hours off for a place in another zone, since the
+   * watch keeps the phone's clock. The answer is read the same way the phone does, so this holds in
+   * any zone the spec runs in.
+   */
+  test('reads a unix time on the phone clock', () => {
+    const unix = Date.UTC(2026, 5, 26, 11, 30) / 1000;
+    const local = new Date(unix * 1000);
+
+    const result = util.minutesFromUnix(unix);
+
+    expect(result).toBe(local.getHours() * 60 + local.getMinutes());
+  });
+
+  /** A missing value must yield null rather than NaN or midnight. */
+  test.each([[undefined], [null], ['x']])('returns null for a value that is not a time (%s)', (input) => {
+    const result = util.minutesFromUnix(input);
+
+    expect(result).toBe(null);
+  });
+});
+
+describe('minutesFrom12Hour', () => {
+  /** A botched 12-hour parse shows WeatherAPI's sunrise and sunset at the wrong time on the watch. */
   test.each([
-    ['05:42 AM', '05:42'],
-    ['5:42 AM', '05:42'],
-    ['11:59 AM', '11:59'],
-    ['05:42 PM', '17:42'],
-    ['11:59 PM', '23:59'],
-  ])('converts %s to 24-hour %s', (input, expected) => {
-    const result = util.hmFrom12Hour(input);
+    ['05:42 AM', 5 * 60 + 42],
+    ['5:42 AM', 5 * 60 + 42],
+    ['11:59 AM', 11 * 60 + 59],
+    ['05:42 PM', 17 * 60 + 42],
+    ['11:59 PM', 23 * 60 + 59],
+  ])('converts %s to %i minutes', (input, expected) => {
+    const result = util.minutesFrom12Hour(input);
 
     expect(result).toBe(expected);
   });
 
   /** The 12 o'clock hour is the off-by-twelve trap: 12 AM is midnight, 12 PM is noon. */
   test.each([
-    ['12:00 AM', '00:00'],
-    ['12:30 AM', '00:30'],
-    ['12:00 PM', '12:00'],
-    ['12:30 PM', '12:30'],
-  ])('maps the 12 o\'clock boundary %s to %s', (input, expected) => {
-    const result = util.hmFrom12Hour(input);
+    ['12:00 AM', 0],
+    ['12:30 AM', 30],
+    ['12:00 PM', 12 * 60],
+    ['12:30 PM', 12 * 60 + 30],
+  ])('maps the 12 o\'clock boundary %s to %i minutes', (input, expected) => {
+    const result = util.minutesFrom12Hour(input);
 
     expect(result).toBe(expected);
   });
 
-  /** An unparseable time must yield '' so the watch shows a placeholder, never "NaN:NaN". */
-  test.each([['not a time'], [null], [undefined]])('returns empty for invalid input (%s)', (input) => {
-    const result = util.hmFrom12Hour(input);
+  /** An unparseable time must yield null so the watch shows a placeholder. */
+  test.each([['not a time'], [null], [undefined]])('returns null for invalid input (%s)', (input) => {
+    const result = util.minutesFrom12Hour(input);
 
-    expect(result).toBe('');
+    expect(result).toBe(null);
+  });
+});
+
+describe('shiftDayMinutes', () => {
+  /** A time moved past midnight has to wrap round, or the watch gets a minute count past the day. */
+  test.each([
+    ['forward past midnight', 23 * 60 + 30, 60, 30],
+    ['back past midnight', 30, -60, 23 * 60 + 30],
+  ])('wraps %s', (label, minutes, shift, expected) => {
+    const result = util.shiftDayMinutes(minutes, shift);
+
+    expect(result).toBe(expected);
+  });
+
+  /** No time in stays no time out, so a missing sunrise still reads as none. */
+  test('passes a missing time through', () => {
+    const result = util.shiftDayMinutes(null, 60);
+
+    expect(result).toBe(null);
+  });
+});
+
+describe('minutesAtPhone', () => {
+  /**
+   * WeatherAPI's sun times are the location's own clock. For London while the phone is elsewhere,
+   * a 06:00 sunrise has to move by the gap between the two zones, or the night schedule flips hours
+   * off. The phone's offset is read the way the code reads it, so this holds in any zone.
+   */
+  test('moves a location time onto the phone clock', () => {
+    const epoch = Date.UTC(2026, 5, 26, 13, 0) / 1000;
+    const phoneOffset = -new Date(epoch * 1000).getTimezoneOffset();
+    const londonNow = '2026-06-26 14:00'; // an hour ahead of UTC in the summer
+
+    const result = util.minutesAtPhone(6 * 60, londonNow, epoch);
+
+    expect(result).toBe((((6 * 60 + phoneOffset - 60) % 1440) + 1440) % 1440);
+  });
+
+  /** Without the location's time now the offset cannot be read, so the time is left as it came. */
+  test('leaves a time alone when the location time is missing', () => {
+    const result = util.minutesAtPhone(6 * 60, undefined, undefined);
+
+    expect(result).toBe(6 * 60);
+  });
+
+  /** No time in stays no time out. */
+  test('passes a missing time through', () => {
+    const result = util.minutesAtPhone(null, '2026-06-26 14:00', 1782478800);
+
+    expect(result).toBe(null);
   });
 });
 
@@ -403,10 +448,22 @@ describe('ok', () => {
     expect(result).not.toHaveProperty('lon');
   });
 
+  /**
+   * Only the current temperature was held to the watch's bounds. A provider glitch sent a high of
+   * 40000, which reached the watch as it came and overflowed a three digit label.
+   */
+  test('holds the extra temperatures to the watch bounds', () => {
+    const extra = { tempMax: 40000, tempMin: -32768, feelsLike: 250, dewPoint: -150, pressure: 1013 };
+
+    const result = util.ok(10, 'Clear', 'Town', 51.5, -0.12, extra);
+
+    expect(result).toMatchObject({ tempMax: 199, tempMin: -99, feelsLike: 199, dewPoint: -99, pressure: 1013 });
+  });
+
   /** The extra readings must ride along, rounded, so the watch can show them. */
   test('attaches the weather extras when provided', () => {
     const extra = {
-      humidity: 61.4, windKmh: 12.7, windDir: 'NW', sunrise: '06:30', sunset: '21:30', uvIndex: 4.8,
+      humidity: 61.4, windKmh: 12.7, windDir: 'NW', sunrise: 390, sunset: 1290, uvIndex: 4.8,
       feelsLike: 9.6, pressure: 1013.4, dewPoint: -2.4, tempMax: 18.6, tempMin: 9.2, precipChance: 80.4,
     };
 
@@ -415,8 +472,8 @@ describe('ok', () => {
     expect(result.humidity).toBe(61);
     expect(result.windKmh).toBe(13);
     expect(result.windDir).toBe('NW');
-    expect(result.sunrise).toBe('06:30');
-    expect(result.sunset).toBe('21:30');
+    expect(result.sunrise).toBe(390);
+    expect(result.sunset).toBe(1290);
     expect(result.uvIndex).toBe(5);
     expect(result.feelsLike).toBe(10);
     expect(result.pressure).toBe(1013);
@@ -453,13 +510,13 @@ describe('ok', () => {
 
   /** A missing single extra must be dropped, not shipped as NaN or "". */
   test('skips individual extras that are missing or non-numeric', () => {
-    const extra = { humidity: undefined, windKmh: 'x', windDir: '', sunrise: '06:30' };
+    const extra = { humidity: undefined, windKmh: 'x', windDir: '', sunrise: 390 };
 
     const result = util.ok(10, 'Clear', 'Town', undefined, undefined, extra);
 
     expect(result).not.toHaveProperty('humidity');
     expect(result).not.toHaveProperty('windKmh');
     expect(result).not.toHaveProperty('windDir');
-    expect(result.sunrise).toBe('06:30');
+    expect(result.sunrise).toBe(390);
   });
 });

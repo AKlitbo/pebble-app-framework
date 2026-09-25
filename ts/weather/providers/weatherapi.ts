@@ -38,14 +38,32 @@ export interface WeatherApiDay {
 }
 
 export interface WeatherApiForecastDay {
+  date?: string;
   astro?: { sunrise?: string; sunset?: string };
   day?: WeatherApiDay;
+}
+
+/**
+ * The forecast day that is the phone's today, or null when the response does not hold it.
+ *
+ * WeatherAPI dates each day on the location's own calendar, and the watch keeps the high, low, and
+ * rain chance as the phone's today. For a city on another date the first day is the wrong one, so
+ * the day is matched by date. A response with no moment or no dates to match on takes the first day.
+ */
+function phoneTodayOf(days: WeatherApiForecastDay[], epochSeconds: unknown): WeatherApiForecastDay | null {
+  const epochMs = Number(epochSeconds) * 1000;
+  if (!Number.isFinite(epochMs) || !days.some((forecast) => forecast.date)) {
+    return days[0] || null;
+  }
+
+  const today = util.phoneDayOf(epochMs, util.phoneOffsetMinutes(epochMs));
+  return days.find((forecast) => forecast.date === today) || null;
 }
 
 /** The subset of a WeatherAPI forecast.json response this provider reads. */
 export interface WeatherApiResponse {
   error?: { message?: string; code?: number };
-  location?: { name?: string; lat?: number; lon?: number };
+  location?: { name?: string; lat?: number; lon?: number; localtime?: string; localtime_epoch?: number };
   current?: {
     condition?: { code?: number; text?: string };
     temp_f?: number; temp_c?: number; is_day?: number;
@@ -81,6 +99,11 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
       return util.status('Invalid Key');
     }
 
+    // 2007 is the key's monthly quota used up, which another try seconds later only spends more of
+    if (Number(json.error.code) === 2007) {
+      return util.status('Rate Limit');
+    }
+
     return util.status('API Error');
   }
 
@@ -101,11 +124,13 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
   const isDay = json.current.is_day !== 0;
 
   // WeatherAPI echoes the resolved location's coordinates in json.location
-  const loc: { name?: string; lat?: number; lon?: number } = json.location || {};
+  const loc: { name?: string; lat?: number; lon?: number; localtime?: string; localtime_epoch?: number } = json.location || {};
 
-  const forecastDay: WeatherApiForecastDay = (json.forecast?.forecastday && json.forecast.forecastday[0]) || {};
-  const astro: { sunrise?: string; sunset?: string } = forecastDay.astro || {};
-  const day: WeatherApiDay = forecastDay.day || {};
+  const forecastDays: WeatherApiForecastDay[] = json.forecast?.forecastday || [];
+  // the sun times come from the location's first day, which is a few minutes off at most on
+  // another date. the high, low, and rain chance are left out rather than taken from the wrong day
+  const astro: { sunrise?: string; sunset?: string } = (forecastDays[0] && forecastDays[0].astro) || {};
+  const day: WeatherApiDay = (phoneTodayOf(forecastDays, loc.localtime_epoch) || {}).day || {};
 
   // prefer the stable numeric code and fall back to the localized text which
   // shorten() still resolves through CONDITION_ALIASES for any unlisted code
@@ -128,8 +153,9 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
       tempMax: opts.fahrenheit ? day.maxtemp_f : day.maxtemp_c,
       tempMin: opts.fahrenheit ? day.mintemp_f : day.mintemp_c,
       precipChance: day.daily_chance_of_rain,
-      sunrise: util.hmFrom12Hour(astro.sunrise),
-      sunset: util.hmFrom12Hour(astro.sunset),
+      // the astro times are the location's own clock, so they move onto the phone's, which the watch keeps
+      sunrise: util.minutesAtPhone(util.minutesFrom12Hour(astro.sunrise), loc.localtime, loc.localtime_epoch),
+      sunset: util.minutesAtPhone(util.minutesFrom12Hour(astro.sunset), loc.localtime, loc.localtime_epoch),
     }
   );
 }
@@ -155,7 +181,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     return done(util.status('No Location'));
   }
 
-  const url = `${WEATHER_API_URL}?key=${encodeURIComponent(opts.key)}&q=${encodeURIComponent(query)}&days=1`;
+  const url = `${WEATHER_API_URL}?key=${encodeURIComponent(opts.key)}&q=${encodeURIComponent(query)}&days=2`;
 
   // WeatherAPI has no forecast strip of its own so when the face shows the forecast row we
   // borrow it from Open-Meteo the same way OWM does. firing it in parallel here keeps it from

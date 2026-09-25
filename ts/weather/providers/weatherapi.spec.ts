@@ -6,8 +6,9 @@
  * error mapping can be asserted.
  */
 
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi, afterEach } from 'vitest';
 import weatherapi from './weatherapi';
+import util from '../util';
 import { fetchRequest } from '../../testing/fetch-request';
 import { routing } from '../../testing/routing';
 import type { RequestFn, WeatherOpts, WeatherResult } from '../util';
@@ -27,6 +28,10 @@ const OK_BODY = JSON.stringify({
   location: { name: 'London' },
   current: { temp_c: 13.4, temp_f: 56.1, condition: { text: 'Light rain' } },
   forecast: { forecastday: [{ astro: { sunrise: '06:00 AM', sunset: '08:00 PM' } }] },
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
 describe('weatherapi provider', () => {
@@ -79,6 +84,15 @@ describe('weatherapi provider', () => {
       expect(result.condition).toBe('LOC NOT FOUND');
     });
 
+    /** A used-up monthly quota read as API ERROR and was retried twice against a quota with nothing left. */
+    test('maps the quota code 2007 to Rate Limit', () => {
+      const body = JSON.stringify({ error: { code: 2007, message: 'quota exceeded' } });
+
+      const result = run(BASE_OPTS, routing({ [WX]: { body } }, []));
+
+      expect(result.condition).toBe('RATE LIMIT');
+    });
+
     /** Each documented key-failure code must map to one clear message. */
     test.each([1002, 2006, 2008])('maps key-error code %i to Invalid Key', (code) => {
       const body = JSON.stringify({ error: { code, message: 'bad key' } });
@@ -88,7 +102,7 @@ describe('weatherapi provider', () => {
       expect(result.condition).toBe('INVALID KEY');
     });
 
-    /** An unrecognised error code must still fail safe with a generic message. */
+    /** An unrecognized error code must still fail safe with a generic message. */
     test('maps an unknown error code to API Error', () => {
       const body = JSON.stringify({ error: { code: 9999, message: 'boom' } });
 
@@ -112,7 +126,7 @@ describe('weatherapi provider', () => {
     test('returns a rounded celsius reading with an aliased condition by default', () => {
       const result = run(BASE_OPTS, routing({ [WX]: { body: OK_BODY } }, []));
 
-      expect(result).toEqual({ temperature: 13, condition: 'RAIN', location: 'London', ok: true, sunrise: '06:00', sunset: '20:00' });
+      expect(result).toEqual({ temperature: 13, condition: 'RAIN', location: 'London', ok: true, sunrise: 360, sunset: 1200 });
     });
 
     /** A clear sky at night (is_day=0) must report Clear Night so the watch shows a moon. */
@@ -213,12 +227,49 @@ describe('weatherapi provider', () => {
       expect(result.precipChance).toBe(80);
     });
 
+    /**
+     * The first forecast day is the location's own. For New York asked from a Tokyo phone past its
+     * midnight, that was New York's Saturday, and the watch showed its high and low as Sunday's.
+     */
+    test('reads the high and low from the phone today on another date', () => {
+      vi.spyOn(util, 'phoneOffsetMinutes').mockReturnValue(540);
+      const body = JSON.stringify({
+        location: { name: 'New York', localtime_epoch: Date.UTC(2026, 6, 5, 0, 15) / 1000 },
+        current: { temp_c: 20, condition: { text: 'Sunny' } },
+        forecast: { forecastday: [
+          { date: '2026-07-04', day: { maxtemp_c: 30, mintemp_c: 20, daily_chance_of_rain: 10 } },
+          { date: '2026-07-05', day: { maxtemp_c: 25, mintemp_c: 15, daily_chance_of_rain: 60 } },
+        ] },
+      });
+
+      const result = run(BASE_OPTS, routing({ [WX]: { body } }, []));
+
+      expect(result.tempMax).toBe(25);
+      expect(result.precipChance).toBe(60);
+    });
+
+    /** A city already on the phone's tomorrow holds no reading for today, and tomorrow's is not today's. */
+    test('leaves the high and low out when no day is the phone today', () => {
+      vi.spyOn(util, 'phoneOffsetMinutes').mockReturnValue(-240);
+      const body = JSON.stringify({
+        location: { name: 'Sydney', localtime_epoch: Date.UTC(2026, 6, 5, 0, 0) / 1000 },
+        current: { temp_c: 20, condition: { text: 'Sunny' } },
+        forecast: { forecastday: [{ date: '2026-07-05', day: { maxtemp_c: 18, mintemp_c: 8, daily_chance_of_rain: 5 } }] },
+      });
+
+      const result = run(BASE_OPTS, routing({ [WX]: { body } }, []));
+
+      expect(result.tempMax).toBeUndefined();
+      expect(result.precipChance).toBeUndefined();
+    });
+
     /** Astronomy data is extracted from the forecast array. */
     test('parses sunrise and sunset from astro block', () => {
       const result = run(BASE_OPTS, routing({ [WX]: { body: OK_BODY } }, []));
 
-      expect(result.sunrise).toBe('06:00');
-      expect(result.sunset).toBe('20:00');
+      // no location time in the fixture, so the times stay on the location's clock
+      expect(result.sunrise).toBe(6 * 60);
+      expect(result.sunset).toBe(20 * 60);
     });
 
     /** Missing astronomy data safely leaves sunrise and sunset unset. */

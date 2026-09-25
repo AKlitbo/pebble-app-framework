@@ -45,7 +45,7 @@ export interface ConditionVocabulary {
   conditions: ConditionEntry[];
 }
 
-// wire code for a condition the watch doesn't recognise, which a face draws as its fallback
+// wire code for a condition the watch doesn't recognize, which a face draws as its fallback
 // glyph. real conditions ride as their array index
 const UNKNOWN_CODE = 255;
 

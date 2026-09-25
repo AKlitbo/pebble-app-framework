@@ -230,7 +230,23 @@ describe('owm provider', () => {
       expect(result.humidity).toBe(61);
       expect(result.windKmh).toBe(36); // 10 m/s * 3.6
       expect(result.windDir).toBe('NW');
-      expect(result.sunrise).toBe('00:00');
+      // read on the phone's clock, whatever zone the spec runs in
+      const midnightUtc = new Date(0);
+      expect(result.sunrise).toBe(midnightUtc.getHours() * 60 + midnightUtc.getMinutes());
+    });
+
+    /** A zone name Open-Meteo refused left OWM without its UV, dew point, high, and low on every fetch. */
+    test('asks Open-Meteo again in the location zone when the phone zone is refused', () => {
+      const refused = JSON.stringify({ error: true, reason: 'Invalid timezone' });
+      const omBody = JSON.stringify({ current: { uv_index: 4.8 } });
+
+      const result = run({ ...BASE, zone: 'Mars/Base' }, routing({
+        [WX]: { body: WX_OK },
+        'timezone=Mars%2FBase': { body: refused },
+        'timezone=auto': { body: omBody },
+      }, []));
+
+      expect(result.uvIndex).toBe(5);
     });
 
     /** The hybrid fetch must inject Open-Meteo's UV index into the payload. */
@@ -367,9 +383,18 @@ describe('owm provider', () => {
       expect(result.condition).toBe('INVALID KEY');
     });
 
-    /** Any non-200 code other than 401 is a generic API error. */
-    test('maps a non-401 error code to API Error', () => {
+    /** A 429 read as API ERROR and was retried twice, spending more of a cap already hit. */
+    test('maps a 429 to Rate Limit', () => {
       const body = JSON.stringify({ cod: 429, message: 'rate' });
+
+      const result = run(BASE, routing({ [WX]: { body }, [OM]: { body: '{}' } }, []));
+
+      expect(result.condition).toBe('RATE LIMIT');
+    });
+
+    /** Any other non-200 code is a generic API error. */
+    test('maps another error code to API Error', () => {
+      const body = JSON.stringify({ cod: 500, message: 'down' });
 
       const result = run(BASE, routing({ [WX]: { body }, [OM]: { body: '{}' } }, []));
 

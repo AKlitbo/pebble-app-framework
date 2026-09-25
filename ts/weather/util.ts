@@ -45,8 +45,10 @@ export interface WeatherResult {
   humidity?: number;
   windKmh?: number;
   windDir?: string;
-  sunrise?: string;
-  sunset?: string;
+  /** Sunrise as minutes past the phone's midnight, the clock the watch keeps. */
+  sunrise?: number;
+  /** Sunset as minutes past the phone's midnight. */
+  sunset?: number;
   uvIndex?: number;
   feelsLike?: number;
   pressure?: number;
@@ -69,6 +71,12 @@ export interface WeatherOpts {
   wantForecast?: boolean;
   /** The reading fields the face shows, such as `humidity` or `uvIndex`. Left out, a provider fetches all of them. */
   fields?: string[];
+  /**
+   * The phone's time zone name, such as `America/Toronto`, for a provider that can answer in it.
+   * The watch keeps the phone's clock, so times sent in the location's own zone read hours off for
+   * a place in another one. Left out, a provider answers in the location's zone.
+   */
+  zone?: string;
 }
 
 export type { RequestFn } from '../pkjs/request';
@@ -216,75 +224,146 @@ function degToCompass(degrees: unknown): string {
 }
 
 /**
- * Pulls "HH:MM" out of an ISO timestamp like "2026-06-26T06:30".
+ * Minutes past midnight from an ISO timestamp like "2026-06-26T06:30".
  *
- * Open-Meteo returns local times when the request asks for timezone=auto, so
- * the clock portion can be shown as-is.
+ * The clock portion is read as written, on whatever clock the response keeps. A caller whose
+ * response can be on another clock moves it with shiftDayMinutes.
  *
  * @param iso An ISO timestamp such as "2026-06-26T06:30".
- * @return The "HH:MM" clock portion, or '' when none is found.
+ * @return Minutes past midnight, or null when no clock portion is found.
  */
-function hmFromIso(iso: unknown): string {
-  const match = /T(\d{2}:\d{2})/.exec(String(iso || ''));
-  return match ? match[1] : '';
+function minutesFromIso(iso: unknown): number | null {
+  const match = /T(\d{2}):(\d{2})/.exec(String(iso || ''));
+  return match ? Number(match[1]) * 60 + Number(match[2]) : null;
 }
 
 /**
- * Formats a UTC unix time as a local "HH:MM" using a timezone offset.
+ * How far ahead of UTC the phone's clock is at a moment, in minutes.
  *
- * OpenWeatherMap reports sunrise/sunset as UTC unix seconds plus a `timezone`
- * offset (also seconds), so the local clock is the two added together.
+ * Read through here rather than straight off Date so a spec can pin the phone's zone whatever
+ * machine it runs on.
  *
- * @param unixSeconds A UTC unix time in seconds.
- * @param offsetSeconds The timezone offset to add, in seconds.
- * @return The local "HH:MM" time, or '' when either value is not a usable number.
+ * @param epochMs The moment to read the phone's offset at.
+ * @return The offset in minutes, negative west of UTC.
  */
-function hmFromUnix(unixSeconds: unknown, offsetSeconds: unknown): string {
-  const unix = Number(unixSeconds);
-  const offset = Number(offsetSeconds);
-  if (!Number.isFinite(unix) || !Number.isFinite(offset)) {
-    return '';
+function phoneOffsetMinutes(epochMs: number): number {
+  return -new Date(epochMs).getTimezoneOffset();
+}
+
+/**
+ * The phone's calendar day at a moment, as YYYY-MM-DD.
+ *
+ * It is the one rule for which of a provider's days counts as today, so every provider that
+ * matches its days against the phone's reads it from here. The offset is passed in, read through
+ * phoneOffsetMinutes, so a spec that pins the phone's zone pins this too.
+ *
+ * @param epochMs The moment to read the day at.
+ * @param offsetMinutes The phone's offset from UTC at that moment.
+ * @return The phone's day, such as "2026-07-05".
+ */
+function phoneDayOf(epochMs: number, offsetMinutes: number): string {
+  return new Date(epochMs + offsetMinutes * 60000).toISOString().slice(0, 10);
+}
+
+/**
+ * Moves a time of day by some minutes, wrapping round midnight.
+ *
+ * @param minutes Minutes past midnight, or null for no time.
+ * @param shift How far to move it, negative to move it earlier.
+ * @return The moved time as minutes past midnight, or null when there was no time.
+ */
+function shiftDayMinutes(minutes: number | null, shift: number): number | null {
+  if (minutes === null) {
+    return null;
   }
 
-  const local = new Date((unix + offset) * 1000);
-  const hours = String(local.getUTCHours()).padStart(2, '0');
-  const minutes = String(local.getUTCMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
+  return (((minutes + shift) % 1440) + 1440) % 1440;
 }
 
 /**
- * Parses a 12-hour time string like "05:42 AM" into "HH:MM", or '' if unparseable.
+ * Minutes past the phone's midnight for a UTC unix time.
+ *
+ * OpenWeatherMap reports sunrise and sunset as UTC unix seconds, so reading them on the phone's own
+ * clock gives the time the watch shows, whatever zone the weather location is in.
+ *
+ * @param unixSeconds A UTC unix time in seconds.
+ * @return Minutes past the phone's midnight, or null when the value is not a usable number.
+ */
+function minutesFromUnix(unixSeconds: unknown): number | null {
+  const unix = Number(unixSeconds);
+  if (unixSeconds === null || unixSeconds === undefined || !Number.isFinite(unix)) {
+    return null;
+  }
+
+  const local = new Date(unix * 1000);
+  return local.getHours() * 60 + local.getMinutes();
+}
+
+/**
+ * Minutes past midnight for a 12-hour time string like "05:42 AM".
  *
  * @param timeStr A 12-hour time string, such as "05:42 AM".
- * @return The "HH:MM" 24-hour time, or '' when it cannot be parsed.
+ * @return Minutes past midnight, or null when it cannot be parsed.
  */
-function hmFrom12Hour(timeStr: unknown): string {
+function minutesFrom12Hour(timeStr: unknown): number | null {
   const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(String(timeStr || '').trim());
   if (!match) {
-    return '';
+    return null;
   }
 
   let hours = parseInt(match[1], 10);
-  const minutes = match[2];
   const isPM = match[3].toUpperCase() === 'PM';
-
   if (hours === 12) {
     hours = isPM ? 12 : 0;
   } else if (isPM) {
     hours += 12;
   }
 
-  return `${String(hours).padStart(2, '0')}:${minutes}`;
+  return hours * 60 + Number(match[2]);
 }
 
-/** Extras that ride as a whole number. */
+/**
+ * Moves a time of day from a location's own clock onto the phone's.
+ *
+ * WeatherAPI gives its sunrise and sunset in the location's local time with no zone on them, but it
+ * also gives the location's local time now beside the matching epoch, and the gap between those two
+ * is the location's offset. A location in the phone's zone comes out unchanged.
+ *
+ * @param minutes The time of day on the location's clock, or null for none.
+ * @param localtime The location's local time now, such as "2026-06-26 14:05".
+ * @param epochSeconds The same moment as a unix time.
+ * @return Minutes past the phone's midnight, or the time unchanged when the offset cannot be read.
+ */
+function minutesAtPhone(minutes: number | null, localtime: unknown, epochSeconds: unknown): number | null {
+  if (minutes === null) {
+    return null;
+  }
+
+  const match = /^(\d{4})-(\d{2})-(\d{2}) (\d{1,2}):(\d{2})$/.exec(String(localtime || ''));
+  const epoch = Number(epochSeconds);
+  if (!match || !Number.isFinite(epoch)) {
+    return minutes;
+  }
+
+  const wall = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]));
+  const locationOffset = Math.round((wall - Math.floor(epoch / 60) * 60000) / 60000);
+  return shiftDayMinutes(minutes, phoneOffsetMinutes(epoch * 1000) - locationOffset);
+}
+
+/** Extras that ride as a whole number, the sun times included as minutes past midnight. */
 const ROUNDED_EXTRAS = [
   'humidity', 'windKmh', 'uvIndex', 'feelsLike', 'pressure', 'dewPoint', 'tempMax', 'tempMin',
-  'precipChance',
+  'precipChance', 'sunrise', 'sunset',
 ];
 
-/** Extras that ride as text, such as a compass point or a clock time. */
-const TEXT_EXTRAS = ['windDir', 'sunrise', 'sunset'];
+/**
+ * The extras that are temperatures, held to the bounds the watch holds the current one to. A
+ * provider glitch otherwise reached the watch as 40000 and overflowed a three digit label.
+ */
+const TEMPERATURE_EXTRAS = ['feelsLike', 'dewPoint', 'tempMax', 'tempMin'];
+
+/** Extras that ride as text, such as a compass point. */
+const TEXT_EXTRAS = ['windDir'];
 
 /**
  * Copies the optional weather extras onto a result, skipping missing values so
@@ -310,7 +389,8 @@ function attachExtras(result: WeatherResult, extra: Record<string, unknown> | nu
 
     const value = Number(raw);
     if (Number.isFinite(value)) {
-      target[name] = Math.round(value);
+      const rounded = Math.round(value);
+      target[name] = TEMPERATURE_EXTRAS.includes(name) ? Math.min(199, Math.max(-99, rounded)) : rounded;
     }
   });
 
@@ -433,9 +513,13 @@ export default {
   applyNight,
   shorten,
   degToCompass,
-  hmFromIso,
-  hmFromUnix,
-  hmFrom12Hour,
+  minutesFromIso,
+  minutesFromUnix,
+  minutesFrom12Hour,
+  minutesAtPhone,
+  phoneOffsetMinutes,
+  phoneDayOf,
+  shiftDayMinutes,
   attachExtras,
   attachForecast,
   requestJson,

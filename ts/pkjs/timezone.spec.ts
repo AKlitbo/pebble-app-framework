@@ -7,7 +7,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { offsetMinutes, toWire } from './timezone';
+import { offsetMinutes, phoneZone, toWire } from './timezone';
 
 // a January and a July moment, so a northern zone is on standard time for one and summer time for
 // the other. both are midday UTC, well clear of any switch, which all happen overnight
@@ -46,6 +46,50 @@ describe('offsetMinutes', () => {
     const result = offsetMinutes('Nowhere/Atlantis', WINTER);
 
     expect(result).toBeNull();
+  });
+});
+
+describe('phoneZone', () => {
+  /** Swaps the runtime's zone name for one test and puts the real one back after. */
+  function withRuntimeZone(zone: string | (() => never), run: () => void): void {
+    const real = Intl.DateTimeFormat;
+    (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = () => {
+      if (typeof zone === 'function') {
+        return zone();
+      }
+      return { resolvedOptions: () => ({ timeZone: zone }) };
+    };
+    try {
+      run();
+    } finally {
+      (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = real;
+    }
+  }
+
+  /**
+   * A runtime can name a zone the phone is not on, such as UTC with no zone table behind it. Sent
+   * to the weather service, that put every sun time and forecast hour off by the phone's offset.
+   */
+  test('refuses a zone name the phone clock disagrees with', () => {
+    // fourteen hours ahead, which no phone running this spec is set to
+    let result: string | null = 'unset';
+
+    withRuntimeZone('Pacific/Kiritimati', () => {
+      result = phoneZone(Date.UTC(2026, 5, 26, 12, 0));
+    });
+
+    expect(result).toBe(null);
+  });
+
+  /** A runtime with no zone table throws when asked, and the weather falls back rather than fail. */
+  test('answers null when the runtime cannot name a zone', () => {
+    let result: string | null = 'unset';
+
+    withRuntimeZone(() => { throw new Error('no zones'); }, () => {
+      result = phoneZone(Date.UTC(2026, 5, 26, 12, 0));
+    });
+
+    expect(result).toBe(null);
   });
 });
 

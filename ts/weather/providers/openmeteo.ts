@@ -20,6 +20,7 @@ const HOURLY_STEP_HOURS = 2;
 export interface OpenMeteoResponse {
   error?: boolean;
   reason?: string;
+  utc_offset_seconds?: number;
   current?: {
     time?: string;
     temperature_2m?: number;
@@ -51,10 +52,12 @@ export interface OpenMeteoResponse {
 }
 
 /**
- * Rounds a value to a whole number, or null when it isn't a real number.
+ * Rounds a forecast column's temperature to a whole number held to -99 to 199, or null when it
+ * isn't a real number.
  *
  * A forecast column with no temperature ships null so the packer can swap in the
- * no-reading marker instead of a bogus zero.
+ * no-reading marker instead of a bogus zero. The bounds are the watch's for the current
+ * temperature, since a glitch value otherwise drew 32767 in a three digit column.
  */
 function roundOrNull(value: unknown): number | null {
   // null/undefined/'' all coerce to 0 through Number() so reject them first
@@ -63,29 +66,71 @@ function roundOrNull(value: unknown): number | null {
   }
 
   const number = Number(value);
-  return Number.isFinite(number) ? Math.round(number) : null;
+  return Number.isFinite(number) ? Math.min(199, Math.max(-99, Math.round(number))) : null;
 }
 
-/** Pulls the hour (0-23) out of an ISO timestamp, or -1 when it has no clock part. */
-function hourOfIso(iso: unknown): number {
-  const match = /T(\d{2}):/.exec(String(iso || ''));
-  return match ? parseInt(match[1], 10) : -1;
+/** The phone's clock against the one a response is written in, worked out once per response. */
+interface PhoneClock {
+  /** How many minutes the phone's clock is ahead of the response's. */
+  shiftMinutes: number;
+  /** The phone's day as YYYY-MM-DD, or null when the response gives no moment to read it at. */
+  today: string | null;
+}
+
+const SAME_CLOCK: PhoneClock = { shiftMinutes: 0, today: null };
+
+/**
+ * The wall clock of an ISO time like "2026-07-05T09:15", or a date like "2026-07-05" at its
+ * midnight, read as if it were UTC so the phone's own zone cannot nudge it. Null when it does not
+ * read.
+ */
+function wallMsOfIso(iso: unknown): number | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(String(iso || ''));
+  if (!match) {
+    return null;
+  }
+
+  return Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4] || 0), Number(match[5] || 0));
 }
 
 /**
- * Works out the weekday (0=Sunday .. 6=Saturday) of an ISO date like "2026-07-05".
- * Parsed as UTC so the phone's own timezone can't nudge it onto the wrong day.
+ * Works out how the phone's clock sits against the response's.
+ *
+ * Open-Meteo writes every time in a response with one offset, the requested zone's at the moment
+ * of the request, and names it in utc_offset_seconds. Asked in the phone's own zone the two clocks
+ * agree and nothing moves. Asked in the location's zone for a city the phone is not in, every time
+ * moves by the gap, or the watch reads it on the wrong clock. The phone's offset is read at the
+ * response's own now, so both sides are measured at the same moment.
  */
-function weekdayOfIso(isoDate: unknown): number {
-  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(isoDate || ''));
-  if (!match) {
-    return -1;
+function phoneClockFor(json: OpenMeteoResponse | null): PhoneClock {
+  const offsetSeconds = json?.utc_offset_seconds;
+  const wallMs = wallMsOfIso(json?.current?.time);
+  if (typeof offsetSeconds !== 'number' || !Number.isFinite(offsetSeconds) || wallMs === null) {
+    return SAME_CLOCK;
   }
 
-  const year = parseInt(match[1], 10);
-  const month = parseInt(match[2], 10);
-  const day = parseInt(match[3], 10);
-  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+  const nowMs = wallMs - offsetSeconds * 1000;
+  const phoneOffset = util.phoneOffsetMinutes(nowMs);
+
+  return {
+    shiftMinutes: phoneOffset - offsetSeconds / 60,
+    today: util.phoneDayOf(nowMs, phoneOffset),
+  };
+}
+
+/**
+ * Where the phone's today sits in the daily block, or -1 when the block does not hold it.
+ *
+ * A response on the phone's clock, or one with no moment to read the phone's day at, starts on
+ * today, so the first day is taken.
+ */
+function todayIndex(json: OpenMeteoResponse | null, phone: PhoneClock): number {
+  const times = json?.daily?.time;
+  if (phone.today === null || !Array.isArray(times)) {
+    return 0;
+  }
+
+  return times.indexOf(phone.today);
 }
 
 /**
@@ -95,9 +140,10 @@ function weekdayOfIso(isoDate: unknown): number {
  * strides by HOURLY_STEP_HOURS. Each column carries the condition as its wire
  * code and the temperature in the unit the request already asked for. A column
  * whose hour falls after dark (is_day 0) gets the night bit so the watch loads
- * the night glyph. A missing is_day is treated as day, same as the current icon.
+ * the night glyph. A missing is_day is treated as day, same as the current icon. The base hour is
+ * on the phone's clock.
  */
-function parseHourly(json: OpenMeteoResponse | null): HourlyStrip | null {
+function parseHourly(json: OpenMeteoResponse | null, phone: PhoneClock): HourlyStrip | null {
   const hourly = json?.hourly;
   const current = json?.current;
   if (!hourly || !Array.isArray(hourly.time) || !Array.isArray(hourly.temperature_2m)) {
@@ -138,21 +184,27 @@ function parseHourly(json: OpenMeteoResponse | null): HourlyStrip | null {
 
   // a base we can't read would ship a bogus hour the watch labels the whole strip
   // with so drop the strip instead of sending a wrong marker
-  const baseHour = hourOfIso(times[start]);
-  if (baseHour < 0) {
+  const baseMinutes = util.minutesFromIso(times[start]);
+  if (baseMinutes === null) {
     return null;
   }
+  const baseHour = Math.floor(baseMinutes / 60);
 
-  return { baseHour: baseHour, stepHours: HOURLY_STEP_HOURS, cols };
+  // the columns sit on the location's whole hours. a phone half an hour off them rounds the label
+  // down, so a column reads up to 45 minutes early and never behind the watch's own hour, which is
+  // what keeps the strip aging from the right place
+  const phoneMinutes = util.shiftDayMinutes(baseHour * 60, phone.shiftMinutes) as number;
+
+  return { baseHour: Math.floor(phoneMinutes / 60), stepHours: HOURLY_STEP_HOURS, cols };
 }
 
 /**
  * Builds the 7-day strip from an Open-Meteo response.
  *
- * Takes the first FORECAST_COLS days starting today. Each column carries the
+ * Takes the first FORECAST_COLS days starting the phone's today. Each column carries the
  * condition code plus the day's high and low in the user's unit.
  */
-function parseDaily(json: OpenMeteoResponse | null): DailyStrip | null {
+function parseDaily(json: OpenMeteoResponse | null, phone: PhoneClock): DailyStrip | null {
   const daily = json?.daily;
   if (!daily || !Array.isArray(daily.time)) {
     return null;
@@ -163,8 +215,17 @@ function parseDaily(json: OpenMeteoResponse | null): DailyStrip | null {
   const mins = daily.temperature_2m_min || [];
   const codes = daily.weather_code || [];
 
+  // a city behind the phone is still on a day the phone has finished with, and the watch would read
+  // that day as six days ahead and never age it, so days before the phone's today come off the
+  // front. a city ahead starts on the phone's tomorrow, and the watch holds that whole until then
+  const today = phone.today;
+  const first = today === null ? 0 : times.findIndex((day) => String(day) >= today);
+  if (first < 0) {
+    return null;
+  }
+
   const cols = [];
-  for (let column = 0; column < FORECAST_COLS && column < times.length; column++) {
+  for (let column = first; column < first + FORECAST_COLS && column < times.length; column++) {
     cols.push({
       code: conditions.codeFor(util.wmoToCondition(codes[column])),
       tempMax: roundOrNull(maxes[column]),
@@ -177,10 +238,11 @@ function parseDaily(json: OpenMeteoResponse | null): DailyStrip | null {
   }
 
   // same guard as the hourly strip: a base weekday we can't read would mislabel every day
-  const baseWeekday = weekdayOfIso(times[0]);
-  if (baseWeekday < 0) {
+  const firstDayMs = wallMsOfIso(times[first]);
+  if (firstDayMs === null) {
     return null;
   }
+  const baseWeekday = new Date(firstDayMs).getUTCDay();
 
   return { baseWeekday: baseWeekday, cols };
 }
@@ -196,7 +258,8 @@ function parseDaily(json: OpenMeteoResponse | null): DailyStrip | null {
  * @return The hourly and daily forecast strips, each null on its own when the response has nothing usable.
  */
 function parseForecast(json: OpenMeteoResponse | null): ForecastCols {
-  return { hourly: parseHourly(json), daily: parseDaily(json) };
+  const phone = phoneClockFor(json);
+  return { hourly: parseHourly(json, phone), daily: parseDaily(json, phone) };
 }
 
 
@@ -221,8 +284,10 @@ const FORECAST_DAYS = 8;
 /**
  * Assembles an Open-Meteo query from the parts a caller wants.
  *
- * Every builder here needs the same coordinates, the same unit, and `timezone=auto` so the daily
- * sunrise and sunset come back local, so those live here rather than in each one.
+ * Every builder here needs the same coordinates, the same unit, and the same zone, so those live
+ * here rather than in each one. The zone is the phone's when the options carry it, so the sun times
+ * and the strips' base hour and weekday come back on the clock the watch keeps. Otherwise it is
+ * the location's own, through `timezone=auto`, and the parse moves every time onto the phone's clock.
  *
  * @param opts The weather request options, read for the coordinates and the unit.
  * @param parts The query pieces this caller wants, each already comma-joined.
@@ -247,7 +312,7 @@ function buildUrl(opts: WeatherOpts, parts: { current: string; daily: string; ho
     url += '&wind_speed_unit=kmh';
   }
 
-  return url + '&timezone=auto';
+  return url + '&timezone=' + encodeURIComponent(opts.zone || 'auto');
 }
 
 /**
@@ -306,11 +371,40 @@ function fetchForecast(opts: WeatherOpts, request: RequestFn, done: (forecast: F
     return done(null);
   }
 
-  util.requestJson<OpenMeteoResponse>(forecastUrl(opts), request, () => done(null), (json) => {
+  requestZoned(opts, forecastUrl, request, () => done(null), (json) => {
     if (json.error) {
       return done(null);
     }
     done(parseForecast(json));
+  });
+}
+
+/**
+ * Fetches one Open-Meteo query, asking again in the location's own zone when Open-Meteo refuses
+ * the phone's zone name.
+ *
+ * A zone name Open-Meteo does not know fails the whole request, so without the retry the reading,
+ * the extras, or the forecast would go missing on every fetch. Every call to Open-Meteo goes
+ * through here, including the ones OWM and WeatherAPI make for what their own APIs lack.
+ *
+ * @param opts The weather request options, read for the zone.
+ * @param urlFor Builds the query from the options, so the retry can build it again without the zone.
+ * @param request The function that performs the actual network request.
+ * @param onFail Called with the status when no JSON came back.
+ * @param onJson Called with the response, which can still carry an error of its own.
+ */
+function requestZoned(
+  opts: WeatherOpts,
+  urlFor: (opts: WeatherOpts) => string,
+  request: RequestFn,
+  onFail: DoneFn,
+  onJson: (json: OpenMeteoResponse) => void
+): void {
+  util.requestJson<OpenMeteoResponse>(urlFor(opts), request, onFail, (json) => {
+    if (json.error && opts.zone && /timezone/i.test(String(json.reason || ''))) {
+      return requestZoned({ ...opts, zone: undefined }, urlFor, request, onFail, onJson);
+    }
+    onJson(json);
   });
 }
 
@@ -323,20 +417,25 @@ function fetchForecast(opts: WeatherOpts, request: RequestFn, done: (forecast: F
  * them from a parallel Open-Meteo call. Keeping the field mapping here means the
  * Open-Meteo paths live in one place instead of drifting across two providers.
  *
+ * The high, low, and rain chance are the phone's today, since the watch keeps them as today's.
+ * A response in the location's zone for a city on another date may not hold that day, and then
+ * they are left out rather than sent from the wrong one.
+ *
  * @param json The Open-Meteo response to read the extras from, or null when there is none.
  * @return The raw extra fields, keyed to match what attachExtras expects.
  */
 function parseExtras(json: OpenMeteoResponse | null): Record<string, unknown> {
   const cur = json?.current;
   const daily = json?.daily;
-  const first = (arr: unknown): unknown => (Array.isArray(arr) ? arr[0] : undefined);
+  const today = todayIndex(json, phoneClockFor(json));
+  const onToday = (arr: unknown): unknown => (Array.isArray(arr) && today >= 0 ? arr[today] : undefined);
 
   return {
     uvIndex: cur?.uv_index,
     dewPoint: cur?.dew_point_2m,
-    tempMax: first(daily?.temperature_2m_max),
-    tempMin: first(daily?.temperature_2m_min),
-    precipChance: first(daily?.precipitation_probability_max),
+    tempMax: onToday(daily?.temperature_2m_max),
+    tempMin: onToday(daily?.temperature_2m_min),
+    precipChance: onToday(daily?.precipitation_probability_max),
   };
 }
 
@@ -369,14 +468,14 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   }
 
   // wind_speed_unit=kmh keeps wind in km/h whatever the temperature unit
-  const url = buildUrl(opts, {
+  const urlFor = (zoned: WeatherOpts): string => buildUrl(zoned, {
     current: current,
     daily: dailyFields,
-    hourly: opts.wantForecast ? HOURLY_FORECAST : undefined,
+    hourly: zoned.wantForecast ? HOURLY_FORECAST : undefined,
     windKmh: true,
   });
 
-  util.requestJson<OpenMeteoResponse>(url, request, done, (json) => {
+  requestZoned(opts, urlFor, request, done, (json) => {
     if (json.error) {
       console.log('open-meteo api error:', json.reason);
       return done(util.status('API Error'));
@@ -388,6 +487,9 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
 
     const cur = json.current;
     const daily = json.daily;
+    const phone = phoneClockFor(json);
+    // a city a day ahead holds no phone today, and its first sunrise is a few minutes off at most
+    const sunDay = Math.max(todayIndex(json, phone), 0);
 
     // is_day is 1 by day and 0 at night. treat a missing value as day so a
     // clear sky never wrongly shows a moon
@@ -405,8 +507,8 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
         windDir: util.degToCompass(cur.wind_direction_10m),
         feelsLike: cur.apparent_temperature,
         pressure: cur.pressure_msl,
-        sunrise: util.hmFromIso(daily?.sunrise?.[0]),
-        sunset: util.hmFromIso(daily?.sunset?.[0]),
+        sunrise: util.shiftDayMinutes(util.minutesFromIso(daily?.sunrise?.[sunDay]), phone.shiftMinutes),
+        sunset: util.shiftDayMinutes(util.minutesFromIso(daily?.sunset?.[sunDay]), phone.shiftMinutes),
         // uv, dew point, and the daily high, low, and rain chance
       }, parseExtras(json))
     );
@@ -421,4 +523,4 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   });
 }
 
-export default { fetch, parseExtras, extrasUrl, parseForecast, fetchForecast };
+export default { fetch, parseExtras, extrasUrl, parseForecast, fetchForecast, requestZoned };

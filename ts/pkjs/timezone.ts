@@ -8,13 +8,7 @@
  */
 
 import wire from './wire';
-
-/** What a location field holds once a place has been picked on the config page. */
-interface SavedPlace {
-  label?: string;
-  offset?: number;
-  tz?: string;
-}
+import { readPlace } from './place';
 
 /** A zone's wall clock at one moment, broken into the pieces every caller here wants. */
 export interface ZoneParts {
@@ -118,7 +112,7 @@ export function offsetMinutes(zone: string, nowMs: number): number | null {
 /**
  * The "offset,label" a timezone field sends the watch, with the offset read off the saved zone.
  *
- * A value saved before the zone was kept is passed straight through, since its offset is all there
+ * A value saved before the zone was kept goes out with the offset it saved, since that is all there
  * is to go on. The label is flattened to ASCII because the watch header fonts carry no glyph for
  * an accented letter and draw it as a box.
  *
@@ -131,21 +125,38 @@ export function toWire(saved: unknown, nowMs: number): string {
     return '';
   }
 
-  let place: SavedPlace;
-  try {
-    place = JSON.parse(saved);
-  } catch (error) {
-    return saved;
-  }
-
-  if (!place || typeof place !== 'object') {
+  // a string that is not a place at all goes through as it came, since a face may keep something
+  // else in a field of this kind
+  const place = readPlace(saved);
+  if (!place) {
     return saved;
   }
 
   const live = place.tz ? offsetMinutes(place.tz, nowMs) : null;
-  const offset = live === null ? Math.round(Number(place.offset)) || 0 : live;
+  const offset = live === null ? place.offset || 0 : live;
 
-  return offset + ',' + wire.toAscii(String(place.label || ''));
+  return offset + ',' + wire.toAscii(place.label);
 }
 
-export default { zoneParts, offsetMinutes, toWire };
+/**
+ * The phone's own time zone name, when the runtime can name it and read it right.
+ *
+ * A runtime with no zone table can throw, or answer UTC while the phone is not on UTC, and a wrong
+ * name would put every sun time and forecast hour off. So the name is only trusted when its offset
+ * now matches the phone clock's own.
+ *
+ * @param nowMs The moment to check the offset at, as epoch milliseconds.
+ * @return The zone name, such as "America/Toronto", or null when it cannot be trusted.
+ */
+export function phoneZone(nowMs: number): string | null {
+  let zone: string;
+  try {
+    zone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  } catch (error) {
+    return null;
+  }
+
+  return zone && offsetMinutes(zone, nowMs) === -new Date(nowMs).getTimezoneOffset() ? zone : null;
+}
+
+export default { zoneParts, offsetMinutes, toWire, phoneZone };
