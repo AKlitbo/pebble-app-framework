@@ -40,6 +40,10 @@ static void build(void)
 {
     Layer *root = window_get_root_layer(s_window);
     s_count = s_build(s_slots, ENGINE_MAX_SLOTS, layer_get_bounds(root));
+    if (s_count > ENGINE_MAX_SLOTS)
+    {
+        s_count = ENGINE_MAX_SLOTS;  // every slot array is this long, so a count past it would write off the end
+    }
 
     for (uint8_t i = 0; i < s_count; i++)
     {

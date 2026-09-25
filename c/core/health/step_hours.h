@@ -27,15 +27,4 @@
  */
 int step_hours_settled(int cur_hour, int cur_min);
 
-/**
- * @brief Which hourly bucket a minute record belongs in.
- *
- * A batched read spans several hours, and the watch moves the window's start forward to the first
- * record it holds, so a record's place in the array says nothing about its place in the day.
- *
- * @param seconds_into_day How far past midnight the record sits.
- * @return The bucket index, or -1 when the record falls outside the day.
- */
-int step_hours_bucket(int seconds_into_day);
-
 /** @} */

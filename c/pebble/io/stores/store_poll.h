@@ -62,4 +62,36 @@ static inline bool store_poll_due(int poll_min, time_t *next, time_t now)
     return true;
 }
 
+/** @brief One store's polling: its interval, whether it polls at all, and when it is next due. */
+typedef struct
+{
+    time_t next;     ///< Wall-clock second the next recurring poll is due
+    int    poll_min; ///< Minutes between polls. 0 or less means no recurring poll
+    bool   live;     ///< True on a live face. A store seeded with fixtures never polls
+} StorePoll;
+
+/**
+ * @brief Take a store's interval and whether it is live, as its init and its reconfigure both do.
+ *
+ * Both are always recorded. The deadline only moves when polling is on, and then to the next
+ * interval boundary, so a save can bring a poll nearer but never make one come faster than the
+ * interval allows.
+ *
+ * @param[in,out] poll The store's polling state.
+ * @param poll_min Minutes between polls. 0 or less turns polling off.
+ * @param live Whether the store is live.
+ * @param now The current wall-clock time.
+ * @return Whether polling is on, which is when a store may arm its first or catch-up fetch.
+ */
+bool store_poll_set(StorePoll *poll, int poll_min, bool live, time_t now);
+
+/**
+ * @brief A store's turn on the face's cadence: whether a poll should go out now.
+ *
+ * @param[in,out] poll The store's polling state. The deadline moves on when a poll is due.
+ * @param now The current wall-clock time.
+ * @return Whether to ask the phone now.
+ */
+bool store_poll_turn(StorePoll *poll, time_t now);
+
 /** @} */

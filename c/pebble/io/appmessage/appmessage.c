@@ -8,6 +8,7 @@
  */
 #include "io/appmessage/appmessage.h"
 
+#include "io/callback_list.h"
 #include "io/outbox_queue.h"
 #include "io/tuple_read.h"
 #include "math/scale.h"
@@ -59,8 +60,13 @@ static struct
     CalendarStripHandler        on_calendar_strip;      ///< The calendar strip arrived
     CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
     CustomColorsProvider        custom_colors_provider; ///< Supplies the face's custom colours for the settings reply
-    InboxCompleteHandler        on_inbox_complete;      ///< Every channel in one inbound message has been handled
 } s_handlers;
+
+/// Room for the work that waits for a whole inbound message, one entry per store that wants it
+#define INBOX_COMPLETE_MAX 4
+
+static CallbackListFn s_inbox_complete_entries[INBOX_COMPLETE_MAX]; ///< That work, in the order it was added
+static CallbackList s_inbox_complete = {s_inbox_complete_entries, INBOX_COMPLETE_MAX, 0}; ///< The list over that storage
 
 void appmessage_on_weather(WeatherHandler cb)                  { s_handlers.on_weather = cb; }
 void appmessage_on_coords(CoordsHandler cb)                    { s_handlers.on_coords = cb; }
@@ -75,7 +81,15 @@ void appmessage_on_stock_strip(StockStripHandler cb)          { s_handlers.on_st
 void appmessage_on_calendar_strip(CalendarStripHandler cb)   { s_handlers.on_calendar_strip = cb; }
 void appmessage_on_custom_colors(CustomColorsHandler cb)      { s_handlers.on_custom_colors = cb; }
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb) { s_handlers.custom_colors_provider = cb; }
-void appmessage_on_inbox_complete(InboxCompleteHandler cb)    { s_handlers.on_inbox_complete = cb; }
+
+void appmessage_add_inbox_complete(InboxCompleteHandler cb)
+{
+    // a full list means a store never commits what a message brought, so say so
+    if (!callback_list_add(&s_inbox_complete, cb))
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "inbox complete list full, dropping a handler");
+    }
+}
 
 /**
  * @name Outbox queue limits
@@ -276,6 +290,31 @@ static uint32_t settings_reply_size(void)
 
     return size;
 }
+
+#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
+/**
+ * @brief Whether the custom colours a message carries are the ones the face already holds.
+ *
+ * The settings page sends the colours with every save, so taking each arrival as a change made
+ * every save rebuild the face and refetch anything that follows a settings change. The face's own
+ * provider rebuilds the string it holds, and the two only match when nothing moved. A string the
+ * provider writes differently just counts as a change.
+ *
+ * @param custom The colours the message carries.
+ * @return True when they match what the face holds.
+ */
+static bool custom_colors_match(const char *custom)
+{
+    if (!s_handlers.custom_colors_provider)
+    {
+        return false;
+    }
+
+    char held[APPMESSAGE_CUSTOM_COLORS_MAX];
+    s_handlers.custom_colors_provider(held, sizeof(held));
+    return strcmp(custom, held) == 0;
+}
+#endif
 
 /**
  * @brief Write the settings reply payload into the outbox iterator.
@@ -535,7 +574,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         // this string gets split straight into the two persist blobs, so an unterminated one
         // would carry whatever followed it in the inbox all the way into flash
         const char *custom = tuple_str_or(custom_colors_t, NULL);
-        if (custom)
+        if (custom && !custom_colors_match(custom))
         {
             s_handlers.on_custom_colors(custom);
             custom_changed = true;
@@ -589,11 +628,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     }
 
     // the whole message is dispatched: let a store that took several channels commit them
-    // once (the weather store coalesces its per-channel writes into a single persist here)
-    if (s_handlers.on_inbox_complete)
-    {
-        s_handlers.on_inbox_complete();
-    }
+    // once (the weather store repaints and saves once here rather than once per channel)
+    callback_list_fire(&s_inbox_complete);
 }
 
 /**

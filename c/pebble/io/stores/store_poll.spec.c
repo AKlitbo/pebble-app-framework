@@ -6,7 +6,8 @@
  * testable while the clock reading stays at the edge. What matters here is not the arithmetic but
  * the two ways a deadline goes wrong: firing more often than the interval, which spends the user's
  * phone battery and a provider's quota, and never firing at all, which leaves the face showing
- * yesterday's weather with nothing to say it is stale.
+ * yesterday's weather with nothing to say it is stale. The polling state on top of them decides
+ * when polling is on at all, so a store seeded with fixtures or switched off never asks.
  */
 #include "unity.h"
 
@@ -182,6 +183,61 @@ void test_the_tightest_cadence_still_advances(void)
     TEST_ASSERT_EQUAL_INT(120, (int)next);
 }
 
+/** @brief A store seeded with fixtures is not live, so nothing arms a fetch that would overwrite them. */
+void test_set_is_off_for_a_store_that_is_not_live(void)
+{
+    StorePoll poll = {.next = 0};
+
+    bool result = store_poll_set(&poll, 30, false, 1000);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief An interval of zero is the setting for no polling, so no first fetch is armed. */
+void test_set_is_off_for_a_zero_interval(void)
+{
+    StorePoll poll = {.next = 0};
+
+    bool result = store_poll_set(&poll, 0, true, 1000);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief Turning polling on aims at the next boundary, so a settings save cannot fetch straight away. */
+void test_set_aims_the_deadline_at_the_next_boundary(void)
+{
+    StorePoll poll = {.next = 0};
+
+    store_poll_set(&poll, 30, true, 1000);
+
+    TEST_ASSERT_EQUAL_INT(1800, (int)poll.next);
+}
+
+/** @brief A store switched off by a reconfigure must stop polling on its next turn. */
+void test_turn_is_never_due_once_the_store_is_off(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_set(&poll, 30, true, 1000);
+    store_poll_set(&poll, 30, false, 1000);
+
+    bool result = store_poll_turn(&poll, 5000);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A live store whose deadline has come round asks once and moves its deadline on. */
+void test_turn_fires_once_when_the_deadline_comes_round(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_set(&poll, 30, true, 1000);
+
+    bool first = store_poll_turn(&poll, 1800);
+    bool second = store_poll_turn(&poll, 1801);
+
+    TEST_ASSERT_TRUE(first);
+    TEST_ASSERT_FALSE(second);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -200,6 +256,11 @@ int main(void)
     RUN_TEST(test_a_clock_that_jumped_back_pulls_the_deadline_in);
     RUN_TEST(test_a_deadline_one_interval_ahead_is_left_alone);
     RUN_TEST(test_the_tightest_cadence_still_advances);
+    RUN_TEST(test_set_is_off_for_a_store_that_is_not_live);
+    RUN_TEST(test_set_is_off_for_a_zero_interval);
+    RUN_TEST(test_set_aims_the_deadline_at_the_next_boundary);
+    RUN_TEST(test_turn_is_never_due_once_the_store_is_off);
+    RUN_TEST(test_turn_fires_once_when_the_deadline_comes_round);
 
     return UNITY_END();
 }

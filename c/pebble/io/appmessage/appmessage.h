@@ -161,7 +161,16 @@ void appmessage_on_stock_strip(StockStripHandler cb);            /**< @brief Pac
 void appmessage_on_calendar_strip(CalendarStripHandler cb);      /**< @brief Packed agenda strip */
 void appmessage_on_custom_colors(CustomColorsHandler cb);        /**< @brief Inbound: splits and stores the combined string */
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb); /**< @brief Outbound: rebuilds the combined string */
-void appmessage_on_inbox_complete(InboxCompleteHandler cb);      /**< @brief Fires once after a whole inbox is handled */
+/**
+ * @brief Adds work to run once after a whole inbound message is handled, after every channel in it.
+ *
+ * Unlike the channel handlers, this adds to a list rather than replacing a handler, so several
+ * stores can each commit what one message brought them. Adding the same function twice does
+ * nothing.
+ *
+ * @param cb The work to run. NULL is ignored.
+ */
+void appmessage_add_inbox_complete(InboxCompleteHandler cb);
 
 /**
  * @brief Register the SDK callbacks and open the inbox and outbox.

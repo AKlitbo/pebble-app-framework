@@ -67,12 +67,13 @@ _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "weather state must f
 
 static void (*s_cb)(void);     ///< Called whenever a reading changes, so the face can redraw
 static AppTimer *s_timer;      ///< The short boot re-ask only. The recurring poll rides the cadence
-static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
-static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
 static int s_boot_retries;     ///< Short cold-boot re-asks used so far, until the first reading lands
-static bool s_live;            ///< True on a live face, so the cache is worth reading and writing and the cadence turn runs
+static StorePoll s_poll;     ///< The interval, and when it is next due. Live gates the cache as well as the cadence turn
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved reading
 static bool s_dirty;           ///< A channel touched the state this inbox, so persist_flush writes it once
+static bool s_changed;         ///< A channel touched the state this inbox, so the face repaints once at the end
+static bool s_heard;           ///< The phone answered a weather request this launch, a failed fetch included
+static uint32_t s_saved_sum;   ///< Sum of the reading last written, so a reply that changes nothing is not written again
 
 // --- state writers (internal: only the channel handlers + the seed touch these) ---
 
@@ -116,14 +117,15 @@ static void mark_dirty(void)
 /**
  * @brief The shared tail every channel handler runs after it writes.
  *
- * Stamps the sync time, flags the cache dirty, and repaints, which keeps the six handlers from
- * each spelling it out.
+ * Stamps the sync time and flags the reading for a save and a repaint, which keeps the six
+ * handlers from each spelling it out. The repaint waits for the end of the message, see
+ * inbox_done.
  */
 static void mark_synced(void)
 {
     s_state.last_sync = time(NULL);
     mark_dirty();
-    if (s_cb) s_cb();
+    s_changed = true;
 }
 
 /**
@@ -138,7 +140,7 @@ static void persist_flush(void)
     {
         return;
     }
-    if (!s_live)
+    if (!s_poll.live)
     {
         s_dirty = false;
         return;
@@ -146,7 +148,28 @@ static void persist_flush(void)
 
     // hold the dirty flag when the write does not land so the next inbox tries again rather than
     // leaving the cache quietly stale
-    s_dirty = !store_save(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_WEATHER);
+    s_dirty = !store_save_changed(s_persist_key, &s_state, sizeof(s_state),
+                                  STORE_READING_SIZE(s_state, last_sync), STORE_TAG_WEATHER, &s_saved_sum);
+}
+
+/**
+ * @brief Runs once a whole inbound message is handled: one repaint for everything it brought,
+ * then the save.
+ *
+ * The phone sends every weather channel in one message, and each one repainting on its own reran
+ * every weather panel up to six times. A face working something out from several readings at
+ * once, such as a layout that follows the sunset, also saw the new temperature beside the old sun
+ * times until the next channel landed.
+ */
+static void inbox_done(void)
+{
+    if (s_changed)
+    {
+        s_changed = false;
+        if (s_cb) s_cb();
+    }
+
+    persist_flush();
 }
 
 /**
@@ -211,6 +234,10 @@ static void apply_seed(const WeatherSeed *seed)
  */
 static void on_weather(int temp, const char *cond)
 {
+    // any answer ends the launch re-asks, a failed fetch included. asking again every few seconds
+    // would only start the same failing round on the phone
+    s_heard = true;
+
     if (!cond)
     {
         return;
@@ -301,11 +328,18 @@ static void on_forecast_daily(const uint8_t *buf, uint16_t len)
 static void boot_fire(void *data)
 {
     s_timer = NULL;
+
+    // the phone already answered, so a request now would only start another round on it. checked
+    // before sending, since a reply can land between two re-asks
+    if (s_heard)
+    {
+        return;
+    }
     appmessage_request_weather();
 
-    if (s_poll_min <= 0 || s_state.last_sync != 0 || s_boot_retries >= WEATHER_BOOT_RETRIES)
+    if (s_poll.poll_min <= 0 || s_state.last_sync != 0 || s_boot_retries >= WEATHER_BOOT_RETRIES)
     {
-        return;  // got a reading, or ran out of tries. the deadline has it from here
+        return;  // a restored reading, or out of tries. the deadline has it from here
     }
 
     s_boot_retries++;
@@ -329,12 +363,7 @@ static void stop_polling(void)
  */
 static void cadence_poll(void)
 {
-    if (!s_live)
-    {
-        return;
-    }
-
-    if (store_poll_due(s_poll_min, &s_next_poll, time(NULL)))
+    if (store_poll_turn(&s_poll, time(NULL)))
     {
         appmessage_request_weather();
     }
@@ -349,12 +378,10 @@ void weather_store_subscribe(void (*cb)(void))
 
 void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 {
-    s_live = false; // only a live store goes live, see the guard below
+    s_poll.live = false; // only a live store goes live, see store_poll_set below
     s_persist_key = cfg.persist_key;
     reset_state();
-    s_poll_min = cfg.poll_min;
-    s_next_poll = store_poll_next(s_poll_min > 0 ? s_poll_min : 1, time(NULL));
-    // s_live is the gate the cadence turn reads, so registering here is harmless either way
+    // the live flag is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
 
     if (cfg.live)
@@ -368,11 +395,13 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
         appmessage_on_weather_air(on_air);
         appmessage_on_weather_forecast_hourly(on_forecast_hourly);
         appmessage_on_weather_forecast_daily(on_forecast_daily);
-        // one coalesced persist per inbox instead of one write per channel handler
-        appmessage_on_inbox_complete(persist_flush);
+        // one repaint and one save per inbox rather than one per channel handler
+        appmessage_add_inbox_complete(inbox_done);
     }
 
     s_boot_retries = 0;  // fresh cold-boot re-ask budget
+    s_heard = false;
+    s_changed = false;
 
     if (seed)
     {
@@ -383,7 +412,8 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
         // restore the last good reading so a relaunch shows it right away. s_cb is still NULL
         // so no redraw fires here, but the first paint (window push) re-pulls every readout.
         // the 500ms first poll then refreshes it in the background
-        if (store_restore(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_WEATHER))
+        if (store_restore_reading(s_persist_key, &s_state, sizeof(s_state), STORE_READING_SIZE(s_state, last_sync),
+                                  STORE_TAG_WEATHER, &s_saved_sum))
         {
             // the counts come back off flash and index the draw loops, so pin them to what the
             // arrays actually hold before anything reads them
@@ -395,17 +425,22 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
             {
                 s_state.daily.count = 0;
             }
+
+            // the strings come back off flash too, so each gets an end of its own before it is printed
+            s_state.cond[sizeof(s_state.cond) - 1] = '\0';
+            s_state.wind_dir[sizeof(s_state.wind_dir) - 1] = '\0';
+            s_state.sunrise[sizeof(s_state.sunrise) - 1] = '\0';
+            s_state.sunset[sizeof(s_state.sunset) - 1] = '\0';
         }
     }
 
+    bool polling = store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL));
     if (cfg.live)
     {
-        s_live = true;
-
         // one fetch shortly after launch so the face is not blank while the first deadline is
         // still coming. poll_min 0 disables polling, matching reconfigure
         stop_polling();
-        if (s_poll_min > 0)
+        if (polling)
         {
             s_timer = app_timer_register(WEATHER_FIRST_POLL_MS, boot_fire, NULL);
         }
@@ -414,16 +449,13 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 
 void weather_store_reconfigure(WeatherConfig cfg)
 {
-    s_poll_min = cfg.poll_min;
-    // s_live gates the cadence turn, so switching the store off here has to clear it
-    s_live = cfg.live;
-
     // take the new interval from the next boundary on (no immediate fetch. a real interval change
-    // is rare, and the reading in hand is still good)
-    stop_polling();
-    if (s_live && s_poll_min > 0)
+    // is rare, and the reading in hand is still good). switching the store off clears the live
+    // flag, which stops the cadence turn too, and drops the boot re-asks. a store that keeps
+    // polling keeps them, since they are what fills a cold launch
+    if (!store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL)))
     {
-        s_next_poll = store_poll_next(s_poll_min, time(NULL));
+        stop_polling();
     }
 }
 

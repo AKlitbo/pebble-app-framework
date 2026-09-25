@@ -7,6 +7,8 @@
 #pragma once
 #include <pebble.h>
 
+#include "io/stores/store_sum.h"
+
 /**
  * @addtogroup lib_stores
  * @{
@@ -77,5 +79,45 @@ static inline bool store_save(uint32_t key, void *state, size_t size, uint8_t ta
     *(uint8_t *)state = tag;
     return persist_write_data(key, state, size) == (int)size;
 }
+
+/**
+ * @brief Save a store's blob only when its reading is different from what is already on flash.
+ *
+ * Only the first @p reading_size bytes are compared, so a reply that brings the same reading with
+ * a new sync time writes nothing. The flash copy then keeps the sync time of the last real change,
+ * and a relaunch reads the reading as older than it is. The catch-up poll after a reconnect fires a
+ * little sooner for it, which costs one request at most.
+ *
+ * @param key The persist slot the face handed the store.
+ * @param[in,out] state The struct to write, with its tag stamped in on the way. Its first field
+ *   must be the uint8_t tag.
+ * @param size sizeof that struct.
+ * @param reading_size How many leading bytes are the reading, from STORE_READING_SIZE. Pass the
+ *   whole size for a blob with no sync time.
+ * @param tag The store's STORE_TAG_* value.
+ * @param[in,out] saved_sum The sum of the reading last written, which the store keeps. It moves on
+ *   only when a write lands.
+ * @return Whether flash holds this reading now, because it already did or because the write
+ *   landed. False means the write failed, so a caller that tracks a dirty flag can try again.
+ */
+bool store_save_changed(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag,
+                        uint32_t *saved_sum);
+
+/**
+ * @brief Restore a saved blob as store_restore does, and record the sum of the reading it holds.
+ *
+ * The sum is what store_save_changed compares against, so a first reply bringing the same reading
+ * after a relaunch is not written again.
+ *
+ * @param key The persist slot the face handed the store.
+ * @param[out] state The struct to fill. Its first field must be the uint8_t tag.
+ * @param size sizeof that struct.
+ * @param reading_size How many leading bytes are the reading, from STORE_READING_SIZE.
+ * @param tag The store's STORE_TAG_* value.
+ * @param[out] saved_sum The sum of the restored reading, or 0 when nothing was restored.
+ * @return Whether a saved blob was restored.
+ */
+bool store_restore_reading(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag,
+                           uint32_t *saved_sum);
 
 /** @} */

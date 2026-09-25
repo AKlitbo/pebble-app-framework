@@ -6,31 +6,16 @@
  */
 #include "io/stores/store_cadence.h"
 
-static void (*s_entries[STORE_CADENCE_MAX])(void); ///< The registered work, in the order it was registered
-static int s_count;                                 ///< How many entries are in use
+#include "io/callback_list.h"
+
+static CallbackListFn s_entries[STORE_CADENCE_MAX];              ///< The registered work, in the order it was registered
+static CallbackList s_list = {s_entries, STORE_CADENCE_MAX, 0}; ///< The list over that storage
 
 void store_cadence_register(void (*cb)(void))
 {
-    if (!cb)
-    {
-        return;
-    }
-
-    for (int i = 0; i < s_count; i++)
-    {
-        if (s_entries[i] == cb)
-        {
-            return;
-        }
-    }
-
     // a full list means a store quietly stops getting its cadence, so the size is set by how many
     // stores there are rather than by guesswork. this fails loudly in a debug build instead
-    if (s_count < STORE_CADENCE_MAX)
-    {
-        s_entries[s_count++] = cb;
-    }
-    else
+    if (!callback_list_add(&s_list, cb))
     {
         APP_LOG(APP_LOG_LEVEL_ERROR, "store cadence full, dropping a registration");
     }
@@ -38,8 +23,5 @@ void store_cadence_register(void (*cb)(void))
 
 void store_cadence_fire(void)
 {
-    for (int i = 0; i < s_count; i++)
-    {
-        s_entries[i]();
-    }
+    callback_list_fire(&s_list);
 }

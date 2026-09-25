@@ -57,10 +57,9 @@ _Static_assert(sizeof(CalendarPersist) <= PERSIST_DATA_MAX_LENGTH, "calendar sna
 
 static void (*s_cb)(void);     ///< Called whenever the agenda changes, so the face can redraw
 static AppTimer *s_timer;      ///< The catch-up fetch only. The recurring poll rides the cadence
-static int s_poll_min;         ///< Minutes between recurring polls. 0 or less means no recurring poll
-static time_t s_next_poll;     ///< Wall-clock second the next recurring poll is due
-static bool s_live;            ///< True on a live face. It gates the cadence turn
+static StorePoll s_poll;     ///< The interval, whether the store is live, and when it is next due
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved strip
+static uint32_t s_saved_sum;   ///< Sum of the reading last written, so a reply that changes nothing is not written again
 
 // --- state writers (internal: only the channel handler + the seed touch these) ---
 
@@ -78,7 +77,7 @@ static void reset_state(void)
  */
 static void persist_save(void)
 {
-    if (!s_live)
+    if (!s_poll.live)
     {
         return;
     }
@@ -91,7 +90,8 @@ static void persist_save(void)
         snap.event[i] = s_state.strip.event[i];
     }
     snap.last_sync = s_state.last_sync;
-    store_save(s_persist_key, &snap, sizeof(snap), STORE_TAG_CALENDAR);
+    store_save_changed(s_persist_key, &snap, sizeof(snap), STORE_READING_SIZE(snap, last_sync),
+                       STORE_TAG_CALENDAR, &s_saved_sum);
 }
 
 /**
@@ -166,12 +166,7 @@ static void stop_polling(void)
  */
 static void cadence_poll(void)
 {
-    if (!s_live)
-    {
-        return;
-    }
-
-    if (store_poll_due(s_poll_min, &s_next_poll, time(NULL)))
+    if (store_poll_turn(&s_poll, time(NULL)))
     {
         appmessage_request_calendar();
     }
@@ -186,12 +181,10 @@ void calendar_store_subscribe(void (*cb)(void))
 
 void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
 {
-    s_live = false; // only a live store goes live, see the guard below
+    s_poll.live = false; // only a live store goes live, see store_poll_set below
     s_persist_key = cfg.persist_key;
     reset_state();
-    s_poll_min = cfg.poll_min;
-    s_next_poll = store_poll_next(s_poll_min > 0 ? s_poll_min : 1, time(NULL));
-    // s_live is the gate the cadence turn reads, so registering here is harmless either way
+    // the live flag is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
 
     if (cfg.live)
@@ -211,26 +204,30 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
         // restore the snapshot so a relaunch shows the last agenda right away. the first poll then
         // refreshes the full strip in the background
         CalendarPersist snap;
-        if (store_restore(s_persist_key, &snap, sizeof(snap), STORE_TAG_CALENDAR))
+        if (store_restore_reading(s_persist_key, &snap, sizeof(snap), STORE_READING_SIZE(snap, last_sync),
+                                  STORE_TAG_CALENDAR, &s_saved_sum))
         {
             uint8_t n = snap.count < CALENDAR_PERSIST_SLOTS ? snap.count : CALENDAR_PERSIST_SLOTS;
             s_state.strip.count = n;
             for (uint8_t i = 0; i < n; i++)
             {
                 s_state.strip.event[i] = snap.event[i];
+
+                // the text comes back off flash too, so each field gets an end of its own before it is printed
+                s_state.strip.event[i].title[CAL_TITLE_LEN - 1] = '\0';
+                s_state.strip.event[i].location[CAL_LOC_LEN - 1] = '\0';
             }
             s_state.last_sync = snap.last_sync;
         }
     }
 
+    bool polling = store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL));
     if (cfg.live)
     {
-        s_live = true;
-
         // one fetch shortly after launch so the agenda is not blank while the first deadline is
         // still coming. poll_min 0 disables polling, matching reconfigure
         stop_polling();
-        if (s_poll_min > 0)
+        if (polling)
         {
             s_timer = app_timer_register(CALENDAR_FIRST_POLL_MS, catch_up_fire, NULL);
         }
@@ -239,17 +236,21 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
 
 void calendar_store_reconfigure(CalendarConfig cfg)
 {
-    s_poll_min = cfg.poll_min;
-    // s_live gates the cadence turn, so switching the store off here has to clear it
-    s_live = cfg.live;
-
-    stop_polling();
-    if (s_live && s_poll_min > 0)
+    // switching the store off clears the live flag, which stops the cadence turn too, and drops any
+    // fetch still waiting. a store that keeps polling keeps its launch fetch, since a settings push
+    // that lands in the first second would otherwise cancel it and leave a restored agenda stale
+    // until the next deadline
+    if (!store_poll_set(&s_poll, cfg.poll_min, cfg.live, time(NULL)))
     {
-        s_next_poll = store_poll_next(s_poll_min, time(NULL));
+        stop_polling();
+        return;
+    }
 
-        // an agenda goes stale on the phone's say-so rather than the watch's, so pull once after
-        // any settings save rather than waiting for the deadline
+    // an empty store has nothing to draw, so catch up right away. one that already holds an
+    // agenda waits for its deadline, so a save that only touched colours does not refetch
+    // the whole feed. the phone refetches on its own when the feed's address changes
+    if (!s_timer && s_state.strip.count == 0)
+    {
         s_timer = app_timer_register(CALENDAR_FIRST_POLL_MS, catch_up_fire, NULL);
     }
 }

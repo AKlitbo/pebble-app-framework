@@ -8,10 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Added `StorePoll` with `store_poll_set` and `store_poll_turn` to `io/stores/store_poll.h`, the polling decisions the weather, stock, and calendar stores share. Each store keeps its own interval and its own first fetch.
 - Added `requests` to a feature's hooks, naming the watch requests it answers. The phone logs one warning when the watch sends a request no listed feature answers.
 - Added `settings_mark_restored`, which clears `settings_was_fresh`. The transport calls it once a save or restore from the settings page has been saved.
 - Added `tools/typecheck.ts`, which runs the four typecheck projects side by side and reports every one that fails. Point a face's `typecheck` script at `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON lib/tools/typecheck.ts` to use it.
 - Added `layout_parse_int` in `c/core/layout/layout_string.h`, which reads one layout field and gives -1 for a number past `LAYOUT_INT_MAX` rather than overflowing. A face that parses layout strings itself can call it in place of its own copy.
+- Added `store_save_changed` and `store_restore_reading` in `io/stores/store_persist.h`, with `store_sum` and `STORE_READING_SIZE` in `io/stores/store_sum.h`, for a store that wants to skip writing a reading it already saved.
+- Added `callback_list_add` and `callback_list_fire` in `c/core/io/callback_list.h`, a short fixed list of callbacks run in the order they were added.
 - Added an optional `uuid` to each entry in an appinfo's `targets` map, which that target's manifest uses in place of the face's. Targets sharing the face's uuid replace each other on the watch and share the phone's saved settings. A target with its own installs beside them, with settings of its own.
 
 ### Changed
@@ -31,6 +34,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The waf build now stages only the framework's `c/core`, `c/pebble`, and `c/dev` into each sandbox, without the host specs, and clears anything else an older build left there. It no longer regenerates the weather tables during `pebble build`, since they are committed and a spec checks them. An array message key such as SLOT[4] now builds, where its bracket reached a compiler flag and failed every compile.
 - `build-manifests.ts <face>` now prints each sandbox's path on stdout and its note on stderr. It only rewrites a sandbox's `package.json` and `wscript` when they change.
 - **Breaking:** `timeband_window_epoch` now takes the clock as an epoch in place of today's midnight, and counts back from it. Pass `now` and the wall clock's minute of the day. A window on the morning the clocks change now starts at the right hour, and one that has not opened yet, such as a forecast strip starting at the next hour, is today's rather than yesterday's.
+- **Breaking:** The health store only reads the walked distance for a face that sets `distance` in `HealthConfig`. Set `.distance = true` if the face shows distance, including a steps readout that can switch to it. Without it `health_store_distance_m` stays 0.
+- **Breaking:** `appmessage_on_inbox_complete` is now `appmessage_add_inbox_complete`, and it adds to a list of up to four handlers rather than replacing the one there was room for. Several stores can each commit what one message brought them. Rename the call.
 
 ### Removed
 
@@ -45,7 +50,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fixed a place typed into a location picker and saved without tapping a suggestion saving as nothing, while the box still showed the name. The picker now shows "Pick a place from the list to save it." while the box holds text that is not a pick.
+- Fixed a restored weather, stock, calendar, or location reading with a damaged string printing past the end of its field. Each string field now gets its terminator back after a restore.
+- Fixed a layout build that returned more slots than it was given room for writing past the engine's slot arrays. The count is now held to `ENGINE_MAX_SLOTS`.
+- Fixed the step chart shifting every bar by an hour on the days the clocks change, with the current hour's bar near empty or doubled. Each hour now starts on the wall clock, and the catch-up after a relaunch reads the batch holding the hour the clocks go back through for its whole length, where its last hour came up empty and its steps landed in the current hour's bar.
 - Fixed `tap-walk.sh` reporting one screenshot state fewer than it captured.
+- Fixed the heart rate graph falling out of step with the clock. The backfill after a first launch placed its records as if the last one were the current minute, which shifted the graph when the watch's minute log ran behind the clock. A watch clock set back froze it, with only its last bar moving until the clock caught up. Each record now lands in the slot for its own minute, through `minute_window_first_slot` in `core/health/minute_window.h`, and the graph starts over when the clock goes back. A relaunch after time in a watchapp now fills the minutes it was away from the watch's log, where the graph came back with a hole in it, or blank after an hour, and a minute holding a live reading keeps it.
 - Fixed a theme walk ignoring the face's `DEV_TIME_MIN`. Each shot moved the pinned clock to a minute of its own, so a panel that builds its own time through `dev_force_time` disagreed with the clock. Every shot now keeps the hour and minute the face pinned.
 - Fixed settings being rewritten to flash on every weather, stock, or calendar message after a fresh install, until the face relaunched. On a face that declares `SETTINGS_FRESH`, the phone now sends the key with every save and restore from the settings page. While fresh, the watch only writes to flash on that message, and saving it ends fresh. Anything else, such as the time zone push on every `ready`, stays in memory until the restore lands. The phone also stops pushing the whole config back on every `ready`. A face without the key saves only when a setting changes. The key carries 1 on a restore and 0 on a save, so a unit switch on the first save of a fresh watch converts the reading in hand, where it read as a restore and showed 21 degrees C as 21F.
 - Fixed `solar_day_progress`, `solar_night_progress`, and `solar_next_event` when sunset falls after midnight, as in a high latitude summer. Daytime read as night and the next event read as a sunrise hours away. Equal sunrise and sunset times, and readings outside the day, now return no data.
@@ -61,6 +70,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `clay-preview.ts` crashing on a face that declares `messageKeys` as a map of name to id, and `--watch` missing edits to the family core's settings sections and to `lib/ts`.
 - Fixed `timeband_rolling` putting now just past the far end when the lead was as long as the window. The lead is now pinned to the window's last minute, so the window always holds the moment it was built around.
 - Fixed the system store's reconnect callback running before the store recorded the phone as connected, so a face's reconnect handler that read `system_store_bluetooth` saw it disconnected.
+- Fixed the weather, stock, calendar, and location stores writing to flash on every reply, even when the reading had not changed. Each keeps a checksum of the reading it last saved and skips a write that would only store a new sync time. A relaunch then reads the saved reading as older than it is, so the catch-up poll after a reconnect can fire a little sooner.
+- Fixed the stores repainting the face when nothing new had arrived. The health store asked for a repaint every minute, and the weather store once for every weather channel in a message, up to six times. The health store now asks only when a reading moved, which on a face that graphs the heart rate window is still once a minute. The weather store repaints once after the whole message, so a face reading several values together, such as sunset beside the temperature, never sees half an update.
+- Fixed the weather store re-asking for weather every 3 seconds at launch after the phone had already answered, up to 9 requests when the fetch failed. Any weather reply now ends the launch re-asks, a failed one included, and the recurring poll takes over.
+- Fixed every settings save counting as a change, which rebuilt the face and made the calendar store refetch the whole feed. The custom colours are now compared with what the face holds, up to as much as it can hold, before they count as changed. The stock and calendar stores only catch up after a save when they have never had an answer, so a cleared watchlist or an empty agenda no longer asks again on every save.
 
 ## [2.2.0] - 2026-09-23
 

@@ -42,6 +42,10 @@ typedef struct
  * @brief Hands back an icon picture from the cache, loading it the first time it is
  * asked for.
  *
+ * Draw it straight away rather than keeping it. A full cache frees its oldest icon to make room,
+ * so a picture held across a lookup of a different icon, such as one set on a BitmapLayer, can be
+ * freed underneath it.
+ *
  * @param res The resource id.
  * @return The cached picture, or NULL if it could not be loaded.
  */

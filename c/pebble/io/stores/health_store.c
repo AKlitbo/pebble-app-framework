@@ -10,6 +10,7 @@
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
 
+#include "health/minute_window.h"
 #include "health/step_hours.h"
 
 #include <stdlib.h>
@@ -81,6 +82,7 @@ static bool s_step_history; ///< Whether the face graphs steps by the hour
 static bool s_sleep;    ///< Whether the face shows sleep
 static bool s_active;   ///< Whether the face shows active minutes
 static bool s_calories; ///< Whether the face shows calories
+static bool s_distance; ///< Whether the face shows distance
 /** @} */
 
 /**
@@ -184,9 +186,11 @@ static HealthMinuteData *scratch_take(int records)
  * @brief Fill the rolling heart rate window by reading the watch's own minute log.
  *
  * Used once at launch to backfill the window from whatever the watch already logged. The window
- * comes out oldest reading first.
+ * comes out oldest reading first, with each reading in the slot for its own minute.
+ *
+ * @param now_min The minute the window's last slot holds, the same one the live readings write.
  */
-static void read_hr_history(void)
+static void read_hr_history(time_t now_min)
 {
 #if defined(PBL_HEALTH)
     uint8_t *history = s_state.hr_history;
@@ -198,8 +202,10 @@ static void read_hr_history(void)
         return; // no room for the records, so leave the window zeroed and let live readings fill it
     }
 
-    time_t end = time(NULL);
-    time_t start = end - (HR_HISTORY_MINUTES * SECONDS_PER_MINUTE);
+    // ask for exactly the window's minutes. a start partway through a minute counts from that
+    // minute's start, so asking an hour back from now reached one minute past the window
+    time_t start = (now_min - (HR_HISTORY_MINUTES - 1)) * SECONDS_PER_MINUTE;
+    time_t end = (now_min + 1) * SECONDS_PER_MINUTE;
 
     uint32_t records_read = health_service_get_minute_history(scratch, HR_HISTORY_MINUTES, &start, &end);
 
@@ -212,16 +218,46 @@ static void read_hr_history(void)
         records_read = HR_HISTORY_MINUTES;
     }
 
-    // the readings come back oldest first and the graph wants them ending at now, so a short read
-    // sits at the back and leaves the front zeroed
-    int offset = HR_HISTORY_MINUTES - (int)records_read;
-    for (uint32_t i = 0; i < records_read; i++)
+    // start comes back moved on to the first record the watch held, and the log runs behind the
+    // clock, so a record's slot comes from its own minute rather than from how many came back.
+    // with no records the loop never runs, so start is never read when it means nothing
+    int slot = minute_window_first_slot(start / SECONDS_PER_MINUTE, now_min, HR_HISTORY_MINUTES);
+    for (uint32_t i = 0; i < records_read; i++, slot++)
     {
-        history[offset + i] = scratch[i].is_invalid ? 0 : scratch[i].heart_rate_bpm;
+        if (slot >= HR_HISTORY_MINUTES)
+        {
+            break; // the records run in order, so nothing after this fits either
+        }
+        if (slot >= 0 && !scratch[i].is_invalid)
+        {
+            history[slot] = scratch[i].heart_rate_bpm;
+        }
     }
 
     free(scratch);
 #endif
+}
+
+/**
+ * @brief When a local hour of today starts.
+ *
+ * Counted on the wall clock rather than as hours since midnight, because on the days the clocks
+ * change the two part ways by an hour. An hour past the end of the day rolls onto the next
+ * midnight, and the hour a spring change skips starts where the one after it does.
+ *
+ * @param today Today's local time, broken apart.
+ * @param hour The hour of the day, 0 to 24.
+ * @return The epoch the hour starts at.
+ */
+// kept out of line, since inlining the struct copy at every call site costs about 120 bytes of binary
+__attribute__((noinline)) static time_t hour_start(const struct tm *today, int hour)
+{
+    struct tm at = *today;
+    at.tm_hour = hour;
+    at.tm_min = 0;
+    at.tm_sec = 0;
+    at.tm_isdst = -1;  // let mktime work out whether the hour falls in summer time
+    return mktime(&at);
 }
 
 /**
@@ -239,8 +275,8 @@ static void read_step_hourly(void)
 #if defined(PBL_HEALTH)
     time_t now = time(NULL);
     time_t day_start = time_start_of_today();
-    struct tm *lt = localtime(&now);
-    int cur_hour = lt->tm_hour;
+    struct tm local = *localtime(&now);  // a copy, since mktime below reuses the same buffer
+    int cur_hour = local.tm_hour;
 
     // a new day, or a clock that jumped backwards, leaves the kept buckets describing hours that
     // are no longer the ones being asked about, so drop the lot and read them again
@@ -277,8 +313,10 @@ static void read_step_hourly(void)
                 span = STEP_CATCHUP_HOURS;
             }
 
-            time_t want_end = day_start + (time_t)(h + span) * SECONDS_PER_HOUR;
-            time_t q_start = day_start + (time_t)h * SECONDS_PER_HOUR;
+            // each hour is the wall clock's own, so on a clock change day the buckets still line up
+            // with the hour the chart labels and the one the current bar is worked out from
+            time_t want_end = hour_start(&local, h + span);
+            time_t q_start = hour_start(&local, h);
             time_t q_end = want_end;
 
             uint32_t asked = (uint32_t)(span * MINUTES_PER_HOUR);
@@ -292,6 +330,8 @@ static void read_step_hourly(void)
 
             // q_start comes back moved on to the first record the watch held, so a record's place
             // in the array says nothing about its hour. only its own time does
+            int bucket = h;
+            time_t bucket_end = hour_start(&local, h + 1);
             for (uint32_t i = 0; i < got; i++)
             {
                 time_t record_at = q_start + (time_t)i * SECONDS_PER_MINUTE;
@@ -303,13 +343,14 @@ static void read_step_hourly(void)
                     break; // the records run in order, so nothing after this is wanted either
                 }
 
-                if (scratch[i].is_invalid)
+                // the records run in order, so the bucket only ever moves forward
+                while (record_at >= bucket_end && bucket < h + span - 1)
                 {
-                    continue;
+                    bucket++;
+                    bucket_end = hour_start(&local, bucket + 1);
                 }
 
-                int bucket = step_hours_bucket((int)(record_at - day_start));
-                if (bucket >= 0)
+                if (!scratch[i].is_invalid)
                 {
                     sums[bucket] += scratch[i].steps;
                 }
@@ -324,7 +365,7 @@ static void read_step_hourly(void)
         free(scratch);
     }
 
-    s_settled_hours = step_hours_settled(cur_hour, lt->tm_min);
+    s_settled_hours = step_hours_settled(cur_hour, local.tm_min);
     s_state.step_hours = cur_hour + 1;
 
     // what is left of today once the settled hours are taken off. the two counts come from
@@ -346,6 +387,11 @@ static void read_step_hourly(void)
  * Only a live face writes, so seed mode never touches storage. A burst can land a reading a
  * second and a flash write blocks, so the saves are held to one a minute, which is all the graph
  * gains anyway.
+ *
+ * One a minute is on purpose, not a rate to trim. The save runs inside the minute tick, so the
+ * CPU is already awake for it and no extra wake is spent. The face is closed whenever the wearer
+ * opens a watchapp, even for a moment, and a graph saved less often comes back missing its last
+ * minutes every time.
  */
 static void persist_save(void)
 {
@@ -382,9 +428,18 @@ static void persist_save(void)
 static void hr_history_advance(time_t now_min)
 {
     time_t elapsed = now_min - s_state.hr_last_min;
-    if (elapsed <= 0)
+    if (elapsed == 0)
     {
-        // same minute, or the clock jumped back. keep the window as it is
+        return;  // same minute, so the reading goes in the slot it already has
+    }
+
+    // the clock went back, so the window's minutes now sit in the future. waiting for the clock to
+    // catch up would pin every new reading to the last slot for as long as it went back, so the
+    // window starts over from now
+    if (elapsed < 0)
+    {
+        memset(s_state.hr_history, 0, sizeof(s_state.hr_history));
+        s_state.hr_last_min = now_min;
         return;
     }
 
@@ -437,20 +492,18 @@ static void refresh_hr(void)
  *
  * These are whole-day sums that move once a minute at most, but movement events arrive every few
  * seconds while walking, and every metric bar steps costs a blocking flash read. So the reads are
- * held to one round a minute, and the three a face has to ask for are skipped unless it has.
+ * held to one round a minute, and the four a face has to ask for are skipped unless it has.
  *
  * @param force Read now regardless of the minute gate, for the seed read and for the significant
  * update that calls every number stale.
- * @return True when the numbers were actually re-read, so the caller knows there is something
- * new to repaint.
  */
-static bool refresh_activity(bool force)
+static void refresh_activity(bool force)
 {
     static time_t s_read_min = 0;
     time_t now_min = time(NULL) / SECONDS_PER_MINUTE;
     if (!force && now_min == s_read_min)
     {
-        return false;
+        return;
     }
     s_read_min = now_min;
 
@@ -473,10 +526,12 @@ static bool refresh_activity(bool force)
         s_state.calories = read_sum_today(HealthMetricActiveKCalories, -1);
     }
 
-    // the watch keeps the step count to hand so that one is cheap. the distance is not, but it
-    // stays ungated because the steps readout can be switched to show it instead
+    // the watch keeps the step count to hand so that one is cheap. the distance is not
     s_state.steps = read_sum_today(HealthMetricStepCount, 0);
-    s_state.distance_m = read_sum_today(HealthMetricWalkedDistanceMeters, 0);
+    if (s_distance)
+    {
+        s_state.distance_m = read_sum_today(HealthMetricWalkedDistanceMeters, 0);
+    }
 
     // the hourly buckets are the dearest thing here, so only a face that graphs them pays. the
     // first read of all is owed to the timer below, which runs once the face is on screen
@@ -484,8 +539,6 @@ static bool refresh_activity(bool force)
     {
         read_step_hourly();
     }
-
-    return true;
 }
 
 /**
@@ -506,6 +559,24 @@ static void steps_first_read(void *data)
 }
 
 /**
+ * @brief Asks the face for a repaint only when a reading really moved.
+ *
+ * The minute tick and most movement events bring back the same numbers, and a repaint for nothing
+ * still reruns every health panel. A face graphing the heart rate window still gets one a minute,
+ * since the window slides. It compares sums rather than a copy of every reading, which keeps the
+ * readings off the stack.
+ *
+ * @param before The sum of the readings before the refresh.
+ */
+static void notify_if_moved(uint32_t before)
+{
+    if (s_cb && store_sum(&s_state, sizeof(s_state)) != before)
+    {
+        s_cb();
+    }
+}
+
+/**
  * @brief Health event handler: refresh only the metrics the event touched, then notify.
  *
  * A movement event does not change the heart rate history and an hr event does not change the
@@ -517,9 +588,7 @@ static void steps_first_read(void *data)
  */
 static void on_health_event(HealthEventType event, void *context)
 {
-    // a movement event that the minute gate turns away read nothing, so there is no repaint to
-    // ask for either. the other events always bring something new
-    bool changed = true;
+    uint32_t before = store_sum(&s_state, sizeof(s_state));
 
     switch (event)
     {
@@ -527,7 +596,7 @@ static void on_health_event(HealthEventType event, void *context)
             refresh_hr();
             break;
         case HealthEventMovementUpdate:
-            changed = refresh_activity(false);
+            refresh_activity(false);
             break;
         case HealthEventSignificantUpdate:
             refresh_hr();
@@ -537,7 +606,7 @@ static void on_health_event(HealthEventType event, void *context)
             return;
     }
 
-    if (changed && s_cb) s_cb();
+    notify_if_moved(before);
 }
 
 /**
@@ -554,10 +623,12 @@ static void cadence_poll(void)
         return;
     }
 
+    uint32_t before = store_sum(&s_state, sizeof(s_state));
+
     refresh_hr();
     refresh_activity(false);
 
-    if (s_cb) s_cb();
+    notify_if_moved(before);
 }
 
 // --- public API ---
@@ -575,6 +646,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
     s_sleep = cfg.sleep;
     s_active = cfg.active;
     s_calories = cfg.calories;
+    s_distance = cfg.distance;
     s_persist_key = cfg.persist_key;
 
     // registering here rather than leaving it to the face means every face gets it
@@ -655,7 +727,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
                 // first launch with nothing saved: backfill from whatever the watch already logged
                 // so the chart is not empty, then let the live readings extend it from here
                 s_state.hr_last_min = time(NULL) / SECONDS_PER_MINUTE;
-                read_hr_history();
+                read_hr_history(s_state.hr_last_min);
             }
         }
 

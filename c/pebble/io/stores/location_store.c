@@ -38,6 +38,7 @@ static struct
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "location state must fit one persist key");
 
 static void (*s_cb)(void); ///< Called whenever the coords change, so the face can redraw
+static uint32_t s_saved_sum; ///< Sum of the reading last written, so a reply that changes nothing is not written again
 static bool s_live;        ///< True on a live face, so the cache is worth reading and writing
 
 /**
@@ -50,7 +51,10 @@ static void persist_save(void)
 {
     if (s_live && coords_look_real(s_state.lat, s_state.lon))
     {
-        store_save(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
+        // the coordinates ride along with every weather reply, and a watch that stays put gets
+        // the same pair each time. the whole blob is the reading, since it has no sync time
+        store_save_changed(s_persist_key, &s_state, sizeof(s_state), sizeof(s_state), STORE_TAG_LOCATION,
+                           &s_saved_sum);
     }
 }
 
@@ -101,7 +105,14 @@ void location_store_init(LocationConfig cfg, const LocationSeed *seed)
     {
         // restore the last good fix so a relaunch shows it right away. s_cb is still NULL so no
         // redraw fires here, but the first paint (window push) re-pulls every readout
-        store_restore(s_persist_key, &s_state, sizeof(s_state), STORE_TAG_LOCATION);
+        if (store_restore_reading(s_persist_key, &s_state, sizeof(s_state), sizeof(s_state), STORE_TAG_LOCATION,
+                                  &s_saved_sum))
+        {
+            // the blob only has to match in size and tag to come back, so each string gets an end
+            // of its own. damaged bytes would otherwise read on past the field when it is printed
+            s_state.lat[sizeof(s_state.lat) - 1] = '\0';
+            s_state.lon[sizeof(s_state.lon) - 1] = '\0';
+        }
     }
 
     if (cfg.live)
