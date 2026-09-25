@@ -23,15 +23,14 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import Module from 'node:module';
 import { createRequire } from 'node:module';
 import { facePaths, compile, copyGenerated, writeTsconfig } from '../pkjs/build-pkjs.ts';
-import { faceRelative } from '../faces.ts';
-import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
+import { appinfoPath, familyCoreDir } from '../faces.ts';
+import { ENGINE, ENGINE_REL } from '../paths.ts';
+import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 
 const requireHost = createRequire(import.meta.url);
 
-const ROOT = WORKSPACE;
 const OUT = path.join(import.meta.dirname, 'clay-preview.html');
 
 const face = process.argv[2];
@@ -40,7 +39,6 @@ if (!face || face.startsWith('--')) {
   process.exit(1);
 }
 
-const rel = faceRelative(face);
 const paths = facePaths(face);
 
 // the bundle pokes at a few host globals while it builds the page, so give it harmless stand-ins
@@ -85,21 +83,14 @@ if (typeof host.localStorage === 'undefined') {
 }
 
 // the watch build aliases "message_keys" to a generated file which does not exist under plain
-// node, so stand in a map built from the appinfo. the real ids do not matter for rendering
-const appinfo = path.join(ROOT, rel, 'config', 'pebble.appinfo.json');
-const declared: string[] = JSON.parse(fs.readFileSync(appinfo, 'utf8')).messageKeys || [];
+// node, so stand in a map built from the appinfo. the real ids do not matter for rendering. the
+// SDK takes messageKeys as a list of names or as a map of name to id, so either one gives the names
+const listed: string[] | Record<string, number> = JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8')).messageKeys || [];
+const declared = Array.isArray(listed) ? listed : Object.keys(listed);
 const messageKeysStub: Record<string, number> = {};
 declared.forEach((name, i) => { messageKeysStub[name] = 10000 + i; });
 
-// _load is a private Node internal so it is not in the public module types
-const moduleInternal = Module as unknown as {
-  _load: (request: string, ...args: unknown[]) => unknown;
-};
-const origLoad = moduleInternal._load;
-moduleInternal._load = function (this: unknown, request: string, ...args: unknown[]) {
-  if (request === 'message_keys') { return messageKeysStub; }
-  return origLoad.apply(this, [request, ...args]);
-};
+stubModuleLoad((id) => (id === 'message_keys' ? messageKeysStub : undefined));
 
 const Clay = requireHost('@rebble/clay/src/js/index');
 
@@ -130,7 +121,7 @@ function isComponent(value: unknown): boolean {
  * "The manipulator must be defined", which reads like a broken component rather than a file that
  * was never a component at all.
  */
-function components(emit: string): unknown[] {
+function components(): unknown[] {
   const found: unknown[] = [];
 
   function collect(dir: string, suffix: string): void {
@@ -150,8 +141,8 @@ function components(emit: string): unknown[] {
     }
   }
 
-  collect(path.join(emit, ...rel.split('/'), 'src', 'pkjs', 'clay'), '.g.js');
-  collect(path.join(emit, ...ENGINE_REL.split('/'), 'ts', 'clay'), '-component.js');
+  collect(path.join(paths.emitPkjs, 'clay'), '.g.js');
+  collect(path.join(paths.emit, ...ENGINE_REL.split('/'), 'ts', 'clay'), '-component.js');
 
   return found;
 }
@@ -160,7 +151,7 @@ function components(emit: string): unknown[] {
 function build(): void {
   // required per build so each pass picks up the freshly compiled emit/ tree. at module scope they
   // would stay bound to the first load and dropping the require cache would not budge them
-  const configPath = path.join(paths.emit, ...rel.split('/'), 'src', 'pkjs', 'config.js');
+  const configPath = path.join(paths.emitPkjs, 'config.js');
   const configModule = requireHost(configPath) as { default?: unknown; customClay?: unknown };
 
   // a face that runs code inside its own config page exports it beside the rows, so the preview
@@ -168,7 +159,7 @@ function build(): void {
   const customClay = (configModule.customClay || null) as (() => void) | null;
 
   const clay = new Clay(configModule.default, customClay, { autoHandleEvents: false });
-  for (const component of components(paths.emit)) {
+  for (const component of components()) {
     clay.registerComponent(component);
   }
 
@@ -195,10 +186,14 @@ copyGenerated(paths);
 build();
 
 if (process.argv.indexOf('--watch') !== -1) {
+  // the face's page, the family core's shared sections, and the framework's ts, which the page
+  // builders and the Clay components both come from
+  const core = familyCoreDir(face);
   const watched = [
-    path.join(ROOT, rel, 'src', 'pkjs'),
-    path.join(ENGINE, 'ts', 'clay'),
-  ].filter((dir) => fs.existsSync(dir));
+    paths.faceSrc,
+    core ? path.join(core, 'pkjs') : '',
+    path.join(ENGINE, 'ts'),
+  ].filter((dir) => dir && fs.existsSync(dir));
 
   // fs.watch fires more than once per save and every pass shells out to a synchronous tsc, so
   // roll a burst of events into one rebuild

@@ -18,31 +18,17 @@
 #include "system/settings/settings.h"
 #include "ui/engine/engine.h"
 
-/**
- * @brief The believable happy numbers a screenshot sits on, and the baseline every shot below
- * varies from.
- */
-typedef struct
+/** @brief The readings no shot varies, and where the watch is. */
+static const struct
 {
-    int16_t temp;     ///< Temperature reading
-    const char *cond; ///< Weather condition code, such as `PCLDY`
-    int hr;           ///< Heart rate reading
-    int steps;        ///< Step count
     int calories;     ///< Calorie count
     int sleep_min;    ///< Minutes slept
     int active_min;   ///< Active minutes
     int distance_m;   ///< Distance walked, in metres
-    int battery;      ///< Battery percentage
-    bool bluetooth;   ///< Whether the phone is connected
     const char *lat;  ///< Latitude, in the dash style the phone sends it in, such as "33-44"
     const char *lon;  ///< Longitude, in the same dash style
-} DevFixture;
-
-/** @brief The default fixture every store is seeded from. */
-static const DevFixture s_default = {
-    .temp = 21, .cond = "PCLDY",
-    .hr = 72, .steps = 8431, .calories = 420, .sleep_min = 431, .active_min = 52, .distance_m = 5300,
-    .battery = 64, .bluetooth = true,
+} s_fixed = {
+    .calories = 420, .sleep_min = 431, .active_min = 52, .distance_m = 5300,
     .lat = "33-44", .lon = "-112-07",
 };
 
@@ -52,8 +38,9 @@ static const DevFixture s_default = {
  *
  * A contact sheet of identical readings shows the palette and nothing else, and it reads as a
  * mock rather than as eight watches. These carry the things the chrome and the scene actually
- * show: what the weather is doing, how full the battery is, whether the phone is connected,
- * whether the Quiet Time mark is up, and where the minute hand sits.
+ * show: what the weather is doing, how full the battery is, whether the phone is connected, and
+ * whether the Quiet Time mark is up. The clock stays on the face's own pinned time in every shot,
+ * so a panel that builds its own time agrees with the rest.
  */
 typedef struct
 {
@@ -64,42 +51,68 @@ typedef struct
     int         battery;    ///< Battery percentage
     bool        bluetooth;  ///< Whether the phone is connected
     bool        quiet_icon; ///< Whether the Quiet Time mark is up
-    uint8_t     minute;     ///< The minute the pinned clock sits on
 } DevShot;
 
 /**
- * @brief The shots a theme walk steps through.
+ * @brief The shots a theme walk steps through. The first is also what a face shows with no walk.
  *
  * Spread on purpose rather than at random: a flat battery and a full one, a dropped phone, the
  * Quiet Time mark up and down, and a range of weather so the scene is not drawing the same sky
  * eight times.
  */
 static const DevShot s_shots[] = {
-    {.temp = 21, .cond = "PCLDY", .hr = 72, .steps = 8431,  .battery = 64,  .bluetooth = true,  .quiet_icon = false, .minute = 42},
-    {.temp = 3,  .cond = "SNOW",  .hr = 58, .steps = 12045, .battery = 92,  .bluetooth = true,  .quiet_icon = true,  .minute = 18},
-    {.temp = -8, .cond = "CLEAR", .hr = 61, .steps = 3120,  .battery = 41,  .bluetooth = false, .quiet_icon = false, .minute = 5},
-    {.temp = 31, .cond = "CLEAR", .hr = 88, .steps = 15680, .battery = 17,  .bluetooth = true,  .quiet_icon = true,  .minute = 55},
-    {.temp = 14, .cond = "DRZL",  .hr = 66, .steps = 6402,  .battery = 78,  .bluetooth = true,  .quiet_icon = false, .minute = 27},
-    {.temp = 27, .cond = "CLDY",  .hr = 74, .steps = 9310,  .battery = 8,   .bluetooth = false, .quiet_icon = true,  .minute = 33},
-    {.temp = 9,  .cond = "FOGGY", .hr = 55, .steps = 4870,  .battery = 100, .bluetooth = true,  .quiet_icon = false, .minute = 11},
-    {.temp = 35, .cond = "PCLDY", .hr = 91, .steps = 11250, .battery = 53,  .bluetooth = true,  .quiet_icon = true,  .minute = 48},
+    {.temp = 21, .cond = "PCLDY", .hr = 72, .steps = 8431,  .battery = 64,  .bluetooth = true,  .quiet_icon = false},
+    {.temp = 3,  .cond = "SNOW",  .hr = 58, .steps = 12045, .battery = 92,  .bluetooth = true,  .quiet_icon = true},
+    {.temp = -8, .cond = "CLEAR", .hr = 61, .steps = 3120,  .battery = 41,  .bluetooth = false, .quiet_icon = false},
+    {.temp = 31, .cond = "CLEAR", .hr = 88, .steps = 15680, .battery = 17,  .bluetooth = true,  .quiet_icon = true},
+    {.temp = 14, .cond = "DRZL",  .hr = 66, .steps = 6402,  .battery = 78,  .bluetooth = true,  .quiet_icon = false},
+    {.temp = 27, .cond = "CLDY",  .hr = 74, .steps = 9310,  .battery = 8,   .bluetooth = false, .quiet_icon = true},
+    {.temp = 9,  .cond = "FOGGY", .hr = 55, .steps = 4870,  .battery = 100, .bluetooth = true,  .quiet_icon = false},
+    {.temp = 35, .cond = "PCLDY", .hr = 91, .steps = 11250, .battery = 53,  .bluetooth = true,  .quiet_icon = true},
 };
 
 static DevWalkMode s_mode;          ///< Which walk is running
 static void (*s_apply_theme)(void); ///< The face's theme-apply hook, run before the engine rebuilds
 static uint8_t s_theme;             ///< The theme the walk is on
-/**
- * @brief The hour the walk was started in.
- *
- * A shot moves the minute without moving the hour, so it never drags a night sweep into daytime.
- */
-static int s_hour;
+static int s_hour;                  ///< The hour the face pinned the clock to
+static int s_minute;                ///< The minute the face pinned the clock to
 
 /**
- * @brief Re-seed the stores from one shot.
+ * @brief Seed the clock, weather, health, and system stores from one shot.
  *
  * The stores are only ever seeded here with live off, and neither takes a subscription on that
- * path, so re-initialising them per tap re-seeds rather than stacking handlers.
+ * path, so seeding again on a tap re-seeds rather than stacking handlers.
+ *
+ * @param shot The shot to seed from.
+ */
+static void seed_shot(const DevShot *shot)
+{
+    // the pinned clock, never ticking
+    time_t now = time(NULL);
+    struct tm pinned = *localtime(&now);
+    pinned.tm_hour = s_hour;
+    pinned.tm_min = s_minute;
+    pinned.tm_sec = 0;
+    time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
+
+    // spread the empty seed so every reading the shot does not set (humidity, wind, uv, ...)
+    // reads as "--" rather than a bogus 0
+    WeatherSeed wx = WEATHER_SEED_EMPTY;
+    wx.temp = shot->temp;
+    wx.cond = shot->cond;
+    weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
+
+    HealthSeed health = {.hr = shot->hr, .steps = shot->steps, .calories = s_fixed.calories,
+                         .sleep_min = s_fixed.sleep_min, .active_min = s_fixed.active_min,
+                         .distance_m = s_fixed.distance_m};
+    health_store_init((HealthConfig){.live = false}, &health);
+
+    SystemSeed system = {.battery = shot->battery, .charging = false, .bluetooth = shot->bluetooth};
+    system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
+}
+
+/**
+ * @brief Move the walk onto one shot, Quiet Time mark included.
  *
  * @param index Which shot, wrapped to the table.
  */
@@ -107,26 +120,7 @@ static void apply_shot(uint8_t index)
 {
     const DevShot *shot = &s_shots[index % ARRAY_LENGTH(s_shots)];
 
-    struct tm pinned;
-    time_t now = time(NULL);
-    pinned = *localtime(&now);
-    pinned.tm_hour = s_hour;
-    pinned.tm_min = shot->minute;
-    pinned.tm_sec = 0;
-    time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
-
-    WeatherSeed wx = WEATHER_SEED_EMPTY;
-    wx.temp = shot->temp;
-    wx.cond = shot->cond;
-    weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
-
-    HealthSeed health = {.hr = shot->hr, .steps = shot->steps, .calories = s_default.calories,
-                         .sleep_min = s_default.sleep_min, .active_min = s_default.active_min,
-                         .distance_m = s_default.distance_m};
-    health_store_init((HealthConfig){.live = false}, &health);
-
-    SystemSeed system = {.battery = shot->battery, .charging = false, .bluetooth = shot->bluetooth};
-    system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
+    seed_shot(shot);
 
     // this does nothing on a face that never subscribed to the id
     // that is fine, since it only moves for the faces that actually draw the mark
@@ -157,31 +151,11 @@ static void tap_handler(AccelAxisType axis, int32_t direction)
 void dev_walk_seed_stores(int hour, int min)
 {
     s_hour = hour;
+    s_minute = min;
 
-    // pinned clock never ticking
-    time_t now = time(NULL);
-    struct tm pinned = *localtime(&now);
-    pinned.tm_hour = hour;
-    pinned.tm_min = min;
-    pinned.tm_sec = 0;
-    time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
+    seed_shot(&s_shots[0]);
 
-    // spread the empty seed so every reading the fixture does not set (humidity, wind, uv, …)
-    // reads as "--" rather than a bogus 0
-    WeatherSeed wx = WEATHER_SEED_EMPTY;
-    wx.temp = s_default.temp;
-    wx.cond = s_default.cond;
-    weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
-
-    HealthSeed health = {.hr = s_default.hr, .steps = s_default.steps, .calories = s_default.calories,
-                         .sleep_min = s_default.sleep_min, .active_min = s_default.active_min,
-                         .distance_m = s_default.distance_m};
-    health_store_init((HealthConfig){.live = false}, &health);
-
-    SystemSeed system = {.battery = s_default.battery, .charging = false, .bluetooth = s_default.bluetooth};
-    system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
-
-    LocationSeed location = {.lat = s_default.lat, .lon = s_default.lon};
+    LocationSeed location = {.lat = s_fixed.lat, .lon = s_fixed.lon};
     location_store_init((LocationConfig){.live = false}, &location);
 }
 

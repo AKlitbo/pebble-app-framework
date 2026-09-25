@@ -46,6 +46,7 @@
  * @defgroup lib_dev Dev Harness
  * @brief Fixed fixtures and a theme walk for repeatable screenshots.
  *
- * The frame faces share it. It seeds every store with a fixed fixture and steps through the themes
- * on a tap, so a face's screenshots come out the same every time.
+ * It lives in c/dev, apart from the runtime. The frame faces share it. It seeds every store with a
+ * fixed fixture and steps through the themes on a tap, so a face's screenshots come out the same
+ * every time.
  */

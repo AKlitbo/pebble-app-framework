@@ -100,7 +100,7 @@ for tap in $(seq 1 "$MAX_TAPS"); do
         # we're done
         rm -f "$CANDIDATE"
         echo ">> wrapped back to start after $tap taps"
-        echo ">> $unique unique states captured in $OUT_DIR/"
+        echo ">> $((unique + 1)) unique states captured in $OUT_DIR/"
         exit 0
     fi
 
@@ -119,5 +119,5 @@ for tap in $(seq 1 "$MAX_TAPS"); do
 done
 
 echo ">> hit MAX_TAPS ($MAX_TAPS) without wrapping, check DEV_TAP_WALK_MODULES is on" >&2
-echo ">> $unique unique states captured in $OUT_DIR/" >&2
+echo ">> $((unique + 1)) unique states captured in $OUT_DIR/" >&2
 exit 1
