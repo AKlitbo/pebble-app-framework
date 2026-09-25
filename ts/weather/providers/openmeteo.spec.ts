@@ -32,7 +32,7 @@ describe('parseExtras', () => {
       current: { uv_index: 4.8, dew_point_2m: -2.4 },
       daily: {
         temperature_2m_max: [18.6], temperature_2m_min: [9.2],
-        precipitation_probability_max: [80], precipitation_sum: [4.25], uv_index_max: [7.6],
+        precipitation_probability_max: [80],
       },
     };
 
@@ -40,7 +40,7 @@ describe('parseExtras', () => {
 
     expect(result).toEqual({
       uvIndex: 4.8, dewPoint: -2.4, tempMax: 18.6, tempMin: 9.2,
-      precipChance: 80, precipTotal: 4.25, uvMax: 7.6,
+      precipChance: 80,
     });
   });
 
@@ -50,7 +50,7 @@ describe('parseExtras', () => {
 
     expect(result).toEqual({
       uvIndex: undefined, dewPoint: undefined, tempMax: undefined, tempMin: undefined,
-      precipChance: undefined, precipTotal: undefined, uvMax: undefined,
+      precipChance: undefined,
     });
   });
 });
@@ -64,8 +64,6 @@ describe('extrasUrl', () => {
     expect(url).toContain('temperature_2m_max');
     expect(url).toContain('temperature_2m_min');
     expect(url).toContain('precipitation_probability_max');
-    expect(url).toContain('precipitation_sum');
-    expect(url).toContain('uv_index_max');
     expect(url).toContain('latitude=40');
     expect(url).toContain('longitude=-73');
   });
@@ -90,8 +88,15 @@ describe('extrasUrl', () => {
     expect(url).toContain('forecast_days=8');
   });
 
+  /** Without forecast_hours the hourly block carries every hour of all eight days, 192 rows for a 16 hour strip. */
+  test('trims the hourly block to the hours the strip reads', () => {
+    const url = openmeteo.extrasUrl({ fahrenheit: false, coords: { lat: 40, lon: -73 }, wantForecast: true });
+
+    expect(url).toContain('forecast_hours=16');
+  });
+
   /** A plain reading face must not pay for the hourly block or the extra days it never shows. */
-  test.each(['hourly=', 'forecast_days='])('omits %s when the face shows no forecast', (param) => {
+  test.each(['hourly=', 'forecast_days=', 'forecast_hours='])('omits %s when the face shows no forecast', (param) => {
     const url = openmeteo.extrasUrl({ fahrenheit: false, coords: { lat: 40, lon: -73 } });
 
     expect(url).not.toContain(param);
@@ -117,6 +122,28 @@ describe('parseForecast', () => {
     // 09:00 then a 2-hour stride lands on 11:00
     expect(result.hourly.cols[0]).toEqual({ code: conditions.codeFor('RAIN'), temp: 12 });
     expect(result.hourly.cols[1]).toEqual({ code: conditions.codeFor('PCLDY'), temp: 14 });
+  });
+
+  /**
+   * The trimmed block starts at the current hour, so half past the hour puts the first column one row
+   * in. Sixteen rows must still reach the eighth column or the strip comes up short.
+   */
+  test('fills all eight columns from a trimmed block when now is past the hour', () => {
+    const hours = Array.from({ length: 16 }, (unused, index) => index + 8);
+    const json = {
+      current: { time: '2026-07-05T08:30' },
+      hourly: {
+        time: hours.map((hour) => `2026-07-05T${String(hour).padStart(2, '0')}:00`),
+        temperature_2m: hours,
+        weather_code: hours.map(() => 0),
+      },
+    };
+
+    const result = openmeteo.parseForecast(json);
+
+    expect(result.hourly.baseHour).toBe(9);
+    expect(result.hourly.cols).toHaveLength(8);
+    expect(result.hourly.cols[7].temp).toBe(23);
   });
 
   /** An hour after dark must carry the night bit or the watch draws a sun at midnight. */
@@ -318,16 +345,12 @@ describe('openmeteo provider', () => {
       'wind_speed_10m',
       'wind_direction_10m',
       'apparent_temperature',
-      'surface_pressure',
-      'cloud_cover',
-      'wind_gusts_10m',
+      'pressure_msl',
       'dew_point_2m',
       'daily=sunrise,sunset',
       'temperature_2m_max',
       'temperature_2m_min',
       'precipitation_probability_max',
-      'precipitation_sum',
-      'uv_index_max',
       'forecast_days=8',
       'wind_speed_unit=kmh',
       'timezone=auto',
@@ -440,12 +463,12 @@ describe('openmeteo provider', () => {
     });
 
     /** The extras must be parsed from their documented fields so the watch can show them. */
-    test('parses humidity, wind, uv, precip and sunrise/sunset from the forecast', () => {
+    test('parses humidity, wind, uv and sunrise/sunset from the forecast', () => {
       const body = JSON.stringify({
         current: {
           temperature_2m: 13, weather_code: 0,
           relative_humidity_2m: 61, wind_speed_10m: 12, wind_direction_10m: 315,
-          uv_index: 5, precipitation: 1.25,
+          uv_index: 5,
         },
         daily: { sunrise: ['2026-06-26T06:30'], sunset: ['2026-06-26T21:30'] },
       });
@@ -456,17 +479,16 @@ describe('openmeteo provider', () => {
       expect(result.windKmh).toBe(12);
       expect(result.windDir).toBe('NW');
       expect(result.uvIndex).toBe(5);
-      expect(result.precip).toBe(125);
       expect(result.sunrise).toBe('06:30');
       expect(result.sunset).toBe('21:30');
     });
 
-    /** The Tier-1 extras must be read from their documented current fields and rounded. */
-    test('parses feels-like, pressure, cloud and wind gust from the forecast', () => {
+    /** Feels-like and pressure must be read from their documented current fields and rounded. */
+    test('parses feels-like and pressure from the forecast', () => {
       const body = JSON.stringify({
         current: {
           temperature_2m: 13, weather_code: 0,
-          apparent_temperature: 9.6, surface_pressure: 1013.4, cloud_cover: 75, wind_gusts_10m: 30.4,
+          apparent_temperature: 9.6, pressure_msl: 1013.4,
         },
       });
 
@@ -474,8 +496,20 @@ describe('openmeteo provider', () => {
 
       expect(result.feelsLike).toBe(10);
       expect(result.pressure).toBe(1013);
-      expect(result.cloud).toBe(75);
-      expect(result.windGustKmh).toBe(30);
+    });
+
+    /**
+     * Open-Meteo sends ground level pressure as surface_pressure, which reads about 840 in Denver
+     * where every other provider says about 1013. Reading it put the Pressure panel far too low.
+     */
+    test('reads the sea level pressure, not the ground level one', () => {
+      const body = JSON.stringify({
+        current: { temperature_2m: 20, weather_code: 0, surface_pressure: 839.6, pressure_msl: 1013.2 },
+      });
+
+      const result = run(COORDS, routing({ [FC]: { body } }, []));
+
+      expect(result.pressure).toBe(1013);
     });
 
     /** Dew point comes from the current block and is read in the user's unit. */
@@ -489,13 +523,13 @@ describe('openmeteo provider', () => {
       expect(result.dewPoint).toBe(-2);
     });
 
-    /** The daily block carries today's high/low, rain chance, precip total, and peak UV. */
-    test('parses the daily high/low, precip chance/total and uv max', () => {
+    /** The daily block carries today's high, low, and rain chance. */
+    test('parses the daily high, low, and rain chance', () => {
       const body = JSON.stringify({
         current: { temperature_2m: 13, weather_code: 0 },
         daily: {
           temperature_2m_max: [18.6], temperature_2m_min: [9.2],
-          precipitation_probability_max: [80], precipitation_sum: [4.25], uv_index_max: [7.6],
+          precipitation_probability_max: [80],
         },
       });
 
@@ -504,8 +538,6 @@ describe('openmeteo provider', () => {
       expect(result.tempMax).toBe(19);
       expect(result.tempMin).toBe(9);
       expect(result.precipChance).toBe(80);
-      expect(result.precipTotal).toBe(425); // 4.25mm -> hundredths
-      expect(result.uvMax).toBe(8);
     });
   });
 

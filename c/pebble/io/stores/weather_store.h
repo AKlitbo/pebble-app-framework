@@ -46,7 +46,7 @@ typedef struct
     int         temp_min;  ///< Today's low, WEATHER_NO_TEMP for none
     int         precip_chance; ///< Chance of rain in percent, -1 for none
     int         feels_like;    ///< How warm it feels, WEATHER_NO_TEMP for none
-    int         pressure;      ///< Surface pressure in hPa, -1 for none
+    int         pressure;      ///< Sea level pressure in hPa, -1 for none
     int         dew_point;     ///< Dew point temperature, WEATHER_NO_TEMP for none
     const WeatherHourly *forecast_hourly; ///< Optional hourly strip, NULL for none
     const WeatherDaily  *forecast_daily;  ///< Optional 7 day strip, NULL for none
@@ -112,7 +112,7 @@ const char *weather_store_sunset(void);
 /** @brief How warm it feels, or WEATHER_NO_TEMP if we have not got one yet. */
 int         weather_store_feels_like(void);
 
-/** @brief The surface pressure in hPa, or -1 if we have not got one yet. */
+/** @brief The sea level pressure in hPa, or -1 if we have not got one yet. */
 int         weather_store_pressure(void);
 
 /** @brief The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet. */

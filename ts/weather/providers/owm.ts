@@ -13,7 +13,7 @@ import type { OpenMeteoResponse } from './openmeteo';
 const OWM_WEATHER_API = 'https://api.openweathermap.org/data/2.5/weather';
 
 interface OwmMain { temp?: number; humidity?: number; feels_like?: number; pressure?: number }
-interface OwmWind { speed?: number; deg?: number; gust?: number }
+interface OwmWind { speed?: number | null; deg?: number }
 interface OwmSys { sunrise?: number; sunset?: number }
 
 /** The subset of an OpenWeatherMap current-weather response this provider reads. */
@@ -26,9 +26,6 @@ interface OwmResponse {
   weather?: Array<{ icon?: string; main?: string }>;
   wind?: OwmWind;
   sys?: OwmSys;
-  rain?: { '1h'?: number };
-  snow?: { '1h'?: number };
-  clouds?: { all?: number };
 }
 
 /**
@@ -56,7 +53,10 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   // OWM's free endpoint carries no UV, dew point or forecast, so Open-Meteo is asked for those
   // at the same time rather than after. request() holds a watchdog that settles every call, so
   // both arms always report and the join always closes. weatherapi borrows its strip the same way
-  let pending = 2;
+  // a face showing none of those skips the Open-Meteo call entirely
+  const borrowed = Object.keys(openMeteo.parseExtras(null));
+  const needOpenMeteo = opts.wantForecast || !opts.fields || opts.fields.some((field) => borrowed.includes(field));
+  let pending = needOpenMeteo ? 2 : 1;
   let result: WeatherResult | null = null;
   let extras: OpenMeteoResponse | null = null;
 
@@ -75,10 +75,12 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     done(result as WeatherResult);
   };
 
-  util.requestJson<OpenMeteoResponse>(openMeteo.extrasUrl(opts), request, () => tryDone(), (om) => {
-    extras = om;
-    tryDone();
-  });
+  if (needOpenMeteo) {
+    util.requestJson<OpenMeteoResponse>(openMeteo.extrasUrl(opts), request, () => tryDone(), (om) => {
+      extras = om;
+      tryDone();
+    });
+  }
 
   util.requestJson<OwmResponse>(url, request, (status) => {
     result = status;
@@ -106,16 +108,10 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     // OWM wind speed is m/s for metric or mph for imperial so normalize to km/h
     const toKmh = (value: unknown) => Number(value) * (opts.fahrenheit ? 1.609344 : 3.6);
     const wind: OwmWind = json.wind || {};
-    const windKmh = Number.isFinite(Number(wind.speed)) ? toKmh(wind.speed) : undefined;
+    // Number(null) is 0, so a null speed is ruled out first or it would read as dead calm
+    const windKmh = wind.speed !== null && Number.isFinite(Number(wind.speed)) ? toKmh(wind.speed) : undefined;
 
     const sys: OwmSys = json.sys || {};
-    const rain: { '1h'?: number } = json.rain || {};
-    const snow: { '1h'?: number } = json.snow || {};
-    const clouds: { all?: number } = json.clouds || {};
-    const precip = (rain['1h'] || snow['1h'] || 0);
-
-    // gust uses the same unit as wind.speed (m/s metric or mph imperial) so normalize to km/h
-    const windGustKmh = Number.isFinite(Number(wind.gust)) ? toKmh(wind.gust) : undefined;
 
     // OWM lumps every cloud level under main "Clouds". split partly (icon code
     // 02) from overcast (03/04) using the icon code before night promotion
@@ -134,11 +130,8 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
         humidity: json.main.humidity,
         windKmh: windKmh,
         windDir: util.degToCompass(wind.deg),
-        precip: precip,
         feelsLike: json.main.feels_like,
         pressure: json.main.pressure,
-        cloud: clouds.all,
-        windGustKmh: windGustKmh,
         sunrise: util.hmFromUnix(sys.sunrise, json.timezone),
         sunset: util.hmFromUnix(sys.sunset, json.timezone),
       }

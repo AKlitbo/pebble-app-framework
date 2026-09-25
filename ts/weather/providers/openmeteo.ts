@@ -29,11 +29,8 @@ export interface OpenMeteoResponse {
     wind_speed_10m?: number;
     wind_direction_10m?: number;
     uv_index?: number;
-    precipitation?: number;
     apparent_temperature?: number;
-    surface_pressure?: number;
-    cloud_cover?: number;
-    wind_gusts_10m?: number;
+    pressure_msl?: number;
     dew_point_2m?: number;
   };
   hourly?: {
@@ -50,8 +47,6 @@ export interface OpenMeteoResponse {
     sunrise?: string[];
     sunset?: string[];
     precipitation_probability_max?: number[];
-    precipitation_sum?: number[];
-    uv_index_max?: number[];
   };
 }
 
@@ -214,6 +209,12 @@ function parseForecast(json: OpenMeteoResponse | null): ForecastCols {
  */
 const HOURLY_FORECAST = 'temperature_2m,weather_code,is_day';
 
+/**
+ * The hourly rows the strip reads, counted from the current hour. The columns span 15 rows, and the
+ * first one is the next hour once now is past the hour, so it takes 16.
+ */
+const FORECAST_HOURS = FORECAST_COLS * HOURLY_STEP_HOURS;
+
 /** Eight days so the daily strip fills a 2x4 panel. Open-Meteo gives seven without it. */
 const FORECAST_DAYS = 8;
 
@@ -235,7 +236,9 @@ function buildUrl(opts: WeatherOpts, parts: { current: string; daily: string; ho
     `&current=${parts.current}`;
 
   if (parts.hourly) {
-    url += `&hourly=${parts.hourly}&forecast_days=${FORECAST_DAYS}`;
+    // forecast_days sets the daily rows. forecast_hours trims the hourly block to the strip
+    // or it would carry every hour of all eight days
+    url += `&hourly=${parts.hourly}&forecast_hours=${FORECAST_HOURS}&forecast_days=${FORECAST_DAYS}`;
   }
 
   url += `&daily=${parts.daily}&temperature_unit=${unit}`;
@@ -261,7 +264,7 @@ function forecastUrl(opts: WeatherOpts): string {
 
 /**
  * Builds an Open-Meteo URL carrying the extras parseExtras reads (UV, dew point,
- * and the daily high/low/precip/uv strip), plus the forecast strips when the face
+ * and the daily high, low, and rain chance), plus the forecast strips when the face
  * asks for them.
  *
  * Paired with parseExtras so the field list lives in one place. Used by OWM, whose
@@ -274,7 +277,7 @@ function forecastUrl(opts: WeatherOpts): string {
  */
 function extrasUrl(opts: WeatherOpts): string {
   let current = 'uv_index,dew_point_2m';
-  let daily = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,uv_index_max';
+  let daily = 'temperature_2m_max,temperature_2m_min,precipitation_probability_max';
 
   if (opts.wantForecast) {
     // temperature_2m rides along only to bring back current.time so parseHourly knows
@@ -334,8 +337,6 @@ function parseExtras(json: OpenMeteoResponse | null): Record<string, unknown> {
     tempMax: first(daily?.temperature_2m_max),
     tempMin: first(daily?.temperature_2m_min),
     precipChance: first(daily?.precipitation_probability_max),
-    precipTotal: first(daily?.precipitation_sum),
-    uvMax: first(daily?.uv_index_max),
   };
 }
 
@@ -353,11 +354,12 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
 
   const lat = opts.coords.lat;
   const lon = opts.coords.lon;
+  // pressure_msl is sea level like the other providers send
+  // surface_pressure is ground level and reads about 170 hPa low in Denver
   const current = 'temperature_2m,weather_code,is_day,relative_humidity_2m,wind_speed_10m,wind_direction_10m,' +
-    'uv_index,precipitation,apparent_temperature,surface_pressure,cloud_cover,wind_gusts_10m,dew_point_2m';
+    'uv_index,apparent_temperature,pressure_msl,dew_point_2m';
   // the sunrise and sunset fields stay first so existing URL assertions still match daily=
-  let dailyFields = 'sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max,' +
-    'precipitation_sum,uv_index_max';
+  let dailyFields = 'sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max';
 
   // only a face that shows the forecast row pays for the hourly block and the extra
   // days. everyone else gets just the current reading plus today's daily extras
@@ -393,7 +395,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
 
     const result = util.ok(
       cur.temperature_2m,
-      util.applyNight(util.wmoToCondition(Number(cur.weather_code)), isDay),
+      util.applyNight(util.wmoToCondition(cur.weather_code), isDay),
       opts.label || 'My Location',
       lat,
       lon,
@@ -401,14 +403,11 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
         humidity: cur.relative_humidity_2m,
         windKmh: cur.wind_speed_10m,
         windDir: util.degToCompass(cur.wind_direction_10m),
-        precip: cur.precipitation,
         feelsLike: cur.apparent_temperature,
-        pressure: cur.surface_pressure,
-        cloud: cur.cloud_cover,
-        windGustKmh: cur.wind_gusts_10m,
+        pressure: cur.pressure_msl,
         sunrise: util.hmFromIso(daily?.sunrise?.[0]),
         sunset: util.hmFromIso(daily?.sunset?.[0]),
-        // uv and dew point and the daily high/low and precip chance/total and uv max
+        // uv, dew point, and the daily high, low, and rain chance
       }, parseExtras(json))
     );
 

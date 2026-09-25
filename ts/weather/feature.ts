@@ -26,6 +26,14 @@ export interface WeatherState {
   round: number;
 }
 
+/** Who has asked for weather lately, read and updated in place by the feature's hooks. */
+export interface WeatherAsks {
+  /** The watch asked, or the phone came up, since the last slow tick. */
+  sinceSlowTick: boolean;
+  /** A weather setting was saved and its forced refetch has not run yet. */
+  savePending: boolean;
+}
+
 /** The helpers runWeatherRound needs, passed in so the specs can swap them. */
 export interface WeatherDeps {
   fetchWeather: (onResult: (result: any) => void) => void;
@@ -68,17 +76,12 @@ const EXTRA_WEATHER_FIELDS = [
   { key: 'WEATHER_SUNRISE', field: 'sunrise' },
   { key: 'WEATHER_SUNSET', field: 'sunset' },
   { key: 'WEATHER_UV_INDEX', field: 'uvIndex' },
-  { key: 'WEATHER_PRECIPITATION', field: 'precip' },
   { key: 'WEATHER_FEELS_LIKE', field: 'feelsLike' },
   { key: 'WEATHER_PRESSURE', field: 'pressure' },
-  { key: 'WEATHER_CLOUD', field: 'cloud' },
-  { key: 'WEATHER_WIND_GUST', field: 'windGustKmh' },
   { key: 'WEATHER_DEW_POINT', field: 'dewPoint' },
   { key: 'WEATHER_TEMP_MAX', field: 'tempMax' },
   { key: 'WEATHER_TEMP_MIN', field: 'tempMin' },
   { key: 'WEATHER_PRECIP_CHANCE', field: 'precipChance' },
-  { key: 'WEATHER_PRECIP_TOTAL', field: 'precipTotal' },
-  { key: 'WEATHER_UV_MAX', field: 'uvMax' },
 ];
 
 // how long each failed weather fetch waits before the next try. a cold launch (gps still warming
@@ -248,6 +251,40 @@ export function runWeatherRound(state: WeatherState, force: boolean, deps: Weath
 }
 
 /**
+ * Decides whether a watch ask, or the phone coming up, should start a fetch.
+ *
+ * Saving a weather setting schedules a forced refetch, and the watch asks as well once it takes
+ * the new settings. An ask that lands before the refetch runs is folded into it, or the two would
+ * race and fetch twice. Either way the ask counts towards skipping the next slow tick.
+ *
+ * @param asks The ask state to read and update in place.
+ * @return True when the ask should start a fetch.
+ */
+export function askShouldFetch(asks: WeatherAsks): boolean {
+  asks.sinceSlowTick = true;
+
+  return !asks.savePending;
+}
+
+/**
+ * Decides whether a slow tick should start a fetch.
+ *
+ * The watch polls on its own clock at the same 30 minutes, so a tick that follows one of its asks
+ * would only fetch the same weather again. The tick fetches when nothing asked since the last one,
+ * such as a watch out of range.
+ *
+ * @param asks The ask state to read and update in place.
+ * @return True when the tick should start a fetch.
+ */
+export function slowTickShouldFetch(asks: WeatherAsks): boolean {
+  const due = !asks.sinceSlowTick;
+
+  asks.sinceSlowTick = false;
+
+  return due;
+}
+
+/**
  * Starts the weather feature for a face, with or without the coordinate keys.
  *
  * @param context What the app shares: the face's message keys, its config defaults, the send queue,
@@ -274,6 +311,9 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
   // weather round state mutated in place by runWeatherRound
   const state: WeatherState = { inFlight: false, round: 0 };
 
+  // who asked lately, so a slow tick or a watch ask does not fetch what another just did
+  const asks: WeatherAsks = { sinceSlowTick: false, savePending: false };
+
   // the weather dict the watch holds, so an unchanged refresh skips the redundant BLE wake.
   // forgotten on ready and on a watch-initiated request so the watch always gets a fresh answer
   const sender = createDedupedSender<AppMessageDict>(
@@ -290,10 +330,6 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       [messageKeys.WEATHER_CONDITIONS]: result.condition,
       [messageKeys.WEATHER_OK]: result.ok ? 1 : 0,
     };
-
-    if (result.location && messageKeys.LOCATION_NAME !== undefined) {
-      dict[messageKeys.LOCATION_NAME] = result.location;
-    }
 
     // extra readings only sent for faces that declare the keys
     // a missing value is left out so the watch keeps its placeholder
@@ -350,6 +386,8 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       // only faces that declare a forecast key pay to fetch the strips. everyone
       // else skips the extra hourly block and the supplemental provider call
       wantForecast: messageKeys.WEATHER_FORECAST_HOURLY !== undefined || messageKeys.WEATHER_FORECAST_DAILY !== undefined,
+      // the readings this face has keys for, so a provider can skip a request that only brings others
+      fields: EXTRA_WEATHER_FIELDS.filter(({ key }) => messageKeys[key] !== undefined).map(({ field }) => field),
     };
 
     const useGps = readBool(config.LOCATION_USE_GPS, defaults.LOCATION_USE_GPS as boolean);
@@ -451,7 +489,10 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     ready() {
       // clear the dedupe cache so a watch that just rebooted with empty stores gets a fresh send
       sender.forget();
-      getWeather();
+
+      if (askShouldFetch(asks)) {
+        getWeather();
+      }
     },
 
     message(payload) {
@@ -459,13 +500,16 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       // round already in flight starts no second fetch, but its own result still goes out once it lands
       if (payload[messageKeys.WEATHER_REQUEST]) {
         sender.forget();
-        getWeather();
+
+        if (askShouldFetch(asks)) {
+          getWeather();
+        }
       }
     },
 
-    // weather changes slowly, so it only refreshes on the slow ticks
+    // weather changes slowly, so it only refreshes on the slow ticks nothing else has covered
     refresh(slow) {
-      if (slow) {
+      if (slow && slowTickShouldFetch(asks)) {
         getWeather();
       }
     },
@@ -476,16 +520,23 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       settingsBeforeConfig = weatherSettingsSnapshot();
     },
 
-    // only refetch when a weather setting actually changed. the C side already re-requests for
-    // those, so refetching on every save (theme or vibe) is wasted
+    // only refetch when a weather setting actually changed, since refetching on every save (theme
+    // or vibe) is wasted. the watch asks too once it takes a changed weather setting, and that ask
+    // is folded into this refetch
     configSaved() {
       const before = settingsBeforeConfig;
 
       settingsBeforeConfig = null;
 
       if (weatherSettingsChanged(before, weatherSettingsSnapshot())) {
+        asks.savePending = true;
+
         // forced so it replaces a round still fetching with the old location or provider
-        setTimeout(() => getWeather(true), refetchDelayMs);
+        setTimeout(() => {
+          asks.savePending = false;
+          asks.sinceSlowTick = true;
+          getWeather(true);
+        }, refetchDelayMs);
       }
     },
   };

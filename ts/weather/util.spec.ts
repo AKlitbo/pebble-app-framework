@@ -45,6 +45,16 @@ describe('wmoToCondition', () => {
 
     expect(result).toBe('UNKNOWN');
   });
+
+  /**
+   * Open-Meteo sends null for an hour it has no code for. null reads as 0 in a comparison, so the
+   * strip drew fog for it, and the current reading showed CLEAR.
+   */
+  test('maps a missing code to Unknown', () => {
+    const result = util.wmoToCondition(null);
+
+    expect(result).toBe('UNKNOWN');
+  });
 });
 
 describe('condition vocabulary single source of truth', () => {
@@ -412,9 +422,8 @@ describe('ok', () => {
   /** The extra readings must ride along, rounded, so the watch can show them. */
   test('attaches the weather extras when provided', () => {
     const extra = {
-      humidity: 61.4, windKmh: 12.7, windDir: 'NW', sunrise: '06:30', sunset: '21:30', uvIndex: 4.8, precip: 1.25,
-      feelsLike: 9.6, pressure: 1013.4, cloud: 75.6, windGustKmh: 30.2,
-      dewPoint: -2.4, tempMax: 18.6, tempMin: 9.2, precipChance: 80.4, uvMax: 7.6, precipTotal: 4.25,
+      humidity: 61.4, windKmh: 12.7, windDir: 'NW', sunrise: '06:30', sunset: '21:30', uvIndex: 4.8,
+      feelsLike: 9.6, pressure: 1013.4, dewPoint: -2.4, tempMax: 18.6, tempMin: 9.2, precipChance: 80.4,
     };
 
     const result = util.ok(10, 'Clear', 'Town', 51.5, -0.12, extra);
@@ -425,25 +434,28 @@ describe('ok', () => {
     expect(result.sunrise).toBe('06:30');
     expect(result.sunset).toBe('21:30');
     expect(result.uvIndex).toBe(5);
-    expect(result.precip).toBe(125);
     expect(result.feelsLike).toBe(10);
     expect(result.pressure).toBe(1013);
-    expect(result.cloud).toBe(76);
-    expect(result.windGustKmh).toBe(30);
     expect(result.dewPoint).toBe(-2);
     expect(result.tempMax).toBe(19);
     expect(result.tempMin).toBe(9);
     expect(result.precipChance).toBe(80);
-    expect(result.uvMax).toBe(8);
-    expect(result.precipTotal).toBe(425); // 4.25mm -> hundredths
   });
 
-  /** A genuine zero reading (0% cloud, calm wind) must ship. A truthy check would wrongly drop it. */
+  /** A genuine zero reading (0% humidity, calm wind) must ship. A truthy check would wrongly drop it. */
   test('keeps zero-valued numeric extras instead of dropping them', () => {
-    const result = util.ok(10, 'Clear', 'Town', undefined, undefined, { cloud: 0, windKmh: 0 });
+    const result = util.ok(10, 'Clear', 'Town', undefined, undefined, { humidity: 0, windKmh: 0 });
 
-    expect(result.cloud).toBe(0);
+    expect(result.humidity).toBe(0);
     expect(result.windKmh).toBe(0);
+  });
+
+  /** Open-Meteo sends null for a reading it has none for, and Number(null) is 0, so it went out as 0% rain. */
+  test.each([[null], [''], [true]])('leaves out an extra that is %s rather than sending 0', (value) => {
+    const result = util.ok(10, 'Clear', 'Town', undefined, undefined, { precipChance: value, uvIndex: value });
+
+    expect(result).not.toHaveProperty('precipChance');
+    expect(result).not.toHaveProperty('uvIndex');
   });
 
   /** A reading with no extras object must stay the bare shape, never carry undefined fields. */

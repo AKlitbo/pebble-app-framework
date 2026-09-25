@@ -49,6 +49,25 @@ describe('owm provider', () => {
   });
 
   describe('weather request', () => {
+    /** A face showing none of the readings Open-Meteo lends OWM must not spend a request on them every round. */
+    test('skips the Open-Meteo call when the face shows none of what it brings', () => {
+      const calls: string[] = [];
+
+      const result = run({ ...BASE, fields: ['humidity', 'windKmh'] }, routing({ [WX]: { body: WX_OK } }, calls));
+
+      expect(calls).toHaveLength(1);
+      expect(result.ok).toBe(true);
+    });
+
+    /** One borrowed reading is enough to need the call, or that panel sits on a dash. */
+    test('still asks Open-Meteo when the face shows one reading it brings', () => {
+      const calls: string[] = [];
+
+      run({ ...BASE, fields: ['humidity', 'uvIndex'] }, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
+
+      expect(calls.some((url) => url.includes(OM))).toBe(true);
+    });
+
     /** The weather call must use the supplied coords. A wrong URL reads the wrong place. */
     test('queries weather at the supplied coordinates', () => {
       const calls: string[] = [];
@@ -185,13 +204,25 @@ describe('owm provider', () => {
       expect(result.location).toBe('Phoenix');
     });
 
+    /** Number(null) is 0, so a null speed from OWM read as dead calm rather than as no reading. */
+    test('leaves a null wind speed as no reading', () => {
+      const body = JSON.stringify({
+        cod: 200, main: { temp: 10, humidity: 61 },
+        weather: [{ main: 'Clear', icon: '01d' }],
+        wind: { speed: null, deg: 315 }, sys: { sunrise: 0, sunset: 24 * 3600 - 1 }, timezone: 0,
+      });
+
+      const result = run(BASE, routing({ [WX]: { body }, [OM]: { body: '{}' } }, []));
+
+      expect(result.windKmh).toBeUndefined();
+    });
+
     /** Metric wind (m/s) must be normalized to km/h so the watch shows the right speed. */
     test('parses extras and converts metric wind from m/s to km/h', () => {
       const body = JSON.stringify({
         cod: 200, main: { temp: 10, humidity: 61 },
         weather: [{ main: 'Clear', icon: '01d' }],
         wind: { speed: 10, deg: 315 }, sys: { sunrise: 0, sunset: 24 * 3600 - 1 }, timezone: 0,
-        rain: { '1h': 2.5 },
       });
 
       const result = run(BASE, routing({ [WX]: { body }, [OM]: { body: '{}' } }, []));
@@ -200,7 +231,6 @@ describe('owm provider', () => {
       expect(result.windKmh).toBe(36); // 10 m/s * 3.6
       expect(result.windDir).toBe('NW');
       expect(result.sunrise).toBe('00:00');
-      expect(result.precip).toBe(250);
     });
 
     /** The hybrid fetch must inject Open-Meteo's UV index into the payload. */
@@ -213,12 +243,12 @@ describe('owm provider', () => {
     });
 
     /** OWM's free endpoint lacks dew point and any daily forecast, so they must be injected from Open-Meteo. */
-    test('injects dew point and the daily high/low, precip chance/total and uv max from Open-Meteo', () => {
+    test('injects dew point and the daily high, low, and rain chance from Open-Meteo', () => {
       const omBody = JSON.stringify({
         current: { uv_index: 4.8, dew_point_2m: -2.4 },
         daily: {
           temperature_2m_max: [18.6], temperature_2m_min: [9.2],
-          precipitation_probability_max: [80], precipitation_sum: [4.25], uv_index_max: [7.6],
+          precipitation_probability_max: [80],
         },
       });
 
@@ -228,8 +258,6 @@ describe('owm provider', () => {
       expect(result.tempMax).toBe(19);
       expect(result.tempMin).toBe(9);
       expect(result.precipChance).toBe(80);
-      expect(result.precipTotal).toBe(425);
-      expect(result.uvMax).toBe(8);
     });
 
     /** The injected dew point and daily highs must follow the unit toggle, so the hybrid call must ask for it. */
@@ -244,32 +272,17 @@ describe('owm provider', () => {
       expect(omCall).toContain('temperature_unit=fahrenheit');
     });
 
-    /** The Tier-1 extras come from their documented fields. Gust normalizes from m/s like wind speed. */
-    test('parses feels-like, pressure, cloud and converts gust from m/s', () => {
+    /** Feels-like and pressure come from their documented fields in main. */
+    test('parses feels-like and pressure', () => {
       const body = JSON.stringify({
         cod: 200, main: { temp: 10, feels_like: 8.6, pressure: 1009 },
         weather: [{ main: 'Clear', icon: '01d' }],
-        clouds: { all: 40 }, wind: { speed: 5, gust: 10 },
       });
 
       const result = run(BASE, routing({ [WX]: { body }, [OM]: { body: '{}' } }, []));
 
       expect(result.feelsLike).toBe(9);
       expect(result.pressure).toBe(1009);
-      expect(result.cloud).toBe(40);
-      expect(result.windGustKmh).toBe(36); // 10 m/s * 3.6
-    });
-
-    /** Imperial gust (mph) must be normalized to km/h, mirroring the wind-speed conversion. */
-    test('converts imperial gust from mph to km/h', () => {
-      const body = JSON.stringify({
-        cod: 200, main: { temp: 10 },
-        weather: [{ main: 'Clear', icon: '01d' }], wind: { speed: 5, gust: 10 },
-      });
-
-      const result = run({ ...BASE, fahrenheit: true }, routing({ [WX]: { body }, [OM]: { body: '{}' } }, []));
-
-      expect(result.windGustKmh).toBe(16); // 10 mph * 1.609344
     });
 
     /** Imperial wind (mph) must be normalized to km/h, not shipped as a raw mph number. */

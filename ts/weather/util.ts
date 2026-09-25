@@ -46,17 +46,12 @@ export interface WeatherResult {
   sunrise?: string;
   sunset?: string;
   uvIndex?: number;
-  precip?: number;
   feelsLike?: number;
   pressure?: number;
-  cloud?: number;
-  windGustKmh?: number;
   dewPoint?: number;
   tempMax?: number;
   tempMin?: number;
   precipChance?: number;
-  uvMax?: number;
-  precipTotal?: number;
   forecastHourly?: HourlyStrip | null;
   forecastDaily?: DailyStrip | null;
 }
@@ -70,6 +65,8 @@ export interface WeatherOpts {
   label?: string;
   place?: string;
   wantForecast?: boolean;
+  /** The reading fields the face shows, such as `humidity` or `uvIndex`. Left out, a provider fetches all of them. */
+  fields?: string[];
 }
 
 /** An HTTP GET the caller supplies, so the specs can swap in a fake. */
@@ -100,7 +97,10 @@ const NIGHT_TOKENS = new Set<string>(
  * @param code The WMO weather code Open-Meteo reports.
  * @return The matching short condition string.
  */
-function wmoToCondition(code: number): string {
+function wmoToCondition(code: unknown): string {
+  // Open-Meteo sends null for an hour or day it has no code for. null reads as 0 in a comparison,
+  // so without this it lands on FOGGY, and Number(null) would read as CLEAR
+  if (typeof code !== 'number' || !Number.isFinite(code)) { return 'UNKNOWN'; }
   if (code === 0) { return 'CLEAR'; }
   if (code === 1 || code === 2) { return 'PCLDY'; }
   if (code === 3) { return 'CLDY'; }
@@ -278,12 +278,9 @@ function hmFrom12Hour(timeStr: unknown): string {
 
 /** Extras that ride as a whole number. */
 const ROUNDED_EXTRAS = [
-  'humidity', 'windKmh', 'uvIndex', 'feelsLike', 'pressure', 'cloud',
-  'windGustKmh', 'dewPoint', 'tempMax', 'tempMin', 'precipChance', 'uvMax',
+  'humidity', 'windKmh', 'uvIndex', 'feelsLike', 'pressure', 'dewPoint', 'tempMax', 'tempMin',
+  'precipChance',
 ];
-
-/** Extras that ride as hundredths, so a rainfall in millimetres stays an integer on the wire. */
-const HUNDREDTH_EXTRAS = ['precip', 'precipTotal'];
 
 /** Extras that ride as text, such as a compass point or a clock time. */
 const TEXT_EXTRAS = ['windDir', 'sunrise', 'sunset'];
@@ -303,17 +300,16 @@ function attachExtras(result: WeatherResult, extra: Record<string, unknown> | nu
   const target = result as unknown as Record<string, unknown>;
 
   ROUNDED_EXTRAS.forEach((name) => {
-    const value = Number(extra[name]);
+    // a provider says "no reading" with null, and Number(null) is 0, so only a real number or a
+    // numeric string counts. otherwise the watch shows 0% rain or UV 0 where it should show a dash
+    const raw = extra[name];
+    if (typeof raw !== 'number' && !(typeof raw === 'string' && raw.trim() !== '')) {
+      return;
+    }
+
+    const value = Number(raw);
     if (Number.isFinite(value)) {
       target[name] = Math.round(value);
-    }
-  });
-
-  // these two ship as hundredths so AppMessage never has to carry a float
-  HUNDREDTH_EXTRAS.forEach((name) => {
-    const value = Number(extra[name]);
-    if (Number.isFinite(value)) {
-      target[name] = Math.round(value * 100);
     }
   });
 

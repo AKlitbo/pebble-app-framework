@@ -33,7 +33,7 @@ const WEATHERAPI_CODE: Record<number, string> = {
 
 export interface WeatherApiDay {
   maxtemp_f?: number; maxtemp_c?: number; mintemp_f?: number; mintemp_c?: number;
-  daily_chance_of_rain?: number; totalprecip_mm?: number; uv?: number;
+  daily_chance_of_rain?: number;
 }
 
 export interface WeatherApiForecastDay {
@@ -49,8 +49,7 @@ export interface WeatherApiResponse {
     condition?: { code?: number; text?: string };
     temp_f?: number; temp_c?: number; is_day?: number;
     humidity?: number; wind_kph?: number; wind_dir?: string; uv?: number;
-    precip_mm?: number; feelslike_f?: number; feelslike_c?: number;
-    pressure_mb?: number; cloud?: number; gust_kph?: number;
+    feelslike_f?: number; feelslike_c?: number; pressure_mb?: number;
     dewpoint_f?: number; dewpoint_c?: number;
   };
   forecast?: { forecastday?: WeatherApiForecastDay[] };
@@ -122,17 +121,12 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
       windKmh: json.current.wind_kph,
       windDir: json.current.wind_dir,
       uvIndex: json.current.uv,
-      precip: json.current.precip_mm,
       feelsLike: opts.fahrenheit ? json.current.feelslike_f : json.current.feelslike_c,
       pressure: json.current.pressure_mb,
-      cloud: json.current.cloud,
-      windGustKmh: json.current.gust_kph,
       dewPoint: opts.fahrenheit ? json.current.dewpoint_f : json.current.dewpoint_c,
       tempMax: opts.fahrenheit ? day.maxtemp_f : day.maxtemp_c,
       tempMin: opts.fahrenheit ? day.mintemp_f : day.mintemp_c,
       precipChance: day.daily_chance_of_rain,
-      precipTotal: day.totalprecip_mm,
-      uvMax: day.uv,
       sunrise: util.hmFrom12Hour(astro.sunrise),
       sunset: util.hmFrom12Hour(astro.sunset),
     }

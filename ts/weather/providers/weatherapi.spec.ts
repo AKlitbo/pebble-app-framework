@@ -151,11 +151,11 @@ describe('weatherapi provider', () => {
       expect(result.condition).toBe('CLEAR');
     });
 
-    /** Humidity, wind, uv, and precip come straight from current.json (wind already km/h, dir a compass word). */
-    test('parses humidity, wind, uv, and precip from current.json', () => {
+    /** Humidity, wind, and uv come straight from current.json (wind already km/h, dir a compass word). */
+    test('parses humidity, wind, and uv from current.json', () => {
       const body = JSON.stringify({
         location: { name: 'London' },
-        current: { temp_c: 10, temp_f: 50, condition: { text: 'Clear' }, humidity: 61, wind_kph: 12, wind_dir: 'NW', uv: 5, precip_mm: 2.5 },
+        current: { temp_c: 10, temp_f: 50, condition: { text: 'Clear' }, humidity: 61, wind_kph: 12, wind_dir: 'NW', uv: 5 },
       });
 
       const result = run(BASE_OPTS, routing({ [WX]: { body } }, []));
@@ -164,16 +164,15 @@ describe('weatherapi provider', () => {
       expect(result.windKmh).toBe(12);
       expect(result.windDir).toBe('NW');
       expect(result.uvIndex).toBe(5);
-      expect(result.precip).toBe(250);
     });
 
-    /** The Tier-1 extras come straight from current.json, already in display units. */
-    test('parses feels-like, pressure, cloud and gust from current.json', () => {
+    /** Feels-like and pressure come straight from current.json, already in display units. */
+    test('parses feels-like and pressure from current.json', () => {
       const body = JSON.stringify({
         location: { name: 'London' },
         current: {
           temp_c: 10, temp_f: 50, condition: { text: 'Clear' },
-          feelslike_c: 8.6, feelslike_f: 47.5, pressure_mb: 1011, cloud: 25, gust_kph: 33,
+          feelslike_c: 8.6, feelslike_f: 47.5, pressure_mb: 1011,
         },
       });
 
@@ -181,8 +180,6 @@ describe('weatherapi provider', () => {
 
       expect(result.feelsLike).toBe(9); // celsius by default
       expect(result.pressure).toBe(1011);
-      expect(result.cloud).toBe(25);
-      expect(result.windGustKmh).toBe(33);
     });
 
     /** Feels-like must follow the unit toggle like the main temperature, not stay stuck on celsius. */
@@ -197,14 +194,14 @@ describe('weatherapi provider', () => {
       expect(result.feelsLike).toBe(48);
     });
 
-    /** Dew point is current. The daily high/low, rain chance, precip total, and peak UV come from the day block. */
-    test('parses dew point and the daily high/low, precip chance/total and uv max', () => {
+    /** Dew point is current. The daily high, low, and rain chance come from the day block. */
+    test('parses dew point and the daily high, low, and rain chance', () => {
       const body = JSON.stringify({
         location: { name: 'London' },
         current: { temp_c: 13, temp_f: 55, condition: { text: 'Light rain' }, dewpoint_c: -2.4, dewpoint_f: 27.7 },
         forecast: { forecastday: [{ day: {
           maxtemp_c: 18.6, maxtemp_f: 65.5, mintemp_c: 9.2, mintemp_f: 48.6,
-          daily_chance_of_rain: 80, totalprecip_mm: 4.25, uv: 7.6,
+          daily_chance_of_rain: 80,
         } }] },
       });
 
@@ -214,8 +211,6 @@ describe('weatherapi provider', () => {
       expect(result.tempMax).toBe(19);
       expect(result.tempMin).toBe(9);
       expect(result.precipChance).toBe(80);
-      expect(result.precipTotal).toBe(425);
-      expect(result.uvMax).toBe(8);
     });
 
     /** Astronomy data is extracted from the forecast array. */

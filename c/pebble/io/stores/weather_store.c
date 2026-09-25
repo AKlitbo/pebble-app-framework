@@ -7,6 +7,7 @@
  */
 #include "io/stores/weather_store.h"
 
+#include <stddef.h>
 #include <stdio.h>
 #include <time.h>
 #include <limits.h>
@@ -16,6 +17,7 @@
 #include "io/stores/store_persist.h"
 #include "io/stores/store_poll.h"
 #include "text/cstring_fit.h"
+#include "weather/weather_reading.h"
 
 /**
  * @brief Delay before the first fetch after launch, in ms.
@@ -42,27 +44,11 @@
  * @var s_state
  * @brief Every reading the store holds, laid out as the blob that gets persisted.
  */
-static struct
-{
-    uint8_t tag;          ///< STORE_TAG_WEATHER, so a restore can tell this blob from another shape
-    int16_t temp;         ///< Current temperature in the user's unit (WEATHER_NO_TEMP when none)
-    char   cond[32];      ///< Short word for the sky, such as "SUNNY"
-    int    humidity;      ///< Percent humidity, -1 when none
-    int    wind_kmh;      ///< Wind speed in km/h, -1 when none
-    char   wind_dir[4];   ///< Wind direction like "NW"
-    char   sunrise[8];    ///< Sunrise time like "06:30"
-    char   sunset[8];     ///< Sunset time like "21:30"
-    int    uv;            ///< UV index (-1 when none)
-    int    temp_max;      ///< Today's high (WEATHER_NO_TEMP when none)
-    int    temp_min;      ///< Today's low (WEATHER_NO_TEMP when none)
-    int    precip_chance; ///< Percent chance of precip (-1 when none)
-    int    feels_like;    ///< Apparent temperature (WEATHER_NO_TEMP when none)
-    int    pressure;      ///< Surface pressure in hPa (-1 when none)
-    int    dew_point;     ///< Dew point temperature (WEATHER_NO_TEMP when none)
-    WeatherHourly hourly; ///< The hourly forecast strip (`count` 0 when none)
-    WeatherDaily  daily;  ///< The 7-day forecast strip (`count` 0 when none)
-    time_t last_sync;     ///< When the last reading landed, or 0 for never
-} s_state;
+static WeatherState s_state;
+// the blob's size and where it ends are its saved format, so a relaunch after an update reads
+// what the last version wrote. on the watch that is 184 bytes with the sync time last
+_Static_assert(sizeof(WeatherState) == 184, "weather state must keep its saved layout");
+_Static_assert(offsetof(WeatherState, last_sync) == 180, "weather state must keep its saved layout");
 _Static_assert(sizeof(s_state) <= PERSIST_DATA_MAX_LENGTH, "weather state must fit one persist key");
 
 static void (*s_cb)(void);     ///< Called whenever a reading changes, so the face can redraw
@@ -115,20 +101,6 @@ static void mark_dirty(void)
 }
 
 /**
- * @brief The shared tail every channel handler runs after it writes.
- *
- * Stamps the sync time and flags the reading for a save and a repaint, which keeps the six
- * handlers from each spelling it out. The repaint waits for the end of the message, see
- * inbox_done.
- */
-static void mark_synced(void)
-{
-    s_state.last_sync = time(NULL);
-    mark_dirty();
-    s_changed = true;
-}
-
-/**
  * @brief The coalesced write, run once per inbox via the transport's inbox-complete hook.
  *
  * Only a live face writes, and this never runs from `reset_state`, so a failed fetch can't
@@ -173,19 +145,6 @@ static void inbox_done(void)
 }
 
 /**
- * @brief Save the current temperature and condition, and mark the reading synced.
- *
- * @param temp The temperature in the user's unit.
- * @param cond The condition token, or NULL for "--".
- */
-static void set_current(int temp, const char *cond)
-{
-    s_state.temp = (int16_t)temp;
-    cstring_fit(s_state.cond, cond ? cond : "--", sizeof(s_state.cond));
-    mark_synced();
-}
-
-/**
  * @brief Prefill the whole store from a seed, for dev builds and screenshots.
  *
  * Copies the extra readings too, so a seeded face shows full weather rather than just the
@@ -225,92 +184,39 @@ static void apply_seed(const WeatherSeed *seed)
 // --- appmessage channel handlers (the store owns its own wiring) ---
 
 /**
- * @brief Current weather channel. A NULL condition means the fetch failed (network drop,
- * provider outage, no location) so we keep the last good reading rather than blanking. It
- * refreshes on the next poll that lands, and survives a relaunch via the cache.
+ * @brief The weather channel. The message holds every group the phone sent, and
+ * weather_reading_apply keeps what it can. A failed fetch keeps the last good reading rather than
+ * blanking, and it refreshes on the next poll that lands.
  *
- * @param temp The temperature in the user's unit (ignored when cond is NULL).
- * @param cond The condition token, or NULL on failure.
+ * @param msg The message, read straight off the inbox.
  */
-static void on_weather(int temp, const char *cond)
+static void on_weather(const WeatherMessage *msg)
 {
     // any answer ends the launch re-asks, a failed fetch included. asking again every few seconds
     // would only start the same failing round on the phone
-    s_heard = true;
-
-    if (!cond)
+    if (msg->groups & WEATHER_GROUP_CURRENT)
     {
-        return;
+        s_heard = true;
     }
-    set_current(temp, cond);
+
+    if (weather_reading_apply(&s_state, msg, time(NULL)))
+    {
+        mark_dirty();
+        s_changed = true;
+    }
 }
 
 /**
- * @brief Extra weather channel (humidity / wind / sun). Absent values arrive as -1 / "".
- */
-static void on_extra(int humidity, int wind_kmh, const char *dir, const char *sunrise, const char *sunset)
-{
-    s_state.humidity = humidity;
-    s_state.wind_kmh = wind_kmh;
-    cstring_fit(s_state.wind_dir, dir ? dir : "", sizeof(s_state.wind_dir));
-    cstring_fit(s_state.sunrise, sunrise ? sunrise : "", sizeof(s_state.sunrise));
-    cstring_fit(s_state.sunset, sunset ? sunset : "", sizeof(s_state.sunset));
-    mark_synced();
-}
-
-/**
- * @brief Forecast channel (uv / hi-lo / precip). The transport hands absent fields as INT_MIN,
- * so map those back to the store's own no-data values (temps get their own sentinel).
- */
-static void on_forecast(int uv, int temp_max, int temp_min, int precip_chance)
-{
-    s_state.uv = (uv == INT_MIN) ? -1 : uv;
-    s_state.temp_max = (temp_max == INT_MIN) ? WEATHER_NO_TEMP : temp_max;
-    s_state.temp_min = (temp_min == INT_MIN) ? WEATHER_NO_TEMP : temp_min;
-    s_state.precip_chance = (precip_chance == INT_MIN) ? -1 : precip_chance;
-    mark_synced();
-}
-
-/**
- * @brief Air channel (feels-like / pressure / dew point). Absent fields arrive as INT_MIN,
- * mapped back to the store's no-data values (temps get their own sentinel).
- */
-static void on_air(int feels_like, int pressure, int dew_point)
-{
-    s_state.feels_like = (feels_like == INT_MIN) ? WEATHER_NO_TEMP : feels_like;
-    s_state.pressure = (pressure == INT_MIN) ? -1 : pressure;
-    s_state.dew_point = (dew_point == INT_MIN) ? WEATHER_NO_TEMP : dew_point;
-    mark_synced();
-}
-
-/**
- * @brief Hourly forecast channel. Takes the strip the reader unpacked and puts it away.
+ * @brief The wearer switched the temperature unit. The reading in hand converts to it so the face
+ * never shows a Celsius number with an F beside it while the new fetch is on its way.
  *
- * A message that does not read clean leaves the last good row where it is.
+ * @param fahrenheit True when the new unit is Fahrenheit.
  */
-static void on_forecast_hourly(const uint8_t *buf, uint16_t len)
+static void on_unit_changed(bool fahrenheit)
 {
-    if (!weather_hourly_decode(buf, len, &s_state.hourly))
-    {
-        return;
-    }
-
-    mark_synced();
-}
-
-/**
- * @brief 7-day forecast channel. Takes the strip the reader unpacked and puts it away.
- *
- * A message that does not read clean leaves the last good row where it is.
- */
-static void on_forecast_daily(const uint8_t *buf, uint16_t len)
-{
-    if (!weather_daily_decode(buf, len, &s_state.daily))
-    {
-        return;
-    }
-
-    mark_synced();
+    weather_reading_convert(&s_state, fahrenheit);
+    mark_dirty();
+    s_changed = true;
 }
 
 // --- polling ---
@@ -390,11 +296,7 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
         // later through reconfigure still gets the reply to its poll. a face seeding fixtures passes
         // live = false and stays unsubscribed, so a real push cannot overwrite it
         appmessage_on_weather(on_weather);
-        appmessage_on_weather_extra(on_extra);
-        appmessage_on_weather_forecast(on_forecast);
-        appmessage_on_weather_air(on_air);
-        appmessage_on_weather_forecast_hourly(on_forecast_hourly);
-        appmessage_on_weather_forecast_daily(on_forecast_daily);
+        appmessage_on_unit_changed(on_unit_changed);
         // one repaint and one save per inbox rather than one per channel handler
         appmessage_add_inbox_complete(inbox_done);
     }

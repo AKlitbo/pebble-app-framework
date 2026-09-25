@@ -8,6 +8,8 @@
 #pragma once
 #include <pebble.h>
 
+#include "weather/weather_reading.h"
+
 /**
  * @addtogroup lib_io
  * @{
@@ -17,16 +19,14 @@
 // the appmessage pipeline stays separate from who reads the data
 
 /**
- * @brief Called with a fresh temperature and condition, or with a failed fetch.
+ * @brief Called with one weather message, holding every group of readings it carried.
  *
- * The pipeline does not know the unit label. The face adds "°C" or "°F" from its own setting
- * when it draws.
+ * The message is read straight off the inbox, so it only lives for this call. The pipeline does
+ * not know the unit label. The face adds "°C" or "°F" from its own setting when it draws.
  *
- * @param temp The reading in the user's unit, clamped to -99 to 199. Not meaningful when
- *   @p condition is NULL.
- * @param condition The condition token, or NULL when the fetch failed (no live reading).
+ * @param msg The message. weather_reading_apply turns it into the kept reading.
  */
-typedef void (*WeatherHandler)(int temp, const char *condition);
+typedef void (*WeatherHandler)(const WeatherMessage *msg);
 
 /**
  * @brief Called with a fresh pair of coordinates.
@@ -45,60 +45,13 @@ typedef void (*CoordsHandler)(const char *lat, const char *lon);
 typedef void (*SettingsChangedHandler)(bool time_or_date_changed);
 
 /**
- * @brief Called with the extra weather readings (humidity, wind, sunrise, sunset).
+ * @brief Called when the wearer switches the temperature unit on the settings page.
  *
- * Only fires for faces that declare the extra weather keys.
+ * Not called for a restore, which brings the unit any reading already on the watch was fetched in.
  *
- * @param humidity Percent humidity, or -1 when missing.
- * @param wind_kmh Wind speed in km/h, or -1 when missing.
- * @param wind_dir Wind direction like "NW", or "" when missing.
- * @param sunrise Sunrise time like "06:30", or "" when missing.
- * @param sunset Sunset time like "21:30", or "" when missing.
+ * @param fahrenheit True when the new unit is Fahrenheit.
  */
-typedef void (*WeatherExtraHandler)(int humidity, int wind_kmh, const char *wind_dir,
-                                    const char *sunrise, const char *sunset);
-
-/**
- * @brief Called with the daily forecast readings (UV, today's high and low, rain chance).
- *
- * Only fires for faces that declare the daily forecast keys. A missing field arrives as
- * INT_MIN rather than -1, so a real negative temperature is never read as missing.
- *
- * @param uv UV index, or INT_MIN when missing.
- * @param temp_max Today's high, or INT_MIN when missing.
- * @param temp_min Today's low, or INT_MIN when missing.
- * @param precip_chance Chance of rain in percent, or INT_MIN when missing.
- */
-typedef void (*WeatherForecastHandler)(int uv, int temp_max, int temp_min, int precip_chance);
-
-/**
- * @brief Called with the air readings (feels-like, surface pressure, dew point).
- *
- * Only fires for faces that declare the air reading keys. A missing field arrives as INT_MIN
- * rather than -1, so a real negative reading is never read as missing.
- *
- * @param feels_like Apparent temperature, or INT_MIN when missing.
- * @param pressure Surface pressure in hPa, or INT_MIN when missing.
- * @param dew_point Dew point temperature, or INT_MIN when missing.
- */
-typedef void (*WeatherAirHandler)(int feels_like, int pressure, int dew_point);
-
-/**
- * @brief Called with a packed forecast strip (hourly or 7 day).
- *
- * The handler owns the wire format, so appmessage just hands the raw bytes and their length
- * across without unpacking them.
- *
- * @param buf The raw wire bytes.
- * @param len How many bytes there are.
- */
-typedef void (*WeatherForecastStripHandler)(const uint8_t *buf, uint16_t len);
-
-/** @brief Called with a fresh location name.
- *
- * @param name The location name, such as "Toronto".
- */
-typedef void (*LocationNameHandler)(const char *name);
+typedef void (*UnitChangedHandler)(bool fahrenheit);
 
 /**
  * @brief Called with a packed watchlist strip. The handler owns the wire format.
@@ -148,15 +101,10 @@ typedef void (*CustomColorsProvider)(char *out, size_t n);
  */
 typedef void (*InboxCompleteHandler)(void);
 
-void appmessage_on_weather(WeatherHandler cb);                   /**< @brief Temperature and condition */
+void appmessage_on_weather(WeatherHandler cb);                   /**< @brief One weather message, every group it carried */
 void appmessage_on_coords(CoordsHandler cb);                     /**< @brief Latitude and longitude */
 void appmessage_on_settings_changed(SettingsChangedHandler cb);  /**< @brief A setting changed on the phone */
-void appmessage_on_weather_extra(WeatherExtraHandler cb);        /**< @brief Humidity, wind and sun times */
-void appmessage_on_weather_forecast(WeatherForecastHandler cb);  /**< @brief UV, today's high and low, rain chance */
-void appmessage_on_weather_air(WeatherAirHandler cb);            /**< @brief Feels-like, pressure and dew point */
-void appmessage_on_weather_forecast_hourly(WeatherForecastStripHandler cb); /**< @brief Packed hourly strip */
-void appmessage_on_weather_forecast_daily(WeatherForecastStripHandler cb);  /**< @brief Packed 7 day strip */
-void appmessage_on_location_name(LocationNameHandler cb);        /**< @brief Location name */
+void appmessage_on_unit_changed(UnitChangedHandler cb);          /**< @brief The wearer switched the temperature unit */
 void appmessage_on_stock_strip(StockStripHandler cb);            /**< @brief Packed watchlist strip */
 void appmessage_on_calendar_strip(CalendarStripHandler cb);      /**< @brief Packed agenda strip */
 void appmessage_on_custom_colors(CustomColorsHandler cb);        /**< @brief Inbound: splits and stores the combined string */

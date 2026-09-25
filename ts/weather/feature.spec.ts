@@ -2,8 +2,9 @@
 /**
  * Specs for the weather feature's own helpers.
  *
- * The coordinate checks, the saved-city reader, the change-gated refetch, and the one-at-a-time
- * weather round are the parts a reader cannot check by eye. The settings snapshot reads the Clay
+ * The coordinate checks, the saved-city reader, the change-gated refetch, the one-at-a-time
+ * weather round, and who gets to fetch between the watch and the phone are the parts a reader
+ * cannot check by eye. The settings snapshot reads the Clay
  * store in localStorage, which jsdom provides. How the feature plugs into the app's lifecycle is
  * covered with the app's own specs.
  */
@@ -16,6 +17,8 @@ import {
   weatherSettingsChanged,
   weatherRetryDelayMs,
   runWeatherRound,
+  askShouldFetch,
+  slowTickShouldFetch,
   WEATHER_KEYS,
   WEATHER_RETRY_DELAYS_MS,
 } from './feature';
@@ -277,5 +280,40 @@ describe('runWeatherRound', () => {
     callbacks[0]({ ok: true });
 
     expect(state.inFlight).toBe(false);
+  });
+});
+
+describe('weather asks', () => {
+  /**
+   * Saving a new temperature unit refetched twice. The phone forced a refetch after the save, and
+   * the watch asked as well once it took the new unit, each with its own gps fix and provider call.
+   */
+  test('folds a watch ask into the refetch a settings save has pending', () => {
+    const asks = { sinceSlowTick: false, savePending: true };
+
+    const result = askShouldFetch(asks);
+
+    expect(result).toBe(false);
+  });
+
+  /** The watch polls every 30 minutes and the phone ticked every 30 too, so each reading was fetched once per end. */
+  test('skips the slow tick that follows a watch ask', () => {
+    const asks = { sinceSlowTick: false, savePending: false };
+    askShouldFetch(asks);
+
+    const result = slowTickShouldFetch(asks);
+
+    expect(result).toBe(false);
+  });
+
+  /** A watch out of range stops asking, and the phone has to keep the reading fresh on its own. */
+  test('fetches on the next slow tick once the watch stops asking', () => {
+    const asks = { sinceSlowTick: false, savePending: false };
+    askShouldFetch(asks);
+    slowTickShouldFetch(asks);
+
+    const result = slowTickShouldFetch(asks);
+
+    expect(result).toBe(true);
   });
 });

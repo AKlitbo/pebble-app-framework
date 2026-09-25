@@ -48,15 +48,10 @@
  */
 static struct
 {
-    WeatherHandler              on_weather;             ///< Current conditions arrived
+    WeatherHandler              on_weather;             ///< A weather message arrived
     CoordsHandler               on_coords;              ///< The phone's coordinates arrived
     SettingsChangedHandler      on_settings_changed;    ///< A settings push was applied
-    WeatherExtraHandler         on_weather_extra;       ///< The extra weather readings arrived
-    WeatherForecastHandler      on_weather_forecast;    ///< Today's forecast readings arrived
-    WeatherAirHandler           on_weather_air;         ///< The air readings arrived
-    WeatherForecastStripHandler on_forecast_hourly;     ///< The hourly forecast strip arrived
-    WeatherForecastStripHandler on_forecast_daily;      ///< The daily forecast strip arrived
-    LocationNameHandler         on_location_name;       ///< The location name arrived
+    UnitChangedHandler          on_unit_changed;        ///< The wearer switched the temperature unit
     StockStripHandler           on_stock_strip;         ///< The stock strip arrived
     CalendarStripHandler        on_calendar_strip;      ///< The calendar strip arrived
     CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
@@ -72,12 +67,7 @@ static CallbackList s_inbox_complete = {s_inbox_complete_entries, INBOX_COMPLETE
 void appmessage_on_weather(WeatherHandler cb)                  { s_handlers.on_weather = cb; }
 void appmessage_on_coords(CoordsHandler cb)                    { s_handlers.on_coords = cb; }
 void appmessage_on_settings_changed(SettingsChangedHandler cb) { s_handlers.on_settings_changed = cb; }
-void appmessage_on_weather_extra(WeatherExtraHandler cb)       { s_handlers.on_weather_extra = cb; }
-void appmessage_on_weather_forecast(WeatherForecastHandler cb) { s_handlers.on_weather_forecast = cb; }
-void appmessage_on_weather_air(WeatherAirHandler cb)          { s_handlers.on_weather_air = cb; }
-void appmessage_on_weather_forecast_hourly(WeatherForecastStripHandler cb) { s_handlers.on_forecast_hourly = cb; }
-void appmessage_on_weather_forecast_daily(WeatherForecastStripHandler cb)  { s_handlers.on_forecast_daily = cb; }
-void appmessage_on_location_name(LocationNameHandler cb)       { s_handlers.on_location_name = cb; }
+void appmessage_on_unit_changed(UnitChangedHandler cb)         { s_handlers.on_unit_changed = cb; }
 void appmessage_on_stock_strip(StockStripHandler cb)          { s_handlers.on_stock_strip = cb; }
 void appmessage_on_calendar_strip(CalendarStripHandler cb)   { s_handlers.on_calendar_strip = cb; }
 void appmessage_on_custom_colors(CustomColorsHandler cb)      { s_handlers.on_custom_colors = cb; }
@@ -405,14 +395,14 @@ static void send_settings(void)
     enqueue(OUTBOX_SETTINGS, REQUEST_RETRY_MAX);
 }
 
-// only a face with one of the byte strips calls this, and a face with none would warn it goes unused
-#if defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_HOURLY) || defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_DAILY) || \
-    defined(HAS_MESSAGE_KEY_STOCK_STRIP) || defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
+// only a face with the stock or calendar strip calls this, and a face with neither would warn it
+// goes unused. the weather strips ride inside the weather message instead
+#if defined(HAS_MESSAGE_KEY_STOCK_STRIP) || defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
 /**
  * @brief Find a byte array tuple by key and hand its bytes to a handler.
  *
- * The forecast, stock, and calendar strips all ride as packed byte arrays through a
- * same-signature handler, so one dispatcher covers them. The handler comes in as an argument
+ * The stock and calendar strips both ride as packed byte arrays through a same-signature
+ * handler, so one dispatcher covers them. The handler comes in as an argument
  * rather than a table, so it stays out of the binary's .data section.
  *
  * @param iter The dictionary iterator to search.
@@ -461,132 +451,113 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
     // a face that opts out of weather leaves this whole block out with its keys
 #if defined(APPMESSAGE_HAS_WEATHER)
-    Tuple *temp_tuple = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMPERATURE);
-    Tuple *conditions_tuple = dict_find(iterator, MESSAGE_KEY_WEATHER_CONDITIONS);
-    Tuple *wx_ok_tuple = dict_find(iterator, MESSAGE_KEY_WEATHER_OK);
-
-    // the payload is phone-controlled so everything here reads through the tuple helpers above.
-    // they check the width as well as the type, which the type on its own cannot do: the SDK
-    // sizes an int by its length and packs the tuples back to back, so reading int32 off a
-    // narrower one picks up the next tuple's key
-    const char *conditions = tuple_str_or(conditions_tuple, NULL);
-    bool temp_is_int = temp_tuple && (temp_tuple->type == TUPLE_INT || temp_tuple->type == TUPLE_UINT);
-
-    if (temp_is_int && conditions)
+    if (s_handlers.on_weather)
     {
-        // only a flag that reads as 1 makes this a real reading. a missing or malformed one keeps it
-        // on the unavailable side, so a failed fetch's status text never shows as a live 0 degrees
-        bool wx_ok = wx_ok_tuple && tuple_int_or(wx_ok_tuple, 0) == 1;
+        // the payload is phone-controlled so everything here reads through the tuple helpers. they
+        // check the width as well as the type, which the type on its own cannot do: the SDK sizes
+        // an int by its length and packs the tuples back to back, so reading int32 off a narrower
+        // one picks up the next tuple's key. a value the phone left out reads INT_MIN or NULL, the
+        // message's one mark for missing, and weather_reading_apply turns it into no data
+        WeatherMessage msg = {
+            .temp = INT_MIN, .humidity = INT_MIN, .wind_kmh = INT_MIN, .uv = INT_MIN,
+            .temp_max = INT_MIN, .temp_min = INT_MIN, .precip_chance = INT_MIN,
+            .feels_like = INT_MIN, .pressure = INT_MIN, .dew_point = INT_MIN,
+        };
 
-        static char conditions_buffer[32];
-
-        cstring_fit(conditions_buffer, conditions, sizeof(conditions_buffer));
-
-        if (wx_ok)
+        Tuple *temp_t = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMPERATURE);
+        const char *cond = tuple_str_or(dict_find(iterator, MESSAGE_KEY_WEATHER_CONDITIONS), NULL);
+        if (temp_t && (temp_t->type == TUPLE_INT || temp_t->type == TUPLE_UINT) && cond)
         {
-            int temp_value = tuple_int_or(temp_tuple, 0);
-            // clamp to a sane range so a corrupt reading can't display absurdly or overflow the
-            // store's int16 field. the face turns the number into "23°C"/"23°F" when it draws
-            temp_value = clamp_int(temp_value, -99, 199);
-
-            if (s_handlers.on_weather)
+            // only a flag that reads as 1 makes this a real reading. a missing or malformed one keeps
+            // it on the unavailable side, so a failed fetch's status text never shows as a live 0
+            msg.groups |= WEATHER_GROUP_CURRENT;
+            msg.ok = tuple_int_or(dict_find(iterator, MESSAGE_KEY_WEATHER_OK), 0) == 1;
+            msg.temp = tuple_int_or(temp_t, 0);
+            msg.cond = cond;
+            if (!msg.ok)
             {
-                s_handlers.on_weather(temp_value, conditions_buffer);
+                APP_LOG(APP_LOG_LEVEL_INFO, "Weather Unavailable: %s", cond);
             }
         }
-        else
-        {
-            // no live reading (e.g. no location set or network error). the NULL cond tells the
-            // store to keep its last good reading rather than blank out (the temp is ignored)
-            APP_LOG(APP_LOG_LEVEL_INFO, "Weather Unavailable: %s", conditions_buffer);
-            if (s_handlers.on_weather)
-            {
-                s_handlers.on_weather(0, NULL);
-            }
-        }
-    }
-#endif
 
-    // extra weather readings only for faces that declare the keys
-    // the keys are absent from other faces' message_keys so guard the whole block
-    // on the generated #defines to keep the shared transport compiling everywhere
+        // each group below is only read by a face that declares all of its keys, the rest leave it
+        // out with them. any one of a group's keys present means the phone sent the group
 #if defined(HAS_MESSAGE_KEY_WEATHER_HUMIDITY) && defined(HAS_MESSAGE_KEY_WEATHER_WIND_SPEED) && \
     defined(HAS_MESSAGE_KEY_WEATHER_WIND_DIR) && defined(HAS_MESSAGE_KEY_WEATHER_SUNRISE) && defined(HAS_MESSAGE_KEY_WEATHER_SUNSET)
-    if (s_handlers.on_weather_extra)
-    {
         Tuple *humidity_t = dict_find(iterator, MESSAGE_KEY_WEATHER_HUMIDITY);
         Tuple *wind_spd_t = dict_find(iterator, MESSAGE_KEY_WEATHER_WIND_SPEED);
         Tuple *wind_dir_t = dict_find(iterator, MESSAGE_KEY_WEATHER_WIND_DIR);
         Tuple *sunrise_t = dict_find(iterator, MESSAGE_KEY_WEATHER_SUNRISE);
         Tuple *sunset_t = dict_find(iterator, MESSAGE_KEY_WEATHER_SUNSET);
-
-        // these keys only ride a weather message so any one present marks it as one
         if (humidity_t || wind_spd_t || wind_dir_t || sunrise_t || sunset_t)
         {
-            int humidity = tuple_int_or(humidity_t, -1);
-            int wind_kmh = tuple_int_or(wind_spd_t, -1);
-            const char *wind_dir = tuple_str_or(wind_dir_t, "");
-            const char *sunrise = tuple_str_or(sunrise_t, "");
-            const char *sunset = tuple_str_or(sunset_t, "");
-
-            s_handlers.on_weather_extra(humidity, wind_kmh, wind_dir, sunrise, sunset);
+            msg.groups |= WEATHER_GROUP_EXTRA;
+            msg.humidity = tuple_int_or(humidity_t, INT_MIN);
+            msg.wind_kmh = tuple_int_or(wind_spd_t, INT_MIN);
+            msg.wind_dir = tuple_str_or(wind_dir_t, NULL);
+            msg.sunrise = tuple_str_or(sunrise_t, NULL);
+            msg.sunset = tuple_str_or(sunset_t, NULL);
         }
-    }
 #endif
 
-    // daily forecast bits (uv now plus today's high/low plus precip chance) same opt-in guard.
-    // absent fields ride out as INT_MIN so a real negative temperature is never mistaken
-    // for no-data (unlike the -1 the extra readings use)
 #if defined(HAS_MESSAGE_KEY_WEATHER_UV_INDEX) && defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MAX) && \
     defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MIN) && defined(HAS_MESSAGE_KEY_WEATHER_PRECIP_CHANCE)
-    if (s_handlers.on_weather_forecast)
-    {
         Tuple *uv_t = dict_find(iterator, MESSAGE_KEY_WEATHER_UV_INDEX);
         Tuple *tmax_t = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMP_MAX);
         Tuple *tmin_t = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMP_MIN);
         Tuple *pchance_t = dict_find(iterator, MESSAGE_KEY_WEATHER_PRECIP_CHANCE);
-
         if (uv_t || tmax_t || tmin_t || pchance_t)
         {
-            int uv = tuple_int_or(uv_t, INT_MIN);
-            int temp_max = tuple_int_or(tmax_t, INT_MIN);
-            int temp_min = tuple_int_or(tmin_t, INT_MIN);
-            int precip_chance = tuple_int_or(pchance_t, INT_MIN);
-
-            s_handlers.on_weather_forecast(uv, temp_max, temp_min, precip_chance);
+            msg.groups |= WEATHER_GROUP_FORECAST;
+            msg.uv = tuple_int_or(uv_t, INT_MIN);
+            msg.temp_max = tuple_int_or(tmax_t, INT_MIN);
+            msg.temp_min = tuple_int_or(tmin_t, INT_MIN);
+            msg.precip_chance = tuple_int_or(pchance_t, INT_MIN);
         }
-    }
 #endif
 
-    // air readings (feels-like plus surface pressure plus dew point). same opt-in guard,
-    // absent fields ride out as INT_MIN so a real negative temperature is never no-data
 #if defined(HAS_MESSAGE_KEY_WEATHER_FEELS_LIKE) && defined(HAS_MESSAGE_KEY_WEATHER_PRESSURE) && \
     defined(HAS_MESSAGE_KEY_WEATHER_DEW_POINT)
-    if (s_handlers.on_weather_air)
-    {
         Tuple *feels_t = dict_find(iterator, MESSAGE_KEY_WEATHER_FEELS_LIKE);
         Tuple *pressure_t = dict_find(iterator, MESSAGE_KEY_WEATHER_PRESSURE);
         Tuple *dew_t = dict_find(iterator, MESSAGE_KEY_WEATHER_DEW_POINT);
-
         if (feels_t || pressure_t || dew_t)
         {
-            int feels_like = tuple_int_or(feels_t, INT_MIN);
-            int pressure = tuple_int_or(pressure_t, INT_MIN);
-            int dew_point = tuple_int_or(dew_t, INT_MIN);
+            msg.groups |= WEATHER_GROUP_AIR;
+            msg.feels_like = tuple_int_or(feels_t, INT_MIN);
+            msg.pressure = tuple_int_or(pressure_t, INT_MIN);
+            msg.dew_point = tuple_int_or(dew_t, INT_MIN);
+        }
+#endif
 
-            s_handlers.on_weather_air(feels_like, pressure, dew_point);
+        // the forecast strips ride as packed byte arrays. the reader owns the wire format, so they
+        // go across as the raw bytes and their length
+#if defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_HOURLY)
+        Tuple *hourly_t = dict_find(iterator, MESSAGE_KEY_WEATHER_FORECAST_HOURLY);
+        if (hourly_t && hourly_t->type == TUPLE_BYTE_ARRAY)
+        {
+            msg.hourly = hourly_t->value->data;
+            msg.hourly_len = hourly_t->length;
+        }
+#endif
+#if defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_DAILY)
+        Tuple *daily_t = dict_find(iterator, MESSAGE_KEY_WEATHER_FORECAST_DAILY);
+        if (daily_t && daily_t->type == TUPLE_BYTE_ARRAY)
+        {
+            msg.daily = daily_t->value->data;
+            msg.daily_len = daily_t->length;
+        }
+#endif
+
+        if (msg.groups || msg.hourly || msg.daily)
+        {
+            s_handlers.on_weather(&msg);
         }
     }
 #endif
 
-    // the forecast, stock, and calendar strips ride as packed byte arrays. each is opt-in via its
-    // own key, and the store owns the wire format, so we just hand the raw bytes on
-#if defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_HOURLY)
-    dispatch_bytes(iterator, MESSAGE_KEY_WEATHER_FORECAST_HOURLY, s_handlers.on_forecast_hourly);
-#endif
-#if defined(HAS_MESSAGE_KEY_WEATHER_FORECAST_DAILY)
-    dispatch_bytes(iterator, MESSAGE_KEY_WEATHER_FORECAST_DAILY, s_handlers.on_forecast_daily);
-#endif
+    // the stock and calendar strips ride as packed byte arrays. each is opt-in via its own key, and
+    // the store owns the wire format, so we just hand the raw bytes on
 #if defined(HAS_MESSAGE_KEY_STOCK_STRIP)
     dispatch_bytes(iterator, MESSAGE_KEY_STOCK_STRIP, s_handlers.on_stock_strip);
 #endif
@@ -605,18 +576,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         const char *lat = tuple_str_or(lat_t, "");
         const char *lon = tuple_str_or(lon_t, "");
         s_handlers.on_coords(lat, lon);
-    }
-#endif
-
-#if defined(HAS_MESSAGE_KEY_LOCATION_NAME)
-    Tuple *loc_name_t = dict_find(iterator, MESSAGE_KEY_LOCATION_NAME);
-    if (s_handlers.on_location_name)
-    {
-        const char *loc_name = tuple_str_or(loc_name_t, "");
-        if (loc_name[0] != '\0' && loc_name[0] != '{')
-        {
-            s_handlers.on_location_name(loc_name);
-        }
     }
 #endif
 
@@ -641,10 +600,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
     // decode every settings field the message carries. the table owns which keys
     // exist and how each encodes so this transport never names a field
+    // the unit the weather in hand was fetched in, to tell a switch from a save that kept it
+    uint8_t unit_before = settings_u8(SETTING_TEMPERATURE_UNIT);
+
     SettingsInbound settings = settings_apply_inbox(iterator);
     bool moved = settings.changed || custom_changed;
 
     bool save = moved;
+    bool restoring = false;
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
     // the phone marks a save or a restore from its settings page by sending SETTINGS_FRESH along
     // with it. while the watch is fresh only that message writes to flash, and it always does, since
@@ -656,6 +619,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     if (settings_was_fresh())
     {
         save = page;
+        restoring = page;
     }
 #endif
 
@@ -676,6 +640,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         if (s_handlers.on_settings_changed)
         {
             s_handlers.on_settings_changed(settings.layout_changed);
+        }
+
+        // a restore brings the phone's unit, which is the unit any reading already here was fetched
+        // in. an edit on the page is the wearer switching, so the reading in hand converts to match
+        uint8_t unit_after = settings_u8(SETTING_TEMPERATURE_UNIT);
+        if (unit_after != unit_before && !restoring && s_handlers.on_unit_changed)
+        {
+            s_handlers.on_unit_changed(unit_after != 0);
         }
 
         if (settings.weather_changed)

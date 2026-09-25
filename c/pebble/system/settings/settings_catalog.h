@@ -22,8 +22,8 @@
  * @brief Setting definition for Temperature Unit (Celsius or Fahrenheit).
  *
  * Every face wires this the same way, so it takes no count: there are two units and there is
- * never going to be a third. Changing it asks for fresh weather rather than converting what is
- * already there, because the phone is what does the conversion.
+ * never going to be a third. Changing it converts the weather already on the watch and asks for
+ * fresh weather in the new unit.
  *
  * @param off Offset into the face's settings struct.
  */
