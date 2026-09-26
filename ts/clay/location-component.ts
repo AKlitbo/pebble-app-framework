@@ -5,7 +5,7 @@
  * matching places. Selecting one stores the resolved coordinates so the watch
  * never has to geocode.
  *
- * A timezone field offers time zones alongside the places, since the geocoder only knows
+ * A field marked `timeZone: true` offers time zones alongside the places, since the geocoder only knows
  * populated ones and there is no city called UTC. Typing utc, zulu, a zone name, or a plain
  * offset such as utc+05:30 all land on a row that can be picked.
  *
@@ -18,7 +18,7 @@
  * zone pick carries no coordinates, and a plain offset carries no zone either, so it sets `fixed`
  * to say the missing zone is on purpose.
  *
- * IMPORTANT: `initialize` and the `manipulator` methods are serialised
+ * IMPORTANT: `initialize` and the `manipulator` methods are serialized
  * (via .toString()) and run inside the Clay config webview, a separate JS
  * context. They must be self-contained and must NOT reference anything from
  * this module's scope (module-level constants, imports, etc.). Those are
@@ -28,7 +28,7 @@
 /** The Clay component context the manipulator and initialize bind to. */
 export interface ClayComponentContext {
   $element: HTMLElement[];
-  config: { label?: string; description?: string; messageKey?: string; attributes?: { placeholder?: string } };
+  config: { label?: string; description?: string; messageKey?: string; timeZone?: boolean; attributes?: { placeholder?: string } };
 }
 
 /** One Open-Meteo geocoding result the autocomplete list shows. */
@@ -44,7 +44,7 @@ interface GeoPlace {
 /**
  * Intl grew a list of the zones it knows in ES2022, which is newer than the lib this compiles
  * against, so the shape is spelled out here. It is a type and nothing else, which is what lets
- * `initialize` mention it and still serialise clean.
+ * `initialize` mention it and still serialize clean.
  */
 interface IntlWithZones {
   supportedValuesOf?(key: string): string[];
@@ -139,8 +139,7 @@ export default {
       // whatever the offset was the day it was picked and goes an hour out when the clocks change.
       // picking the place again is the whole fix, and it happens right here. a plain offset has no
       // zone on purpose and no daylight saving to follow, so it is left alone
-      const messageKey = this.config.messageKey || '';
-      const wantsZone = /TIME_?ZONE/i.test(messageKey);
+      const wantsZone = Boolean(this.config.timeZone);
       const noteEl = root.querySelector('.loc-note') as HTMLElement;
       noteEl.style.display = (wantsZone && label && !zone && !fixed) ? 'block' : 'none';
     },
@@ -182,9 +181,9 @@ export default {
     // the field alone
     let picks = 0;
 
-    // only a timezone field offers zones. the weather location wants a real place with
+    // only a field marked timeZone offers zones. the weather location wants a real place with
     // coordinates, and a row like UTC has none
-    const wantsZone = /TIME_?ZONE/i.test(self.config.messageKey || '');
+    const wantsZone = Boolean(self.config.timeZone);
 
     // the zone rows showing for what is typed now, so a geocoder answer can redraw the list
     // without losing them
@@ -451,11 +450,13 @@ export default {
       zones.forEach(function(choice: ZoneChoice) {
         const item = document.createElement('li');
         item.className = 'loc-item loc-item-zone';
-        // the full zone name, since Adelaide on its own does not say which one
-        item.textContent = choice.zone || choice.label;
+        // the full zone name, since Adelaide on its own does not say which one. a typed offset reads
+        // its UTC label instead, since its Etc/GMT-5 name carries the sign the other way round
+        const offsetRow = choice.label.indexOf('UTC') === 0;
+        item.textContent = offsetRow ? choice.label : choice.zone || choice.label;
 
         // what that zone reads against UTC, unless the row already says so itself
-        if (choice.label.indexOf('UTC') !== 0) {
+        if (!offsetRow) {
           const hint = document.createElement('span');
           hint.className = 'loc-hint';
           hint.textContent = offsetText(choice.offset);

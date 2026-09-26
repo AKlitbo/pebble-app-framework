@@ -14,6 +14,7 @@
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import component from './location-component';
+import { offsetMinutes } from '../pkjs/timezone';
 import type { ClayComponentContext } from './location-component';
 import { fetchRequest } from '../testing/fetch-request';
 import { installFakeXhr } from '../testing/xhr';
@@ -101,7 +102,7 @@ describe('manipulator', () => {
 
   /** The zone has to survive being persisted, or the pkjs side has nothing to read a fresh offset off and the watch drifts an hour every summer. */
   test('keeps the saved zone in what a timezone field persists', () => {
-    const { ctx, hidden } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const { ctx, hidden } = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     const blob = JSON.stringify({ lat: 52.5, lon: 13.4, label: 'Berlin', offset: 60, tz: 'Europe/Berlin' });
     hidden.value = blob;
 
@@ -115,7 +116,7 @@ describe('manipulator', () => {
    * an hour out when the clocks change. Picking the city again is the fix, so the picker says so.
    */
   test('prompts to pick again when a restored timezone value carries no zone', () => {
-    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     ctx.set('0,London, England, United Kingdom');
 
@@ -124,7 +125,7 @@ describe('manipulator', () => {
 
   /** A blob whose zone lookup never came back is the same problem wearing a different shape. */
   test('prompts to pick again when a saved place has no zone in it', () => {
-    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     ctx.set(JSON.stringify({ lat: 51.5, lon: -0.1, label: 'London', offset: 0 }));
 
@@ -133,7 +134,7 @@ describe('manipulator', () => {
 
   /** Nagging somebody whose clock is already right would teach them to ignore the prompt. */
   test('stays quiet when the saved place carries its zone', () => {
-    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     ctx.set(JSON.stringify({ lat: 51.5, lon: -0.1, label: 'London', offset: 0, tz: 'Europe/London' }));
 
@@ -151,7 +152,7 @@ describe('manipulator', () => {
 
   /** An empty field has nothing to pick again, so a prompt there is just noise. */
   test('stays quiet when nothing is saved yet', () => {
-    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const { ctx, note } = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     ctx.set('');
 
@@ -285,7 +286,7 @@ describe('initialize', () => {
    * to be up until the zone actually lands. Typing hid it, so the tap has to put it back.
    */
   test('shows the prompt when the picked place has no zone yet', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -306,7 +307,7 @@ describe('initialize', () => {
    * city's name.
    */
   test('keeps the zone the geocoder named before the lookup answers', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'Tokyo');
@@ -510,7 +511,7 @@ describe('zone search', () => {
 
   /** The whole point. No city is called UTC, so without this row the watch can never show it. */
   test('offers UTC for a query of utc', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -522,7 +523,7 @@ describe('zone search', () => {
 
   /** The word the user asked for. Zulu is not a zone name, so nothing would match it on its own. */
   test('offers UTC for a query of zulu', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'zulu');
@@ -534,7 +535,7 @@ describe('zone search', () => {
 
   /** The zones need nothing from the network, so a config page opened offline still reaches UTC. */
   test('shows the zone rows before the geocoder has been asked', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -545,7 +546,7 @@ describe('zone search', () => {
 
   /** A zone that saved no tz would be stuck on today's offset, which is the bug the zone is for. */
   test('persists the zone and its label on picking UTC', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -558,6 +559,20 @@ describe('zone search', () => {
   });
 
   /**
+   * A typed offset's zone is named Etc/GMT-5 for UTC+5, the sign the other way round. Showing that
+   * name alone read as UTC-5, so the right row looked wrong.
+   */
+  test('shows a typed offset as its UTC label', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc+5');
+    const row = mounted.list.querySelector('.loc-item-zone');
+
+    expect(row.textContent).toBe('UTC+05:00');
+  });
+
+  /**
    * The zone's wall clock and "now" have to come from one reading. Read twice across a minute
    * rollover, Berlin's hint came out as UTC+00:59 and stayed that way for the life of the page.
    */
@@ -567,7 +582,7 @@ describe('zone search', () => {
     const lastMs = Date.UTC(2026, 0, 15, 11, 59, 59, 999);
     vi.setSystemTime(lastMs);
     const now = vi.spyOn(Date, 'now').mockReturnValue(lastMs + 1);
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'berlin');
@@ -578,11 +593,35 @@ describe('zone search', () => {
   });
 
   /**
+   * The picker runs inside Clay's webview and cannot import, so it keeps its own copy of the offset
+   * maths in ts/pkjs/timezone.ts. The two must agree, or the hint beside a zone says one time and
+   * the watch shows another. Each zone here is one a simpler sum gets wrong.
+   */
+  test.each([
+    ['berlin', 'Europe/Berlin', WINTER],
+    ['berlin', 'Europe/Berlin', SUMMER],
+    ['adelaide', 'Australia/Adelaide', WINTER],
+    ['adelaide', 'Australia/Adelaide', SUMMER],
+    ['chatham', 'Pacific/Chatham', WINTER],
+    ['chatham', 'Pacific/Chatham', SUMMER],
+    ['st johns', 'America/St_Johns', WINTER],
+    ['st johns', 'America/St_Johns', SUMMER],
+    ['phoenix', 'America/Phoenix', WINTER],
+    ['phoenix', 'America/Phoenix', SUMMER],
+  ])('agrees with the phone on the offset for %s (%s) at %d', (query, zone, moment) => {
+    vi.setSystemTime(moment as number);
+
+    const result = hintFor(query as string, zone as string);
+
+    expect(result).toBe(utcText(offsetMinutes(zone as string, moment as number) as number));
+  });
+
+  /**
    * A zone tapped inside the 300 ms debounce still had a search queued behind it. The search
    * reopened the list over the picked row, and a stray tap there overwrote the pick.
    */
   test('keeps the list shut when a zone is tapped before the search runs', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -595,7 +634,7 @@ describe('zone search', () => {
 
   /** The same reopening from a geocoder answer that lands after the zone was already tapped. */
   test('keeps the list shut when the geocoder answers after a zone is tapped', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -612,7 +651,7 @@ describe('zone search', () => {
    * puts the alternate clock ten hours out and looks like a plausible zone name either way.
    */
   test('stores a whole hour offset as the Etc zone with the sign inverted', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5');
@@ -625,7 +664,7 @@ describe('zone search', () => {
 
   /** West of UTC flips it the other way, and a reversed pair here is the same ten hour error. */
   test('stores a western whole hour offset as an Etc zone too', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'gmt-8');
@@ -638,7 +677,7 @@ describe('zone search', () => {
 
   /** There is no Etc zone for a half hour, so the minutes stand alone and fixed says that is meant. */
   test('stores a half hour offset as minutes with no zone', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5:30');
@@ -654,7 +693,7 @@ describe('zone search', () => {
    * city again would be asking for something the user cannot give.
    */
   test('raises no daylight saving prompt for a restored fixed offset', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
 
     mounted.ctx.set(JSON.stringify({ label: 'UTC+05:30', offset: 330, tz: '', fixed: true }));
 
@@ -663,7 +702,7 @@ describe('zone search', () => {
 
   /** Picking a zone by name has to reach the watch as a word that fits, not as Australia/Adelaide. */
   test('labels a named zone with the city on the end of it', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'adelaide');
@@ -677,7 +716,7 @@ describe('zone search', () => {
 
   /** Zones are an addition. A city search that stopped working would be a worse face than before. */
   test('still lists the geocoded cities under the zones', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'Berlin');
@@ -701,9 +740,21 @@ describe('zone search', () => {
     expect(result).toHaveLength(0);
   });
 
+  /** The page marks a picker as a time zone, so a key that only looks like one gets a plain place search. */
+  test('offers no zones on a field not marked timeZone even when its key names one', () => {
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    mounted.ctx.initialize();
+
+    type(mounted.query, 'utc');
+
+    const result = zoneRows(mounted);
+
+    expect(result).toHaveLength(0);
+  });
+
   /** Offline is the normal way to open the config page, and UTC needs nothing from the network. */
   test('keeps the zone rows up when the geocoder request errors', () => {
-    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+    const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -747,3 +798,26 @@ describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1')('live geocoding', () => {
     expect(typeof top.timezone).toBe('string');
   });
 });
+
+/** Minutes ahead of UTC the way the picker writes them, so the two copies are compared as text. */
+function utcText(minutes: number): string {
+  const away = Math.abs(minutes);
+  const hours = String(Math.floor(away / 60)).padStart(2, '0');
+  const rest = String(away % 60).padStart(2, '0');
+  return 'UTC' + (minutes < 0 ? '-' : '+') + hours + ':' + rest;
+}
+
+/** Mid January and mid July at noon UTC, so every zone is read once each side of daylight saving. */
+const WINTER = Date.UTC(2026, 0, 15, 12, 0);
+const SUMMER = Date.UTC(2026, 6, 15, 12, 0);
+
+/** Types a query into a fresh time zone picker and reads the offset hint beside the named zone. */
+function hintFor(query: string, zone: string): string {
+  const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+  mounted.ctx.initialize();
+  type(mounted.query, query);
+
+  const rows = Array.from(mounted.list.querySelectorAll('.loc-item-zone'));
+  const row = rows.find((item) => (item.textContent || '').indexOf(zone) === 0);
+  return (row && row.querySelector('.loc-hint') && (row.querySelector('.loc-hint') as HTMLElement).textContent) || '';
+}
