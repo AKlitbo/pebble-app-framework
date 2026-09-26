@@ -3,9 +3,12 @@
  * src/pkjs) so lib stays independent as the copy-as-starter base.
  */
 
-/** A value Clay stores for a setting: a scalar, or the { value } wrapper Clay
+/** A value Clay stores for a setting: a single value, or the { value } wrapper Clay
  * puts around some component values. */
 export type ClayValue = string | number | boolean | { value: string | number | boolean };
+
+/** One choice a select or radio group offers: its label and the value Clay stores. */
+export type ClayOption = { label: string; value: string | number };
 
 /**
  * One Clay config item (a section, heading, select, toggle, input, custom
@@ -15,11 +18,13 @@ export type ClayValue = string | number | boolean | { value: string | number | b
  */
 export interface ClayConfigItem {
   type: string;
+  /** Names the item for Clay's getItemById, for an item a custom function has to reach. */
+  id?: string;
   messageKey?: string;
   label?: string;
   description?: string;
   defaultValue?: string | number | boolean;
-  options?: Array<{ label: string; value: string | number }>;
+  options?: ClayOption[];
   items?: ClayConfigItem[];
   attributes?: Record<string, unknown>;
   /** Clay's own per-item filter, resolved against the watch the page was opened from. Names come
@@ -27,11 +32,16 @@ export interface ClayConfigItem {
    * invert, so ['NOT_PLATFORM_GABBRO'] drops the item on a round watch and keeps it everywhere
    * else. An item with none declared is always shown. */
   capabilities?: string[];
+  /** Marks a `locationsearch` item as a time zone picker. It offers zones and plain offsets beside the
+   * places, and the phone sends it to the watch as "offset,label" with the offset read off the zone. */
+  timeZone?: boolean;
   // custom components (layoutBuilder / themeBuilder / slotBuilder) carry these
   moduleOptions?: unknown;
   moduleThumbnails?: unknown;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
+  /** color only: false shows the true colours instead of their washed-out sunlight pair. */
+  sunlight?: boolean;
   /** slider only: the gap between values. Its decimal places are how far Clay scales the value up for the watch. */
   step?: number;
 }

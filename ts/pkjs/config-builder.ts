@@ -1,15 +1,16 @@
 /**
- * A generic Clay settings-page builder for a simple face.
+ * A generic Clay settings-page builder.
  *
  * buildConfig stamps out the common sections (theme, date, weather, location, and
  * so on) from a small per-section description, so a plain face gets a settings page
- * without hand-assembling one. A face whose layout or theme picker outgrows the
- * template can hand-build its own page instead and reuse only defaultDateOptions
- * from here. buildConfig stays as the starting point a copied face would reach for
- * first.
+ * without hand-assembling one. Each section is its own exported builder taking the
+ * same description, so a face whose layout or theme picker needs its own sections in
+ * between can lay out its page from the builders it wants. buildConfig stays as the
+ * starting point a copied face would reach for first.
  */
 
 import type { ClayConfigItem } from '../clay/types';
+import { VIBE_OPTIONS } from './config-rows';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
  * Present means "include it", and its own fields tune it. */
@@ -73,90 +74,57 @@ const beatsDateOptions = [
   { 'label': '2026.0618.672 (yyyy.mmdd.beat)', 'value': '%Y.%m%d.{B}' },
 ];
 
-/** The buzz patterns the connect and disconnect selects both offer. */
-const vibeOptions = [
-  { 'label': 'None', 'value': 0 },
-  { 'label': 'Short', 'value': 1 },
-  { 'label': 'Long', 'value': 2 },
-  { 'label': 'Double', 'value': 3 },
-];
+/**
+ * The Appearance section: the theme picker when the face has one, its own appearance controls, and
+ * the Quiet Time icon toggle when asked for.
+ *
+ * @param options The per-section description, read for theme, appearanceItems, and quietTime.
+ * @return The section.
+ */
+export function appearanceSection(options: ConfigBuilderOptions): ClayConfigItem {
+  const theme = options.theme || {};
+
+  return {
+    'type': 'section',
+    'items': [
+      {
+        'type': 'heading',
+        'defaultValue': 'Appearance',
+      },
+      // a face that colours itself from individual pickers rather than a preset list omits
+      // theme entirely, and the section is then just its own appearanceItems
+      ...(options.theme ? [{
+        'type': 'select',
+        'messageKey': 'APPEARANCE_THEME',
+        'label': theme.label || 'Frame Theme',
+        'description': theme.description || 'Colour scheme for the watch frame.',
+        'defaultValue': 0,
+        'options': theme.options,
+      }] : []),
+      // a face's own appearance controls sit with the theme picker rather than in a section
+      // of their own, because a section per setting reads as a longer page than it is
+      ...(options.appearanceItems || []),
+      ...(options.quietTime ? [{
+        'type': 'toggle',
+        'messageKey': 'APPEARANCE_QUIET_TIME_ICON',
+        'label': 'Show Quiet Time Icon',
+        'description': options.quietTime.description || 'Show a muted-speaker glyph next to bluetooth while Quiet Time is on.',
+        'defaultValue': false,
+      }] : []),
+    ],
+  };
+}
 
 /**
- * Builds a Clay config array from a per-section description.
+ * The Bluetooth section: the connection icon and the buzz on connect and disconnect.
  *
- * Top-level fields:
- *   heading, intro        page title and lead paragraph (both optional)
- *
- * Section objects (each section is customised through its own fields):
- *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section
- *   clockItems      [ClayConfigItem]            extra controls inside the Clock section
- *   bluetooth { description? }                   always shown
- *   date     { label?, description?, default?, beats?, options? }
- *   steps    { label?, description?, capabilities? }
- *
- * Optional sections (present = included, omitted = excluded):
- *   theme       { label?, description?, options? }  the theme picker. options is the theme list,
- *                                                   and a picker given none has nothing to offer
- *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
- *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
- *   weather     {}                               marker, adds the provider picker to the Weather section
- *   temperature {}                               marker, adds the unit dropdown to the Weather section
- *
- * @param options The per-section description to build the page from.
- * @return The assembled Clay config array, ready to hand to Clay.
+ * @param options The per-section description, read for bluetooth.
+ * @return The section.
  */
-function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
-  const theme = options.theme || {};
+export function bluetoothSection(options: ConfigBuilderOptions): ClayConfigItem {
   const bluetooth = options.bluetooth || {};
-  const date = options.date || {};
-  const steps = options.steps || {};
 
-  const config: ClayConfigItem[] = [
-    {
-      'type': 'heading',
-      'defaultValue': options.heading || 'Watchface Configuration',
-    },
-    {
-      'type': 'text',
-      'defaultValue': options.intro || 'Personalize your layout and make this watchface your own.',
-    },
-    {
-      'type': 'section',
-      'items': [
-        {
-          'type': 'heading',
-          'defaultValue': 'Appearance',
-        },
-        // a face that colours itself from individual pickers rather than a preset list omits
-        // theme entirely, and the section is then just its own appearanceItems
-        ...(options.theme ? [{
-          'type': 'select',
-          'messageKey': 'APPEARANCE_THEME',
-          'label': theme.label || 'Frame Theme',
-          'description': theme.description || 'Colour scheme for the watch frame.',
-          'defaultValue': 0,
-          'options': theme.options,
-        }] : []),
-        // a face's own appearance controls sit with the theme picker rather than in a section
-        // of their own, because a section per setting reads as a longer page than it is
-        ...(options.appearanceItems || []),
-        ...(options.quietTime ? [{
-          'type': 'toggle',
-          'messageKey': 'APPEARANCE_QUIET_TIME_ICON',
-          'label': 'Show Quiet Time Icon',
-          'description': options.quietTime.description || 'Show a muted-speaker glyph next to bluetooth while Quiet Time is on.',
-          'defaultValue': false,
-        }] : []),
-      ],
-    },
-  ];
-
-  // face-specific sections (e.g. a layout and goals) sit right after Appearance
-  if (options.layoutSections) {
-    options.layoutSections.forEach((section) => config.push(section));
-  }
-
-  config.push({
+  return {
     'type': 'section',
     'items': [
       {
@@ -176,7 +144,7 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
         'label': 'Vibrate on Connect',
         'description': 'Buzz the watch when the phone reconnects.',
         'defaultValue': 0,
-        'options': vibeOptions,
+        'options': VIBE_OPTIONS,
       },
       {
         'type': 'select',
@@ -184,10 +152,21 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
         'label': 'Vibrate on Disconnect',
         'description': 'Buzz the watch when the phone disconnects.',
         'defaultValue': 0,
-        'options': vibeOptions,
+        'options': VIBE_OPTIONS,
       },
     ],
-  });
+  };
+}
+
+/**
+ * The Clock section: the date and time formats, the face's own clock controls, and the alternate
+ * time zone picker and hourly buzz when asked for.
+ *
+ * @param options The per-section description, read for date, clockItems, clock, and hourlyVibe.
+ * @return The section.
+ */
+export function clockSection(options: ConfigBuilderOptions): ClayConfigItem {
+  const date = options.date || {};
 
   const dateDescription = date.beats
     ? 'How the date line is written. The .beat formats add Swatch Internet Time, so you can read both at once.'
@@ -231,6 +210,7 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     clockItems.push({
       'type': 'locationsearch',
       'messageKey': 'CLOCK_TIMEZONE_1',
+      'timeZone': true,
       'label': 'Alternate Time Zone',
       'description': 'Sets the time shown by the alternate time zone readout. Search a city, a zone name such as Europe/London, or type UTC or an offset like UTC+05:30.',
       'attributes': {
@@ -246,14 +226,25 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
       'label': options.hourlyVibe.label || 'Hourly Vibration',
       'description': options.hourlyVibe.description || 'Buzz at the top of every hour. Silenced automatically during Quiet Time.',
       'defaultValue': 0,
-      'options': vibeOptions,
+      'options': VIBE_OPTIONS,
     });
   }
 
-  config.push({
+  return {
     'type': 'section',
     'items': clockItems,
-  });
+  };
+}
+
+/**
+ * The Health section: what the stats slot shows, and the battery readout when asked for. It is on
+ * every page, since the stats slot is.
+ *
+ * @param options The per-section description, read for steps and battery.
+ * @return The section.
+ */
+export function healthSection(options: ConfigBuilderOptions): ClayConfigItem {
+  const steps = options.steps || {};
 
   // when the steps control is the only thing in this section and it is filtered out, the heading
   // goes with it. a lone section title with nothing under it reads as a control that failed to
@@ -296,109 +287,181 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     });
   }
 
-  config.push({
+  return {
     'type': 'section',
     'items': healthItems,
-  });
+  };
+}
 
-  // the type no longer allows it, but an options object built in a variable gets past that check, and
-  // the picker would then vanish from the page without a word
+/**
+ * The Location Settings section: the GPS toggles and the manual city the weather fetch reads.
+ *
+ * @param options The per-section description, read for location.
+ * @return The section, or null for a face that asks for no location.
+ */
+export function locationSection(options: ConfigBuilderOptions): ClayConfigItem | null {
+  // the type leaves timeZone out of location, but an options object built in a variable gets past
+  // that check, and the picker would then vanish from the page without a word
   if (options.location && (options.location as { timeZone?: unknown }).timeZone) {
     console.warn('buildConfig: location.timeZone is gone. Pass clock: { timeZone: true } for the time zone picker');
   }
 
-  if (options.location) {
-    const locationItems: ClayConfigItem[] = [
-      {
-        'type': 'heading',
-        'defaultValue': 'Location Settings',
-      },
-      {
-        'type': 'toggle',
-        'messageKey': 'LOCATION_USE_GPS',
-        'label': 'Enable Phone GPS',
-        'description': 'Automatically fetch weather for your current location.',
-        'defaultValue': options.location.gpsDefault !== undefined ? options.location.gpsDefault : false,
-      },
-      {
-        'type': 'toggle',
-        'messageKey': 'LOCATION_GPS_FALLBACK',
-        'label': 'Fallback to Manual Location',
-        'description': 'If GPS is disabled or unavailable, use the city typed below.',
-        'defaultValue': true,
-      },
-      {
-        'type': 'locationsearch',
-        'messageKey': 'LOCATION_NAME',
-        'label': 'Manual Location',
-        'attributes': {
-          'placeholder': 'Search a city, e.g. Phoenix',
-        },
-      },
-    ];
+  if (!options.location) {
+    return null;
+  }
 
-    config.push({
-      'type': 'section',
-      'items': locationItems,
+  const locationItems: ClayConfigItem[] = [
+    {
+      'type': 'heading',
+      'defaultValue': 'Location Settings',
+    },
+    {
+      'type': 'toggle',
+      'messageKey': 'LOCATION_USE_GPS',
+      'label': 'Enable Phone GPS',
+      'description': 'Automatically fetch weather for your current location.',
+      'defaultValue': options.location.gpsDefault !== undefined ? options.location.gpsDefault : false,
+    },
+    {
+      'type': 'toggle',
+      'messageKey': 'LOCATION_GPS_FALLBACK',
+      'label': 'Fallback to Manual Location',
+      'description': 'If GPS is disabled or unavailable, use the city typed below.',
+      'defaultValue': true,
+    },
+    {
+      'type': 'locationsearch',
+      'messageKey': 'LOCATION_NAME',
+      'label': 'Manual Location',
+      'attributes': {
+        'placeholder': 'Search a city, e.g. Phoenix',
+      },
+    },
+  ];
+
+  return {
+    'type': 'section',
+    'items': locationItems,
+  };
+}
+
+/**
+ * The Weather section: the temperature unit and the provider picker, each when asked for.
+ *
+ * @param options The per-section description, read for temperature and weather.
+ * @return The section, or null for a face that asks for neither.
+ */
+export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | null {
+  if (!(options.weather || options.temperature)) {
+    return null;
+  }
+
+  const weatherItems: ClayConfigItem[] = [
+    {
+      'type': 'heading',
+      'defaultValue': 'Weather',
+    },
+  ];
+
+  if (options.temperature) {
+    weatherItems.push({
+      'type': 'select',
+      'messageKey': 'WEATHER_TEMPERATURE_UNIT',
+      'label': 'Temperature Unit',
+      'defaultValue': 0,
+      'options': [
+        { 'label': 'Celsius (°C)', 'value': 0 },
+        { 'label': 'Fahrenheit (°F)', 'value': 1 },
+      ],
     });
   }
 
-  if (options.weather || options.temperature) {
-    const weatherItems: ClayConfigItem[] = [
+  if (options.weather) {
+    weatherItems.push(
       {
-        'type': 'heading',
-        'defaultValue': 'Weather',
+        'type': 'text',
+        'defaultValue': 'Choose where your watch pulls its weather data. Open-Meteo works right out of the box with no setup required.',
       },
-    ];
-
-    if (options.temperature) {
-      weatherItems.push({
+      {
         'type': 'select',
-        'messageKey': 'WEATHER_TEMPERATURE_UNIT',
-        'label': 'Temperature Unit',
-        'defaultValue': 0,
+        'messageKey': 'WEATHER_PROVIDER',
+        'label': 'Data Source',
+        'defaultValue': 'openmeteo',
         'options': [
-          { 'label': 'Celsius (°C)', 'value': 0 },
-          { 'label': 'Fahrenheit (°F)', 'value': 1 },
+          { 'label': 'Open-Meteo (Free, No Key Required)', 'value': 'openmeteo' },
+          { 'label': 'OpenWeatherMap', 'value': 'owm' },
+          { 'label': 'WeatherAPI.com', 'value': 'weatherapi' },
         ],
-      });
-    }
-
-    if (options.weather) {
-      weatherItems.push(
-        {
-          'type': 'text',
-          'defaultValue': 'Choose where your watch pulls its weather data. Open-Meteo works right out of the box with no setup required.',
+      },
+      {
+        'type': 'input',
+        'messageKey': 'WEATHER_API_KEY',
+        'label': 'API Key',
+        'description': 'Only required if you selected OpenWeatherMap or WeatherAPI above.',
+        'attributes': {
+          'placeholder': 'Paste your private API key here...',
+          'limit': 64,
         },
-        {
-          'type': 'select',
-          'messageKey': 'WEATHER_PROVIDER',
-          'label': 'Data Source',
-          'defaultValue': 'openmeteo',
-          'options': [
-            { 'label': 'Open-Meteo (Free, No Key Required)', 'value': 'openmeteo' },
-            { 'label': 'OpenWeatherMap', 'value': 'owm' },
-            { 'label': 'WeatherAPI.com', 'value': 'weatherapi' },
-          ],
-        },
-        {
-          'type': 'input',
-          'messageKey': 'WEATHER_API_KEY',
-          'label': 'API Key',
-          'description': 'Only required if you selected OpenWeatherMap or WeatherAPI above.',
-          'attributes': {
-            'placeholder': 'Paste your private API key here...',
-            'limit': 64,
-          },
-        }
-      );
-    }
-
-    config.push({
-      'type': 'section',
-      'items': weatherItems,
-    });
+      }
+    );
   }
+
+  return {
+    'type': 'section',
+    'items': weatherItems,
+  };
+}
+
+/**
+ * Builds a Clay config array from a per-section description.
+ *
+ * It is the section builders above in their usual order, for a face that wants the whole page. A
+ * face that needs its own sections in between calls the builders it wants and lays them out itself.
+ *
+ * Top-level fields:
+ *   heading, intro        page title and lead paragraph (both optional)
+ *
+ * Section objects (each section is customized through its own fields):
+ *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section
+ *   clockItems      [ClayConfigItem]            extra controls inside the Clock section
+ *   bluetooth { description? }                   always shown
+ *   date     { label?, description?, default?, beats?, options? }
+ *   steps    { label?, description?, capabilities? }
+ *
+ * Optional sections (present = included, omitted = excluded):
+ *   theme       { label?, description?, options? }  the theme picker. options is the theme list,
+ *                                                   and a picker given none has nothing to offer
+ *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
+ *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
+ *   weather     {}                               marker, adds the provider picker to the Weather section
+ *   temperature {}                               marker, adds the unit dropdown to the Weather section
+ *
+ * @param options The per-section description to build the page from.
+ * @return The assembled Clay config array, ready to hand to Clay.
+ */
+function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
+  const config: ClayConfigItem[] = [
+    {
+      'type': 'heading',
+      'defaultValue': options.heading || 'Watchface Configuration',
+    },
+    {
+      'type': 'text',
+      'defaultValue': options.intro || 'Personalize your layout and make this watchface your own.',
+    },
+    appearanceSection(options),
+    // face-specific sections (e.g. a layout and goals) sit right after Appearance
+    ...(options.layoutSections || []),
+    bluetoothSection(options),
+    clockSection(options),
+    healthSection(options),
+  ];
+
+  [locationSection(options), weatherSection(options)].forEach((section) => {
+    if (section) {
+      config.push(section);
+    }
+  });
 
   config.push({
     'type': 'submit',
@@ -412,5 +475,7 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
 // so a consumer can read them off the default export as well as the named one
 buildConfig.defaultDateOptions = defaultDateOptions;
 buildConfig.beatsDateOptions = beatsDateOptions;
+
+export { defaultDateOptions, beatsDateOptions };
 
 export default buildConfig;
