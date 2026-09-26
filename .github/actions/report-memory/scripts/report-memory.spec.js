@@ -89,4 +89,22 @@ describe('report-memory', () => {
     expect(core.setFailed).toHaveBeenCalledWith('build-ridgeline.log has no memory report. Either the build did not get as far as linking, or it was incremental and had nothing to relink.');
     expect(rows).toBeNull();
   });
+
+  /** An empty input read the repo folder itself and crashed with a stack trace. */
+  test('fails with a message when no log is given', async () => {
+    vi.stubEnv('BUILD_LOG', '');
+
+    const { core } = await report();
+
+    expect(core.setFailed).toHaveBeenCalledWith('No log was given. Pass the build log the build step tees its output to.');
+  });
+
+  /** Every other action refuses a path outside the repo, and this one read one quietly. */
+  test('refuses a log outside the repo', async () => {
+    vi.stubEnv('BUILD_LOG', '../build-ridgeline.log');
+
+    const { core } = await report();
+
+    expect(core.setFailed).toHaveBeenCalledWith("log '../build-ridgeline.log' has to be a relative path inside the repo.");
+  });
 });

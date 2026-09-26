@@ -14,6 +14,8 @@
  * blocks are held until it arrives.
  */
 
+const { stripColour } = require('../../../shared/lib');
+
 const HEADER = /(\S+) APP MEMORY USAGE/;
 const LEAVING = /Leaving directory .*\/targets\/([^/]+)\/build/;
 const FIELDS = [
@@ -29,15 +31,17 @@ const VIRTUAL_SIZE_OFFSET = 0x80;
  * Reads every platform's memory block out of a build log, matched to the target it was built for.
  *
  * @param log The build log.
- * @return One entry per target and platform with its resources, footprint and free heap in bytes. A block
- *   missing any of the three figures is left out, and so is one never closed by its sandbox's line.
+ * @return The rows, one per target and platform with its resources, footprint and free heap in bytes, and
+ *   the incomplete blocks, each named by its target and platform. A block missing any of the three figures
+ *   is incomplete rather than a row. One never closed by its sandbox's line is left out.
  */
 function readBuildLog(log) {
   const rows = [];
+  const incomplete = [];
   let held = [];
   let block = null;
 
-  for (const line of String(log).split(/\r?\n/)) {
+  for (const line of stripColour(log).split(/\r?\n/)) {
     const header = HEADER.exec(line);
     if (header) {
       block = { platform: header[1].toLowerCase() };
@@ -50,6 +54,8 @@ function readBuildLog(log) {
       for (const done of held) {
         if (FIELDS.every(([field]) => done[field] !== undefined)) {
           rows.push({ target: leaving[1], ...done });
+        } else {
+          incomplete.push({ target: leaving[1], platform: done.platform });
         }
       }
       held = [];
@@ -67,7 +73,7 @@ function readBuildLog(log) {
     }
   }
 
-  return rows;
+  return { rows, incomplete };
 }
 
 /**

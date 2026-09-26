@@ -35,11 +35,15 @@ async function render() {
 }
 
 describe('render-memory', () => {
-  /** An empty table reads as a pass, when really every build broke or none of them uploaded anything. */
-  test('fails when no build job left any rows', async () => {
+  /**
+   * An empty table would read as a pass, so the run gets a warning saying no face reported. The build jobs
+   * that broke already fail the run, and a second red job here pointed away from them.
+   */
+  test('warns without failing when no build job left any rows', async () => {
     const core = await render();
 
-    expect(core.setFailed).toHaveBeenCalledWith(`No memory rows under ${dir}. Every build job either failed before it reported or never uploaded its rows.`);
+    expect(core.warning).toHaveBeenCalledWith(`No memory rows under ${dir}. Every build job either failed before it reported or never uploaded its rows.`, { title: 'Memory Report' });
+    expect(core.setFailed).not.toHaveBeenCalled();
   });
 
   /** A face creeping toward its static limit only in the table is easy to miss until the build that finally fails. */

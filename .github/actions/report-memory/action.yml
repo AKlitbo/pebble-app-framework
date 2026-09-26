@@ -35,3 +35,6 @@ runs:
         name: memory-${{ inputs.face }}
         path: ${{ steps.report.outputs.file }}
         if-no-files-found: error
+        # a re-run of a job that got this far already uploaded the rows, and a second upload under the
+        # same name is refused unless it replaces the first
+        overwrite: true

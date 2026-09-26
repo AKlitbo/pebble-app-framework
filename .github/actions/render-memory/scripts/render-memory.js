@@ -11,7 +11,7 @@
  */
 const fs = require('node:fs');
 const path = require('node:path');
-const { fail, step } = require('../../../shared/lib');
+const { step } = require('../../../shared/lib');
 const { WARN_AT, rankRows, renderReport } = require('./lib');
 
 module.exports = step(async ({ core }) => {
@@ -19,8 +19,13 @@ module.exports = step(async ({ core }) => {
 
   const files = fs.existsSync(dir) ? fs.readdirSync(dir).filter((name) => name.endsWith('.json')) : [];
   const rows = files.flatMap((name) => JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')));
+  // with no rows every build job already failed or never reported, and those jobs carry the reason
+  // failing here as well would add a red job that points away from it
   if (rows.length === 0) {
-    fail(`No memory rows under ${dir}. Every build job either failed before it reported or never uploaded its rows.`);
+    const message = `No memory rows under ${dir}. Every build job either failed before it reported or never uploaded its rows.`;
+    core.warning(message, { title: 'Memory Report' });
+    await core.summary.addRaw(`## Memory\n\n${message}`, true).write();
+    return;
   }
 
   const ranked = rankRows(rows);

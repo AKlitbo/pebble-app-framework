@@ -30,8 +30,13 @@ const ALARM_AT = 90;
  * Works out how close each row is to its limits, closest first.
  *
  * @param rows The rows every face build reported.
- * @return The same rows with imagePct, staticPct, the worst of the two, and which limit that worst one is,
- *   ordered from the closest to a limit down.
+ * A row whose binary was missing reads as 0 bytes, which no real app image is, and one too short to hold its
+ * header reads a static size of 0. Either is marked unmeasured and goes first, since reading as 0% would rank
+ * a face that may be near a limit as the safest.
+ *
+ * @param rows The rows every face build reported.
+ * @return The same rows with imagePct, staticPct, the worst of the two, which limit that worst one is, and
+ *   whether it was measured at all, the unmeasured first and then from the closest to a limit down.
  */
 function rankRows(rows) {
   return rows
@@ -39,9 +44,14 @@ function rankRows(rows) {
       const imagePct = (row.image * 100) / IMAGE_LIMIT;
       const staticPct = (row.virtualSize * 100) / STATIC_LIMIT;
       const tighter = staticPct > imagePct ? 'static size' : 'app image';
-      return { ...row, imagePct, staticPct, worst: Math.max(imagePct, staticPct), tighter };
+      return { ...row, imagePct, staticPct, worst: Math.max(imagePct, staticPct), tighter, measured: row.image > 0 && row.virtualSize > 0 };
     })
-    .sort((first, second) => second.worst - first.worst);
+    .sort((first, second) => {
+      if (first.measured !== second.measured) {
+        return first.measured ? 1 : -1;
+      }
+      return second.worst - first.worst;
+    });
 }
 
 /** A byte count in KB, to as many decimals as the column wants. */
@@ -63,12 +73,16 @@ function renderReport(ranked) {
     } else if (row.worst >= WARN_AT) {
       mark = ' :warning:';
     }
+    // the mark goes on whichever limit the row is closest to
+    const imageMark = row.tighter === 'app image' ? mark : '';
+    const staticMark = row.tighter === 'static size' ? mark : '';
+    const unmeasured = 'not measured :grey_question:';
     return [
       `**${row.face}**`,
       `\`${row.target}\``,
       `\`${row.platform}\``,
-      `${kb(row.image, 1)} (${Math.floor(row.imagePct)}%)`,
-      `${kb(row.virtualSize, 1)} (${Math.floor(row.staticPct)}%)${mark}`,
+      row.measured ? `${kb(row.image, 1)} (${Math.floor(row.imagePct)}%)${imageMark}` : unmeasured,
+      row.measured ? `${kb(row.virtualSize, 1)} (${Math.floor(row.staticPct)}%)${staticMark}` : unmeasured,
       kb(row.free, 0),
       kb(row.resources, 0),
     ];

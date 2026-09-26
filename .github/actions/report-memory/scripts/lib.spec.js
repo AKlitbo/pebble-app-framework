@@ -46,7 +46,7 @@ describe('readBuildLog', () => {
   test('reads each platform in a sandbox that builds several', () => {
     const result = readBuildLog(RIDGELINE);
 
-    expect(result).toEqual([
+    expect(result.rows).toEqual([
       { target: 'ridgeline', platform: 'gabbro', resources: 24344, footprint: 24886, free: 106186 },
       { target: 'ridgeline', platform: 'emery', resources: 20872, footprint: 25592, free: 105480 },
     ]);
@@ -56,16 +56,21 @@ describe('readBuildLog', () => {
   test('matches each block to its own target when a face builds several', () => {
     const result = readBuildLog(GRIDLOCK);
 
-    expect(result.map((row) => [row.target, row.free])).toEqual([['gridlock-face', 71678], ['gridlock-app', 71682]]);
+    expect(result.rows.map((row) => [row.target, row.free])).toEqual([['gridlock-face', 71678], ['gridlock-app', 71682]]);
   });
 
-  /** A log cut off partway through a block would otherwise report a heap of undefined, which renders as NaN KB. */
-  test('leaves out a block missing one of its figures', () => {
+  /**
+   * A log cut off partway through a block would otherwise report a heap of undefined, which renders as NaN KB.
+   * The block is named as incomplete, since dropping it without a word left the platform missing from the table
+   * with nothing saying why.
+   */
+  test('names a block missing one of its figures as incomplete rather than a row', () => {
     const cut = RIDGELINE.split('\n').filter((line) => !line.includes('106186')).join('\n');
 
     const result = readBuildLog(cut);
 
-    expect(result.map((row) => row.platform)).toEqual(['emery']);
+    expect(result.rows.map((row) => row.platform)).toEqual(['emery']);
+    expect(result.incomplete).toEqual([{ target: 'ridgeline', platform: 'gabbro' }]);
   });
 });
 

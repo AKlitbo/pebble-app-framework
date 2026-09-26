@@ -9,7 +9,7 @@ import { describe, expect, test } from 'vitest';
 import { rankRows, renderReport } from './lib.js';
 
 function row(fields) {
-  return { face: 'face', target: 'face', platform: 'emery', image: 0, virtualSize: 0, resources: 0, footprint: 0, free: 0, ...fields };
+  return { face: 'face', target: 'face', platform: 'emery', image: 1000, virtualSize: 1000, resources: 0, footprint: 0, free: 0, ...fields };
 }
 
 describe('rankRows', () => {
@@ -22,6 +22,27 @@ describe('rankRows', () => {
 
     expect(result.map((entry) => entry.face)).toEqual(['tight', 'roomy']);
     expect(result[0].tighter).toBe('static size');
+  });
+
+  /** A binary that could not be read showed as 0% and sorted last, so a face that may be near a limit looked the safest. */
+  test('puts a row whose binary was missing first', () => {
+    const tight = row({ face: 'tight', virtualSize: 62000 });
+    const missing = row({ face: 'missing', image: 0, virtualSize: 0 });
+
+    const result = rankRows([tight, missing]);
+
+    expect(result.map((entry) => entry.face)).toEqual(['missing', 'tight']);
+    expect(result[0].measured).toBe(false);
+  });
+
+  /** A binary too short for its header read a static size of 0, so the face ranked as the safest when nobody knew its size. */
+  test('treats a static size of 0 as not measured', () => {
+    const tight = row({ face: 'tight', virtualSize: 62000 });
+    const short = row({ face: 'short', image: 40, virtualSize: 0 });
+
+    const result = rankRows([tight, short]);
+
+    expect(result.map((entry) => entry.face)).toEqual(['short', 'tight']);
   });
 });
 
@@ -36,7 +57,27 @@ describe('renderReport', () => {
 
     const result = renderReport(ranked);
 
-    const line = result.split('\n').find((text) => text.startsWith('| **face**'));
-    expect(line).toMatch(new RegExp(`%\\)${mark.replace(/[:]/g, '\\:')} \\|`));
+    const cells = result.split('\n').find((text) => text.startsWith('| **face**')).split(' | ');
+    expect(cells[4]).toMatch(new RegExp(`%\\)${mark}$`));
+  });
+
+  /** The mark always sat on Static, so a face near its app image cap sent the reader to the wrong column. */
+  test('marks the app image when that is the tighter limit', () => {
+    const ranked = rankRows([row({ image: 60000, virtualSize: 40000 })]);
+
+    const result = renderReport(ranked);
+
+    const cells = result.split('\n').find((text) => text.startsWith('| **face**')).split(' | ');
+    expect(cells[3]).toContain(':rotating_light:');
+    expect(cells[4]).not.toContain(':rotating_light:');
+  });
+
+  /** A row read as 0 KB looked like the smallest face rather than one nobody could measure. */
+  test('says a row whose binary was missing was not measured', () => {
+    const ranked = rankRows([row({ image: 0, virtualSize: 0 })]);
+
+    const result = renderReport(ranked);
+
+    expect(result).toContain('| not measured :grey_question: | not measured :grey_question: |');
   });
 });

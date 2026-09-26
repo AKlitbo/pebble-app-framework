@@ -12,7 +12,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { fail, step } = require('../../../shared/lib');
+const { fail, step, insideRepo } = require('../../../shared/lib');
 const { readBuildLog, readVirtualSize } = require('./lib');
 
 module.exports = step(async ({ core }) => {
@@ -20,7 +20,13 @@ module.exports = step(async ({ core }) => {
   const log = process.env.BUILD_LOG || '';
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
 
-  const logPath = path.resolve(workspace, log);
+  // an empty input would read the repo folder itself, since the runner does not enforce required inputs
+  // on a composite action
+  if (!log) {
+    fail('No log was given. Pass the build log the build step tees its output to.');
+  }
+  // the log is held inside the repo like every other action's path input
+  const logPath = path.join(workspace, insideRepo(log, 'log'));
   if (!fs.existsSync(logPath)) {
     fail(`No build log at ${log}. The build step has to tee its output there.`);
   }
@@ -29,7 +35,10 @@ module.exports = step(async ({ core }) => {
     fail(`${log} has no memory report. Either the build did not get as far as linking, or it was incremental and had nothing to relink.`);
   }
 
-  const blocks = readBuildLog(text);
+  const { rows: blocks, incomplete } = readBuildLog(text);
+  for (const block of incomplete) {
+    core.warning(`${block.target} on ${block.platform} printed a memory header without all its figures, so it has no row.`, { title: `${face} Memory` });
+  }
   if (blocks.length === 0) {
     fail(`${log} has a memory report, but none of its figures could be read. The SDK may have changed how it prints them.`);
   }
