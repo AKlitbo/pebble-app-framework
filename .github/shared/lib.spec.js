@@ -99,4 +99,18 @@ describe('markdownTable', () => {
 
     expect(result).toBe('| Message |\n| --- |\n| a \\| b |');
   });
+
+  /** The summary read <void> in a tsc message as an HTML tag, so Promise<void> showed as just Promise. */
+  test('escapes angle brackets inside a cell', () => {
+    const result = markdownTable(['Message'], [['Promise<void>']]);
+
+    expect(result).toBe('| Message |\n| --- |\n| Promise&lt;void&gt; |');
+  });
+
+  /** Inside backticks the summary shows an escape as written, so a typescript-eslint type read Promise&lt;void&gt;. */
+  test('leaves angle brackets inside backtick code alone', () => {
+    const result = markdownTable(['Message'], [['Unsafe argument of type `Promise<void>` for <x>']]);
+
+    expect(result).toBe('| Message |\n| --- |\n| Unsafe argument of type `Promise<void>` for &lt;x&gt; |');
+  });
 });

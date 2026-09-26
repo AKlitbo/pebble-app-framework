@@ -129,12 +129,18 @@ function outputTail(text, count = 40) {
 /**
  * A markdown table, with any | or line break in a cell made safe so it cannot break the row.
  *
+ * Angle brackets are escaped too, outside backtick code. The job summary reads `<void>` in a message such as
+ * `Promise<void>` as an HTML tag and drops it. Inside backticks it shows as written, and there an escape
+ * would show as the entity text.
+ *
  * @param headings The column headings.
  * @param rows The rows, each a list of cells in heading order.
  * @return The table as markdown.
  */
 function markdownTable(headings, rows) {
-  const cell = (value) => String(value).replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
+  // splitting on a capture group keeps the code spans, at the odd places in the list
+  const escapeTags = (text) => text.split(/(`[^`]*`)/).map((part, index) => (index % 2 === 1 ? part : part.replace(/</g, '&lt;').replace(/>/g, '&gt;'))).join('');
+  const cell = (value) => escapeTags(String(value).replace(/\|/g, '\\|').replace(/\r?\n/g, ' '));
   const row = (cells) => `| ${cells.map(cell).join(' | ')} |`;
   return [row(headings), row(headings.map(() => '---')), ...rows.map(row)].join('\n');
 }
@@ -149,4 +155,108 @@ function firstLine(text) {
   return String(text || '').split(/\r?\n/).map((line) => line.trim()).find(Boolean) || '';
 }
 
-module.exports = { fail, step, insideRepo, existingPath, repoPath, fenceFor, outputTail, markdownTable, firstLine };
+/**
+ * Reads a JSON file, failing with its name when it is missing or does not parse, such as after a stray
+ * trailing comma, rather than crashing with a stack trace.
+ *
+ * @param file The file's path.
+ * @param label How the message names the file, normally its path from the repo root.
+ * @return What the file holds.
+ */
+function readJson(file, label) {
+  try {
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch (error) {
+    fail(`${label} is missing or is not valid JSON. ${error.message}`);
+  }
+}
+
+// the colour codes a tool wraps its output in when it thinks a terminal is watching, as in ESC[93m
+// the escape is built from its character code, since lint refuses a control character inside a regex
+const COLOUR = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+
+/**
+ * Takes the terminal colour codes out of a tool's output, so its lines can be matched as plain text.
+ *
+ * @param text What the tool printed.
+ * @return The same text with no colour codes.
+ */
+function stripColour(text) {
+  return String(text || '').replace(COLOUR, '');
+}
+
+// a release tag, such as v2.0.0 or v3.0.0-rc.27
+const VERSION_TAG = /^v(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/;
+
+/**
+ * Whether a name is a release tag.
+ *
+ * @param name The tag or folder name, such as v2.0.0.
+ * @return True for a release tag, with or without a pre-release label.
+ */
+function isVersionTag(name) {
+  return VERSION_TAG.test(String(name));
+}
+
+/** A release tag's parts, with the pre-release label split on its dots. */
+function parseVersionTag(name) {
+  const match = VERSION_TAG.exec(String(name));
+  return { release: [Number(match[1]), Number(match[2]), Number(match[3])], pre: match[4] ? match[4].split('.') : [] };
+}
+
+/** Orders two pre-release labels the way semver does. A number sorts below a word, and a longer label wins a tie. */
+function comparePre(first, second) {
+  for (let index = 0; index < Math.min(first.length, second.length); index++) {
+    const firstPart = first[index];
+    const secondPart = second[index];
+    const firstIsNumber = /^\d+$/.test(firstPart);
+    const secondIsNumber = /^\d+$/.test(secondPart);
+    if (firstIsNumber && secondIsNumber && Number(firstPart) !== Number(secondPart)) {
+      return Number(firstPart) - Number(secondPart);
+    }
+    if (firstIsNumber !== secondIsNumber) {
+      return firstIsNumber ? -1 : 1;
+    }
+    if (!firstIsNumber && firstPart !== secondPart) {
+      return firstPart < secondPart ? -1 : 1;
+    }
+  }
+  return first.length - second.length;
+}
+
+/**
+ * Orders two release tags oldest first, the way semver does. A release candidate sorts below the release
+ * it leads up to, and rc.9 below rc.27.
+ *
+ * @param first A release tag, such as v3.0.0-rc.9.
+ * @param second Another release tag.
+ * @return Below zero when first is older, above zero when it is newer, and zero for the same version.
+ */
+function compareVersionTags(first, second) {
+  const older = parseVersionTag(first);
+  const newer = parseVersionTag(second);
+  for (let index = 0; index < 3; index++) {
+    if (older.release[index] !== newer.release[index]) {
+      return older.release[index] - newer.release[index];
+    }
+  }
+  if (older.pre.length === 0 || newer.pre.length === 0) {
+    return newer.pre.length - older.pre.length;
+  }
+  return comparePre(older.pre, newer.pre);
+}
+
+/**
+ * Whether a release tag carries a pre-release label, such as rc.1.
+ *
+ * @param name A release tag.
+ * @return True for a pre-release. A name that is not a release tag at all is not one.
+ */
+function isPrereleaseTag(name) {
+  return isVersionTag(name) && parseVersionTag(name).pre.length > 0;
+}
+
+module.exports = {
+  fail, step, insideRepo, existingPath, repoPath, fenceFor, outputTail, markdownTable, firstLine, stripColour, readJson,
+  isVersionTag, compareVersionTags, isPrereleaseTag,
+};
