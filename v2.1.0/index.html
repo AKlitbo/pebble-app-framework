@@ -8,6 +8,7 @@
     <script src="theme.js"></script>
     <script src="versions.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
@@ -41,7 +42,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -53,13 +54,17 @@
         <img class="logo" src="logo.svg" alt="" width="56" height="56" />
         <div class="head-text">
           <h1>Pebble App Framework</h1>
-          <p class="tagline">The shared engine behind my Pebble watchfaces. It holds the device C, the PebbleKit JS runtime and Clay config pieces, the waf build helpers, and the generators and build tooling every face uses.</p>
+          <p class="tagline">
+            The shared framework behind my Pebble watchfaces and watchapps: the device C, the PebbleKit JS runtime and
+            Clay config pieces, and the build tooling every face uses. Setup and usage are in the
+            <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4a9a4a7621d40b03b857048dd802ca4770ab2b90/README.md">README on GitHub</a>.
+          </p>
         </div>
         <div class="head-side">
           <div class="build">
             <b>v2.1.0</b><br />
             v2.1.0 @ 4a9a4a7<br />
-            built 2026-09-21
+            built 2026-09-26
           </div>
         </div>
       </header>
@@ -71,7 +76,8 @@
             <div class="card-top"><span class="lang">C</span><span class="kind">Doxygen</span></div>
             <h2>Device API</h2>
             <p>
-              The engine that runs on the watch. Panels, stores, the clock, and the message formats the phone sends.
+              The half of the framework that runs on the watch. Panels, stores, the clock, and the message formats the
+              phone sends.
             </p>
             <div class="card-foot"><span>c/core · c/pebble</span><span class="go">c/ →</span></div>
           </a>
@@ -92,7 +98,7 @@
           <a class="card" href="coverage/c/">
             <div class="card-top"><span class="lang">C</span><span class="kind">gcovr</span></div>
             <h2>Host C Specs</h2>
-            <p>Which lines of the engine's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
+            <p>Which lines of the framework's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
             <div class="pixels" title="98.0% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><span class="visually-hidden">98.0% of lines</span></div>
             <div class="card-foot"><span>make -C c/spec coverage</span><span class="go">coverage/c/ →</span></div>
           </a>
@@ -102,138 +108,10 @@
             <div class="card-top"><span class="lang">TS</span><span class="kind">Vitest v8</span></div>
             <h2>TypeScript Specs</h2>
             <p>Which lines of the phone runtime and the build tools the Vitest suite reaches.</p>
-            <div class="pixels" title="80.7% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">80.7% of lines</span></div>
+            <div class="pixels" title="80.6% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">80.6% of lines</span></div>
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>
-      </div>
-
-      <div class="readme-layout">
-        <nav class="toc" aria-label="README sections">
-          <div class="section-label">README</div>
-          <a href="#layout">Layout</a>
-<a href="#using-it">Using It</a>
-<a href="#versions">Versions</a>
-<a href="#tests">Tests</a>
-<a href="#docs">Docs</a>
-<a href="#ci">CI</a>
-<a href="#license">License</a>
-<a href="#ai-training">AI Training</a>
-        </nav>
-        <article class="readme"><h2 id="layout">Layout</h2>
-<p><strong>Engine Code</strong></p>
-<ul>
-<li><strong><code>c/</code></strong>: the device engine. <code>c/core/</code> is pure and host-testable. <code>c/pebble/</code> needs the SDK. <code>c/spec/</code> holds the host test harness.</li>
-<li><strong><code>ts/</code></strong>: the PebbleKit JS runtime (weather, stocks, calendar, Clay).</li>
-<li><strong><code>py/</code></strong>: the waf helpers that stage and build a face.</li>
-<li><strong><code>css/</code></strong>: the Pebble-64 colour palette the frame backgrounds use.</li>
-</ul>
-<p><strong>Tooling</strong></p>
-<ul>
-<li><strong><code>tools/</code></strong>: manifest, pkjs, icon, frame, thumbnail and Clay component generators.</li>
-<li><strong><code>config/</code></strong>: the shared tsconfig, eslint and vitest setup.</li>
-<li><strong><code>testing/</code></strong>: helpers the TypeScript specs share.</li>
-<li><strong><code>.githooks/</code></strong>: the pre-commit hook that runs lint and typecheck.</li>
-<li><strong><code>build.sh</code></strong>: builds a face&#39;s <code>.pbw</code> from WSL with the Pebble SDK installed.</li>
-</ul>
-<p><strong>CI and Docs</strong></p>
-<ul>
-<li><strong><code>.github/actions/</code></strong>: the GitHub Actions, each with its script and specs under <code>scripts/</code>. The engine&#39;s workflows run the verify actions, <code>build-doxygen</code>, <code>build-docs-site</code>, and <code>publish-docs-site</code>. The face repos&#39; workflows run <code>setup-pebble</code>, <code>report-memory</code> and <code>render-memory</code> in CI, and <code>prepare-release</code>, <code>setup-pebble</code> and <code>publish-release</code> to release a face, each reached as <code>lib/.github/actions/&lt;name&gt;</code>.</li>
-<li><strong><code>.github/shared/</code></strong>: the helpers and spec fakes the scripts in <code>.github/actions/</code> share.</li>
-<li><strong><code>docs/doxygen/</code></strong>: the Doxygen theme, logo, main page, and header.</li>
-<li><strong><code>docs/typedoc/</code></strong>: the look laid over TypeDoc&#39;s default theme.</li>
-<li><strong><code>docs/site/</code></strong>: the docs site&#39;s page templates, its stylesheets for the pages, the shared bar, and the coverage reports, the theme script, and the version picker&#39;s script.</li>
-<li><strong><code>docs/tools/</code></strong>: renders the docs site&#39;s home page and its changelog, notices, and licence pages, and puts the shared bar on every page Doxygen, TypeDoc, and the coverage reports write.</li>
-</ul>
-<h2 id="using-it">Using It</h2>
-<p>The engine does not build on its own. It is mounted as a git submodule one folder down inside a repo of faces, most often at <code>lib/</code>, and that repo lists the folder as an npm workspace so the engine&#39;s dependencies install once. A repo holding one face keeps it at the root, laid out like a plain Pebble project with <code>config/</code>, <code>src/</code> and <code>resources/</code>. A repo of several keeps each at <code>watchfaces/&lt;face&gt;/</code>, or at <code>watchfaces/&lt;family&gt;/&lt;face&gt;/</code> beside the code the family shares.</p>
-<pre><code class="language-sh">git submodule add https://github.com/AKlitbo/pebble-app-framework.git lib
-git config core.hooksPath lib/.githooks
-npm install
-bash lib/build.sh &lt;face&gt;</code></pre>
-<p>A repo of faces reaches the engine&#39;s tools through scripts in its own <code>package.json</code>, each running <code>node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON</code> on the tool. The generators take a face name, and run for every face that needs them when given none.</p>
-<table>
-<thead>
-<tr>
-<th align="left">Script</th>
-<th align="left">Tool</th>
-<th align="left">Face</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>gen:clay</code></td>
-<td align="left"><code>tools/clay-components/generate-components.ts</code></td>
-<td align="left">optional</td>
-</tr>
-<tr>
-<td align="left"><code>gen:thumbnails</code></td>
-<td align="left"><code>tools/thumbnails/embed-thumbnails.ts</code></td>
-<td align="left">optional</td>
-</tr>
-<tr>
-<td align="left"><code>gen:icons</code></td>
-<td align="left"><code>tools/icons/generate-icons.ts</code></td>
-<td align="left">optional</td>
-</tr>
-<tr>
-<td align="left"><code>gen:frame</code></td>
-<td align="left"><code>tools/frame/generate-frame.ts</code></td>
-<td align="left">required, then the frame</td>
-</tr>
-<tr>
-<td align="left"><code>dev:clay</code></td>
-<td align="left"><code>tools/dev/clay-preview.ts</code></td>
-<td align="left">required</td>
-</tr>
-</tbody></table>
-<p>The folder can have any name, as long as it sits straight under the repo root and the repo&#39;s <code>package.json</code> lists it in <code>workspaces</code>. That listing is how the tools tell a mounted engine from one checked out on its own. Faces import the engine by relative path, so their imports use whatever name the repo picked, and the build stages the engine into <code>targets/&lt;target&gt;/</code> under that same name. Build output all lands in <code>targets/</code>, which the repo should ignore.</p>
-<p>Each repo pins an exact engine commit, so an engine change reaches a face only when that repo moves its <code>lib</code> pointer.</p>
-<h2 id="versions">Versions</h2>
-<p>Engine releases are git tags such as <code>v1.0.0</code>. A repo using the engine moves its <code>lib</code> pointer to a tag:</p>
-<pre><code class="language-sh">git -C lib fetch --tags
-git -C lib checkout v1.0.0
-git add lib
-git commit -m &quot;move the engine to v1.0.0&quot;</code></pre>
-<p><code>git submodule status</code> then shows the tag beside the commit. Work between releases can point <code>lib</code> at any commit, but a face release checks that <code>lib</code> sits exactly on a tag and stops if it does not.</p>
-<h2 id="tests">Tests</h2>
-<p>Everything here runs on its own, with no faces needed:</p>
-<pre><code class="language-sh">make -C c/spec      <span class="cmt"># the host C suite</span>
-npm ci
-npm test            <span class="cmt"># providers, Clay pieces, build tools against fixtures/, and the action scripts</span>
-npm run lint
-npm run typecheck</code></pre>
-<p>The docs site tools have a package of their own in <code>docs/</code>, with their own scripts, so a repo of faces never installs TypeDoc, marked, or Prettier:</p>
-<pre><code class="language-sh">npm ci --prefix docs
-npm --prefix docs run test
-npm --prefix docs run lint            <span class="cmt"># the site&#39;s browser script, which the engine&#39;s own lint leaves out</span>
-npm --prefix docs run typecheck
-npm --prefix docs run format:check    <span class="cmt"># or format to fix the templates, stylesheets, and theme script</span></code></pre>
-<p>A few specs also check real faces, such as whether each face&#39;s generated Clay components and thumbnails are up to date. They skip here and run in a repo that mounts the engine at <code>lib/</code> beside its <code>watchfaces/</code>.</p>
-<h2 id="docs">Docs</h2>
-<p>The docs site is built from four parts. Doxygen 1.18.0 builds the C docs from the doc comments in <code>c/</code>, TypeDoc builds the TypeScript docs from the exported code in <code>ts/</code>, and both test suites write a coverage report. A small script then builds the home page from this README, the changelog, the notices, and the licences. An older Doxygen ignores settings the Doxyfile uses.</p>
-<p>To build it locally, run these from the repo root in this order. Doxygen, <code>make</code>, and gcovr need WSL or Linux.</p>
-<pre><code class="language-sh">npm ci --prefix docs           <span class="cmt"># TypeDoc and marked, kept out of the engine&#39;s own install</span>
-doxygen                        <span class="cmt"># the C docs</span>
-npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
-npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
-make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
-npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4a9a4a7621d40b03b857048dd802ca4770ab2b90/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-app-framework/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
-<h2 id="ci">CI</h2>
-<ul>
-<li><strong><code>engine-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>
-<li><strong><code>docs-site-publish.yml</code></strong>: builds the docs site on every PR, and publishes a version of it from main and from each pushed <code>v*</code> tag.</li>
-</ul>
-<h2 id="license">License</h2>
-<p><strong>Source Code:</strong> © 2026 Andrew Klitbo (Null Syntax), dual-licensed. You may choose either:</p>
-<ul>
-<li>the <a href="licences/agpl-3.0-or-later/">GNU Affero General Public License v3.0 or later</a>, or</li>
-<li>the <a href="licences/polyform-noncommercial-1.0.0/">PolyForm Noncommercial License 1.0.0</a>.</li>
-</ul>
-<p>See <a href="licences/">LICENSE</a> and <a href="notices/">NOTICES</a>. The early history of this code was published in <a href="https://github.com/AKlitbo/pebble-watchfaces">pebble-watchfaces</a> under the PolyForm Noncommercial License, and copies taken from that history keep those terms.</p>
-<h2 id="ai-training">AI Training</h2>
-<p>Please do not use this repository for training, fine-tuning, or evaluating artificial intelligence or machine learning models. This is a request and not a term of either license.</p>
-</article>
       </div>
 
       <footer class="site-foot">

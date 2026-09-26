@@ -1,13 +1,4 @@
 <!-- HTML header for doxygen 1.18.0 -->
-<!--
-  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
-  Two things are changed. The scripts at the end of the head load the site's theme.js and
-  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
-  double escaped outline links. The title area keeps only the line naming this part of the site, to
-  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
-  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
-  the same way when Doxygen moves up a version, then put those two changes back.
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
@@ -30,31 +21,21 @@
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="pebble.css" rel="stylesheet" type="text/css"/>
-<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
 <script type="text/javascript" src="../theme.js"></script>
 <script type="text/javascript" src="../versions.js"></script>
-<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
-<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
-<script type="text/javascript">
-  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
-  DoxygenAwesomeDarkModeToggle.init();
-  DoxygenAwesomeInteractiveToc.init();
-</script>
 <script type="text/javascript">
   // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
   // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
-  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
   // TODO: remove once Doxygen stops double escaping names in navtree.js
   (function () {
     var entities = {
       '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
       '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
     };
-    function unescapeOutline() {
-      var panel = document.getElementById('page-nav-contents');
-      if (!panel) {
-        return;
-      }
+    function unescapeOutline(panel) {
       panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
         // mark before changing the text, so the change cannot trigger this again
         link.setAttribute('data-unescaped', '');
@@ -66,13 +47,35 @@
         );
       });
     }
-    new MutationObserver(unescapeOutline).observe(
-      document.documentElement,
-      { childList: true, subtree: true }
-    );
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
   })();
 </script>
+<!-- site-bar head -->
 <link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -85,7 +88,7 @@
     <option value="v2.1.0" selected>v2.1.0</option>
   </select>
   <div class="site-bar-links">
-    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
@@ -101,7 +104,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -192,12 +195,6 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_0fstruc
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a0ebb7e2470a25382914057567df6b6fc" name="a0ebb7e2470a25382914057567df6b6fc"></a>
-<a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
-<tr class="memdesc:a0ebb7e2470a25382914057567df6b6fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a8c57d2ae2893bf12ecf2938512fdf39d" name="a8c57d2ae2893bf12ecf2938512fdf39d"></a>
-time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
-<tr class="memdesc:a8c57d2ae2893bf12ecf2938512fdf39d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When that agenda arrived. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a3adc1e2c434f4609f082da78980b03fb" name="a3adc1e2c434f4609f082da78980b03fb"></a>
 uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memdesc:a3adc1e2c434f4609f082da78980b03fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_STOCK, so a restore can tell this blob from another shape. <br /></td></tr>
@@ -216,15 +213,6 @@ bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a99366657db6debaa3b1e59f6d094ea37" name="a99366657db6debaa3b1e59f6d094ea37"></a>
 bool&#160;</td><td class="memItemRight"><b>bluetooth_connected</b></td></tr>
 <tr class="memdesc:a99366657db6debaa3b1e59f6d094ea37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone is connected. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a9d9ce9226e75c270100d5ec903c2def2" name="a9d9ce9226e75c270100d5ec903c2def2"></a>
-uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
-<tr class="memdesc:a9d9ce9226e75c270100d5ec903c2def2"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="aa561dc7a98c82760ae578d581a6fade7" name="aa561dc7a98c82760ae578d581a6fade7"></a>
-char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
-<tr class="memdesc:aa561dc7a98c82760ae578d581a6fade7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude as text, as the phone sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ab334df8e695943ac85f46fa33b38c444" name="ab334df8e695943ac85f46fa33b38c444"></a>
-char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
-<tr class="memdesc:ab334df8e695943ac85f46fa33b38c444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="aacd6798200fa6693dd1d61678a3a5426" name="aacd6798200fa6693dd1d61678a3a5426"></a>
 int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
 <tr class="memdesc:aacd6798200fa6693dd1d61678a3a5426"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
@@ -255,6 +243,15 @@ uint16_t&#160;</td><td class="memItemRight"><b>step_hourly</b> [HOURS_PER_DAY]</
 <tr class="memitem:"><td class="memItemLeft"><a id="af5b1b14ffb090792e3552dd0b40f350b" name="af5b1b14ffb090792e3552dd0b40f350b"></a>
 int&#160;</td><td class="memItemRight"><b>step_hours</b></td></tr>
 <tr class="memdesc:af5b1b14ffb090792e3552dd0b40f350b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of those hours are real (0 to 24). <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a9d9ce9226e75c270100d5ec903c2def2" name="a9d9ce9226e75c270100d5ec903c2def2"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
+<tr class="memdesc:a9d9ce9226e75c270100d5ec903c2def2"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aa561dc7a98c82760ae578d581a6fade7" name="aa561dc7a98c82760ae578d581a6fade7"></a>
+char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
+<tr class="memdesc:aa561dc7a98c82760ae578d581a6fade7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude as text, as the phone sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ab334df8e695943ac85f46fa33b38c444" name="ab334df8e695943ac85f46fa33b38c444"></a>
+char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
+<tr class="memdesc:ab334df8e695943ac85f46fa33b38c444"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a237a05ff153b38d7cb6339835b41ab76" name="a237a05ff153b38d7cb6339835b41ab76"></a>
 uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memdesc:a237a05ff153b38d7cb6339835b41ab76"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_WEATHER, so a restore can tell this blob from another shape. <br /></td></tr>
@@ -309,6 +306,12 @@ int&#160;</td><td class="memItemRight"><b>dew_point</b></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a3b313ff9b49afb5828c3bf78702c8d29" name="a3b313ff9b49afb5828c3bf78702c8d29"></a>
 time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
 <tr class="memdesc:a3b313ff9b49afb5828c3bf78702c8d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the last reading landed, or 0 for never. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a0ebb7e2470a25382914057567df6b6fc" name="a0ebb7e2470a25382914057567df6b6fc"></a>
+<a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
+<tr class="memdesc:a0ebb7e2470a25382914057567df6b6fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a8c57d2ae2893bf12ecf2938512fdf39d" name="a8c57d2ae2893bf12ecf2938512fdf39d"></a>
+time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
+<tr class="memdesc:a8c57d2ae2893bf12ecf2938512fdf39d"><td class="mdescLeft">&#160;</td><td class="mdescRight">When that agenda arrived. <br /></td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following files:</div><!-- contents -->
 </div><!-- doc-content -->

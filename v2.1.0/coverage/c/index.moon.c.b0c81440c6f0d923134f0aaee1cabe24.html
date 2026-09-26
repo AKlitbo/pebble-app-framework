@@ -7,11 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="index.css"/>
     <script src="index.js"></script>
-  <script src="../../theme.js"></script>
+  <!-- site-bar head -->
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../site-bar.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../coverage.css">
+<!-- /site-bar head -->
 </head>
 
   <body>
@@ -26,7 +29,7 @@
   <div class="site-bar-links">
     <a data-section="c" href="../../c/index.html">Device API</a>
     <a data-section="ts" href="../../ts/index.html">Phone API</a>
-    <a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-c" aria-current="location" href="../../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
   </div>
   <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
@@ -40,7 +43,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -219,7 +222,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">"clock/moon.h"</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;clock/moon.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l8" href="#l8">8</a></td>
@@ -660,14 +663,14 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">        </span><span class="s">"NEW"</span><span class="p">,</span><span class="w"> </span><span class="s">"WAX CRES"</span><span class="p">,</span><span class="w"> </span><span class="s">"1ST QTR"</span><span class="p">,</span><span class="w"> </span><span class="s">"WAX GIB"</span><span class="p">,</span></td>
+        <td class="src "><span class="w">        </span><span class="s">&quot;NEW&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;WAX CRES&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1ST QTR&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;WAX GIB&quot;</span><span class="p">,</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l66" href="#l66">66</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">        </span><span class="s">"FULL"</span><span class="p">,</span><span class="w"> </span><span class="s">"WAN GIB"</span><span class="p">,</span><span class="w"> </span><span class="s">"3RD QTR"</span><span class="p">,</span><span class="w"> </span><span class="s">"WAN CRES"</span><span class="p">,</span></td>
+        <td class="src "><span class="w">        </span><span class="s">&quot;FULL&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;WAN GIB&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;3RD QTR&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;WAN CRES&quot;</span><span class="p">,</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l67" href="#l67">67</a></td>
@@ -711,7 +714,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-09-21 02:57:08
+          at 2026-09-26 01:13:07
         </footer>
       </div>
     </div>
