@@ -7,7 +7,9 @@
  * the two ways a deadline goes wrong: firing more often than the interval, which spends the user's
  * phone battery and a provider's quota, and never firing at all, which leaves the face showing
  * yesterday's weather with nothing to say it is stale. The polling state on top of them decides
- * when polling is on at all, so a store seeded with fixtures or switched off never asks.
+ * when polling is on at all, so a store seeded with fixtures or switched off never asks. The
+ * reconnect check has the same two ways to go wrong, and bluetooth dropping in and out is what
+ * would make it fetch too often.
  */
 #include "unity.h"
 
@@ -238,6 +240,38 @@ void test_turn_fires_once_when_the_deadline_comes_round(void)
     TEST_ASSERT_FALSE(second);
 }
 
+/** @brief A reading that never arrived is asked for as soon as the phone is back, or the face waits a whole interval. */
+void test_reconnect_asks_for_a_reading_that_never_arrived(void)
+{
+    bool result = store_poll_reconnect_due(-1, POLL_MIN);
+
+    TEST_ASSERT_TRUE(result);
+}
+
+/** @brief A reading younger than its interval is left alone, so bluetooth flapping cannot fetch faster than polling. */
+void test_reconnect_leaves_a_fresh_reading_alone(void)
+{
+    bool result = store_poll_reconnect_due(INTERVAL - 1, POLL_MIN);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A reading a whole interval old is the one that went stale while the phone was away. */
+void test_reconnect_asks_for_a_reading_a_whole_interval_old(void)
+{
+    bool result = store_poll_reconnect_due(INTERVAL, POLL_MIN);
+
+    TEST_ASSERT_TRUE(result);
+}
+
+/** @brief Polling turned off stays off on reconnect too, even for a reading that never arrived. */
+void test_reconnect_leaves_polling_that_is_off_alone(void)
+{
+    bool result = store_poll_reconnect_due(-1, 0);
+
+    TEST_ASSERT_FALSE(result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -261,6 +295,10 @@ int main(void)
     RUN_TEST(test_set_aims_the_deadline_at_the_next_boundary);
     RUN_TEST(test_turn_is_never_due_once_the_store_is_off);
     RUN_TEST(test_turn_fires_once_when_the_deadline_comes_round);
+    RUN_TEST(test_reconnect_asks_for_a_reading_that_never_arrived);
+    RUN_TEST(test_reconnect_leaves_a_fresh_reading_alone);
+    RUN_TEST(test_reconnect_asks_for_a_reading_a_whole_interval_old);
+    RUN_TEST(test_reconnect_leaves_polling_that_is_off_alone);
 
     return UNITY_END();
 }

@@ -62,6 +62,31 @@ static inline bool store_poll_due(int poll_min, time_t *next, time_t now)
     return true;
 }
 
+/**
+ * @brief Whether a reading is worth asking for again now that the phone is back.
+ *
+ * The phone's side may have been closed the whole time it was away, so a face catches up a reading
+ * that went stale meanwhile. Only a reading that never arrived, or one at least its own interval old,
+ * is asked for, so bluetooth dropping in and out cannot fetch faster than the normal polling. Polling
+ * turned off is left alone, the same as its store.
+ *
+ * @param age_s Seconds since the reading arrived, or below 0 when it never has.
+ * @param poll_min Minutes between polls. 0 or less means polling is off.
+ * @return Whether to ask for the reading again.
+ */
+static inline bool store_poll_reconnect_due(int age_s, int poll_min)
+{
+    if (poll_min <= 0)
+    {
+        return false;
+    }
+    // a clock set back makes a saved reading's age negative too, so it reads as never arrived and the
+    // reconnect asks again. the first answer resets the age, and a reconnect means the phone is there
+    // to give one, so it costs about one fetch. counting that age as fresh instead would skip every
+    // reconnect fetch until the clock caught up, which can be hours
+    return age_s < 0 || age_s >= poll_min * SECONDS_PER_MINUTE;
+}
+
 /** @brief One store's polling: its interval, whether it polls at all, and when it is next due. */
 typedef struct
 {
