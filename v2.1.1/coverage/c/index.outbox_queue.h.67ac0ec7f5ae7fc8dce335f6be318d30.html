@@ -7,11 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="index.css"/>
     <script src="index.js"></script>
-  <script src="../../theme.js"></script>
+  <!-- site-bar head -->
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../site-bar.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../coverage.css">
+<!-- /site-bar head -->
 </head>
 
   <body>
@@ -26,7 +29,7 @@
   <div class="site-bar-links">
     <a data-section="c" href="../../c/index.html">Device API</a>
     <a data-section="ts" href="../../ts/index.html">Phone API</a>
-    <a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-c" aria-current="location" href="../../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
   </div>
   <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
@@ -40,7 +43,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -226,7 +229,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @brief The outbox's work queue, its failed set, and the slot holding whatever is in flight.</span></td>
+        <td class="src "><span class="cm"> * @brief The outbox&#39;s work queue, its failed set, and the slot holding whatever is in flight.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l4" href="#l4">4</a></td>
@@ -555,7 +558,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * Zero-initialized is the empty state, since `OUTBOX_NONE` is the enum's zero.</span></td>
+        <td class="src "><span class="cm"> * Zero-initialized is the empty state, since `OUTBOX_NONE` is the enum&#39;s zero.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l51" href="#l51">51</a></td>
@@ -583,7 +586,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">    </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">queue</span><span class="p">[</span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">];</span><span class="w">  </span><span class="c1">///&lt; This pass's work queue, oldest first</span></td>
+        <td class="src "><span class="w">    </span><span class="n">OutboxJob</span><span class="w"> </span><span class="n">queue</span><span class="p">[</span><span class="n">OUTBOX_QUEUE_MAX</span><span class="p">];</span><span class="w">  </span><span class="c1">///&lt; This pass&#39;s work queue, oldest first</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l55" href="#l55">55</a></td>
@@ -2056,7 +2059,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * Nothing reaches a phone that is not connected, so a store's next poll asks again once it is back</span></td>
+        <td class="src "><span class="cm"> * Nothing reaches a phone that is not connected, so a store&#39;s next poll asks again once it is back</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l249" href="#l249">249</a></td>
@@ -2149,7 +2152,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-09-23 02:28:53
+          at 2026-09-26 01:12:41
         </footer>
       </div>
     </div>

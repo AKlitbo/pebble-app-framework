@@ -1,13 +1,4 @@
 <!-- HTML header for doxygen 1.18.0 -->
-<!--
-  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
-  Two things are changed. The scripts at the end of the head load the site's theme.js and
-  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
-  double escaped outline links. The title area keeps only the line naming this part of the site, to
-  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
-  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
-  the same way when Doxygen moves up a version, then put those two changes back.
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
@@ -30,31 +21,21 @@
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="pebble.css" rel="stylesheet" type="text/css"/>
-<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
 <script type="text/javascript" src="../theme.js"></script>
 <script type="text/javascript" src="../versions.js"></script>
-<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
-<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
-<script type="text/javascript">
-  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
-  DoxygenAwesomeDarkModeToggle.init();
-  DoxygenAwesomeInteractiveToc.init();
-</script>
 <script type="text/javascript">
   // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
   // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
-  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
   // TODO: remove once Doxygen stops double escaping names in navtree.js
   (function () {
     var entities = {
       '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
       '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
     };
-    function unescapeOutline() {
-      var panel = document.getElementById('page-nav-contents');
-      if (!panel) {
-        return;
-      }
+    function unescapeOutline(panel) {
       panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
         // mark before changing the text, so the change cannot trigger this again
         link.setAttribute('data-unescaped', '');
@@ -66,13 +47,35 @@
         );
       });
     }
-    new MutationObserver(unescapeOutline).observe(
-      document.documentElement,
-      { childList: true, subtree: true }
-    );
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
   })();
 </script>
+<!-- site-bar head -->
 <link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -85,7 +88,7 @@
     <option value="v2.1.1" selected>v2.1.1</option>
   </select>
   <div class="site-bar-links">
-    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
@@ -101,7 +104,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -203,7 +206,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('functions_s.ht
 <li>step_hourly&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#aebcaea8e6c16f4f83258984729e701c1">[struct].s_state</a>, <a class="el" href="structHealthSeed.html#a1ed293dabaee597deaed84e6448b0eb0">HealthSeed</a></li>
 <li>step_hours&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#af5b1b14ffb090792e3552dd0b40f350b">[struct].s_state</a>, <a class="el" href="structHealthSeed.html#ae8ed84681436e54cc8f65a3270cea4e1">HealthSeed</a>, <a class="el" href="structWeatherHourly.html#a7cc8b049ea31e32b4c89ee2f49294eaa">WeatherHourly</a></li>
 <li>steps&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#ab2a1a1b19162e6ab14cc18a126a7725f">[struct].s_state</a>, <a class="el" href="structDevFixture.html#a3a510b559e708632cab59487a3fd9e54">DevFixture</a>, <a class="el" href="structDevShot.html#a2e288d0b1865a8bde030569b98274f60">DevShot</a>, <a class="el" href="structHealthSeed.html#a192572a06658ca20b3f0f436379b0c05">HealthSeed</a></li>
-<li>strip&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#a0ebb7e2470a25382914057567df6b6fc">[struct].s_state</a>, <a class="el" href="structCalendarSeed.html#ae30b59c3ff9a7e08801f875e88e94e50">CalendarSeed</a>, <a class="el" href="structStockSeed.html#ad8f30db92dc3f9f9c3127c38b6aa58ca">StockSeed</a></li>
+<li>strip&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#a245b7bb94f1403b5c18554b3b88da49b">[struct].s_state</a>, <a class="el" href="structCalendarSeed.html#ae30b59c3ff9a7e08801f875e88e94e50">CalendarSeed</a>, <a class="el" href="structStockSeed.html#ad8f30db92dc3f9f9c3127c38b6aa58ca">StockSeed</a></li>
 <li>sunrise&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#a00fe86ac601abcee5c50ea45ac1df152">[struct].s_state</a>, <a class="el" href="structWeatherSeed.html#ae98c7da3fd4c33502a0b16eee2559adb">WeatherSeed</a></li>
 <li>sunset&#160;:&#160;<a class="el" href="struct_0fstruct_0e_8s__state.html#a66b813693c7577f236cb129a08151a5b">[struct].s_state</a>, <a class="el" href="structWeatherSeed.html#a8ae79ebf1a025752b1c6930608493313">WeatherSeed</a></li>
 <li>symbol&#160;:&#160;<a class="el" href="structStockSlot.html#a297cf0bffbcaf225d6be1979660efbb0">StockSlot</a></li>

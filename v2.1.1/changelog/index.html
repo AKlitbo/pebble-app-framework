@@ -8,6 +8,7 @@
     <script src="../theme.js"></script>
     <script src="../versions.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
@@ -41,7 +42,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -51,9 +52,9 @@
     <div class="wrap">
       <main class="page">
         <h1>Changelog</h1>
-        <div class="readme"><p>All notable API changes to the Pebble App Framework are documented in this file.</p>
+        <div class="readme"><p>All notable API changes to the Pebble Watchface Engine are documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="211-2026-09-22"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v2.1.0...v2.1.1">2.1.1</a> - 2026-09-22</h2>
+<h2 id="211---2026-09-22"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.1.0...v2.1.1">2.1.1</a> - 2026-09-22</h2>
 <h3 id="changed">Changed</h3>
 <ul>
 <li>The <code>locationsearch</code> prompt to pick a city again now draws as a callout, with an accent bar and a badge. A face can repaint it through <code>.loc-note</code>.</li>
@@ -67,15 +68,15 @@
 <li>Fixed an older calendar fetch that answered last overwriting a newer one, such as the old feed showing after the iCal URL changed. Only the newest fetch&#39;s answer is sent to the watch.</li>
 <li>Fixed <code>-DBUILD_WATCHAPP</code> never being passed, so an app target built as though it were a watchface. A face&#39;s <code>#ifdef BUILD_WATCHAPP</code> code now reaches the app, which for Gridlock is the weather request it makes as it opens. Run <code>npm run build:manifests</code> to rewrite the sandboxes, which <code>build.sh</code> and CI already do.</li>
 </ul>
-<h2 id="210-2026-09-20"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
+<h2 id="210---2026-09-20"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Added <code>layout_has_any_block</code> in <code>c/core/layout/layout_string.h</code>, which says whether a layout wire string holds a placeable block. The catalog bound comes in as an argument.</li>
 <li>Added <code>layout_role_pick</code> in <code>c/core/layout/layout_role.h</code>, which picks between a face&#39;s day, night and Quiet Time layouts. A trigger with no layout assigned falls through to the next one rather than drawing an empty grid.</li>
 <li>Added time zones to a <code>locationsearch</code> field on a timezone key. It matches UTC, a zone name, or a typed offset such as <code>utc+05:30</code> as well as a city, and a zone pick persists <code>{label, offset, tz, fixed}</code> with no coordinates.</li>
 </ul>
-<h2 id="200-2026-09-17"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v1.1.0...v2.0.0">2.0.0</a> - 2026-09-17</h2>
-<h3 id="added-2">Added</h3>
+<h2 id="200---2026-09-17"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.1.0...v2.0.0">2.0.0</a> - 2026-09-17</h2>
+<h3 id="added-1">Added</h3>
 <ul>
 <li>Added <code>node-version</code> and <code>sdk-version</code> inputs to the <code>setup-pebble</code> action. Both are optional and default to Node 24 and the latest SDK.</li>
 <li>Added <code>report-memory</code> and <code>render-memory</code> actions, which rank each face&#39;s memory use in the CI run summary.</li>
@@ -83,7 +84,7 @@
 <li>Added an optional <code>cancel</code> callback to the builder&#39;s <code>DragSpec</code>, called when a pointer is taken away mid-drag. Builders that remove an item from their model in <code>lift</code> can restore it here.</li>
 <li>Added <code>createDedupedSender</code> to <code>ts/pkjs/send-queue.ts</code>. It wraps a queueSend so an unchanged payload is skipped and a payload whose send failed is not counted as delivered, which is what the weather, stock, and calendar pushes all use now.</li>
 </ul>
-<h3 id="changed-2">Changed</h3>
+<h3 id="changed-1">Changed</h3>
 <ul>
 <li><strong>Breaking:</strong> The engine can now be mounted under any folder name. The face repo declares that folder in its <code>package.json</code> workspaces, which is how the tools locate the engine.</li>
 <li><code>build.sh</code> and the waf build now find faces through the same lookup as the other tools. <code>build.sh</code> no longer needs the repo&#39;s <code>build:pkjs</code> script.</li>
@@ -105,7 +106,7 @@
 <li><strong>Breaking:</strong> Removed the <code>tools/ci/</code> scripts. A face repo moving to this engine should switch its workflows to the new actions in the same commit.</li>
 <li><strong>Breaking:</strong> Removed <code>weather_store_location_name</code> and the weather store&#39;s <code>LOCATION_NAME</code> handler. Nothing read them. <code>STORE_TAG_WEATHER</code> moves to <code>0x12</code> with the struct, so a saved reading is refused once after the upgrade and the weather panels show placeholders until the next poll.</li>
 </ul>
-<h3 id="fixed-2">Fixed</h3>
+<h3 id="fixed-1">Fixed</h3>
 <ul>
 <li>Fixed settings replies larger than the outbox being sent partially. They are now skipped unless they fit in full.</li>
 <li>Fixed deleted calendar events remaining on the agenda. An empty calendar or removed feed now clears them.</li>
@@ -123,13 +124,13 @@
 <li>Fixed <code>readout_weather_cond</code> cutting a condition token at the first underscore rather than at a trailing <code>_NIGHT</code>. It now reads the generated label table, which applies the same rule as the phone.</li>
 <li>Fixed <code>ICON_AUTOTRIM</code> and <code>ICON_TRIM_LOG</code> being impossible to override. They are <code>#ifndef</code>-guarded now, so a face can set either one before including <code>icon_cache.h</code> as the header always claimed.</li>
 </ul>
-<h2 id="110-2026-09-12"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v1.0.0...v1.1.0">1.1.0</a> - 2026-09-12</h2>
-<h3 id="added-3">Added</h3>
+<h2 id="110---2026-09-12"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.0.0...v1.1.0">1.1.0</a> - 2026-09-12</h2>
+<h3 id="added-2">Added</h3>
 <ul>
 <li>Added support for a repo that holds a single face at its root, laid out like a plain Pebble project with <code>config/</code>, <code>src/</code> and <code>resources/</code>. The build and the face release find that face by the name in its <code>config/pebble.appinfo.json</code>, and its changelog sits at the repo root.</li>
 </ul>
-<h2 id="100-2026-09-12"><a href="https://github.com/AKlitbo/pebble-app-framework/releases/tag/v1.0.0">1.0.0</a> - 2026-09-12</h2>
-<h3 id="added-4">Added</h3>
+<h2 id="100---2026-09-12"><a href="https://github.com/AKlitbo/pebble-watchface-engine/releases/tag/v1.0.0">1.0.0</a> - 2026-09-12</h2>
+<h3 id="added-3">Added</h3>
 <ul>
 <li>First release of the engine as its own repo, split out of the shared <code>lib/</code> in pebble-watchfaces.</li>
 </ul>

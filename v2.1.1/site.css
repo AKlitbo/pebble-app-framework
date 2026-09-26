@@ -121,6 +121,15 @@ body {
   max-width: 62ch;
 }
 
+.tagline a {
+  color: var(--signal);
+  text-underline-offset: 2px;
+}
+
+.tagline a:hover {
+  color: var(--signal-hover);
+}
+
 .head-side {
   display: flex;
   align-items: center;
@@ -183,8 +192,9 @@ body {
   transition: transform 80ms steps(2);
 }
 
-/* hovering presses the card onto its shadow, like a button going down */
-.card:hover,
+/* hovering presses the card onto its shadow, like a button going down. the hover is read off the slot,
+   which stays put, since a card moving out from under a pointer at its edge would flicker in and out */
+.card-slot:hover .card,
 .card:focus-visible {
   transform: translate(4px, 4px);
 }
@@ -194,7 +204,7 @@ body {
   outline-offset: 3px;
 }
 
-.card:active {
+.card-slot:active .card {
   transform: translate(6px, 6px);
 }
 
@@ -257,7 +267,7 @@ body {
   white-space: nowrap;
 }
 
-.card:hover .go {
+.card-slot:hover .go {
   color: var(--signal-hover);
 }
 
@@ -280,66 +290,9 @@ body {
   box-shadow: inset 0 0 0 1px var(--rule);
 }
 
-/* ---------------------------------------------------------------- README */
+/* ---------------------------------------------------------------- rendered markdown */
 
-.readme-layout {
-  display: grid;
-  grid-template-columns: 170px minmax(0, 1fr);
-  gap: 48px;
-  margin-top: 56px;
-  padding-top: 36px;
-  border-top: 1px solid var(--rule);
-}
-
-@media (max-width: 760px) {
-  .readme-layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-}
-
-.toc {
-  position: sticky;
-  top: 24px;
-  align-self: start;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.toc .section-label {
-  margin: 0 0 12px;
-}
-
-.toc a {
-  font: 400 13.5px/1.5 var(--mono);
-  color: var(--ink-muted);
-  text-decoration: none;
-  padding: 3px 0;
-}
-
-.toc a:hover {
-  color: var(--signal);
-}
-
-@media (max-width: 760px) {
-  .toc {
-    position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 4px 16px;
-  }
-
-  .toc .section-label {
-    flex-basis: 100%;
-  }
-}
-
-/* rendered markdown, on the home page and on every other page */
-.readme {
-  max-width: 70ch;
-}
-
+/* the changelog, the notices, and the licences, which run the full width of the page like the footer under them */
 .readme > :first-child {
   margin-top: 0;
 }
@@ -402,10 +355,6 @@ body {
   padding: 0;
   font: inherit;
   overflow-wrap: normal;
-}
-
-.readme .cmt {
-  color: var(--ink-muted);
 }
 
 /* a licence reads exactly as written, so it keeps its own line breaks and wraps only what runs too long */

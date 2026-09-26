@@ -59,6 +59,32 @@ html.dark-mode {
   color-scheme: dark;
 }
 
+/* with no script the system setting decides, as it does in site.css */
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) {
+    --cov-paper: #121114;
+    --cov-raised: #1b1a1e;
+    --cov-ink: #e4e1da;
+    --cov-muted: #9a968e;
+    --cov-rule: #2e2c33;
+    --cov-signal: #ff4700;
+    --cov-high: #1e3519;
+    --cov-high-strong: #6fbf4a;
+    --cov-medium: #2f2710;
+    --cov-medium-strong: #e0b43a;
+    --cov-low: #3f1b1e;
+    --cov-low-strong: #ff6b5e;
+    --cov-none: #25232a;
+    --cov-code-comment: #9a968e;
+    --cov-code-keyword: #ff55aa;
+    --cov-code-type: #55aaff;
+    --cov-code-string: #aaff55;
+    --cov-code-number: #ffaa55;
+    --cov-code-preprocessor: #55ffff;
+    color-scheme: dark;
+  }
+}
+
 /* ---------------------------------------------------------------- both reports */
 
 html,
@@ -71,6 +97,19 @@ body {
 body {
   margin: 0 !important;
   font-family: var(--cov-sans) !important;
+}
+
+/* Istanbul's wrapper is as tall as the window so its footer sits at the bottom, and with the bar above it
+   every page scrolled by the bar's height. the body stacks them in a column and the wrapper fills only what
+   the bar leaves. gcovr has no wrapper, so its pages keep their own layout */
+body:has(> .wrapper) {
+  display: flex;
+  flex-direction: column;
+}
+
+body:has(> .wrapper) > .wrapper {
+  flex: 1 0 auto;
+  min-height: 0;
 }
 
 a:link,
