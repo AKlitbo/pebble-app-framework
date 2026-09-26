@@ -1,13 +1,4 @@
 <!-- HTML header for doxygen 1.18.0 -->
-<!--
-  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
-  Two things are changed. The scripts at the end of the head load the site's theme.js and
-  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
-  double escaped outline links. The title area keeps only the line naming this part of the site, to
-  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
-  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
-  the same way when Doxygen moves up a version, then put those two changes back.
--->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
@@ -30,31 +21,21 @@
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 <link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 <link href="pebble.css" rel="stylesheet" type="text/css"/>
-<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
 <script type="text/javascript" src="../theme.js"></script>
 <script type="text/javascript" src="../versions.js"></script>
-<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
-<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
-<script type="text/javascript">
-  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
-  DoxygenAwesomeDarkModeToggle.init();
-  DoxygenAwesomeInteractiveToc.init();
-</script>
 <script type="text/javascript">
   // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
   // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
-  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
   // TODO: remove once Doxygen stops double escaping names in navtree.js
   (function () {
     var entities = {
       '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
       '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
     };
-    function unescapeOutline() {
-      var panel = document.getElementById('page-nav-contents');
-      if (!panel) {
-        return;
-      }
+    function unescapeOutline(panel) {
       panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
         // mark before changing the text, so the change cannot trigger this again
         link.setAttribute('data-unescaped', '');
@@ -66,13 +47,35 @@
         );
       });
     }
-    new MutationObserver(unescapeOutline).observe(
-      document.documentElement,
-      { childList: true, subtree: true }
-    );
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
   })();
 </script>
+<!-- site-bar head -->
 <link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -85,7 +88,7 @@
     <option value="v1.0.0" selected>v1.0.0</option>
   </select>
   <div class="site-bar-links">
-    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
@@ -101,7 +104,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -189,8 +192,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('index.html',''
   <div class="headertitle"><div class="title">Device API </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>The half of the engine that runs on the watch. <code>c/core</code> is plain C that builds and tests on any machine, and <code>c/pebble</code> is the part that talks to the Pebble SDK.</p>
-<p>The README, the licences, and the coverage reports are on the <a href="../index.html">docs home page</a>. </p>
+<div class="textblock"><p>The half of the framework that runs on the watch. <code>c/core</code> is plain C that builds and tests on any machine, and <code>c/pebble</code> is the part that talks to the Pebble SDK.</p>
+<p>The licences, the coverage reports, and a link to the README on GitHub are on the <a href="../index.html">docs home page</a>. </p>
 </div></div><!-- PageDoc -->
 <a href="doxygen_crawl.html"></a>
 </div><!-- contents -->

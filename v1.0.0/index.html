@@ -8,6 +8,7 @@
     <script src="theme.js"></script>
     <script src="versions.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
@@ -41,7 +42,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -53,13 +54,17 @@
         <img class="logo" src="logo.svg" alt="" width="56" height="56" />
         <div class="head-text">
           <h1>Pebble App Framework</h1>
-          <p class="tagline">The shared engine behind a family of Pebble watchfaces. It holds the device C, the PebbleKit JS runtime and Clay config pieces, the waf build helpers, and the generators and build tooling every face uses.</p>
+          <p class="tagline">
+            The shared framework behind my Pebble watchfaces and watchapps: the device C, the PebbleKit JS runtime and
+            Clay config pieces, and the build tooling every face uses. Setup and usage are in the
+            <a href="https://github.com/AKlitbo/pebble-app-framework/blob/00648aef84a7369c2ea21533c0e9fe6fabf5ddfe/README.md">README on GitHub</a>.
+          </p>
         </div>
         <div class="head-side">
           <div class="build">
             <b>v1.0.0</b><br />
             v1.0.0 @ 00648ae<br />
-            built 2026-09-18
+            built 2026-09-26
           </div>
         </div>
       </header>
@@ -71,7 +76,8 @@
             <div class="card-top"><span class="lang">C</span><span class="kind">Doxygen</span></div>
             <h2>Device API</h2>
             <p>
-              The engine that runs on the watch. Panels, stores, the clock, and the message formats the phone sends.
+              The half of the framework that runs on the watch. Panels, stores, the clock, and the message formats the
+              phone sends.
             </p>
             <div class="card-foot"><span>c/core · c/pebble</span><span class="go">c/ →</span></div>
           </a>
@@ -92,7 +98,7 @@
           <a class="card" href="coverage/c/">
             <div class="card-top"><span class="lang">C</span><span class="kind">gcovr</span></div>
             <h2>Host C Specs</h2>
-            <p>Which lines of the engine's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
+            <p>Which lines of the framework's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
             <div class="pixels" title="97.6% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><span class="visually-hidden">97.6% of lines</span></div>
             <div class="card-foot"><span>make -C c/spec coverage</span><span class="go">coverage/c/ →</span></div>
           </a>
@@ -106,62 +112,6 @@
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>
-      </div>
-
-      <div class="readme-layout">
-        <nav class="toc" aria-label="README sections">
-          <div class="section-label">README</div>
-          <a href="#layout">Layout</a>
-<a href="#using-it">Using it</a>
-<a href="#versions">Versions</a>
-<a href="#tests">Tests</a>
-<a href="#license">License</a>
-<a href="#ai-training">AI Training</a>
-        </nav>
-        <article class="readme"><h2 id="layout">Layout</h2>
-<ul>
-<li><strong><code>c/</code></strong>: the device engine. <code>c/core/</code> is pure and host-testable, <code>c/pebble/</code> needs the SDK, <code>c/spec/</code> holds the host test harness.</li>
-<li><strong><code>ts/</code></strong>: the PebbleKit JS runtime (weather, stocks, calendar, Clay).</li>
-<li><strong><code>py/</code></strong>: the waf helpers that stage and build a face.</li>
-<li><strong><code>css/</code></strong>: the Pebble-64 colour palette the frame backgrounds use.</li>
-<li><strong><code>testing/</code></strong>: shared test helpers.</li>
-<li><strong><code>tools/</code></strong>: manifest, pkjs, icon, frame, thumbnail and Clay component generators, plus CI scripts.</li>
-<li><strong><code>config/</code></strong>: the shared tsconfig, eslint and vitest setup.</li>
-<li><strong><code>build.sh</code></strong>: builds a face&#39;s <code>.pbw</code> from WSL with the Pebble SDK installed.</li>
-</ul>
-<h2 id="using-it">Using it</h2>
-<p>The engine does not build on its own. It is mounted as a git submodule at <code>lib/</code> inside a watchfaces repo, which holds the faces under <code>watchfaces/</code> and lists <code>lib</code> as an npm workspace so the engine&#39;s dependencies install once.</p>
-<pre><code class="language-sh">git submodule add https://github.com/AKlitbo/pebble-app-framework.git lib
-git config core.hooksPath lib/.githooks
-npm install
-bash lib/build.sh &lt;face&gt;</code></pre>
-<p>The mount point has to be <code>lib/</code>. Faces import the engine by relative path, and the waf build finds the repo root by looking for it.</p>
-<p>Each repo pins an exact engine commit, so an engine change reaches a face only when that repo moves its <code>lib</code> pointer.</p>
-<h2 id="versions">Versions</h2>
-<p>Engine releases are git tags such as <code>v1.0.0</code>. A repo using the engine moves its <code>lib</code> pointer to a tag:</p>
-<pre><code class="language-sh">git -C lib fetch --tags
-git -C lib checkout v1.0.0
-git add lib
-git commit -m &quot;move the engine to v1.0.0&quot;</code></pre>
-<p><code>git submodule status</code> then shows the tag beside the commit. Work between releases can point <code>lib</code> at any commit, but a face release checks that <code>lib</code> sits exactly on a tag and stops if it does not.</p>
-<h2 id="tests">Tests</h2>
-<p>Everything here runs on its own, with no faces needed:</p>
-<pre><code class="language-sh">make -C c/spec      <span class="cmt"># the host C suite</span>
-npm ci
-npm test            <span class="cmt"># the TypeScript specs: providers, Clay pieces, build tools against fixtures/</span>
-npm run lint
-npm run typecheck</code></pre>
-<p>A few specs also check real faces, such as whether each face&#39;s generated Clay components and thumbnails are up to date. They skip here and run in a repo that mounts the engine at <code>lib/</code> beside its <code>watchfaces/</code>.</p>
-<h2 id="license">License</h2>
-<p><strong>Source Code:</strong> © 2026 Andrew Klitbo (Null Syntax), dual-licensed. You may choose either:</p>
-<ul>
-<li>the <a href="licences/agpl-3.0-or-later/">GNU Affero General Public License v3.0 or later</a>, or</li>
-<li>the <a href="licences/polyform-noncommercial-1.0.0/">PolyForm Noncommercial License 1.0.0</a>.</li>
-</ul>
-<p>See <a href="licences/">LICENSE</a> and <a href="notices/">NOTICES</a>. The early history of this code was published in <a href="https://github.com/AKlitbo/pebble-watchfaces">pebble-watchfaces</a> under the PolyForm Noncommercial License, and copies taken from that history keep those terms.</p>
-<h2 id="ai-training">AI Training</h2>
-<p>Please do not use this repository for training, fine-tuning, or evaluating artificial intelligence or machine learning models. This is a request and not a term of either license.</p>
-</article>
       </div>
 
       <footer class="site-foot">

@@ -81,3 +81,30 @@ code,
 pre {
   font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }
+
+/* TypeDoc sizes its sticky sidebars to the window less its own toolbar, and the shared bar above the toolbar
+   pushed their last entries past the bottom until the page scrolled, out of reach on a page too short to
+   scroll. the bar's height comes off as well, about 49px where it is one row, so the sidebars end that much
+   short of the bottom once the bar scrolls away, which costs less than entries nobody can reach */
+:root {
+  --site-bar-height: 49px;
+}
+
+@media (min-width: 770px) and (max-width: 1399px) {
+  .col-sidebar {
+    max-height: calc(
+      100vh - var(--dim-header-height) - var(--dim-footer-height) - 2 * var(--dim-container-main-margin-y) -
+        var(--site-bar-height)
+    );
+  }
+}
+
+@media (min-width: 1200px) {
+  .page-menu,
+  .site-menu {
+    max-height: calc(
+      100vh - var(--dim-header-height) - var(--dim-footer-height) - 2 * var(--dim-container-main-margin-y) -
+        var(--site-bar-height)
+    );
+  }
+}

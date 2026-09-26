@@ -7,11 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="index.css"/>
     <script src="index.js"></script>
-  <script src="../../theme.js"></script>
+  <!-- site-bar head -->
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../site-bar.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../coverage.css">
+<!-- /site-bar head -->
 </head>
 
   <body>
@@ -26,7 +29,7 @@
   <div class="site-bar-links">
     <a data-section="c" href="../../c/index.html">Device API</a>
     <a data-section="ts" href="../../ts/index.html">Phone API</a>
-    <a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-c" aria-current="location" href="../../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
   </div>
   <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
@@ -40,7 +43,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -184,7 +187,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">"clock/duration.h"</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;clock/duration.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l6" href="#l6">6</a></td>
@@ -261,7 +264,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">4</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">snprintf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="s">"%d:%02d"</span><span class="p">,</span><span class="w"> </span><span class="n">minutes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="n">minutes</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">snprintf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%d:%02d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">minutes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="n">minutes</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l16" href="#l16">16</a></td>
@@ -373,7 +376,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">2</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">snprintf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="s">"%dh %dm"</span><span class="p">,</span><span class="w"> </span><span class="n">hours</span><span class="p">,</span><span class="w"> </span><span class="n">mins</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">snprintf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%dh %dm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">hours</span><span class="p">,</span><span class="w"> </span><span class="n">mins</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l30" href="#l30">30</a></td>
@@ -401,7 +404,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">2</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">snprintf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="s">"%dm"</span><span class="p">,</span><span class="w"> </span><span class="n">mins</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">snprintf</span><span class="p">(</span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%dm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mins</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l34" href="#l34">34</a></td>
@@ -431,7 +434,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-09-18 08:28:21
+          at 2026-09-26 01:17:10
         </footer>
       </div>
     </div>
