@@ -4,7 +4,26 @@
  * Nothing here runs a real tool. Each fake records its calls so a spec can check what the script
  * reported, and answers only what that spec asks it to.
  */
+import fs from 'node:fs';
+import path from 'node:path';
 import { vi } from 'vitest';
+import { tempDir } from '../../ts/testing/temp-dir.ts';
+
+/**
+ * Writes files into a fresh temp folder, which is removed once the spec that made it has run.
+ *
+ * @param files Each file's path from the folder, and its text.
+ * @param prefix The start of the folder's name, which says which spec left it if one ever stays.
+ * @return The folder.
+ */
+export function tempTree(files, prefix = 'action-spec-') {
+  const root = tempDir(prefix);
+  for (const [file, text] of Object.entries(files)) {
+    fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    fs.writeFileSync(path.join(root, file), text);
+  }
+  return root;
+}
 
 /**
  * A fake of @actions/core with the parts the scripts use.

@@ -2,12 +2,20 @@ name: Setup Pebble
 description: >
   Installs Node, the project's npm dependencies, pebble-tool and the Pebble SDK so `bash lib/build.sh`
   can run, then checks the toolchain answers and puts the pebble-tool and SDK versions on the job summary.
-  Linux runners only.
+  Given a face that paf sync has already filled and installed, it installs the Node, SDK, and pebble-tool
+  that face's framework records. Linux runners only.
 
 # a face repo's ci.yml and release.yml both run this, since a release built with a different toolchain
 # from CI is a release nobody tested
 
 inputs:
+  face:
+    description: >
+      A face that paf sync has already filled and installed. Its framework's project/toolchain.json names
+      the Node major, SDK, and pebble-tool to install, over node-version, sdk-version, and
+      pebble-tool-version.
+    required: false
+    default: ''
   node-version:
     description: The Node version to install.
     required: false
@@ -19,18 +27,61 @@ inputs:
       between runs, which latest cannot be, since a cached latest would quietly stop being the latest.
     required: false
     default: latest
+  pebble-tool-version:
+    description: >
+      The pebble-tool to install, such as 5.0.40. Empty takes the newest. With a pinned sdk-version
+      that is the newest on the day the cache was made, which later runs keep until the runner image
+      changes. A face always pins both.
+    required: false
+    default: ''
 
 runs:
   using: composite
   steps:
+    - name: Read the Face's Toolchain
+      id: toolchain
+      if: inputs.face != ''
+      uses: actions/github-script@v9
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        FACE: ${{ inputs.face }}
+      with:
+        # the input reaches the script through the environment, never through this body
+        script: |
+          const path = require('path');
+          const run = require(path.join(process.env.ACTION_PATH, 'scripts', 'toolchain.js'));
+          return run({ core });
+
+    # a face's framework decides its versions. without a face they come from the inputs
+    - name: Pick the Versions
+      id: versions
+      shell: bash
+      env:
+        FROM_FACE_SDK: ${{ steps.toolchain.outputs.sdk }}
+        FROM_FACE_TOOL: ${{ steps.toolchain.outputs.pebble-tool }}
+        INPUT_SDK: ${{ inputs.sdk-version }}
+        INPUT_TOOL: ${{ inputs.pebble-tool-version }}
+      run: |
+        # an input the face's framework overrides is named, so a run meant to try another version says why it did not
+        if [ -n "$FROM_FACE_SDK" ] && [ "$INPUT_SDK" != "latest" ] && [ "$INPUT_SDK" != "$FROM_FACE_SDK" ]; then
+          echo "::warning title=Setup Pebble::sdk-version $INPUT_SDK is ignored, since the face's framework records SDK $FROM_FACE_SDK"
+        fi
+        if [ -n "$FROM_FACE_TOOL" ] && [ -n "$INPUT_TOOL" ] && [ "$INPUT_TOOL" != "$FROM_FACE_TOOL" ]; then
+          echo "::warning title=Setup Pebble::pebble-tool-version $INPUT_TOOL is ignored, since the face's framework records pebble-tool $FROM_FACE_TOOL"
+        fi
+        echo "sdk=${FROM_FACE_SDK:-$INPUT_SDK}" >> "$GITHUB_OUTPUT"
+        echo "pebble-tool=${FROM_FACE_TOOL:-$INPUT_TOOL}" >> "$GITHUB_OUTPUT"
+
+    # a face was installed by paf sync before this, so there is nothing left for an npm cache to speed up
     - name: Setup Node
       uses: actions/setup-node@v7
       with:
-        node-version: ${{ inputs.node-version }}
-        cache: 'npm'
+        node-version: ${{ steps.toolchain.outputs.node || inputs.node-version }}
+        cache: ${{ inputs.face == '' && 'npm' || '' }}
 
     # the pkjs bundle requires @rebble/clay, so a full install is needed
     - name: Install Dependencies
+      if: inputs.face == ''
       shell: bash
       run: npm ci
 
@@ -52,7 +103,7 @@ runs:
     # cache, or every pinned build would restore a pebble with nothing to run on
     - name: Read the Runner Image and Python
       id: runner
-      if: inputs.sdk-version != 'latest'
+      if: steps.versions.outputs.sdk != 'latest'
       shell: bash
       run: |
         echo "image=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
@@ -65,7 +116,7 @@ runs:
     # only kept when the whole job passes, and a face build that fails would download it every time
     - name: Restore pebble-tool and the SDK
       id: cache
-      if: inputs.sdk-version != 'latest'
+      if: steps.versions.outputs.sdk != 'latest'
       uses: actions/cache/restore@v6
       with:
         path: |
@@ -73,21 +124,22 @@ runs:
           ~/.local/share/uv/tools/pebble-tool
           ~/.local/share/uv/python
           ~/.local/share/pebble-sdk
-        key: pebble-sdk-${{ inputs.sdk-version }}-${{ runner.arch }}-${{ steps.runner.outputs.image }}-python${{ steps.runner.outputs.python }}
+        key: pebble-sdk-${{ steps.versions.outputs.sdk }}-tool${{ steps.versions.outputs.pebble-tool }}-${{ runner.arch }}-${{ steps.runner.outputs.image }}-python${{ steps.runner.outputs.python }}
 
     - name: Install pebble-tool and the SDK
       if: steps.cache.outputs.cache-hit != 'true'
       shell: bash
       env:
-        SDK_VERSION: ${{ inputs.sdk-version }}
+        SDK_VERSION: ${{ steps.versions.outputs.sdk }}
+        PEBBLE_TOOL: ${{ steps.versions.outputs.pebble-tool }}
       run: |
         set -euo pipefail
         curl -LsSf https://astral.sh/uv/install.sh | sh
-        uv tool install pebble-tool
+        uv tool install "pebble-tool${PEBBLE_TOOL:+==$PEBBLE_TOOL}"
         pebble sdk install "$SDK_VERSION"
 
     - name: Save pebble-tool and the SDK
-      if: inputs.sdk-version != 'latest' && steps.cache.outputs.cache-hit != 'true'
+      if: steps.versions.outputs.sdk != 'latest' && steps.cache.outputs.cache-hit != 'true'
       uses: actions/cache/save@v6
       with:
         path: |
@@ -95,13 +147,13 @@ runs:
           ~/.local/share/uv/tools/pebble-tool
           ~/.local/share/uv/python
           ~/.local/share/pebble-sdk
-        key: pebble-sdk-${{ inputs.sdk-version }}-${{ runner.arch }}-${{ steps.runner.outputs.image }}-python${{ steps.runner.outputs.python }}
+        key: pebble-sdk-${{ steps.versions.outputs.sdk }}-tool${{ steps.versions.outputs.pebble-tool }}-${{ runner.arch }}-${{ steps.runner.outputs.image }}-python${{ steps.runner.outputs.python }}
 
     - name: Verify Pebble
       uses: actions/github-script@v9
       env:
         ACTION_PATH: ${{ github.action_path }}
-        SDK_VERSION: ${{ inputs.sdk-version }}
+        SDK_VERSION: ${{ steps.versions.outputs.sdk }}
       with:
         # the input reaches the script through the environment, never through this body
         script: |

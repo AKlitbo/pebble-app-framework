@@ -12,7 +12,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { fail, step, insideRepo } = require('../../../shared/lib');
+const { fail, step, insideRepo, faceProject } = require('../../../shared/lib');
 const { readBuildLog, readVirtualSize } = require('./lib');
 
 module.exports = step(async ({ core }) => {
@@ -43,9 +43,12 @@ module.exports = step(async ({ core }) => {
     fail(`${log} has a memory report, but none of its figures could be read. The SDK may have changed how it prints them.`);
   }
 
+  // the build writes targets/ into the face's project, which is its own folder or its family's
+  const { rel } = faceProject(workspace, face);
+
   const rows = blocks.map((block) => {
     // a missing binary reads as 0 rather than dropping the row, so the gap still shows in the table
-    const binRel = path.posix.join('targets', block.target, 'build', block.platform, 'pebble-app.bin');
+    const binRel = rel(`targets/${block.target}/build/${block.platform}/pebble-app.bin`);
     const binPath = path.join(workspace, binRel);
     let image = 0;
     let virtualSize = 0;

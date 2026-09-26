@@ -3,12 +3,14 @@
  *
  * repoPath decides where every annotation lands, so a path it gets wrong puts a failure on no line or on
  * the wrong file. step decides whether a failing check reads as a plain failure or as a crash in the
- * script. existingPath is what stops a mistyped input reaching a tool. Those are what is worth pinning.
+ * script. existingPath is what stops a mistyped input reaching a tool. findFaceProject decides where a
+ * release and a memory report look for a face's build output. Those are what is worth pinning.
  */
 import fs from 'node:fs';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { fakeCore } from './fakes.js';
-import { existingPath, fail, fenceFor, markdownTable, repoPath, step } from './lib.js';
+import { fakeCore, tempTree } from './fakes.js';
+import path from 'node:path';
+import { existingPath, faceProject, fail, fenceFor, findFaceProject, markdownTable, repoPath, step } from './lib.js';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -112,5 +114,124 @@ describe('markdownTable', () => {
     const result = markdownTable(['Message'], [['Unsafe argument of type `Promise<void>` for <x>']]);
 
     expect(result).toBe('| Message |\n| --- |\n| Unsafe argument of type `Promise<void>` for &lt;x&gt; |');
+  });
+});
+
+/** Writes files into a fresh temp folder for the lookup to search. */
+function tree(files) {
+  return tempTree(files, 'face-project-');
+}
+
+describe('findFaceProject', () => {
+  /** A family with its own framework keeps its build output in its own folder, not the repo root. */
+  test('finds the family folder a face in it builds from', () => {
+    const root = tree({
+      'watchfaces/mosaic/core/.gitkeep': '',
+      'watchfaces/mosaic/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }',
+    });
+
+    const result = findFaceProject(root, 'gridlock');
+
+    expect(result).toEqual({ project: path.join(root, 'watchfaces', 'mosaic'), face: path.join(root, 'watchfaces', 'mosaic', 'gridlock') });
+  });
+
+  /**
+   * A folder of faces with no core/ is not a family, and the tools in its lib/ find no faces there. Taken
+   * as the project, the release read a lib/ whose tools could not find the face.
+   */
+  test('finds nothing in a folder under watchfaces/ that is neither a family nor a face', () => {
+    const root = tree({ 'watchfaces/contour/ridgeline/config/pebble.appinfo.json': '{ "name": "ridgeline" }' });
+
+    const result = findFaceProject(root, 'ridgeline');
+
+    expect(result).toBeNull();
+  });
+
+  /**
+   * A face that is a project of its own builds there, where the tools name it by its appinfo. Found by
+   * its folder instead, its release tag never matched the face the build made.
+   */
+  test('finds a face that is its own project by its appinfo name', () => {
+    const root = tree({ 'watchfaces/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock-face" }' });
+
+    const result = findFaceProject(root, 'gridlock-face');
+
+    expect(result).toEqual({ project: path.join(root, 'watchfaces', 'gridlock'), face: path.join(root, 'watchfaces', 'gridlock') });
+  });
+
+  /** A repo keeps its apps under watchapps/, and a release of one found nothing there and stopped. */
+  test('finds a face in a family under watchapps/', () => {
+    const root = tree({
+      'watchapps/toolbox/core/.gitkeep': '',
+      'watchapps/toolbox/timer/config/pebble.appinfo.json': '{ "name": "timer" }',
+    });
+
+    const result = findFaceProject(root, 'timer');
+
+    expect(result).toEqual({ project: path.join(root, 'watchapps', 'toolbox'), face: path.join(root, 'watchapps', 'toolbox', 'timer') });
+  });
+
+  /** A family can be a repo of its own, with its faces beside its core/, and setup-pebble has to find them there. */
+  test('finds a face straight under a family at the repo root', () => {
+    const root = tree({
+      'core/.gitkeep': '',
+      'ridgeline/config/pebble.appinfo.json': '{ "name": "ridgeline" }',
+    });
+
+    const result = findFaceProject(root, 'ridgeline');
+
+    expect(result).toEqual({ project: root, face: path.join(root, 'ridgeline') });
+  });
+
+  /** A repo that is one face names it in its appinfo, since the folder is named after wherever it was cloned. */
+  test('finds a face at the repo root by its appinfo name', () => {
+    const root = tree({ 'config/pebble.appinfo.json': '{ "name": "lcars-stardate" }' });
+
+    const result = findFaceProject(root, 'lcars-stardate');
+
+    expect(result).toEqual({ project: root, face: root });
+  });
+
+  /** A release tag names one face, and picking either of two would publish the wrong face's build and notes. */
+  test('stops on two faces with the same name', () => {
+    const root = tree({
+      'watchfaces/mosaic/core/.gitkeep': '',
+      'watchfaces/mosaic/clock/config/pebble.appinfo.json': '{ "name": "clock" }',
+      'watchapps/toolbox/core/.gitkeep': '',
+      'watchapps/toolbox/clock/config/pebble.appinfo.json': '{ "name": "clock" }',
+    });
+
+    const result = () => findFaceProject(root, 'clock');
+
+    expect(result).toThrow(/Two faces are named 'clock', at watchfaces\/mosaic\/clock and watchapps\/toolbox\/clock/);
+  });
+
+  /** A release tag naming a face the repo does not have has to stop the release, not build from nowhere. */
+  test('finds nothing for a face the repo does not have', () => {
+    const root = tree({ 'core/.gitkeep': '' });
+
+    const result = findFaceProject(root, 'missing');
+
+    expect(result).toBeNull();
+  });
+
+  /** A face input reaching out of the repo climbed to the filesystem root, and the toolchain and build output were read from there. */
+  test('finds nothing for a name that reaches into another folder', () => {
+    const base = tree({ 'repo/core/.gitkeep': '', 'other/face/config/pebble.appinfo.json': '{ "name": "face" }' });
+
+    const result = findFaceProject(path.join(base, 'repo'), '../other/face');
+
+    expect(result).toBeNull();
+  });
+});
+
+describe('faceProject', () => {
+  /** A mistyped release tag fell back to the repo root and stopped on a lib/ that was never there, rather than on the name. */
+  test('stops on a face the repo does not have', () => {
+    const root = tree({ 'watchfaces/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }' });
+
+    const result = () => faceProject(root, 'gridlok');
+
+    expect(result).toThrow("This repo has no face called 'gridlok'.");
   });
 });

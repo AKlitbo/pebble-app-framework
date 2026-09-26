@@ -6,7 +6,8 @@
  * folder from its own action folder.
  */
 const fs = require('fs');
-const { posix } = require('path');
+const path = require('path');
+const { posix } = path;
 
 /** A failure the script expects, such as a failing test, as opposed to a crash in the script itself. */
 class ExpectedFailure extends Error {}
@@ -256,7 +257,92 @@ function isPrereleaseTag(name) {
   return isVersionTag(name) && parseVersionTag(name).pre.length > 0;
 }
 
+/** Whether a folder holds a face. */
+function holdsFace(dir) {
+  return fs.existsSync(path.join(dir, 'config', 'pebble.appinfo.json'));
+}
+
+/** The name in a face's appinfo, which names it when the face is the root of its project. */
+function appinfoName(root, dir) {
+  const file = path.join(dir, 'config', 'pebble.appinfo.json');
+  const rel = path.relative(root, file).split(path.sep).join('/');
+  return readJson(file, rel).name;
+}
+
+/**
+ * Finds a face by name, and the project folder it builds from.
+ *
+ * The project is the folder with the framework in its lib/. A repo that is one face or one family is a
+ * project itself. A repo of several keeps each face and each family under watchfaces/ or watchapps/ as
+ * a project of its own. The two folders only sort faces from apps, and a project in either is laid out
+ * the same. A face goes by the name the tools give it where it builds: its appinfo's when it is a project
+ * on its own, since its folder is named after wherever it was cloned, and its folder's in a family.
+ *
+ * A face's name is its release tag, so two faces with the same name stop the lookup rather than have
+ * one of them picked, which would publish the wrong face's build and notes under the tag.
+ *
+ * @param repoRoot The repo root.
+ * @param name The face's name.
+ * @return The project and face folders, or null when the repo has no such face.
+ */
+function findFaceProject(repoRoot, name) {
+  // inside a project this repeats the rules of tools/faces.ts, so a new place a face can sit in one has
+  // to be added in both. the face has to be found before its lib/ is known, so faces.ts cannot be asked first
+  // a face's name is one folder name, so one reaching into another folder, or out of the repo, is none
+  if (!name || /[\\/]/.test(name) || name === '.' || name === '..') {
+    return null;
+  }
+  const root = path.resolve(repoRoot);
+  const projects = [root];
+  for (const folder of ['watchfaces', 'watchapps']) {
+    const dir = path.join(root, folder);
+    if (fs.existsSync(dir)) {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (entry.isDirectory()) {
+          projects.push(path.join(dir, entry.name));
+        }
+      }
+    }
+  }
+
+  const found = [];
+  for (const project of projects) {
+    if (holdsFace(project)) {
+      if (appinfoName(root, project) === name) {
+        found.push({ project, face: project });
+      }
+    } else if (fs.existsSync(path.join(project, 'core')) && holdsFace(path.join(project, name))) {
+      found.push({ project, face: path.join(project, name) });
+    }
+  }
+
+  if (found.length > 1) {
+    const where = found.map((match) => path.relative(root, match.face).split(path.sep).join('/') || '.').join(' and ');
+    fail(`Two faces are named '${name}', at ${where}. A face's name has to be unique in the repo.`);
+  }
+  return found[0] || null;
+}
+
+/**
+ * The project folder a face builds from, and the framework in its lib/.
+ *
+ * @param root The repo root.
+ * @param name The face's name, or empty for the repo root.
+ * @return The project folder, the framework folder, and `rel`, which gives either or a file in them as a
+ *   path from the repo root.
+ */
+function faceProject(root, name) {
+  const found = name ? findFaceProject(root, name) : null;
+  if (name && !found) {
+    fail(`This repo has no face called '${name}'.`);
+  }
+  const project = found ? found.project : path.resolve(root);
+  const framework = path.join(project, 'lib');
+  const rel = (file = '') => path.relative(root, path.resolve(project, file)).split(path.sep).join('/') || '.';
+  return { project, framework, rel };
+}
+
 module.exports = {
   fail, step, insideRepo, existingPath, repoPath, fenceFor, outputTail, markdownTable, firstLine, stripColour, readJson,
-  isVersionTag, compareVersionTags, isPrereleaseTag,
+  isVersionTag, compareVersionTags, isPrereleaseTag, findFaceProject, faceProject,
 };

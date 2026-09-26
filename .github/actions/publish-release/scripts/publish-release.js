@@ -9,11 +9,8 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { fail, step, firstLine, markdownTable, isPrereleaseTag, readJson } = require('../../../shared/lib');
+const { fail, step, firstLine, markdownTable, isPrereleaseTag, readJson, faceProject } = require('../../../shared/lib');
 const { assetName } = require('./lib');
-
-// this script sits in .github/actions/publish-release/scripts/ inside the framework
-const ENGINE = path.resolve(__dirname, '..', '..', '..', '..');
 
 module.exports = step(async ({ core, exec }) => {
   const tag = process.env.RELEASE_TAG;
@@ -22,8 +19,14 @@ module.exports = step(async ({ core, exec }) => {
   const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
   const repo = process.env.GITHUB_REPOSITORY ? ['--repo', process.env.GITHUB_REPOSITORY] : [];
 
-  const manifests = path.join(ENGINE, 'tools', 'manifest', 'build-manifests.ts');
-  const listed = await exec.getExecOutput('node', ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', manifests, '--targets', face], { ignoreReturnCode: true, silent: true });
+  // the face's targets and its build output sit in the folder it builds from, and the targets come from
+  // the framework in that folder's lib/
+  const { project, framework: lib, rel: projectRel } = faceProject(workspace, face);
+  if (!fs.existsSync(path.join(lib, 'package.json'))) {
+    fail(`${projectRel(lib)}/ holds no framework, so there is no telling which targets the face builds. Run paf sync before this step.`);
+  }
+  const manifests = path.join(lib, 'tools', 'manifest', 'build-manifests.ts');
+  const listed = await exec.getExecOutput('node', ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', manifests, '--targets', face], { ignoreReturnCode: true, silent: true, cwd: project });
   const targets = listed.stdout.split(/\s+/).filter(Boolean);
   if (listed.exitCode !== 0 || targets.length === 0) {
     fail(`build-manifests.ts --targets ${face} exited ${listed.exitCode} without naming a target. ${firstLine(listed.stderr)}`);
@@ -34,15 +37,15 @@ module.exports = step(async ({ core, exec }) => {
   fs.mkdirSync(dest, { recursive: true });
 
   const assets = targets.map((target) => {
-    const pbw = path.join(workspace, 'targets', target, 'build', `${target}.pbw`);
+    const pbw = path.join(project, 'targets', target, 'build', `${target}.pbw`);
     if (!fs.existsSync(pbw)) {
-      fail(`targets/${target}/build/${target}.pbw is missing, so the build did not finish that target.`);
+      fail(`${projectRel(`targets/${target}/build/${target}.pbw`)} is missing, so the build did not finish that target.`);
     }
-    const manifest = readJson(path.join(workspace, 'targets', target, 'package.json'), `targets/${target}/package.json`);
+    const manifest = readJson(path.join(project, 'targets', target, 'package.json'), projectRel(`targets/${target}/package.json`));
     const platforms = manifest.pebble?.targetPlatforms;
     // the SDK builds every platform when the appinfo lists none, and the asset is named by what it installs on
     if (!Array.isArray(platforms) || platforms.length === 0) {
-      fail(`targets/${target}/package.json lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.`);
+      fail(`${projectRel(`targets/${target}/package.json`)} lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.`);
     }
     const name = assetName(target, platforms, version);
     fs.copyFileSync(pbw, path.join(dest, name));

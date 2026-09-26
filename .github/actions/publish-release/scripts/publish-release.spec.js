@@ -8,16 +8,16 @@
  * Each spec lays out build output in a temporary folder, and fakes node and gh.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore, fakeExec } from '../../../shared/fakes.js';
+import { tempDir } from '../../../../ts/testing/temp-dir.ts';
 import publishRelease from './publish-release.js';
 
 let workspace;
 
 beforeEach(() => {
-  workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'publish-release-'));
+  workspace = tempDir('publish-release-');
   vi.stubEnv('GITHUB_WORKSPACE', workspace);
   vi.stubEnv('RUNNER_TEMP', workspace);
   vi.stubEnv('GITHUB_REPOSITORY', 'AKlitbo/pebble-watchfaces');
@@ -26,15 +26,18 @@ beforeEach(() => {
   vi.stubEnv('VERSION', '1.3.1');
   vi.stubEnv('TITLE', 'Gridlock 1.3.1');
   vi.stubEnv('NOTES_FILE', path.join(workspace, 'release-notes.md'));
+  fs.mkdirSync(path.join(workspace, 'lib'));
+  fs.writeFileSync(path.join(workspace, 'lib', 'package.json'), '{}');
+  fs.mkdirSync(path.join(workspace, 'config'));
+  fs.writeFileSync(path.join(workspace, 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
 });
 
 afterEach(() => {
-  fs.rmSync(workspace, { recursive: true, force: true });
   vi.unstubAllEnvs();
 });
 
-function writeTarget(target, platforms, { built = true } = {}) {
-  const dir = path.join(workspace, 'targets', target);
+function writeTarget(target, platforms, { built = true, project = '.' } = {}) {
+  const dir = path.join(workspace, project, 'targets', target);
   fs.mkdirSync(path.join(dir, 'build'), { recursive: true });
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ pebble: { targetPlatforms: platforms } }));
   if (built) {
@@ -76,6 +79,33 @@ describe('publish-release', () => {
       '--repo', 'AKlitbo/pebble-watchfaces',
     ], { ignoreReturnCode: true });
     expect(fs.readFileSync(path.join(assets, 'gridlock-app-1.3.1.pbw'), 'utf8')).toBe('gridlock-app');
+  });
+
+  /** A family with its own framework builds into its own targets/, so reading the repo root's would find no pbw and stop the release. */
+  test('attaches the pbw a family project built', async () => {
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'config'), { recursive: true });
+    fs.rmSync(path.join(workspace, 'config'), { recursive: true });
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'lib'));
+    fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'lib', 'package.json'), '{}');
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'core'));
+    fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
+    writeTarget('gridlock', ['emery'], { project: 'watchfaces/mosaic' });
+
+    const { core, exec } = await publish(({ command }) => (command === 'node' ? { stdout: 'gridlock\n' } : {}));
+
+    expect(core.setFailed).not.toHaveBeenCalled();
+    expect(exec.getExecOutput).toHaveBeenCalledWith('node', expect.arrayContaining([path.join(workspace, 'watchfaces', 'mosaic', 'lib', 'tools', 'manifest', 'build-manifests.ts')]), expect.objectContaining({ cwd: path.join(workspace, 'watchfaces', 'mosaic') }));
+    expect(fs.readFileSync(path.join(workspace, 'release-assets', 'gridlock-emery-1.3.1.pbw'), 'utf8')).toBe('gridlock');
+  });
+
+  /** The action's own framework copy looks for faces in the action's folder, so without the face's lib/ there is nothing to ask. */
+  test('stops before node when the face has no lib/', async () => {
+    fs.rmSync(path.join(workspace, 'lib'), { recursive: true });
+
+    const { core, exec } = await publish();
+
+    expect(core.setFailed).toHaveBeenCalledWith('lib/ holds no framework, so there is no telling which targets the face builds. Run paf sync before this step.');
+    expect(exec.getExecOutput).not.toHaveBeenCalled();
   });
 
   /** A candidate went out as a full release, and GitHub marked it Latest for every wearer following the repo. */

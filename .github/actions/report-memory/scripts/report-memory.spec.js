@@ -8,10 +8,10 @@
  * Each spec lays out a build in a temporary folder.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore } from '../../../shared/fakes.js';
+import { tempDir } from '../../../../ts/testing/temp-dir.ts';
 import reportMemory from './report-memory.js';
 
 const LOG = [
@@ -29,20 +29,21 @@ const LOG = [
 let workspace;
 
 beforeEach(() => {
-  workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'report-memory-'));
+  workspace = tempDir('report-memory-');
   vi.stubEnv('GITHUB_WORKSPACE', workspace);
   vi.stubEnv('RUNNER_TEMP', workspace);
   vi.stubEnv('FACE', 'ridgeline');
   vi.stubEnv('BUILD_LOG', 'build-ridgeline.log');
+  fs.mkdirSync(path.join(workspace, 'config'));
+  fs.writeFileSync(path.join(workspace, 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline' }));
 });
 
 afterEach(() => {
-  fs.rmSync(workspace, { recursive: true, force: true });
   vi.unstubAllEnvs();
 });
 
-function writeBinary(platform, length, virtualSize) {
-  const dir = path.join(workspace, 'targets', 'ridgeline', 'build', platform);
+function writeBinary(platform, length, virtualSize, project = '.') {
+  const dir = path.join(workspace, project, 'targets', 'ridgeline', 'build', platform);
   fs.mkdirSync(dir, { recursive: true });
   const binary = Buffer.alloc(length);
   binary.writeUInt16LE(virtualSize, 0x80);
@@ -70,6 +71,21 @@ describe('report-memory', () => {
       { face: 'ridgeline', target: 'ridgeline', platform: 'gabbro', image: 22132, virtualSize: 24888, resources: 24344, footprint: 24886, free: 106186 },
       { face: 'ridgeline', target: 'ridgeline', platform: 'emery', image: 22844, virtualSize: 25592, resources: 20872, footprint: 25592, free: 105480 },
     ]);
+  });
+
+  /** A family with its own framework builds into its own targets/, so reading the repo root's would report every size as 0. */
+  test('reads the binaries a family project built', async () => {
+    fs.rmSync(path.join(workspace, 'config'), { recursive: true });
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'contour', 'ridgeline', 'config'), { recursive: true });
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'contour', 'core'));
+    fs.writeFileSync(path.join(workspace, 'watchfaces', 'contour', 'ridgeline', 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline' }));
+    writeBinary('gabbro', 22132, 24888, 'watchfaces/contour');
+    writeBinary('emery', 22844, 25592, 'watchfaces/contour');
+
+    const { core, rows } = await report();
+
+    expect(core.warning).not.toHaveBeenCalled();
+    expect(rows.map((row) => [row.platform, row.image, row.virtualSize])).toEqual([['gabbro', 22132, 24888], ['emery', 22844, 25592]]);
   });
 
   /** Dropping the row for a missing binary would make the face look like it simply built fewer platforms. */
