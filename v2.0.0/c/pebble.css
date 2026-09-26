@@ -1,4 +1,4 @@
-/* The engine docs. The look, laid over doxygen-awesome-css.
+/* The framework docs. The look, laid over doxygen-awesome-css.
  *
  * doxygen-awesome drives nearly everything off CSS variables set on the html element, so most of
  * this file hands it different values rather than fighting its rules. It swaps themes by putting
@@ -305,11 +305,6 @@ h2.groupheader {
   color: var(--pb-signal) !important;
 }
 
-/* the shared bar across the top of the site carries the one theme toggle, so doxygen-awesome's stays hidden */
-doxygen-awesome-dark-mode-toggle {
-  display: none !important;
-}
-
 #MSearchBox {
   border: 1px solid var(--pb-rule);
   box-shadow: none;
@@ -331,10 +326,6 @@ doxygen-awesome-dark-mode-toggle {
 #MSearchBox:focus-within {
   outline: 2px solid var(--pb-signal);
   outline-offset: 1px;
-}
-
-doxygen-awesome-dark-mode-toggle svg {
-  fill: var(--pb-signal);
 }
 
 #nav-tree .selected {

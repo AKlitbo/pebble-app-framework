@@ -186,7 +186,7 @@ var searchData=
   ['store_5ftag_5fstock_183',['STORE_TAG_STOCK',['../group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676',1,'store_persist.h']]],
   ['store_5ftag_5fweather_184',['STORE_TAG_WEATHER',['../group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867',1,'store_persist.h']]],
   ['stores_185',['Stores',['../group__lib__stores.html',1,'']]],
-  ['strip_186',['strip',['../structCalendarSeed.html#ae30b59c3ff9a7e08801f875e88e94e50',1,'CalendarSeed::strip'],['../structStockSeed.html#ad8f30db92dc3f9f9c3127c38b6aa58ca',1,'StockSeed::strip'],['../struct_0fstruct_0e_8s__state.html#a0ebb7e2470a25382914057567df6b6fc',1,'[struct].s_state::strip'],['../struct_0fstruct_0e_8s__state.html#a245b7bb94f1403b5c18554b3b88da49b',1,'[struct].s_state::strip']]],
+  ['strip_186',['strip',['../structCalendarSeed.html#ae30b59c3ff9a7e08801f875e88e94e50',1,'CalendarSeed::strip'],['../structStockSeed.html#ad8f30db92dc3f9f9c3127c38b6aa58ca',1,'StockSeed::strip'],['../struct_0fstruct_0e_8s__state.html#a245b7bb94f1403b5c18554b3b88da49b',1,'[struct].s_state::strip'],['../struct_0fstruct_0e_8s__state.html#a0ebb7e2470a25382914057567df6b6fc',1,'[struct].s_state::strip']]],
   ['sunrise_187',['sunrise',['../structWeatherSeed.html#ae98c7da3fd4c33502a0b16eee2559adb',1,'WeatherSeed::sunrise'],['../struct_0fstruct_0e_8s__state.html#a00fe86ac601abcee5c50ea45ac1df152',1,'[struct].s_state::sunrise']]],
   ['sunset_188',['sunset',['../structWeatherSeed.html#a8ae79ebf1a025752b1c6930608493313',1,'WeatherSeed::sunset'],['../struct_0fstruct_0e_8s__state.html#a66b813693c7577f236cb129a08151a5b',1,'[struct].s_state::sunset']]],
   ['symbol_189',['symbol',['../structStockSlot.html#a297cf0bffbcaf225d6be1979660efbb0',1,'StockSlot']]],
