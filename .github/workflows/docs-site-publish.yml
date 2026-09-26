@@ -8,11 +8,13 @@ name: Docs Site Publish
 # main and each pushed release tag publish into a folder of their own on the gh-pages branch, main/ or one
 # named for the tag, so every release keeps the docs and coverage it shipped with. GitHub Pages serves the
 # branch as it stands
+# only a tag shaped like a version starts it, since publish refuses any other folder name and the build
+# before it would be wasted
 on:
   pull_request:
   push:
     branches: [main]
-    tags: ['v*']
+    tags: ['v[0-9]+.[0-9]+.[0-9]+*']
   workflow_dispatch:
 
 # a PR's newer push makes its older build pointless, but a publish in progress is left to finish
@@ -37,15 +39,23 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          # the build installs the docs packages too, so the cache follows both lockfiles
+          cache-dependency-path: |
+            package-lock.json
+            docs/package-lock.json
 
       - name: Install Dependencies
+        id: install
         run: npm ci
 
       - name: Build the C Docs
         uses: ./.github/actions/build-doxygen
 
       # the TypeScript docs, both coverage reports, and the home page with the pages around it
+      # it runs even when Doxygen reported a warning, so one run shows every problem. the job still fails,
+      # so nothing is uploaded or published
       - name: Build the Rest of the Site
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         uses: ./.github/actions/build-docs-site
 
       # the publish job picks the site up from here, and a PR's copy stays a week so it can be looked over
@@ -55,6 +65,8 @@ jobs:
           name: docs-site
           path: docs/site/dist
           retention-days: 7
+          # a re-run of the whole workflow uploads under the same name again, which is refused without it
+          overwrite: true
 
   publish:
     name: Publish the Docs to GitHub Pages

@@ -24,8 +24,9 @@ function readSummary(file) {
   }
 }
 
+// rounded down the way the home page rounds it, so 99.96 reads 99.9% in both places rather than 100.0% here
 function figure(percent) {
-  return percent === null ? 'no report' : `${percent.toFixed(1)}% of lines`;
+  return percent === null ? 'no report' : `${(Math.floor(percent * 10) / 10).toFixed(1)}% of lines`;
 }
 
 module.exports = step(async ({ core, exec }) => {
@@ -43,21 +44,27 @@ module.exports = step(async ({ core, exec }) => {
   const typedoc = await run('TypeDoc', 'node', ['docs/node_modules/typedoc/bin/typedoc', '--options', typedocOptions]);
   const warnings = readTypedocWarnings(`${typedoc.stdout}\n${typedoc.stderr}`);
   const rows = warnings.map((warning) => {
-    const file = warning.file || typedocOptions;
+    // a type from a dependency, such as one under @rebble/clay, names a file that is not in the repo, and GitHub
+    // drops an annotation it cannot place, so that lands on the options file too
+    const inRepo = warning.file && fs.statSync(warning.file, { throwIfNoEntry: false });
+    const file = inRepo ? warning.file : typedocOptions;
     const annotate = warning.severity === 'error' ? core.error : core.warning;
     const title = warning.severity === 'error' ? 'TypeDoc Error' : 'TypeDoc Warning';
-    annotate(warning.message, { title, file });
-    return [file, warning.severity, firstLine(warning.message)];
+    annotate(warning.message, warning.line ? { title, file, startLine: warning.line } : { title, file });
+    return [warning.line ? `${file}:${warning.line}` : file, warning.severity, firstLine(warning.message)];
   });
+  // a warning makes TypeDoc exit nonzero on its own, so its output only goes on the summary when there is no
+  // warning to explain the exit or when it stopped for a reason past its warnings, such as a crash
+  const typedocStopped = typedoc.exitCode !== 0 && !/output could not be generated due to the errors above/.test(typedoc.stdout + typedoc.stderr);
   if (warnings.length > 0) {
-    problems.push({ message: `TypeDoc reported ${warnings.length} warning(s). The docs only publish from a build with none.` });
+    problems.push({ message: `TypeDoc reported ${warnings.length} warning(s). The docs only publish from a build with none.`, output: typedocStopped ? typedoc : undefined });
   } else if (typedoc.exitCode !== 0) {
     problems.push({ message: `TypeDoc exited ${typedoc.exitCode}.`, output: typedoc });
   }
 
-  const vitest = await run('TypeScript Coverage', 'npx', ['vitest', 'run', '--config', vitestConfig, '--coverage', `--coverage.reportsDirectory=${TS_COVERAGE}`]);
+  const vitest = await run('TypeScript Coverage', 'npx', ['--no-install', 'vitest', 'run', '--config', vitestConfig, '--coverage', `--coverage.reportsDirectory=${TS_COVERAGE}`]);
   if (vitest.exitCode !== 0) {
-    problems.push({ message: `Vitest exited ${vitest.exitCode} while measuring coverage, so a spec failed.`, output: vitest });
+    problems.push({ message: `Vitest exited ${vitest.exitCode} while measuring coverage. The summary shows the end of its output.`, output: vitest });
   }
 
   const make = await run('C Coverage', 'make', ['-C', 'c/spec', 'coverage']);
@@ -67,7 +74,7 @@ module.exports = step(async ({ core, exec }) => {
 
   const pages = await run('Site Pages', 'npm', ['--prefix', 'docs', 'run', 'site']);
   if (pages.exitCode !== 0) {
-    problems.push({ message: `npm run docs:site exited ${pages.exitCode}.`, output: pages });
+    problems.push({ message: `npm --prefix docs run site exited ${pages.exitCode}.`, output: pages });
   }
 
   const summary = [

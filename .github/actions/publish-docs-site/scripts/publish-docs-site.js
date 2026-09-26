@@ -42,8 +42,9 @@ module.exports = step(async ({ core, exec }) => {
   // one try from a fresh copy of the branch
   // a push another publish beat comes back as beaten, and the next try starts over on top of it
   const attempt = async () => {
-    // --exit-code makes a missing branch exit 2, which tells it apart from not reaching the remote at all
-    const found = await exec.getExecOutput('git', ['ls-remote', '--exit-code', '--heads', 'origin', branch], { ignoreReturnCode: true, silent: true });
+    // --exit-code makes a missing branch exit 2, which tells it apart from not reaching the remote at all.
+    // the full ref is asked for, since a bare name also matches a branch such as archive/gh-pages
+    const found = await exec.getExecOutput('git', ['ls-remote', '--exit-code', 'origin', `refs/heads/${branch}`], { ignoreReturnCode: true, silent: true });
     if (found.exitCode !== 0 && found.exitCode !== 2) {
       fail(`git ls-remote exited ${found.exitCode}. ${firstLine(found.stderr)}`);
     }
@@ -54,7 +55,8 @@ module.exports = step(async ({ core, exec }) => {
     fs.rmSync(worktree, { recursive: true, force: true });
     let parent = null;
     if (found.exitCode === 0) {
-      await git(['fetch', '--depth=1', 'origin', branch]);
+      // by its full ref too, since a bare name finds a tag of the same name before the branch
+      await git(['fetch', '--depth=1', 'origin', `refs/heads/${branch}`]);
       parent = (await git(['rev-parse', 'FETCH_HEAD'])).stdout.trim();
       await git(['worktree', 'add', '--detach', worktree, parent]);
     } else {

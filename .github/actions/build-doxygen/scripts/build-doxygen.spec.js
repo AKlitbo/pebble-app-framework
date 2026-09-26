@@ -39,6 +39,18 @@ afterEach(() => {
 });
 
 describe('build-doxygen', () => {
+  /** A Doxygen missing from the path throws rather than exiting, and the run showed a stack trace with no reason. */
+  test('fails with a message when doxygen is not on the path', async () => {
+    const core = fakeCore();
+    const exec = fakeExec(() => {
+      throw new Error('Unable to locate executable file: doxygen.');
+    });
+
+    await buildDoxygen({ core, exec });
+
+    expect(core.setFailed).toHaveBeenCalledWith('doxygen could not run, so Doxygen is not installed on the path. Unable to locate executable file: doxygen.');
+  });
+
   /** A clean build has to pass, since it is the only one that publishes. */
   test('passes a build with no warnings', async () => {
     const { core, exec } = await build();
@@ -79,10 +91,20 @@ describe('build-doxygen', () => {
     expect(exec.getExecOutput).toHaveBeenCalledTimes(1);
   });
 
-  /** A Doxygen that crashes can print no warning at all, and that must not read as a clean build. */
-  test('fails when Doxygen exits with an error', async () => {
-    const { core } = await build({ result: { exitCode: 1, stderr: '' } });
+  /** A crash after some warnings showed only the warnings, so the reason the build stopped was never on the summary. */
+  test('puts its output on the summary when Doxygen stops after warnings', async () => {
+    const { core } = await build({ result: { exitCode: 134, stderr: `${WARNINGS}\nSegmentation fault (core dumped)` } });
 
-    expect(core.setFailed).toHaveBeenCalledWith('Doxygen exited 1.');
+    expect(core.setFailed).toHaveBeenCalledWith('Doxygen exited 134 after 3 warning(s). The summary shows the end of its output.');
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('Segmentation fault');
+  });
+
+  /** A Doxygen that crashes can print no warning at all, and the summary read as a clean build with no reason given. */
+  test('fails with its output on the summary when Doxygen exits without a warning', async () => {
+    const { core } = await build({ result: { exitCode: 134, stderr: 'Segmentation fault (core dumped)' } });
+
+    expect(core.setFailed).toHaveBeenCalledWith('Doxygen exited 134 without a warning line. The summary shows the end of its output.');
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('Segmentation fault');
+    expect(core.summary.addRaw.mock.calls[0][0]).not.toContain('Built with no warnings.');
   });
 });

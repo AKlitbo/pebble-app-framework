@@ -2,8 +2,7 @@
  * Works out which docs versions the site holds and where its front page sends a visitor.
  */
 
-// main, or a release tag such as v2.0.0 or v1.2.0-rc.1
-const FOLDER = /^(main|v(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?)$/;
+const { isVersionTag, compareVersionTags, isPrereleaseTag } = require('../../../shared/lib');
 
 /**
  * Whether a name is one a version of the docs is published under.
@@ -15,51 +14,7 @@ const FOLDER = /^(main|v(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?)$/;
  * @return True for main or a release tag.
  */
 function isVersionFolder(name) {
-  return FOLDER.test(String(name));
-}
-
-/** A version's parts, with the pre-release label split on its dots, or null for main. */
-function parse(name) {
-  const match = FOLDER.exec(name);
-  if (!match || match[1] === 'main') {
-    return null;
-  }
-  return { release: [Number(match[2]), Number(match[3]), Number(match[4])], pre: match[5] ? match[5].split('.') : [] };
-}
-
-/** Orders two pre-release labels the way semver does. A number sorts below a word, and a longer label wins a tie. */
-function comparePre(first, second) {
-  for (let index = 0; index < Math.min(first.length, second.length); index++) {
-    const a = first[index];
-    const b = second[index];
-    const aNumber = /^\d+$/.test(a);
-    const bNumber = /^\d+$/.test(b);
-    if (aNumber && bNumber && Number(a) !== Number(b)) {
-      return Number(a) - Number(b);
-    }
-    if (aNumber !== bNumber) {
-      return aNumber ? -1 : 1;
-    }
-    if (!aNumber && a !== b) {
-      return a < b ? -1 : 1;
-    }
-  }
-  return first.length - second.length;
-}
-
-/** Orders two release folders oldest first. A release candidate sorts below the release it leads up to. */
-function compareVersions(first, second) {
-  const a = parse(first);
-  const b = parse(second);
-  for (let index = 0; index < 3; index++) {
-    if (a.release[index] !== b.release[index]) {
-      return a.release[index] - b.release[index];
-    }
-  }
-  if (a.pre.length === 0 || b.pre.length === 0) {
-    return b.pre.length - a.pre.length;
-  }
-  return comparePre(a.pre, b.pre);
+  return name === 'main' || isVersionTag(name);
 }
 
 /**
@@ -72,9 +27,9 @@ function compareVersions(first, second) {
  * @return The versions in picker order, and the latest release or null when there is none yet.
  */
 function listVersions(folders) {
-  const releases = folders.filter((name) => isVersionFolder(name) && name !== 'main').sort(compareVersions).reverse();
+  const releases = folders.filter((name) => isVersionFolder(name) && name !== 'main').sort(compareVersionTags).reverse();
   const versions = folders.includes('main') ? ['main', ...releases] : releases;
-  const latest = releases.find((name) => parse(name).pre.length === 0) || null;
+  const latest = releases.find((name) => !isPrereleaseTag(name)) || null;
   return { latest, versions };
 }
 

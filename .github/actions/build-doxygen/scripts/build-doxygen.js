@@ -5,14 +5,20 @@
  * know and builds different docs, so the version on the path is checked against the one asked for first.
  * Any warning fails the build, since the published docs are meant to have none.
  */
-const { fail, step, repoPath, existingPath, firstLine, markdownTable } = require('../../../shared/lib');
+const { fail, step, repoPath, existingPath, firstLine, markdownTable, outputTail } = require('../../../shared/lib');
 const { readWarnings } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
   const wanted = process.env.VERSION;
   const doxyfile = existingPath(process.env.DOXYFILE || 'Doxyfile', 'doxyfile');
 
-  const version = await exec.getExecOutput('doxygen', ['--version'], { ignoreReturnCode: true, silent: true });
+  let version;
+  try {
+    version = await exec.getExecOutput('doxygen', ['--version'], { ignoreReturnCode: true, silent: true });
+  } catch (error) {
+    // a command missing from the path throws rather than exiting, so the real reason goes in the message
+    fail(`doxygen could not run, so Doxygen is not installed on the path. ${error.message}`);
+  }
   if (version.exitCode !== 0) {
     fail(`doxygen --version exited ${version.exitCode}, so Doxygen is not installed on the path.`);
   }
@@ -33,14 +39,22 @@ module.exports = step(async ({ core, exec }) => {
     return [warning.line ? `${file}:${warning.line}` : file, warning.severity, firstLine(warning.message)];
   });
 
-  const summary = [`## Doxygen ${found}`, '', warnings.length === 0 ? 'Built with no warnings.' : `Built with ${warnings.length} warning(s).`];
+  // a warning alone never stops Doxygen, so a nonzero exit is something else, and its reason prints in some
+  // other shape. the end of the output goes on the summary, whether or not warnings came before it
+  const stopped = run.exitCode !== 0;
+  const stoppedHow = warnings.length === 0 ? 'without a warning line' : `after ${warnings.length} warning(s)`;
+  const outcome = stopped ? `Exited ${run.exitCode} ${stoppedHow}.` : warnings.length > 0 ? `Built with ${warnings.length} warning(s).` : 'Built with no warnings.';
+  const summary = [`## Doxygen ${found}`, '', outcome];
   if (rows.length > 0) {
     summary.push('', markdownTable(['Where', 'Severity', 'Message'], rows));
   }
+  if (stopped) {
+    summary.push('', outputTail([run.stdout, run.stderr].join('\n')));
+  }
   await core.summary.addRaw(summary.join('\n'), true).write();
 
-  if (run.exitCode !== 0) {
-    fail(`Doxygen exited ${run.exitCode}.`);
+  if (stopped) {
+    fail(`Doxygen exited ${run.exitCode} ${stoppedHow}. The summary shows the end of its output.`);
   }
   if (warnings.length > 0) {
     fail(`Doxygen reported ${warnings.length} warning(s). The docs only publish from a build with none.`);

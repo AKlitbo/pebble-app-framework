@@ -41,6 +41,8 @@ runs:
         ACTION_PATH: ${{ github.action_path }}
         TYPEDOC_OPTIONS: ${{ inputs.typedoc-options }}
         VITEST_CONFIG: ${{ inputs.vitest-config }}
+        # a PR checks out the merge commit GitHub makes, so the site names the PR's own head instead
+        PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       with:
         # the inputs reach the script through the environment, never through this body
         script: |
