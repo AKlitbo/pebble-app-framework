@@ -31,15 +31,15 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog = CHANGELOG } = {}) {
+function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog = CHANGELOG, targetPlatforms = ['emery', 'gabbro'] } = {}) {
   const dir = path.join(workspace, rel);
   fs.mkdirSync(path.join(dir, 'config'), { recursive: true });
-  fs.writeFileSync(path.join(dir, 'config', 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version }));
+  fs.writeFileSync(path.join(dir, 'config', 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version, targetPlatforms }));
   fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), changelog);
 }
 
 const TAGGED = ({ command, args }) => {
-  if (command === 'git' && args.includes('describe')) {
+  if (command === 'git' && args.includes('--points-at')) {
     return { stdout: 'v1.2.0\n' };
   }
   if (command === 'gh') {
@@ -88,13 +88,61 @@ describe('prepare-release', () => {
     writeFace('.');
 
     const { core } = await prepare(({ command, args }) => {
-      if (command === 'git' && args.includes('describe')) {
-        return { exitCode: 128, stderr: 'fatal: no tag exactly matches' };
+      if (command === 'git' && args.includes('--points-at')) {
+        return { stdout: 'wip\n' };
       }
       return command === 'git' ? { stdout: '2f22717\n' } : {};
     });
 
     expect(core.setFailed).toHaveBeenCalledWith('The framework is at 2f22717, which is not a framework tag. Move lib to a framework tag before releasing.');
+  });
+
+  /** A face with no version in its appinfo builds as the repo's version, and its tag could never match undefined. */
+  test('holds a face with no appinfo version to the repo version', async () => {
+    writeFace('.', { version: null });
+    fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({ version: '1.11.0' }));
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).not.toHaveBeenCalled();
+  });
+
+  /** A missing platform list only failed at publish, after the SDK install and the whole build. */
+  test('stops before the build when the appinfo lists no platforms', async () => {
+    writeFace('.', { targetPlatforms: null });
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).toHaveBeenCalledWith('config/pebble.appinfo.json lists no targetPlatforms. Add them so the release can name what each pbw installs on.');
+  });
+
+  /** A version with build metadata was never read as a pre-release, so a candidate went out marked Latest. */
+  test('refuses a version publish-release cannot read', async () => {
+    writeFace('.', { version: '1.11.0-rc.1+b5' });
+    vi.stubEnv('RELEASE_TAG', 'lcars-stardate-v1.11.0-rc.1+b5');
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).toHaveBeenCalledWith('Version 1.11.0-rc.1+b5 is not shaped X.Y.Z or X.Y.Z-label, such as 1.11.0 or 1.11.0-rc.1.');
+  });
+
+  /** A trailing comma in the root package.json crashed the step with a stack trace that named no file. */
+  test('names a package.json that is not valid JSON', async () => {
+    writeFace('.', { version: null });
+    fs.writeFileSync(path.join(workspace, 'package.json'), '{ "version": "1.11.0", }');
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).toHaveBeenCalledWith(expect.stringMatching(/^package\.json is missing or is not valid JSON\./));
+  });
+
+  /** With no version anywhere the message read "package.json says undefined", which names no fix. */
+  test('says when neither the appinfo nor the repo sets a version', async () => {
+    writeFace('.', { version: null });
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).toHaveBeenCalledWith('Tag lcars-stardate-v1.11.0 says version 1.11.0, but neither config/pebble.appinfo.json nor package.json sets a version.');
   });
 
   /** A tag typed with the wrong version would publish a release whose name disagrees with what the watch reports. */

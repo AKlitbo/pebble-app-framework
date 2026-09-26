@@ -6,7 +6,7 @@
  * that an entry nobody dated is not read as dated.
  */
 import { describe, expect, test } from 'vitest';
-import { isDated, readChangelogEntry, splitTag } from './lib.js';
+import { isDated, readChangelogEntry, splitTag, pickFrameworkTag } from './lib.js';
 
 const CHANGELOG = [
   '# Changelog - LCARS Stardate',
@@ -90,5 +90,44 @@ describe('isDated', () => {
     const result = isDated(date);
 
     expect(result).toBe(dated);
+  });
+
+  /** A typo such as 2026-19-07 passed on its shape and went out in release notes that cannot be taken back. */
+  test.each([['2026-19-07'], ['2026-02-30']])("refuses '%s', which is no real date", (date) => {
+    const result = isDated(date);
+
+    expect(result).toBe(false);
+  });
+});
+
+describe('splitTag with a label', () => {
+  /** A pre-release label holding -v split the tag inside the version, and the release named a face that does not exist. */
+  test('splits at the -v a version starts after', () => {
+    const result = splitTag('gridlock-v3.0.0-very.1');
+
+    expect(result).toEqual({ face: 'gridlock', version: '3.0.0-very.1' });
+  });
+});
+
+describe('pickFrameworkTag', () => {
+  /** git describe named one tag of several, so a face released on the final version could report its candidate. */
+  test('takes the release over its own candidate', () => {
+    const result = pickFrameworkTag(['v3.0.0-rc.27', 'v3.0.0']);
+
+    expect(result).toBe('v3.0.0');
+  });
+
+  /** Candidates compare by number, or rc.9 would read as newer than rc.27. */
+  test('takes the highest candidate by number', () => {
+    const result = pickFrameworkTag(['v3.0.0-rc.9', 'v3.0.0-rc.27']);
+
+    expect(result).toBe('v3.0.0-rc.27');
+  });
+
+  /** Any tag at all passed as a framework version, so a stray wip tag let a release through. */
+  test('finds nothing in tags that are not versions', () => {
+    const result = pickFrameworkTag(['wip', 'backup']);
+
+    expect(result).toBeNull();
   });
 });

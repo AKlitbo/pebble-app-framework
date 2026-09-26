@@ -183,13 +183,25 @@ export function fillWscript(template: string, dirs: SandboxDirs): string {
 }
 
 /**
+ * The version a face builds as. The face's own version wins, and the root package.json is the fallback.
+ * The release check reads it from here too, so a tag is held to the version the pbw is built with.
+ *
+ * @param config The face's appinfo.
+ * @param rootPkg The root package.json.
+ * @return The version, or undefined when neither file has one.
+ */
+export function faceVersion(config: { version?: string }, rootPkg: { version?: string }): string | undefined {
+  return config.version || rootPkg.version;
+}
+
+/**
  * Writes one target's sandbox: targets/<target name>/{package.json,wscript}.
  *
  * @return The sandbox's absolute path.
  */
 function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target): string {
-  // the face's own version wins. the root package.json is the fallback and still owns the author
-  const version = config.version || rootPkg.version;
+  // the root package.json still owns the author
+  const version = faceVersion(config, rootPkg) as string;
   const manifest = buildManifest(config, { author: rootPkg.author, version }, target);
 
   const outDir = path.join(ROOT, 'targets', target.name);

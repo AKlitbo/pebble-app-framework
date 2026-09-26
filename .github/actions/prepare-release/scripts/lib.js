@@ -6,6 +6,8 @@
  * the notes are that entry as written. There is no second copy to keep in step.
  */
 
+const { isVersionTag, compareVersionTags } = require('../../../shared/lib');
+
 // a Keep a Changelog heading, such as "## [1.11.0] - 2026-09-07" or "## [Unreleased]"
 const HEADING = /^## \[([^\]]+)\](?: - (.*))?$/;
 
@@ -15,13 +17,14 @@ const LINK_REFERENCE = /^\[[^\]]+\]: \S/;
 /**
  * Splits a release tag into the face and the version.
  *
- * A face name can hold -v itself, as in retro-vapor, so the split is at the last -v.
+ * A face name can hold -v itself, as in retro-vapor, and so can a pre-release label, as in -very.1, so the
+ * split is at the last -v that a version number starts after.
  *
  * @param tag The tag that was pushed.
  * @return The face and the version, or null when the tag is not shaped <face>-v<version>.
  */
 function splitTag(tag) {
-  const match = /^(.+)-v(.+)$/.exec(String(tag));
+  const match = /^(.+)-v(\d.*)$/.exec(String(tag));
   if (!match) {
     return null;
   }
@@ -61,10 +64,31 @@ function readChangelogEntry(text, version) {
  * Whether a changelog heading carries a real date, rather than Unreleased or nothing at all.
  *
  * @param date The date as readChangelogEntry read it.
- * @return True for a date written like 2026-09-07.
+ * @return True for a real date written like 2026-09-07. A typo such as 2026-19-07 is not one.
  */
 function isDated(date) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(date);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return false;
+  }
+  // a month past 12 reads as no date at all, and a day past the month's end rolls over into another one,
+  // so a date is only real when it reads back the same
+  const parsed = new Date(`${date}T00:00:00Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
 }
 
-module.exports = { splitTag, readChangelogEntry, isDated };
+/**
+ * Picks the framework version a commit is on, from every tag it carries.
+ *
+ * A commit can carry more than one, such as a release candidate's tag and the final release's, and git
+ * describe names only one of them. The highest version wins, and a release beats its own candidates. A tag
+ * that is not a version, such as wip, is no framework version at all.
+ *
+ * @param tags Every tag on the commit.
+ * @return The highest version tag, or null when none of them is one.
+ */
+function pickFrameworkTag(tags) {
+  const versions = tags.filter(isVersionTag).sort(compareVersionTags);
+  return versions.length ? versions[versions.length - 1] : null;
+}
+
+module.exports = { splitTag, readChangelogEntry, isDated, pickFrameworkTag };

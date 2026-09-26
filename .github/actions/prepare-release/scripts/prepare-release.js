@@ -14,8 +14,8 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { fail, step, firstLine, markdownTable } = require('../../../shared/lib');
-const { splitTag, readChangelogEntry, isDated } = require('./lib');
+const { fail, step, firstLine, markdownTable, isVersionTag, readJson } = require('../../../shared/lib');
+const { splitTag, readChangelogEntry, isDated, pickFrameworkTag } = require('./lib');
 
 // this script sits in .github/actions/prepare-release/scripts/ inside the framework
 const ENGINE = path.resolve(__dirname, '..', '..', '..', '..');
@@ -26,12 +26,12 @@ module.exports = step(async ({ core, exec }) => {
   const repo = process.env.GITHUB_REPOSITORY ? ['--repo', process.env.GITHUB_REPOSITORY] : [];
 
   // a release ships on a named framework version. day to day commits can sit between tags, releases cannot
-  const described = await exec.getExecOutput('git', ['-C', ENGINE, 'describe', '--exact-match', '--tags'], { ignoreReturnCode: true, silent: true });
-  if (described.exitCode !== 0) {
+  const listed = await exec.getExecOutput('git', ['-C', ENGINE, 'tag', '--points-at', 'HEAD'], { ignoreReturnCode: true, silent: true });
+  const engineTag = listed.exitCode === 0 ? pickFrameworkTag(listed.stdout.split(/\s+/).filter(Boolean)) : null;
+  if (!engineTag) {
     const head = await exec.getExecOutput('git', ['-C', ENGINE, 'rev-parse', '--short', 'HEAD'], { ignoreReturnCode: true, silent: true });
     fail(`The framework is at ${head.stdout.trim() || 'a commit git could not name'}, which is not a framework tag. Move lib to a framework tag before releasing.`);
   }
-  const engineTag = described.stdout.trim();
 
   const parts = splitTag(tag);
   if (!parts) {
@@ -39,18 +39,45 @@ module.exports = step(async ({ core, exec }) => {
   }
 
   const { findFaces } = await import(pathToFileURL(path.join(ENGINE, 'tools', 'faces.ts')).href);
-  const faces = findFaces(workspace);
+  const { APPINFO_REL } = await import(pathToFileURL(path.join(ENGINE, 'tools', 'paths.ts')).href);
+  const { faceVersion } = await import(pathToFileURL(path.join(ENGINE, 'tools', 'manifest', 'build-manifests.ts')).href);
+  let faces;
+  try {
+    faces = findFaces(workspace);
+  } catch (error) {
+    // a face's appinfo that does not parse or has no name stops the lookup
+    fail(`The faces in this repo could not be listed. ${error.message}`);
+  }
   const face = faces.find((entry) => entry.name === parts.face);
   if (!face) {
     const known = faces.map((entry) => entry.name).join(', ') || 'none';
     fail(`Tag ${tag} names the face '${parts.face}', which this repo does not have. The faces here are: ${known}.`);
   }
 
-  // a tag that disagrees with the manifest is a typo, and a published release cannot be taken back cleanly
-  const appinfoRel = path.posix.join(face.rel, 'config', 'pebble.appinfo.json');
-  const appinfo = JSON.parse(fs.readFileSync(path.join(workspace, appinfoRel), 'utf8'));
-  if (appinfo.version !== parts.version) {
-    fail(`Tag ${tag} says version ${parts.version}, but ${appinfoRel} says ${appinfo.version}.`);
+  // a tag that disagrees with the manifest is a typo, and a published release cannot be taken back cleanly.
+  // the version comes from the same place the build takes it, so a face with none in its appinfo is held
+  // to the repo's own version
+  const appinfoRel = path.join(face.rel, APPINFO_REL).split(path.sep).join('/');
+  const appinfo = readJson(path.join(workspace, appinfoRel), appinfoRel);
+  const rootPackage = path.join(workspace, 'package.json');
+  const repoPackage = fs.existsSync(rootPackage) ? readJson(rootPackage, 'package.json') : {};
+  const version = faceVersion(appinfo, repoPackage);
+  const versionFrom = appinfo.version ? appinfoRel : 'package.json';
+  if (!version) {
+    fail(`Tag ${tag} says version ${parts.version}, but neither ${appinfoRel} nor package.json sets a version.`);
+  }
+  if (version !== parts.version) {
+    fail(`Tag ${tag} says version ${parts.version}, but ${versionFrom} says ${version}.`);
+  }
+  // publish-release marks a version with a label as a pre-release, and reads the label the shared way.
+  // a version it cannot read, such as one with build metadata, would go out as Latest
+  if (!isVersionTag(`v${version}`)) {
+    fail(`Version ${version} is not shaped X.Y.Z or X.Y.Z-label, such as 1.11.0 or 1.11.0-rc.1.`);
+  }
+  // the release names each pbw by the platforms it installs on, and finding none out after the SDK
+  // install and the whole build wastes both
+  if (!Array.isArray(appinfo.targetPlatforms) || appinfo.targetPlatforms.length === 0) {
+    fail(`${appinfoRel} lists no targetPlatforms. Add them so the release can name what each pbw installs on.`);
   }
 
   const changelogRel = path.posix.join(face.rel, 'CHANGELOG.md');

@@ -72,9 +72,23 @@ describe('publish-release', () => {
       path.join(assets, 'gridlock-app-1.3.1.pbw'),
       '--title', 'Gridlock 1.3.1',
       '--notes-file', path.join(workspace, 'release-notes.md'),
+      '--verify-tag',
       '--repo', 'AKlitbo/pebble-watchfaces',
     ], { ignoreReturnCode: true });
     expect(fs.readFileSync(path.join(assets, 'gridlock-app-1.3.1.pbw'), 'utf8')).toBe('gridlock-app');
+  });
+
+  /** A candidate went out as a full release, and GitHub marked it Latest for every wearer following the repo. */
+  test('publishes a candidate version as a pre-release', async () => {
+    vi.stubEnv('VERSION', '3.0.0-rc.1');
+    vi.stubEnv('RELEASE_TAG', 'gridlock-v3.0.0-rc.1');
+    writeTarget('gridlock-face', ['emery']);
+    writeTarget('gridlock-app', ['emery', 'gabbro']);
+
+    const { exec } = await publish();
+
+    const created = exec.getExecOutput.mock.calls.find(([command, args]) => command === 'gh' && args[0] === 'release');
+    expect(created[1]).toContain('--prerelease');
   });
 
   /** A release published without one of its targets is public with a download missing, and has to be deleted by hand. */
@@ -86,6 +100,28 @@ describe('publish-release', () => {
 
     expect(core.setFailed).toHaveBeenCalledWith('targets/gridlock-app/build/gridlock-app.pbw is missing, so the build did not finish that target.');
     expect(exec.getExecOutput.mock.calls.some(([command]) => command === 'gh')).toBe(false);
+  });
+
+  /** An appinfo with no platform list builds fine, and naming its asset crashed the step after the whole build. */
+  test('stops with a message when a target lists no platforms', async () => {
+    writeTarget('gridlock-face', ['emery']);
+    writeTarget('gridlock-app', undefined);
+
+    const { core, exec } = await publish();
+
+    expect(core.setFailed).toHaveBeenCalledWith("targets/gridlock-app/package.json lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.");
+    expect(exec.getExecOutput.mock.calls.some(([command]) => command === 'gh')).toBe(false);
+  });
+
+  /** A manifest with no pebble block crashed the step with a stack trace rather than saying what was wrong. */
+  test('stops with a message when a manifest has no pebble block', async () => {
+    writeTarget('gridlock-face', ['emery']);
+    writeTarget('gridlock-app', ['emery']);
+    fs.writeFileSync(path.join(workspace, 'targets', 'gridlock-app', 'package.json'), JSON.stringify({ name: 'gridlock-app' }));
+
+    const { core } = await publish();
+
+    expect(core.setFailed).toHaveBeenCalledWith("targets/gridlock-app/package.json lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.");
   });
 
   /** gh failing to publish is the release not happening, and a green step there would hide it. */

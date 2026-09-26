@@ -9,7 +9,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { fail, step, firstLine, markdownTable } = require('../../../shared/lib');
+const { fail, step, firstLine, markdownTable, isPrereleaseTag, readJson } = require('../../../shared/lib');
 const { assetName } = require('./lib');
 
 // this script sits in .github/actions/publish-release/scripts/ inside the framework
@@ -38,14 +38,23 @@ module.exports = step(async ({ core, exec }) => {
     if (!fs.existsSync(pbw)) {
       fail(`targets/${target}/build/${target}.pbw is missing, so the build did not finish that target.`);
     }
-    const manifest = JSON.parse(fs.readFileSync(path.join(workspace, 'targets', target, 'package.json'), 'utf8'));
-    const platforms = manifest.pebble.targetPlatforms;
+    const manifest = readJson(path.join(workspace, 'targets', target, 'package.json'), `targets/${target}/package.json`);
+    const platforms = manifest.pebble?.targetPlatforms;
+    // the SDK builds every platform when the appinfo lists none, and the asset is named by what it installs on
+    if (!Array.isArray(platforms) || platforms.length === 0) {
+      fail(`targets/${target}/package.json lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.`);
+    }
     const name = assetName(target, platforms, version);
     fs.copyFileSync(pbw, path.join(dest, name));
     return { name, target, platforms };
   });
 
-  const args = ['release', 'create', tag, ...assets.map((asset) => path.join(dest, asset.name)), '--title', process.env.TITLE, '--notes-file', process.env.NOTES_FILE, ...repo];
+  // a version with a label, such as 3.0.0-rc.1, is a candidate. marked a pre-release, GitHub never shows it
+  // as Latest, so a wearer following the repo's latest release keeps the last real one
+  const prerelease = isPrereleaseTag(`v${version}`) ? ['--prerelease'] : [];
+  // --verify-tag stops a tag that was never pushed, which gh would otherwise make at the default branch
+  // and attach pbws built from another commit to
+  const args = ['release', 'create', tag, ...assets.map((asset) => path.join(dest, asset.name)), '--title', process.env.TITLE, '--notes-file', process.env.NOTES_FILE, '--verify-tag', ...prerelease, ...repo];
   const created = await core.group(`gh release create ${tag}`, () => exec.getExecOutput('gh', args, { ignoreReturnCode: true }));
   if (created.exitCode !== 0) {
     fail(`gh release create exited ${created.exitCode}. ${firstLine(created.stderr)}`);
