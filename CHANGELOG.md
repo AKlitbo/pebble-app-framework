@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added an optional `uuid` to each entry in an appinfo's `targets` map, which that target's manifest uses in place of the face's. Targets sharing the face's uuid replace each other on the watch and share the phone's saved settings. A target with its own installs beside them, with settings of its own.
 - Added `zone_setting_is_set`, `zone_setting_offset`, and `zone_setting_label` in `c/core/clock/zone_setting.h`, which read a time zone setting as the phone sends it. An empty setting is no zone rather than UTC.
 - Added `SETTINGS_REQUEST_FULL` and `SETTINGS_REQUEST_FRESH` to `WIRE_CAPS` and `wire_caps.g.h`, the two values a settings request carries.
+- Added `project/toolchain.json`, recording the Pebble SDK, the pebble-tool, and the Node major the framework is built and tested with. It carries a `format` number, and ships in the `files` list.
+- Added a `files` list to the framework's `package.json`, naming what a face project needs from the framework. The C host specs, the docs site, the hooks, and all of `.github/` are left out, the face actions included. The TypeScript specs stay in, since the ones that check a face's generated files only run beside faces.
 
 ### Changed
 

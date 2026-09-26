@@ -2,9 +2,27 @@
   "name": "pebble-app-framework",
   "author": "Null Syntax",
   "version": "3.0.0",
-  "description": "The shared framework behind my Pebble watchfaces and watchapps, mounted as a submodule at lib/.",
+  "description": "The shared framework behind my Pebble watchfaces and watchapps, which paf mounts at lib/.",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
+  "files": [
+    "build.sh",
+    "c/core",
+    "c/dev",
+    "c/pebble",
+    "config",
+    "css",
+    "py",
+    "tools",
+    "ts",
+    "tsconfig.json",
+    "project/toolchain.json",
+    "CHANGELOG.md",
+    "LICENSE",
+    "LICENSES",
+    "NOTICES.md",
+    "!**/*.spec.c"
+  ],
   "engines": {
     "node": ">=24.2"
   },
