@@ -175,9 +175,10 @@ describe('buildComponentSource', () => {
   });
 
   /**
-   * The output names each bundled module by path, and those paths used to follow the folder the
-   * command ran from. A run from a subfolder rewrote every committed component and failed the
-   * staleness check below with nothing really changed.
+   * The output names each bundled module by a path fixed to the fixture roots, not to the folder
+   * the command runs from. A path that followed the working folder would rewrite every committed
+   * component on a run from a subfolder and fail the staleness check below with nothing really
+   * changed.
    */
   test('gives the same source whatever folder it runs from', async () => {
     const { manifestPath } = fixtureManifest();

@@ -42,6 +42,15 @@ describe('indexBySlug', () => {
     });
   });
 
+  /** Two modules on one slug passed the check, and the first one's tile was blank on the settings page. */
+  test('stops on a slug two modules share', () => {
+    const meta = { 'Weather': { slug: 'weather' }, 'Weather Now': { slug: 'weather' } };
+
+    const call = () => indexBySlug(meta);
+
+    expect(call).toThrow(/modules "Weather" and "Weather Now" share the slug "weather"/);
+  });
+
   /** Order comes from row position: get it wrong and the emitted asset reshuffles against module-meta. */
   test('takes each row order from its position in the registry', () => {
     const meta = { 'First': { slug: 'a' }, 'Second': { slug: 'b' }, 'Third': { slug: 'c' } };
@@ -170,7 +179,7 @@ describe.skipIf(COMMITTING_FACES.length === 0)('generated asset', () => {
       expect(committed).toBe(built.source);
     });
 
-    /** A png naming no module, or a module with no png, means the previews and the catalog disagree. */
+    /** A png naming no module, or a module with no png, means the previews and the catalogue disagree. */
     test(`${face}: every png maps to a module and every module has a png`, () => {
       const result = encodeThumbnails(face);
 

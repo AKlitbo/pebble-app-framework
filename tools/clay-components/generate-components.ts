@@ -295,6 +295,10 @@ function indentBlock(text: string, indent: string): string {
 /**
  * The template file flattened to the one line string Clay expects.
  *
+ * The lines are joined with nothing between them, so text wrapped across two lines would run
+ * together. No template wraps text, and a space between every line would change every generated
+ * component, so a template keeps each run of text on one line.
+ *
  * @param templatePath The template file to read.
  * @return The template, blank lines dropped and the rest joined with no separator.
  */

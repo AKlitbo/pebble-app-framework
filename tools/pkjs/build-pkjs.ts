@@ -82,7 +82,7 @@ export function facePaths(target: string, sourceFace: string = target): FacePath
 }
 
 /**
- * Empties the face's emit tree. It is entirely derived and gitignored, so this is always safe.
+ * Empties the face's emit tree. It is entirely built output and gitignored, so this is always safe.
  *
  * @param p The paths for the target being cleaned.
  */

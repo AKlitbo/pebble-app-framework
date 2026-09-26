@@ -84,7 +84,17 @@ type Appinfo = SharedAppinfo & Partial<Target> & { version?: string; targets?: T
  */
 export function resolveTargets(config: Appinfo): Target[] {
   if (config.targets) {
-    return Object.values(config.targets);
+    // an empty map or a target with no name reached the sandbox step as targets/undefined, or as
+    // a TypeError that named nothing
+    const targets = Object.entries(config.targets);
+    if (targets.length === 0) {
+      throw new Error('appinfo declares an empty targets map');
+    }
+    const unnamed = targets.find(([, target]) => !target || !target.name);
+    if (unnamed) {
+      throw new Error(`appinfo target "${unnamed[0]}" has no name`);
+    }
+    return targets.map(([, target]) => target);
   }
   if (!config.name) {
     throw new Error('appinfo declares neither a targets map nor a top-level name');
@@ -130,6 +140,8 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
     private: true,
     pebble: {
       displayName: config.displayName,
+      // every target shares the face's uuid unless it names its own, so a face's targets install
+      // as one app with one set of phone settings, and installing one replaces the other
       uuid: target.uuid || config.uuid,
       sdkVersion: config.sdkVersion,
       enableMultiJS: config.enableMultiJS,
@@ -203,6 +215,47 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
 }
 
 /**
+ * The first target name two faces share, or null when every name is unique.
+ *
+ * A sandbox is named after its target, so two faces with the same name build into one folder and
+ * the second quietly replaces the first's .pbw.
+ *
+ * @param targetsByFace Each face's target names, keyed by face.
+ * @return A message naming the target and both faces, or null.
+ */
+export function findTargetClash(targetsByFace: Record<string, string[]>): string | null {
+  const owner = new Map<string, string>();
+  for (const [face, names] of Object.entries(targetsByFace)) {
+    for (const name of names) {
+      const other = owner.get(name);
+      if (other === face) {
+        return `target "${name}" is declared twice by ${face}, so one would build over the other in targets/${name}`;
+      }
+      if (other) {
+        return `target "${name}" is declared by both ${other} and ${face}, so one would build over the other in targets/${name}`;
+      }
+      owner.set(name, face);
+    }
+  }
+
+  return null;
+}
+
+/** Every face's target names, leaving out a face whose appinfo does not read, since its own build reports that. */
+function allTargetNames(): Record<string, string[]> {
+  const byFace: Record<string, string[]> = {};
+  for (const name of listFaceNames()) {
+    try {
+      byFace[name] = resolveTargets(JSON.parse(fs.readFileSync(appinfoPath(name), 'utf8'))).map((target) => target.name);
+    } catch {
+      // unreadable, so it has no targets to clash with
+    }
+  }
+
+  return byFace;
+}
+
+/**
  * Writes every target sandbox for a face and prints each sandbox's absolute path, one per line, so
  * build.sh writes and finds them in one run. With --targets it only prints the face's target names,
  * and with --faces every face in the repo, one per line, so build.sh can check a name and loop over
@@ -233,6 +286,12 @@ function main() {
       console.log(target.name);
     }
     return;
+  }
+
+  const clash = findTargetClash({ ...allTargetNames(), [face]: targets.map((target) => target.name) });
+  if (clash) {
+    console.error(clash);
+    process.exit(1);
   }
 
   const rootPkg: RootPkg = JSON.parse(fs.readFileSync(ROOT_PKG, 'utf8'));

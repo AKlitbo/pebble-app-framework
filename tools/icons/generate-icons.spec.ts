@@ -9,7 +9,7 @@
  * the PNGs.
  *
  * The last group checks the media block a face has committed still matches its icons.json. The
- * rendered PNGs are not checked, since re-rasterising them needs sharp and takes real time, but the
+ * rendered PNGs are not checked, since re-rasterizing them needs sharp and takes real time, but the
  * media array is the half the C side reads its RESOURCE_ID names from. It runs where the framework is
  * mounted beside faces that declare icons.
  */
@@ -34,7 +34,7 @@ describe('whiten', () => {
     expect(result).not.toContain(`fill="${color}"`);
   });
 
-  /** Stroke-styled glyphs set their color on stroke, not fill. A missed stroke comes through black. */
+  /** Stroke-styled glyphs set their colour on stroke, not fill. A missed stroke comes through black. */
   test('recolors a hard-coded stroke to white', () => {
     const result = whiten('<svg><path stroke="#000" d="M0 0"/></svg>');
 
@@ -153,6 +153,25 @@ describe('buildMedia', () => {
 });
 
 describe('replaceMediaArray', () => {
+  /** A "media" string earlier in the file was taken for the key, and the icons went over another array. */
+  test('finds the media key past a string that reads media', () => {
+    const raw = [
+      '{',
+      '  "displayName": "media",',
+      '  "targetPlatforms": ["emery"],',
+      '  "resources": {',
+      '    "media": []',
+      '  }',
+      '}',
+    ].join('\n');
+    const media = [{ type: 'bitmap', name: 'ICON_WI_CLEAR', file: 'icons/wi-clear.png' }];
+
+    const result = JSON.parse(replaceMediaArray(raw, media));
+
+    expect(result.targetPlatforms).toEqual(['emery']);
+    expect(result.resources.media).toEqual(media);
+  });
+
   /** Bitmaps ride on one line for a scannable list. Fonts keep their multi-line block so extra fields survive. */
   test('renders bitmaps inline and fonts as blocks', () => {
     const raw = [

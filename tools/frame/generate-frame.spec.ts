@@ -1,10 +1,10 @@
 /**
  * Specs for the pure parts of the frame generator.
  *
- * faceScreenSize picks how big a background gets baked, so a wrong platform read ships a
- * background that does not fill the watch's screen or leaves a border around it. parseArgs and
- * outFor decide which frame gets baked and which PNG it is written over, so a slip there quietly
- * replaces the wrong theme's background. capColors folds a bake down to the colour cap after the
+ * facePlatforms picks which screens a background gets baked for, so a wrong read ships a build
+ * with no frame for one of them, or one baked at another screen's size. parseArgs and outFor
+ * decide which frame gets baked and which PNG it is written over, so a slip there quietly replaces
+ * the wrong theme's or the wrong platform's background. capColors folds a bake down to the colour cap after the
  * resize. A bitmap over 16 colours packs at eight bits per pixel instead of four, which doubles
  * the heap the watch needs to hold the frame and can keep a full-screen frame from loading at all,
  * so which pixels get folded and which are left alone is worth pinning. The render pipeline itself
@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { capColors, faceScreenSize, outFor, parseArgs, PLATFORM_DIMS } from './generate-frame';
+import { capColors, facePlatforms, outFor, parseArgs } from './generate-frame';
 import type { FaceConfig } from './generate-frame';
 import { WORKSPACE } from '../paths';
 
@@ -47,28 +47,39 @@ const UNTHEMED: FaceConfig = { ...THEMED, supportsTheme: false };
 
 const IMAGES = path.join('face', 'resources', 'images');
 
-describe('faceScreenSize', () => {
+describe('facePlatforms', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  /** A bake sized for the wrong platform leaves a border around the background or crops it. */
-  test('resolves the size from the appinfo first target platform', () => {
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ targetPlatforms: ['chalk'] }));
+  /**
+   * Only the first platform was read, so a face on emery and gabbro got one frame at emery's size,
+   * and the round build shipped it on a screen it did not fit.
+   */
+  test('bakes every platform the appinfo targets', () => {
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ targetPlatforms: ['emery', 'gabbro'] }));
 
-    expect(faceScreenSize('whatever.json')).toEqual(PLATFORM_DIMS.chalk);
+    const result = facePlatforms('whatever.json');
+
+    expect(result).toEqual(['emery', 'gabbro']);
   });
 
-  /** A face with no appinfo yet still needs a size to bake at, or the bake crashes before it renders anything. */
+  /** A face with no appinfo yet still needs a platform to bake for, or the bake stops before it renders anything. */
   test('falls back to emery when the appinfo is missing or unreadable', () => {
-    expect(faceScreenSize(path.join('no', 'such', 'appinfo.json'))).toEqual(PLATFORM_DIMS.emery);
+    const result = facePlatforms(path.join('no', 'such', 'appinfo.json'));
+
+    expect(result).toEqual(['emery']);
   });
 
-  /** A platform the table has no entry for must not crash the bake, so it lands on a known size instead. */
-  test('falls back to emery for an unknown platform', () => {
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ targetPlatforms: ['nope'] }));
+  /** A platform with no known size is left out with a warning rather than stopping the bakes it sits beside. */
+  test('leaves out and warns about a platform it has no size for', () => {
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ targetPlatforms: ['nope', 'gabbro'] }));
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    expect(faceScreenSize('whatever.json')).toEqual(PLATFORM_DIMS.emery);
+    const result = facePlatforms('whatever.json');
+
+    expect(result).toEqual(['gabbro']);
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -118,27 +129,27 @@ describe('outFor', () => {
   test('names a themed bake after its theme', () => {
     const opts = parseArgs(['--theme', 'mono'], THEMED);
 
-    const result = outFor(opts, 'mono', 1, THEMED, IMAGES);
+    const result = outFor(opts, 'mono', 1, THEMED, IMAGES, 'emery');
 
-    expect(result).toBe(path.join(IMAGES, 'background-mono.png'));
+    expect(result).toBe(path.join(IMAGES, 'background-mono~emery.png'));
   });
 
   /** The face loads background.png as its plain frame, so the bare base has to land there and not under its own name. */
   test('writes the bare background base to background.png', () => {
     const opts = parseArgs(['classic'], UNTHEMED);
 
-    const result = outFor(opts, null, 1, UNTHEMED, IMAGES);
+    const result = outFor(opts, null, 1, UNTHEMED, IMAGES, 'emery');
 
-    expect(result).toBe(path.join(IMAGES, 'background.png'));
+    expect(result).toBe(path.join(IMAGES, 'background~emery.png'));
   });
 
   /** Any other frame gets its own file, or baking it would overwrite the face's plain background. */
   test('names any other frame after its base', () => {
     const opts = parseArgs(['padd'], UNTHEMED);
 
-    const result = outFor(opts, null, 1, UNTHEMED, IMAGES);
+    const result = outFor(opts, null, 1, UNTHEMED, IMAGES, 'emery');
 
-    expect(result).toBe(path.join(IMAGES, 'background-padd.png'));
+    expect(result).toBe(path.join(IMAGES, 'background-padd~emery.png'));
   });
 
   /** A face with no plain background names every frame after itself, so its default frame never lands on background.png. */
@@ -146,18 +157,31 @@ describe('outFor', () => {
     const face: FaceConfig = { ...UNTHEMED, bareBackgroundBase: null };
     const opts = parseArgs([], face);
 
-    const result = outFor(opts, null, 1, face, IMAGES);
+    const result = outFor(opts, null, 1, face, IMAGES, 'emery');
 
-    expect(result).toBe(path.join(IMAGES, 'background-classic.png'));
+    expect(result).toBe(path.join(IMAGES, 'background-classic~emery.png'));
   });
 
-  /** --out names one file, so honouring it across several themes would write every colourway over the same PNG. */
-  test('ignores --out when more than one theme is baked', () => {
-    const opts = parseArgs(['--theme', 'all', '--out', 'override.png'], THEMED);
+  /** Two platforms landing on one file name would leave only the last screen's frame in the build. */
+  test('tags the file with the platform it was baked for', () => {
+    const opts = parseArgs(['classic'], UNTHEMED);
 
-    const result = outFor(opts, 'mono', 2, THEMED, IMAGES);
+    const result = outFor(opts, null, 1, UNTHEMED, IMAGES, 'gabbro');
 
-    expect(result).toBe(path.join(IMAGES, 'background-mono.png'));
+    expect(result).toBe(path.join(IMAGES, 'background~gabbro.png'));
+  });
+
+  /**
+   * --out across several themes was ignored, so a preview run meant to leave the face alone wrote
+   * over its committed backgrounds. Each theme now lands beside the --out path under its own name.
+   */
+  test('names each theme beside --out when more than one theme is baked', () => {
+    vi.spyOn(process, 'cwd').mockReturnValue(WORKSPACE);
+    const opts = parseArgs(['--theme', 'all', '--out', 'preview/override.png'], THEMED);
+
+    const result = outFor(opts, 'mono', 2, THEMED, IMAGES, 'emery');
+
+    expect(result).toBe(path.join(WORKSPACE, 'preview', 'override-mono~emery.png'));
   });
 
   /**
@@ -170,9 +194,9 @@ describe('outFor', () => {
     vi.spyOn(process, 'cwd').mockReturnValue(path.join(WORKSPACE, 'somewhere', 'else'));
     const opts = parseArgs(['--out', 'resources/images/override.png'], THEMED);
 
-    const result = outFor(opts, null, 1, THEMED, IMAGES);
+    const result = outFor(opts, null, 1, THEMED, IMAGES, 'emery');
 
-    expect(result).toBe(path.join(WORKSPACE, 'resources', 'images', 'override.png'));
+    expect(result).toBe(path.join(WORKSPACE, 'resources', 'images', 'override~emery.png'));
   });
 });
 

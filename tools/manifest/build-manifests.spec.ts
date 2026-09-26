@@ -10,7 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildMedia, buildManifest, fillWscript, resolveTargets } from './build-manifests';
+import { buildMedia, buildManifest, fillWscript, findTargetClash, resolveTargets } from './build-manifests';
 import type { SharedAppinfo } from './build-manifests';
 
 // a fresh config per test so the mutation check can't be masked by an earlier test
@@ -153,6 +153,29 @@ describe('buildManifest', () => {
   });
 });
 
+describe('findTargetClash', () => {
+  /** A copied face that kept its name built into the same sandbox, and its .pbw replaced the other's. */
+  test('names a target two faces share', () => {
+    const result = findTargetClash({ alpha: ['clock'], beta: ['clock'] });
+
+    expect(result).toMatch(/target "clock" is declared by both alpha and beta/);
+  });
+
+  /** Two entries in one face's targets map with one name built into one sandbox, and the watchface never came out. */
+  test('names a target one face declares twice', () => {
+    const result = findTargetClash({ alpha: ['clock', 'clock'] });
+
+    expect(result).toMatch(/target "clock" is declared twice by alpha/);
+  });
+
+  /** Unique names build side by side. */
+  test('passes unique names', () => {
+    const result = findTargetClash({ alpha: ['alpha-face', 'alpha-app'], beta: ['beta'] });
+
+    expect(result).toBeNull();
+  });
+});
+
 describe('resolveTargets', () => {
   /** The common face inlines one target, so a missing targets map still builds exactly that one .pbw. */
   test('returns the inline single target when there is no targets map', () => {
@@ -179,6 +202,24 @@ describe('resolveTargets', () => {
       { name: 'gridlock-face', watchface: true },
       { name: 'gridlock-app', watchface: false, menuIcon: 'ICON_ONE' },
     ]);
+  });
+
+  /** An empty map built nothing and failed later with a TypeError that named nothing. */
+  test('throws on an empty targets map', () => {
+    const config = { ...makeConfig(), targets: {} };
+
+    const call = () => resolveTargets(config);
+
+    expect(call).toThrow(/empty targets map/);
+  });
+
+  /** A target with no name built into targets/undefined and shipped undefined.pbw. */
+  test('throws on a target with no name', () => {
+    const config = { ...makeConfig(), targets: { watchface: { watchface: true } as never } };
+
+    const call = () => resolveTargets(config);
+
+    expect(call).toThrow(/target "watchface" has no name/);
   });
 
   /** An appinfo with no identity at all is a build-input mistake, so it must fail loudly not silently. */

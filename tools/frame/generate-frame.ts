@@ -7,6 +7,11 @@
  * Chromium clips pseudo-elements drawn at z-index:-1, which carve-outs such as the LCARS elbows
  * rely on.
  *
+ * A frame is baked once for each platform the face's appinfo targets, since the screens differ in
+ * size and a round one needs a frame drawn round. Each platform bakes from its own
+ * frame/<name>~<platform>.html to a PNG tagged ~<platform>, which the SDK picks for that build. A
+ * platform with no frame of its own is skipped with a warning, and the rest still bake.
+ *
  * The build does not bake frames. The PNGs under resources/images/ are committed. Run this
  * by hand to re-bake one during design:
  *   npm run gen:frame -- <face> [frame]
@@ -43,7 +48,7 @@ const ROOT = WORKSPACE;
  * A face either bakes each theme from its own frame/<name>.html (supportsTheme: false, one
  * HTML per look) or swaps a palette over one HTML (supportsTheme: true, a theme_<name>.css
  * per look). clearTextSelectors have their text emptied and hideSelectors are hidden, so the
- * bake is pure chrome. The "bareBackgroundBase" frame bakes to background.png; every other
+ * bake is pure chrome. The "bareBackgroundBase" frame bakes to background.png. Every other
  * base lands at background-<base>.png.
  *
  * hideSelectors drop out of the flow, so use them for something nothing else is positioned
@@ -92,23 +97,32 @@ function loadFaceConfig(dirs: FaceDirs): FaceConfig {
 }
 
 /**
- * Resolves the native screen size from the appinfo's first target platform (emery default).
+ * The platforms a face's appinfo targets that a frame can be baked for.
+ *
+ * A platform with no known screen size is left out with a warning, since there is no size to bake
+ * it at. A face
+ * with no appinfo yet, or none of its platforms known, bakes for emery.
  *
  * @param appinfoPath The face's pebble.appinfo.json path.
- * @return The screen size in pixels for the face's first target platform.
+ * @return The platforms to bake, in the appinfo's order.
  */
-export function faceScreenSize(appinfoPath: string): Dims {
+export function facePlatforms(appinfoPath: string): string[] {
+  let listed: unknown[] = [];
   try {
     const appinfo = JSON.parse(fs.readFileSync(appinfoPath, 'utf8'));
-    const platform: unknown = appinfo.targetPlatforms && appinfo.targetPlatforms[0];
-    if (typeof platform === 'string' && PLATFORM_DIMS[platform]) {
-      return PLATFORM_DIMS[platform];
-    }
+    listed = Array.isArray(appinfo.targetPlatforms) ? appinfo.targetPlatforms : [];
   } catch {
     // no appinfo yet, so fall through to the default
   }
 
-  return PLATFORM_DIMS.emery;
+  const known = listed.map(String).filter((platform) => {
+    if (PLATFORM_DIMS[platform]) {
+      return true;
+    }
+    console.warn(`warning: no screen size known for ${platform}, so it gets no frame`);
+    return false;
+  });
+  return known.length ? known : ['emery'];
 }
 
 // the watch never sees the anti-aliased bake. the SDK snaps every channel to one of four levels
@@ -273,6 +287,7 @@ export function parseArgs(argv: string[], face: FaceConfig): Options {
  * @param themeCount How many themes are being baked in this run.
  * @param face The face's config, used for its bare background base name.
  * @param imagesDir The face's resources/images directory.
+ * @param platform The platform being baked, which the file carries as its ~<platform> tag.
  * @return The absolute path the PNG should be written to.
  */
 export function outFor(
@@ -280,23 +295,28 @@ export function outFor(
   themeName: string | null,
   themeCount: number,
   face: FaceConfig,
-  imagesDir: string
+  imagesDir: string,
+  platform: string
 ): string {
-  if (opts.outOverride && themeCount === 1) {
-    return path.resolve(ROOT, opts.outOverride);
+  const tag = '~' + platform;
+  if (opts.outOverride) {
+    // several themes each get their own file beside the one --out names, rather than landing over
+    // the committed backgrounds a preview run meant to leave alone
+    const suffix = themeName && themeCount > 1 ? `-${themeName}` : '';
+    return path.resolve(ROOT, opts.outOverride).replace(/(\.png)?$/i, suffix + tag + '.png');
   }
 
   const base = opts.frame;
   let name: string;
   if (themeName) {
-    name = `background-${themeName}.png`;
+    name = `background-${themeName}`;
   } else if (face.bareBackgroundBase && base === face.bareBackgroundBase) {
-    name = 'background.png';
+    name = 'background';
   } else {
-    name = `background-${base}.png`;
+    name = `background-${base}`;
   }
 
-  return path.join(imagesDir, name);
+  return path.join(imagesDir, name + tag + '.png');
 }
 
 /** Bakes one or more theme PNGs for a face, from the command-line arguments. */
@@ -311,14 +331,21 @@ async function main(): Promise<void> {
   const dirs = faceDirs(face);
   const faceCfg = loadFaceConfig(dirs);
   const opts = parseArgs(argv.slice(1), faceCfg);
-  const { w: screenW, h: screenH } = faceScreenSize(dirs.appinfo);
 
-  const html = path.join(dirs.frameDir, `${opts.frame}.html`);
-  if (!fs.existsSync(html)) {
-    console.error(`Frame HTML not found: ${html}`);
+  // each platform bakes from its own HTML, and one without it is skipped so the rest still bake
+  const bakes = facePlatforms(dirs.appinfo)
+    .map((platform) => ({ platform, html: path.join(dirs.frameDir, `${opts.frame}~${platform}.html`) }))
+    .filter((bake) => {
+      if (fs.existsSync(bake.html)) {
+        return true;
+      }
+      console.warn(`warning: ${path.relative(ROOT, bake.html)} not found, so ${bake.platform} gets no ${opts.frame} frame`);
+      return false;
+    });
+  if (bakes.length === 0) {
+    console.error(`No frame HTML found for ${opts.frame} on any platform the face targets`);
     process.exit(1);
   }
-  const fileUrl = 'file://' + html.replace(/\\/g, '/');
 
   let themes: (string | null)[];
   if (opts.theme === 'all') {
@@ -343,71 +370,77 @@ async function main(): Promise<void> {
   const hideSel = faceCfg.hideSelectors.join(', ');
   const unpaintSel = (faceCfg.unpaintSelectors || []).join(', ');
 
-  for (const themeName of themes) {
-    await page.goto(fileUrl, { waitUntil: 'networkidle' });
+  for (const bake of bakes) {
+    const { w: screenW, h: screenH } = PLATFORM_DIMS[bake.platform];
+    const html = bake.html;
+    const fileUrl = 'file://' + html.replace(/\\/g, '/');
 
-    if (themeName) {
-      const themeCss = path.join(dirs.cssDir, `theme_${themeName}.css`);
-      if (!fs.existsSync(themeCss)) {
-        throw new Error(`Theme stylesheet not found: ${themeCss}`);
+    for (const themeName of themes) {
+      await page.goto(fileUrl, { waitUntil: 'networkidle' });
+
+      if (themeName) {
+        const themeCss = path.join(dirs.cssDir, `theme_${themeName}.css`);
+        if (!fs.existsSync(themeCss)) {
+          throw new Error(`Theme stylesheet not found: ${themeCss}`);
+        }
+        await page.evaluate(() => {
+          document.querySelectorAll('link[href*="theme_"]').forEach((link) => link.remove());
+        });
+        await page.addStyleTag({ path: themeCss });
       }
-      await page.evaluate(() => {
-        document.querySelectorAll('link[href*="theme_"]').forEach((link) => link.remove());
-      });
-      await page.addStyleTag({ path: themeCss });
+
+      await page.evaluate(
+        ({ clear, hide, unpaint }: { clear: string; hide: string; unpaint: string }) => {
+          if (clear) {
+            document.querySelectorAll(clear).forEach((el) => {
+              el.textContent = '';
+            });
+          }
+          if (hide) {
+            document.querySelectorAll(hide).forEach((el) => {
+              (el as HTMLElement).style.display = 'none';
+            });
+          }
+          // visibility rather than display so the box still takes up its space
+          // it also takes the element's ::before and ::after along with it
+          // which is where a frame often keeps its decorations, such as the LCARS end notches
+          if (unpaint) {
+            document.querySelectorAll(unpaint).forEach((el) => {
+              (el as HTMLElement).style.visibility = 'hidden';
+            });
+          }
+        },
+        { clear: clearSel, hide: hideSel, unpaint: unpaintSel }
+      );
+
+      // networkidle does not guarantee custom webfonts are painted, so await the font api
+      await page.evaluate(() => document.fonts && document.fonts.ready);
+      await page.waitForTimeout(200);
+
+      const screenshot = await page.locator('.viewport').screenshot();
+      const out = outFor(opts, themeName, themes.length, faceCfg, dirs.imagesDir, bake.platform);
+      fs.mkdirSync(path.dirname(out), { recursive: true });
+
+      const resized = sharp(screenshot)
+        // lanczos3 prevents moire when downscaling the sharp chrome geometry
+        .resize(screenW, screenH, { kernel: 'lanczos3' });
+
+      if (faceCfg.maxColors) {
+        const raw = await resized.ensureAlpha().raw().toBuffer();
+        await sharp(capColors(raw, faceCfg.maxColors), {
+          raw: { width: screenW, height: screenH, channels: 4 },
+        })
+          .png()
+          .toFile(out);
+      } else {
+        await resized.png().toFile(out);
+      }
+
+      console.log(
+        `Rendered ${path.relative(ROOT, html)}${themeName ? ` [${themeName}]` : ''} -> ` +
+          `${path.relative(ROOT, out)} (${screenW}x${screenH})`
+      );
     }
-
-    await page.evaluate(
-      ({ clear, hide, unpaint }: { clear: string; hide: string; unpaint: string }) => {
-        if (clear) {
-          document.querySelectorAll(clear).forEach((el) => {
-            el.textContent = '';
-          });
-        }
-        if (hide) {
-          document.querySelectorAll(hide).forEach((el) => {
-            (el as HTMLElement).style.display = 'none';
-          });
-        }
-        // visibility rather than display so the box still takes up its space
-        // it also takes the element's ::before and ::after along with it
-        // which is where a frame often keeps its decorations, such as the LCARS end notches
-        if (unpaint) {
-          document.querySelectorAll(unpaint).forEach((el) => {
-            (el as HTMLElement).style.visibility = 'hidden';
-          });
-        }
-      },
-      { clear: clearSel, hide: hideSel, unpaint: unpaintSel }
-    );
-
-    // networkidle does not guarantee custom webfonts are painted, so await the font api
-    await page.evaluate(() => document.fonts && document.fonts.ready);
-    await page.waitForTimeout(200);
-
-    const screenshot = await page.locator('.viewport').screenshot();
-    const out = outFor(opts, themeName, themes.length, faceCfg, dirs.imagesDir);
-    fs.mkdirSync(path.dirname(out), { recursive: true });
-
-    const resized = sharp(screenshot)
-      // lanczos3 prevents moire when downscaling the sharp chrome geometry
-      .resize(screenW, screenH, { kernel: 'lanczos3' });
-
-    if (faceCfg.maxColors) {
-      const raw = await resized.ensureAlpha().raw().toBuffer();
-      await sharp(capColors(raw, faceCfg.maxColors), {
-        raw: { width: screenW, height: screenH, channels: 4 },
-      })
-        .png()
-        .toFile(out);
-    } else {
-      await resized.png().toFile(out);
-    }
-
-    console.log(
-      `Rendered ${path.relative(ROOT, html)}${themeName ? ` [${themeName}]` : ''} -> ` +
-        `${path.relative(ROOT, out)} (${screenW}x${screenH})`
-    );
   }
 
   await browser.close();

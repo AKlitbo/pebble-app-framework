@@ -91,13 +91,20 @@ type ThumbFile = { file: string; slug: string; label: string; order: number; siz
  * Indexes the label-keyed registry by slug, keeping each row's position as its
  * sort order so the emitted file follows module-meta.ts.
  *
+ * Two modules on one slug would share one set of pictures, and the first one's tile came out blank
+ * with nothing to say why, so the index stops and names both.
+ *
  * @param meta The label-keyed registry to index.
  * @return The same rows keyed by slug, each with its label and sort order.
  */
 export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
   const bySlug: SlugIndex = {};
   Object.keys(meta).forEach((label, index) => {
-    bySlug[meta[label].slug] = { label: label, order: index };
+    const slug = meta[label].slug;
+    if (bySlug[slug]) {
+      throw new Error(`modules "${bySlug[slug].label}" and "${label}" share the slug "${slug}"`);
+    }
+    bySlug[slug] = { label: label, order: index };
   });
   return bySlug;
 }
@@ -162,6 +169,9 @@ export function buildSource(thumbs: Thumbs, order: Record<string, number>): stri
 
 /**
  * The registry slugs that no PNG covered, so a new module with no picture gets reported.
+ *
+ * One picture is enough to count, since a module only has pictures at the sizes it fits. Most
+ * fit one or two of the sizes a face offers, so a check for every size would fail every face.
  *
  * @param meta The label-keyed registry to check.
  * @param seen The slugs a PNG was found for.

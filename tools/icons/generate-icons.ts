@@ -174,8 +174,8 @@ export function resourceName(basename: string): string {
 }
 
 // a media entry is a face icon when it is a bitmap under an icons/ dir. media file paths
-// are relative to the face's resources/ dir so this matches both the new local
-// "icons/foo.png" and the old shared "../../../lib/resources/icons/foo.png"
+// are relative to the face's resources/ dir, so this matches both a face's own
+// "icons/foo.png" and a shared "../../../lib/resources/icons/foo.png"
 function isIconEntry(entry: MediaEntry): boolean {
   return entry.type === 'bitmap' && typeof entry.file === 'string' && /(^|\/)icons\//.test(entry.file);
 }
@@ -241,12 +241,14 @@ function formatEntry(entry: MediaEntry, indent: string): string {
  * @return The same text with its media array replaced.
  */
 export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
-  const keyAt = raw.indexOf('"media"');
-  if (keyAt === -1) {
+  // the key followed by its array, since "media" can also sit earlier in the file as a string value
+  const key = /"media"\s*:\s*\[/.exec(raw);
+  if (!key) {
     throw new Error('no "media" array in package.json');
   }
 
-  const open = raw.indexOf('[', keyAt);
+  const keyAt = key.index;
+  const open = keyAt + key[0].length - 1;
   let depth = 0, close = -1, inString = false, escaped = false;
   for (let i = open; i < raw.length; i++) {
     const char = raw[i];
