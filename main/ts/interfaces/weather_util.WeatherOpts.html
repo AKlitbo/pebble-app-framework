@@ -1,6 +1,9 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>WeatherOpts | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><script src="../../theme.js"></script>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>WeatherOpts | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><!-- site-bar head -->
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
 <link rel="stylesheet" href="../../site-bar.css">
+<!-- /site-bar head -->
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><nav class="site-bar" aria-label="Docs site">
   <a class="site-bar-home" href="../../index.html">
     <img src="../../logo.svg" alt="" width="22" height="22" />
@@ -11,7 +14,7 @@
   </select>
   <div class="site-bar-links">
     <a data-section="c" href="../../c/index.html">Device API</a>
-    <a data-section="ts" aria-current="page" href="../../ts/index.html">Phone API</a>
+    <a data-section="ts" aria-current="location" href="../../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
   </div>
@@ -26,7 +29,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -50,7 +53,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">WeatherOpts</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#coords">coords</a><span class="tsd-signature-symbol">?:</span> <a href="weather_util.WeatherCoords.html" class="tsd-signature-type tsd-kind-interface">WeatherCoords</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#fahrenheit">fahrenheit</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#fields">fields</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#key">key</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#label">label</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#place">place</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#provider">provider</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#wantforecast">wantForecast</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#zone">zone</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L64">weather/util.ts:64</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L64">weather/util.ts:64</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -75,44 +78,44 @@
 <h3 class="tsd-anchor-link" id="coords"><code class="tsd-tag">Optional</code><span>coords</span><a href="#coords" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">coords</span><span class="tsd-signature-symbol">?:</span> <a href="weather_util.WeatherCoords.html" class="tsd-signature-type tsd-kind-interface">WeatherCoords</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L68">weather/util.ts:68</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L68">weather/util.ts:68</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="fahrenheit"><code class="tsd-tag">Optional</code><span>fahrenheit</span><a href="#fahrenheit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">fahrenheit</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L67">weather/util.ts:67</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L67">weather/util.ts:67</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="fields"><code class="tsd-tag">Optional</code><span>fields</span><a href="#fields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">fields</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 <div class="tsd-comment tsd-typography"><p>The reading fields the face shows, such as <code>humidity</code> or <code>uvIndex</code>. Left out, a provider fetches all of them.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L73">weather/util.ts:73</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L73">weather/util.ts:73</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="key"><code class="tsd-tag">Optional</code><span>key</span><a href="#key" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">key</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L66">weather/util.ts:66</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L66">weather/util.ts:66</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="label"><code class="tsd-tag">Optional</code><span>label</span><a href="#label" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L69">weather/util.ts:69</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L69">weather/util.ts:69</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="place"><code class="tsd-tag">Optional</code><span>place</span><a href="#place" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">place</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L70">weather/util.ts:70</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L70">weather/util.ts:70</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="provider"><code class="tsd-tag">Optional</code><span>provider</span><a href="#provider" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">provider</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L65">weather/util.ts:65</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L65">weather/util.ts:65</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="wantforecast"><code class="tsd-tag">Optional</code><span>want<wbr/>Forecast</span><a href="#wantforecast" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">wantForecast</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L71">weather/util.ts:71</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L71">weather/util.ts:71</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="zone"><code class="tsd-tag">Optional</code><span>zone</span><a href="#zone" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">zone</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
@@ -121,7 +124,7 @@ The watch keeps the phone's clock, so times sent in the location's own zone read
 a place in another one. Left out, a provider answers in the location's zone.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/weather/util.ts#L79">weather/util.ts:79</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/weather/util.ts#L79">weather/util.ts:79</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

@@ -1,6 +1,9 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ClayConfigItem | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><script src="../../theme.js"></script>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ClayConfigItem | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><!-- site-bar head -->
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
 <link rel="stylesheet" href="../../site-bar.css">
+<!-- /site-bar head -->
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><nav class="site-bar" aria-label="Docs site">
   <a class="site-bar-home" href="../../index.html">
     <img src="../../logo.svg" alt="" width="22" height="22" />
@@ -11,7 +14,7 @@
   </select>
   <div class="site-bar-links">
     <a data-section="c" href="../../c/index.html">Device API</a>
-    <a data-section="ts" aria-current="page" href="../../ts/index.html">Phone API</a>
+    <a data-section="ts" aria-current="location" href="../../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
     <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
   </div>
@@ -26,7 +29,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -53,7 +56,7 @@ a face's own typed config array stays assignable to this.</p>
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">ClayConfigItem</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#attributes">attributes</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#capabilities">capabilities</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#defaultvalue">defaultValue</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#description">description</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#id">id</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#items">items</a><span class="tsd-signature-symbol">?:</span> <a href="" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#label">label</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#messagekey">messageKey</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#moduleoptions">moduleOptions</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#modulethumbnails">moduleThumbnails</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#options">options</a><span class="tsd-signature-symbol">?:</span> <a href="../types/clay_types.ClayOption.html" class="tsd-signature-type tsd-kind-type-alias">ClayOption</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#step">step</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#storeclass">storeClass</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#sunlight">sunlight</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#timezone">timeZone</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#type">type</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L19">clay/types.ts:19</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L19">clay/types.ts:19</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -85,7 +88,7 @@ a face's own typed config array stays assignable to this.</p>
 <h3 class="tsd-anchor-link" id="attributes"><code class="tsd-tag">Optional</code><span>attributes</span><a href="#attributes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">attributes</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L29">clay/types.ts:29</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L29">clay/types.ts:29</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="capabilities"><code class="tsd-tag">Optional</code><span>capabilities</span><a href="#capabilities" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">capabilities</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
@@ -95,75 +98,75 @@ invert, so ['NOT_PLATFORM_GABBRO'] drops the item on a round watch and keeps it 
 else. An item with none declared is always shown.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L34">clay/types.ts:34</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L34">clay/types.ts:34</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="defaultvalue"><code class="tsd-tag">Optional</code><span>default<wbr/>Value</span><a href="#defaultvalue" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">defaultValue</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">number</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">boolean</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L26">clay/types.ts:26</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L26">clay/types.ts:26</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="description"><code class="tsd-tag">Optional</code><span>description</span><a href="#description" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">description</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L25">clay/types.ts:25</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L25">clay/types.ts:25</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="id"><code class="tsd-tag">Optional</code><span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>Names the item for Clay's getItemById, for an item a custom function has to reach.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L22">clay/types.ts:22</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L22">clay/types.ts:22</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="items"><code class="tsd-tag">Optional</code><span>items</span><a href="#items" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">items</span><span class="tsd-signature-symbol">?:</span> <a href="" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L28">clay/types.ts:28</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L28">clay/types.ts:28</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="label"><code class="tsd-tag">Optional</code><span>label</span><a href="#label" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L24">clay/types.ts:24</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L24">clay/types.ts:24</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="messagekey"><code class="tsd-tag">Optional</code><span>message<wbr/>Key</span><a href="#messagekey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">messageKey</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L23">clay/types.ts:23</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L23">clay/types.ts:23</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="moduleoptions"><code class="tsd-tag">Optional</code><span>module<wbr/>Options</span><a href="#moduleoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">moduleOptions</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L39">clay/types.ts:39</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L39">clay/types.ts:39</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="modulethumbnails"><code class="tsd-tag">Optional</code><span>module<wbr/>Thumbnails</span><a href="#modulethumbnails" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">moduleThumbnails</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L40">clay/types.ts:40</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L40">clay/types.ts:40</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="options"><code class="tsd-tag">Optional</code><span>options</span><a href="#options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/clay_types.ClayOption.html" class="tsd-signature-type tsd-kind-type-alias">ClayOption</a><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L27">clay/types.ts:27</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L27">clay/types.ts:27</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="step"><code class="tsd-tag">Optional</code><span>step</span><a href="#step" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">step</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
 <div class="tsd-comment tsd-typography"><p>slider only: the gap between values. Its decimal places are how far Clay scales the value up for the watch.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L46">clay/types.ts:46</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L46">clay/types.ts:46</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="storeclass"><code class="tsd-tag">Optional</code><span>store<wbr/>Class</span><a href="#storeclass" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">storeClass</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div>
 <div class="tsd-comment tsd-typography"><p>hiddenStore only: the extra class that tells one store on a page from another.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L42">clay/types.ts:42</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L42">clay/types.ts:42</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="sunlight"><code class="tsd-tag">Optional</code><span>sunlight</span><a href="#sunlight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">sunlight</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
 <div class="tsd-comment tsd-typography"><p>color only: false shows the true colours instead of their washed-out sunlight pair.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L44">clay/types.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L44">clay/types.ts:44</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="timezone"><code class="tsd-tag">Optional</code><span>time<wbr/>Zone</span><a href="#timezone" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">timeZone</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">boolean</span></div>
@@ -171,12 +174,12 @@ else. An item with none declared is always shown.</p>
 places, and the phone sends it to the watch as &quot;offset,label&quot; with the offset read off the zone.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L37">clay/types.ts:37</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L37">clay/types.ts:37</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="type"><span>type</span><a href="#type" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">type</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/198d30421e9eba72a8e3cfbac83dd369923d7143/ts/clay/types.ts#L20">clay/types.ts:20</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/clay/types.ts#L20">clay/types.ts:20</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

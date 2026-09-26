@@ -14,11 +14,14 @@
             background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
+<!-- site-bar head -->
+<link rel="icon" href="../../../../favicon.svg" type="image/svg+xml">
 <script src="../../../../theme.js"></script>
 <script src="../../../../versions.js"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../../../site-bar.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
 <link rel="stylesheet" href="../../../../coverage.css">
+<!-- /site-bar head -->
 </head>
     
 <body>
@@ -34,7 +37,7 @@
     <a data-section="c" href="../../../../c/index.html">Device API</a>
     <a data-section="ts" href="../../../../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../../../../coverage/c/index.html">C Coverage</a>
-    <a data-section="coverage-ts" aria-current="page" href="../../../../coverage/ts/index.html">TS Coverage</a>
+    <a data-section="coverage-ts" aria-current="location" href="../../../../coverage/ts/index.html">TS Coverage</a>
   </div>
   <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
     <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
@@ -47,7 +50,7 @@
   <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
   <svg viewBox="0 0 14 14" aria-hidden="true">
     <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
-    <rect class="lit" x="3" y="3" width="4" height="8" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
   </svg>
   <span class="theme-toggle-label">Theme</span>
 </button>
@@ -59,30 +62,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">46.83% </span>
+                <span class="strong">47.5% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>37/79</span>
+                <span class='fraction'>38/80</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">65% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>24/40</span>
+                <span class='fraction'>26/40</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">61.53% </span>
+                <span class="strong">64.28% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/13</span>
+                <span class='fraction'>9/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">45.94% </span>
+                <span class="strong">46.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>34/74</span>
+                <span class='fraction'>35/75</span>
             </div>
         
             
@@ -404,7 +407,19 @@
 <a name='L303'></a><a href='#L303'>303</a>
 <a name='L304'></a><a href='#L304'>304</a>
 <a name='L305'></a><a href='#L305'>305</a>
-<a name='L306'></a><a href='#L306'>306</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L306'></a><a href='#L306'>306</a>
+<a name='L307'></a><a href='#L307'>307</a>
+<a name='L308'></a><a href='#L308'>308</a>
+<a name='L309'></a><a href='#L309'>309</a>
+<a name='L310'></a><a href='#L310'>310</a>
+<a name='L311'></a><a href='#L311'>311</a>
+<a name='L312'></a><a href='#L312'>312</a>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -427,12 +442,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -586,6 +601,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -706,7 +733,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
@@ -894,13 +921,25 @@ export function fillWscript(template: string, dirs: SandboxDirs): string {
 }
 &nbsp;
 /**
+ * The version a face builds as. The face's own version wins, and the root package.json is the fallback.
+ * The release check reads it from here too, so a tag is held to the version the pbw is built with.
+ *
+ * @param config The face's appinfo.
+ * @param rootPkg The root package.json.
+ * @return The version, or undefined when neither file has one.
+ */
+export function faceVersion(config: { version?: string }, rootPkg: { version?: string }): string | undefined {
+  return config.version || rootPkg.version;
+}
+&nbsp;
+/**
  * Writes one target's sandbox: targets/&lt;target name&gt;/{package.json,wscript}.
  *
  * @return The sandbox's absolute path.
  */
 function <span class="fstat-no" title="function not covered" >writeTarget(f</span>ace: string, config: Appinfo, rootPkg: RootPkg, target: Target): string {
-  // the face's own version wins. the root package.json is the fallback and still owns the author
-  const version = <span class="cstat-no" title="statement not covered" >config.version || rootPkg.version;</span>
+  // the root package.json still owns the author
+  const version = <span class="cstat-no" title="statement not covered" >faceVersion(config, rootPkg) as string;</span>
   const manifest = <span class="cstat-no" title="statement not covered" >buildManifest(config, { author: rootPkg.author, version }, target);</span>
 &nbsp;
   const outDir = <span class="cstat-no" title="statement not covered" >path.join(ROOT, 'targets', target.name);</span>
@@ -1021,7 +1060,7 @@ function <span class="fstat-no" title="function not covered" >main() {</span>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-26T04:14:34.759Z
+                at 2026-09-26T08:01:30.128Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
