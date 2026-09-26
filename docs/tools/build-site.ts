@@ -4,18 +4,20 @@
  *
  * Doxygen, TypeDoc, and both coverage runs have already written their parts into dist by the time this
  * runs. This adds the home page, the changelog, the notices, and the licence pages around them, plus the
- * stylesheets, theme script, and logo they share. Then it goes back through every page those tools wrote
+ * stylesheets, theme script, and logo they share. The README is not rendered. The home page links it on
+ * GitHub instead. Then it goes back through every page those tools wrote
  * and adds the shared bar, so each one has a way home and the same theme toggle. It never clears dist.
  *
  * A coverage summary or a tool's folder that is missing is skipped, so the site still builds on a machine
  * that skipped part of the build.
  *
- * Run via `npm run docs:site`, or as the last part of the build-docs-site action.
+ * Run via `npm --prefix docs run site`, or as the last part of the build-docs-site action.
  */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
+  PAGES,
   REPO_URL,
   addSiteBar,
   escapeHtml,
@@ -23,29 +25,21 @@ import {
   pixelStrip,
   readGcovrSummary,
   readVitestSummary,
-  renderInline,
   renderLicenceText,
   renderMarkdown,
   renderSiteBar,
   rootFor,
-  sectionList,
   splitTitle,
-  takeIntro,
-  undotLinks,
   type GeneratedPage,
   type SiteSection,
 } from './render.ts';
 
 const ROOT = path.resolve(import.meta.dirname, '..', '..');
 const SITE = path.join(ROOT, 'docs', 'site');
-const TEMPLATES = path.join(SITE, 'templates');
 const DIST = path.join(SITE, 'dist');
 
-// the two full licence texts, each with the folder its page sits in and the title it shows
-const LICENCES = [
-  { file: 'LICENSES/AGPL-3.0-or-later.txt', folder: 'agpl-3.0-or-later', title: 'GNU Affero General Public License v3.0 or later' },
-  { file: 'LICENSES/PolyForm-Noncommercial-1.0.0.txt', folder: 'polyform-noncommercial-1.0.0', title: 'PolyForm Noncommercial License 1.0.0' },
-];
+// the two full licence texts, which the licence page lists
+const LICENCES = [PAGES.agpl, PAGES.polyform];
 
 // files the pages share, copied into dist as they are, by their path from the repo root
 const SHARED_FILES = [
@@ -61,8 +55,8 @@ const SHARED_FILES = [
 const FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">';
 
 // the folders other tools write, with the section each belongs to and the tags each page needs in its head
-// the Doxygen header already loads theme.js, versions.js, and the Plex fonts, and TypeDoc's stylesheet brings the fonts
-// the coverage reports bring none of it, and they get the site's look from coverage.css
+// the Doxygen header already loads the tab icon, theme.js, versions.js, and the Plex fonts, and TypeDoc's
+// stylesheet brings the fonts. the coverage reports bring none of it, and they get the site's look from coverage.css
 const GENERATED: { folder: string; kind: GeneratedPage; section: SiteSection; head: (root: string) => string }[] = [
   {
     folder: 'c',
@@ -74,36 +68,46 @@ const GENERATED: { folder: string; kind: GeneratedPage; section: SiteSection; he
     folder: 'ts',
     kind: 'typedoc',
     section: 'ts',
-    head: (root) => `<script src="${root}theme.js"></script>\n<script src="${root}versions.js"></script>\n<link rel="stylesheet" href="${root}site-bar.css">\n`,
+    head: sharedHead,
   },
   {
     folder: 'coverage/c',
     kind: 'report',
     section: 'coverage-c',
-    head: (root) => coverageHead(root),
+    head: coverageHead,
   },
   {
     folder: 'coverage/ts',
     kind: 'report',
     section: 'coverage-ts',
-    head: (root) => coverageHead(root),
+    head: coverageHead,
   },
 ];
 
 // Doxygen writes a bare list of links for web crawlers, with no header and nobody reading it, so it gets no bar
 const SKIPPED = new Set(['c/doxygen_crawl.html']);
 
-function coverageHead(root: string): string {
-  return `<script src="${root}theme.js"></script>\n<script src="${root}versions.js"></script>\n${FONTS}\n<link rel="stylesheet" href="${root}site-bar.css">\n<link rel="stylesheet" href="${root}coverage.css">\n`;
+/** The tab icon, the two scripts, and the bar's stylesheet, which every page Doxygen did not write takes. */
+function sharedHead(root: string): string {
+  return `<link rel="icon" href="${root}favicon.svg" type="image/svg+xml">\n<script src="${root}theme.js"></script>\n<script src="${root}versions.js"></script>\n<link rel="stylesheet" href="${root}site-bar.css">\n`;
 }
 
-/** Reads a repo file with Windows line endings folded, so a checkout on either system renders the same. */
+/** The shared tags plus the fonts and the coverage stylesheet, which the coverage reports bring none of. */
+function coverageHead(root: string): string {
+  return `${sharedHead(root)}${FONTS}\n<link rel="stylesheet" href="${root}coverage.css">\n`;
+}
+
+/**
+ * Reads a repo file with Windows line endings folded, so a checkout on either system renders the same. A
+ * byte order mark a Windows editor left at the start is dropped too, since marked would read it as part of
+ * the first line and miss the title heading.
+ */
 function read(relative: string): string {
-  return fs.readFileSync(path.join(ROOT, relative), 'utf8').replace(/\r\n/g, '\n');
+  return fs.readFileSync(path.join(ROOT, relative), 'utf8').replace(/^\uFEFF/, '').replace(/\r\n/g, '\n');
 }
 
 function template(name: string): string {
-  return fs.readFileSync(path.join(TEMPLATES, name), 'utf8').replace(/\r\n/g, '\n');
+  return read(path.join('docs', 'site', 'templates', name));
 }
 
 /** A summary a coverage run did not write, or wrote badly, reads as null. */
@@ -117,6 +121,29 @@ function readSummary(relative: string): unknown {
 
 function git(...args: string[]): string {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8' }).trim();
+}
+
+/** Runs git with its stderr kept out of the build's output, for a call that is expected to fail sometimes. */
+function gitQuiet(...args: string[]): string {
+  return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+}
+
+/**
+ * Names a local build the way CI names it. A checkout on a branch is the branch. A detached one, such as an
+ * old release checked out to look at its docs, reads HEAD from git, so it is named by the tag it sits on or
+ * else its short commit.
+ */
+function localRef(): string {
+  const name = git('rev-parse', '--abbrev-ref', 'HEAD');
+  if (name !== 'HEAD') {
+    return name;
+  }
+  try {
+    // a commit with no tag on it fails here, and git's own complaint about that is not worth printing
+    return gitQuiet('describe', '--tags', '--exact-match', 'HEAD');
+  } catch {
+    return git('rev-parse', '--short', 'HEAD');
+  }
 }
 
 function write(relative: string, html: string): void {
@@ -137,29 +164,11 @@ function pagesUnder(folder: string): string[] {
     .filter((relative) => !SKIPPED.has(relative));
 }
 
-/**
- * Takes the dot off each folder at the top of a report, since GitHub Pages leaves out a .github folder
- * when it packs the site. A folder left by an earlier build under the new name is replaced, because the
- * report was just written again.
- */
-function undotFolders(folder: string): string[] {
-  const start = path.join(DIST, folder);
-  if (!fs.existsSync(start)) {
-    return [];
-  }
-  const dotted = fs.readdirSync(start, { withFileTypes: true }).filter((entry) => entry.isDirectory() && entry.name.startsWith('.'));
-  for (const entry of dotted) {
-    const target = path.join(start, entry.name.slice(1));
-    fs.rmSync(target, { recursive: true, force: true });
-    fs.renameSync(path.join(start, entry.name), target);
-  }
-  return dotted.map((entry) => entry.name);
-}
-
 const version = (JSON.parse(read('package.json')) as { version: string }).version;
-const commit = process.env.GITHUB_SHA || git('rev-parse', 'HEAD');
+// a PR build checks out the merge commit GitHub makes, which is on no branch, so the PR's own head goes first
+const commit = process.env.PR_HEAD_SHA || process.env.GITHUB_SHA || git('rev-parse', 'HEAD');
 // a PR build's ref name is its merge ref, so the branch it came from is tried first
-const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || git('rev-parse', '--abbrev-ref', 'HEAD');
+const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME || localRef();
 const built = new Date().toISOString().slice(0, 10);
 
 const themeToggle = template('theme-toggle.html');
@@ -171,7 +180,14 @@ function siteBar(root: string, section: SiteSection): string {
 }
 
 function footer(root: string): string {
-  return fillTemplate(template('footer.html'), { root, repoUrl: REPO_URL, branch: escapeHtml(branch) });
+  return fillTemplate(template('footer.html'), {
+    changelog: root + PAGES.changelog.folder,
+    notices: root + PAGES.notices.folder,
+    agpl: root + PAGES.agpl.folder,
+    polyform: root + PAGES.polyform.folder,
+    repoUrl: REPO_URL,
+    branch: escapeHtml(branch),
+  });
 }
 
 function page(relative: string, title: string, body: string): void {
@@ -179,44 +195,38 @@ function page(relative: string, title: string, body: string): void {
   write(relative, fillTemplate(template('page.html'), { root, title: escapeHtml(title), body, siteBar: siteBar(root, null), footer: footer(root) }));
 }
 
-// the home page, with the README's title and tagline in the header and the rest below the cards
-const home = { root: '', commit };
-const readme = splitTitle(read('README.md'));
-const intro = takeIntro(readme.body);
-const rendered = renderMarkdown(intro.rest, home);
-
+// the home page, the cards into each part of the site with the README a link away on GitHub
+// the README link is pinned to the build's commit like every other repo link, so an older version's site
+// shows the setup steps that match its docs
 write('index.html', fillTemplate(template('landing.html'), {
   siteBar: siteBar('', null),
-  tagline: renderInline(intro.intro, home),
+  readmeUrl: `${REPO_URL}/blob/${commit}/README.md`,
   version: escapeHtml(version),
   branch: escapeHtml(branch),
   commitShort: commit.slice(0, 7),
   built,
   coverageC: pixelStrip(readGcovrSummary(readSummary('coverage/c/summary.json'))),
   coverageTs: pixelStrip(readVitestSummary(readSummary('coverage/ts/coverage-summary.json'))),
-  toc: sectionList(rendered.sections),
-  readme: rendered.html,
   footer: footer(''),
 }));
 
-for (const [file, folder, fallback] of [['CHANGELOG.md', 'changelog', 'Changelog'], ['NOTICES.md', 'notices', 'Third-Party Notices']]) {
-  const markdown = splitTitle(read(file));
-  page(`${folder}/index.html`, markdown.title || fallback, renderMarkdown(markdown.body, { root: '../', commit }).html);
+for (const markdownPage of [PAGES.changelog, PAGES.notices]) {
+  const markdown = splitTitle(read(markdownPage.file));
+  const relative = `${markdownPage.folder}index.html`;
+  page(relative, markdown.title || markdownPage.title, renderMarkdown(markdown.body, { root: rootFor(relative), commit }));
 }
 
-const licenceLinks = LICENCES.map((licence) => `<li><a href="${licence.folder}/">${escapeHtml(licence.title)}</a></li>`).join('\n');
-page('licences/index.html', 'Licence', `${renderLicenceText(read('LICENSE'))}\n<h2 id="full-texts">Full Texts</h2>\n<ul>\n${licenceLinks}\n</ul>`);
+// each full text's link is its folder worked out from the licence page's own folder, so either can move
+const licenceLinks = LICENCES.map((licence) => `<li><a href="${path.posix.relative(PAGES.licence.folder, licence.folder)}/">${escapeHtml(licence.title)}</a></li>`).join('\n');
+page(`${PAGES.licence.folder}index.html`, PAGES.licence.title, `${renderLicenceText(read(PAGES.licence.file))}\n<h2 id="full-texts">Full Texts</h2>\n<ul>\n${licenceLinks}\n</ul>`);
 
 for (const licence of LICENCES) {
-  page(`licences/${licence.folder}/index.html`, licence.title, renderLicenceText(read(licence.file)));
+  page(`${licence.folder}index.html`, licence.title, renderLicenceText(read(licence.file)));
 }
 
 for (const file of SHARED_FILES) {
   fs.copyFileSync(path.join(ROOT, file), path.join(DIST, path.basename(file)));
 }
-
-// the Vitest report lays out the action scripts under .github/, which would never reach GitHub Pages
-const undotted = undotFolders('coverage/ts');
 
 // the shared bar on every page the other tools wrote
 let barred = 0;
@@ -225,8 +235,7 @@ for (const generated of GENERATED) {
     const file = path.join(DIST, relative);
     const html = fs.readFileSync(file, 'utf8');
     const root = rootFor(relative);
-    const linked = generated.folder === 'coverage/ts' ? undotLinks(html, undotted) : html;
-    const result = addSiteBar(linked, generated.kind, generated.head(root), siteBar(root, generated.section));
+    const result = addSiteBar(html, generated.kind, generated.head(root), siteBar(root, generated.section));
     if (result !== html) {
       fs.writeFileSync(file, result);
       barred++;

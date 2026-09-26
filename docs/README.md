@@ -2,7 +2,7 @@
 
 Everything that builds the framework's docs site, with a package of its own so a repo of faces never installs those tools.
 
-The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test suite, and a home page built from the README, the changelog, the notices, and the licences. Main and each release tag publish it to [GitHub Pages](https://aklitbo.github.io/pebble-app-framework/), and a picker in the shared bar moves between the versions.
+The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test suite, a home page that links into each of them, and pages for the changelog, the notices, and the licences. The README is not on the site, and the home page links it on GitHub. Main and each release tag publish it to [GitHub Pages](https://aklitbo.github.io/pebble-app-framework/), and a picker in the shared bar moves between the versions.
 
 ## Layout
 
@@ -16,9 +16,10 @@ The package here holds TypeDoc, marked and Prettier, alongside `tsconfig.json`, 
 
 ## Building It
 
-Run these from the repo root in this order, since the home page reads both coverage reports. Doxygen, `make` and gcovr need WSL or Linux.
+Run these from the repo root in this order, since the home page reads both coverage reports. Doxygen, `make` and gcovr need WSL or Linux. The first `npm ci` is the framework's own, which the coverage run and the checks below need, since Vitest and ESLint come from it.
 
 ```sh
+npm ci
 npm ci --prefix docs
 doxygen
 npm --prefix docs run ts
@@ -35,7 +36,7 @@ CI does the same through the `build-docs-site` action, which runs after `build-d
 
 ```sh
 npm --prefix docs run test          # the renderer specs
-npm --prefix docs run lint          # site/theme.js, which the framework's own lint leaves out
+npm --prefix docs run lint          # the browser scripts in site/, which the framework's own lint leaves out
 npm --prefix docs run typecheck
 npm --prefix docs run format:check  # or format to fix the templates, stylesheets and theme script
 ```
@@ -45,6 +46,16 @@ The framework's own Vitest run and typecheck skip this folder, since what is her
 ## The Shared Bar
 
 Every page on the site carries the same bar across the top, with the logo linking home, the version picker, a link to each part of the site, a GitHub link and the one theme toggle. The home page and the pages built from `templates/` carry it from the template. `build-site.ts` puts it into each page Doxygen, TypeDoc and the two coverage reports write, and swaps the one already there on a rebuild, so a page never ends up with two.
+
+## The Doxygen Header
+
+`doxygen/header.html` is Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`, with these changes:
+
+* The scripts at the end of the head load the site's `theme.js` and `versions.js`, and the fix for Doxygen's double escaped outline links.
+* The mermaid line after the dark mode one is left out, since no page draws a diagram and it would load mermaid from a CDN on every page.
+* The title area keeps only the line naming this part of the site, to match the title TypeDoc shows. Its logo, brief and search cells are gone, because the site's shared bar already shows the logo and the search box is in Doxygen's own menu.
+
+Doxygen copies the header into every page it writes, so these notes live here rather than in the file. When Doxygen moves up a version, make the header again the same way and put these changes back.
 
 ## Versions
 

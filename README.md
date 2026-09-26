@@ -2,6 +2,9 @@
 
 The shared framework behind my Pebble watchfaces and watchapps. It holds the device C, the PebbleKit JS runtime and Clay config pieces, the waf build helpers, and the generators and build tooling every face uses.
 
+> [!NOTE]
+> Built and tested with Pebble SDK 4.33.1 and pebble-tool 5.0.40, for emery and gabbro. The framework uses what that SDK offers, so something a newer PebbleOS adds, such as its extra vibe patterns, waits until an SDK ships it. A face built with another SDK may behave differently.
+
 ## Layout
 
 **Framework Code**

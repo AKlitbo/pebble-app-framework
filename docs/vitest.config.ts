@@ -5,7 +5,7 @@
  * suite, which skips docs/. That keeps a repo of faces from needing the docs packages just to run its
  * tests.
  *
- * Run via npm run test:docs, after npm ci --prefix docs.
+ * Run via npm --prefix docs run test, after npm ci and npm ci --prefix docs.
  */
 import { defineConfig } from 'vitest/config';
 

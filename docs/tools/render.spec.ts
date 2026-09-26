@@ -2,9 +2,9 @@
  * Specs for the docs site renderer.
  *
  * Nobody reads the html this writes before it goes up, so a mistake here shows as a broken page on GitHub
- * Pages. The parts worth pinning are the ones that still produce a page that loads: the README losing a
- * section or showing its tagline twice, a link that 404s, a coverage strip drawn from a bad summary, and a
- * placeholder left in the page.
+ * Pages. The parts worth pinning are the ones that still produce a page that loads: a title printed twice,
+ * a link or an image that 404s, an anchor that misses its heading, a coverage strip drawn from a bad
+ * summary, a placeholder left in the page, and a rebuild that changes a page it should leave alone.
  */
 import { describe, expect, test } from 'vitest';
 import {
@@ -15,11 +15,11 @@ import {
   readVitestSummary,
   renderMarkdown,
   renderSiteBar,
+  rewriteImage,
   rewriteLink,
   rootFor,
+  slug,
   splitTitle,
-  takeIntro,
-  undotLinks,
 } from './render.ts';
 
 const HOME = { root: '', commit: 'abc1234' };
@@ -35,6 +35,15 @@ describe('splitTitle', () => {
     expect(result.body.trim()).toBe('The shared framework.\n\n## Layout\n\nThe tree.');
   });
 
+  /** The title is escaped into the page title and heading, so its raw markdown showed backticks in the browser tab. */
+  test('gives the title as plain text', () => {
+    const markdown = '# The `lib` [Notices](x.md)\n\nBody.\n';
+
+    const result = splitTitle(markdown);
+
+    expect(result.title).toBe('The lib Notices');
+  });
+
   /** A file that opens on a section keeps it, so a changelog missing its title still shows in full. */
   test('leaves a file with no title whole', () => {
     const markdown = '## Layout\n\nThe tree.\n';
@@ -45,24 +54,40 @@ describe('splitTitle', () => {
   });
 });
 
-describe('takeIntro', () => {
-  /** The intro is the header tagline, so leaving it in the body would print it twice on the home page. */
-  test('takes the first paragraph as the intro', () => {
-    const markdown = '\nThe shared framework.\n\n## Layout\n\nThe tree.\n';
+describe('slug', () => {
+  /** GitHub keeps one hyphen per space, so a link written for GitHub to a dated changelog heading missed here. */
+  test.each([
+    ['[2.2.0] - 2026-09-23', '220---2026-09-23'],
+    ['A & B', 'a--b'],
+    ['Using It', 'using-it'],
+    ['snake_case name', 'snake_case-name'],
+  ])('makes %s the id GitHub gives it', (heading, expected) => {
+    const result = slug(heading);
 
-    const result = takeIntro(markdown);
+    expect(result).toBe(expected);
+  });
+});
 
-    expect(result.intro).toBe('The shared framework.');
-    expect(result.rest.trim()).toBe('## Layout\n\nThe tree.');
+describe('rewriteImage', () => {
+  /** The site has no copy of the repo's files, so an image by its repo path was a 404. */
+  test('loads a repo image from GitHub at the commit', () => {
+    const result = rewriteImage('./docs/diagram.png', HOME);
+
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/raw/abc1234/docs/diagram.png');
   });
 
-  /** A README that goes straight into a section would otherwise lose that section to the tagline. */
-  test('keeps the body whole when it opens on a heading', () => {
-    const markdown = '## Layout\n\nThe tree.\n';
+  /** GitHub reads a leading slash from the repo root, and on Pages it pointed outside the site. */
+  test('reads a leading slash as the repo root', () => {
+    const result = rewriteImage('/docs/diagram.png', HOME);
 
-    const result = takeIntro(markdown);
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/raw/abc1234/docs/diagram.png');
+  });
 
-    expect(result).toEqual({ intro: '', rest: markdown });
+  /** An image that already has a full address loads as it is. */
+  test('leaves a full URL alone', () => {
+    const result = rewriteImage('https://example.com/a.png', HOME);
+
+    expect(result).toBe('https://example.com/a.png');
   });
 });
 
@@ -88,6 +113,13 @@ describe('rewriteLink', () => {
     expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/docs/doxygen/awesome/LICENSE');
   });
 
+  /** GitHub reads a link that starts with a slash from the repo root, and on Pages it pointed outside the site. */
+  test('reads a leading slash as the repo root', () => {
+    const result = rewriteLink('/c/core/clock/timeband.h', HOME);
+
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/c/core/clock/timeband.h');
+  });
+
   /** Rewriting a full URL or an anchor would break a link that already works. */
   test.each([
     'https://aklitbo.github.io/pebble-app-framework/',
@@ -101,35 +133,69 @@ describe('rewriteLink', () => {
 });
 
 describe('renderMarkdown', () => {
-  /** The changelog repeats Fixed under every version, so without a count each link jumps to the first one. */
+  /** The changelog repeats Fixed under every version, and GitHub numbers the repeats from 1, so a link written there lands here. */
   test('gives repeated headings their own ids', () => {
     const markdown = '## 1.1.0\n\n### Fixed\n\n## 1.0.0\n\n### Fixed\n';
 
     const result = renderMarkdown(markdown, HOME);
 
-    expect(result.html).toContain('<h3 id="fixed">Fixed</h3>');
-    expect(result.html).toContain('<h3 id="fixed-2">Fixed</h3>');
+    expect(result).toContain('<h3 id="fixed">Fixed</h3>');
+    expect(result).toContain('<h3 id="fixed-1">Fixed</h3>');
   });
 
-  /** The section list beside the README follows its sections, not every heading inside them. */
-  test('lists only level two headings as sections', () => {
-    const markdown = '## Layout\n\n### Framework Code\n\n## Using It\n';
+  /** A heading titled Fixed 1 takes fixed-1 as its own, so a later repeat of Fixed has to skip past it. */
+  test('skips an id a heading already took as its own', () => {
+    const markdown = '### Fixed\n\n### Fixed 1\n\n### Fixed\n';
 
     const result = renderMarkdown(markdown, HOME);
 
-    expect(result.sections).toEqual([
-      { id: 'layout', title: 'Layout' },
-      { id: 'using-it', title: 'Using It' },
-    ]);
+    expect(result).toContain('<h3 id="fixed-1">Fixed 1</h3>');
+    expect(result).toContain('<h3 id="fixed-2">Fixed</h3>');
   });
 
-  /** A link in the rendered README must never point at a repo path the site does not have. */
+  /** A rendered link must never point at a repo path the site does not have. */
   test('rewrites the links it renders', () => {
     const markdown = 'See [LICENSE](LICENSE).';
 
     const result = renderMarkdown(markdown, HOME);
 
-    expect(result.html).toContain('<a href="licences/">LICENSE</a>');
+    expect(result).toContain('<a href="licences/">LICENSE</a>');
+  });
+
+  /** The README has no page on the site, so a link to it goes to GitHub where it is read. */
+  test('sends a link to the README to GitHub', () => {
+    const markdown = 'See the [README](README.md#using-it).';
+
+    const result = renderMarkdown(markdown, HOME);
+
+    expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/README.md#using-it">README</a>');
+  });
+
+  /** An image by its repo path was a 404 on the published page. */
+  test('points an image at the file on GitHub', () => {
+    const markdown = '![a diagram](docs/x.png)';
+
+    const result = renderMarkdown(markdown, HOME);
+
+    expect(result).toContain('<img src="https://github.com/AKlitbo/pebble-app-framework/raw/abc1234/docs/x.png" alt="a diagram">');
+  });
+
+  /** A fence with more than its language in the info string lost its language class and its comment dimming. */
+  test('reads only the first word of a fence info string as its language', () => {
+    const markdown = '```sh title\nnpm test\n```\n';
+
+    const result = renderMarkdown(markdown, HOME);
+
+    expect(result).toContain('<code class="language-sh">npm test</code>');
+  });
+
+  /** A heading with inline code got an id from its raw markdown, so a link to it missed. */
+  test('makes a heading id from its plain text', () => {
+    const markdown = '## Using `clay-preview.ts`\n';
+
+    const result = renderMarkdown(markdown, HOME);
+
+    expect(result).toContain('<h2 id="using-clay-previewts">');
   });
 });
 
@@ -186,6 +252,13 @@ describe('pixelStrip', () => {
 
     expect(result.match(/<i><\/i>/g) ?? []).toHaveLength(lit);
     expect(result.match(/<i class="off"><\/i>/g) ?? []).toHaveLength(10 - lit);
+  });
+
+  /** The figure rounded to the nearest tenth read 100.0% beside a strip with one pixel dark. */
+  test('rounds the figure down the way the pixels are', () => {
+    const result = pixelStrip(99.96);
+
+    expect(result).toContain('title="99.9% of lines"');
   });
 
   /** With no summary the card shows no strip, rather than one that reads as nothing covered. */
@@ -246,7 +319,7 @@ describe('renderSiteBar', () => {
   test('marks the section the page is in', () => {
     const result = renderSiteBar(TEMPLATE, { ...BUILD, root: '../../', section: 'coverage-c' });
 
-    expect(result).toContain('<a data-section="coverage-c" aria-current="page" href="../../coverage/c/index.html">');
+    expect(result).toContain('<a data-section="coverage-c" aria-current="location" href="../../coverage/c/index.html">');
     expect(result.match(/aria-current/g)).toHaveLength(1);
   });
 
@@ -269,6 +342,9 @@ describe('renderSiteBar', () => {
 describe('addSiteBar', () => {
   const BAR = '<nav class="site-bar"></nav>';
   const HEAD = '<link rel="stylesheet" href="../site-bar.css">';
+  // what the head tags and the bar go in as
+  const HEAD_TAGS = `<!-- site-bar head -->\n${HEAD}\n<!-- /site-bar head -->\n`;
+  const BAR_LINE = `${BAR}\n`;
 
   /** Outside #top, Doxygen sizes its sidebar without the bar and the sidebar runs past the bottom of the window. */
   test('puts the bar inside the top of a Doxygen page', () => {
@@ -276,7 +352,7 @@ describe('addSiteBar', () => {
 
     const result = addSiteBar(html, 'doxygen', HEAD, BAR);
 
-    expect(result).toBe(`<html><head><title>x</title>${HEAD}</head><body>\n<div id="top"><!-- do not remove this div -->\n${BAR}<div id="titlearea">`);
+    expect(result).toBe(`<html><head><title>x</title>${HEAD_TAGS}</head><body>\n<div id="top"><!-- do not remove this div -->\n${BAR_LINE}<div id="titlearea">`);
   });
 
   /** Below TypeDoc's toolbar, the bar would be hidden under it as soon as the page scrolls. */
@@ -285,16 +361,39 @@ describe('addSiteBar', () => {
 
     const result = addSiteBar(html, 'typedoc', HEAD, BAR);
 
-    expect(result).toBe(`<html><head>${HEAD}</head><body><script>theme()</script>${BAR}<header class="tsd-page-toolbar">`);
+    expect(result).toBe(`<html><head>${HEAD_TAGS}</head><body><script>theme()</script>${BAR_LINE}<header class="tsd-page-toolbar">`);
   });
 
   /** Building the site pages again would otherwise stack a second bar and a second set of head tags on every page. */
   test('swaps the bar on a page that already has one and adds nothing else', () => {
-    const html = `<html><head>${HEAD}</head><body>\n<nav class="site-bar"><a>Old</a></nav>\n<div class="wrapper">`;
+    const html = `<html><head>${HEAD_TAGS}</head><body>\n<nav class="site-bar"><a>Old</a></nav>\n<div class="wrapper">`;
 
     const result = addSiteBar(html, 'report', HEAD, BAR);
 
-    expect(result).toBe(`<html><head>${HEAD}</head><body>\n${BAR}\n<div class="wrapper">`);
+    expect(result).toBe(`<html><head>${HEAD_TAGS}</head><body>\n${BAR_LINE}<div class="wrapper">`);
+  });
+
+  /**
+   * The bar ends on a line break, and each rebuild put one more under it. Every page then changed on every
+   * run, so all of them were written again and the count of pages given a bar was wrong.
+   */
+  test('leaves a page as it is when it is built again with the same bar', () => {
+    const once = addSiteBar('<html><head></head><body>\n<div class="wrapper">', 'report', HEAD, `${BAR}\n`);
+
+    const result = addSiteBar(once, 'report', HEAD, `${BAR}\n`);
+
+    expect(result).toBe(once);
+  });
+
+  /** A change to the head tags never reached a page built over again, so it came out without the new stylesheet. */
+  test('swaps the head tags on a page that already has a bar', () => {
+    const once = addSiteBar('<html><head></head><body>\n<div class="wrapper">', 'report', HEAD, BAR);
+    const newHead = '<link rel="stylesheet" href="../coverage.css">';
+
+    const result = addSiteBar(once, 'report', newHead, BAR);
+
+    expect(result).toContain(`<!-- site-bar head -->\n${newHead}\n<!-- /site-bar head -->\n</head>`);
+    expect(result).not.toContain('site-bar.css');
   });
 
   /** A tool update that moves its markup has to stop the build, not publish pages with no way home. */
@@ -304,34 +403,5 @@ describe('addSiteBar', () => {
     const result = () => addSiteBar(html, 'typedoc', HEAD, BAR);
 
     expect(result).toThrow('tsd-page-toolbar');
-  });
-});
-
-describe('undotLinks', () => {
-  /** GitHub Pages drops the .github folder, so a link still naming it opens a 404 for every action script. */
-  test('points a link into a renamed folder at the name without the dot', () => {
-    const html = '<a href=".github/actions/build-docs-site/scripts/index.html">.github/actions</a>';
-
-    const result = undotLinks(html, ['.github']);
-
-    expect(result).toBe('<a href="github/actions/build-docs-site/scripts/index.html">.github/actions</a>');
-  });
-
-  /** A page deeper in the report reaches the folder through ../, and that link has to follow the rename too. */
-  test('follows the rename through links that climb first', () => {
-    const html = '<a href="../../.github/actions/index.html">x</a>';
-
-    const result = undotLinks(html, ['.github']);
-
-    expect(result).toBe('<a href="../../github/actions/index.html">x</a>');
-  });
-
-  /** Only the renamed folder moves, so a file whose name merely contains it keeps its link. */
-  test('leaves links to anything else alone', () => {
-    const html = '<a href="ts/pkjs/.github.ts.html">x</a><a href="base.css">y</a>';
-
-    const result = undotLinks(html, ['.github']);
-
-    expect(result).toBe(html);
   });
 });

@@ -1,34 +1,46 @@
 /**
  * Renders the pages of the docs site that come from files in the repo.
  *
- * The home page carries the README, and the changelog, the notices, and the licences each get a page of
- * their own. Everything here takes what it needs as arguments and hands back a string, so build-site.ts is
- * the only part that reads the disk, git, or the clock.
+ * The changelog, the notices, and the licences each get a page of their own. The README is left to
+ * GitHub, so a link to it goes there. Everything here takes what it needs as arguments and hands back a
+ * string, so build-site.ts is the only part that reads the disk, git, or the clock.
  */
 import { Marked, type Token } from 'marked';
 
 /** Where the framework lives on GitHub. A link to a repo file with no page on the site opens it here. */
 export const REPO_URL = 'https://github.com/AKlitbo/pebble-app-framework';
 
-// the repo files that have a page of their own on the site, by their path from the repo root
-const SITE_PAGES = new Map<string, string>([
-  ['LICENSE', 'licences/'],
-  ['LICENSES/AGPL-3.0-or-later.txt', 'licences/agpl-3.0-or-later/'],
-  ['LICENSES/PolyForm-Noncommercial-1.0.0.txt', 'licences/polyform-noncommercial-1.0.0/'],
-  ['NOTICES.md', 'notices/'],
-  ['CHANGELOG.md', 'changelog/'],
-]);
+/** A repo file with a page of its own on the site. */
+export interface SitePage {
+  /** The file, by its path from the repo root. */
+  file: string;
+  /** The folder its page sits in, from the site root, with a trailing slash. */
+  folder: string;
+  /** The title its page shows, and the name the footer links it by. */
+  title: string;
+}
+
+/**
+ * Every repo file with a page of its own, by the name build-site.ts and the footer use for it.
+ *
+ * The page build, the footer, and the link rewriting all read their folders from here, so a page that
+ * moves takes every link to it along.
+ */
+export const PAGES = {
+  changelog: { file: 'CHANGELOG.md', folder: 'changelog/', title: 'Changelog' },
+  notices: { file: 'NOTICES.md', folder: 'notices/', title: 'Third-Party Notices' },
+  licence: { file: 'LICENSE', folder: 'licences/', title: 'Licence' },
+  agpl: { file: 'LICENSES/AGPL-3.0-or-later.txt', folder: 'licences/agpl-3.0-or-later/', title: 'GNU Affero General Public License v3.0 or later' },
+  polyform: { file: 'LICENSES/PolyForm-Noncommercial-1.0.0.txt', folder: 'licences/polyform-noncommercial-1.0.0/', title: 'PolyForm Noncommercial License 1.0.0' },
+} satisfies Record<string, SitePage>;
+
+// the same pages by file, for the link rewriting
+const SITE_PAGES = new Map<string, string>(Object.values(PAGES).map((page) => [page.file, page.folder]));
 
 const ENTITIES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 
 // the number of pixels in a coverage strip
 const STRIP_PIXELS = 10;
-
-/** One level two heading, the way the section list beside the README shows it. */
-export interface Section {
-  id: string;
-  title: string;
-}
 
 /** What a link needs to know about the page it sits on. */
 export interface LinkOptions {
@@ -49,17 +61,20 @@ export function escapeHtml(text: string): string {
 }
 
 /**
- * Turns a heading into the id its anchor uses. `Using It` becomes `using-it`.
+ * Turns a heading into the id its anchor uses, the way GitHub does. `Using It` becomes `using-it`.
  *
- * @param text The heading as written.
- * @return Lowercase letters, digits, and single hyphens, or `section` when nothing is left.
+ * Every space becomes its own hyphen and a run of them is kept, so `[2.2.0] - 2026-09-23` becomes
+ * `220---2026-09-23`. A link written to work on GitHub then lands on the same heading here.
+ *
+ * @param text The heading's plain text.
+ * @return Lowercase letters, digits, underscores, and hyphens, or `section` when nothing is left.
  */
 export function slug(text: string): string {
   const result = text
-    .toLowerCase()
-    .replace(/[^a-z0-9 -]/g, '')
     .trim()
-    .replace(/[\s-]+/g, '-');
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s_-]/gu, '')
+    .replace(/\s/g, '-');
 
   return result || 'section';
 }
@@ -69,19 +84,21 @@ export function slug(text: string): string {
  *
  * The markdown links files by their path in the repo, which is a 404 once it is a page on GitHub Pages. A
  * file with a page of its own goes to that page. Any other repo file goes to GitHub at the commit the site
- * was built from. Full URLs and anchors already work, so they are left alone.
+ * was built from, including one written from the repo root with a leading slash. Full URLs and anchors
+ * already work, so they are left alone.
  *
  * @param href The link as written in the markdown.
  * @param options Where the page sits and which commit it was built from.
  * @return The link to put in the html.
  */
 export function rewriteLink(href: string, options: LinkOptions): string {
-  if (href.startsWith('#') || href.startsWith('/') || /^[a-z][a-z0-9+.-]*:/i.test(href)) {
+  if (href.startsWith('#') || href.startsWith('//') || /^[a-z][a-z0-9+.-]*:/i.test(href)) {
     return href;
   }
 
+  // GitHub reads a link that starts with / from the repo root, so it is a repo path like any other
   const hashAt = href.indexOf('#');
-  const target = (hashAt === -1 ? href : href.slice(0, hashAt)).replace(/^\.\//, '');
+  const target = (hashAt === -1 ? href : href.slice(0, hashAt)).replace(/^\.?\//, '');
   const fragment = hashAt === -1 ? '' : href.slice(hashAt);
 
   const page = SITE_PAGES.get(target);
@@ -89,6 +106,24 @@ export function rewriteLink(href: string, options: LinkOptions): string {
     return `${options.root}${page}${fragment}`;
   }
   return `${REPO_URL}/blob/${options.commit}/${target}${fragment}`;
+}
+
+/**
+ * Points an image in one of the repo's markdown files at a copy that loads on the site.
+ *
+ * The site has no copy of the repo's files, so a repo path is a 404 there, whether written relative or
+ * from the repo root. It loads the file itself from GitHub at the commit the site was built from. A full
+ * URL is left alone.
+ *
+ * @param src The image path as written in the markdown.
+ * @param options Which commit the site was built from.
+ * @return The source to put in the html.
+ */
+export function rewriteImage(src: string, options: LinkOptions): string {
+  if (src.startsWith('//') || /^[a-z][a-z0-9+.-]*:/i.test(src)) {
+    return src;
+  }
+  return `${REPO_URL}/raw/${options.commit}/${src.replace(/^\.?\//, '')}`;
 }
 
 /** Every token after `from` joined back into markdown, which is exactly the source they were read from. */
@@ -108,7 +143,8 @@ function firstContent(tokens: Token[], from: number): number {
 /**
  * Takes the level one heading off the top of a markdown file.
  *
- * The site shows that title in its own header, so leaving it in the body would print it twice.
+ * The site shows that title in its own header, so leaving it in the body would print it twice. It goes in
+ * the page's title and heading as plain text, so its inline markup such as backticks is taken off.
  *
  * @param markdown The whole file.
  * @return The title, and the markdown after it. With no level one heading first, the title is empty and
@@ -122,64 +158,55 @@ export function splitTitle(markdown: string): { title: string; body: string } {
   if (first === undefined || first.type !== 'heading' || first.depth !== 1) {
     return { title: '', body: markdown };
   }
-  return { title: first.text, body: joinRaw(tokens, index + 1) };
+  return { title: plainText(first.tokens ?? []), body: joinRaw(tokens, index + 1) };
+}
+
+/** The text a heading reads as, with its inline markup such as backticks and links taken off. */
+function plainText(tokens: Token[]): string {
+  return tokens
+    .map((token) => ('tokens' in token && Array.isArray(token.tokens) ? plainText(token.tokens) : 'text' in token ? String(token.text) : ''))
+    .join('');
 }
 
 /**
- * Takes the opening paragraph off a markdown body.
- *
- * The README's first paragraph is the home page's tagline, so it comes out of the body shown below.
- *
- * @param markdown The body, usually what splitTitle left.
- * @return The paragraph as markdown, and the rest. When the body does not open on a paragraph, the intro is
- * empty and nothing is taken.
+ * Builds a markdown reader that rewrites links and images and gives each heading an id. Each page gets a
+ * fresh one, so ids from one page never bump the count on another.
  */
-export function takeIntro(markdown: string): { intro: string; rest: string } {
-  const tokens = new Marked().lexer(markdown);
-  const index = firstContent(tokens, 0);
-  const first = tokens[index];
-
-  if (first === undefined || first.type !== 'paragraph') {
-    return { intro: '', rest: markdown };
-  }
-  return { intro: first.text, rest: joinRaw(tokens, index + 1) };
-}
-
-/** Dims a trailing `# comment` on one already escaped line of a shell block. */
-function markShellComment(line: string): string {
-  return line.replace(/(^|\s)(#.*)$/, '$1<span class="cmt">$2</span>');
-}
-
-/**
- * Builds a markdown reader that rewrites links, gives each heading an id, and records the level two
- * headings as it goes. Each page gets a fresh one, so ids from one page never bump the count on another.
- */
-function createMarked(options: LinkOptions, sections: Section[]): Marked {
-  const seen = new Map<string, number>();
+function createMarked(options: LinkOptions): Marked {
+  // every id handed out on the page, and for each base the number its next repeat takes
+  const used = new Map<string, number>();
 
   return new Marked({
     gfm: true,
     renderer: {
-      heading({ tokens, depth, text }) {
-        const base = slug(text);
-        const count = (seen.get(base) ?? 0) + 1;
-        seen.set(base, count);
-        const id = count === 1 ? base : `${base}-${count}`;
-
-        if (depth === 2) {
-          sections.push({ id, title: text });
+      heading({ tokens, depth }) {
+        // GitHub numbers a repeat from 1, so the second Fixed is fixed-1, and skips a number a heading
+        // already took as its own id, such as one titled Fixed 1
+        const base = slug(plainText(tokens));
+        let id = base;
+        while (used.has(id)) {
+          const next = (used.get(base) ?? 0) + 1;
+          used.set(base, next);
+          id = `${base}-${next}`;
         }
+        used.set(id, 0);
+
         return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>\n`;
       },
       link({ href, title, tokens }) {
         const titleAttribute = title ? ` title="${escapeHtml(title)}"` : '';
         return `<a href="${escapeHtml(rewriteLink(href, options))}"${titleAttribute}>${this.parser.parseInline(tokens)}</a>`;
       },
+      image({ href, title, text }) {
+        const titleAttribute = title ? ` title="${escapeHtml(title)}"` : '';
+        return `<img src="${escapeHtml(rewriteImage(href, options))}" alt="${escapeHtml(text)}"${titleAttribute}>`;
+      },
       code({ text, lang }) {
-        const lines = escapeHtml(text).split('\n');
-        const body = lang === 'sh' ? lines.map(markShellComment).join('\n') : lines.join('\n');
-        const language = lang ? ` class="language-${escapeHtml(lang)}"` : '';
-        return `<pre><code${language}>${body}</code></pre>\n`;
+        // a fence's info string can carry more than the language, such as `sh title`, and only the first
+        // word names the language
+        const language = (lang || '').split(/\s+/)[0];
+        const className = language ? ` class="language-${escapeHtml(language)}"` : '';
+        return `<pre><code${className}>${escapeHtml(text)}</code></pre>\n`;
       },
     },
   });
@@ -190,35 +217,10 @@ function createMarked(options: LinkOptions, sections: Section[]): Marked {
  *
  * @param markdown The markdown to render.
  * @param options Where the page sits and which commit it was built from, for the links.
- * @return The html, and the level two headings in order for the section list.
- */
-export function renderMarkdown(markdown: string, options: LinkOptions): { html: string; sections: Section[] } {
-  const sections: Section[] = [];
-
-  const html = createMarked(options, sections).parse(markdown, { async: false });
-
-  return { html, sections };
-}
-
-/**
- * Renders a single line of markdown with no paragraph around it, such as the tagline.
- *
- * @param markdown The line to render.
- * @param options Where the page sits and which commit it was built from, for the links.
  * @return The html.
  */
-export function renderInline(markdown: string, options: LinkOptions): string {
-  return createMarked(options, []).parseInline(markdown, { async: false });
-}
-
-/**
- * Builds the section list that sits beside the README.
- *
- * @param sections The level two headings, from renderMarkdown.
- * @return One link per section, each on its own line.
- */
-export function sectionList(sections: Section[]): string {
-  return sections.map((section) => `<a href="#${section.id}">${escapeHtml(section.title)}</a>`).join('\n');
+export function renderMarkdown(markdown: string, options: LinkOptions): string {
+  return createMarked(options).parse(markdown, { async: false });
 }
 
 /**
@@ -279,7 +281,8 @@ export function pixelStrip(percent: number | null): string {
   }
 
   const lit = Math.floor(percent / 10);
-  const figure = `${percent.toFixed(1)}% of lines`;
+  // rounded down like the pixels, so 99.96 never reads 100.0% beside a strip with one pixel dark
+  const figure = `${(Math.floor(percent * 10) / 10).toFixed(1)}% of lines`;
   const pixels = Array.from({ length: STRIP_PIXELS }, (_, index) => (index < lit ? '<i></i>' : '<i class="off"></i>')).join('');
 
   return `<div class="pixels" title="${figure}">${pixels}<span class="visually-hidden">${figure}</span></div>`;
@@ -355,25 +358,7 @@ export function renderSiteBar(template: string, options: SiteBarOptions): string
     themeToggle,
   });
 
-  return section === null ? bar : bar.replace(`data-section="${section}"`, `data-section="${section}" aria-current="page"`);
-}
-
-/**
- * Points the links in a coverage page at folders that have had the dot taken off their names.
- *
- * Vitest lays its report out like the source tree, so the framework's action scripts land under
- * coverage/ts/.github/. GitHub Pages leaves out every .github folder when it packs the site, and each of
- * those pages 404s. build-site.ts renames the folder without its dot, and this moves the links to match.
- *
- * @param html A page of the coverage report.
- * @param folders The names the dot came off, such as `.github`.
- * @return The page with every link into one of those folders pointed at the name without the dot.
- */
-export function undotLinks(html: string, folders: string[]): string {
-  return folders.reduce((page, folder) => {
-    const escaped = folder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return page.replace(new RegExp(`href="((?:\\.\\./)*)${escaped}/`, 'g'), `href="$1${folder.slice(1)}/`);
-  }, html);
+  return section === null ? bar : bar.replace(`data-section="${section}"`, `data-section="${section}" aria-current="location"`);
 }
 
 /** The kinds of page other tools write, which each need the bar in a different spot. */
@@ -389,15 +374,21 @@ const BAR_SPOTS: Record<GeneratedPage, { pattern: RegExp; before: boolean }> = {
   report: { pattern: /<body[^>]*>\n?/, before: false },
 };
 
-// a bar already on the page, from the nav tag through to its close
-const EXISTING_BAR = /<nav class="site-bar"[\s\S]*?<\/nav>\n?/;
+// a bar already on the page, from the nav tag through to its close and the line breaks after it
+const EXISTING_BAR = /<nav class="site-bar"[\s\S]*?<\/nav>\n*/;
+
+// the tags the bar needs in the head, between the markers they are put in with
+const HEAD_START = '<!-- site-bar head -->\n';
+const HEAD_END = '<!-- /site-bar head -->\n';
+const EXISTING_HEAD = /<!-- site-bar head -->\n[\s\S]*?<!-- \/site-bar head -->\n/;
 
 /**
  * Puts the shared bar and the tags it needs into a page another tool wrote.
  *
- * A page that already has a bar gets that bar swapped for the new one and nothing else, so building the
- * site pages again over the same output never gives a page two bars or two sets of head tags, and a
- * change to the bar still reaches it. A page missing the spot its kind expects is refused, so a tool
+ * A page that already has a bar gets that bar and its head tags swapped for the new ones, so building the
+ * site pages again over the same output never gives a page two bars or two sets of head tags, a change to
+ * either still reaches it, and a page that comes out the same is left as it is. The head tags sit between
+ * two markers so they can be found again. A page missing the spot its kind expects is refused, so a tool
  * update that changes its markup stops the build rather than publishing pages with no way home.
  *
  * @param html The page as the tool wrote it, or as an earlier build left it.
@@ -407,8 +398,12 @@ const EXISTING_BAR = /<nav class="site-bar"[\s\S]*?<\/nav>\n?/;
  * @return The page with the bar in.
  */
 export function addSiteBar(html: string, kind: GeneratedPage, head: string, bar: string): string {
+  const headTags = HEAD_START + head + (head.endsWith('\n') ? '' : '\n') + HEAD_END;
+  // the bar always ends on one line break, the same whether it went in fresh or replaced one
+  const barLine = bar.replace(/\n*$/, '\n');
+
   if (EXISTING_BAR.test(html)) {
-    return html.replace(EXISTING_BAR, () => `${bar}\n`);
+    return html.replace(EXISTING_HEAD, () => headTags).replace(EXISTING_BAR, () => barLine);
   }
 
   const headEnd = html.indexOf('</head>');
@@ -418,5 +413,5 @@ export function addSiteBar(html: string, kind: GeneratedPage, head: string, bar:
   }
 
   const barAt = BAR_SPOTS[kind].before ? spot.index : spot.index + spot[0].length;
-  return html.slice(0, headEnd) + head + html.slice(headEnd, barAt) + bar + html.slice(barAt);
+  return html.slice(0, headEnd) + headTags + html.slice(headEnd, barAt) + barLine + html.slice(barAt);
 }

@@ -4,8 +4,8 @@
  * page Doxygen, TypeDoc, gcovr, and Vitest write. So it sits inside stylesheets it does not control, and it
  * sets its own colours, fonts, and spacing rather than inheriting them.
  *
- * The palette is the one in site.css. theme.js puts dark-mode on the html element of every page, and the
- * bar reads that.
+ * The palette is the one in site.css. theme.js puts dark-mode or light-mode on the html element of every
+ * page, and the bar reads that. With no script the system setting decides, as it does in site.css.
  */
 
 .site-bar {
@@ -46,6 +46,20 @@ html.dark-mode .site-bar {
   --bar-muted: #9a968e;
   --bar-rule: #2e2c33;
   --bar-signal: #ff4700;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) .site-bar {
+    --bar-paper: #1b1a1e;
+    --bar-ink: #e4e1da;
+    --bar-muted: #9a968e;
+    --bar-rule: #2e2c33;
+    --bar-signal: #ff4700;
+  }
+
+  html:not(.light-mode) .site-bar .site-bar-version {
+    color-scheme: dark;
+  }
 }
 
 .site-bar *,
@@ -138,6 +152,10 @@ html.dark-mode .site-bar .site-bar-version {
   min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
+  /* a row that scrolls sideways clips top and bottom too, so it gets room for a link's focus ring, which
+     sits 4px out, and gives it back in margin so the bar keeps its height */
+  padding: 4px;
+  margin: -4px;
 }
 
 .site-bar .site-bar-links a {
@@ -152,7 +170,7 @@ html.dark-mode .site-bar .site-bar-version {
 }
 
 /* the section you are in is filled in, ink behind text the colour of the paper */
-.site-bar .site-bar-links a[aria-current='page'] {
+.site-bar .site-bar-links a[aria-current='location'] {
   background: var(--bar-ink) !important;
   border-color: var(--bar-ink);
   color: var(--bar-paper) !important;
@@ -215,7 +233,7 @@ html.dark-mode .site-bar .site-bar-version {
   flex: none;
 }
 
-.site-bar .theme-toggle .lit {
+.site-bar .theme-toggle .theme-toggle-lit {
   fill: currentColor;
 }
 
@@ -225,19 +243,28 @@ html.dark-mode .site-bar .site-bar-version {
   stroke-width: 1.5;
 }
 
-/* on a phone the logo replaces the name, and the links take a row of their own that scrolls sideways */
+/* on a phone the logo replaces the name, and the links take a row of their own. they wrap rather than
+   scroll, since a scrolling row hides its scrollbar and the last link was cut off with no sign of more */
 @media (max-width: 640px) {
   .site-bar {
     padding: 8px 16px;
   }
 
+  /* hidden from sight but still read out, since it is the only name the home link has */
   .site-bar-home span {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .site-bar-links {
     order: 3;
     flex-basis: 100%;
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
 
   .site-bar .site-bar-github {

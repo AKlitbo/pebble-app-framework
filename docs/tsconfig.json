@@ -1,6 +1,6 @@
 // typechecks the docs site tools and their specs
 // they import marked from the docs package's own install, so a repo of faces never checks them
-// run by npm run typecheck:docs and by the framework's CI after npm ci --prefix docs
+// run by npm --prefix docs run typecheck and by the framework's CI after npm ci --prefix docs
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {

@@ -8,6 +8,7 @@
     <script src="theme.js"></script>
     <script src="versions.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
@@ -22,7 +23,11 @@
         <img class="logo" src="logo.svg" alt="" width="56" height="56" />
         <div class="head-text">
           <h1>Pebble App Framework</h1>
-          <p class="tagline">{{tagline}}</p>
+          <p class="tagline">
+            The shared framework behind my Pebble watchfaces and watchapps: the device C, the PebbleKit JS runtime and
+            Clay config pieces, and the build tooling every face uses. Setup and usage are in the
+            <a href="{{readmeUrl}}">README on GitHub</a>.
+          </p>
         </div>
         <div class="head-side">
           <div class="build">
@@ -76,14 +81,6 @@
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>
-      </div>
-
-      <div class="readme-layout">
-        <nav class="toc" aria-label="README sections">
-          <div class="section-label">README</div>
-          {{toc}}
-        </nav>
-        <article class="readme">{{readme}}</article>
       </div>
 
       {{footer}}
