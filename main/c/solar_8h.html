@@ -207,7 +207,8 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>How the day's light is going, worked out from three plain clock readings. </p>
-<p>Sunrise, sunset, and now all arrive as minutes past midnight, so this is pure arithmetic with no watch behind it. Reading the phone's strings and the clock is the caller's job. Handing over the three numbers is the seam. Any reading of -1 means the caller had nothing, and every function here answers "no data" for it rather than doing maths on a missing time. </p>
+<p>Sunrise, sunset, and now all arrive as minutes past midnight, so this is pure arithmetic with no watch behind it. Reading the phone's strings and the clock is the caller's job. Handing over the three numbers is the seam. Any reading of -1 means the caller had nothing, and every function here answers "no data" for it rather than doing maths on a missing time. Sunrise and sunset on the same minute count as no data too, since a sun that never sets and one that never rises can both arrive that way.</p>
+<p>The daylight is measured forward round the clock from sunrise, so a sunset after midnight, as in a high latitude summer, works the same as an ordinary one. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

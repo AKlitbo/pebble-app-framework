@@ -193,12 +193,14 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('number__format
 <p>Pure number and string formatting, no SDK behind it.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="number__format_8h_source.html">text/number_format.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a4adab5526b64c59384538f303559a94f" id="r_a4adab5526b64c59384538f303559a94f"><td class="memItemLeft">static unsigned int&#160;</td><td class="memItemRight"><a class="el" href="#a4adab5526b64c59384538f303559a94f">magnitude_of</a> (int value)</td></tr>
+<tr class="memdesc:a4adab5526b64c59384538f303559a94f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of a number without its sign, as an unsigned value.  <br /></td></tr>
 <tr class="memitem:ga3633a279bf5254234b2a8549d98e80de" id="r_ga3633a279bf5254234b2a8549d98e80de"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3633a279bf5254234b2a8549d98e80de">number_group</a> (char *buffer, size_t size, int value)</td></tr>
 <tr class="memdesc:ga3633a279bf5254234b2a8549d98e80de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format an integer with apostrophe thousands separators (e.g. 20358 -&gt; "20'358").  <br /></td></tr>
 <tr class="memitem:ga145e042f4414e0854e809ac7c7b086ca" id="r_ga145e042f4414e0854e809ac7c7b086ca"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga145e042f4414e0854e809ac7c7b086ca">fmt_int_or_dash</a> (char *buffer, size_t size, int value, const char *fmt)</td></tr>
@@ -211,10 +213,48 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga2d2900400e9b136d9d176de8838c52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy bytes into a fixed buffer, taking what fits and always terminating.  <br /></td></tr>
 <tr class="memitem:ga6334eca7eb0a33cdf25b1bb9060afa35" id="r_ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35">cstring_is_clean</a> (const char *s, uint16_t size)</td></tr>
 <tr class="memdesc:ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a byte range holds a string worth keeping.  <br /></td></tr>
+<tr class="memitem:ga58af7628a1a740a9fb7a220b3a472c22" id="r_ga58af7628a1a740a9fb7a220b3a472c22"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22">cstring_setting_is_clean</a> (const char *s, uint16_t size, const char *default_str)</td></tr>
+<tr class="memdesc:ga58af7628a1a740a9fb7a220b3a472c22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a saved text setting reads as one, where an empty setting can be the real value.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Pure number and string formatting, no SDK behind it. </p>
-</div></div><!-- contents -->
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a4adab5526b64c59384538f303559a94f" name="a4adab5526b64c59384538f303559a94f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4adab5526b64c59384538f303559a94f">&#9670;&#160;</a></span>magnitude_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int magnitude_of </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>value</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The size of a number without its sign, as an unsigned value. </p>
+<p>abs() on INT_MIN has no answer that fits an int, and the stock price comes straight off the wire. Doing the negation in unsigned maths gives the right size for every int, INT_MIN included.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The number to take the size of. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value with its sign dropped. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>

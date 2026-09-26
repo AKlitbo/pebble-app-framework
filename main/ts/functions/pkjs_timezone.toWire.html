@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>toWire | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script src="../../theme.js"></script>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>toWire | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
 <link rel="stylesheet" href="../../site-bar.css">
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><nav class="site-bar" aria-label="Docs site">
@@ -51,7 +51,7 @@
 <div class="tsd-signature tsd-anchor-link" id="towire"><span class="tsd-kind-call-signature">toWire</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">saved</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">nowMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><a href="#towire" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>The &quot;offset,label&quot; a timezone field sends the watch, with the offset read off the saved zone.</p>
-<p>A value saved before the zone was kept is passed straight through, since its offset is all there
+<p>A value saved before the zone was kept goes out with the offset it saved, since that is all there
 is to go on. The label is flattened to ASCII because the watch header fonts carry no glyph for
 an accented letter and draw it as a box.</p>
 </div>
@@ -67,7 +67,7 @@ an accented letter and draw it as a box.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><p>The string for the watch, or an empty string when nothing is saved yet.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/ts/pkjs/timezone.ts#L129">pkjs/timezone.ts:129</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/ts/pkjs/timezone.ts#L123">pkjs/timezone.ts:123</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

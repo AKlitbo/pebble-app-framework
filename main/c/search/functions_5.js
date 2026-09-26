@@ -1,8 +1,8 @@
 var searchData=
 [
   ['field_5fptr_0',['field_ptr',['../settings_8c.html#a9c02c31794700bb68b55537aba182399',1,'settings.c']]],
-  ['field_5fvalue_5fsize_1',['field_value_size',['../settings_8c.html#a775c82fee27b9e632dafab46f31d8f17',1,'settings.c']]],
-  ['floor_5fminutes_2',['floor_minutes',['../timeband_8c.html#a559819d9fb094a7234f890e6a311e52d',1,'timeband.c']]],
+  ['field_5fvalue_5fsize_5fmax_1',['field_value_size_max',['../settings_8c.html#af2864a2798c5e8551ec3217923c20354',1,'settings.c']]],
+  ['floor_5fminutes_2',['floor_minutes',['../timeband_8c.html#a8e06291a2bccc7a786852acbf98622af',1,'timeband.c']]],
   ['fmt_5fhundredths_3',['fmt_hundredths',['../group__lib__core.html#gafa9f63d99d2011c46da1397b798fc529',1,'fmt_hundredths(char *buffer, size_t size, int value):&#160;number_format.c'],['../group__lib__core.html#gafa9f63d99d2011c46da1397b798fc529',1,'fmt_hundredths(char *buffer, size_t size, int value):&#160;number_format.c']]],
   ['fmt_5fint_5for_5fdash_4',['fmt_int_or_dash',['../group__lib__core.html#ga145e042f4414e0854e809ac7c7b086ca',1,'fmt_int_or_dash(char *buffer, size_t size, int value, const char *fmt):&#160;number_format.c'],['../group__lib__core.html#ga145e042f4414e0854e809ac7c7b086ca',1,'fmt_int_or_dash(char *buffer, size_t size, int value, const char *fmt):&#160;number_format.c']]],
   ['fmt_5fpct_5fsigned_5',['fmt_pct_signed',['../group__lib__core.html#gad8460f42bd55675f97ac3b2feae4fde0',1,'fmt_pct_signed(char *buffer, size_t size, int value):&#160;number_format.c'],['../group__lib__core.html#gad8460f42bd55675f97ac3b2feae4fde0',1,'fmt_pct_signed(char *buffer, size_t size, int value):&#160;number_format.c']]],
@@ -10,5 +10,9 @@ var searchData=
   ['fonts_5fregister_7',['fonts_register',['../group__lib__ui.html#gad49c536818ff15a0e7535e258fbdd59b',1,'fonts_register(FontId id, GFont handle):&#160;fonts.c'],['../group__lib__ui.html#gad49c536818ff15a0e7535e258fbdd59b',1,'fonts_register(FontId id, GFont handle):&#160;fonts.c']]],
   ['fonts_5fregister_5fsystem_8',['fonts_register_system',['../group__lib__ui.html#gac0a1fd4baa979be69b65a646fd457ad8',1,'fonts_register_system(FontId id, GFont handle):&#160;fonts.c'],['../group__lib__ui.html#gac0a1fd4baa979be69b65a646fd457ad8',1,'fonts_register_system(FontId id, GFont handle):&#160;fonts.c']]],
   ['fonts_5funload_5fall_9',['fonts_unload_all',['../group__lib__ui.html#gab7fb11d15d23d2ef37c4baa9db129ee1',1,'fonts_unload_all(void):&#160;fonts.c'],['../group__lib__ui.html#gab7fb11d15d23d2ef37c4baa9db129ee1',1,'fonts_unload_all(void):&#160;fonts.c']]],
-  ['fraction_5fpx_10',['fraction_px',['../group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f',1,'fraction_px(int total, int num, int den):&#160;scale.c'],['../group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f',1,'fraction_px(int total, int num, int den):&#160;scale.c']]]
+  ['forecast_5fdays_5fpast_10',['forecast_days_past',['../group__lib__core.html#ga2f750b53c34d89db9ce79a2a252ebf02',1,'forecast_days_past(int days_since_first, uint8_t count):&#160;forecast_age.c'],['../group__lib__core.html#ga2f750b53c34d89db9ce79a2a252ebf02',1,'forecast_days_past(int days_since_first, uint8_t count):&#160;forecast_age.c']]],
+  ['forecast_5fhours_5fpast_11',['forecast_hours_past',['../group__lib__core.html#ga39e6efbba632aacf61875379354b1c38',1,'forecast_hours_past(int32_t seconds_into_strip, uint8_t step_hours, uint8_t count):&#160;forecast_age.c'],['../group__lib__core.html#ga39e6efbba632aacf61875379354b1c38',1,'forecast_hours_past(int32_t seconds_into_strip, uint8_t step_hours, uint8_t count):&#160;forecast_age.c']]],
+  ['forecast_5ftoday_12',['forecast_today',['../weather__store_8c.html#a6338097c3aa566509557080e498f23a1',1,'weather_store.c']]],
+  ['forward_13',['forward',['../solar_8c.html#abc2880e1e3accfcb789382afc39f0a78',1,'solar.c']]],
+  ['fraction_5fpx_14',['fraction_px',['../group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f',1,'fraction_px(int total, int num, int den):&#160;scale.c'],['../group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f',1,'fraction_px(int total, int num, int den):&#160;scale.c']]]
 ];

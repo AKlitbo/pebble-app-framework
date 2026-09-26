@@ -18,8 +18,14 @@ var searchData=
   ['stock_5fwire_2eh_15',['stock_wire.h',['../stock__wire_8h.html',1,'']]],
   ['store_5fcadence_2ec_16',['store_cadence.c',['../store__cadence_8c.html',1,'']]],
   ['store_5fcadence_2eh_17',['store_cadence.h',['../store__cadence_8h.html',1,'']]],
-  ['store_5fpersist_2eh_18',['store_persist.h',['../store__persist_8h.html',1,'']]],
-  ['store_5fpoll_2eh_19',['store_poll.h',['../store__poll_8h.html',1,'']]],
-  ['system_5fstore_2ec_20',['system_store.c',['../system__store_8c.html',1,'']]],
-  ['system_5fstore_2eh_21',['system_store.h',['../system__store_8h.html',1,'']]]
+  ['store_5ffetch_2ec_18',['store_fetch.c',['../store__fetch_8c.html',1,'']]],
+  ['store_5ffetch_2eh_19',['store_fetch.h',['../store__fetch_8h.html',1,'']]],
+  ['store_5fpersist_2ec_20',['store_persist.c',['../store__persist_8c.html',1,'']]],
+  ['store_5fpersist_2eh_21',['store_persist.h',['../store__persist_8h.html',1,'']]],
+  ['store_5fpoll_2ec_22',['store_poll.c',['../store__poll_8c.html',1,'']]],
+  ['store_5fpoll_2eh_23',['store_poll.h',['../store__poll_8h.html',1,'']]],
+  ['store_5fsum_2ec_24',['store_sum.c',['../store__sum_8c.html',1,'']]],
+  ['store_5fsum_2eh_25',['store_sum.h',['../store__sum_8h.html',1,'']]],
+  ['system_5fstore_2ec_26',['system_store.c',['../system__store_8c.html',1,'']]],
+  ['system_5fstore_2eh_27',['system_store.h',['../system__store_8h.html',1,'']]]
 ];

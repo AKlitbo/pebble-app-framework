@@ -7,6 +7,8 @@ var searchData=
   ['stockseed_4',['StockSeed',['../structStockSeed.html',1,'']]],
   ['stockslot_5',['StockSlot',['../structStockSlot.html',1,'']]],
   ['stockstrip_6',['StockStrip',['../structStockStrip.html',1,'']]],
-  ['systemconfig_7',['SystemConfig',['../structSystemConfig.html',1,'']]],
-  ['systemseed_8',['SystemSeed',['../structSystemSeed.html',1,'']]]
+  ['storefetch_7',['StoreFetch',['../structStoreFetch.html',1,'']]],
+  ['storepoll_8',['StorePoll',['../structStorePoll.html',1,'']]],
+  ['systemconfig_9',['SystemConfig',['../structSystemConfig.html',1,'']]],
+  ['systemseed_10',['SystemSeed',['../structSystemSeed.html',1,'']]]
 ];

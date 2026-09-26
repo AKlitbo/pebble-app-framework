@@ -205,10 +205,10 @@ Macros</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a53741af02acdd92c6c86ff7ec2e9656b" id="r_a53741af02acdd92c6c86ff7ec2e9656b"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a53741af02acdd92c6c86ff7ec2e9656b">wrap_day</a> (int minutes)</td></tr>
 <tr class="memdesc:a53741af02acdd92c6c86ff7ec2e9656b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bring any minute count into 0..1439, counting backwards from midnight for a negative one.  <br /></td></tr>
-<tr class="memitem:a559819d9fb094a7234f890e6a311e52d" id="r_a559819d9fb094a7234f890e6a311e52d"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a559819d9fb094a7234f890e6a311e52d">floor_minutes</a> (long long seconds)</td></tr>
-<tr class="memdesc:a559819d9fb094a7234f890e6a311e52d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whole minutes in a second count, rounding down so a part minute before the window still counts as the minute it started in.  <br /></td></tr>
-<tr class="memitem:a89deb935efeb798bca5cce146e94b574" id="r_a89deb935efeb798bca5cce146e94b574"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a89deb935efeb798bca5cce146e94b574">ceil_minutes</a> (long long seconds)</td></tr>
-<tr class="memdesc:a89deb935efeb798bca5cce146e94b574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whole minutes in a second count, rounding up so a span ending part way through a minute still covers it.  <br /></td></tr>
+<tr class="memitem:a8e06291a2bccc7a786852acbf98622af" id="r_a8e06291a2bccc7a786852acbf98622af"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a8e06291a2bccc7a786852acbf98622af">floor_minutes</a> (int seconds)</td></tr>
+<tr class="memdesc:a8e06291a2bccc7a786852acbf98622af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whole minutes in a second count, rounding down so a part minute before the window still counts as the minute it started in.  <br /></td></tr>
+<tr class="memitem:a2d5083d8663f9050b440ca1e555a108c" id="r_a2d5083d8663f9050b440ca1e555a108c"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a2d5083d8663f9050b440ca1e555a108c">ceil_minutes</a> (int seconds)</td></tr>
+<tr class="memdesc:a2d5083d8663f9050b440ca1e555a108c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whole minutes in a second count, rounding up so a span ending part way through a minute still covers it.  <br /></td></tr>
 <tr class="memitem:ga2e4ca30c1616284c941596b66bcc6158" id="r_ga2e4ca30c1616284c941596b66bcc6158"><td class="memItemLeft">
 <a class="el" href="structTimeBand.html">TimeBand</a>&#160;</td><td class="memItemRight"><b>timeband_full_day</b> (void)</td></tr>
 <tr class="memdesc:ga2e4ca30c1616284c941596b66bcc6158"><td class="mdescLeft">&#160;</td><td class="mdescRight">A window running midnight to midnight. <br /></td></tr>
@@ -226,14 +226,14 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga0a00805862511df587e96edc9083c7da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clip an absolute span onto the window.  <br /></td></tr>
 <tr class="memitem:ga7ec5edf0ceeb305eed2d84da3130a0ba" id="r_ga7ec5edf0ceeb305eed2d84da3130a0ba"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga7ec5edf0ceeb305eed2d84da3130a0ba">timeband_clip_daily</a> (<a class="el" href="structTimeBand.html">TimeBand</a> band, int from_min, int to_min, <a class="el" href="structTimeBandSpan.html">TimeBandSpan</a> *out, int max_out)</td></tr>
 <tr class="memdesc:ga7ec5edf0ceeb305eed2d84da3130a0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clip a daily span, one that repeats every day like the daylight, onto the window.  <br /></td></tr>
-<tr class="memitem:gaec5ed7d7849e370a7327bc4224276580" id="r_gaec5ed7d7849e370a7327bc4224276580"><td class="memItemLeft">time_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaec5ed7d7849e370a7327bc4224276580">timeband_window_epoch</a> (<a class="el" href="structTimeBand.html">TimeBand</a> band, time_t midnight, int now_min)</td></tr>
-<tr class="memdesc:gaec5ed7d7849e370a7327bc4224276580"><td class="mdescLeft">&#160;</td><td class="mdescRight">The epoch the window's first minute sits at.  <br /></td></tr>
+<tr class="memitem:ga63e7a4d00b37b74522dc6eaab727b6f8" id="r_ga63e7a4d00b37b74522dc6eaab727b6f8"><td class="memItemLeft">time_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga63e7a4d00b37b74522dc6eaab727b6f8">timeband_window_epoch</a> (<a class="el" href="structTimeBand.html">TimeBand</a> band, time_t now, int now_min)</td></tr>
+<tr class="memdesc:ga63e7a4d00b37b74522dc6eaab727b6f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The epoch the window's first minute sits at.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The window sums: build one, place a moment on it, and clip a span to it. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a89deb935efeb798bca5cce146e94b574" name="a89deb935efeb798bca5cce146e94b574"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89deb935efeb798bca5cce146e94b574">&#9670;&#160;</a></span>ceil_minutes()</h2>
+<a id="a2d5083d8663f9050b440ca1e555a108c" name="a2d5083d8663f9050b440ca1e555a108c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d5083d8663f9050b440ca1e555a108c">&#9670;&#160;</a></span>ceil_minutes()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,7 +244,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int ceil_minutes </td>
           <td>(</td>
-          <td class="paramtype">long long</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span></td><td>)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -266,8 +266,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a559819d9fb094a7234f890e6a311e52d" name="a559819d9fb094a7234f890e6a311e52d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a559819d9fb094a7234f890e6a311e52d">&#9670;&#160;</a></span>floor_minutes()</h2>
+<a id="a8e06291a2bccc7a786852acbf98622af" name="a8e06291a2bccc7a786852acbf98622af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e06291a2bccc7a786852acbf98622af">&#9670;&#160;</a></span>floor_minutes()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -278,7 +278,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int floor_minutes </td>
           <td>(</td>
-          <td class="paramtype">long long</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span></td><td>)</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>seconds</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>

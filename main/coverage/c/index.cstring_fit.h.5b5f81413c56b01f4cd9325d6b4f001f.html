@@ -110,14 +110,14 @@
     <div role="rowheader" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2 sortable">Blocks</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l24">cstring_fit (c/core/text/cstring_fit.h:24)</a>    </div>
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="4">called 4 times</div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l28">cstring_fit (c/core/text/cstring_fit.h:28)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="17">called 17 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l53">cstring_fit_same (c/core/text/cstring_fit.h:53)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l57">cstring_fit_same (c/core/text/cstring_fit.h:57)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="8">called 8 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
@@ -289,154 +289,154 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param dst The buffer to write into.</span></td>
+        <td class="src "><span class="cm"> * The cut counts bytes, so a character that takes more than one byte can be split at it. The fonts</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l21" href="#l21">21</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param src The string to copy, or NULL to empty the buffer.</span></td>
+        <td class="src "><span class="cm"> * carry only the characters a face shows, which a character past ASCII is not, so it draws as a box</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l22" href="#l22">22</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param size The buffer's size, terminator included.</span></td>
+        <td class="src "><span class="cm"> * whether it is cut or whole, and walking back to a character boundary would cost bytes for nothing.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l23" href="#l23">23</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> */</span></td>
+        <td class="src "><span class="cm"> *</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l24" href="#l24">24</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">4</td>
-        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">cstring_fit</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span></td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param dst The buffer to write into.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l25" href="#l25">25</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="p">{</span></td>
+        <td class="src "><span class="cm"> * @param src The string to copy, or NULL to empty the buffer.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l26" href="#l26">26</a></td>
         <td class="linebranch">
-          <details class="linebranchDetails">
-            <summary class="linebranchSummary">2/2</summary>
-            <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 1 taken 3 times.</div>
-            </div>
-          </details>
         </td>
-        <td class="linecount coveredLine show_coveredLine">4</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param size The buffer's size, terminator included.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l27" href="#l27">27</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+        <td class="src "><span class="cm"> */</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l28" href="#l28">28</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">1</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
+        <td class="linecount coveredLine show_coveredLine">17</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">cstring_fit</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l29" href="#l29">29</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+        <td class="src "><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l30" href="#l30">30</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount"></td>
-        <td class="src "></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l31" href="#l31">31</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
             <div class="linebranchContents">
               <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 1 taken 16 times.</div>
             </div>
           </details>
         </td>
-        <td class="linecount coveredLine show_coveredLine">3</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">src</span><span class="p">)</span></td>
+        <td class="linecount coveredLine show_coveredLine">17</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l32" href="#l32">32</a></td>
+        <td class="lineno"><a id="l31" href="#l31">31</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l33" href="#l33">33</a></td>
-        <td class="linebranch">
-        </td>
-        <td class="linecount coveredLine show_coveredLine">1</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">dst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'\0'</span><span class="p">;</span></td>
-      </tr>
-      <tr class="source-line">
-        <td class="lineno"><a id="l34" href="#l34">34</a></td>
+        <td class="lineno"><a id="l32" href="#l32">32</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">1</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l35" href="#l35">35</a></td>
+        <td class="lineno"><a id="l33" href="#l33">33</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l36" href="#l36">36</a></td>
+        <td class="lineno"><a id="l34" href="#l34">34</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
+        <td class="lineno"><a id="l35" href="#l35">35</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 1 taken 15 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">16</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">src</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l36" href="#l36">36</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
         <td class="lineno"><a id="l37" href="#l37">37</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">2</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">strncpy</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span></td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">dst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'\0'</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l38" href="#l38">38</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">2</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">dst</span><span class="p">[</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'\0'</span><span class="p">;</span></td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l39" href="#l39">39</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="p">}</span></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l40" href="#l40">40</a></td>
@@ -449,43 +449,43 @@
         <td class="lineno"><a id="l41" href="#l41">41</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "><span class="cm">/**</span></td>
+        <td class="linecount coveredLine show_coveredLine">15</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">strncpy</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span><span class="w"> </span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l42" href="#l42">42</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @brief Whether copying @p value into a buffer would leave it reading exactly as it does now.</span></td>
+        <td class="linecount coveredLine show_coveredLine">15</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">dst</span><span class="p">[</span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">'\0'</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l43" href="#l43">43</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> *</span></td>
+        <td class="src "><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l44" href="#l44">44</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * The copy keeps only what fits, so the incoming string is measured the same way. Comparing it in</span></td>
+        <td class="src "></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l45" href="#l45">45</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * full instead would call a value longer than the buffer a change every single time, which for a</span></td>
+        <td class="src "><span class="cm">/**</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l46" href="#l46">46</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * settings field means re-reacting to a setting nobody touched.</span></td>
+        <td class="src "><span class="cm"> * @brief Whether copying @p value into a buffer would leave it reading exactly as it does now.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l47" href="#l47">47</a></td>
@@ -499,52 +499,80 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param current What the buffer holds now.</span></td>
+        <td class="src "><span class="cm"> * The copy keeps only what fits, so the incoming string is measured the same way. Comparing it in</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l49" href="#l49">49</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param value The string that would be copied in. Must not be NULL.</span></td>
+        <td class="src "><span class="cm"> * full instead would call a value longer than the buffer a change every single time, which for a</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l50" href="#l50">50</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param size The buffer's size, terminator included.</span></td>
+        <td class="src "><span class="cm"> * settings field means re-reacting to a setting nobody touched.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l51" href="#l51">51</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @return True when the copy would leave the buffer unchanged.</span></td>
+        <td class="src "><span class="cm"> *</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l52" href="#l52">52</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> */</span></td>
+        <td class="src "><span class="cm"> * @param current What the buffer holds now.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l53" href="#l53">53</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">8</td>
-        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">cstring_fit_same</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">current</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span></td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param value The string that would be copied in. Must not be NULL.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l54" href="#l54">54</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="p">{</span></td>
+        <td class="src "><span class="cm"> * @param size The buffer's size, terminator included.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l55" href="#l55">55</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return True when the copy would leave the buffer unchanged.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l56" href="#l56">56</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l57" href="#l57">57</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">8</td>
+        <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">cstring_fit_same</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">current</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">size</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l58" href="#l58">58</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l59" href="#l59">59</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
@@ -558,49 +586,49 @@
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">size</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l56" href="#l56">56</a></td>
+        <td class="lineno"><a id="l60" href="#l60">60</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l57" href="#l57">57</a></td>
+        <td class="lineno"><a id="l61" href="#l61">61</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">1</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">  </span><span class="c1">// nowhere to put it, so nothing about the buffer can move</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l58" href="#l58">58</a></td>
+        <td class="lineno"><a id="l62" href="#l62">62</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l59" href="#l59">59</a></td>
+        <td class="lineno"><a id="l63" href="#l63">63</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l60" href="#l60">60</a></td>
+        <td class="lineno"><a id="l64" href="#l64">64</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">7</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">room</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l61" href="#l61">61</a></td>
+        <td class="lineno"><a id="l65" href="#l65">65</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">7</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">incoming</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">value</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l62" href="#l62">62</a></td>
+        <td class="lineno"><a id="l66" href="#l66">66</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
@@ -614,35 +642,35 @@
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">incoming</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">room</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l63" href="#l63">63</a></td>
+        <td class="lineno"><a id="l67" href="#l67">67</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l64" href="#l64">64</a></td>
+        <td class="lineno"><a id="l68" href="#l68">68</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">2</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="n">incoming</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">room</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l65" href="#l65">65</a></td>
+        <td class="lineno"><a id="l69" href="#l69">69</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="w">    </span><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l66" href="#l66">66</a></td>
+        <td class="lineno"><a id="l70" href="#l70">70</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l67" href="#l67">67</a></td>
+        <td class="lineno"><a id="l71" href="#l71">71</a></td>
         <td class="linebranch">
           <details class="linebranchDetails">
             <summary class="linebranchSummary">4/4</summary>
@@ -658,28 +686,28 @@
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">current</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">incoming</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">strncmp</span><span class="p">(</span><span class="n">current</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">incoming</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l68" href="#l68">68</a></td>
+        <td class="lineno"><a id="l72" href="#l72">72</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="p">}</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l69" href="#l69">69</a></td>
+        <td class="lineno"><a id="l73" href="#l73">73</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l70" href="#l70">70</a></td>
+        <td class="lineno"><a id="l74" href="#l74">74</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
         <td class="src "><span class="cm">/** @} */</span></td>
       </tr>
       <tr class="source-line">
-        <td class="lineno"><a id="l71" href="#l71">71</a></td>
+        <td class="lineno"><a id="l75" href="#l75">75</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
@@ -692,7 +720,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-09-23 19:22:31
+          at 2026-09-26 04:11:09
         </footer>
       </div>
     </div>

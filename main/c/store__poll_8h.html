@@ -197,12 +197,21 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('store__poll_8h
 </div>
 <p><a href="store__poll_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:StorePoll" id="r_StorePoll"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structStorePoll.html">StorePoll</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One store's polling: its interval, whether it polls at all, and when it is next due.  <a href="structStorePoll.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gaee79556bd3009dd1478b61913e5368d4" id="r_gaee79556bd3009dd1478b61913e5368d4"><td class="memItemLeft">static time_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaee79556bd3009dd1478b61913e5368d4">store_poll_next</a> (int poll_min, time_t now)</td></tr>
 <tr class="memdesc:gaee79556bd3009dd1478b61913e5368d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next wall-clock second a poll of this interval falls due.  <br /></td></tr>
 <tr class="memitem:ga997e6ccf70b96c79e2500b83af6e54dc" id="r_ga997e6ccf70b96c79e2500b83af6e54dc"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga997e6ccf70b96c79e2500b83af6e54dc">store_poll_due</a> (int poll_min, time_t *next, time_t now)</td></tr>
 <tr class="memdesc:ga997e6ccf70b96c79e2500b83af6e54dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <code class="param">next</code> has come round, moving it on to the following deadline when it has.  <br /></td></tr>
+<tr class="memitem:ga30b8b33c3204c012230afe0eb9e8d594" id="r_ga30b8b33c3204c012230afe0eb9e8d594"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga30b8b33c3204c012230afe0eb9e8d594">store_poll_set</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, int poll_min, bool live, time_t now)</td></tr>
+<tr class="memdesc:ga30b8b33c3204c012230afe0eb9e8d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its init and its reconfigure both do.  <br /></td></tr>
+<tr class="memitem:ga576c21d8f643934d22918c3fb2cbeeef" id="r_ga576c21d8f643934d22918c3fb2cbeeef"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga576c21d8f643934d22918c3fb2cbeeef">store_poll_turn</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, time_t now)</td></tr>
+<tr class="memdesc:ga576c21d8f643934d22918c3fb2cbeeef"><td class="mdescLeft">&#160;</td><td class="mdescRight">A store's turn on the face's cadence: whether a poll should go out now.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Wall-clock deadlines for the stores that poll the phone. </p>

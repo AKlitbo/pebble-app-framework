@@ -1,9 +1,9 @@
 var searchData=
 [
-  ['margin_0',['margin',['../structIconEntry.html#a28ec4407002560f82c3199726fbc4d56',1,'IconEntry']]],
-  ['message_5fkey_1',['message_key',['../structSettingField.html#ac8a166713eef87fb9adb5c8119c0d4dd',1,'SettingField']]],
-  ['migrate_2',['migrate',['../structSettingsSchema.html#a98dd2666626795edfc3593fd9880b495',1,'SettingsSchema']]],
-  ['min_5fversioned_5fsize_3',['min_versioned_size',['../structSettingsSchema.html#a423877692a5620c67cc25c955455a635',1,'SettingsSchema']]],
-  ['minute_4',['minute',['../structDevShot.html#aa7692bf8322570f50a5ac4684f9194a1',1,'DevShot']]],
-  ['minute_5ftick_5',['minute_tick',['../structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20',1,'TimeConfig']]]
+  ['last_5fsync_0',['last_sync',['../structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a',1,'WeatherState::last_sync'],['../structCalendarPersist.html#a9ba0dbe5f0bd8c2114bacc0be1385f11',1,'CalendarPersist::last_sync'],['../struct_0fstruct_0e_8s__state.html#a8c57d2ae2893bf12ecf2938512fdf39d',1,'[struct].s_state::last_sync'],['../struct_0fstruct_0e_8s__state.html#aa3adf9f8ede4619ee3c823e6d473bd48',1,'[struct].s_state::last_sync']]],
+  ['lat_1',['lat',['../structLocationSeed.html#a58307502423dcd0ab844df491022d3a5',1,'LocationSeed::lat'],['../struct_0fstruct_0e_8s__fixed.html#a12a7b8f4beb48e720df769ae0dc7ebd0',1,'[struct].s_fixed::lat'],['../struct_0fstruct_0e_8s__state.html#aa561dc7a98c82760ae578d581a6fade7',1,'[struct].s_state::lat']]],
+  ['layout_5fchanged_2',['layout_changed',['../structSettingsInbound.html#a0191358313d7d00799bd893bc58e491f',1,'SettingsInbound']]],
+  ['live_3',['live',['../structCalendarConfig.html#a686613ad49821e6aab85b1ff80eb9ac7',1,'CalendarConfig::live'],['../structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14',1,'HealthConfig::live'],['../structLocationConfig.html#a83c6b320e75bb7bed8f72b441b063e33',1,'LocationConfig::live'],['../structStockConfig.html#ae0699f32855948ce685614e570317f38',1,'StockConfig::live'],['../structStorePoll.html#ad96becb58ae977574a0b761caa011cb8',1,'StorePoll::live'],['../structSystemConfig.html#a3a51107da6d0eccf43036c688e77b2fa',1,'SystemConfig::live'],['../structTimeConfig.html#af951cac1e7733963949ff707dcfe650e',1,'TimeConfig::live'],['../structWeatherConfig.html#ad002199ba6f3a4b7af38924a8bb640e7',1,'WeatherConfig::live']]],
+  ['location_4',['location',['../structCalendarEvent.html#a33d3f80513e76379d78b3fa3617167ae',1,'CalendarEvent']]],
+  ['lon_5',['lon',['../structLocationSeed.html#a525f72325d8cad6c0317e6b0d4ce469f',1,'LocationSeed::lon'],['../struct_0fstruct_0e_8s__fixed.html#a2097c38849b7d11f46f4ebbbb7e17d19',1,'[struct].s_fixed::lon'],['../struct_0fstruct_0e_8s__state.html#ab334df8e695943ac85f46fa33b38c444',1,'[struct].s_state::lon']]]
 ];

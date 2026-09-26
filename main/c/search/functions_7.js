@@ -13,5 +13,6 @@ var searchData=
   ['health_5fstore_5fstep_5fhours_10',['health_store_step_hours',['../group__lib__stores.html#ga7f6eb32c1ad9a2a9ffa41d13dc507204',1,'health_store_step_hours(void):&#160;health_store.c'],['../group__lib__stores.html#ga7f6eb32c1ad9a2a9ffa41d13dc507204',1,'health_store_step_hours(void):&#160;health_store.c']]],
   ['health_5fstore_5fsteps_11',['health_store_steps',['../group__lib__stores.html#ga38cd6bed400162ebab1a2284484c4445',1,'health_store_steps(void):&#160;health_store.c'],['../group__lib__stores.html#ga38cd6bed400162ebab1a2284484c4445',1,'health_store_steps(void):&#160;health_store.c']]],
   ['health_5fstore_5fsubscribe_12',['health_store_subscribe',['../group__lib__stores.html#ga3d23a155e70dad9fd2ac23f2ec39775c',1,'health_store_subscribe(void(*cb)(void)):&#160;health_store.c'],['../group__lib__stores.html#ga3d23a155e70dad9fd2ac23f2ec39775c',1,'health_store_subscribe(void(*cb)(void)):&#160;health_store.c']]],
-  ['hr_5fhistory_5fadvance_13',['hr_history_advance',['../health__store_8c.html#abec475d019d9d8e7a8f2b899624e41bb',1,'health_store.c']]]
+  ['hour_5fstart_13',['hour_start',['../health__store_8c.html#ad1ca88dd2fcfe3e52bc1a2d1589ab3e7',1,'health_store.c']]],
+  ['hr_5fhistory_5fadvance_14',['hr_history_advance',['../health__store_8c.html#abec475d019d9d8e7a8f2b899624e41bb',1,'health_store.c']]]
 ];

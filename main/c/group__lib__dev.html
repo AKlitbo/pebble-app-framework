@@ -195,10 +195,14 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__de
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
-<tr class="memitem:c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Ec" id="r_c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">c/pebble/dev/dev_walk.c</a></td></tr>
+<tr class="memitem:c_2Fdev_2Fdev_5Fwalk_2Ec" id="r_c_2Fdev_2Fdev_5Fwalk_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">c/dev/dev_walk.c</a></td></tr>
 <tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Eh" id="r_c_2Fpebble_2Fdev_2Fdev_5Fwalk_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">c/pebble/dev/dev_walk.h</a></td></tr>
+<tr class="memitem:c_2Fdev_2Fdev_5Fwalk_2Eh" id="r_c_2Fdev_2Fdev_5Fwalk_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">c/dev/dev_walk.h</a></td></tr>
 <tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for the frame faces. It seeds every store with a fixed fixture, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk" for deterministic screenshots. Each tap steps to the next theme on the same fixed data and the same fixed clock. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Ffixed" id="r__5Bstruct_5D_2Es_5Ffixed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__fixed.html">[struct].s_fixed</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -219,7 +223,7 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Fixed fixtures and a theme walk for repeatable screenshots. </p>
-<p>The frame faces share it. It seeds every store with a fixed fixture and steps through the themes on a tap, so a face's screenshots come out the same every time.</p>
+<p>It lives in c/dev, apart from the runtime. The frame faces share it. It seeds every store with a fixed fixture and steps through the themes on a tap, so a face's screenshots come out the same every time.</p>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
 <a id="gabd7169bdf3c69ae6ffe751b975f1fadd" name="gabd7169bdf3c69ae6ffe751b975f1fadd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gabd7169bdf3c69ae6ffe751b975f1fadd">&#9670;&#160;</a></span>DevWalkMode</h2>

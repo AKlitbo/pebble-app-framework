@@ -2,7 +2,7 @@ var searchData=
 [
   ['raw_5fweek_0',['raw_week',['../date_8c.html#a2ec80a6baceb057022750ccc09a69ac5',1,'date.c']]],
   ['read_5fhr_1',['read_hr',['../health__store_8c.html#aa5e9651b7557a0bdec77456faa7b73be',1,'health_store.c']]],
-  ['read_5fhr_5fhistory_2',['read_hr_history',['../health__store_8c.html#a0dafe322be8e710fd0229311173ff805',1,'health_store.c']]],
+  ['read_5fhr_5fhistory_2',['read_hr_history',['../health__store_8c.html#ae75b734a66f178f0637203c5db0fecf1',1,'health_store.c']]],
   ['read_5fi16_5fle_3',['read_i16_le',['../group__lib__core.html#ga3fd54f4514af9738e081706d21fd44bc',1,'bytes_le.h']]],
   ['read_5fi32_5fle_4',['read_i32_le',['../group__lib__core.html#ga7ac2e494355ca66ce8ec8bbd881e90e9',1,'bytes_le.h']]],
   ['read_5fstep_5fhourly_5',['read_step_hourly',['../health__store_8c.html#ac5d29c457db49f5400731bc15fcb9c32',1,'health_store.c']]],
@@ -23,13 +23,14 @@ var searchData=
   ['rect_5ffallback_20',['rect_fallback',['../structZone.html#a839f256ad624c5be0d82732ecab01f47',1,'Zone']]],
   ['rect_5ffallback2_21',['rect_fallback2',['../structZone.html#a896caa855cd84c0e6ef28c7c1856eafe',1,'Zone']]],
   ['rect_5ffallback3_22',['rect_fallback3',['../structZone.html#a9991f1fe88fcf46da0b4e4e1fbdc8aab',1,'Zone']]],
-  ['refresh_5factivity_23',['refresh_activity',['../health__store_8c.html#a88920d8fd33075de6e56eb499c93bfd7',1,'health_store.c']]],
+  ['refresh_5factivity_23',['refresh_activity',['../health__store_8c.html#ad11a87cd6fe81b62297e02012fd47e6d',1,'health_store.c']]],
   ['refresh_5fhr_24',['refresh_hr',['../health__store_8c.html#a621aad019cd81f1ec9165baaf42524c5',1,'health_store.c']]],
   ['repaint_5fslot_25',['repaint_slot',['../engine_8c.html#aa951c14b92f78cf5e7dd25b4ebf47007',1,'engine.c']]],
-  ['request_5fretry_5fdelay_5fms_26',['REQUEST_RETRY_DELAY_MS',['../appmessage_8c.html#aa5fb091797fee70e44b207aad9233dd7',1,'appmessage.c']]],
-  ['request_5fretry_5fmax_27',['REQUEST_RETRY_MAX',['../appmessage_8c.html#a74e58c793ca8409dc757bf0059fff54d',1,'appmessage.c']]],
-  ['res_28',['res',['../structIconEntry.html#afbac9a3396568064669ee57bbeb0b533',1,'IconEntry']]],
-  ['reset_5fstate_29',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
-  ['retries_5fleft_30',['retries_left',['../structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1',1,'OutboxJob']]],
-  ['retry_5fpass_31',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]]
+  ['request_26',['request',['../structStoreFetch.html#a6faa1b9a94dd4e7faf5bb6ff5de4087d',1,'StoreFetch']]],
+  ['request_5fretry_5fdelay_5fms_27',['REQUEST_RETRY_DELAY_MS',['../appmessage_8c.html#aa5fb091797fee70e44b207aad9233dd7',1,'appmessage.c']]],
+  ['request_5fretry_5fmax_28',['REQUEST_RETRY_MAX',['../appmessage_8c.html#a74e58c793ca8409dc757bf0059fff54d',1,'appmessage.c']]],
+  ['res_29',['res',['../structIconEntry.html#afbac9a3396568064669ee57bbeb0b533',1,'IconEntry']]],
+  ['reset_5fstate_30',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
+  ['retries_5fleft_31',['retries_left',['../structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1',1,'OutboxJob']]],
+  ['retry_5fpass_32',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]]
 ];

@@ -1,8 +1,12 @@
 var searchData=
 [
-  ['persist_5fkey_0',['persist_key',['../structCalendarConfig.html#a28bab0644bbdd2302aea9e28f11b1dc8',1,'CalendarConfig::persist_key'],['../structHealthConfig.html#a162f07256f08bd8dada6c12f6178cce0',1,'HealthConfig::persist_key'],['../structLocationConfig.html#a4ba08972332cc0893b16546ee64ff001',1,'LocationConfig::persist_key'],['../structStockConfig.html#a35aea9539901a173b4dc1343054dff80',1,'StockConfig::persist_key'],['../structWeatherConfig.html#aea465941bd98b1490454738c7af6088e',1,'WeatherConfig::persist_key']]],
-  ['poll_5fmin_1',['poll_min',['../structCalendarConfig.html#acb8009a48a79bd45de23069a2a9160f8',1,'CalendarConfig::poll_min'],['../structStockConfig.html#a26c88d84596dd4347fe66f69a84fc698',1,'StockConfig::poll_min'],['../structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4',1,'WeatherConfig::poll_min']]],
-  ['precip_5fchance_2',['precip_chance',['../structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437',1,'WeatherSeed::precip_chance'],['../struct_0fstruct_0e_8s__state.html#a6f8f263f9567c81244f4f711c835ff1c',1,'[struct].s_state::precip_chance']]],
-  ['pressure_3',['pressure',['../structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902',1,'WeatherSeed::pressure'],['../struct_0fstruct_0e_8s__state.html#a92c92efd5d840d8128d5b4555aae3fb8',1,'[struct].s_state::pressure']]],
-  ['price_5fcents_4',['price_cents',['../structStockSlot.html#a5256275b025aa00f48cc430f0fb775be',1,'StockSlot']]]
+  ['offset_0',['offset',['../structSettingField.html#a1d9df18c4cf838434964e182d565b4d7',1,'SettingField']]],
+  ['ok_1',['ok',['../structWeatherMessage.html#a328318e4aa166fec155634010ddf8431',1,'WeatherMessage::ok'],['../structStockSlot.html#afcd50802e50f27fd66ede857cd333679',1,'StockSlot::ok']]],
+  ['on_5fcalendar_5fstrip_2',['on_calendar_strip',['../struct_0fstruct_0e_8s__handlers.html#a8ab4d7274df70e06b5c05fd751ff1d50',1,'[struct].s_handlers']]],
+  ['on_5fcoords_3',['on_coords',['../struct_0fstruct_0e_8s__handlers.html#a13506a96423b501b5473c6a98b3737b9',1,'[struct].s_handlers']]],
+  ['on_5fcustom_5fcolors_4',['on_custom_colors',['../struct_0fstruct_0e_8s__handlers.html#af7c10eb2540dfd275921145dc3d2ff84',1,'[struct].s_handlers']]],
+  ['on_5fsettings_5fchanged_5',['on_settings_changed',['../struct_0fstruct_0e_8s__handlers.html#a0afb29ddc2a5198c679c6a24867826a3',1,'[struct].s_handlers']]],
+  ['on_5fstock_5fstrip_6',['on_stock_strip',['../struct_0fstruct_0e_8s__handlers.html#aa2d8bcb401fba2d3cf84f4547302c6b3',1,'[struct].s_handlers']]],
+  ['on_5funit_5fchanged_7',['on_unit_changed',['../struct_0fstruct_0e_8s__handlers.html#a3b5a3feae6f6bc801afdde571b7f62e5',1,'[struct].s_handlers']]],
+  ['on_5fweather_8',['on_weather',['../struct_0fstruct_0e_8s__handlers.html#a0061624d023ab2782d958af5e43678b2',1,'[struct].s_handlers']]]
 ];

@@ -1,0 +1,25 @@
+var structWeatherState =
+[
+    [ "cond", "structWeatherState.html#a7e43f225b231eed29dffcecb9f8c7d2f", null ],
+    [ "cond_label", "structWeatherState.html#aff9f98e3f9cbf2fab7b41e46d7552c56", null ],
+    [ "daily", "structWeatherState.html#a0585006c516149c78970319d8bdc07b0", null ],
+    [ "daily_first", "structWeatherState.html#aa668cd1b177bbfd27dd0a60215ea6ec9", null ],
+    [ "dew_point", "structWeatherState.html#a8a4412e90af8c10f96abe56ea378170a", null ],
+    [ "feels_like", "structWeatherState.html#adb364d466033e6a7031057861d40b6e2", null ],
+    [ "forecast_day", "structWeatherState.html#af60f8192ef84bbbd9b6decd7cd2f4c77", null ],
+    [ "hourly", "structWeatherState.html#a51b784635421b939e7c3d77c78523d92", null ],
+    [ "hourly_first", "structWeatherState.html#a0880368890fa96ac09b581c38f07f714", null ],
+    [ "humidity", "structWeatherState.html#aab2b5a749e4b0f1b2e4a98e04e811694", null ],
+    [ "last_sync", "structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a", null ],
+    [ "precip_chance", "structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709", null ],
+    [ "pressure", "structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e", null ],
+    [ "sunrise", "structWeatherState.html#a297b2b392f2d3752f55360f3ffd30d9d", null ],
+    [ "sunset", "structWeatherState.html#a4e42b02e63c4eca428a9c75a12133583", null ],
+    [ "tag", "structWeatherState.html#ada60a92f0690b1a06bca06d42984ae7a", null ],
+    [ "temp", "structWeatherState.html#ae41f90ba55b0a7b7f53812816ee435d0", null ],
+    [ "temp_max", "structWeatherState.html#a7608d767f3af291200139974bef30df5", null ],
+    [ "temp_min", "structWeatherState.html#a1317a6f4ed770efe3bdf6352dbe7d1a2", null ],
+    [ "uv", "structWeatherState.html#a31a4fb50d7112a091d3c60d6a7f89903", null ],
+    [ "wind_dir", "structWeatherState.html#ac4711deb819db30232d3cbb525ddeafe", null ],
+    [ "wind_kmh", "structWeatherState.html#ac89a66ed27ff84aa61675f2b78d4784e", null ]
+];

@@ -9,5 +9,6 @@ var location__store_8c =
     [ "s_cb", "location__store_8c.html#a0d75601f9ac1a6725c17065d338a664a", null ],
     [ "s_live", "location__store_8c.html#a86591675781beec649ac9e8db3485c4f", null ],
     [ "s_persist_key", "location__store_8c.html#afc1e32c72630b62007536cb95f77bb07", null ],
+    [ "s_saved_sum", "location__store_8c.html#afd6bfed4583dc043e4cb212594733f97", null ],
     [ "s_state", "location__store_8c.html#a3af1e441f6e0b5610fe289862db9f45b", null ]
 ];

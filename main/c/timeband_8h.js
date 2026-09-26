@@ -9,5 +9,5 @@ var timeband_8h =
     [ "timeband_pos", "group__lib__core.html#ga4d0f6578d1e429d7c77be357109a6989", null ],
     [ "timeband_pos_offset", "group__lib__core.html#ga464dfe5bbece0af2f5539d0616fd7643", null ],
     [ "timeband_rolling", "group__lib__core.html#ga17975bf89798eeb2baacffec94111b18", null ],
-    [ "timeband_window_epoch", "group__lib__core.html#gaec5ed7d7849e370a7327bc4224276580", null ]
+    [ "timeband_window_epoch", "group__lib__core.html#ga63e7a4d00b37b74522dc6eaab727b6f8", null ]
 ];

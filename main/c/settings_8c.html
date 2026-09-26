@@ -233,6 +233,8 @@ Functions</h2></td></tr>
 <tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 <tr class="memdesc:gab9d20e3758e874e18f045827a5cd29b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persist the active face's structs under their keys (the whole chain). <br /></td></tr>
+<tr class="memitem:ga311ba161873a4026937acc17c57525cc" id="r_ga311ba161873a4026937acc17c57525cc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga311ba161873a4026937acc17c57525cc">settings_mark_restored</a> (void)</td></tr>
+<tr class="memdesc:ga311ba161873a4026937acc17c57525cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears settings_was_fresh once a save or restore from the settings page has been saved.  <br /></td></tr>
 <tr class="memitem:ga3751b197b3c6a12637ebdf7ebc0ea997" id="r_ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga3751b197b3c6a12637ebdf7ebc0ea997">settings_u8</a> (<a class="el" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
 <tr class="memdesc:ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a known uint8/bool setting by id.  <br /></td></tr>
 <tr class="memitem:gab048a393e0f36aa1df969db0a34db046" id="r_gab048a393e0f36aa1df969db0a34db046"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#gab048a393e0f36aa1df969db0a34db046">settings_str</a> (<a class="el" href="group__lib__settings.html#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
@@ -243,10 +245,10 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 <tr class="memdesc:ga7f6e82a36168e1d570748a8c18d0a30b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many values an enum setting allows (its sanitize ceiling).  <br /></td></tr>
 <tr class="memitem:a895927e65d1e699baf9e552d266c02cc" id="r_a895927e65d1e699baf9e552d266c02cc"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a895927e65d1e699baf9e552d266c02cc">enum_text</a> (uint8_t value, char *buf, size_t size)</td></tr>
 <tr class="memdesc:a895927e65d1e699baf9e552d266c02cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes an enum value as the text Clay reads a select back as.  <br /></td></tr>
-<tr class="memitem:a775c82fee27b9e632dafab46f31d8f17" id="r_a775c82fee27b9e632dafab46f31d8f17"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#a775c82fee27b9e632dafab46f31d8f17">field_value_size</a> (const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *schema, const <a class="el" href="structSettingField.html">SettingField</a> *field)</td></tr>
-<tr class="memdesc:a775c82fee27b9e632dafab46f31d8f17"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many bytes one field's value takes on the wire, written the way settings_serialize writes it.  <br /></td></tr>
-<tr class="memitem:gaa8498d8f013ff55cd4bf1308ddc8f12b" id="r_gaa8498d8f013ff55cd4bf1308ddc8f12b"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#gaa8498d8f013ff55cd4bf1308ddc8f12b">settings_serialized_size</a> (void)</td></tr>
-<tr class="memdesc:gaa8498d8f013ff55cd4bf1308ddc8f12b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many outbox bytes every field of the active face takes once written.  <br /></td></tr>
+<tr class="memitem:af2864a2798c5e8551ec3217923c20354" id="r_af2864a2798c5e8551ec3217923c20354"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#af2864a2798c5e8551ec3217923c20354">field_value_size_max</a> (const <a class="el" href="structSettingField.html">SettingField</a> *field)</td></tr>
+<tr class="memdesc:af2864a2798c5e8551ec3217923c20354"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most bytes one field's value could take on the wire, written the way settings_serialize writes it.  <br /></td></tr>
+<tr class="memitem:ga281a4f818f93bf883410d0222e21713b" id="r_ga281a4f818f93bf883410d0222e21713b"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga281a4f818f93bf883410d0222e21713b">settings_serialized_size_max</a> (void)</td></tr>
+<tr class="memdesc:ga281a4f818f93bf883410d0222e21713b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most outbox bytes every field of the active face could ever take once written.  <br /></td></tr>
 <tr class="memitem:ga8a25e0c1aea6e4cb033cefa62a590458" id="r_ga8a25e0c1aea6e4cb033cefa62a590458"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga8a25e0c1aea6e4cb033cefa62a590458">settings_serialize</a> (DictionaryIterator *iter)</td></tr>
 <tr class="memdesc:ga8a25e0c1aea6e4cb033cefa62a590458"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write every field of the active face into an outbox iterator.  <br /></td></tr>
 <tr class="memitem:ga226c66180fb376a5888b279eca034417" id="r_ga226c66180fb376a5888b279eca034417"><td class="memItemLeft"><a class="el" href="structSettingsInbound.html">SettingsInbound</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga226c66180fb376a5888b279eca034417">settings_apply_inbox</a> (DictionaryIterator *iter)</td></tr>
@@ -258,7 +260,7 @@ Variables</h2></td></tr>
 static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *&#160;</td><td class="memItemRight"><b>s_primary</b></td></tr>
 <tr class="memdesc:a103a9efc5cd332137f9d11dca75ae011"><td class="mdescLeft">&#160;</td><td class="mdescRight">Head of the schema chain registered by settings_init, the primary plus any companions. <br /></td></tr>
 <tr class="memitem:aa467d3462915f91a8ef7e224cba65b46" id="r_aa467d3462915f91a8ef7e224cba65b46"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#aa467d3462915f91a8ef7e224cba65b46">s_was_fresh</a></td></tr>
-<tr class="memdesc:aa467d3462915f91a8ef7e224cba65b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the primary key had no saved blob at init.  <br /></td></tr>
+<tr class="memdesc:aa467d3462915f91a8ef7e224cba65b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the primary key had no saved blob at init, and no settings page message has landed since.  <br /></td></tr>
 <tr class="memitem:adcdaae53b13f19b99ab529c1fcf20f70" id="r_adcdaae53b13f19b99ab529c1fcf20f70"><td class="memItemLeft"><a id="adcdaae53b13f19b99ab529c1fcf20f70" name="adcdaae53b13f19b99ab529c1fcf20f70"></a>
 static const <a class="el" href="structSettingField.html">SettingField</a> *&#160;</td><td class="memItemRight"><b>s_by_id</b> [<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">SETTING_COUNT</a>]</td></tr>
 <tr class="memdesc:adcdaae53b13f19b99ab529c1fcf20f70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Known fields indexed by id for typed reads, drawn from every schema in the chain. <br /></td></tr>
@@ -517,8 +519,8 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 
 </div>
 </div>
-<a id="a775c82fee27b9e632dafab46f31d8f17" name="a775c82fee27b9e632dafab46f31d8f17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a775c82fee27b9e632dafab46f31d8f17">&#9670;&#160;</a></span>field_value_size()</h2>
+<a id="af2864a2798c5e8551ec3217923c20354" name="af2864a2798c5e8551ec3217923c20354"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2864a2798c5e8551ec3217923c20354">&#9670;&#160;</a></span>field_value_size_max()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -527,14 +529,10 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">uint32_t field_value_size </td>
+          <td class="memname">uint32_t field_value_size_max </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *</td>          <td class="paramname"><span class="paramname"><em>schema</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="structSettingField.html">SettingField</a> *</td>          <td class="paramname"><span class="paramname"><em>field</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structSettingField.html">SettingField</a> *</td>          <td class="paramname"><span class="paramname"><em>field</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -544,10 +542,10 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 </table>
 </div><div class="memdoc">
 
-<p>How many bytes one field's value takes on the wire, written the way settings_serialize writes it. </p>
+<p>The most bytes one field's value could take on the wire, written the way settings_serialize writes it. </p>
+<p>A string counts as filling its whole buffer, and an enum as the three digits plus terminator any uint8_t fits in.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">schema</td><td>The schema the field belongs to. </td></tr>
     <tr><td class="paramname">field</td><td>The field to measure. </td></tr>
   </table>
   </dd>
@@ -686,7 +684,7 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 </div><div class="memdoc">
 
 <p>Clamp a damaged cstring back to its default. </p>
-<p>Valid means NUL-terminated within the buffer, non-empty, and free of control bytes. A place name can arrive as UTF-8, so anything from 0x20 up counts as text and is left alone.</p>
+<p>Valid means NUL-terminated within the buffer, free of control bytes, and non-empty unless the field's own default is empty. A place name can arrive as UTF-8, so anything from 0x20 up counts as text and is left alone.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">schema</td><td>The schema that owns the field. </td></tr>
@@ -790,8 +788,8 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 </table>
 </div><div class="memdoc">
 
-<p>True when the primary key had no saved blob at init. </p>
-<p>That means storage was wiped by a fresh install or an update. It tells the phone to push its own config back rather than the watch seeding from defaults. </p>
+<p>True when the primary key had no saved blob at init, and no settings page message has landed since. </p>
+<p>That means storage was wiped by a fresh install or an update. It tells the phone to push its own config back rather than the watch seeding from defaults. It clears once the settings page's save or restore has landed and been saved. </p>
 
 </div>
 </div>

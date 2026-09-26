@@ -61,14 +61,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/98</span>
+                <span class='fraction'>0/93</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/44</span>
+                <span class='fraction'>0/50</span>
             </div>
         
             
@@ -82,7 +82,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/90</span>
+                <span class='fraction'>0/85</span>
             </div>
         
             
@@ -322,12 +322,7 @@
 <a name='L221'></a><a href='#L221'>221</a>
 <a name='L222'></a><a href='#L222'>222</a>
 <a name='L223'></a><a href='#L223'>223</a>
-<a name='L224'></a><a href='#L224'>224</a>
-<a name='L225'></a><a href='#L225'>225</a>
-<a name='L226'></a><a href='#L226'>226</a>
-<a name='L227'></a><a href='#L227'>227</a>
-<a name='L228'></a><a href='#L228'>228</a>
-<a name='L229'></a><a href='#L229'>229</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L224'></a><a href='#L224'>224</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -361,7 +356,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -370,7 +364,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -410,18 +403,10 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -429,6 +414,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -524,7 +510,11 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -580,15 +570,14 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import Module from 'node:module';
 import { createRequire } from 'node:module';
 import { facePaths, compile, copyGenerated, writeTsconfig } from '../pkjs/build-pkjs.ts';
-import { faceRelative } from '../faces.ts';
-import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
+import { appinfoPath, familyCoreDir } from '../faces.ts';
+import { ENGINE, ENGINE_REL } from '../paths.ts';
+import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 &nbsp;
 const requireHost = <span class="cstat-no" title="statement not covered" >createRequire(import.meta.url);</span>
 &nbsp;
-const ROOT = <span class="cstat-no" title="statement not covered" >WORKSPACE;</span>
 const OUT = <span class="cstat-no" title="statement not covered" >path.join(import.meta.dirname, 'clay-preview.html');</span>
 &nbsp;
 const face = <span class="cstat-no" title="statement not covered" >process.argv[2];</span>
@@ -597,7 +586,6 @@ const face = <span class="cstat-no" title="statement not covered" >process.argv[
 <span class="cstat-no" title="statement not covered" >  process.exit(1);</span>
 }
 &nbsp;
-const rel = <span class="cstat-no" title="statement not covered" >faceRelative(face);</span>
 const paths = <span class="cstat-no" title="statement not covered" >facePaths(face);</span>
 &nbsp;
 // the bundle pokes at a few host globals while it builds the page, so give it harmless stand-ins
@@ -642,21 +630,14 @@ const seed = <span class="cstat-no" title="statement not covered" >process.argv.
 }
 &nbsp;
 // the watch build aliases "message_keys" to a generated file which does not exist under plain
-// node, so stand in a map built from the appinfo. the real ids do not matter for rendering
-const appinfo = <span class="cstat-no" title="statement not covered" >path.join(ROOT, rel, 'config', 'pebble.appinfo.json');</span>
-const declared: string[] = <span class="cstat-no" title="statement not covered" >JSON.parse(fs.readFileSync(appinfo, 'utf8')).messageKeys || [];</span>
+// node, so stand in a map built from the appinfo. the real ids do not matter for rendering. the
+// SDK takes messageKeys as a list of names or as a map of name to id, so either one gives the names
+const listed: string[] | Record&lt;string, number&gt; = <span class="cstat-no" title="statement not covered" >JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8')).messageKeys || [];</span>
+const declared = <span class="cstat-no" title="statement not covered" >Array.isArray(listed) ? listed : Object.keys(listed);</span>
 const messageKeysStub: Record&lt;string, number&gt; = <span class="cstat-no" title="statement not covered" >{};</span>
 <span class="cstat-no" title="statement not covered" >declared.<span class="fstat-no" title="function not covered" >forEach((n</span>ame, i) =&gt; { <span class="cstat-no" title="statement not covered" >messageKeysStub[name] = 10000 + i; }</span>);</span>
 &nbsp;
-// _load is a private Node internal so it is not in the public module types
-const moduleInternal = <span class="cstat-no" title="statement not covered" >Module as unknown as {</span>
-  _load: (request: string, ...args: unknown[]) =&gt; unknown;
-};
-const origLoad = <span class="cstat-no" title="statement not covered" >moduleInternal._load;</span>
-<span class="cstat-no" title="statement not covered" >moduleInternal._load = <span class="fstat-no" title="function not covered" >function (this: unknown, r</span>equest: string, ...args: unknown[]) {</span>
-<span class="cstat-no" title="statement not covered" >  if (request === 'message_keys') { <span class="cstat-no" title="statement not covered" >return messageKeysStub; }</span></span>
-<span class="cstat-no" title="statement not covered" >  return origLoad.apply(this, [request, ...args]);</span>
-};
+<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >stubModuleLoad((i</span>d) =&gt; (<span class="cstat-no" title="statement not covered" >id === 'message_keys' ? messageKeysStub : undefined))</span>;</span>
 &nbsp;
 const Clay = <span class="cstat-no" title="statement not covered" >requireHost('@rebble/clay/src/js/index');</span>
 &nbsp;
@@ -687,7 +668,7 @@ function <span class="fstat-no" title="function not covered" >isComponent(v</spa
  * "The manipulator must be defined", which reads like a broken component rather than a file that
  * was never a component at all.
  */
-function <span class="fstat-no" title="function not covered" >components(e</span>mit: string): unknown[] {
+function <span class="fstat-no" title="function not covered" >components(): unknown[] {</span>
   const found: unknown[] = <span class="cstat-no" title="statement not covered" >[];</span>
 &nbsp;
   function <span class="fstat-no" title="function not covered" >collect(d</span>ir: string, suffix: string): void {
@@ -707,8 +688,8 @@ function <span class="fstat-no" title="function not covered" >components(e</span
     }
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  collect(path.join(emit, ...rel.split('/'), 'src', 'pkjs', 'clay'), '.g.js');</span>
-<span class="cstat-no" title="statement not covered" >  collect(path.join(emit, ...ENGINE_REL.split('/'), 'ts', 'clay'), '-component.js');</span>
+<span class="cstat-no" title="statement not covered" >  collect(path.join(paths.emitPkjs, 'clay'), '.g.js');</span>
+<span class="cstat-no" title="statement not covered" >  collect(path.join(paths.emit, ...ENGINE_REL.split('/'), 'ts', 'clay'), '-component.js');</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  return found;</span>
 }
@@ -717,7 +698,7 @@ function <span class="fstat-no" title="function not covered" >components(e</span
 function <span class="fstat-no" title="function not covered" >build(): void {</span>
   // required per build so each pass picks up the freshly compiled emit/ tree. at module scope they
   // would stay bound to the first load and dropping the require cache would not budge them
-  const configPath = <span class="cstat-no" title="statement not covered" >path.join(paths.emit, ...rel.split('/'), 'src', 'pkjs', 'config.js');</span>
+  const configPath = <span class="cstat-no" title="statement not covered" >path.join(paths.emitPkjs, 'config.js');</span>
   const configModule = <span class="cstat-no" title="statement not covered" >requireHost(configPath) as { default?: unknown; customClay?: unknown };</span>
 &nbsp;
   // a face that runs code inside its own config page exports it beside the rows, so the preview
@@ -725,7 +706,7 @@ function <span class="fstat-no" title="function not covered" >build(): void {</s
   const customClay = (<span class="cstat-no" title="statement not covered" >configModule.customClay || null) as (() =&gt; void) | null;</span>
 &nbsp;
   const clay = <span class="cstat-no" title="statement not covered" >new Clay(configModule.default, customClay, { autoHandleEvents: false });</span>
-<span class="cstat-no" title="statement not covered" >  for (const component of components(paths.emit)) {</span>
+<span class="cstat-no" title="statement not covered" >  for (const component of components()) {</span>
 <span class="cstat-no" title="statement not covered" >    clay.registerComponent(component);</span>
   }
 &nbsp;
@@ -752,10 +733,14 @@ function <span class="fstat-no" title="function not covered" >build(): void {</s
 <span class="cstat-no" title="statement not covered" >build();</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >if (process.argv.indexOf('--watch') !== -1) {</span>
+  // the face's page, the family core's shared sections, and the framework's ts, which the page
+  // builders and the Clay components both come from
+  const core = <span class="cstat-no" title="statement not covered" >familyCoreDir(face);</span>
   const watched = <span class="cstat-no" title="statement not covered" >[</span>
-    path.join(ROOT, rel, 'src', 'pkjs'),
-    path.join(ENGINE, 'ts', 'clay'),
-  ].<span class="fstat-no" title="function not covered" >filter((d</span>ir) =&gt; <span class="cstat-no" title="statement not covered" >fs.existsSync(dir))</span>;
+    paths.faceSrc,
+    core ? path.join(core, 'pkjs') : '',
+    path.join(ENGINE, 'ts'),
+  ].<span class="fstat-no" title="function not covered" >filter((d</span>ir) =&gt; <span class="cstat-no" title="statement not covered" >dir &amp;&amp; fs.existsSync(dir))</span>;
 &nbsp;
   // fs.watch fires more than once per save and every pass shells out to a synchronous tsc, so
   // roll a burst of events into one rebuild
@@ -790,7 +775,7 @@ function <span class="fstat-no" title="function not covered" >build(): void {</s
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-23T19:22:11.585Z
+                at 2026-09-26T04:10:41.451Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

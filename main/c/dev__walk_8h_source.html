@@ -15,7 +15,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: c/pebble/dev/dev_walk.h Source File</title>
+<title>Pebble App Framework: c/dev/dev_walk.h Source File</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -208,10 +208,10 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8h_s
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span></div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__dev.html#ga1ff4ca8046b48b20d4d60258901384c1">dev_walk_deinit</a>(<span class="keywordtype">void</span>);</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span></div>
-<div class="ttc" id="agroup__lib__dev_html_ga1ff4ca8046b48b20d4d60258901384c1"><div class="ttname"><a href="group__lib__dev.html#ga1ff4ca8046b48b20d4d60258901384c1">dev_walk_deinit</a></div><div class="ttdeci">void dev_walk_deinit(void)</div><div class="ttdoc">Drop the tap subscription. Call from deinit.</div><div class="ttdef"><b>Definition</b> dev_walk.c:210</div></div>
-<div class="ttc" id="agroup__lib__dev_html_ga881065800617954a0fd094063774f0d9"><div class="ttname"><a href="group__lib__dev.html#ga881065800617954a0fd094063774f0d9">dev_walk_init</a></div><div class="ttdeci">void dev_walk_init(DevWalkMode mode, void(*apply_theme)(void))</div><div class="ttdoc">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer...</div><div class="ttdef"><b>Definition</b> dev_walk.c:188</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga1ff4ca8046b48b20d4d60258901384c1"><div class="ttname"><a href="group__lib__dev.html#ga1ff4ca8046b48b20d4d60258901384c1">dev_walk_deinit</a></div><div class="ttdeci">void dev_walk_deinit(void)</div><div class="ttdoc">Drop the tap subscription. Call from deinit.</div><div class="ttdef"><b>Definition</b> dev_walk.c:187</div></div>
+<div class="ttc" id="agroup__lib__dev_html_ga881065800617954a0fd094063774f0d9"><div class="ttname"><a href="group__lib__dev.html#ga881065800617954a0fd094063774f0d9">dev_walk_init</a></div><div class="ttdeci">void dev_walk_init(DevWalkMode mode, void(*apply_theme)(void))</div><div class="ttdoc">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer...</div><div class="ttdef"><b>Definition</b> dev_walk.c:165</div></div>
 <div class="ttc" id="agroup__lib__dev_html_gabd7169bdf3c69ae6ffe751b975f1fadd"><div class="ttname"><a href="group__lib__dev.html#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a></div><div class="ttdeci">DevWalkMode</div><div class="ttdoc">Which walk a tap advances. The face works this out from its own toggles.</div><div class="ttdef"><b>Definition</b> dev_walk.h:26</div></div>
-<div class="ttc" id="agroup__lib__dev_html_gad7d36031f9102cac1d91f9d66079d9ed"><div class="ttname"><a href="group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a></div><div class="ttdeci">void dev_walk_seed_stores(int hour, int min)</div><div class="ttdoc">Inits every store from the default fixture, with live set to false and a pinned clock,...</div><div class="ttdef"><b>Definition</b> dev_walk.c:157</div></div>
+<div class="ttc" id="agroup__lib__dev_html_gad7d36031f9102cac1d91f9d66079d9ed"><div class="ttname"><a href="group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a></div><div class="ttdeci">void dev_walk_seed_stores(int hour, int min)</div><div class="ttdoc">Inits every store from the default fixture, with live set to false and a pinned clock,...</div><div class="ttdef"><b>Definition</b> dev_walk.c:154</div></div>
 <div class="ttc" id="agroup__lib__dev_html_ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d"><div class="ttname"><a href="group__lib__dev.html#ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d">DEV_WALK_THEMES</a></div><div class="ttdeci">@ DEV_WALK_THEMES</div><div class="ttdoc">A tap steps to the next theme.</div><div class="ttdef"><b>Definition</b> dev_walk.h:28</div></div>
 <div class="ttc" id="agroup__lib__dev_html_ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca"><div class="ttname"><a href="group__lib__dev.html#ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca">DEV_WALK_NONE</a></div><div class="ttdeci">@ DEV_WALK_NONE</div><div class="ttdoc">Just pin the fixture, no tap handler.</div><div class="ttdef"><b>Definition</b> dev_walk.h:27</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8h_s
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__walk_8h.html">dev_walk.h</a></li>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__walk_8h.html">dev_walk.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

@@ -202,7 +202,7 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a25fec78ed8dc40aafa0ee6173a93e661" id="r_a25fec78ed8dc40aafa0ee6173a93e661"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a25fec78ed8dc40aafa0ee6173a93e661">ICON_CACHE_MAX</a>&#160;&#160;&#160;64</td></tr>
+<tr class="memitem:a25fec78ed8dc40aafa0ee6173a93e661" id="r_a25fec78ed8dc40aafa0ee6173a93e661"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a25fec78ed8dc40aafa0ee6173a93e661">ICON_CACHE_MAX</a>&#160;&#160;&#160;24</td></tr>
 <tr class="memdesc:a25fec78ed8dc40aafa0ee6173a93e661"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many distinct icons the cache holds at once.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
@@ -248,13 +248,14 @@ static uint8_t&#160;</td><td class="memItemRight"><b>s_cache_count</b></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ICON_CACHE_MAX&#160;&#160;&#160;64</td>
+          <td class="memname">#define ICON_CACHE_MAX&#160;&#160;&#160;24</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>How many distinct icons the cache holds at once. </p>
-<p>A face's reachable set runs well past this. The moon panel alone rotates 28 small and 28 large glyphs through a lunar month, and the forecast strip adds a day and night glyph per condition. So the cache drops its coldest entry to make room rather than filling up and turning every later icon into a blank. </p>
+<p>It has to cover every icon one redraw touches. The busiest layout built so far is two eight column forecast strips with a pair of two icon panels under them, which is 20, so 24 leaves a little room. Past that the cache still works but thrashes. A redraw walks its icons in the same order every time, so the coldest entry is always the next one wanted, and every lookup reloads the resource and rescans its margins. A reload that fails on a busy heap leaves that icon blank.</p>
+<p>Icons nothing draws any more, such as the moon glyphs of days gone by, are what gets dropped. A face that draws more at once sets its own cap before this file is compiled. </p>
 
 </div>
 </div>

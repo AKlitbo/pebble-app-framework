@@ -4,8 +4,6 @@ var dir_ed0a980f694fc128a68d545a93b54902 =
     [ "astro.h", "astro_8h.html", "astro_8h" ],
     [ "beats.c", "beats_8c.html", "beats_8c" ],
     [ "beats.h", "beats_8h.html", "beats_8h" ],
-    [ "clockstr.c", "clockstr_8c.html", "clockstr_8c" ],
-    [ "clockstr.h", "clockstr_8h.html", "clockstr_8h" ],
     [ "date.c", "date_8c.html", "date_8c" ],
     [ "date.h", "date_8h.html", "date_8h" ],
     [ "duration.c", "duration_8c.html", "duration_8c" ],
@@ -21,5 +19,7 @@ var dir_ed0a980f694fc128a68d545a93b54902 =
     [ "timeband.c", "timeband_8c.html", "timeband_8c" ],
     [ "timeband.h", "timeband_8h.html", "timeband_8h" ],
     [ "weekday.c", "weekday_8c.html", "weekday_8c" ],
-    [ "weekday.h", "weekday_8h.html", "weekday_8h" ]
+    [ "weekday.h", "weekday_8h.html", "weekday_8h" ],
+    [ "zone_setting.c", "zone__setting_8c.html", "zone__setting_8c" ],
+    [ "zone_setting.h", "zone__setting_8h.html", "zone__setting_8h" ]
 ];

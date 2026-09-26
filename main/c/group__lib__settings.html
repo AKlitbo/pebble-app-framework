@@ -322,6 +322,8 @@ Functions</h2></td></tr>
 <tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft"><a id="gab9d20e3758e874e18f045827a5cd29b3" name="gab9d20e3758e874e18f045827a5cd29b3"></a>
 void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 <tr class="memdesc:gab9d20e3758e874e18f045827a5cd29b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persist the active face's structs under their keys (the whole chain). <br /></td></tr>
+<tr class="memitem:ga311ba161873a4026937acc17c57525cc" id="r_ga311ba161873a4026937acc17c57525cc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga311ba161873a4026937acc17c57525cc">settings_mark_restored</a> (void)</td></tr>
+<tr class="memdesc:ga311ba161873a4026937acc17c57525cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears settings_was_fresh once a save or restore from the settings page has been saved.  <br /></td></tr>
 <tr class="memitem:ga3751b197b3c6a12637ebdf7ebc0ea997" id="r_ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#ga3751b197b3c6a12637ebdf7ebc0ea997">settings_u8</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
 <tr class="memdesc:ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read a known uint8/bool setting by id.  <br /></td></tr>
 <tr class="memitem:gab048a393e0f36aa1df969db0a34db046" id="r_gab048a393e0f36aa1df969db0a34db046"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#gab048a393e0f36aa1df969db0a34db046">settings_str</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
@@ -330,8 +332,8 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 <tr class="memdesc:gaca6beaa8ac8e3de5499b406ebab187af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write a known uint8 or enum setting by id. In memory only, does not persist.  <br /></td></tr>
 <tr class="memitem:ga7f6e82a36168e1d570748a8c18d0a30b" id="r_ga7f6e82a36168e1d570748a8c18d0a30b"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#ga7f6e82a36168e1d570748a8c18d0a30b">settings_enum_count</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
 <tr class="memdesc:ga7f6e82a36168e1d570748a8c18d0a30b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many values an enum setting allows (its sanitize ceiling).  <br /></td></tr>
-<tr class="memitem:gaa8498d8f013ff55cd4bf1308ddc8f12b" id="r_gaa8498d8f013ff55cd4bf1308ddc8f12b"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#gaa8498d8f013ff55cd4bf1308ddc8f12b">settings_serialized_size</a> (void)</td></tr>
-<tr class="memdesc:gaa8498d8f013ff55cd4bf1308ddc8f12b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many outbox bytes every field of the active face takes once written.  <br /></td></tr>
+<tr class="memitem:ga281a4f818f93bf883410d0222e21713b" id="r_ga281a4f818f93bf883410d0222e21713b"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga281a4f818f93bf883410d0222e21713b">settings_serialized_size_max</a> (void)</td></tr>
+<tr class="memdesc:ga281a4f818f93bf883410d0222e21713b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most outbox bytes every field of the active face could ever take once written.  <br /></td></tr>
 <tr class="memitem:ga8a25e0c1aea6e4cb033cefa62a590458" id="r_ga8a25e0c1aea6e4cb033cefa62a590458"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga8a25e0c1aea6e4cb033cefa62a590458">settings_serialize</a> (DictionaryIterator *iter)</td></tr>
 <tr class="memdesc:ga8a25e0c1aea6e4cb033cefa62a590458"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write every field of the active face into an outbox iterator.  <br /></td></tr>
 <tr class="memitem:ga226c66180fb376a5888b279eca034417" id="r_ga226c66180fb376a5888b279eca034417"><td class="memItemLeft"><a class="el" href="structSettingsInbound.html">SettingsInbound</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga226c66180fb376a5888b279eca034417">settings_apply_inbox</a> (DictionaryIterator *iter)</td></tr>
@@ -652,7 +654,7 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 <div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188">SETTING_TEMPERATURE_UNIT</a></div><div class="ttdeci">@ SETTING_TEMPERATURE_UNIT</div><div class="ttdoc">Celsius or Fahrenheit.</div><div class="ttdef"><b>Definition</b> settings.h:25</div></div>
 </div><!-- fragment -->
 <p>Setting definition for Temperature Unit (Celsius or Fahrenheit). </p>
-<p>Every face wires this the same way, so it takes no count: there are two units and there is never going to be a third. Changing it asks for fresh weather rather than converting what is already there, because the phone is what does the conversion.</p>
+<p>Every face wires this the same way, so it takes no count: there are two units and there is never going to be a third. Changing it converts the weather already on the watch and asks for fresh weather in the new unit.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
@@ -918,7 +920,7 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79" name="gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79"></a>TIME_FORMAT_24H&#160;</td><td class="fielddoc"><p>24 hour clock </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5" name="gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5"></a>TIME_FORMAT_BEATS&#160;</td><td class="fielddoc"><p>Kept for the wire format. Not offered in the config. </p>
+<tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5" name="gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5"></a>TIME_FORMAT_BEATS&#160;</td><td class="fielddoc"><p>Swatch Internet Time, offered as .beats on the settings page. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468" name="gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468"></a>TIME_FORMAT_12H_NO_LEAD&#160;</td><td class="fielddoc"><p>12 hour without a leading zero like 6:30 </p>
 </td></tr>
@@ -1038,6 +1040,26 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 
 </div>
 </div>
+<a id="ga311ba161873a4026937acc17c57525cc" name="ga311ba161873a4026937acc17c57525cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga311ba161873a4026937acc17c57525cc">&#9670;&#160;</a></span>settings_mark_restored()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void settings_mark_restored </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clears settings_was_fresh once a save or restore from the settings page has been saved. </p>
+<p>Only that message counts. Anything else the phone sends while the watch is fresh stays in memory, so the phone still sees a fresh watch and pushes its whole config back. </p>
+
+</div>
+</div>
 <a id="ga8a25e0c1aea6e4cb033cefa62a590458" name="ga8a25e0c1aea6e4cb033cefa62a590458"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga8a25e0c1aea6e4cb033cefa62a590458">&#9670;&#160;</a></span>settings_serialize()</h2>
 
@@ -1054,7 +1076,7 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Write every field of the active face into an outbox iterator. </p>
-<p>Stops at the first field that does not fit, so check settings_serialized_size first when the snapshot has to arrive whole.</p>
+<p>Stops at the first field that does not fit. The transport opens its outbox at settings_serialized_size_max, so the whole snapshot fits.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">iter</td><td>The dictionary iterator to encode into. </td></tr>
@@ -1065,14 +1087,14 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 
 </div>
 </div>
-<a id="gaa8498d8f013ff55cd4bf1308ddc8f12b" name="gaa8498d8f013ff55cd4bf1308ddc8f12b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaa8498d8f013ff55cd4bf1308ddc8f12b">&#9670;&#160;</a></span>settings_serialized_size()</h2>
+<a id="ga281a4f818f93bf883410d0222e21713b" name="ga281a4f818f93bf883410d0222e21713b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga281a4f818f93bf883410d0222e21713b">&#9670;&#160;</a></span>settings_serialized_size_max()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint32_t settings_serialized_size </td>
+          <td class="memname">uint32_t settings_serialized_size_max </td>
           <td>(</td>
           <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -1080,9 +1102,9 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>How many outbox bytes every field of the active face takes once written. </p>
-<p>Counts each field's tuple header and value the same way settings_serialize writes them, so a caller can tell before it starts a message whether the whole snapshot fits.</p>
-<dl class="section return"><dt>Returns</dt><dd>The bytes the fields need, not counting the dictionary's own one byte header. </dd></dl>
+<p>The most outbox bytes every field of the active face could ever take once written. </p>
+<p>Counts each string as filling its whole buffer, so no later settings change can outgrow it. The transport sizes its outbox from this when it opens.</p>
+<dl class="section return"><dt>Returns</dt><dd>The bytes the fields could need, not counting the dictionary's own one byte header. </dd></dl>
 
 </div>
 </div>
@@ -1185,7 +1207,7 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults. </p>
-<dl class="section return"><dt>Returns</dt><dd>true when the primary key had no blob at <span class="tt"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from a trusted blob, applying defaults first.">settings_init</a></span>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true when any schema in the chain had no blob at <span class="tt"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from a trusted blob, applying defaults first.">settings_init</a></span>, or one was reset for a blob it could not read, and no settings page message has landed since. </dd></dl>
 
 </div>
 </div>

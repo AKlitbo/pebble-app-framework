@@ -59,16 +59,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">43.05% </span>
+                <span class="strong">45.33% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>31/72</span>
+                <span class='fraction'>34/75</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">36% </span>
+                <span class="strong">40.74% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/25</span>
+                <span class='fraction'>11/27</span>
             </div>
         
             
@@ -80,9 +80,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">44.92% </span>
+                <span class="strong">47.22% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>31/69</span>
+                <span class='fraction'>34/72</span>
             </div>
         
             
@@ -359,7 +359,17 @@
 <a name='L258'></a><a href='#L258'>258</a>
 <a name='L259'></a><a href='#L259'>259</a>
 <a name='L260'></a><a href='#L260'>260</a>
-<a name='L261'></a><a href='#L261'>261</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a>
+<a name='L270'></a><a href='#L270'>270</a>
+<a name='L271'></a><a href='#L271'>271</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -456,11 +466,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -519,6 +536,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -712,13 +732,20 @@ type ThumbFile = { file: string; slug: string; label: string; order: number; siz
  * Indexes the label-keyed registry by slug, keeping each row's position as its
  * sort order so the emitted file follows module-meta.ts.
  *
+ * Two modules on one slug would share one set of pictures, and the first one's tile came out blank
+ * with nothing to say why, so the index stops and names both.
+ *
  * @param meta The label-keyed registry to index.
  * @return The same rows keyed by slug, each with its label and sort order.
  */
 export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
   const bySlug: SlugIndex = {};
   Object.keys(meta).forEach((label, index) =&gt; {
-    bySlug[meta[label].slug] = { label: label, order: index };
+    const slug = meta[label].slug;
+    if (bySlug[slug]) {
+      throw new Error(`modules "${bySlug[slug].label}" and "${label}" share the slug "${slug}"`);
+    }
+    bySlug[slug] = { label: label, order: index };
   });
   return bySlug;
 }
@@ -783,6 +810,9 @@ export function buildSource(thumbs: Thumbs, order: Record&lt;string, number&gt;)
 &nbsp;
 /**
  * The registry slugs that no PNG covered, so a new module with no picture gets reported.
+ *
+ * One picture is enough to count, since a module only has pictures at the sizes it fits. Most
+ * fit one or two of the sizes a face offers, so a check for every size would fail every face.
  *
  * @param meta The label-keyed registry to check.
  * @param seen The slugs a PNG was found for.
@@ -886,7 +916,7 @@ export function <span class="fstat-no" title="function not covered" >build(f</sp
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-23T19:22:11.585Z
+                at 2026-09-26T04:10:41.451Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

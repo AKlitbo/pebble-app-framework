@@ -193,6 +193,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('store__persist
 <p>Shared persist save and restore helpers for the stores.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;pebble.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="store__sum_8h_source.html">io/stores/store_sum.h</a>&quot;</code><br />
 </div>
 <p><a href="store__persist_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -203,7 +204,7 @@ Macros</h2></td></tr>
 <p>The size on its own cannot tell two blobs apart. The calendar snapshot and the weather state happen to be the same size, and reordering two fields keeps the size too, so the tag is what makes the guard mean anything. Bump a store's low nibble whenever its persisted struct changes shape, and an older blob is dropped rather than read as the wrong thing. </p>
 </div></td></tr>
 <tr class="memitem:gaf7f92da5799b3fc95c172f84287e6867" id="r_gaf7f92da5799b3fc95c172f84287e6867"><td class="memItemLeft">
-#define&#160;</td><td class="memItemRight"><b>STORE_TAG_WEATHER</b>&#160;&#160;&#160;0x12</td></tr>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_WEATHER</b>&#160;&#160;&#160;0x13</td></tr>
 <tr class="memdesc:gaf7f92da5799b3fc95c172f84287e6867"><td class="mdescLeft">&#160;</td><td class="mdescRight">The weather store's blob. <br /></td></tr>
 <tr class="memitem:ga5b35a6941ad6bb200a944b38ae9fa676" id="r_ga5b35a6941ad6bb200a944b38ae9fa676"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>STORE_TAG_STOCK</b>&#160;&#160;&#160;0x21</td></tr>
@@ -224,6 +225,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga286178630dd827b7d2e677742541e280"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restore a saved blob into <code class="param">state</code>, but only when it is this store's own current layout.  <br /></td></tr>
 <tr class="memitem:ga814b2c13673684e3684ff4ed7beec6eb" id="r_ga814b2c13673684e3684ff4ed7beec6eb"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">store_save</a> (uint32_t key, void *state, size_t size, uint8_t tag)</td></tr>
 <tr class="memdesc:ga814b2c13673684e3684ff4ed7beec6eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a store's blob with its tag stamped in, so the next restore can recognise it.  <br /></td></tr>
+<tr class="memitem:ga26072e6c901d3d7455c93261276e6922" id="r_ga26072e6c901d3d7455c93261276e6922"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga26072e6c901d3d7455c93261276e6922">store_save_changed</a> (uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</td></tr>
+<tr class="memdesc:ga26072e6c901d3d7455c93261276e6922"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save a store's blob only when its reading is different from what is already on flash.  <br /></td></tr>
+<tr class="memitem:gacfb278bcfc9c6dbc28c5728a3b68e277" id="r_gacfb278bcfc9c6dbc28c5728a3b68e277"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gacfb278bcfc9c6dbc28c5728a3b68e277">store_restore_reading</a> (uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</td></tr>
+<tr class="memdesc:gacfb278bcfc9c6dbc28c5728a3b68e277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restore a saved blob as store_restore does, and record the sum of the reading it holds.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Shared persist save and restore helpers for the stores. </p>

@@ -203,7 +203,9 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a854b4a35a11cda25892a46e24e0b8e0c" id="r_a854b4a35a11cda25892a46e24e0b8e0c"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#a854b4a35a11cda25892a46e24e0b8e0c">have_all</a> (int rise, int set, int now)</td></tr>
-<tr class="memdesc:a854b4a35a11cda25892a46e24e0b8e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether all three readings are real, so the maths below is not run on a missing time.  <br /></td></tr>
+<tr class="memdesc:a854b4a35a11cda25892a46e24e0b8e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether all three readings are real minutes of the day, so the maths below is not run on a missing time. Sunrise and sunset landing on the same minute also count as missing, since that could be a sun that never sets or one that never rises and there is no telling which.  <br /></td></tr>
+<tr class="memitem:abc2880e1e3accfcb789382afc39f0a78" id="r_abc2880e1e3accfcb789382afc39f0a78"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#abc2880e1e3accfcb789382afc39f0a78">forward</a> (int from, int to)</td></tr>
+<tr class="memdesc:abc2880e1e3accfcb789382afc39f0a78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes going forward round the clock from one reading to another.  <br /></td></tr>
 <tr class="memitem:gac982a31420ab76dbaa86ab1885c065ad" id="r_gac982a31420ab76dbaa86ab1885c065ad"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gac982a31420ab76dbaa86ab1885c065ad">solar_day_progress</a> (int rise, int set, int now)</td></tr>
 <tr class="memdesc:gac982a31420ab76dbaa86ab1885c065ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the daylight it is, from 0 at sunrise to 100 at sunset.  <br /></td></tr>
 <tr class="memitem:gaee0b6058425e523d5393b77aceb34a54" id="r_gaee0b6058425e523d5393b77aceb34a54"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaee0b6058425e523d5393b77aceb34a54">solar_night_progress</a> (int rise, int set, int now)</td></tr>
@@ -214,6 +216,46 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>How the day's light is going, worked out from three plain clock readings. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="abc2880e1e3accfcb789382afc39f0a78" name="abc2880e1e3accfcb789382afc39f0a78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc2880e1e3accfcb789382afc39f0a78">&#9670;&#160;</a></span>forward()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int forward </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>from</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>to</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Minutes going forward round the clock from one reading to another. </p>
+<p>Sunset falls after midnight in a high latitude summer, so the daylight can run from 03:00 round to 00:30. Measuring everything forward from sunrise this way covers that and an ordinary day with the same maths.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">from</td><td>The earlier reading, minutes past midnight. </td></tr>
+    <tr><td class="paramname">to</td><td>The later reading, minutes past midnight. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>0 to 1439. </dd></dl>
+
+</div>
+</div>
 <a id="a854b4a35a11cda25892a46e24e0b8e0c" name="a854b4a35a11cda25892a46e24e0b8e0c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a854b4a35a11cda25892a46e24e0b8e0c">&#9670;&#160;</a></span>have_all()</h2>
 
@@ -246,7 +288,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Whether all three readings are real, so the maths below is not run on a missing time. </p>
+<p>Whether all three readings are real minutes of the day, so the maths below is not run on a missing time. Sunrise and sunset landing on the same minute also count as missing, since that could be a sun that never sets or one that never rises and there is no telling which. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">rise</td><td>Sunrise, minutes past midnight, or -1 for no data. </td></tr>
@@ -255,7 +297,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>True when all three are real readings. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>True when all three are real readings and the sun both rises and sets. </dd></dl>
 
 </div>
 </div>

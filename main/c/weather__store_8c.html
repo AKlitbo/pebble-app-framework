@@ -193,18 +193,19 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('weather__store
 <p>The active weather store: holds the readings, owns the appmessage weather channels, and asks the phone for more whenever its turn on the face's cadence finds a poll due.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="weather__store_8h_source.html">io/stores/weather_store.h</a>&quot;</code><br />
+<code>#include &lt;stddef.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;time.h&gt;</code><br />
 <code>#include &lt;limits.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="store__poll_8h_source.html">io/stores/store_poll.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="forecast__age_8h_source.html">weather/forecast_age.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="weather__reading_8h_source.html">weather/weather_reading.h</a>&quot;</code><br />
 </div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr class="memitem:_5Bstruct_5D_2Es_5Fstate" id="r__5Bstruct_5D_2Es_5Fstate"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__state.html">[struct].s_state</a></td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a095baca2ac96275e14cbde3495f43b73" id="r_a095baca2ac96275e14cbde3495f43b73"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a095baca2ac96275e14cbde3495f43b73">WEATHER_FIRST_POLL_MS</a>&#160;&#160;&#160;500</td></tr>
@@ -226,34 +227,18 @@ static void&#160;</td><td class="memItemRight"><b>reset_state</b> (void)</td></t
 <tr class="memdesc:a9fbef29f6a0a976770a3055c37a35d95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the reading back to no-data for every field. <br /></td></tr>
 <tr class="memitem:a38798b6392bd528fd20169e49b63ff36" id="r_a38798b6392bd528fd20169e49b63ff36"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a38798b6392bd528fd20169e49b63ff36">mark_dirty</a> (void)</td></tr>
 <tr class="memdesc:a38798b6392bd528fd20169e49b63ff36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark the reading as needing a save.  <br /></td></tr>
-<tr class="memitem:a1d0e8f31da1e0cae1eae139b92483954" id="r_a1d0e8f31da1e0cae1eae139b92483954"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a1d0e8f31da1e0cae1eae139b92483954">mark_synced</a> (void)</td></tr>
-<tr class="memdesc:a1d0e8f31da1e0cae1eae139b92483954"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared tail every channel handler runs after it writes.  <br /></td></tr>
 <tr class="memitem:a91a226520846cd505005169ca4f9d754" id="r_a91a226520846cd505005169ca4f9d754"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a91a226520846cd505005169ca4f9d754">persist_flush</a> (void)</td></tr>
 <tr class="memdesc:a91a226520846cd505005169ca4f9d754"><td class="mdescLeft">&#160;</td><td class="mdescRight">The coalesced write, run once per inbox via the transport's inbox-complete hook.  <br /></td></tr>
-<tr class="memitem:a22aef660d42e4f3460fed6caa17becde" id="r_a22aef660d42e4f3460fed6caa17becde"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a22aef660d42e4f3460fed6caa17becde">set_current</a> (int temp, const char *cond)</td></tr>
-<tr class="memdesc:a22aef660d42e4f3460fed6caa17becde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the current temperature and condition, and mark the reading synced.  <br /></td></tr>
+<tr class="memitem:a9733ae28f8c21e9ec18ae4251141d96b" id="r_a9733ae28f8c21e9ec18ae4251141d96b"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a9733ae28f8c21e9ec18ae4251141d96b">inbox_done</a> (void)</td></tr>
+<tr class="memdesc:a9733ae28f8c21e9ec18ae4251141d96b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs once a whole inbound message is handled: one repaint for everything it brought, then the save.  <br /></td></tr>
 <tr class="memitem:aa5bb619dd308587c2ec6444250ee6ab1" id="r_aa5bb619dd308587c2ec6444250ee6ab1"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aa5bb619dd308587c2ec6444250ee6ab1">apply_seed</a> (const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *seed)</td></tr>
 <tr class="memdesc:aa5bb619dd308587c2ec6444250ee6ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefill the whole store from a seed, for dev builds and screenshots.  <br /></td></tr>
-<tr class="memitem:a22cc1ebc5f6b0cd2e326dd53dcf6e6f3" id="r_a22cc1ebc5f6b0cd2e326dd53dcf6e6f3"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a22cc1ebc5f6b0cd2e326dd53dcf6e6f3">on_weather</a> (int temp, const char *cond)</td></tr>
-<tr class="memdesc:a22cc1ebc5f6b0cd2e326dd53dcf6e6f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current weather channel. A NULL condition means the fetch failed (network drop, provider outage, no location) so we keep the last good reading rather than blanking. It refreshes on the next poll that lands, and survives a relaunch via the cache.  <br /></td></tr>
-<tr class="memitem:a035a86513ca2d313168eab8c045e0993" id="r_a035a86513ca2d313168eab8c045e0993"><td class="memItemLeft"><a id="a035a86513ca2d313168eab8c045e0993" name="a035a86513ca2d313168eab8c045e0993"></a>
-static void&#160;</td><td class="memItemRight"><b>on_extra</b> (int humidity, int wind_kmh, const char *dir, const char *sunrise, const char *sunset)</td></tr>
-<tr class="memdesc:a035a86513ca2d313168eab8c045e0993"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extra weather channel (humidity / wind / sun). Absent values arrive as -1 / "". <br /></td></tr>
-<tr class="memitem:ab8ce0f6108324704be6ab823c5a42a97" id="r_ab8ce0f6108324704be6ab823c5a42a97"><td class="memItemLeft"><a id="ab8ce0f6108324704be6ab823c5a42a97" name="ab8ce0f6108324704be6ab823c5a42a97"></a>
-static void&#160;</td><td class="memItemRight"><b>on_forecast</b> (int uv, int temp_max, int temp_min, int precip_chance)</td></tr>
-<tr class="memdesc:ab8ce0f6108324704be6ab823c5a42a97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forecast channel (uv / hi-lo / precip). The transport hands absent fields as INT_MIN, so map those back to the store's own no-data values (temps get their own sentinel). <br /></td></tr>
-<tr class="memitem:a25335d9e23019b22ec9354d0d97a35d1" id="r_a25335d9e23019b22ec9354d0d97a35d1"><td class="memItemLeft"><a id="a25335d9e23019b22ec9354d0d97a35d1" name="a25335d9e23019b22ec9354d0d97a35d1"></a>
-static void&#160;</td><td class="memItemRight"><b>on_air</b> (int feels_like, int pressure, int dew_point)</td></tr>
-<tr class="memdesc:a25335d9e23019b22ec9354d0d97a35d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Air channel (feels-like / pressure / dew point). Absent fields arrive as INT_MIN, mapped back to the store's no-data values (temps get their own sentinel). <br /></td></tr>
-<tr class="memitem:a7c5a5434551d343cf8d71c1d6e01d3c6" id="r_a7c5a5434551d343cf8d71c1d6e01d3c6"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a7c5a5434551d343cf8d71c1d6e01d3c6">on_forecast_hourly</a> (const uint8_t *buf, uint16_t len)</td></tr>
-<tr class="memdesc:a7c5a5434551d343cf8d71c1d6e01d3c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hourly forecast channel. Takes the strip the reader unpacked and puts it away.  <br /></td></tr>
-<tr class="memitem:a98797c9d3dfad57b9164d485756f4c19" id="r_a98797c9d3dfad57b9164d485756f4c19"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a98797c9d3dfad57b9164d485756f4c19">on_forecast_daily</a> (const uint8_t *buf, uint16_t len)</td></tr>
-<tr class="memdesc:a98797c9d3dfad57b9164d485756f4c19"><td class="mdescLeft">&#160;</td><td class="mdescRight">7-day forecast channel. Takes the strip the reader unpacked and puts it away.  <br /></td></tr>
+<tr class="memitem:af5f33238881e8b25ccd2445b79ccb95a" id="r_af5f33238881e8b25ccd2445b79ccb95a"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#af5f33238881e8b25ccd2445b79ccb95a">on_weather</a> (const <a class="el" href="structWeatherMessage.html">WeatherMessage</a> *msg)</td></tr>
+<tr class="memdesc:af5f33238881e8b25ccd2445b79ccb95a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The weather channel. The message holds every group the phone sent, and weather_reading_apply keeps what it can. A failed fetch keeps the last good reading rather than blanking, and it refreshes on the next poll that lands.  <br /></td></tr>
+<tr class="memitem:ab270d4f87c98123387d5599b915429b3" id="r_ab270d4f87c98123387d5599b915429b3"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ab270d4f87c98123387d5599b915429b3">on_unit_changed</a> (bool fahrenheit)</td></tr>
+<tr class="memdesc:ab270d4f87c98123387d5599b915429b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wearer switched the temperature unit. The reading in hand converts to it so the face never shows a Celsius number with an F beside it while the new fetch is on its way.  <br /></td></tr>
 <tr class="memitem:a57f5cd13bc80a504451172b29ed6e7de" id="r_a57f5cd13bc80a504451172b29ed6e7de"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a57f5cd13bc80a504451172b29ed6e7de">boot_fire</a> (void *data)</td></tr>
 <tr class="memdesc:a57f5cd13bc80a504451172b29ed6e7de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short boot re-ask, and only that.  <br /></td></tr>
-<tr class="memitem:ae097f0c73987f4efa784f7ab6a0fa8ae" id="r_ae097f0c73987f4efa784f7ab6a0fa8ae"><td class="memItemLeft"><a id="ae097f0c73987f4efa784f7ab6a0fa8ae" name="ae097f0c73987f4efa784f7ab6a0fa8ae"></a>
-static void&#160;</td><td class="memItemRight"><b>stop_polling</b> (void)</td></tr>
-<tr class="memdesc:ae097f0c73987f4efa784f7ab6a0fa8ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the boot re-ask timer, if one is armed. <br /></td></tr>
 <tr class="memitem:ac219f20bf18466869ec6ecc7820e97a6" id="r_ac219f20bf18466869ec6ecc7820e97a6"><td class="memItemLeft"><a id="ac219f20bf18466869ec6ecc7820e97a6" name="ac219f20bf18466869ec6ecc7820e97a6"></a>
 static void&#160;</td><td class="memItemRight"><b>cadence_poll</b> (void)</td></tr>
 <tr class="memdesc:ac219f20bf18466869ec6ecc7820e97a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence: poll when the deadline has come round. <br /></td></tr>
@@ -267,9 +252,13 @@ void&#160;</td><td class="memItemRight"><b>weather_store_subscribe</b> (void(*cb
 <tr class="memitem:ga2cd48126740a404ee6893890c5abf288" id="r_ga2cd48126740a404ee6893890c5abf288"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_temp</b> (void)</td></tr>
 <tr class="memdesc:ga2cd48126740a404ee6893890c5abf288"><td class="mdescLeft">&#160;</td><td class="mdescRight">The temperature reading in the user's unit, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:a6338097c3aa566509557080e498f23a1" id="r_a6338097c3aa566509557080e498f23a1"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#a6338097c3aa566509557080e498f23a1">forecast_today</a> (void)</td></tr>
+<tr class="memdesc:a6338097c3aa566509557080e498f23a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the high, low, UV, and rain chance are today's.  <br /></td></tr>
 <tr class="memitem:ga2b52199ca0e311c968b7f831305acd62" id="r_ga2b52199ca0e311c968b7f831305acd62"><td class="memItemLeft">
 const char *&#160;</td><td class="memItemRight"><b>weather_store_cond</b> (void)</td></tr>
 <tr class="memdesc:ga2b52199ca0e311c968b7f831305acd62"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short word for the sky, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gad57eba8aa9a6f59644fedafcac7a3bab" id="r_gad57eba8aa9a6f59644fedafcac7a3bab"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gad57eba8aa9a6f59644fedafcac7a3bab">weather_store_cond_label</a> (void)</td></tr>
+<tr class="memdesc:gad57eba8aa9a6f59644fedafcac7a3bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sky in words, such as "Partly Cloudy", for a face that declares WEATHER_CONDITION_LABEL.  <br /></td></tr>
 <tr class="memitem:gaec0de378ffe3adbadab18b877c3e214c" id="r_gaec0de378ffe3adbadab18b877c3e214c"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_humidity</b> (void)</td></tr>
 <tr class="memdesc:gaec0de378ffe3adbadab18b877c3e214c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The humidity in percent, or -1 if we have not got one yet. <br /></td></tr>
@@ -279,72 +268,70 @@ int&#160;</td><td class="memItemRight"><b>weather_store_wind_kmh</b> (void)</td>
 <tr class="memitem:ga21865e60abf090e923d95f74e4e5e3b2" id="r_ga21865e60abf090e923d95f74e4e5e3b2"><td class="memItemLeft">
 const char *&#160;</td><td class="memItemRight"><b>weather_store_wind_dir</b> (void)</td></tr>
 <tr class="memdesc:ga21865e60abf090e923d95f74e4e5e3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wind direction like "NW", or empty if we have not got one yet. <br /></td></tr>
-<tr class="memitem:gae1aaec2e20f48ead785d1c217b0a2ad4" id="r_gae1aaec2e20f48ead785d1c217b0a2ad4"><td class="memItemLeft">
-const char *&#160;</td><td class="memItemRight"><b>weather_store_sunrise</b> (void)</td></tr>
-<tr class="memdesc:gae1aaec2e20f48ead785d1c217b0a2ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sunrise time like "06:30", or empty if we have not got one yet. <br /></td></tr>
-<tr class="memitem:ga21fd739c3cdf95b044af16789ac88bd5" id="r_ga21fd739c3cdf95b044af16789ac88bd5"><td class="memItemLeft">
-const char *&#160;</td><td class="memItemRight"><b>weather_store_sunset</b> (void)</td></tr>
-<tr class="memdesc:ga21fd739c3cdf95b044af16789ac88bd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sunset time like "21:30", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gadcce3fc2dbdf6a3ccd751a70ef171adf" id="r_gadcce3fc2dbdf6a3ccd751a70ef171adf"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_sunrise</b> (void)</td></tr>
+<tr class="memdesc:gadcce3fc2dbdf6a3ccd751a70ef171adf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunrise as minutes past midnight, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga613a6718a67c620b3c4623cbbfc3d84e" id="r_ga613a6718a67c620b3c4623cbbfc3d84e"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_sunset</b> (void)</td></tr>
+<tr class="memdesc:ga613a6718a67c620b3c4623cbbfc3d84e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunset as minutes past midnight, or -1 if we have not got one yet. <br /></td></tr>
 <tr class="memitem:ga839bf5c5187f067697de69f79f025b3f" id="r_ga839bf5c5187f067697de69f79f025b3f"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_uv</b> (void)</td></tr>
-<tr class="memdesc:ga839bf5c5187f067697de69f79f025b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UV index, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga839bf5c5187f067697de69f79f025b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's UV index, or -1 if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga9521fad2bb38f644e02c9c3ac8547d4b" id="r_ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_temp_max</b> (void)</td></tr>
-<tr class="memdesc:ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga3ad694d30ad387bd9a9c1db451cc9c2d" id="r_ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_temp_min</b> (void)</td></tr>
-<tr class="memdesc:ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga04d4ed2abc57cd51459c6913b2d77e1d" id="r_ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_precip_chance</b> (void)</td></tr>
-<tr class="memdesc:ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The chance of rain in percent, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's chance of rain in percent, or -1 if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga06cf30734c71d28b90e5b660ee75bc9d" id="r_ga06cf30734c71d28b90e5b660ee75bc9d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_feels_like</b> (void)</td></tr>
 <tr class="memdesc:ga06cf30734c71d28b90e5b660ee75bc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How warm it feels, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
 <tr class="memitem:gac167df267d9204941ae5ef9541074edc" id="r_gac167df267d9204941ae5ef9541074edc"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_pressure</b> (void)</td></tr>
-<tr class="memdesc:gac167df267d9204941ae5ef9541074edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The surface pressure in hPa, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:gac167df267d9204941ae5ef9541074edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sea level pressure in hPa, or -1 if we have not got one yet. <br /></td></tr>
 <tr class="memitem:ga4780ec893b0d2cb94e17ab85c78e377d" id="r_ga4780ec893b0d2cb94e17ab85c78e377d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_dew_point</b> (void)</td></tr>
 <tr class="memdesc:ga4780ec893b0d2cb94e17ab85c78e377d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
-<tr class="memitem:gaba5bc2a406811b7f6d4b6df181f620d7" id="r_gaba5bc2a406811b7f6d4b6df181f620d7"><td class="memItemLeft">
-const <a class="el" href="structWeatherHourly.html">WeatherHourly</a> *&#160;</td><td class="memItemRight"><b>weather_store_forecast_hourly</b> (void)</td></tr>
-<tr class="memdesc:gaba5bc2a406811b7f6d4b6df181f620d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>
-<tr class="memitem:ga0610dff5f72df6fa9f4312a73e6d96de" id="r_ga0610dff5f72df6fa9f4312a73e6d96de"><td class="memItemLeft">
-const <a class="el" href="structWeatherDaily.html">WeatherDaily</a> *&#160;</td><td class="memItemRight"><b>weather_store_forecast_daily</b> (void)</td></tr>
-<tr class="memdesc:ga0610dff5f72df6fa9f4312a73e6d96de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 7-day forecast strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>
+<tr class="memitem:gaba5bc2a406811b7f6d4b6df181f620d7" id="r_gaba5bc2a406811b7f6d4b6df181f620d7"><td class="memItemLeft">const <a class="el" href="structWeatherHourly.html">WeatherHourly</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store_forecast_hourly</a> (void)</td></tr>
+<tr class="memdesc:gaba5bc2a406811b7f6d4b6df181f620d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip, starting at the hour now.  <br /></td></tr>
+<tr class="memitem:ga0610dff5f72df6fa9f4312a73e6d96de" id="r_ga0610dff5f72df6fa9f4312a73e6d96de"><td class="memItemLeft">const <a class="el" href="structWeatherDaily.html">WeatherDaily</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store_forecast_daily</a> (void)</td></tr>
+<tr class="memdesc:ga0610dff5f72df6fa9f4312a73e6d96de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The daily forecast strip, starting today.  <br /></td></tr>
 <tr class="memitem:ga7856768b2bde2cf55422b2c3b5ea3b4e" id="r_ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_age_s</b> (void)</td></tr>
 <tr class="memdesc:ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a34f3119af3501c2700a27a542b72172e" name="a34f3119af3501c2700a27a542b72172e"></a>
-<a class="el" href="struct_0fstruct_0e_8s__state.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
-<tr class="memdesc:a34f3119af3501c2700a27a542b72172e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every reading the store holds, laid out as the blob that gets persisted. <br /></td></tr>
+<tr class="memitem:a2a3db4bc36fd168193b20a09c608c773" id="r_a2a3db4bc36fd168193b20a09c608c773"><td class="memItemLeft"><a id="a2a3db4bc36fd168193b20a09c608c773" name="a2a3db4bc36fd168193b20a09c608c773"></a>
+static <a class="el" href="structWeatherState.html">WeatherState</a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
+<tr class="memdesc:a2a3db4bc36fd168193b20a09c608c773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every reading the store holds, laid out as the blob that gets persisted. <br /></td></tr>
 <tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
 static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
 <tr class="memdesc:a0d75601f9ac1a6725c17065d338a664a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever a reading changes, so the face can redraw. <br /></td></tr>
-<tr class="memitem:aa2450b83d4ef266d458eca3c73715aa2" id="r_aa2450b83d4ef266d458eca3c73715aa2"><td class="memItemLeft"><a id="aa2450b83d4ef266d458eca3c73715aa2" name="aa2450b83d4ef266d458eca3c73715aa2"></a>
-static AppTimer *&#160;</td><td class="memItemRight"><b>s_timer</b></td></tr>
-<tr class="memdesc:aa2450b83d4ef266d458eca3c73715aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short boot re-ask only. The recurring poll rides the cadence. <br /></td></tr>
-<tr class="memitem:ad180049e0de115c19b3a8d6027e6e160" id="r_ad180049e0de115c19b3a8d6027e6e160"><td class="memItemLeft"><a id="ad180049e0de115c19b3a8d6027e6e160" name="ad180049e0de115c19b3a8d6027e6e160"></a>
-static int&#160;</td><td class="memItemRight"><b>s_poll_min</b></td></tr>
-<tr class="memdesc:ad180049e0de115c19b3a8d6027e6e160"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes between recurring polls. 0 or less means no recurring poll. <br /></td></tr>
-<tr class="memitem:a599c81a3107fff4c866f7cc0dfb42e14" id="r_a599c81a3107fff4c866f7cc0dfb42e14"><td class="memItemLeft"><a id="a599c81a3107fff4c866f7cc0dfb42e14" name="a599c81a3107fff4c866f7cc0dfb42e14"></a>
-static time_t&#160;</td><td class="memItemRight"><b>s_next_poll</b></td></tr>
-<tr class="memdesc:a599c81a3107fff4c866f7cc0dfb42e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock second the next recurring poll is due. <br /></td></tr>
 <tr class="memitem:a3e8ceb6edd19c82d11e2d15c671924f4" id="r_a3e8ceb6edd19c82d11e2d15c671924f4"><td class="memItemLeft"><a id="a3e8ceb6edd19c82d11e2d15c671924f4" name="a3e8ceb6edd19c82d11e2d15c671924f4"></a>
 static int&#160;</td><td class="memItemRight"><b>s_boot_retries</b></td></tr>
 <tr class="memdesc:a3e8ceb6edd19c82d11e2d15c671924f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Short cold-boot re-asks used so far, until the first reading lands. <br /></td></tr>
-<tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
-static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
-<tr class="memdesc:a86591675781beec649ac9e8db3485c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">True once the store is enabled on a live face, so the cache is worth reading and writing and the cadence turn runs. <br /></td></tr>
+<tr class="memitem:af962c600172c1bf7e33a007776cba2ab" id="r_af962c600172c1bf7e33a007776cba2ab"><td class="memItemLeft"><a id="af962c600172c1bf7e33a007776cba2ab" name="af962c600172c1bf7e33a007776cba2ab"></a>
+static <a class="el" href="structStoreFetch.html">StoreFetch</a>&#160;</td><td class="memItemRight"><b>s_fetch</b></td></tr>
+<tr class="memdesc:af962c600172c1bf7e33a007776cba2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The interval, the boot re-ask timer, and when the next poll is due. Live gates the cache too. <br /></td></tr>
 <tr class="memitem:afc1e32c72630b62007536cb95f77bb07" id="r_afc1e32c72630b62007536cb95f77bb07"><td class="memItemLeft"><a id="afc1e32c72630b62007536cb95f77bb07" name="afc1e32c72630b62007536cb95f77bb07"></a>
 static uint32_t&#160;</td><td class="memItemRight"><b>s_persist_key</b></td></tr>
 <tr class="memdesc:afc1e32c72630b62007536cb95f77bb07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist slot the face handed us for the saved reading. <br /></td></tr>
 <tr class="memitem:ae8a3c3beea14ff8ceadf605953c6ee61" id="r_ae8a3c3beea14ff8ceadf605953c6ee61"><td class="memItemLeft"><a id="ae8a3c3beea14ff8ceadf605953c6ee61" name="ae8a3c3beea14ff8ceadf605953c6ee61"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
 <tr class="memdesc:ae8a3c3beea14ff8ceadf605953c6ee61"><td class="mdescLeft">&#160;</td><td class="mdescRight">A channel touched the state this inbox, so persist_flush writes it once. <br /></td></tr>
+<tr class="memitem:a2e6dcdd2124edeff7e300cf6de89bcda" id="r_a2e6dcdd2124edeff7e300cf6de89bcda"><td class="memItemLeft"><a id="a2e6dcdd2124edeff7e300cf6de89bcda" name="a2e6dcdd2124edeff7e300cf6de89bcda"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_changed</b></td></tr>
+<tr class="memdesc:a2e6dcdd2124edeff7e300cf6de89bcda"><td class="mdescLeft">&#160;</td><td class="mdescRight">A channel touched the state this inbox, so the face repaints once at the end. <br /></td></tr>
+<tr class="memitem:a4cf02b128b4097de9a6c85cd0ded8adc" id="r_a4cf02b128b4097de9a6c85cd0ded8adc"><td class="memItemLeft"><a id="a4cf02b128b4097de9a6c85cd0ded8adc" name="a4cf02b128b4097de9a6c85cd0ded8adc"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_heard</b></td></tr>
+<tr class="memdesc:a4cf02b128b4097de9a6c85cd0ded8adc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone answered a weather request this launch, a failed fetch included. <br /></td></tr>
+<tr class="memitem:afd6bfed4583dc043e4cb212594733f97" id="r_afd6bfed4583dc043e4cb212594733f97"><td class="memItemLeft"><a id="afd6bfed4583dc043e4cb212594733f97" name="afd6bfed4583dc043e4cb212594733f97"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_saved_sum</b></td></tr>
+<tr class="memdesc:afd6bfed4583dc043e4cb212594733f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum of the reading last written, so a reply that changes nothing is not written again. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The active weather store: holds the readings, owns the appmessage weather channels, and asks the phone for more whenever its turn on the face's cadence finds a poll due. </p>
@@ -435,6 +422,62 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
 
 </div>
 </div>
+<a id="a6338097c3aa566509557080e498f23a1" name="a6338097c3aa566509557080e498f23a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6338097c3aa566509557080e498f23a1">&#9670;&#160;</a></span>forecast_today()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool forecast_today </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether the high, low, UV, and rain chance are today's. </p>
+<p>They are only good for the day they came. For some providers they ride on a second request, and when only that one fails the rest of the reading keeps landing, so without this yesterday's high and low would show as today's. </p>
+
+</div>
+</div>
+<a id="a9733ae28f8c21e9ec18ae4251141d96b" name="a9733ae28f8c21e9ec18ae4251141d96b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9733ae28f8c21e9ec18ae4251141d96b">&#9670;&#160;</a></span>inbox_done()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void inbox_done </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Runs once a whole inbound message is handled: one repaint for everything it brought, then the save. </p>
+<p>The phone sends every weather channel in one message, and each one repainting on its own reran every weather panel up to six times. A face working something out from several readings at once, such as a layout that follows the sunset, also saw the new temperature beside the old sun times until the next channel landed. </p>
+
+</div>
+</div>
 <a id="a38798b6392bd528fd20169e49b63ff36" name="a38798b6392bd528fd20169e49b63ff36"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a38798b6392bd528fd20169e49b63ff36">&#9670;&#160;</a></span>mark_dirty()</h2>
 
@@ -463,8 +506,8 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
 
 </div>
 </div>
-<a id="a1d0e8f31da1e0cae1eae139b92483954" name="a1d0e8f31da1e0cae1eae139b92483954"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d0e8f31da1e0cae1eae139b92483954">&#9670;&#160;</a></span>mark_synced()</h2>
+<a id="ab270d4f87c98123387d5599b915429b3" name="ab270d4f87c98123387d5599b915429b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab270d4f87c98123387d5599b915429b3">&#9670;&#160;</a></span>on_unit_changed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -473,9 +516,9 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void mark_synced </td>
+          <td class="memname">void on_unit_changed </td>
           <td>(</td>
-          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>fahrenheit</em></span></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -486,77 +529,18 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The shared tail every channel handler runs after it writes. </p>
-<p>Stamps the sync time, flags the cache dirty, and repaints, which keeps the six handlers from each spelling it out. </p>
+<p>The wearer switched the temperature unit. The reading in hand converts to it so the face never shows a Celsius number with an F beside it while the new fetch is on its way. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fahrenheit</td><td>True when the new unit is Fahrenheit. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a id="a98797c9d3dfad57b9164d485756f4c19" name="a98797c9d3dfad57b9164d485756f4c19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98797c9d3dfad57b9164d485756f4c19">&#9670;&#160;</a></span>on_forecast_daily()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void on_forecast_daily </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>7-day forecast channel. Takes the strip the reader unpacked and puts it away. </p>
-<p>A message that does not read clean leaves the last good row where it is. </p>
-
-</div>
-</div>
-<a id="a7c5a5434551d343cf8d71c1d6e01d3c6" name="a7c5a5434551d343cf8d71c1d6e01d3c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c5a5434551d343cf8d71c1d6e01d3c6">&#9670;&#160;</a></span>on_forecast_hourly()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void on_forecast_hourly </td>
-          <td>(</td>
-          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>buf</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Hourly forecast channel. Takes the strip the reader unpacked and puts it away. </p>
-<p>A message that does not read clean leaves the last good row where it is. </p>
-
-</div>
-</div>
-<a id="a22cc1ebc5f6b0cd2e326dd53dcf6e6f3" name="a22cc1ebc5f6b0cd2e326dd53dcf6e6f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22cc1ebc5f6b0cd2e326dd53dcf6e6f3">&#9670;&#160;</a></span>on_weather()</h2>
+<a id="af5f33238881e8b25ccd2445b79ccb95a" name="af5f33238881e8b25ccd2445b79ccb95a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5f33238881e8b25ccd2445b79ccb95a">&#9670;&#160;</a></span>on_weather()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -567,12 +551,8 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
         <tr>
           <td class="memname">void on_weather </td>
           <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>temp</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramtype">const <a class="el" href="structWeatherMessage.html">WeatherMessage</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
           <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>cond</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -582,11 +562,10 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Current weather channel. A NULL condition means the fetch failed (network drop, provider outage, no location) so we keep the last good reading rather than blanking. It refreshes on the next poll that lands, and survives a relaunch via the cache. </p>
+<p>The weather channel. The message holds every group the phone sent, and weather_reading_apply keeps what it can. A failed fetch keeps the last good reading rather than blanking, and it refreshes on the next poll that lands. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">temp</td><td>The temperature in the user's unit (ignored when cond is NULL). </td></tr>
-    <tr><td class="paramname">cond</td><td>The condition token, or NULL on failure. </td></tr>
+    <tr><td class="paramname">msg</td><td>The message, read straight off the inbox. </td></tr>
   </table>
   </dd>
 </dl>
@@ -618,44 +597,6 @@ static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
 
 <p>The coalesced write, run once per inbox via the transport's inbox-complete hook. </p>
 <p>Only a live face writes, and this never runs from <span class="tt"><a class="el" href="#a9fbef29f6a0a976770a3055c37a35d95" title="Clear the reading back to no-data for every field.">reset_state</a></span>, so a failed fetch can't stomp the last good reading. </p>
-
-</div>
-</div>
-<a id="a22aef660d42e4f3460fed6caa17becde" name="a22aef660d42e4f3460fed6caa17becde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22aef660d42e4f3460fed6caa17becde">&#9670;&#160;</a></span>set_current()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void set_current </td>
-          <td>(</td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>temp</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>cond</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Save the current temperature and condition, and mark the reading synced. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">temp</td><td>The temperature in the user's unit. </td></tr>
-    <tr><td class="paramname">cond</td><td>The condition token, or NULL for "--". </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

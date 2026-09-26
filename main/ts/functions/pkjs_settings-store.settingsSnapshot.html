@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>settingsSnapshot | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script src="../../theme.js"></script>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>settingsSnapshot | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
 <link rel="stylesheet" href="../../site-bar.css">
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><nav class="site-bar" aria-label="Docs site">
@@ -48,21 +48,27 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="settingssnapshot"><span class="tsd-kind-call-signature">settingsSnapshot</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">keys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#settingssnapshot" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="settingssnapshot"><span class="tsd-kind-call-signature">settingsSnapshot</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">keys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">defaults</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><a href="#settingssnapshot" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Snapshots the settings behind a key list so a later save can be diffed against them. Each
-value is JSON-encoded so objects compare by content.</p>
+<div class="tsd-comment tsd-typography"><p>Snapshots the settings behind a key list so a later save can be diffed against them. A setting
+with nothing saved reads as its default, which is what a fetch used for it, so a first save or
+seed that writes the default back does not count as a change. A single value compares by its
+text, since a default declared as the number 0 comes back from Clay as the string &quot;0&quot;, and
+anything else is JSON-encoded so objects compare by content.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">keys</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>The settings to snapshot, by message key.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">defaults</span>: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></span>
+<div class="tsd-comment tsd-typography"><p>The face's config defaults, read for a setting with nothing saved.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><p>Each setting's JSON, in the same order as the keys.</p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h4><p>Each setting as text, in the same order as the keys.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/ts/pkjs/settings-store.ts#L66">pkjs/settings-store.ts:66</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/ts/pkjs/settings-store.ts#L95">pkjs/settings-store.ts:95</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

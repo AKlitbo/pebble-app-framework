@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('weather__store
 </div><!--header-->
 <div class="contents">
 
-<p>Active weather store. It owns the appmessage weather channels and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the values and subscribes for repaints. The phone data flows straight in and nobody wires it.  
+<p>Active weather store. It owns the appmessage weather channels and its place on the shared cadence, so a face just hands it the rules (live / poll interval), optionally seeds it, then reads the values and subscribes for repaints. The phone data flows straight in and nobody wires it.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;pebble.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="weather__wire_8h_source.html">wire/weather_wire.h</a>&quot;</code><br />
@@ -223,6 +223,8 @@ int&#160;</td><td class="memItemRight"><b>weather_store_temp</b> (void)</td></tr
 <tr class="memitem:ga2b52199ca0e311c968b7f831305acd62" id="r_ga2b52199ca0e311c968b7f831305acd62"><td class="memItemLeft">
 const char *&#160;</td><td class="memItemRight"><b>weather_store_cond</b> (void)</td></tr>
 <tr class="memdesc:ga2b52199ca0e311c968b7f831305acd62"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short word for the sky, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gad57eba8aa9a6f59644fedafcac7a3bab" id="r_gad57eba8aa9a6f59644fedafcac7a3bab"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gad57eba8aa9a6f59644fedafcac7a3bab">weather_store_cond_label</a> (void)</td></tr>
+<tr class="memdesc:gad57eba8aa9a6f59644fedafcac7a3bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sky in words, such as "Partly Cloudy", for a face that declares WEATHER_CONDITION_LABEL.  <br /></td></tr>
 <tr class="memitem:gaec0de378ffe3adbadab18b877c3e214c" id="r_gaec0de378ffe3adbadab18b877c3e214c"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_humidity</b> (void)</td></tr>
 <tr class="memdesc:gaec0de378ffe3adbadab18b877c3e214c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The humidity in percent, or -1 if we have not got one yet. <br /></td></tr>
@@ -232,45 +234,43 @@ int&#160;</td><td class="memItemRight"><b>weather_store_wind_kmh</b> (void)</td>
 <tr class="memitem:ga21865e60abf090e923d95f74e4e5e3b2" id="r_ga21865e60abf090e923d95f74e4e5e3b2"><td class="memItemLeft">
 const char *&#160;</td><td class="memItemRight"><b>weather_store_wind_dir</b> (void)</td></tr>
 <tr class="memdesc:ga21865e60abf090e923d95f74e4e5e3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wind direction like "NW", or empty if we have not got one yet. <br /></td></tr>
-<tr class="memitem:gae1aaec2e20f48ead785d1c217b0a2ad4" id="r_gae1aaec2e20f48ead785d1c217b0a2ad4"><td class="memItemLeft">
-const char *&#160;</td><td class="memItemRight"><b>weather_store_sunrise</b> (void)</td></tr>
-<tr class="memdesc:gae1aaec2e20f48ead785d1c217b0a2ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sunrise time like "06:30", or empty if we have not got one yet. <br /></td></tr>
-<tr class="memitem:ga21fd739c3cdf95b044af16789ac88bd5" id="r_ga21fd739c3cdf95b044af16789ac88bd5"><td class="memItemLeft">
-const char *&#160;</td><td class="memItemRight"><b>weather_store_sunset</b> (void)</td></tr>
-<tr class="memdesc:ga21fd739c3cdf95b044af16789ac88bd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sunset time like "21:30", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gadcce3fc2dbdf6a3ccd751a70ef171adf" id="r_gadcce3fc2dbdf6a3ccd751a70ef171adf"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_sunrise</b> (void)</td></tr>
+<tr class="memdesc:gadcce3fc2dbdf6a3ccd751a70ef171adf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunrise as minutes past midnight, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga613a6718a67c620b3c4623cbbfc3d84e" id="r_ga613a6718a67c620b3c4623cbbfc3d84e"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_sunset</b> (void)</td></tr>
+<tr class="memdesc:ga613a6718a67c620b3c4623cbbfc3d84e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunset as minutes past midnight, or -1 if we have not got one yet. <br /></td></tr>
 <tr class="memitem:ga06cf30734c71d28b90e5b660ee75bc9d" id="r_ga06cf30734c71d28b90e5b660ee75bc9d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_feels_like</b> (void)</td></tr>
 <tr class="memdesc:ga06cf30734c71d28b90e5b660ee75bc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How warm it feels, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
 <tr class="memitem:gac167df267d9204941ae5ef9541074edc" id="r_gac167df267d9204941ae5ef9541074edc"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_pressure</b> (void)</td></tr>
-<tr class="memdesc:gac167df267d9204941ae5ef9541074edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The surface pressure in hPa, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:gac167df267d9204941ae5ef9541074edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sea level pressure in hPa, or -1 if we have not got one yet. <br /></td></tr>
 <tr class="memitem:ga4780ec893b0d2cb94e17ab85c78e377d" id="r_ga4780ec893b0d2cb94e17ab85c78e377d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_dew_point</b> (void)</td></tr>
 <tr class="memdesc:ga4780ec893b0d2cb94e17ab85c78e377d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
 <tr class="memitem:ga839bf5c5187f067697de69f79f025b3f" id="r_ga839bf5c5187f067697de69f79f025b3f"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_uv</b> (void)</td></tr>
-<tr class="memdesc:ga839bf5c5187f067697de69f79f025b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The UV index, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga839bf5c5187f067697de69f79f025b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's UV index, or -1 if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga9521fad2bb38f644e02c9c3ac8547d4b" id="r_ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_temp_max</b> (void)</td></tr>
-<tr class="memdesc:ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga3ad694d30ad387bd9a9c1db451cc9c2d" id="r_ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_temp_min</b> (void)</td></tr>
-<tr class="memdesc:ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memdesc:ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. <br /></td></tr>
 <tr class="memitem:ga04d4ed2abc57cd51459c6913b2d77e1d" id="r_ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_precip_chance</b> (void)</td></tr>
-<tr class="memdesc:ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The chance of rain in percent, or -1 if we have not got one yet. <br /></td></tr>
-<tr class="memitem:gaba5bc2a406811b7f6d4b6df181f620d7" id="r_gaba5bc2a406811b7f6d4b6df181f620d7"><td class="memItemLeft">
-const <a class="el" href="structWeatherHourly.html">WeatherHourly</a> *&#160;</td><td class="memItemRight"><b>weather_store_forecast_hourly</b> (void)</td></tr>
-<tr class="memdesc:gaba5bc2a406811b7f6d4b6df181f620d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>
-<tr class="memitem:ga0610dff5f72df6fa9f4312a73e6d96de" id="r_ga0610dff5f72df6fa9f4312a73e6d96de"><td class="memItemLeft">
-const <a class="el" href="structWeatherDaily.html">WeatherDaily</a> *&#160;</td><td class="memItemRight"><b>weather_store_forecast_daily</b> (void)</td></tr>
-<tr class="memdesc:ga0610dff5f72df6fa9f4312a73e6d96de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 7-day forecast strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>
+<tr class="memdesc:ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's chance of rain in percent, or -1 if we have not got one yet or the day it came is over. <br /></td></tr>
+<tr class="memitem:gaba5bc2a406811b7f6d4b6df181f620d7" id="r_gaba5bc2a406811b7f6d4b6df181f620d7"><td class="memItemLeft">const <a class="el" href="structWeatherHourly.html">WeatherHourly</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store_forecast_hourly</a> (void)</td></tr>
+<tr class="memdesc:gaba5bc2a406811b7f6d4b6df181f620d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip, starting at the hour now.  <br /></td></tr>
+<tr class="memitem:ga0610dff5f72df6fa9f4312a73e6d96de" id="r_ga0610dff5f72df6fa9f4312a73e6d96de"><td class="memItemLeft">const <a class="el" href="structWeatherDaily.html">WeatherDaily</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store_forecast_daily</a> (void)</td></tr>
+<tr class="memdesc:ga0610dff5f72df6fa9f4312a73e6d96de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The daily forecast strip, starting today.  <br /></td></tr>
 <tr class="memitem:ga7856768b2bde2cf55422b2c3b5ea3b4e" id="r_ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_age_s</b> (void)</td></tr>
 <tr class="memdesc:ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Active weather store. It owns the appmessage weather channels and its place on the shared cadence, so a face just hands it the rules (enabled / live / poll interval), optionally seeds it, then reads the values and subscribes for repaints. The phone data flows straight in and nobody wires it. </p>
+<div class="textblock"><p>Active weather store. It owns the appmessage weather channels and its place on the shared cadence, so a face just hands it the rules (live / poll interval), optionally seeds it, then reads the values and subscribes for repaints. The phone data flows straight in and nobody wires it. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

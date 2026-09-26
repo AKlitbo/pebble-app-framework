@@ -192,44 +192,55 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('store__persist
 <a href="store__persist_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;pebble.h&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867">   27</a></span><span class="preprocessor">#define STORE_TAG_WEATHER  0x12 </span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676">   28</a></span><span class="preprocessor">#define STORE_TAG_STOCK    0x21 </span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga71057ac435b7b29a882b011053659d86">   29</a></span><span class="preprocessor">#define STORE_TAG_CALENDAR 0x31 </span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga31737569cb65fc760932f244727a568d">   30</a></span><span class="preprocessor">#define STORE_TAG_HEALTH   0x42 </span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="group__lib__stores.html#gaa19bf75ee3cb87a3a31a97238f4dcf73">   31</a></span><span class="preprocessor">#define STORE_TAG_LOCATION 0x51 </span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span></div>
-<div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">   46</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">store_restore</a>(uint32_t key, <span class="keywordtype">void</span> *state, <span class="keywordtype">size_t</span> size, uint8_t tag)</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">if</span> (!persist_exists(key) || persist_get_size(key) != (<span class="keywordtype">int</span>)size)</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    {</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    }</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="comment">// read the tag on its own first. reading the whole blob to check it would already have</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="comment">// stomped the defaults by the time we found out it was the wrong shape</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    uint8_t stored = 0;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">if</span> (persist_read_data(key, &amp;stored, <span class="keyword">sizeof</span>(stored)) != (<span class="keywordtype">int</span>)<span class="keyword">sizeof</span>(stored) || stored != tag)</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> persist_read_data(key, state, size) == (int)size;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="store__sum_8h.html">io/stores/store_sum.h</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867">   29</a></span><span class="preprocessor">#define STORE_TAG_WEATHER  0x13 </span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676">   30</a></span><span class="preprocessor">#define STORE_TAG_STOCK    0x21 </span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga71057ac435b7b29a882b011053659d86">   31</a></span><span class="preprocessor">#define STORE_TAG_CALENDAR 0x31 </span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga31737569cb65fc760932f244727a568d">   32</a></span><span class="preprocessor">#define STORE_TAG_HEALTH   0x42 </span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="group__lib__stores.html#gaa19bf75ee3cb87a3a31a97238f4dcf73">   33</a></span><span class="preprocessor">#define STORE_TAG_LOCATION 0x51 </span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span></div>
+<div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">   48</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">store_restore</a>(uint32_t key, <span class="keywordtype">void</span> *state, <span class="keywordtype">size_t</span> size, uint8_t tag)</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>{</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">if</span> (!persist_exists(key) || persist_get_size(key) != (<span class="keywordtype">int</span>)size)</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="comment">// read the tag on its own first. reading the whole blob to check it would already have</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// stomped the defaults by the time we found out it was the wrong shape</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    uint8_t stored = 0;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">if</span> (persist_read_data(key, &amp;stored, <span class="keyword">sizeof</span>(stored)) != (<span class="keywordtype">int</span>)<span class="keyword">sizeof</span>(stored) || stored != tag)</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keywordflow">return</span> persist_read_data(key, state, size) == (int)size;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
 </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span></div>
-<div class="foldopen" id="foldopen00075" data-start="{" data-end="}">
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">   75</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">store_save</a>(uint32_t key, <span class="keywordtype">void</span> *state, <span class="keywordtype">size_t</span> size, uint8_t tag)</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>{</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    *(uint8_t *)state = tag;</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordflow">return</span> persist_write_data(key, state, size) == (int)size;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>}</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span></div>
+<div class="foldopen" id="foldopen00077" data-start="{" data-end="}">
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">   77</a></span><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">store_save</a>(uint32_t key, <span class="keywordtype">void</span> *state, <span class="keywordtype">size_t</span> size, uint8_t tag)</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>{</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    *(uint8_t *)state = tag;</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">return</span> persist_write_data(key, state, size) == (int)size;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>}</div>
 </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span></div>
-<div class="ttc" id="agroup__lib__stores_html_ga286178630dd827b7d2e677742541e280"><div class="ttname"><a href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">store_restore</a></div><div class="ttdeci">static bool store_restore(uint32_t key, void *state, size_t size, uint8_t tag)</div><div class="ttdoc">Restore a saved blob into state, but only when it is this store&#39;s own current layout.</div><div class="ttdef"><b>Definition</b> store_persist.h:46</div></div>
-<div class="ttc" id="agroup__lib__stores_html_ga814b2c13673684e3684ff4ed7beec6eb"><div class="ttname"><a href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">store_save</a></div><div class="ttdeci">static bool store_save(uint32_t key, void *state, size_t size, uint8_t tag)</div><div class="ttdoc">Save a store&#39;s blob with its tag stamped in, so the next restore can recognise it.</div><div class="ttdef"><b>Definition</b> store_persist.h:75</div></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span></div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__stores.html#ga26072e6c901d3d7455c93261276e6922">store_save_changed</a>(uint32_t key, <span class="keywordtype">void</span> *state, <span class="keywordtype">size_t</span> size, <span class="keywordtype">size_t</span> reading_size, uint8_t tag,</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>                        uint32_t *saved_sum);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__stores.html#gacfb278bcfc9c6dbc28c5728a3b68e277">store_restore_reading</a>(uint32_t key, <span class="keywordtype">void</span> *state, <span class="keywordtype">size_t</span> size, <span class="keywordtype">size_t</span> reading_size, uint8_t tag,</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                           uint32_t *saved_sum);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span></div>
+<div class="ttc" id="agroup__lib__stores_html_ga26072e6c901d3d7455c93261276e6922"><div class="ttname"><a href="group__lib__stores.html#ga26072e6c901d3d7455c93261276e6922">store_save_changed</a></div><div class="ttdeci">bool store_save_changed(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</div><div class="ttdoc">Save a store&#39;s blob only when its reading is different from what is already on flash.</div><div class="ttdef"><b>Definition</b> store_persist.c:10</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga286178630dd827b7d2e677742541e280"><div class="ttname"><a href="group__lib__stores.html#ga286178630dd827b7d2e677742541e280">store_restore</a></div><div class="ttdeci">static bool store_restore(uint32_t key, void *state, size_t size, uint8_t tag)</div><div class="ttdoc">Restore a saved blob into state, but only when it is this store&#39;s own current layout.</div><div class="ttdef"><b>Definition</b> store_persist.h:48</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga814b2c13673684e3684ff4ed7beec6eb"><div class="ttname"><a href="group__lib__stores.html#ga814b2c13673684e3684ff4ed7beec6eb">store_save</a></div><div class="ttdeci">static bool store_save(uint32_t key, void *state, size_t size, uint8_t tag)</div><div class="ttdoc">Save a store&#39;s blob with its tag stamped in, so the next restore can recognise it.</div><div class="ttdef"><b>Definition</b> store_persist.h:77</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gacfb278bcfc9c6dbc28c5728a3b68e277"><div class="ttname"><a href="group__lib__stores.html#gacfb278bcfc9c6dbc28c5728a3b68e277">store_restore_reading</a></div><div class="ttdeci">bool store_restore_reading(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</div><div class="ttdoc">Restore a saved blob as store_restore does, and record the sum of the reading it holds.</div><div class="ttdef"><b>Definition</b> store_persist.c:33</div></div>
+<div class="ttc" id="astore__sum_8h_html"><div class="ttname"><a href="store__sum_8h.html">store_sum.h</a></div><div class="ttdoc">A checksum of a store&#39;s reading, so a reply that brings nothing new costs no flash write.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 </div><!-- container -->

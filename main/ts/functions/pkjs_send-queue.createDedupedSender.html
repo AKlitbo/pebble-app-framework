@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>createDedupedSender | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script src="../../theme.js"></script>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>createDedupedSender | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
 <link rel="stylesheet" href="../../site-bar.css">
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><nav class="site-bar" aria-label="Docs site">
@@ -48,38 +48,29 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="creatededupedsender"><span class="tsd-kind-call-signature">createDedupedSender</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">queueSend</span><span class="tsd-signature-symbol">:</span> <a href="../types/pkjs_send-queue.QueueSendFn.html" class="tsd-signature-type tsd-kind-type-alias">QueueSendFn</a><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">build</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">AppMessageDict</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">same</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">left</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">right</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/pkjs_send-queue.DedupedSender.html" class="tsd-signature-type tsd-kind-interface">DedupedSender</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">&gt;</span><a href="#creatededupedsender" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="creatededupedsender"><span class="tsd-kind-call-signature">createDedupedSender</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">queueSend</span><span class="tsd-signature-symbol">:</span> <a href="../types/pkjs_send-queue.QueueSendFn.html" class="tsd-signature-type tsd-kind-type-alias">QueueSendFn</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/pkjs_send-queue.DedupedSender.html" class="tsd-signature-type tsd-kind-interface">DedupedSender</a><a href="#creatededupedsender" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Wraps a queueSend so the same payload is not sent twice in a row.</p>
-<p>Every push costs a BLE wake whether or not the reading moved, so the payload the watch took is
-kept and an identical one is dropped. The half worth spelling out is the failure: a send that
-nacked its way to the retry cap never reached the watch, so what was kept is thrown away and
-the next push goes out again. Recording it on the way in instead would leave the face blank
-until the values happened to move.</p>
+<div class="tsd-comment tsd-typography"><p>Wraps a queueSend so the same dict is not sent twice in a row.</p>
+<p>Every push costs a BLE wake whether or not the reading moved, so the JSON of the dict the watch
+took is kept and a push with the same JSON is dropped. Holding the JSON rather than the dict means
+each push works it out once. The half worth spelling out is the failure. A send that nacked its
+way to the retry cap never reached the watch, so what was kept is thrown away and the next push
+goes out again. Recording it on the way in instead would leave the face blank until the values
+happened to move.</p>
 </div>
-<section class="tsd-panel">
-<h4>Type Parameters</h4>
-<ul class="tsd-type-parameter-list">
-<li><span id="creatededupedsendert"><span class="tsd-kind-type-parameter">T</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">queueSend</span>: <a href="../types/pkjs_send-queue.QueueSendFn.html" class="tsd-signature-type tsd-kind-type-alias">QueueSendFn</a></span>
 <div class="tsd-comment tsd-typography"><p>The queue every send goes through.</p>
 </div></li>
-<li><span><span class="tsd-kind-parameter">build</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">AppMessageDict</span></span>
-<div class="tsd-comment tsd-typography"><p>Turns the payload into the dict for the watch.</p>
-</div></li>
-<li><span><span class="tsd-kind-parameter">same</span>: <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">left</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">right</span><span class="tsd-signature-symbol">:</span> <a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">boolean</span></span>
-<div class="tsd-comment tsd-typography"><p>Whether two payloads are the same reading. Defaults to identity.</p>
-</div></li>
 <li><span><span class="tsd-kind-parameter">label</span>: <span class="tsd-signature-type">string</span></span>
 <div class="tsd-comment tsd-typography"><p>What to call this sender in the log.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../interfaces/pkjs_send-queue.DedupedSender.html" class="tsd-signature-type tsd-kind-interface">DedupedSender</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#creatededupedsendert">T</a><span class="tsd-signature-symbol">&gt;</span></h4><p>The sender, holding what the watch last took.</p>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/pkjs_send-queue.DedupedSender.html" class="tsd-signature-type tsd-kind-interface">DedupedSender</a></h4><p>The sender, holding what the watch last took.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/ts/pkjs/send-queue.ts#L134">pkjs/send-queue.ts:134</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/ts/pkjs/send-queue.ts#L152">pkjs/send-queue.ts:152</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

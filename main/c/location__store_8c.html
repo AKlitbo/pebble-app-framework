@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('location__stor
 <code>#include &lt;string.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="coords_8h_source.html">wire/coords.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -231,6 +232,9 @@ Variables</h2></td></tr>
 <tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
 static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
 <tr class="memdesc:a0d75601f9ac1a6725c17065d338a664a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever the coords change, so the face can redraw. <br /></td></tr>
+<tr class="memitem:afd6bfed4583dc043e4cb212594733f97" id="r_afd6bfed4583dc043e4cb212594733f97"><td class="memItemLeft"><a id="afd6bfed4583dc043e4cb212594733f97" name="afd6bfed4583dc043e4cb212594733f97"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_saved_sum</b></td></tr>
+<tr class="memdesc:afd6bfed4583dc043e4cb212594733f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum of the reading last written, so a reply that changes nothing is not written again. <br /></td></tr>
 <tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
 <tr class="memdesc:a86591675781beec649ac9e8db3485c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">True on a live face, so the cache is worth reading and writing. <br /></td></tr>

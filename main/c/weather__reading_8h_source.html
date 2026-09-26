@@ -1,0 +1,345 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!--
+  Doxygen's own header for 1.18.0, made with `doxygen -w html header.html footer.html style.css`.
+  Two things are changed. The scripts at the end of the head load the site's theme.js and
+  versions.js, the doxygen-awesome dark mode toggle and interactive table of contents, and the fix for Doxygen's
+  double escaped outline links. The title area keeps only the line naming this part of the site, to
+  match the title TypeDoc shows. Its logo, brief, and search cells are gone, because the site's
+  shared bar already shows the logo and the search box is in Doxygen's own menu. Regenerate this file
+  the same way when Doxygen moves up a version, then put those two changes back.
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: c/core/weather/weather_reading.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules. the toggle reads its choice as it loads, so this runs first -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript" src="doxygen-awesome-interactive-toc.js"></script>
+<script type="text/javascript">
+  DoxygenAwesomeDarkModeToggle.title = "Switch between light and dark";
+  DoxygenAwesomeDarkModeToggle.init();
+  DoxygenAwesomeInteractiveToc.init();
+</script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this watches for the panel and puts the real characters back in each link, once each.
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline() {
+      var panel = document.getElementById('page-nav-contents');
+      if (!panel) {
+        return;
+      }
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    new MutationObserver(unescapeOutline).observe(
+      document.documentElement,
+      { childList: true, subtree: true }
+    );
+  })();
+</script>
+<link rel="stylesheet" href="../site-bar.css">
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="page" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('weather__reading_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">weather_reading.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="weather__reading_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;time.h&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="weather__wire_8h.html">wire/weather_wire.h</a>&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="group__lib__core.html#gace94f04d01ec6679143f9937fc0d7d35">   26</a></span><span class="preprocessor">#define WEATHER_GROUP_CURRENT  (1u &lt;&lt; 0)</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="group__lib__core.html#gad2a50305c20a2dc3acf340c9837a065b">   28</a></span><span class="preprocessor">#define WEATHER_GROUP_EXTRA    (1u &lt;&lt; 1)</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga7eef9602c89fd58adb11e058618d1dd7">   30</a></span><span class="preprocessor">#define WEATHER_GROUP_FORECAST (1u &lt;&lt; 2)</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga49eb8281314392449d74706359777576">   32</a></span><span class="preprocessor">#define WEATHER_GROUP_AIR      (1u &lt;&lt; 3)</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span></div>
+<div class="foldopen" id="foldopen00042" data-start="{" data-end="};">
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structWeatherMessage.html">   42</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>{</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a2ef77286e2f02067ca9e7437aca389a6">   44</a></span>    uint8_t        <a class="code hl_variable" href="structWeatherMessage.html#a2ef77286e2f02067ca9e7437aca389a6">groups</a>;        </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a328318e4aa166fec155634010ddf8431">   45</a></span>    <span class="keywordtype">bool</span>           <a class="code hl_variable" href="structWeatherMessage.html#a328318e4aa166fec155634010ddf8431">ok</a>;            </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a975df3054641eddb181006370fe704be">   46</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a975df3054641eddb181006370fe704be">temp</a>;          </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#af788f75769fe248ae57b11f9eb626fdd">   47</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>    *<a class="code hl_variable" href="structWeatherMessage.html#af788f75769fe248ae57b11f9eb626fdd">cond</a>;          </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a58ad44b76adbf7e94a0b5acb50c04783">   48</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a58ad44b76adbf7e94a0b5acb50c04783">humidity</a>;      </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a16481e6e0f37ab4e8d86756af480984b">   49</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a16481e6e0f37ab4e8d86756af480984b">wind_kmh</a>;      </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a51a1436b6e9630b7f1c9f9c420607120">   50</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>    *<a class="code hl_variable" href="structWeatherMessage.html#a51a1436b6e9630b7f1c9f9c420607120">wind_dir</a>;      </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#ad6aae8415749e405ce9892c61daa06cb">   51</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>    *<a class="code hl_variable" href="structWeatherMessage.html#ad6aae8415749e405ce9892c61daa06cb">cond_label</a>;    </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a423bfb57af732fbe40889a50a5d6604f">   52</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a423bfb57af732fbe40889a50a5d6604f">sunrise</a>;       </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a2adc5a90619bd4a3572ff13fc54bf45c">   53</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a2adc5a90619bd4a3572ff13fc54bf45c">sunset</a>;        </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#aa64e5b7422e22ec1eb018b0afe7bf56d">   54</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#aa64e5b7422e22ec1eb018b0afe7bf56d">uv</a>;            </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a217ead73acf2ca31c797d0e536dfff33">   55</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a217ead73acf2ca31c797d0e536dfff33">temp_max</a>;      </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a16a30cff51ac31165840714b5bac5227">   56</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a16a30cff51ac31165840714b5bac5227">temp_min</a>;      </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a196b4cbc8502c9c6e24d1040d4ff8ce2">   57</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a196b4cbc8502c9c6e24d1040d4ff8ce2">precip_chance</a>; </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#ace9fa48992630d940ef2fbd4e21dfd05">   58</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#ace9fa48992630d940ef2fbd4e21dfd05">feels_like</a>;    </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#ae9d770ab1a1756f491395ca35cf2014e">   59</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#ae9d770ab1a1756f491395ca35cf2014e">pressure</a>;      </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a9b16dd1fd8f5a9f6ee2c3d7902e57368">   60</a></span>    <span class="keywordtype">int</span>            <a class="code hl_variable" href="structWeatherMessage.html#a9b16dd1fd8f5a9f6ee2c3d7902e57368">dew_point</a>;     </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010">   61</a></span>    <span class="keyword">const</span> uint8_t *<a class="code hl_variable" href="structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010">hourly</a>;        </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a9137b2f3ba3f619fbecd49e518a97bcb">   62</a></span>    uint16_t       <a class="code hl_variable" href="structWeatherMessage.html#a9137b2f3ba3f619fbecd49e518a97bcb">hourly_len</a>;    </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#afc89d1fd8b8de86ea19a1704a0623543">   63</a></span>    <span class="keyword">const</span> uint8_t *<a class="code hl_variable" href="structWeatherMessage.html#afc89d1fd8b8de86ea19a1704a0623543">daily</a>;         </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="structWeatherMessage.html#a2246248b9662e9e1bd5ca6c8ed1a4096">   64</a></span>    uint16_t       <a class="code hl_variable" href="structWeatherMessage.html#a2246248b9662e9e1bd5ca6c8ed1a4096">daily_len</a>;     </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>} <a class="code hl_struct" href="structWeatherMessage.html">WeatherMessage</a>;</div>
+</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span></div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="};">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structWeatherState.html">   73</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>{</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structWeatherState.html#ada60a92f0690b1a06bca06d42984ae7a">   75</a></span>    uint8_t <a class="code hl_variable" href="structWeatherState.html#ada60a92f0690b1a06bca06d42984ae7a">tag</a>;          </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structWeatherState.html#ae41f90ba55b0a7b7f53812816ee435d0">   76</a></span>    int16_t <a class="code hl_variable" href="structWeatherState.html#ae41f90ba55b0a7b7f53812816ee435d0">temp</a>;         </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structWeatherState.html#a7e43f225b231eed29dffcecb9f8c7d2f">   77</a></span>    <span class="keywordtype">char</span>   <a class="code hl_variable" href="structWeatherState.html#a7e43f225b231eed29dffcecb9f8c7d2f">cond</a>[32];      </div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno"><a class="line" href="structWeatherState.html#aff9f98e3f9cbf2fab7b41e46d7552c56">   78</a></span>    <span class="keywordtype">char</span>   <a class="code hl_variable" href="structWeatherState.html#aff9f98e3f9cbf2fab7b41e46d7552c56">cond_label</a>[20]; </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="structWeatherState.html#aab2b5a749e4b0f1b2e4a98e04e811694">   79</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#aab2b5a749e4b0f1b2e4a98e04e811694">humidity</a>;      </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="structWeatherState.html#ac89a66ed27ff84aa61675f2b78d4784e">   80</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#ac89a66ed27ff84aa61675f2b78d4784e">wind_kmh</a>;      </div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="structWeatherState.html#ac4711deb819db30232d3cbb525ddeafe">   81</a></span>    <span class="keywordtype">char</span>   <a class="code hl_variable" href="structWeatherState.html#ac4711deb819db30232d3cbb525ddeafe">wind_dir</a>[4];   </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="structWeatherState.html#a297b2b392f2d3752f55360f3ffd30d9d">   82</a></span>    int16_t <a class="code hl_variable" href="structWeatherState.html#a297b2b392f2d3752f55360f3ffd30d9d">sunrise</a>;      </div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="structWeatherState.html#a4e42b02e63c4eca428a9c75a12133583">   83</a></span>    int16_t <a class="code hl_variable" href="structWeatherState.html#a4e42b02e63c4eca428a9c75a12133583">sunset</a>;       </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structWeatherState.html#a31a4fb50d7112a091d3c60d6a7f89903">   84</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#a31a4fb50d7112a091d3c60d6a7f89903">uv</a>;            </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structWeatherState.html#a7608d767f3af291200139974bef30df5">   85</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#a7608d767f3af291200139974bef30df5">temp_max</a>;      </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="structWeatherState.html#a1317a6f4ed770efe3bdf6352dbe7d1a2">   86</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#a1317a6f4ed770efe3bdf6352dbe7d1a2">temp_min</a>;      </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709">   87</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709">precip_chance</a>; </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="structWeatherState.html#adb364d466033e6a7031057861d40b6e2">   88</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#adb364d466033e6a7031057861d40b6e2">feels_like</a>;    </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e">   89</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e">pressure</a>;      </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="structWeatherState.html#a8a4412e90af8c10f96abe56ea378170a">   90</a></span>    <span class="keywordtype">int</span>    <a class="code hl_variable" href="structWeatherState.html#a8a4412e90af8c10f96abe56ea378170a">dew_point</a>;     </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="structWeatherState.html#af60f8192ef84bbbd9b6decd7cd2f4c77">   91</a></span>    time_t <a class="code hl_variable" href="structWeatherState.html#af60f8192ef84bbbd9b6decd7cd2f4c77">forecast_day</a>;  </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="structWeatherState.html#a51b784635421b939e7c3d77c78523d92">   92</a></span>    <a class="code hl_struct" href="structWeatherHourly.html">WeatherHourly</a> <a class="code hl_variable" href="structWeatherState.html#a51b784635421b939e7c3d77c78523d92">hourly</a>; </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="structWeatherState.html#a0880368890fa96ac09b581c38f07f714">   93</a></span>    time_t <a class="code hl_variable" href="structWeatherState.html#a0880368890fa96ac09b581c38f07f714">hourly_first</a>;  </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="structWeatherState.html#aa668cd1b177bbfd27dd0a60215ea6ec9">   94</a></span>    time_t <a class="code hl_variable" href="structWeatherState.html#aa668cd1b177bbfd27dd0a60215ea6ec9">daily_first</a>;   </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="structWeatherState.html#a0585006c516149c78970319d8bdc07b0">   95</a></span>    <a class="code hl_struct" href="structWeatherDaily.html">WeatherDaily</a>  <a class="code hl_variable" href="structWeatherState.html#a0585006c516149c78970319d8bdc07b0">daily</a>;  </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a">   96</a></span>    time_t <a class="code hl_variable" href="structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a">last_sync</a>;     </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>} <a class="code hl_struct" href="structWeatherState.html">WeatherState</a>;</div>
+</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span></div>
+<div class="foldopen" id="foldopen00106" data-start="{" data-end="};">
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="structWeatherClock.html">  106</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>{</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1">  108</a></span>    time_t  <a class="code hl_variable" href="structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1">now</a>;       </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="structWeatherClock.html#a3ae8fad6167ba4194d754c420fed06cb">  109</a></span>    time_t  <a class="code hl_variable" href="structWeatherClock.html#a3ae8fad6167ba4194d754c420fed06cb">day_start</a>; </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno"><a class="line" href="structWeatherClock.html#a8ff4a083b881047a4608b0d328c3b6e6">  110</a></span>    uint8_t <a class="code hl_variable" href="structWeatherClock.html#a8ff4a083b881047a4608b0d328c3b6e6">hour</a>;      </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="structWeatherClock.html#a7562e2fafbe4bd092596ab24d60c1c21">  111</a></span>    uint8_t <a class="code hl_variable" href="structWeatherClock.html#a7562e2fafbe4bd092596ab24d60c1c21">minute</a>;    </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="structWeatherClock.html#a392bd2d9e6c9ecc8247663108492fcbb">  112</a></span>    uint8_t <a class="code hl_variable" href="structWeatherClock.html#a392bd2d9e6c9ecc8247663108492fcbb">second</a>;    </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="structWeatherClock.html#a8e6c870f60a2694eaa5e8af7755bf724">  113</a></span>    uint8_t <a class="code hl_variable" href="structWeatherClock.html#a8e6c870f60a2694eaa5e8af7755bf724">wday</a>;      </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>} <a class="code hl_struct" href="structWeatherClock.html">WeatherClock</a>;</div>
+</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span></div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga2b36f0d71ccc983475ea5fa5e919e585">weather_reading_apply</a>(<a class="code hl_struct" href="structWeatherState.html">WeatherState</a> *state, <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherMessage.html">WeatherMessage</a> *msg, <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherClock.html">WeatherClock</a> *clock);</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span></div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__core.html#ga6fcabd81132c73ba225beaf6f035fe5c">weather_reading_convert</a>(<a class="code hl_struct" href="structWeatherState.html">WeatherState</a> *state, <span class="keywordtype">bool</span> to_fahrenheit);</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span></div>
+<div class="ttc" id="agroup__lib__core_html_ga2b36f0d71ccc983475ea5fa5e919e585"><div class="ttname"><a href="group__lib__core.html#ga2b36f0d71ccc983475ea5fa5e919e585">weather_reading_apply</a></div><div class="ttdeci">bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)</div><div class="ttdoc">Put a message&#39;s readings into the kept weather.</div><div class="ttdef"><b>Definition</b> weather_reading.c:30</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga6fcabd81132c73ba225beaf6f035fe5c"><div class="ttname"><a href="group__lib__core.html#ga6fcabd81132c73ba225beaf6f035fe5c">weather_reading_convert</a></div><div class="ttdeci">void weather_reading_convert(WeatherState *state, bool to_fahrenheit)</div><div class="ttdoc">Convert every temperature in the kept weather to the other unit.</div><div class="ttdef"><b>Definition</b> weather_reading.c:120</div></div>
+<div class="ttc" id="astructWeatherClock_html"><div class="ttname"><a href="structWeatherClock.html">WeatherClock</a></div><div class="ttdoc">The watch&#39;s clock at the moment a message lands, broken apart.</div><div class="ttdef"><b>Definition</b> weather_reading.h:107</div></div>
+<div class="ttc" id="astructWeatherClock_html_a392bd2d9e6c9ecc8247663108492fcbb"><div class="ttname"><a href="structWeatherClock.html#a392bd2d9e6c9ecc8247663108492fcbb">WeatherClock::second</a></div><div class="ttdeci">uint8_t second</div><div class="ttdoc">The local second, 0 to 59.</div><div class="ttdef"><b>Definition</b> weather_reading.h:112</div></div>
+<div class="ttc" id="astructWeatherClock_html_a3ae8fad6167ba4194d754c420fed06cb"><div class="ttname"><a href="structWeatherClock.html#a3ae8fad6167ba4194d754c420fed06cb">WeatherClock::day_start</a></div><div class="ttdeci">time_t day_start</div><div class="ttdoc">Local midnight of today.</div><div class="ttdef"><b>Definition</b> weather_reading.h:109</div></div>
+<div class="ttc" id="astructWeatherClock_html_a7562e2fafbe4bd092596ab24d60c1c21"><div class="ttname"><a href="structWeatherClock.html#a7562e2fafbe4bd092596ab24d60c1c21">WeatherClock::minute</a></div><div class="ttdeci">uint8_t minute</div><div class="ttdoc">The local minute, 0 to 59.</div><div class="ttdef"><b>Definition</b> weather_reading.h:111</div></div>
+<div class="ttc" id="astructWeatherClock_html_a8e6c870f60a2694eaa5e8af7755bf724"><div class="ttname"><a href="structWeatherClock.html#a8e6c870f60a2694eaa5e8af7755bf724">WeatherClock::wday</a></div><div class="ttdeci">uint8_t wday</div><div class="ttdoc">The local weekday, 0 for Sunday.</div><div class="ttdef"><b>Definition</b> weather_reading.h:113</div></div>
+<div class="ttc" id="astructWeatherClock_html_a8ff4a083b881047a4608b0d328c3b6e6"><div class="ttname"><a href="structWeatherClock.html#a8ff4a083b881047a4608b0d328c3b6e6">WeatherClock::hour</a></div><div class="ttdeci">uint8_t hour</div><div class="ttdoc">The local hour, 0 to 23.</div><div class="ttdef"><b>Definition</b> weather_reading.h:110</div></div>
+<div class="ttc" id="astructWeatherClock_html_a9fdd4c975baaa069590ed44b86c207a1"><div class="ttname"><a href="structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1">WeatherClock::now</a></div><div class="ttdeci">time_t now</div><div class="ttdoc">The time the message landed.</div><div class="ttdef"><b>Definition</b> weather_reading.h:108</div></div>
+<div class="ttc" id="astructWeatherDaily_html"><div class="ttname"><a href="structWeatherDaily.html">WeatherDaily</a></div><div class="ttdoc">The 7-day strip. count is 0 until a reading lands.</div><div class="ttdef"><b>Definition</b> weather_wire.h:55</div></div>
+<div class="ttc" id="astructWeatherHourly_html"><div class="ttname"><a href="structWeatherHourly.html">WeatherHourly</a></div><div class="ttdoc">The hourly strip. count is 0 until a reading lands.</div><div class="ttdef"><b>Definition</b> weather_wire.h:46</div></div>
+<div class="ttc" id="astructWeatherMessage_html"><div class="ttname"><a href="structWeatherMessage.html">WeatherMessage</a></div><div class="ttdoc">One weather message as the transport read it, before anything is kept.</div><div class="ttdef"><b>Definition</b> weather_reading.h:43</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a16481e6e0f37ab4e8d86756af480984b"><div class="ttname"><a href="structWeatherMessage.html#a16481e6e0f37ab4e8d86756af480984b">WeatherMessage::wind_kmh</a></div><div class="ttdeci">int wind_kmh</div><div class="ttdoc">Wind speed in km/h.</div><div class="ttdef"><b>Definition</b> weather_reading.h:49</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a16a30cff51ac31165840714b5bac5227"><div class="ttname"><a href="structWeatherMessage.html#a16a30cff51ac31165840714b5bac5227">WeatherMessage::temp_min</a></div><div class="ttdeci">int temp_min</div><div class="ttdoc">Today&#39;s low.</div><div class="ttdef"><b>Definition</b> weather_reading.h:56</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a196b4cbc8502c9c6e24d1040d4ff8ce2"><div class="ttname"><a href="structWeatherMessage.html#a196b4cbc8502c9c6e24d1040d4ff8ce2">WeatherMessage::precip_chance</a></div><div class="ttdeci">int precip_chance</div><div class="ttdoc">Percent chance of rain.</div><div class="ttdef"><b>Definition</b> weather_reading.h:57</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a217ead73acf2ca31c797d0e536dfff33"><div class="ttname"><a href="structWeatherMessage.html#a217ead73acf2ca31c797d0e536dfff33">WeatherMessage::temp_max</a></div><div class="ttdeci">int temp_max</div><div class="ttdoc">Today&#39;s high.</div><div class="ttdef"><b>Definition</b> weather_reading.h:55</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a2246248b9662e9e1bd5ca6c8ed1a4096"><div class="ttname"><a href="structWeatherMessage.html#a2246248b9662e9e1bd5ca6c8ed1a4096">WeatherMessage::daily_len</a></div><div class="ttdeci">uint16_t daily_len</div><div class="ttdoc">Its length in bytes.</div><div class="ttdef"><b>Definition</b> weather_reading.h:64</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a2adc5a90619bd4a3572ff13fc54bf45c"><div class="ttname"><a href="structWeatherMessage.html#a2adc5a90619bd4a3572ff13fc54bf45c">WeatherMessage::sunset</a></div><div class="ttdeci">int sunset</div><div class="ttdoc">Sunset as minutes past local midnight.</div><div class="ttdef"><b>Definition</b> weather_reading.h:53</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a2ef77286e2f02067ca9e7437aca389a6"><div class="ttname"><a href="structWeatherMessage.html#a2ef77286e2f02067ca9e7437aca389a6">WeatherMessage::groups</a></div><div class="ttdeci">uint8_t groups</div><div class="ttdoc">The WEATHER_GROUP_ bits for the groups that arrived.</div><div class="ttdef"><b>Definition</b> weather_reading.h:44</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a328318e4aa166fec155634010ddf8431"><div class="ttname"><a href="structWeatherMessage.html#a328318e4aa166fec155634010ddf8431">WeatherMessage::ok</a></div><div class="ttdeci">bool ok</div><div class="ttdoc">The phone&#39;s fetch worked, so the current reading is real.</div><div class="ttdef"><b>Definition</b> weather_reading.h:45</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a423bfb57af732fbe40889a50a5d6604f"><div class="ttname"><a href="structWeatherMessage.html#a423bfb57af732fbe40889a50a5d6604f">WeatherMessage::sunrise</a></div><div class="ttdeci">int sunrise</div><div class="ttdoc">Sunrise as minutes past local midnight.</div><div class="ttdef"><b>Definition</b> weather_reading.h:52</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a51a1436b6e9630b7f1c9f9c420607120"><div class="ttname"><a href="structWeatherMessage.html#a51a1436b6e9630b7f1c9f9c420607120">WeatherMessage::wind_dir</a></div><div class="ttdeci">const char * wind_dir</div><div class="ttdoc">Wind direction, such as &quot;NW&quot;.</div><div class="ttdef"><b>Definition</b> weather_reading.h:50</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a58ad44b76adbf7e94a0b5acb50c04783"><div class="ttname"><a href="structWeatherMessage.html#a58ad44b76adbf7e94a0b5acb50c04783">WeatherMessage::humidity</a></div><div class="ttdeci">int humidity</div><div class="ttdoc">Percent humidity.</div><div class="ttdef"><b>Definition</b> weather_reading.h:48</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a7b03071ef02a2a9a5906f65735f1b010"><div class="ttname"><a href="structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010">WeatherMessage::hourly</a></div><div class="ttdeci">const uint8_t * hourly</div><div class="ttdoc">The packed hourly strip, or NULL when none arrived.</div><div class="ttdef"><b>Definition</b> weather_reading.h:61</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a9137b2f3ba3f619fbecd49e518a97bcb"><div class="ttname"><a href="structWeatherMessage.html#a9137b2f3ba3f619fbecd49e518a97bcb">WeatherMessage::hourly_len</a></div><div class="ttdeci">uint16_t hourly_len</div><div class="ttdoc">Its length in bytes.</div><div class="ttdef"><b>Definition</b> weather_reading.h:62</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a975df3054641eddb181006370fe704be"><div class="ttname"><a href="structWeatherMessage.html#a975df3054641eddb181006370fe704be">WeatherMessage::temp</a></div><div class="ttdeci">int temp</div><div class="ttdoc">The temperature in the user&#39;s unit.</div><div class="ttdef"><b>Definition</b> weather_reading.h:46</div></div>
+<div class="ttc" id="astructWeatherMessage_html_a9b16dd1fd8f5a9f6ee2c3d7902e57368"><div class="ttname"><a href="structWeatherMessage.html#a9b16dd1fd8f5a9f6ee2c3d7902e57368">WeatherMessage::dew_point</a></div><div class="ttdeci">int dew_point</div><div class="ttdoc">Dew point temperature.</div><div class="ttdef"><b>Definition</b> weather_reading.h:60</div></div>
+<div class="ttc" id="astructWeatherMessage_html_aa64e5b7422e22ec1eb018b0afe7bf56d"><div class="ttname"><a href="structWeatherMessage.html#aa64e5b7422e22ec1eb018b0afe7bf56d">WeatherMessage::uv</a></div><div class="ttdeci">int uv</div><div class="ttdoc">UV index.</div><div class="ttdef"><b>Definition</b> weather_reading.h:54</div></div>
+<div class="ttc" id="astructWeatherMessage_html_ace9fa48992630d940ef2fbd4e21dfd05"><div class="ttname"><a href="structWeatherMessage.html#ace9fa48992630d940ef2fbd4e21dfd05">WeatherMessage::feels_like</a></div><div class="ttdeci">int feels_like</div><div class="ttdoc">How warm it feels.</div><div class="ttdef"><b>Definition</b> weather_reading.h:58</div></div>
+<div class="ttc" id="astructWeatherMessage_html_ad6aae8415749e405ce9892c61daa06cb"><div class="ttname"><a href="structWeatherMessage.html#ad6aae8415749e405ce9892c61daa06cb">WeatherMessage::cond_label</a></div><div class="ttdeci">const char * cond_label</div><div class="ttdoc">The sky in words, such as &quot;Partly Cloudy&quot;, or NULL for a face with no key for it.</div><div class="ttdef"><b>Definition</b> weather_reading.h:51</div></div>
+<div class="ttc" id="astructWeatherMessage_html_ae9d770ab1a1756f491395ca35cf2014e"><div class="ttname"><a href="structWeatherMessage.html#ae9d770ab1a1756f491395ca35cf2014e">WeatherMessage::pressure</a></div><div class="ttdeci">int pressure</div><div class="ttdoc">Sea level pressure in hPa.</div><div class="ttdef"><b>Definition</b> weather_reading.h:59</div></div>
+<div class="ttc" id="astructWeatherMessage_html_af788f75769fe248ae57b11f9eb626fdd"><div class="ttname"><a href="structWeatherMessage.html#af788f75769fe248ae57b11f9eb626fdd">WeatherMessage::cond</a></div><div class="ttdeci">const char * cond</div><div class="ttdoc">The sky word, such as &quot;SUNNY&quot;.</div><div class="ttdef"><b>Definition</b> weather_reading.h:47</div></div>
+<div class="ttc" id="astructWeatherMessage_html_afc89d1fd8b8de86ea19a1704a0623543"><div class="ttname"><a href="structWeatherMessage.html#afc89d1fd8b8de86ea19a1704a0623543">WeatherMessage::daily</a></div><div class="ttdeci">const uint8_t * daily</div><div class="ttdoc">The packed daily strip, or NULL when none arrived.</div><div class="ttdef"><b>Definition</b> weather_reading.h:63</div></div>
+<div class="ttc" id="astructWeatherState_html"><div class="ttname"><a href="structWeatherState.html">WeatherState</a></div><div class="ttdoc">The weather a store keeps, laid out as the blob it saves to flash.</div><div class="ttdef"><b>Definition</b> weather_reading.h:74</div></div>
+<div class="ttc" id="astructWeatherState_html_a0585006c516149c78970319d8bdc07b0"><div class="ttname"><a href="structWeatherState.html#a0585006c516149c78970319d8bdc07b0">WeatherState::daily</a></div><div class="ttdeci">WeatherDaily daily</div><div class="ttdoc">The 7-day forecast strip (count 0 when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:95</div></div>
+<div class="ttc" id="astructWeatherState_html_a0880368890fa96ac09b581c38f07f714"><div class="ttname"><a href="structWeatherState.html#a0880368890fa96ac09b581c38f07f714">WeatherState::hourly_first</a></div><div class="ttdeci">time_t hourly_first</div><div class="ttdoc">When the hourly strip&#39;s first column starts, or 0 when none came.</div><div class="ttdef"><b>Definition</b> weather_reading.h:93</div></div>
+<div class="ttc" id="astructWeatherState_html_a10a0c1b94135d6c9d6ed2e49102e6e0e"><div class="ttname"><a href="structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e">WeatherState::pressure</a></div><div class="ttdeci">int pressure</div><div class="ttdoc">Sea level pressure in hPa (-1 when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:89</div></div>
+<div class="ttc" id="astructWeatherState_html_a1317a6f4ed770efe3bdf6352dbe7d1a2"><div class="ttname"><a href="structWeatherState.html#a1317a6f4ed770efe3bdf6352dbe7d1a2">WeatherState::temp_min</a></div><div class="ttdeci">int temp_min</div><div class="ttdoc">Today&#39;s low (WEATHER_NO_TEMP when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:86</div></div>
+<div class="ttc" id="astructWeatherState_html_a27ceeb5c3bd3ae1d840b53f10f8ad709"><div class="ttname"><a href="structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709">WeatherState::precip_chance</a></div><div class="ttdeci">int precip_chance</div><div class="ttdoc">Percent chance of precip (-1 when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:87</div></div>
+<div class="ttc" id="astructWeatherState_html_a297b2b392f2d3752f55360f3ffd30d9d"><div class="ttname"><a href="structWeatherState.html#a297b2b392f2d3752f55360f3ffd30d9d">WeatherState::sunrise</a></div><div class="ttdeci">int16_t sunrise</div><div class="ttdoc">Sunrise as minutes past local midnight, -1 when none.</div><div class="ttdef"><b>Definition</b> weather_reading.h:82</div></div>
+<div class="ttc" id="astructWeatherState_html_a31a4fb50d7112a091d3c60d6a7f89903"><div class="ttname"><a href="structWeatherState.html#a31a4fb50d7112a091d3c60d6a7f89903">WeatherState::uv</a></div><div class="ttdeci">int uv</div><div class="ttdoc">UV index (-1 when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:84</div></div>
+<div class="ttc" id="astructWeatherState_html_a4e42b02e63c4eca428a9c75a12133583"><div class="ttname"><a href="structWeatherState.html#a4e42b02e63c4eca428a9c75a12133583">WeatherState::sunset</a></div><div class="ttdeci">int16_t sunset</div><div class="ttdoc">Sunset as minutes past local midnight, -1 when none.</div><div class="ttdef"><b>Definition</b> weather_reading.h:83</div></div>
+<div class="ttc" id="astructWeatherState_html_a51b784635421b939e7c3d77c78523d92"><div class="ttname"><a href="structWeatherState.html#a51b784635421b939e7c3d77c78523d92">WeatherState::hourly</a></div><div class="ttdeci">WeatherHourly hourly</div><div class="ttdoc">The hourly forecast strip (count 0 when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:92</div></div>
+<div class="ttc" id="astructWeatherState_html_a7608d767f3af291200139974bef30df5"><div class="ttname"><a href="structWeatherState.html#a7608d767f3af291200139974bef30df5">WeatherState::temp_max</a></div><div class="ttdeci">int temp_max</div><div class="ttdoc">Today&#39;s high (WEATHER_NO_TEMP when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:85</div></div>
+<div class="ttc" id="astructWeatherState_html_a7e43f225b231eed29dffcecb9f8c7d2f"><div class="ttname"><a href="structWeatherState.html#a7e43f225b231eed29dffcecb9f8c7d2f">WeatherState::cond</a></div><div class="ttdeci">char cond[32]</div><div class="ttdoc">Short word for the sky, such as &quot;SUNNY&quot;.</div><div class="ttdef"><b>Definition</b> weather_reading.h:77</div></div>
+<div class="ttc" id="astructWeatherState_html_a8a4412e90af8c10f96abe56ea378170a"><div class="ttname"><a href="structWeatherState.html#a8a4412e90af8c10f96abe56ea378170a">WeatherState::dew_point</a></div><div class="ttdeci">int dew_point</div><div class="ttdoc">Dew point temperature (WEATHER_NO_TEMP when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:90</div></div>
+<div class="ttc" id="astructWeatherState_html_a91c5cb1e7246a0080820a3dbb9eb689a"><div class="ttname"><a href="structWeatherState.html#a91c5cb1e7246a0080820a3dbb9eb689a">WeatherState::last_sync</a></div><div class="ttdeci">time_t last_sync</div><div class="ttdoc">When the last reading landed, or 0 for never.</div><div class="ttdef"><b>Definition</b> weather_reading.h:96</div></div>
+<div class="ttc" id="astructWeatherState_html_aa668cd1b177bbfd27dd0a60215ea6ec9"><div class="ttname"><a href="structWeatherState.html#aa668cd1b177bbfd27dd0a60215ea6ec9">WeatherState::daily_first</a></div><div class="ttdeci">time_t daily_first</div><div class="ttdoc">Local midnight of the daily strip&#39;s first day, or 0 when none came.</div><div class="ttdef"><b>Definition</b> weather_reading.h:94</div></div>
+<div class="ttc" id="astructWeatherState_html_aab2b5a749e4b0f1b2e4a98e04e811694"><div class="ttname"><a href="structWeatherState.html#aab2b5a749e4b0f1b2e4a98e04e811694">WeatherState::humidity</a></div><div class="ttdeci">int humidity</div><div class="ttdoc">Percent humidity, -1 when none.</div><div class="ttdef"><b>Definition</b> weather_reading.h:79</div></div>
+<div class="ttc" id="astructWeatherState_html_ac4711deb819db30232d3cbb525ddeafe"><div class="ttname"><a href="structWeatherState.html#ac4711deb819db30232d3cbb525ddeafe">WeatherState::wind_dir</a></div><div class="ttdeci">char wind_dir[4]</div><div class="ttdoc">Wind direction like &quot;NW&quot;.</div><div class="ttdef"><b>Definition</b> weather_reading.h:81</div></div>
+<div class="ttc" id="astructWeatherState_html_ac89a66ed27ff84aa61675f2b78d4784e"><div class="ttname"><a href="structWeatherState.html#ac89a66ed27ff84aa61675f2b78d4784e">WeatherState::wind_kmh</a></div><div class="ttdeci">int wind_kmh</div><div class="ttdoc">Wind speed in km/h, -1 when none.</div><div class="ttdef"><b>Definition</b> weather_reading.h:80</div></div>
+<div class="ttc" id="astructWeatherState_html_ada60a92f0690b1a06bca06d42984ae7a"><div class="ttname"><a href="structWeatherState.html#ada60a92f0690b1a06bca06d42984ae7a">WeatherState::tag</a></div><div class="ttdeci">uint8_t tag</div><div class="ttdoc">The store&#39;s tag, so a restore can tell this blob from another shape.</div><div class="ttdef"><b>Definition</b> weather_reading.h:75</div></div>
+<div class="ttc" id="astructWeatherState_html_adb364d466033e6a7031057861d40b6e2"><div class="ttname"><a href="structWeatherState.html#adb364d466033e6a7031057861d40b6e2">WeatherState::feels_like</a></div><div class="ttdeci">int feels_like</div><div class="ttdoc">Apparent temperature (WEATHER_NO_TEMP when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:88</div></div>
+<div class="ttc" id="astructWeatherState_html_ae41f90ba55b0a7b7f53812816ee435d0"><div class="ttname"><a href="structWeatherState.html#ae41f90ba55b0a7b7f53812816ee435d0">WeatherState::temp</a></div><div class="ttdeci">int16_t temp</div><div class="ttdoc">Current temperature in the user&#39;s unit (WEATHER_NO_TEMP when none).</div><div class="ttdef"><b>Definition</b> weather_reading.h:76</div></div>
+<div class="ttc" id="astructWeatherState_html_af60f8192ef84bbbd9b6decd7cd2f4c77"><div class="ttname"><a href="structWeatherState.html#af60f8192ef84bbbd9b6decd7cd2f4c77">WeatherState::forecast_day</a></div><div class="ttdeci">time_t forecast_day</div><div class="ttdoc">Local midnight of the day the high, low, UV, and rain chance came, or 0.</div><div class="ttdef"><b>Definition</b> weather_reading.h:91</div></div>
+<div class="ttc" id="astructWeatherState_html_aff9f98e3f9cbf2fab7b41e46d7552c56"><div class="ttname"><a href="structWeatherState.html#aff9f98e3f9cbf2fab7b41e46d7552c56">WeatherState::cond_label</a></div><div class="ttdeci">char cond_label[20]</div><div class="ttdoc">The sky in words, such as &quot;Partly Cloudy&quot;, empty when the phone sent none.</div><div class="ttdef"><b>Definition</b> weather_reading.h:78</div></div>
+<div class="ttc" id="aweather__wire_8h_html"><div class="ttname"><a href="weather__wire_8h.html">weather_wire.h</a></div><div class="ttdoc">The forecast strips as the phone packs them, and the readers that unpack them.</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>weather</b></li><li class="navelem"><a href="weather__reading_8h.html">weather_reading.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

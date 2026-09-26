@@ -1,5 +1,6 @@
 var annotated_dup =
 [
+    [ "[struct].s_fixed", "struct_0fstruct_0e_8s__fixed.html", "struct_0fstruct_0e_8s__fixed" ],
     [ "[struct].s_handlers", "struct_0fstruct_0e_8s__handlers.html", "struct_0fstruct_0e_8s__handlers" ],
     [ "[struct].s_state", "struct_0fstruct_0e_8s__state.html", "struct_0fstruct_0e_8s__state" ],
     [ "CalendarConfig", "structCalendarConfig.html", "structCalendarConfig" ],
@@ -7,7 +8,7 @@ var annotated_dup =
     [ "CalendarPersist", "structCalendarPersist.html", "structCalendarPersist" ],
     [ "CalendarSeed", "structCalendarSeed.html", "structCalendarSeed" ],
     [ "CalendarStrip", "structCalendarStrip.html", "structCalendarStrip" ],
-    [ "DevFixture", "structDevFixture.html", "structDevFixture" ],
+    [ "CallbackList", "structCallbackList.html", "structCallbackList" ],
     [ "DevShot", "structDevShot.html", "structDevShot" ],
     [ "EngineSlot", "structEngineSlot.html", "structEngineSlot" ],
     [ "HealthConfig", "structHealthConfig.html", "structHealthConfig" ],
@@ -26,16 +27,21 @@ var annotated_dup =
     [ "StockSeed", "structStockSeed.html", "structStockSeed" ],
     [ "StockSlot", "structStockSlot.html", "structStockSlot" ],
     [ "StockStrip", "structStockStrip.html", "structStockStrip" ],
+    [ "StoreFetch", "structStoreFetch.html", "structStoreFetch" ],
+    [ "StorePoll", "structStorePoll.html", "structStorePoll" ],
     [ "SystemConfig", "structSystemConfig.html", "structSystemConfig" ],
     [ "SystemSeed", "structSystemSeed.html", "structSystemSeed" ],
     [ "TimeBand", "structTimeBand.html", "structTimeBand" ],
     [ "TimeBandSpan", "structTimeBandSpan.html", "structTimeBandSpan" ],
     [ "TimeConfig", "structTimeConfig.html", "structTimeConfig" ],
+    [ "WeatherClock", "structWeatherClock.html", "structWeatherClock" ],
     [ "WeatherConfig", "structWeatherConfig.html", "structWeatherConfig" ],
     [ "WeatherDaily", "structWeatherDaily.html", "structWeatherDaily" ],
     [ "WeatherDayCol", "structWeatherDayCol.html", "structWeatherDayCol" ],
     [ "WeatherHourCol", "structWeatherHourCol.html", "structWeatherHourCol" ],
     [ "WeatherHourly", "structWeatherHourly.html", "structWeatherHourly" ],
+    [ "WeatherMessage", "structWeatherMessage.html", "structWeatherMessage" ],
     [ "WeatherSeed", "structWeatherSeed.html", "structWeatherSeed" ],
+    [ "WeatherState", "structWeatherState.html", "structWeatherState" ],
     [ "Zone", "structZone.html", "structZone" ]
 ];

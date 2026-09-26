@@ -193,10 +193,13 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage_8c.
 <p>AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="callback__list_8h_source.html">io/callback_list.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="outbox__queue_8h_source.html">io/outbox_queue.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tuple__read_8h_source.html">io/tuple_read.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="scale_8h_source.html">math/scale.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="wire__caps_8g_8h_source.html">wire/wire_caps.g.h</a>&quot;</code><br />
 <code>#include &lt;limits.h&gt;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -205,13 +208,16 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ac83cbad686c149f4be2c8eeac589ca97" id="r_ac83cbad686c149f4be2c8eeac589ca97"><td class="memItemLeft"><a id="ac83cbad686c149f4be2c8eeac589ca97" name="ac83cbad686c149f4be2c8eeac589ca97"></a>
+#define&#160;</td><td class="memItemRight"><b>INBOX_COMPLETE_MAX</b>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ac83cbad686c149f4be2c8eeac589ca97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Room for the work that waits for a whole inbound message, one entry per store that wants it. <br /></td></tr>
 <tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Outbox queue limits</div></td></tr>
 <tr><td colspan="2" class="ititle"><div class="groupText"><p>Only one AppMessage send can be in flight at a time, so every outbound message (the weather, stock and calendar requests plus the settings reply) goes through one queue. It sends the head, waits for its sent or failed callback, then sends the next, and drains a pass at a time.</p>
-<p>A request the phone nacks is held in a failed set and retried on a later pass. Its pkjs was usually asleep, and that first send is often what wakes it. Holding it back means a whole poll is not lost to one asleep-phone nack and left stale until the next interval. </p>
+<p>A job the phone nacks is held in a failed set and retried on a later pass. Its pkjs was usually asleep or busy, and that first send is often what wakes it. Holding it back means a whole poll is not lost to one nack and left stale until the next interval, and neither is a settings reply. </p>
 </div></td></tr>
 <tr class="memitem:a74e58c793ca8409dc757bf0059fff54d" id="r_a74e58c793ca8409dc757bf0059fff54d"><td class="memItemLeft"><a id="a74e58c793ca8409dc757bf0059fff54d" name="a74e58c793ca8409dc757bf0059fff54d"></a>
 #define&#160;</td><td class="memItemRight"><b>REQUEST_RETRY_MAX</b>&#160;&#160;&#160;3</td></tr>
-<tr class="memdesc:a74e58c793ca8409dc757bf0059fff54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retry passes a nacked request gets before it is dropped. <br /></td></tr>
+<tr class="memdesc:a74e58c793ca8409dc757bf0059fff54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retry passes a nacked job gets before it is dropped. <br /></td></tr>
 <tr class="memitem:aa5fb091797fee70e44b207aad9233dd7" id="r_aa5fb091797fee70e44b207aad9233dd7"><td class="memItemLeft"><a id="aa5fb091797fee70e44b207aad9233dd7" name="aa5fb091797fee70e44b207aad9233dd7"></a>
 #define&#160;</td><td class="memItemRight"><b>REQUEST_RETRY_DELAY_MS</b>&#160;&#160;&#160;5000</td></tr>
 <tr class="memdesc:aa5fb091797fee70e44b207aad9233dd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay before the next retry pass, in ms. <br /></td></tr>
@@ -219,32 +225,17 @@ Macros</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga8760e9417f2f894915a0950dc1fdab07" id="r_ga8760e9417f2f894915a0950dc1fdab07"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_weather</b> (<a class="el" href="group__lib__io.html#ga7f166ce0149d01e665fe17a47dfa00bd">WeatherHandler</a> cb)</td></tr>
-<tr class="memdesc:ga8760e9417f2f894915a0950dc1fdab07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature and condition. <br /></td></tr>
+void&#160;</td><td class="memItemRight"><b>appmessage_on_weather</b> (<a class="el" href="group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb">WeatherHandler</a> cb)</td></tr>
+<tr class="memdesc:ga8760e9417f2f894915a0950dc1fdab07"><td class="mdescLeft">&#160;</td><td class="mdescRight">One weather message, every group it carried. <br /></td></tr>
 <tr class="memitem:ga7c64814ef2b8dcd4ee38743e31fb58d2" id="r_ga7c64814ef2b8dcd4ee38743e31fb58d2"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_coords</b> (<a class="el" href="group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030">CoordsHandler</a> cb)</td></tr>
 <tr class="memdesc:ga7c64814ef2b8dcd4ee38743e31fb58d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Latitude and longitude. <br /></td></tr>
 <tr class="memitem:gad9d1d40d059728d240df1d07fd713323" id="r_gad9d1d40d059728d240df1d07fd713323"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_settings_changed</b> (<a class="el" href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">SettingsChangedHandler</a> cb)</td></tr>
 <tr class="memdesc:gad9d1d40d059728d240df1d07fd713323"><td class="mdescLeft">&#160;</td><td class="mdescRight">A setting changed on the phone. <br /></td></tr>
-<tr class="memitem:gad4360c9f5dace5487ea6dd8bae620527" id="r_gad4360c9f5dace5487ea6dd8bae620527"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_extra</b> (<a class="el" href="group__lib__io.html#ga20ba4f3074f2ac3ff172d912a05d005e">WeatherExtraHandler</a> cb)</td></tr>
-<tr class="memdesc:gad4360c9f5dace5487ea6dd8bae620527"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity, wind and sun times. <br /></td></tr>
-<tr class="memitem:gafd576cde1016f517bdafb33b332993ee" id="r_gafd576cde1016f517bdafb33b332993ee"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_forecast</b> (<a class="el" href="group__lib__io.html#ga84945e018c2a84f45e45ce683273e985">WeatherForecastHandler</a> cb)</td></tr>
-<tr class="memdesc:gafd576cde1016f517bdafb33b332993ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV, today's high and low, rain chance. <br /></td></tr>
-<tr class="memitem:ga36f8c9345e5a6323013776b74dab2c20" id="r_ga36f8c9345e5a6323013776b74dab2c20"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_air</b> (<a class="el" href="group__lib__io.html#gaacc7569bc241a64a05d4fb72c8b8e4a7">WeatherAirHandler</a> cb)</td></tr>
-<tr class="memdesc:ga36f8c9345e5a6323013776b74dab2c20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Feels-like, pressure and dew point. <br /></td></tr>
-<tr class="memitem:ga88a4d530275216588d8c63a4c0c7a8c2" id="r_ga88a4d530275216588d8c63a4c0c7a8c2"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_forecast_hourly</b> (<a class="el" href="group__lib__io.html#gad1004ca4be56020f12044e28936eba28">WeatherForecastStripHandler</a> cb)</td></tr>
-<tr class="memdesc:ga88a4d530275216588d8c63a4c0c7a8c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed hourly strip. <br /></td></tr>
-<tr class="memitem:gad021727509d62fff8c31b283ef912c6b" id="r_gad021727509d62fff8c31b283ef912c6b"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_weather_forecast_daily</b> (<a class="el" href="group__lib__io.html#gad1004ca4be56020f12044e28936eba28">WeatherForecastStripHandler</a> cb)</td></tr>
-<tr class="memdesc:gad021727509d62fff8c31b283ef912c6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed 7 day strip. <br /></td></tr>
-<tr class="memitem:ga4bee672fd0b3bbfc53bc653dee0d7983" id="r_ga4bee672fd0b3bbfc53bc653dee0d7983"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_location_name</b> (<a class="el" href="group__lib__io.html#gac4a084dd2740afb9dbb74118db98bf4f">LocationNameHandler</a> cb)</td></tr>
-<tr class="memdesc:ga4bee672fd0b3bbfc53bc653dee0d7983"><td class="mdescLeft">&#160;</td><td class="mdescRight">Location name. <br /></td></tr>
+<tr class="memitem:gab58b5b73b9f4c46fa2b249e2378b71b3" id="r_gab58b5b73b9f4c46fa2b249e2378b71b3"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_unit_changed</b> (<a class="el" href="group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9">UnitChangedHandler</a> cb)</td></tr>
+<tr class="memdesc:gab58b5b73b9f4c46fa2b249e2378b71b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wearer switched the temperature unit. <br /></td></tr>
 <tr class="memitem:ga45a5f177aabba862b779b38b5b4ed288" id="r_ga45a5f177aabba862b779b38b5b4ed288"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_stock_strip</b> (<a class="el" href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">StockStripHandler</a> cb)</td></tr>
 <tr class="memdesc:ga45a5f177aabba862b779b38b5b4ed288"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed watchlist strip. <br /></td></tr>
@@ -257,25 +248,26 @@ void&#160;</td><td class="memItemRight"><b>appmessage_on_custom_colors</b> (<a c
 <tr class="memitem:gaf7a398e20625029f2e376405e9132660" id="r_gaf7a398e20625029f2e376405e9132660"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_set_custom_colors_provider</b> (<a class="el" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a> cb)</td></tr>
 <tr class="memdesc:gaf7a398e20625029f2e376405e9132660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbound: rebuilds the combined string. <br /></td></tr>
-<tr class="memitem:ga8fb7bfc73fc11194d6954aa0d6ffe01c" id="r_ga8fb7bfc73fc11194d6954aa0d6ffe01c"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>appmessage_on_inbox_complete</b> (<a class="el" href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">InboxCompleteHandler</a> cb)</td></tr>
-<tr class="memdesc:ga8fb7bfc73fc11194d6954aa0d6ffe01c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fires once after a whole inbox is handled. <br /></td></tr>
+<tr class="memitem:ga502ebf1b6d9c87b77f5f708cd7424f86" id="r_ga502ebf1b6d9c87b77f5f708cd7424f86"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga502ebf1b6d9c87b77f5f708cd7424f86">appmessage_add_inbox_complete</a> (<a class="el" href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">InboxCompleteHandler</a> cb)</td></tr>
+<tr class="memdesc:ga502ebf1b6d9c87b77f5f708cd7424f86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds work to run once after a whole inbound message is handled, after every channel in it.  <br /></td></tr>
 <tr class="memitem:a5f7778c42828f5ddb907706658b382e8" id="r_a5f7778c42828f5ddb907706658b382e8"><td class="memItemLeft"><a id="a5f7778c42828f5ddb907706658b382e8" name="a5f7778c42828f5ddb907706658b382e8"></a>
 static void&#160;</td><td class="memItemRight"><b>pump</b> (void)</td></tr>
 <tr class="memdesc:a5f7778c42828f5ddb907706658b382e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the head job when the outbox is free, once the phone is there. <br /></td></tr>
 <tr class="memitem:abb7f7e97f2dd93df0449b3f9bdc9c96a" id="r_abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#abb7f7e97f2dd93df0449b3f9bdc9c96a">settings_reply_size</a> (void)</td></tr>
-<tr class="memdesc:abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many outbox bytes the settings reply takes, counting everything write_settings writes.  <br /></td></tr>
+<tr class="memdesc:abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most outbox bytes the settings reply could take, counting everything write_settings writes. The outbox is opened at this, so no settings change can outgrow it later.  <br /></td></tr>
 <tr class="memitem:afd8b8f5d619f4689a2891358d52737cc" id="r_afd8b8f5d619f4689a2891358d52737cc"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#afd8b8f5d619f4689a2891358d52737cc">write_settings</a> (DictionaryIterator *iter)</td></tr>
 <tr class="memdesc:afd8b8f5d619f4689a2891358d52737cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the settings reply payload into the outbox iterator.  <br /></td></tr>
+<tr class="memitem:ab81a6739f4c1e01e98a42af4a9a83b96" id="r_ab81a6739f4c1e01e98a42af4a9a83b96"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ab81a6739f4c1e01e98a42af4a9a83b96">kind_has_key</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
+<tr class="memdesc:ab81a6739f4c1e01e98a42af4a9a83b96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this face declares the key a kind is sent under.  <br /></td></tr>
 <tr class="memitem:a8227736a721829bfecf2b2649e296d98" id="r_a8227736a721829bfecf2b2649e296d98"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#a8227736a721829bfecf2b2649e296d98">send_job</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
 <tr class="memdesc:a8227736a721829bfecf2b2649e296d98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the message for <code class="param">kind</code> and hand it to the outbox.  <br /></td></tr>
 <tr class="memitem:a4d5c99898dbd4b6c81ee21ab84e99965" id="r_a4d5c99898dbd4b6c81ee21ab84e99965"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a4d5c99898dbd4b6c81ee21ab84e99965">enqueue</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind, int retries)</td></tr>
-<tr class="memdesc:a4d5c99898dbd4b6c81ee21ab84e99965"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a job to the work queue unless its kind is already pending, then pump.  <br /></td></tr>
+<tr class="memdesc:a4d5c99898dbd4b6c81ee21ab84e99965"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a job to the work queue unless its kind is already pending, then pump either way.  <br /></td></tr>
 <tr class="memitem:aa69231abc10b6f39ee8277edc53f1e11" id="r_aa69231abc10b6f39ee8277edc53f1e11"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aa69231abc10b6f39ee8277edc53f1e11">retry_pass</a> (void *data)</td></tr>
 <tr class="memdesc:aa69231abc10b6f39ee8277edc53f1e11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the whole failed set back into the work queue for another pass, then pump.  <br /></td></tr>
 <tr class="memitem:gaf552756e4da1e1818775bb984bdd36c0" id="r_gaf552756e4da1e1818775bb984bdd36c0"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_request_weather</b> (void)</td></tr>
-<tr class="memdesc:gaf552756e4da1e1818775bb984bdd36c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh weather reading. The weather store calls this on its turn on the shared cadence. <br /></td></tr>
+<tr class="memdesc:gaf552756e4da1e1818775bb984bdd36c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh weather reading. The weather store calls this on its turn on the shared cadence. On a face that does not declare the weather keys it sends nothing and logs one warning the first time it is called. The weather keys are WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK, and a face that declares only some of them fails to build, with each missing one named. <br /></td></tr>
 <tr class="memitem:gac7dbcd76bf92e5bbf684d2c9849b5ebf" id="r_gac7dbcd76bf92e5bbf684d2c9849b5ebf"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_request_stock</b> (void)</td></tr>
 <tr class="memdesc:gac7dbcd76bf92e5bbf684d2c9849b5ebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for fresh quotes. The stock store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the stock keys. <br /></td></tr>
@@ -285,8 +277,6 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 <tr class="memitem:a7537892c98316590da6b643bbbba37cc" id="r_a7537892c98316590da6b643bbbba37cc"><td class="memItemLeft"><a id="a7537892c98316590da6b643bbbba37cc" name="a7537892c98316590da6b643bbbba37cc"></a>
 static void&#160;</td><td class="memItemRight"><b>send_settings</b> (void)</td></tr>
 <tr class="memdesc:a7537892c98316590da6b643bbbba37cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the settings reply so it serialises with the data requests through the one outbox. <br /></td></tr>
-<tr class="memitem:a75036a87df47ccdab47d4335b1e01a94" id="r_a75036a87df47ccdab47d4335b1e01a94"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a75036a87df47ccdab47d4335b1e01a94">dispatch_bytes</a> (DictionaryIterator *iter, uint32_t key, void(*cb)(const uint8_t *data, uint16_t len))</td></tr>
-<tr class="memdesc:a75036a87df47ccdab47d4335b1e01a94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a byte array tuple by key and hand its bytes to a handler.  <br /></td></tr>
 <tr class="memitem:a0d534305af0a10edbc3c427bae3e975c" id="r_a0d534305af0a10edbc3c427bae3e975c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d534305af0a10edbc3c427bae3e975c">inbox_received_callback</a> (DictionaryIterator *iterator, void *context)</td></tr>
 <tr class="memdesc:a0d534305af0a10edbc3c427bae3e975c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply an inbox message: weather, coords, and any changed settings.  <br /></td></tr>
 <tr class="memitem:a84466f8e93f6160cfe1de858608d07ce" id="r_a84466f8e93f6160cfe1de858608d07ce"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a84466f8e93f6160cfe1de858608d07ce">inbox_dropped_callback</a> (AppMessageResult reason, void *context)</td></tr>
@@ -295,14 +285,20 @@ static void&#160;</td><td class="memItemRight"><b>send_settings</b> (void)</td><
 <tr class="memdesc:a6b185c8da29188c8cae40cdca98e100b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbox send was nacked (usually the phone's pkjs is asleep).  <br /></td></tr>
 <tr class="memitem:a0369d40d54958ca96f392694cf507399" id="r_a0369d40d54958ca96f392694cf507399"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0369d40d54958ca96f392694cf507399">outbox_sent_callback</a> (DictionaryIterator *iter, void *context)</td></tr>
 <tr class="memdesc:a0369d40d54958ca96f392694cf507399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbox delivered. Frees the outbox and sends the next queued job.  <br /></td></tr>
-<tr class="memitem:ga08eff87fc42ee9c842bb5c338706f1fa" id="r_ga08eff87fc42ee9c842bb5c338706f1fa"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga08eff87fc42ee9c842bb5c338706f1fa">appmessage_open</a> (void)</td></tr>
-<tr class="memdesc:ga08eff87fc42ee9c842bb5c338706f1fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the SDK callbacks and open the inbox/outbox.  <br /></td></tr>
+<tr class="memitem:gab954f122b1dd5b44dfd5bda314c53831" id="r_gab954f122b1dd5b44dfd5bda314c53831"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#gab954f122b1dd5b44dfd5bda314c53831">appmessage_open</a> (uint32_t inbox_size)</td></tr>
+<tr class="memdesc:gab954f122b1dd5b44dfd5bda314c53831"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register the SDK callbacks and open the inbox and outbox.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a3294e778e6cb9bcda9026e5a45b3dfa3" name="a3294e778e6cb9bcda9026e5a45b3dfa3"></a>
 <a class="el" href="struct_0fstruct_0e_8s__handlers.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_handlers</b></td></tr>
 <tr class="memdesc:a3294e778e6cb9bcda9026e5a45b3dfa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The registered channel handlers. Each one stays NULL until a consumer opts in. <br /></td></tr>
+<tr class="memitem:a69c5d4c123fa7eb457ceaddd0a25358c" id="r_a69c5d4c123fa7eb457ceaddd0a25358c"><td class="memItemLeft"><a id="a69c5d4c123fa7eb457ceaddd0a25358c" name="a69c5d4c123fa7eb457ceaddd0a25358c"></a>
+static <a class="el" href="group__lib__core.html#gace9c32cbf32397ccc0a34a750ce3ea68">CallbackListFn</a>&#160;</td><td class="memItemRight"><b>s_inbox_complete_entries</b> [<a class="el" href="#ac83cbad686c149f4be2c8eeac589ca97">INBOX_COMPLETE_MAX</a>]</td></tr>
+<tr class="memdesc:a69c5d4c123fa7eb457ceaddd0a25358c"><td class="mdescLeft">&#160;</td><td class="mdescRight">That work, in the order it was added. <br /></td></tr>
+<tr class="memitem:a45764b077cf30a455153937be9f4684b" id="r_a45764b077cf30a455153937be9f4684b"><td class="memItemLeft"><a id="a45764b077cf30a455153937be9f4684b" name="a45764b077cf30a455153937be9f4684b"></a>
+static <a class="el" href="structCallbackList.html">CallbackList</a>&#160;</td><td class="memItemRight"><b>s_inbox_complete</b> = {<a class="el" href="#a69c5d4c123fa7eb457ceaddd0a25358c">s_inbox_complete_entries</a>, <a class="el" href="#ac83cbad686c149f4be2c8eeac589ca97">INBOX_COMPLETE_MAX</a>, 0}</td></tr>
+<tr class="memdesc:a45764b077cf30a455153937be9f4684b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The list over that storage. <br /></td></tr>
 <tr class="memitem:a1a96284017193cf901d1b43de9d74204" id="r_a1a96284017193cf901d1b43de9d74204"><td class="memItemLeft"><a id="a1a96284017193cf901d1b43de9d74204" name="a1a96284017193cf901d1b43de9d74204"></a>
 static <a class="el" href="structOutboxQueue.html">OutboxQueue</a>&#160;</td><td class="memItemRight"><b>s_outbox</b></td></tr>
 <tr class="memdesc:a1a96284017193cf901d1b43de9d74204"><td class="mdescLeft">&#160;</td><td class="mdescRight">What is queued, what nacked, and what is in flight. <br /></td></tr>
@@ -316,51 +312,6 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
-<a id="a75036a87df47ccdab47d4335b1e01a94" name="a75036a87df47ccdab47d4335b1e01a94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75036a87df47ccdab47d4335b1e01a94">&#9670;&#160;</a></span>dispatch_bytes()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void dispatch_bytes </td>
-          <td>(</td>
-          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>cb&#160;</em></span>)(const uint8_t *data, uint16_t len)&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Find a byte array tuple by key and hand its bytes to a handler. </p>
-<p>The forecast, stock, and calendar strips all ride as packed byte arrays through a same-signature handler, so one dispatcher covers them. The handler comes in as an argument rather than a table, so it stays out of the binary's .data section.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">iter</td><td>The dictionary iterator to search. </td></tr>
-    <tr><td class="paramname">key</td><td>The message key to look up. </td></tr>
-    <tr><td class="paramname">cb</td><td>The handler to call with the raw bytes, or NULL to do nothing. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="a4d5c99898dbd4b6c81ee21ab84e99965" name="a4d5c99898dbd4b6c81ee21ab84e99965"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4d5c99898dbd4b6c81ee21ab84e99965">&#9670;&#160;</a></span>enqueue()</h2>
 
@@ -388,11 +339,11 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 </table>
 </div><div class="memdoc">
 
-<p>Add a job to the work queue unless its kind is already pending, then pump. </p>
+<p>Add a job to the work queue unless its kind is already pending, then pump either way. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">kind</td><td>The job kind to send. </td></tr>
-    <tr><td class="paramname">retries</td><td>Retry passes left if the first send nacks (0 for the settings reply). </td></tr>
+    <tr><td class="paramname">retries</td><td>Retry passes left if the first send nacks. </td></tr>
   </table>
   </dd>
 </dl>
@@ -475,6 +426,40 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 
 </div>
 </div>
+<a id="ab81a6739f4c1e01e98a42af4a9a83b96" name="ab81a6739f4c1e01e98a42af4a9a83b96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab81a6739f4c1e01e98a42af4a9a83b96">&#9670;&#160;</a></span>kind_has_key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool kind_has_key </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a></td>          <td class="paramname"><span class="paramname"><em>kind</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether this face declares the key a kind is sent under. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">kind</td><td>The job kind to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when send_job has something to write for <code class="param">kind</code>. </dd></dl>
+
+</div>
+</div>
 <a id="a6b185c8da29188c8cae40cdca98e100b" name="a6b185c8da29188c8cae40cdca98e100b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6b185c8da29188c8cae40cdca98e100b">&#9670;&#160;</a></span>outbox_failed_callback()</h2>
 
@@ -508,7 +493,7 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 </div><div class="memdoc">
 
 <p>Outbox send was nacked (usually the phone's pkjs is asleep). </p>
-<p>Frees the outbox and holds a real request for a later retry pass, then pumps the rest of the queue. The settings reply is not held.</p>
+<p>Frees the outbox and holds the job for a later retry pass while it has retries left, then pumps the rest of the queue.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">iter</td><td>The dictionary iterator. </td></tr>
@@ -648,7 +633,7 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 </table>
 </div><div class="memdoc">
 
-<p>How many outbox bytes the settings reply takes, counting everything write_settings writes. </p>
+<p>The most outbox bytes the settings reply could take, counting everything write_settings writes. The outbox is opened at this, so no settings change can outgrow it later. </p>
 <dl class="section return"><dt>Returns</dt><dd>The whole message's size, the dictionary's own header included. </dd></dl>
 
 </div>
@@ -677,7 +662,7 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 </div><div class="memdoc">
 
 <p>Write the settings reply payload into the outbox iterator. </p>
-<p>The watch persist is the source of truth so Clay can seed its store from it. Carries the current settings, a fresh flag, and the custom colours. settings_reply_size counts the same three things.</p>
+<p>The watch persist is the source of truth so Clay can seed its store from it. Carries the request key as a marker, the current settings, a fresh flag, and the custom colours. settings_reply_size counts the same four things.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">iter</td><td>The outbox iterator to write into. </td></tr>

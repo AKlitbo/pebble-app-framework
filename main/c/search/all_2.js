@@ -2,7 +2,7 @@ var searchData=
 [
   ['base_5fhour_0',['base_hour',['../structWeatherHourly.html#ad7a834d6b6571d80f22136ef20ef9e41',1,'WeatherHourly']]],
   ['base_5fweekday_1',['base_weekday',['../structWeatherDaily.html#af780eee24c1b9f82b788f4fdcd7379c8',1,'WeatherDaily']]],
-  ['battery_2',['battery',['../structDevFixture.html#a7e38462c558138431fc712c1b624e08c',1,'DevFixture::battery'],['../structDevShot.html#a071b035c65394ce86dc044d4aa3517bf',1,'DevShot::battery'],['../structSystemSeed.html#a51e6c8c9c417fce174a71a3ba8d3994d',1,'SystemSeed::battery']]],
+  ['battery_2',['battery',['../structDevShot.html#a071b035c65394ce86dc044d4aa3517bf',1,'DevShot::battery'],['../structSystemSeed.html#a51e6c8c9c417fce174a71a3ba8d3994d',1,'SystemSeed::battery']]],
   ['battery_5fdisplay_5fboth_3',['BATTERY_DISPLAY_BOTH',['../group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2',1,'setting_values.h']]],
   ['battery_5fdisplay_5fcount_4',['BATTERY_DISPLAY_COUNT',['../group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0',1,'setting_values.h']]],
   ['battery_5fdisplay_5ficon_5',['BATTERY_DISPLAY_ICON',['../group__lib__settings.html#ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357',1,'setting_values.h']]],
@@ -22,7 +22,7 @@ var searchData=
   ['bits_19',['System Bits',['../group__lib__system.html',1,'']]],
   ['blob_20',['blob',['../structSettingsSchema.html#a438d6811d84f07c545ee4446c8fa9c5b',1,'SettingsSchema']]],
   ['blob_5fsize_21',['blob_size',['../structSettingsSchema.html#a596fbeb3c05f172304792c0479cea8cb',1,'SettingsSchema']]],
-  ['bluetooth_22',['bluetooth',['../structDevFixture.html#a216a230ebbc9cd6ed8b0685babd9301e',1,'DevFixture::bluetooth'],['../structDevShot.html#a36e1570c506bfeec9d9e8f527a4d1123',1,'DevShot::bluetooth'],['../structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee',1,'SystemSeed::bluetooth']]],
+  ['bluetooth_22',['bluetooth',['../structDevShot.html#a36e1570c506bfeec9d9e8f527a4d1123',1,'DevShot::bluetooth'],['../structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee',1,'SystemSeed::bluetooth']]],
   ['bluetooth_5fconnected_23',['bluetooth_connected',['../struct_0fstruct_0e_8s__state.html#a99366657db6debaa3b1e59f6d094ea37',1,'[struct].s_state']]],
   ['bmp_24',['bmp',['../structIconEntry.html#afe492534dca5b03d015294388fe33d3e',1,'IconEntry']]],
   ['bmt_5futc_5foffset_5fs_25',['BMT_UTC_OFFSET_S',['../beats_8h.html#a9351772e84923ba8b628942ab6b85161',1,'beats.h']]],

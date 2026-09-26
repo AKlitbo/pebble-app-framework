@@ -215,17 +215,16 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8">OUTBOX_NONE</a>
 , <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49">OUTBOX_WEATHER</a>
 , <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c">OUTBOX_SETTINGS</a>
-, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010">OUTBOX_FRESH</a>
 , <br />
-&#160;&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a>
+&#160;&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a>
 <br />
  }</td></tr>
 <tr class="memdesc:ga247b62ae1a0fa87cef6e3e8b7f738f17"><td class="mdescLeft">&#160;</td><td class="mdescRight">What an outbox job sends.  <a href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga2f6b6bbbefc2729e4f7e95a5f943bdec" id="r_ga2f6b6bbbefc2729e4f7e95a5f943bdec"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga2f6b6bbbefc2729e4f7e95a5f943bdec">outbox_is_request</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
-<tr class="memdesc:ga2f6b6bbbefc2729e4f7e95a5f943bdec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a kind is a request the watch makes, rather than a reply it sends back.  <br /></td></tr>
 <tr class="memitem:ga2c94fc09107a6527a82ec145fd784a9d" id="r_ga2c94fc09107a6527a82ec145fd784a9d"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d">outbox_busy</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
 <tr class="memdesc:ga2c94fc09107a6527a82ec145fd784a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether anything is in flight, which is what says the outbox is busy.  <br /></td></tr>
 <tr class="memitem:ga6f6fa750435ac4704bb55298be9b7e27" id="r_ga6f6fa750435ac4704bb55298be9b7e27"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
@@ -239,7 +238,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gabf4958a2b2c2b9310e9c3dde7d76e18d" id="r_gabf4958a2b2c2b9310e9c3dde7d76e18d"><td class="memItemLeft">static <a class="el" href="structOutboxJob.html">OutboxJob</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#gabf4958a2b2c2b9310e9c3dde7d76e18d">outbox_release</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
 <tr class="memdesc:gabf4958a2b2c2b9310e9c3dde7d76e18d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark whatever was in flight as settled, whichever way it went.  <br /></td></tr>
 <tr class="memitem:ga1a93146eec16ce495449829a38274d31" id="r_ga1a93146eec16ce495449829a38274d31"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga1a93146eec16ce495449829a38274d31">outbox_hold_failed</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="structOutboxJob.html">OutboxJob</a> job)</td></tr>
-<tr class="memdesc:ga1a93146eec16ce495449829a38274d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hold a nacked request for the next pass, if it still has retries and is a real request.  <br /></td></tr>
+<tr class="memdesc:ga1a93146eec16ce495449829a38274d31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hold a nacked job for the next pass, if it still has retries.  <br /></td></tr>
 <tr class="memitem:ga66fb285ede9868f85fbaa10fe36ebbba" id="r_ga66fb285ede9868f85fbaa10fe36ebbba"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga66fb285ede9868f85fbaa10fe36ebbba">outbox_retry_pass</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
 <tr class="memdesc:ga66fb285ede9868f85fbaa10fe36ebbba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the whole failed set back into the work queue for another pass.  <br /></td></tr>
 <tr class="memitem:ga7a65d4b95956b231936a0de61759fca9" id="r_ga7a65d4b95956b231936a0de61759fca9"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9">outbox_clear</a> (<a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
@@ -247,7 +246,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The outbox's work queue, its failed set, and the slot holding whatever is in flight. </p>
-<p>One AppMessage goes out at a time, so everything the watch wants to send queues here first. A request the phone nacks is held in the failed set and moved back for a later pass, because its pkjs was usually asleep and that first send is often what wakes it. Holding it means a whole poll is not lost to one asleep-phone nack.</p>
+<p>One AppMessage goes out at a time, so everything the watch wants to send queues here first. A job the phone nacks is held in the failed set and moved back for a later pass, because its pkjs was usually asleep or busy and that first send is often what wakes it. Holding it means a whole poll, or the one settings reply a launch gets, is not lost to one nack.</p>
 <p>None of that needs the SDK. The transport owns one of these, does the sending and the timers, and asks here what to send next, which keeps the deciding testable on the host. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

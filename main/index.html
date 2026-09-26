@@ -57,9 +57,9 @@
         </div>
         <div class="head-side">
           <div class="build">
-            <b>v2.2.0</b><br />
-            main @ b9d1321<br />
-            built 2026-09-23
+            <b>v3.0.0</b><br />
+            main @ db2e179<br />
+            built 2026-09-26
           </div>
         </div>
       </header>
@@ -94,7 +94,7 @@
             <div class="card-top"><span class="lang">C</span><span class="kind">gcovr</span></div>
             <h2>Host C Specs</h2>
             <p>Which lines of the framework's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
-            <div class="pixels" title="98.0% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><span class="visually-hidden">98.0% of lines</span></div>
+            <div class="pixels" title="98.4% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><span class="visually-hidden">98.4% of lines</span></div>
             <div class="card-foot"><span>make -C c/spec coverage</span><span class="go">coverage/c/ →</span></div>
           </a>
         </div>
@@ -103,7 +103,7 @@
             <div class="card-top"><span class="lang">TS</span><span class="kind">Vitest v8</span></div>
             <h2>TypeScript Specs</h2>
             <p>Which lines of the phone runtime and the build tools the Vitest suite reaches.</p>
-            <div class="pixels" title="82.4% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">82.4% of lines</span></div>
+            <div class="pixels" title="84.4% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">84.4% of lines</span></div>
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>
@@ -124,7 +124,7 @@
         <article class="readme"><h2 id="layout">Layout</h2>
 <p><strong>Framework Code</strong></p>
 <ul>
-<li><strong><code>c/</code></strong>: the device code. <code>c/core/</code> is pure and host-testable. <code>c/pebble/</code> needs the SDK. <code>c/spec/</code> holds the host test harness.</li>
+<li><strong><code>c/</code></strong>: the device code. <code>c/core/</code> is pure and host-testable. <code>c/pebble/</code> needs the SDK. <code>c/dev/</code> is the screenshot harness, which no release build links. <code>c/spec/</code> holds the host test harness.</li>
 <li><strong><code>ts/</code></strong>: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its <code>testing/</code> folder holds helpers the TypeScript specs share and never ships to a face.</li>
 <li><strong><code>py/</code></strong>: the waf helpers that stage and build a face.</li>
 <li><strong><code>css/</code></strong>: the Pebble-64 colour palette the frame backgrounds use.</li>
@@ -185,8 +185,13 @@ bash lib/build.sh &lt;face&gt;</code></pre>
 <td align="left"><code>tools/dev/clay-preview.ts</code></td>
 <td align="left">required</td>
 </tr>
+<tr>
+<td align="left"><code>typecheck</code></td>
+<td align="left"><code>tools/typecheck.ts</code></td>
+<td align="left">none</td>
+</tr>
 </tbody></table>
-<p>The folder can have any name, as long as it sits straight under the repo root and the repo&#39;s <code>package.json</code> lists it in <code>workspaces</code>. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework into <code>targets/&lt;target&gt;/</code> under that same name. Build output all lands in <code>targets/</code>, which the repo should ignore.</p>
+<p>The folder can have any name, as long as it sits straight under the repo root and the repo&#39;s <code>package.json</code> lists it in <code>workspaces</code>. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework&#39;s C into <code>targets/&lt;target&gt;/</code> under that same name. Build output all lands in <code>targets/</code>, which the repo should ignore.</p>
 <p>Each repo pins an exact framework commit, so a framework change reaches a face only when that repo moves its <code>lib</code> pointer.</p>
 <h2 id="versions">Versions</h2>
 <p>Framework releases are git tags such as <code>v1.0.0</code>. A repo using the framework moves its <code>lib</code> pointer to a tag:</p>
@@ -218,7 +223,7 @@ npm --prefix docs run ts       <span class="cmt"># the TypeScript docs</span>
 npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C c/spec coverage        <span class="cmt"># the C coverage report, which needs gcovr</span>
 npm --prefix docs run site     <span class="cmt"># the home page and the pages around it, last since it reads both coverage reports</span></code></pre>
-<p>The <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-app-framework/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
+<p>The <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/docs/README.md"><code>docs/</code> README</a> covers that folder&#39;s layout, its own scripts, and how the shared bar reaches every page. The site lands in <code>docs/site/dist/</code>, which git ignores. CI fails a build with any Doxygen or TypeDoc warning. Main and each pushed release tag publish the site to <a href="https://aklitbo.github.io/pebble-app-framework/">GitHub Pages</a>, each into a folder of its own, and the site opens on the latest release.</p>
 <h2 id="ci">CI</h2>
 <ul>
 <li><strong><code>framework-ci.yml</code></strong>: runs the host C suite, Vitest, lint and typecheck on every PR and push to main that changes more than markdown. Each failure shows on its line in the PR, and the totals go on the job summary.</li>

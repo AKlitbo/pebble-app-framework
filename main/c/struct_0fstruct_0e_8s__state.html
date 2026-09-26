@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_0fstruc
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">[struct].s_state Struct Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+  <div class="headertitle"><div class="title">[struct].s_state Struct Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a> &#124; <a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
@@ -222,60 +222,6 @@ uint16_t&#160;</td><td class="memItemRight"><b>step_hourly</b> [HOURS_PER_DAY]</
 <tr class="memitem:"><td class="memItemLeft"><a id="af5b1b14ffb090792e3552dd0b40f350b" name="af5b1b14ffb090792e3552dd0b40f350b"></a>
 int&#160;</td><td class="memItemRight"><b>step_hours</b></td></tr>
 <tr class="memdesc:af5b1b14ffb090792e3552dd0b40f350b"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of those hours are real (0 to 24). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a237a05ff153b38d7cb6339835b41ab76" name="a237a05ff153b38d7cb6339835b41ab76"></a>
-uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
-<tr class="memdesc:a237a05ff153b38d7cb6339835b41ab76"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_WEATHER, so a restore can tell this blob from another shape. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ab31b0951909f8022d16aebd3f0365b8f" name="ab31b0951909f8022d16aebd3f0365b8f"></a>
-int16_t&#160;</td><td class="memItemRight"><b>temp</b></td></tr>
-<tr class="memdesc:ab31b0951909f8022d16aebd3f0365b8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current temperature in the user's unit (WEATHER_NO_TEMP when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="aecc535d5b1a1d9b9f2302f72af9e5d43" name="aecc535d5b1a1d9b9f2302f72af9e5d43"></a>
-char&#160;</td><td class="memItemRight"><b>cond</b> [32]</td></tr>
-<tr class="memdesc:aecc535d5b1a1d9b9f2302f72af9e5d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Short word for the sky, such as "SUNNY". <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a657f671119802e671fe6c60f9a9aafad" name="a657f671119802e671fe6c60f9a9aafad"></a>
-int&#160;</td><td class="memItemRight"><b>humidity</b></td></tr>
-<tr class="memdesc:a657f671119802e671fe6c60f9a9aafad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Percent humidity, -1 when none. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a1061be4ea06b4a20974a70f0064ddd11" name="a1061be4ea06b4a20974a70f0064ddd11"></a>
-int&#160;</td><td class="memItemRight"><b>wind_kmh</b></td></tr>
-<tr class="memdesc:a1061be4ea06b4a20974a70f0064ddd11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wind speed in km/h, -1 when none. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="adc98b14ac4937434785a4e9517ece49e" name="adc98b14ac4937434785a4e9517ece49e"></a>
-char&#160;</td><td class="memItemRight"><b>wind_dir</b> [4]</td></tr>
-<tr class="memdesc:adc98b14ac4937434785a4e9517ece49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wind direction like "NW". <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a00fe86ac601abcee5c50ea45ac1df152" name="a00fe86ac601abcee5c50ea45ac1df152"></a>
-char&#160;</td><td class="memItemRight"><b>sunrise</b> [8]</td></tr>
-<tr class="memdesc:a00fe86ac601abcee5c50ea45ac1df152"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunrise time like "06:30". <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a66b813693c7577f236cb129a08151a5b" name="a66b813693c7577f236cb129a08151a5b"></a>
-char&#160;</td><td class="memItemRight"><b>sunset</b> [8]</td></tr>
-<tr class="memdesc:a66b813693c7577f236cb129a08151a5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunset time like "21:30". <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ac24d23c4f6dbab19a57a45e89ac813d7" name="ac24d23c4f6dbab19a57a45e89ac813d7"></a>
-int&#160;</td><td class="memItemRight"><b>uv</b></td></tr>
-<tr class="memdesc:ac24d23c4f6dbab19a57a45e89ac813d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">UV index (-1 when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a835e7afcfdf20d2b7124e78ab1ebef4f" name="a835e7afcfdf20d2b7124e78ab1ebef4f"></a>
-int&#160;</td><td class="memItemRight"><b>temp_max</b></td></tr>
-<tr class="memdesc:a835e7afcfdf20d2b7124e78ab1ebef4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high (WEATHER_NO_TEMP when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a8deb5599c32222e56c1a167e71112fba" name="a8deb5599c32222e56c1a167e71112fba"></a>
-int&#160;</td><td class="memItemRight"><b>temp_min</b></td></tr>
-<tr class="memdesc:a8deb5599c32222e56c1a167e71112fba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low (WEATHER_NO_TEMP when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a6f8f263f9567c81244f4f711c835ff1c" name="a6f8f263f9567c81244f4f711c835ff1c"></a>
-int&#160;</td><td class="memItemRight"><b>precip_chance</b></td></tr>
-<tr class="memdesc:a6f8f263f9567c81244f4f711c835ff1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Percent chance of precip (-1 when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a8fc2f9c91855b94aaee0e33a8afb8225" name="a8fc2f9c91855b94aaee0e33a8afb8225"></a>
-int&#160;</td><td class="memItemRight"><b>feels_like</b></td></tr>
-<tr class="memdesc:a8fc2f9c91855b94aaee0e33a8afb8225"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apparent temperature (WEATHER_NO_TEMP when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a92c92efd5d840d8128d5b4555aae3fb8" name="a92c92efd5d840d8128d5b4555aae3fb8"></a>
-int&#160;</td><td class="memItemRight"><b>pressure</b></td></tr>
-<tr class="memdesc:a92c92efd5d840d8128d5b4555aae3fb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Surface pressure in hPa (-1 when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a6947fe23a493df36de1f8094612d4c9b" name="a6947fe23a493df36de1f8094612d4c9b"></a>
-int&#160;</td><td class="memItemRight"><b>dew_point</b></td></tr>
-<tr class="memdesc:a6947fe23a493df36de1f8094612d4c9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dew point temperature (WEATHER_NO_TEMP when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="aa03a86332b85e7d7c3e17454552642e6" name="aa03a86332b85e7d7c3e17454552642e6"></a>
-<a class="el" href="structWeatherHourly.html">WeatherHourly</a>&#160;</td><td class="memItemRight"><b>hourly</b></td></tr>
-<tr class="memdesc:aa03a86332b85e7d7c3e17454552642e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip (<span class="tt">count</span> 0 when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ab9845291a3090935ed2e532d73887d10" name="ab9845291a3090935ed2e532d73887d10"></a>
-<a class="el" href="structWeatherDaily.html">WeatherDaily</a>&#160;</td><td class="memItemRight"><b>daily</b></td></tr>
-<tr class="memdesc:ab9845291a3090935ed2e532d73887d10"><td class="mdescLeft">&#160;</td><td class="mdescRight">The 7-day forecast strip (<span class="tt">count</span> 0 when none). <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a3b313ff9b49afb5828c3bf78702c8d29" name="a3b313ff9b49afb5828c3bf78702c8d29"></a>
-time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
-<tr class="memdesc:a3b313ff9b49afb5828c3bf78702c8d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the last reading landed, or 0 for never. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a9d9ce9226e75c270100d5ec903c2def2" name="a9d9ce9226e75c270100d5ec903c2def2"></a>
 uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memdesc:a9d9ce9226e75c270100d5ec903c2def2"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>

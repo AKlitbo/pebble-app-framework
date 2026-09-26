@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('stock__store_8
 <code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="store__poll_8h_source.html">io/stores/store_poll.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -220,11 +220,6 @@ static void&#160;</td><td class="memItemRight"><b>persist_save</b> (void)</td></
 <tr class="memdesc:a0dc7c52be58d63c4224ad00a7f2b5e5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefill the store from a seed, for dev builds and screenshots.  <br /></td></tr>
 <tr class="memitem:a611ee6200dc6d16566d4f9039f03ded9" id="r_a611ee6200dc6d16566d4f9039f03ded9"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a611ee6200dc6d16566d4f9039f03ded9">on_stock_strip</a> (const uint8_t *buf, uint16_t len)</td></tr>
 <tr class="memdesc:a611ee6200dc6d16566d4f9039f03ded9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stock channel. Takes the watchlist the reader unpacked and puts it away.  <br /></td></tr>
-<tr class="memitem:a72d3fbc6394dec90dd05ebee86d7dba4" id="r_a72d3fbc6394dec90dd05ebee86d7dba4"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a72d3fbc6394dec90dd05ebee86d7dba4">catch_up_fire</a> (void *data)</td></tr>
-<tr class="memdesc:a72d3fbc6394dec90dd05ebee86d7dba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The one-shot catch-up fetch, used at launch and when the panel turns up empty.  <br /></td></tr>
-<tr class="memitem:ae097f0c73987f4efa784f7ab6a0fa8ae" id="r_ae097f0c73987f4efa784f7ab6a0fa8ae"><td class="memItemLeft"><a id="ae097f0c73987f4efa784f7ab6a0fa8ae" name="ae097f0c73987f4efa784f7ab6a0fa8ae"></a>
-static void&#160;</td><td class="memItemRight"><b>stop_polling</b> (void)</td></tr>
-<tr class="memdesc:ae097f0c73987f4efa784f7ab6a0fa8ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cancel the catch-up fetch timer, if one is armed. <br /></td></tr>
 <tr class="memitem:ac219f20bf18466869ec6ecc7820e97a6" id="r_ac219f20bf18466869ec6ecc7820e97a6"><td class="memItemLeft"><a id="ac219f20bf18466869ec6ecc7820e97a6" name="ac219f20bf18466869ec6ecc7820e97a6"></a>
 static void&#160;</td><td class="memItemRight"><b>cadence_poll</b> (void)</td></tr>
 <tr class="memdesc:ac219f20bf18466869ec6ecc7820e97a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence: poll when the deadline has come round. <br /></td></tr>
@@ -252,21 +247,15 @@ Variables</h2></td></tr>
 <tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
 static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
 <tr class="memdesc:a0d75601f9ac1a6725c17065d338a664a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever the quotes change, so the face can redraw. <br /></td></tr>
-<tr class="memitem:aa2450b83d4ef266d458eca3c73715aa2" id="r_aa2450b83d4ef266d458eca3c73715aa2"><td class="memItemLeft"><a id="aa2450b83d4ef266d458eca3c73715aa2" name="aa2450b83d4ef266d458eca3c73715aa2"></a>
-static AppTimer *&#160;</td><td class="memItemRight"><b>s_timer</b></td></tr>
-<tr class="memdesc:aa2450b83d4ef266d458eca3c73715aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The catch-up fetch only. The recurring poll rides the cadence. <br /></td></tr>
-<tr class="memitem:ad180049e0de115c19b3a8d6027e6e160" id="r_ad180049e0de115c19b3a8d6027e6e160"><td class="memItemLeft"><a id="ad180049e0de115c19b3a8d6027e6e160" name="ad180049e0de115c19b3a8d6027e6e160"></a>
-static int&#160;</td><td class="memItemRight"><b>s_poll_min</b></td></tr>
-<tr class="memdesc:ad180049e0de115c19b3a8d6027e6e160"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes between recurring polls. 0 or less means no recurring poll. <br /></td></tr>
-<tr class="memitem:a599c81a3107fff4c866f7cc0dfb42e14" id="r_a599c81a3107fff4c866f7cc0dfb42e14"><td class="memItemLeft"><a id="a599c81a3107fff4c866f7cc0dfb42e14" name="a599c81a3107fff4c866f7cc0dfb42e14"></a>
-static time_t&#160;</td><td class="memItemRight"><b>s_next_poll</b></td></tr>
-<tr class="memdesc:a599c81a3107fff4c866f7cc0dfb42e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock second the next recurring poll is due. <br /></td></tr>
-<tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
-static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
-<tr class="memdesc:a86591675781beec649ac9e8db3485c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">True once the store is enabled on a live face. It gates the cadence turn. <br /></td></tr>
+<tr class="memitem:af962c600172c1bf7e33a007776cba2ab" id="r_af962c600172c1bf7e33a007776cba2ab"><td class="memItemLeft"><a id="af962c600172c1bf7e33a007776cba2ab" name="af962c600172c1bf7e33a007776cba2ab"></a>
+static <a class="el" href="structStoreFetch.html">StoreFetch</a>&#160;</td><td class="memItemRight"><b>s_fetch</b></td></tr>
+<tr class="memdesc:af962c600172c1bf7e33a007776cba2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The interval, the catch-up fetch, and when the next poll is due. <br /></td></tr>
 <tr class="memitem:afc1e32c72630b62007536cb95f77bb07" id="r_afc1e32c72630b62007536cb95f77bb07"><td class="memItemLeft"><a id="afc1e32c72630b62007536cb95f77bb07" name="afc1e32c72630b62007536cb95f77bb07"></a>
 static uint32_t&#160;</td><td class="memItemRight"><b>s_persist_key</b></td></tr>
 <tr class="memdesc:afc1e32c72630b62007536cb95f77bb07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist slot the face handed us for the saved strip. <br /></td></tr>
+<tr class="memitem:afd6bfed4583dc043e4cb212594733f97" id="r_afd6bfed4583dc043e4cb212594733f97"><td class="memItemLeft"><a id="afd6bfed4583dc043e4cb212594733f97" name="afd6bfed4583dc043e4cb212594733f97"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_saved_sum</b></td></tr>
+<tr class="memdesc:afd6bfed4583dc043e4cb212594733f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum of the reading last written, so a reply that changes nothing is not written again. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The active stock store: holds the quotes, owns the appmessage stock channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due. </p>
@@ -317,39 +306,6 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_persist_key</b></td></tr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">seed</td><td>The prefill to apply. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a72d3fbc6394dec90dd05ebee86d7dba4" name="a72d3fbc6394dec90dd05ebee86d7dba4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72d3fbc6394dec90dd05ebee86d7dba4">&#9670;&#160;</a></span>catch_up_fire()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void catch_up_fire </td>
-          <td>(</td>
-          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The one-shot catch-up fetch, used at launch and when the panel turns up empty. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">data</td><td>The timer context (unused). </td></tr>
   </table>
   </dd>
 </dl>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>default | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script src="../../theme.js"></script>
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>default | Pebble App Framework: Phone API</title><meta name="description" content="Documentation for Pebble App Framework: Phone API"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><script src="../../theme.js"></script>
 <script src="../../versions.js"></script>
 <link rel="stylesheet" href="../../site-bar.css">
 </head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><nav class="site-bar" aria-label="Docs site">
@@ -51,9 +51,11 @@
 <div class="tsd-signature tsd-anchor-link" id="default"><span class="tsd-kind-call-signature">default</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/pkjs_config-builder.ConfigBuilderOptions.html" class="tsd-signature-type tsd-kind-interface">ConfigBuilderOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><a href="#default" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Builds a Clay config array from a per-section description.</p>
+<p>It is the section builders above in their usual order, for a face that wants the whole page. A
+face that needs its own sections in between calls the builders it wants and lays them out itself.</p>
 <p>Top-level fields:
 heading, intro        page title and lead paragraph (both optional)</p>
-<p>Section objects (each section is customised through its own fields):
+<p>Section objects (each section is customized through its own fields):
 appearanceItems [ClayConfigItem]            extra controls inside the Appearance section
 clockItems      [ClayConfigItem]            extra controls inside the Clock section
 bluetooth { description? }                   always shown
@@ -62,7 +64,8 @@ steps    { label?, description?, capabilities? }</p>
 <p>Optional sections (present = included, omitted = excluded):
 theme       { label?, description?, options? }  the theme picker. options is the theme list,
 and a picker given none has nothing to offer
-location    { gpsDefault?, timeZone? }
+clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
+location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
 weather     {}                               marker, adds the provider picker to the Weather section
 temperature {}                               marker, adds the unit dropdown to the Weather section</p>
 </div>
@@ -75,7 +78,7 @@ temperature {}                               marker, adds the unit dropdown to t
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The assembled Clay config array, ready to hand to Clay.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/ts/pkjs/config-builder.ts#L104">pkjs/config-builder.ts:104</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/ts/pkjs/config-builder.ts#L442">pkjs/config-builder.ts:442</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -93,12 +96,12 @@ temperature {}                               marker, adds the unit dropdown to t
 <h3 class="tsd-anchor-link" id="beatsdateoptions"><span>beats<wbr/>Date<wbr/>Options</span><a href="#beatsdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">beatsDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/ts/pkjs/config-builder.ts#L404">pkjs/config-builder.ts:404</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/ts/pkjs/config-builder.ts#L477">pkjs/config-builder.ts:477</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="defaultdateoptions"><span>default<wbr/>Date<wbr/>Options</span><a href="#defaultdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">defaultDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/b9d132179e1314f8b1ec1cc8fdd7309d1d8240f2/ts/pkjs/config-builder.ts#L403">pkjs/config-builder.ts:403</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/db2e179fdff5f145a746f9a24f6973bea74ba01c/ts/pkjs/config-builder.ts#L476">pkjs/config-builder.ts:476</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

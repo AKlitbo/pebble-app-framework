@@ -1,25 +1,10 @@
 var searchData=
 [
-  ['raw_5fweek_0',['raw_week',['../date_8c.html#a2ec80a6baceb057022750ccc09a69ac5',1,'date.c']]],
-  ['read_5fhr_1',['read_hr',['../health__store_8c.html#aa5e9651b7557a0bdec77456faa7b73be',1,'health_store.c']]],
-  ['read_5fhr_5fhistory_2',['read_hr_history',['../health__store_8c.html#a0dafe322be8e710fd0229311173ff805',1,'health_store.c']]],
-  ['read_5fi16_5fle_3',['read_i16_le',['../group__lib__core.html#ga3fd54f4514af9738e081706d21fd44bc',1,'bytes_le.h']]],
-  ['read_5fi32_5fle_4',['read_i32_le',['../group__lib__core.html#ga7ac2e494355ca66ce8ec8bbd881e90e9',1,'bytes_le.h']]],
-  ['read_5fstep_5fhourly_5',['read_step_hourly',['../health__store_8c.html#ac5d29c457db49f5400731bc15fcb9c32',1,'health_store.c']]],
-  ['read_5fsum_5ftoday_6',['read_sum_today',['../health__store_8c.html#a78f21309c4be5fcdb65ba548b2024d0c',1,'health_store.c']]],
-  ['readout_5fdate_7',['readout_date',['../group__lib__ui.html#ga27e66e5fb5efa50e5cd3a641ca95f3e1',1,'readout_date(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#ga27e66e5fb5efa50e5cd3a641ca95f3e1',1,'readout_date(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5fdate_5fshows_5fbeats_8',['readout_date_shows_beats',['../group__lib__ui.html#gac815591cccd1783227eb1a656212c8c5',1,'readout_date_shows_beats(void):&#160;readouts.c'],['../group__lib__ui.html#gac815591cccd1783227eb1a656212c8c5',1,'readout_date_shows_beats(void):&#160;readouts.c']]],
-  ['readout_5fhr_9',['readout_hr',['../group__lib__ui.html#gab74d674a3402d0c3ccb145f54ee4d5dc',1,'readout_hr(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#gab74d674a3402d0c3ccb145f54ee4d5dc',1,'readout_hr(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5flat_10',['readout_lat',['../group__lib__ui.html#gaa2fe71cbe1755aae8977cad2d17e71ed',1,'readout_lat(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#gaa2fe71cbe1755aae8977cad2d17e71ed',1,'readout_lat(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5flon_11',['readout_lon',['../group__lib__ui.html#gacea2f8a4dcf1bff5344807e02a4842aa',1,'readout_lon(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#gacea2f8a4dcf1bff5344807e02a4842aa',1,'readout_lon(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5fmeridiem_12',['readout_meridiem',['../group__lib__ui.html#gad7314f0630f01d77249d12b3f5018d20',1,'readout_meridiem(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#gad7314f0630f01d77249d12b3f5018d20',1,'readout_meridiem(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5fsteps_13',['readout_steps',['../group__lib__ui.html#ga46b62b70722c1a8885049b5dd237aa7e',1,'readout_steps(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#ga46b62b70722c1a8885049b5dd237aa7e',1,'readout_steps(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5ftime_14',['readout_time',['../group__lib__ui.html#ga5f1ce126b5f8ddfb48e78d1077355883',1,'readout_time(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#ga5f1ce126b5f8ddfb48e78d1077355883',1,'readout_time(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5fweather_5fcond_15',['readout_weather_cond',['../group__lib__ui.html#ga5d4d51464278e6e297e35ecf92b88666',1,'readout_weather_cond(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#ga5d4d51464278e6e297e35ecf92b88666',1,'readout_weather_cond(char *out, size_t n):&#160;readouts.c']]],
-  ['readout_5fweather_5ftemp_16',['readout_weather_temp',['../group__lib__ui.html#gaee4e7d275341c91bdbae7a5adc7ddc09',1,'readout_weather_temp(char *out, size_t n):&#160;readouts.c'],['../group__lib__ui.html#gaee4e7d275341c91bdbae7a5adc7ddc09',1,'readout_weather_temp(char *out, size_t n):&#160;readouts.c']]],
-  ['refresh_5factivity_17',['refresh_activity',['../health__store_8c.html#a88920d8fd33075de6e56eb499c93bfd7',1,'health_store.c']]],
-  ['refresh_5fhr_18',['refresh_hr',['../health__store_8c.html#a621aad019cd81f1ec9165baaf42524c5',1,'health_store.c']]],
-  ['repaint_5fslot_19',['repaint_slot',['../engine_8c.html#aa951c14b92f78cf5e7dd25b4ebf47007',1,'engine.c']]],
-  ['reset_5fstate_20',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
-  ['retry_5fpass_21',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]]
+  ['pct_5fof_0',['pct_of',['../group__lib__core.html#ga0fa2f5ff0207c0179c689d0277bdfffd',1,'pct_of(int value, int goal):&#160;pct.c'],['../group__lib__core.html#ga0fa2f5ff0207c0179c689d0277bdfffd',1,'pct_of(int value, int goal):&#160;pct.c']]],
+  ['persist_5fflush_1',['persist_flush',['../weather__store_8c.html#a91a226520846cd505005169ca4f9d754',1,'weather_store.c']]],
+  ['persist_5fsave_2',['persist_save',['../calendar__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;calendar_store.c'],['../health__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;health_store.c'],['../location__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;location_store.c'],['../stock__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;stock_store.c']]],
+  ['phase_3',['phase',['../tide_8c.html#a08bf10e5ba17a2c669e2cc0a45d7bfaa',1,'tide.c']]],
+  ['plot_5fy_4',['plot_y',['../group__lib__core.html#gadc6c8c4764edd2d25babbc4689eaa73b',1,'plot_y(int y0, int height, int lo, int hi, int value):&#160;scale.c'],['../group__lib__core.html#gadc6c8c4764edd2d25babbc4689eaa73b',1,'plot_y(int y0, int height, int lo, int hi, int value):&#160;scale.c']]],
+  ['pump_5',['pump',['../appmessage_8c.html#a5f7778c42828f5ddb907706658b382e8',1,'appmessage.c']]],
+  ['px_5falpha_6',['px_alpha',['../icon__cache_8c.html#aa9b17bd6491a4fb807f99fb1b0a66a40',1,'icon_cache.c']]]
 ];
