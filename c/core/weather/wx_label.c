@@ -8,8 +8,8 @@
 
 #include <string.h>
 
-#define NIGHT_SUFFIX "_NIGHT"
-#define NIGHT_SUFFIX_LEN 6
+#define NIGHT_SUFFIX "_NIGHT" ///< What the phone adds to a token after dark
+#define NIGHT_SUFFIX_LEN 6    ///< The suffix's length, without its terminator
 
 void wx_label_short(char *out, size_t n, const char *condition)
 {

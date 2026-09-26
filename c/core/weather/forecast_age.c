@@ -6,7 +6,7 @@
  */
 #include "weather/forecast_age.h"
 
-#define SECONDS_PER_STRIP_HOUR 3600
+#define SECONDS_PER_STRIP_HOUR 3600 ///< Seconds in one hour of a forecast strip
 
 uint8_t forecast_hours_past(int32_t seconds_into_strip, uint8_t step_hours, uint8_t count)
 {

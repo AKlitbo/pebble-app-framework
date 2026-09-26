@@ -11,9 +11,9 @@
 #include "math/scale.h"
 #include "text/cstring_fit.h"
 
-#define SECONDS_PER_READING_HOUR 3600
-#define SECONDS_PER_READING_DAY  86400
-#define MINUTES_PER_READING_DAY  1440
+#define SECONDS_PER_READING_HOUR 3600  ///< Seconds in an hour, for placing a strip's first column
+#define SECONDS_PER_READING_DAY  86400 ///< Seconds in a day, for placing a strip's first day
+#define MINUTES_PER_READING_DAY  1440  ///< Minutes in a day, the range a sunrise or sunset is held to
 
 /** A number the message left out, as the store's own no-data value. */
 static int or_none(int value, int none)

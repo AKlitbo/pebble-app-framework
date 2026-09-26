@@ -18,7 +18,10 @@
 #include "system/settings/settings.h"
 #include "ui/engine/engine.h"
 
-/** @brief The readings no shot varies, and where the watch is. */
+/**
+ * @var s_fixed
+ * @brief The readings no shot varies, and where the watch is.
+ */
 static const struct
 {
     int calories;     ///< Calorie count
