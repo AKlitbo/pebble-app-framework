@@ -61,10 +61,12 @@ runs:
     # about 1.6 GB once installed, so a pinned SDK is fetched once rather than on every face build
     # uv runs pebble-tool on the system Python where it can, and on one it downloads where it cannot
     # a downloaded one comes back from the cache too, or the restored pebble would have nothing to run on
-    - name: Cache pebble-tool and the SDK
+    # the save is its own step straight after the install, since a cache saved at the end of the job is
+    # only kept when the whole job passes, and a face build that fails would download it every time
+    - name: Restore pebble-tool and the SDK
       id: cache
       if: inputs.sdk-version != 'latest'
-      uses: actions/cache@v6
+      uses: actions/cache/restore@v6
       with:
         path: |
           ~/.local/bin/pebble
@@ -83,6 +85,17 @@ runs:
         curl -LsSf https://astral.sh/uv/install.sh | sh
         uv tool install pebble-tool
         pebble sdk install "$SDK_VERSION"
+
+    - name: Save pebble-tool and the SDK
+      if: inputs.sdk-version != 'latest' && steps.cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: |
+          ~/.local/bin/pebble
+          ~/.local/share/uv/tools/pebble-tool
+          ~/.local/share/uv/python
+          ~/.local/share/pebble-sdk
+        key: pebble-sdk-${{ inputs.sdk-version }}-${{ runner.arch }}-${{ steps.runner.outputs.image }}-python${{ steps.runner.outputs.python }}
 
     - name: Verify Pebble
       uses: actions/github-script@v9

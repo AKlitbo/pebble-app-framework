@@ -5,15 +5,13 @@
  * Installed SDKs block, with the active one marked, then an Available SDKs block. Either command can also
  * print a coloured notice on stderr when a newer SDK or pebble-tool is out.
  */
+const { stripColour } = require('../../../shared/lib');
 
 // Pebble Tool v5.0.39 (active SDK: v4.17)
 // with no SDK installed the part in brackets is left off
 const VERSION = /Pebble Tool v(\S+)(?: \(active SDK: v?([^)]*)\))?/;
 // A new SDK is available: v4.33.1 (current: v4.17)
 const NOTICE = /A new (SDK|pebble-tool) is available: v?(\S+) \(current: v?([^)]+)\)/;
-// the colour codes pebble-tool wraps its notices in
-// eslint-disable-next-line no-control-regex
-const COLOUR = /\x1b\[[0-9;]*m/g;
 
 /**
  * Reads the tool version and the active SDK out of `pebble --version`.
@@ -23,7 +21,7 @@ const COLOUR = /\x1b\[[0-9;]*m/g;
  *   is an empty string when no SDK is active.
  */
 function readVersion(output) {
-  const match = VERSION.exec(String(output).replace(COLOUR, ''));
+  const match = VERSION.exec(stripColour(output));
   if (!match) {
     return null;
   }
@@ -40,7 +38,7 @@ function readSdkList(output) {
   const installed = [];
   let active = '';
   let inInstalled = false;
-  for (const raw of String(output).replace(COLOUR, '').split(/\r?\n/)) {
+  for (const raw of stripColour(output).split(/\r?\n/)) {
     const line = raw.trim();
     if (/^Installed SDKs:/.test(line)) {
       inInstalled = true;
@@ -64,8 +62,7 @@ function readSdkList(output) {
  * @return One entry per notice, naming what is out of date, the newest version, and the current one.
  */
 function readNotices(output) {
-  return String(output)
-    .replace(COLOUR, '')
+  return stripColour(output)
     .split(/\r?\n/)
     .map((line) => NOTICE.exec(line))
     .filter(Boolean)

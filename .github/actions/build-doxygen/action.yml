@@ -17,10 +17,12 @@ inputs:
 runs:
   using: composite
   steps:
-    # the release binary is kept between runs, so a build only downloads it once per version
-    - name: Cache Doxygen
+    # the release binary is kept between runs, so a build only downloads it once per version. the save is
+    # its own step straight after the install, since a cache saved at the end of the job is only kept when
+    # the whole job passes, and a docs build that fails its warnings check would download it every time
+    - name: Restore Doxygen
       id: cache
-      uses: actions/cache@v6
+      uses: actions/cache/restore@v6
       with:
         path: ${{ runner.temp }}/doxygen-${{ inputs.version }}
         key: doxygen-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
@@ -38,6 +40,13 @@ runs:
         mkdir -p "$DEST"
         curl -fsSL "https://github.com/doxygen/doxygen/releases/download/$tag/doxygen-$VERSION.linux.bin.tar.gz" \
           | tar xz -C "$DEST" --strip-components=1
+
+    - name: Save Doxygen
+      if: steps.cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: ${{ runner.temp }}/doxygen-${{ inputs.version }}
+        key: doxygen-${{ inputs.version }}-${{ runner.os }}-${{ runner.arch }}
 
     - name: Put Doxygen on the Path
       shell: bash
