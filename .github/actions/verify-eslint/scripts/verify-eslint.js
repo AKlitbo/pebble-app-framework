@@ -13,7 +13,7 @@ module.exports = step(async ({ core, exec }) => {
   const config = existingPath(process.env.ESLINT_CONFIG || 'config/eslint.config.ts', 'config');
 
   // silent, since the JSON would bury the log. each problem is written back out below as its own line
-  const run = await exec.getExecOutput('npx', ['eslint', '.', '--config', config, '--format', 'json'], {
+  const run = await exec.getExecOutput('npx', ['--no-install', 'eslint', '.', '--config', config, '--format', 'json'], {
     ignoreReturnCode: true,
     silent: true,
   });

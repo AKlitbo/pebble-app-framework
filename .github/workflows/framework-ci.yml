@@ -12,10 +12,11 @@ on:
     paths-ignore:
       - '**.md'
 
-# a newer push to the same branch or PR makes the run already going pointless
+# a PR's newer push makes its older run pointless. a push to main is left to finish, so a break shows on
+# the commit that made it rather than on the one after
 concurrency:
   group: framework-ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -46,19 +47,29 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          # the jobs install the docs packages too, so the cache follows both lockfiles
+          cache-dependency-path: |
+            package-lock.json
+            docs/package-lock.json
 
       - name: Install Dependencies
+        id: install
         run: npm ci
 
       # the checks over real faces skip here and run in the repos that mount the framework
       - name: Test
         uses: ./.github/actions/verify-vitest
 
-      # the docs site tools import packages only the docs install has, so their specs run on their own config
+      # the docs site tools import packages only the docs install has, so their specs run on their own config.
+      # they run whether or not the main suite passed, so one push shows every failure. a failed docs install
+      # or a failed root install stops them, since every spec would fail to load and bury the install's own error
       - name: Install the Docs Packages
+        id: docs-install
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm ci --prefix docs
 
       - name: Test the Docs Site Tools
+        if: ${{ !cancelled() && steps.docs-install.outcome == 'success' }}
         uses: ./.github/actions/verify-vitest
         with:
           config: docs/vitest.config.ts
@@ -76,8 +87,13 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          # the jobs install the docs packages too, so the cache follows both lockfiles
+          cache-dependency-path: |
+            package-lock.json
+            docs/package-lock.json
 
       - name: Install Dependencies
+        id: install
         run: npm ci
 
       - name: Lint
@@ -85,14 +101,21 @@ jobs:
 
       # Prettier keeps the docs site's templates, stylesheets, and theme script tidy
       # it sits in the docs package's own install, so a repo of faces never needs it
+      # each check runs whether or not the one before it passed, so one push shows every failure. a failed docs
+      # install or a failed root install stops them, since each would only fail on the missing packages and bury
+      # the install's own error
       - name: Install the Docs Packages
+        id: docs-install
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm ci --prefix docs
 
       - name: Check the Docs Site Formatting
+        if: ${{ !cancelled() && steps.docs-install.outcome == 'success' }}
         run: npm --prefix docs run format:check
 
       # the framework's own config leaves plain JavaScript out, so the site's browser script is linted here
       - name: Lint the Docs Site Script
+        if: ${{ !cancelled() && steps.docs-install.outcome == 'success' }}
         run: npm --prefix docs run lint
 
   typecheck:
@@ -108,17 +131,26 @@ jobs:
         with:
           node-version: '24'
           cache: 'npm'
+          # the jobs install the docs packages too, so the cache follows both lockfiles
+          cache-dependency-path: |
+            package-lock.json
+            docs/package-lock.json
 
       - name: Install Dependencies
+        id: install
         run: npm ci
 
-      # docs/tsconfig.json checks code that imports packages only the docs install has
+      # docs/tsconfig.json checks code that imports packages only the docs install has. the root projects
+      # are still checked when it fails, and only the docs project reports the missing packages
       - name: Install the Docs Packages
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm ci --prefix docs
 
-      # the same projects npm run typecheck and npm run typecheck:docs check, run one at a time so one
-      # failure cannot hide the rest
+      # the projects tools/typecheck.ts checks, which is what npm run typecheck runs, plus the docs project,
+      # which only this repo has. run one at a time so one failure cannot hide the rest. a spec beside
+      # typecheck.ts fails when this list and that one stop agreeing
       - name: Typecheck
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         uses: ./.github/actions/verify-typecheck
         with:
           projects: |

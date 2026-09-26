@@ -134,11 +134,19 @@ describe('verify-vitest', () => {
     expect(core.setFailed).toHaveBeenCalledWith('1 test(s) failed across 2 spec file(s), and Vitest exited 1.');
   });
 
-  /** An unhandled rejection makes Vitest exit 1 with every test in the report passing, and only the exit code says so. */
-  test('fails a run that exits with an error even when the report shows no failures', async () => {
+  /** An unhandled rejection makes Vitest exit 1 with every test in the report passing, and only its output says why. */
+  test('fails a run that exits with an error even when the report shows no failures, with the output on the summary', async () => {
     const { core } = await verify(vitestWrites(PASSING_REPORT, 1));
 
-    expect(core.setFailed).toHaveBeenCalledWith('0 test(s) failed across 0 spec file(s), and Vitest exited 1.');
+    expect(core.setFailed).toHaveBeenCalledWith('Vitest exited 1 with no failing test, such as from an unhandled error or a coverage threshold. The summary shows the end of its output.');
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('### Why Vitest Failed');
+  });
+
+  /** A job runs the framework suite and the docs suite, and two tables both headed Vitest could not be told apart. */
+  test('names the config in the summary heading', async () => {
+    const { core } = await verify(vitestWrites(PASSING_REPORT, 0));
+
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('## Vitest (config/vitest.config.ts)');
   });
 
   /** A broken config writes no report at all, and treating no failures as a pass would ship an untested change. */

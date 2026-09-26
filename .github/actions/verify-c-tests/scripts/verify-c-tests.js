@@ -4,6 +4,9 @@
  * A failing test becomes an error annotation on its line, and gcc's errors and warnings land on the lines
  * gcc names. A spec that stopped before printing its counter is named on its own, since a crash leaves no
  * line to point at. The totals go on the job summary whether the suite passed or not.
+ *
+ * A compiler warning fails the step as well, even when every test passes. The watch build treats every
+ * warning as an error, so a warning let through here breaks each face that moves up to the commit.
  */
 const { fail, step, repoPath, markdownTable, outputTail } = require('../../../shared/lib');
 const { readSuite } = require('./lib');
@@ -26,6 +29,11 @@ module.exports = step(async ({ core, exec }) => {
   }
 
   const problems = [];
+  // every spec builds with the whole core, so one warning in a core file is printed once per spec
+  // it is reported once, since GitHub keeps only ten annotations of each kind for a step and the
+  // repeats would push a real failure out
+  const reported = new Set();
+  let warnings = 0;
   let notBuilt = 0;
   let notFinished = 0;
 
@@ -39,6 +47,14 @@ module.exports = step(async ({ core, exec }) => {
 
     for (const note of spec.compiler) {
       const file = repoPath(note.file, SPEC_DIR);
+      const key = [file, note.line, note.column, note.severity, note.message].join('|');
+      if (reported.has(key)) {
+        continue;
+      }
+      reported.add(key);
+      if (note.severity === 'warning') {
+        warnings += 1;
+      }
       const annotate = note.severity === 'error' ? core.error : core.warning;
       const title = note.severity === 'error' ? 'Compiler Error' : 'Compiler Warning';
       annotate(note.message, { title, file, startLine: note.line, startColumn: note.column });
@@ -63,15 +79,17 @@ module.exports = step(async ({ core, exec }) => {
   const ran = specs.filter((spec) => spec.counts);
   const total = (field) => ran.reduce((sum, spec) => sum + spec.counts[field], 0);
   const tests = total('tests');
-  const failures = total('failures');
   const ignored = total('ignored');
+  // a spec that stops before its counter still printed the FAIL lines before it, and those count too
+  const unfinishedFailures = specs.filter((spec) => !spec.counts).reduce((sum, spec) => sum + spec.failures.length, 0);
+  const failures = total('failures') + unfinishedFailures;
 
   const summary = [
     '## Host C Tests',
     '',
     markdownTable(
       ['Specs', 'Tests', 'Passed', 'Failed', 'Ignored', 'Did Not Build', 'Did Not Finish'],
-      [[specs.length, tests, tests - failures - ignored, failures, ignored, notBuilt, notFinished]]
+      [[specs.length, tests, tests - total('failures') - ignored, failures, ignored, notBuilt, notFinished]]
     ),
   ];
   if (problems.length > 0) {
@@ -81,6 +99,9 @@ module.exports = step(async ({ core, exec }) => {
 
   if (failures > 0 || notBuilt > 0 || notFinished > 0) {
     fail(`${failures} test(s) failed, ${notBuilt} spec(s) did not build, and ${notFinished} spec(s) did not finish.`);
+  }
+  if (warnings > 0) {
+    fail(`Every test passed, but the compiler printed ${warnings} warning(s). The watch build treats a warning as an error.`);
   }
   if (result.exitCode !== 0) {
     fail(`make -C ${SPEC_DIR} exited ${result.exitCode} even though every spec passed. The log shows what stopped it.`);

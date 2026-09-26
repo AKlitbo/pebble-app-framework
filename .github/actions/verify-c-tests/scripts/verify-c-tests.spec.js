@@ -101,6 +101,35 @@ describe('verify-c-tests', () => {
     });
   });
 
+  /** A warning in a core file came once per spec, and GitHub's ten annotations a step ran out before the real failure. */
+  test('reports a warning every spec repeats only once', async () => {
+    const warning = "../core/text/fit.c:12:5: warning: unused variable 'y' [-Wunused-variable]";
+    const stdout = ['== ../core/math/pct.spec.c ==', warning, '1 Tests 0 Failures 0 Ignored', '== ../core/math/series.spec.c ==', warning, '1 Tests 0 Failures 0 Ignored'].join('\n');
+
+    const { core } = await verify({ exitCode: 0, stdout });
+
+    expect(core.warning).toHaveBeenCalledTimes(1);
+  });
+
+  /** gcc names itself rather than a file for a warning about its flags, and that warning passed the no-warnings rule. */
+  test('fails on a warning gcc prints about its own flags', async () => {
+    const stdout = ['== ../core/math/pct.spec.c ==', "cc1: warning: command-line option '-Wfoo' is valid for C++ but not for C", '1 Tests 0 Failures 0 Ignored'].join('\n');
+
+    const { core } = await verify({ exitCode: 0, stdout });
+
+    expect(core.warning).toHaveBeenCalledWith("command-line option '-Wfoo' is valid for C++ but not for C", expect.objectContaining({ file: 'c/spec/Makefile' }));
+    expect(core.setFailed).toHaveBeenCalledWith('Every test passed, but the compiler printed 1 warning(s). The watch build treats a warning as an error.');
+  });
+
+  /** The watch build treats a warning as an error, so a warning passed here broke every face that moved up to the commit. */
+  test('fails a suite that passes with a compiler warning', async () => {
+    const stdout = ['== ../core/math/pct.spec.c ==', '../core/math/pct.c:12:5: warning: comparison is always false [-Wtype-limits]', '1 Tests 0 Failures 0 Ignored'].join('\n');
+
+    const { core } = await verify({ exitCode: 0, stdout });
+
+    expect(core.setFailed).toHaveBeenCalledWith('Every test passed, but the compiler printed 1 warning(s). The watch build treats a warning as an error.');
+  });
+
   /** A crash leaves no FAIL line, so without naming the spec the step would fail with nothing to point at. */
   test('names a spec that crashed before it reported', async () => {
     const { core } = await verify({ exitCode: 2, stdout: BROKEN });
@@ -116,6 +145,20 @@ describe('verify-c-tests', () => {
     const { core } = await verify({ exitCode: 2, stdout: BROKEN });
 
     expect(core.setFailed).toHaveBeenCalledWith('1 test(s) failed, 1 spec(s) did not build, and 1 spec(s) did not finish.');
+  });
+
+  /** A spec that failed and then crashed was left out of the count, so the message said no test failed. */
+  test('counts the failures of a spec that crashed after them', async () => {
+    const crashed = [
+      '== ../core/text/text_case.spec.c ==',
+      '../core/text/text_case.spec.c:12:test_upper:FAIL: Expected 1 Was 0',
+      '../core/text/text_case.spec.c:20:test_lower:FAIL: Expected 1 Was 0',
+      'Segmentation fault (core dumped)',
+    ].join('\n');
+
+    const { core } = await verify({ exitCode: 2, stdout: crashed });
+
+    expect(core.setFailed).toHaveBeenCalledWith('2 test(s) failed, 0 spec(s) did not build, and 1 spec(s) did not finish.');
   });
 
   /** A Makefile that breaks before the first spec prints no header, and reading that as a pass would hide the whole suite. */

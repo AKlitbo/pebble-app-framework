@@ -4,7 +4,8 @@
  * Vitest prints its usual output to the log and writes a JSON report alongside, and the report is what
  * this reads, since it carries each failure's file and line without scraping the log. A run that never
  * wrote a report never got as far as the specs, such as a broken config, so its output goes on the summary
- * instead.
+ * instead. So does a run that failed with no failing test, such as an unhandled error or a coverage
+ * threshold, since the report has nothing to say about why.
  */
 const fs = require('node:fs');
 const os = require('node:os');
@@ -20,6 +21,7 @@ module.exports = step(async ({ core, exec }) => {
   fs.rmSync(results, { force: true });
 
   const args = [
+    '--no-install',
     'vitest',
     'run',
     '--config',
@@ -44,8 +46,9 @@ module.exports = step(async ({ core, exec }) => {
     return [failure.line ? `${file}:${failure.line}` : file, failure.name, failure.message];
   });
 
+  // a job can run more than one suite, so the heading names the config each table came from
   const summary = [
-    '## Vitest',
+    `## Vitest (${config})`,
     '',
     markdownTable(
       ['Spec Files', 'Failed Files', 'Tests', 'Passed', 'Failed', 'Skipped'],
@@ -55,8 +58,15 @@ module.exports = step(async ({ core, exec }) => {
   if (rows.length > 0) {
     summary.push('', '### Failures', '', markdownTable(['Where', 'Test', 'Message'], rows));
   }
+  const failedWithoutTests = run.exitCode !== 0 && failures.length === 0;
+  if (failedWithoutTests) {
+    summary.push('', '### Why Vitest Failed', '', outputTail([run.stdout, run.stderr].join('\n')));
+  }
   await core.summary.addRaw(summary.join('\n'), true).write();
 
+  if (failedWithoutTests) {
+    fail(`Vitest exited ${run.exitCode} with no failing test, such as from an unhandled error or a coverage threshold. The summary shows the end of its output.`);
+  }
   if (failures.length > 0 || run.exitCode !== 0) {
     fail(`${counts.failedTests} test(s) failed across ${counts.failedFiles} spec file(s), and Vitest exited ${run.exitCode}.`);
   }

@@ -15,9 +15,14 @@ CC      ?= cc
 # -Wno-unused-parameter keeps the SDK callback signatures (void *data and the like) quiet
 # -fwrapv makes a signed overflow wrap rather than be undefined, so -O2 cannot quietly hide an
 # overflow a spec is there to catch
-CFLAGS  ?= -std=c11 -Wall -Wextra -Wno-unused-parameter -fwrapv -O2
+# -Wno-stringop-truncation quiets gcc on cstring_fit, whose whole job is to cut a string to its buffer.
+# CI fails on any warning, and the Pebble toolchain's gcc has no such warning to match it
+CFLAGS  ?= -std=c11 -Wall -Wextra -Wno-unused-parameter -Wno-stringop-truncation -fwrapv -O2
 # host/ holds the stub pebble.h that lets the pure lib/c/pebble sources compile off the watch
 INCLUDES = -I../core -I../pebble -Ihost -Iunity
+# Unity flushes after each test, so a spec that crashes still shows the FAIL lines printed before it.
+# stdout to a pipe is buffered, and a crash loses whatever is still in the buffer
+DEFINES = -DUNITY_USE_FLUSH_STDOUT
 
 BUILD = build
 UNITY = unity/unity.c
@@ -50,7 +55,7 @@ test:
 	  case " $(CORE_SRC) " in *" $$sibling "*) sibling="";; esac; \
 	  [ -n "$$sibling" ] && [ -f "$$sibling" ] || sibling=""; \
 	  echo "== $$spec =="; \
-	  $(CC) $(CFLAGS) $(INCLUDES) $$spec $$sibling $(CORE_SRC) $(UNITY) -o $$bin || { fail=1; continue; }; \
+	  $(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) $$spec $$sibling $(CORE_SRC) $(UNITY) -o $$bin || { fail=1; continue; }; \
 	  $$bin || fail=1; \
 	done; \
 	exit $$fail

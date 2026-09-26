@@ -16,6 +16,12 @@ const RESULT = /^(.+?\.c):(\d+):(\w+):(FAIL|IGNORE)(?::\s*(.*))?$/;
 // ../core/units/wind.spec.c:100:29: error: expected expression before ';' token
 // ../core/math/pct.spec.c:3:10: fatal error: pct.h: No such file or directory
 const COMPILER = /^(.+?\.[ch]):(\d+):(\d+): (fatal error|error|warning): (.*)$/;
+// cc1: warning: command-line option '-Wfoo' is valid for C++ but not for C
+// gcc: error: missing.c: No such file or directory
+// gcc names itself rather than a file for a message about its flags or its inputs, and those land on the
+// Makefile, which holds both
+// collect2 is left to the linker pattern below, since its line closes a link failure in the spec itself
+const DRIVER = /^(cc1|cc1plus|gcc|cc|<command-line>): (fatal error|error|warning): (.*)$/;
 // a link failure names no line worth pointing at, so it is kept against the spec as a whole
 // /usr/bin/ld: /tmp/ccX.o: in function `test_x': pct.spec.c:(.text+0x1a): undefined reference to `pct_of'
 const LINKER = /undefined reference to|ld returned \d+ exit status/;
@@ -47,6 +53,7 @@ function readSuite(output) {
     const counter = COUNTER.exec(line);
     const result = RESULT.exec(line);
     const compiler = COMPILER.exec(line);
+    const driver = DRIVER.exec(line);
     if (counter) {
       spec.counts = { tests: Number(counter[1]), failures: Number(counter[2]), ignored: Number(counter[3]) };
     } else if (result) {
@@ -60,6 +67,8 @@ function readSuite(output) {
         severity: compiler[4] === 'warning' ? 'warning' : 'error',
         message: compiler[5],
       });
+    } else if (driver) {
+      spec.compiler.push({ file: 'Makefile', line: undefined, column: undefined, severity: driver[2] === 'warning' ? 'warning' : 'error', message: driver[3] });
     } else if (LINKER.test(line)) {
       spec.compiler.push({ file: spec.file, line: undefined, column: undefined, severity: 'error', message: line.trim() });
     } else if (CRASH.test(line)) {

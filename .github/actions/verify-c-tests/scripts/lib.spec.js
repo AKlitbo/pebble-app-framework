@@ -88,7 +88,10 @@ describe('readSuite', () => {
     const [pct] = readSuite(output);
 
     expect(pct.compiler).toHaveLength(2);
-    expect(pct.compiler[0]).toMatchObject({ file: '../core/math/pct.spec.c', line: undefined, severity: 'error' });
+    // the collect2 line that closes it belongs to the spec too, and landing it on the Makefile blamed the build setup
+    for (const note of pct.compiler) {
+      expect(note).toMatchObject({ file: '../core/math/pct.spec.c', line: undefined, severity: 'error' });
+    }
   });
 
   /** A crash prints neither a counter nor a FAIL line, so the shell's own line is the only clue to what happened. */

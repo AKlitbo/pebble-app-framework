@@ -59,7 +59,7 @@ describe('verify-eslint', () => {
   test('lints the repo with its config and asks for JSON', async () => {
     const { exec } = await verify({ exitCode: 0, stdout: '[]' });
 
-    expect(exec.getExecOutput).toHaveBeenCalledWith('npx', ['eslint', '.', '--config', 'config/eslint.config.ts', '--format', 'json'], {
+    expect(exec.getExecOutput).toHaveBeenCalledWith('npx', ['--no-install', 'eslint', '.', '--config', 'config/eslint.config.ts', '--format', 'json'], {
       ignoreReturnCode: true,
       silent: true,
     });

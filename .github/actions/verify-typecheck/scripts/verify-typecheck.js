@@ -1,11 +1,12 @@
 /**
  * Runs tsc over each project and reports every type error on its line.
  *
- * `npm run typecheck` chains the projects with &&, so the first one to fail hides every error in the ones
- * after it. This runs them one at a time and keeps going, so a single run shows everything. A project that
- * exits with an error but prints nothing tsc-shaped goes on the summary with its output.
+ * Each project runs on its own and the run keeps going past a failure, so a single run shows every error.
+ * Each error lands as an annotation on its line, with the totals for each project on the job summary. A
+ * project that exits with an error but prints nothing tsc-shaped goes on the summary with its output.
  */
-const { fail, step, repoPath, existingPath, firstLine, markdownTable, outputTail } = require('../../../shared/lib');
+const fs = require('node:fs');
+const { fail, step, repoPath, insideRepo, firstLine, markdownTable, outputTail } = require('../../../shared/lib');
 const { readTsc } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
@@ -13,7 +14,7 @@ module.exports = step(async ({ core, exec }) => {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((project) => existingPath(project, 'project'));
+    .map((project) => insideRepo(project, 'project'));
   if (projects.length === 0) {
     fail('No projects to check. Pass one tsconfig per line in projects.');
   }
@@ -23,8 +24,15 @@ module.exports = step(async ({ core, exec }) => {
   const unreadable = [];
 
   for (const project of projects) {
+    // a missing tsconfig is one failure among the rest, so the other projects still get checked
+    if (!fs.statSync(project, { throwIfNoEntry: false })) {
+      core.error(`project '${project}' does not exist.`, { title: 'Missing Project' });
+      problems.push([project, 'Missing Project', 'The tsconfig does not exist.']);
+      results.push({ project, exitCode: 1, errors: 1 });
+      continue;
+    }
     const run = await core.group(`tsc -p ${project}`, () =>
-      exec.getExecOutput('npx', ['tsc', '-p', project, '--pretty', 'false'], { ignoreReturnCode: true })
+      exec.getExecOutput('npx', ['--no-install', 'tsc', '-p', project, '--pretty', 'false'], { ignoreReturnCode: true })
     );
     const errors = readTsc([run.stdout, run.stderr].join('\n'));
 

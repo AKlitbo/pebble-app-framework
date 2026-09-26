@@ -20,7 +20,7 @@ const TOOLS_ERRORS = [
 
 async function verify(answers) {
   const core = fakeCore();
-  const exec = fakeExec(({ args }) => answers[args[2]] || {});
+  const exec = fakeExec(({ args }) => answers[args[3]] || {});
   await verifyTypecheck({ core, exec });
   return { core, exec };
 }
@@ -37,12 +37,24 @@ afterEach(() => {
 });
 
 describe('verify-typecheck', () => {
-  /** Stopping at the first failing project, the way npm run typecheck does, hides every error in the ones after it. */
+  /** Stopping at the first failing project hides every error in the ones after it. */
   test('runs every project even after one fails', async () => {
     const { exec } = await verify({ 'config/tsconfig.tools.json': { exitCode: 2, stdout: TOOLS_ERRORS } });
 
-    const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[2]);
+    const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[3]);
     expect(projects).toEqual(['tsconfig.json', 'config/tsconfig.tools.json', 'config/tsconfig.spec.json']);
+  });
+
+  /** One renamed tsconfig stopped the step before any project ran, so the others' type errors waited for another push. */
+  test('checks the other projects when one tsconfig is missing', async () => {
+    fs.statSync.mockImplementation((file) => (file === 'config/tsconfig.tools.json' ? undefined : { isFile: () => true }));
+
+    const { core, exec } = await verify({});
+
+    const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[3]);
+    expect(projects).toEqual(['tsconfig.json', 'config/tsconfig.spec.json']);
+    expect(core.error).toHaveBeenCalledWith("project 'config/tsconfig.tools.json' does not exist.", { title: 'Missing Project' });
+    expect(core.setFailed).toHaveBeenCalled();
   });
 
   /** A type error that loses its second line loses the part that says which property is missing. */
