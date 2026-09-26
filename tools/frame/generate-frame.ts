@@ -19,6 +19,7 @@
  */
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { firefox } from 'playwright';
 import sharp from 'sharp';
 import { faceDir } from '../faces.ts';
@@ -319,6 +320,47 @@ export function outFor(
   return path.join(imagesDir, name + tag + '.png');
 }
 
+/**
+ * The stylesheets a frame page links that the browser cannot load from disk.
+ *
+ * Firefox renders a page whose stylesheet is missing without a word, and hands the link an empty sheet
+ * rather than none, so the page itself cannot say. A frame whose colours sheet went missing would bake
+ * with every colour it declared left out. The links come from the page as the browser resolved them,
+ * so comments, quoting, and relative paths are read the way Firefox reads them. A file: link has to be
+ * a file that is there. A sheet from the web is not checked, since one that fails shows as the wrong
+ * font rather than a bare frame. Anything else, such as C:/x.css, which a URL reads as a scheme called
+ * c, is a sheet the browser never loads.
+ *
+ * @param urls Each stylesheet link's href, resolved by the page.
+ * @return The ones the browser cannot load.
+ */
+export function missingStylesheets(urls: string[]): string[] {
+  return urls.filter((url) => {
+    let parsed: URL;
+
+    try {
+      parsed = new URL(url);
+    } catch {
+      return true;
+    }
+
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return false;
+    }
+
+    if (parsed.protocol !== 'file:') {
+      return true;
+    }
+
+    // a path running through a file, such as frame.css/extra.css, throws ENOTDIR, and names a missing sheet
+    try {
+      return !fs.statSync(fileURLToPath(parsed), { throwIfNoEntry: false })?.isFile();
+    } catch {
+      return true;
+    }
+  });
+}
+
 /** Bakes one or more theme PNGs for a face, from the command-line arguments. */
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
@@ -365,6 +407,20 @@ async function main(): Promise<void> {
     viewport: { width: 1920, height: 1080 },
     deviceScaleFactor: opts.scale,
   });
+
+  // every page is checked before any bakes, so a missing sheet on one platform stops the run before
+  // another platform's frames are rewritten. a themed bake takes out the page's own theme_ links and
+  // adds the theme's sheet itself, so a missing one there is never loaded
+  const themed = themes[0] !== null;
+  for (const bake of bakes) {
+    await page.goto(pathToFileURL(bake.html).href, { waitUntil: 'networkidle' });
+    const links = await page.$$eval('link[rel~="stylesheet" i]', (found) => found.map((link) => (link as HTMLLinkElement).href));
+    const missing = missingStylesheets(links).filter((url) => !(themed && url.includes('theme_')));
+    if (missing.length) {
+      await browser.close();
+      throw new Error(`${path.relative(ROOT, bake.html)} links stylesheets the browser cannot load: ${missing.join(', ')}`);
+    }
+  }
 
   const clearSel = faceCfg.clearTextSelectors.join(', ');
   const hideSel = faceCfg.hideSelectors.join(', ');

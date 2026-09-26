@@ -5,8 +5,9 @@
  * resourceName/buildMedia/replaceMediaArray own the package.json sync: which
  * Pebble id a file maps to, how a manifest's icons fold into an existing media
  * array, and how that array is spliced back without disturbing the rest of the
- * file. Everything else in the pipeline is sharp/fs I/O, covered by eyeballing
- * the PNGs.
+ * file. iconSourcesDir decides where the SVGs are read from, and renderFace what
+ * happens to an icon whose source this machine does not have. Everything else in
+ * the pipeline is sharp I/O, covered by eyeballing the PNGs.
  *
  * The last group checks the media block a face has committed still matches its icons.json. The
  * rendered PNGs are not checked, since re-rasterizing them needs sharp and takes real time, but the
@@ -16,10 +17,12 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
 import { describe, test, expect } from 'vitest';
-import { whiten, resourceName, buildMedia, replaceMediaArray } from './generate-icons';
+import { whiten, resourceName, buildMedia, replaceMediaArray, iconSourcesDir, renderFace, holdsIconSets } from './generate-icons';
 import type { IconManifest } from './generate-icons';
 import { appinfoPath, listFaceNames, faceDir } from '../faces';
+import { tempDir } from '../../ts/testing/temp-dir';
 
 describe('whiten', () => {
   /** A black fill left untouched renders an invisible glyph on the watch's dark face. */
@@ -230,7 +233,6 @@ describe('replaceMediaArray', () => {
   });
 });
 
-
 /** Where a face declares the icons it wants. */
 function manifestPath(face: string): string {
   return path.join(faceDir(face), 'resources', 'icons.json');
@@ -268,5 +270,106 @@ describe.skipIf(ICON_FACES.length === 0)('generated media', () => {
 
       expect(result).toBe(raw);
     });
+  });
+});
+
+describe('iconSourcesDir', () => {
+  /** A repo that keeps its sources somewhere of its own must not be pointed at a copy fetched for it. */
+  test('takes the workspace setting over the environment', () => {
+    const result = iconSourcesDir(path.join('/work', 'mosaic'), { framework: { iconSources: '../../vendor' } }, '/cache/icons');
+
+    expect(result).toBe(path.resolve('/vendor'));
+  });
+
+  /** A tool that fetched the sources passes them this way, and a workspace with no setting has to take them. */
+  test('falls back to the environment', () => {
+    const result = iconSourcesDir(path.join('/work', 'mosaic'), {}, '/cache/icons');
+
+    expect(result).toBe(path.resolve('/cache/icons'));
+  });
+
+  /** A guessed folder that turns out empty fails on every icon, so with nothing named there is no folder. */
+  test('gives no folder when nothing names one', () => {
+    const result = iconSourcesDir(path.join('/work', 'mosaic'), {}, undefined);
+
+    expect(result).toBeNull();
+  });
+});
+
+/** A face folder holding a committed bt-on.png of the given square size. */
+async function faceWithPng(size: number): Promise<string> {
+  const face = tempDir('icons-face-');
+  const png = path.join(face, 'resources', 'icons', 'bt-on.png');
+  fs.mkdirSync(path.dirname(png), { recursive: true });
+  await sharp({ create: { width: size, height: size, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).png().toFile(png);
+  return face;
+}
+
+describe('holdsIconSets', () => {
+  /** A folder a level off holds none of the sets, and keeping every PNG passed a run that rendered nothing. */
+  test('finds no sets in a folder that holds none', () => {
+    const sources = tempDir('icons-src-');
+    fs.mkdirSync(path.join(sources, 'vendor'));
+
+    const result = holdsIconSets(sources);
+
+    expect(result).toBe(false);
+  });
+
+  /** A machine that fetched only some sets still renders from them, so one set is enough. */
+  test('finds a folder holding one of the sets', () => {
+    const sources = tempDir('icons-src-');
+    fs.mkdirSync(path.join(sources, 'uxwing'));
+
+    const result = holdsIconSets(sources);
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('renderFace', () => {
+  /**
+   * A face drawing only from a set this machine never fetched stopped the whole run, so the faces after it
+   * were never regenerated. It keeps its PNGs and the run carries on.
+   */
+  test('keeps every PNG of a face whose only set is missing', async () => {
+    const face = await faceWithPng(12);
+    const sources = tempDir('icons-src-');
+    fs.mkdirSync(path.join(sources, 'uxwing'));
+
+    const result = await renderFace(face, { 'bt-on': { svg: 'sr/bluetooth-on', size: [12, 12] } }, sources);
+
+    expect(result).toBe(0);
+  });
+
+  /** A face whose icons.json uses a set this machine never fetched still has its committed PNGs to build with. */
+  test('keeps the PNG it has when the source is missing', async () => {
+    const face = await faceWithPng(12);
+    const sources = tempDir('icons-src-');
+    fs.mkdirSync(path.join(sources, 'weather-icons', 'svg'), { recursive: true });
+    fs.writeFileSync(path.join(sources, 'weather-icons', 'svg', 'dot.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>');
+
+    const result = await renderFace(face, { 'bt-on': { svg: 'sr/bluetooth-on', size: [12, 12] }, dot: { svg: 'wi/dot', size: [8, 8] } }, sources);
+
+    expect(result).toBe(1);
+    expect((await sharp(path.join(face, 'resources', 'icons', 'bt-on.png')).metadata()).width).toBe(12);
+  });
+
+  /** A PNG made before icons.json changed its size would draw the old size in the new spot, with only a warning in the log. */
+  test('stops when the PNG it would keep is not the size icons.json asks for', async () => {
+    const face = await faceWithPng(12);
+
+    const result = renderFace(face, { 'bt-on': { svg: 'sr/bluetooth-on', size: [16, 16] } }, tempDir('icons-src-'));
+
+    await expect(result).rejects.toThrow(/its PNG is 12x12 where icons.json asks for 16x16/);
+  });
+
+  /** With no source and no PNG the build would fail on the resource later, so it stops here with the icon named. */
+  test('stops when the source is missing and there is no PNG to keep', async () => {
+    const face = tempDir('icons-face-');
+
+    const result = renderFace(face, { 'bt-on': { svg: 'sr/bluetooth-on', size: [12, 12] } }, tempDir('icons-src-'));
+
+    await expect(result).rejects.toThrow(/Missing source: .*bluetooth-on\.svg \(for bt-on\)/);
   });
 });

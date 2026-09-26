@@ -2,10 +2,13 @@
 /**
  * Rasterize the watchface's SVG glyphs into its Pebble PNG resources.
  *
- * Sources are vendored under vendor/:
- *   weather-icons, by Erik Flowers (key "wi")
+ * The SVG sources sit in a folder of their own, outside the framework, one set per subfolder:
+ *   weather-icons/svg, by Erik Flowers (key "wi")
  *   uxwing, heart, feet, thermometer, and friends (key "ux")
  *   svgrepo, bluetooth on and slash (key "sr")
+ *
+ * The folder is whatever the workspace's package.json names as framework.iconSources, relative to
+ * that package.json. Without one, ICON_SOURCES names it, which is how paf hands over its own copy.
  *
  * The face declares what it needs in resources/icons.json,
  * mapping an icon name to its vendored svg and final pixel size:
@@ -44,9 +47,8 @@ export type IconSpec = { svg: string; size: [number, number]; trim?: boolean };
 export type IconManifest = Record<string, IconSpec>;
 
 const ROOT = WORKSPACE;
-const VENDOR = path.resolve(ROOT, 'vendor');
 
-// manifest svg key -> the vendor subdir holding those svgs
+// manifest svg key -> the subfolder of the icon sources holding those svgs
 const VENDOR_DIRS: Record<string, string> = {
   wi: path.join('weather-icons', 'svg'),
   ux: 'uxwing',
@@ -150,8 +152,32 @@ async function render(
     .toFile(outputFile);
 }
 
-// "wi/wi-day-sunny" -> vendor/weather-icons/svg/wi-day-sunny.svg
-function svgPath(ref: string): string {
+/** The part of a workspace's package.json that says where the icon sources are. */
+export type IconSourcesPkg = { framework?: { iconSources?: string } };
+
+/**
+ * Where a workspace keeps its icon sources, or null when nothing says.
+ *
+ * The workspace's own setting wins, so a repo that keeps its sources somewhere of its own is never
+ * pointed elsewhere. The environment is the fallback, which is how a tool that fetched the sources
+ * for the workspace passes them in. Nothing is assumed past that, since a guessed folder that turns
+ * out empty fails on every icon rather than on the missing setting.
+ *
+ * @param root The workspace folder, which the setting is relative to.
+ * @param pkg The workspace's package.json.
+ * @param fromEnv The ICON_SOURCES environment variable.
+ * @return The folder's absolute path, or null.
+ */
+export function iconSourcesDir(root: string, pkg: IconSourcesPkg, fromEnv: string | undefined): string | null {
+  const setting = pkg.framework && pkg.framework.iconSources;
+  if (setting) {
+    return path.resolve(root, setting);
+  }
+  return fromEnv ? path.resolve(fromEnv) : null;
+}
+
+// "wi/wi-day-sunny" -> <icon sources>/weather-icons/svg/wi-day-sunny.svg
+function svgPath(sources: string, ref: string): string {
   const slash = ref.indexOf('/');
   const key = slash === -1 ? '' : ref.slice(0, slash);
   const dir = VENDOR_DIRS[key];
@@ -159,7 +185,7 @@ function svgPath(ref: string): string {
     throw new Error(`Unknown vendor key in svg ref "${ref}" (expected one of: ${Object.keys(VENDOR_DIRS).join(', ')})`);
   }
 
-  return path.join(VENDOR, dir, `${ref.slice(slash + 1)}.svg`);
+  return path.join(sources, dir, `${ref.slice(slash + 1)}.svg`);
 }
 
 /**
@@ -306,46 +332,78 @@ function syncMedia(pkgPath: string, manifest: IconManifest): void {
 // can ask for over a hundred, so one at a time leaves most of the machine idle
 const RENDER_CONCURRENCY = 8;
 
-// render every icon a manifest asks for into the face's resources/icons dir
-async function renderFace(dir: string, manifest: IconManifest): Promise<number> {
+/**
+ * Whether a folder holds at least one of the icon sets. One holding none is the wrong folder, such as a
+ * level too deep, rather than a machine that lacks a set, and every icon would keep its PNG and pass.
+ *
+ * @param sources The icon sources folder.
+ * @return Whether any set's folder is in it.
+ */
+export function holdsIconSets(sources: string): boolean {
+  return Object.values(VENDOR_DIRS).some((dir) => fs.existsSync(path.join(sources, dir)));
+}
+
+/**
+ * Renders every icon a manifest asks for into the face's resources/icons folder.
+ *
+ * An icon whose source is missing keeps the PNG already there, with a warning, so a face drawing
+ * from a set this machine does not have still regenerates the rest. Without a PNG to keep, or with one
+ * that is not the size icons.json asks for, it stops, since the build would fail on the missing
+ * resource or draw the old size. A mistyped source name on an icon that has a PNG only warns, and the
+ * old PNG ships. A sources folder that is missing, or holds none of the icon sets, still stops the run
+ * before this, which catches the common mistake, so the warning is worth keeping a partial set working.
+ *
+ * @param dir The face's folder.
+ * @param manifest The face's icons.json.
+ * @param sources The icon sources folder.
+ * @return How many icons it rendered.
+ */
+export async function renderFace(dir: string, manifest: IconManifest, sources: string): Promise<number> {
   const outDir = path.join(dir, 'resources', 'icons');
   await fs.promises.mkdir(outDir, { recursive: true });
 
   const entries = Object.entries(manifest);
   let next = 0;
+  let rendered = 0;
 
   // each worker takes the next icon off the shared list until none are left
   const worker = async (): Promise<void> => {
     while (next < entries.length) {
       const [name, spec] = entries[next++];
-      const src = svgPath(spec.svg);
-      try {
-        await fs.promises.access(src);
-      } catch {
-        throw new Error(`Missing source: ${src} (for ${name})`);
+      const src = svgPath(sources, spec.svg);
+      const out = path.join(outDir, `${name}.png`);
+      if (!fs.existsSync(src)) {
+        if (!fs.existsSync(out)) {
+          throw new Error(`Missing source: ${src} (for ${name})`);
+        }
+        // every render comes out at exactly the size asked for, so a PNG of another size was made
+        // before icons.json changed, and keeping it would draw the old size in the new spot
+        const kept = await sharp(out).metadata();
+        if (kept.width !== spec.size[0] || kept.height !== spec.size[1]) {
+          throw new Error(`Missing source: ${src} (for ${name}), and its PNG is ${kept.width}x${kept.height} where icons.json asks for ${spec.size[0]}x${spec.size[1]}`);
+        }
+        console.warn(`warning: ${src} is missing, so ${name} keeps the PNG it has`);
+        continue;
       }
 
       const svg = await fs.promises.readFile(src, 'utf8');
-      await render(whiten(svg), spec.size, path.join(outDir, `${name}.png`), { trim: Boolean(spec.trim) });
+      await render(whiten(svg), spec.size, out, { trim: Boolean(spec.trim) });
+      rendered++;
     }
   };
 
   await Promise.all(Array.from({ length: Math.min(RENDER_CONCURRENCY, entries.length) }, worker));
 
-  return entries.length;
+  return rendered;
 }
 
 /** Renders every icon a face's manifest asks for, then syncs its media list from the same manifest. */
-async function iconsFor(face: string): Promise<void> {
+async function iconsFor(face: string, sources: string): Promise<void> {
   const dir = faceDir(face);
   // resources (icons.json + rendered PNGs) and the appinfo live under the face dir
   const manifestPath = path.join(dir, 'resources', 'icons.json');
-  if (!fs.existsSync(manifestPath)) {
-    throw new Error(`No resources/icons.json under ${dir}`);
-  }
-
   const manifest: IconManifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
-  const rendered = await renderFace(dir, manifest);
+  const rendered = await renderFace(dir, manifest, sources);
   // the media list is synced into the face's appinfo. its package.json is regenerated from
   // it at build time (or with npm run build:manifests -- <face>)
   syncMedia(appinfoPath(face), manifest);
@@ -357,8 +415,33 @@ async function iconsFor(face: string): Promise<void> {
 async function main(): Promise<void> {
   const face = process.argv[2];
   const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(path.join(faceDir(name), 'resources', 'icons.json')));
+  if (faces.length === 0) {
+    return;
+  }
+  // a named face with no icons says so, before the sources folder it would never read is asked for.
+  // with no face named, the list above already holds only faces with icons
+  if (face && !fs.existsSync(path.join(faceDir(face), 'resources', 'icons.json'))) {
+    throw new Error(`No resources/icons.json under ${faceDir(face)}`);
+  }
+
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  const sources = iconSourcesDir(ROOT, pkg, process.env.ICON_SOURCES);
+  if (!sources) {
+    throw new Error(`No icon sources folder. Name it as "framework": { "iconSources": "<folder>" } in ${path.join(ROOT, 'package.json')}`);
+  }
+  // a folder that is not there would leave every icon on its committed PNG with a warning each and pass,
+  // which reads as a run that worked
+  if (!fs.existsSync(sources) || !fs.statSync(sources).isDirectory()) {
+    const from = pkg.framework && pkg.framework.iconSources ? `"framework.iconSources" in ${path.join(ROOT, 'package.json')}` : 'ICON_SOURCES';
+    throw new Error(`The icon sources folder ${sources} is not there. It comes from ${from}.`);
+  }
+  if (!holdsIconSets(sources)) {
+    const sets = Object.values(VENDOR_DIRS).map((dir) => dir.split(path.sep).join('/')).join(', ');
+    throw new Error(`The icon sources folder ${sources} holds none of the icon sets (${sets}). Check that it is the folder holding them.`);
+  }
+
   for (const name of faces) {
-    await iconsFor(name);
+    await iconsFor(name, sources);
   }
 }
 

@@ -7,15 +7,18 @@
  * the wrong theme's or the wrong platform's background. capColors folds a bake down to the colour cap after the
  * resize. A bitmap over 16 colours packs at eight bits per pixel instead of four, which doubles
  * the heap the watch needs to hold the frame and can keep a full-screen frame from loading at all,
- * so which pixels get folded and which are left alone is worth pinning. The render pipeline itself
- * drives Firefox and sharp and is left to integration use, npm run gen:frame.
+ * so which pixels get folded and which are left alone is worth pinning. missingStylesheets stops a
+ * bake whose colours sheet is gone, which Firefox renders without complaint. The render pipeline
+ * itself drives Firefox and sharp and is left to integration use, npm run gen:frame.
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { capColors, facePlatforms, outFor, parseArgs } from './generate-frame';
+import { capColors, facePlatforms, missingStylesheets, outFor, parseArgs } from './generate-frame';
 import type { FaceConfig } from './generate-frame';
 import { WORKSPACE } from '../paths';
+import { tempDir } from '../../ts/testing/temp-dir';
 
 /** Flatten [r, g, b, a] pixels into the raw buffer sharp hands over. */
 function raw(pixels: number[][]): Uint8Array {
@@ -243,5 +246,47 @@ describe('capColors', () => {
     const result = capColors(buffer, 1);
 
     expect(Array.from(result)).toEqual([250, 250, 250, 255, 255, 255, 255, 255]);
+  });
+});
+
+describe('missingStylesheets', () => {
+  /**
+   * A frame that links the framework's colours by a path that no longer lands on them bakes with
+   * every colour variable unresolved, and Firefox says nothing about it.
+   */
+  test('names a file: sheet that is not there', () => {
+    const dir = tempDir('frame-');
+    fs.writeFileSync(path.join(dir, 'frame.css'), '');
+    const here = pathToFileURL(path.join(dir, 'frame.css')).href;
+    const gone = pathToFileURL(path.join(dir, 'lib', 'css', 'pebble-colors.css')).href;
+
+    const result = missingStylesheets([here, gone]);
+
+    expect(result).toEqual([gone]);
+  });
+
+  /** A web font sheet cannot be checked from disk, and one that fails shows as the wrong font rather than a bare frame. */
+  test('leaves sheets from the web alone', () => {
+    const result = missingStylesheets(['https://fonts.googleapis.com/css2?family=Share+Tech+Mono']);
+
+    expect(result).toEqual([]);
+  });
+
+  /** The page resolves C:/x.css to a scheme called c, so Firefox never loads it, and the frame baked bare. */
+  test('names a sheet the browser reads as another scheme', () => {
+    const result = missingStylesheets(['c:/frames/colours.css']);
+
+    expect(result).toEqual(['c:/frames/colours.css']);
+  });
+
+  /** A path running through a file threw ENOTDIR, so the run stopped on a raw error rather than naming the sheet. */
+  test('names a sheet whose path runs through a file', () => {
+    const dir = tempDir('frame-');
+    fs.writeFileSync(path.join(dir, 'frame.css'), '');
+    const through = pathToFileURL(path.join(dir, 'frame.css', 'extra.css')).href;
+
+    const result = missingStylesheets([through]);
+
+    expect(result).toEqual([through]);
   });
 });
