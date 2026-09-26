@@ -6,8 +6,6 @@
  * the notes are that entry as written. There is no second copy to keep in step.
  */
 
-const { isVersionTag, compareVersionTags } = require('../../../shared/lib');
-
 // a Keep a Changelog heading, such as "## [1.11.0] - 2026-09-07" or "## [Unreleased]"
 const HEADING = /^## \[([^\]]+)\](?: - (.*))?$/;
 
@@ -76,19 +74,4 @@ function isDated(date) {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
 }
 
-/**
- * Picks the framework version a commit is on, from every tag it carries.
- *
- * A commit can carry more than one, such as a release candidate's tag and the final release's, and git
- * describe names only one of them. The highest version wins, and a release beats its own candidates. A tag
- * that is not a version, such as wip, is no framework version at all.
- *
- * @param tags Every tag on the commit.
- * @return The highest version tag, or null when none of them is one.
- */
-function pickFrameworkTag(tags) {
-  const versions = tags.filter(isVersionTag).sort(compareVersionTags);
-  return versions.length ? versions[versions.length - 1] : null;
-}
-
-module.exports = { splitTag, readChangelogEntry, isDated, pickFrameworkTag };
+module.exports = { splitTag, readChangelogEntry, isDated };

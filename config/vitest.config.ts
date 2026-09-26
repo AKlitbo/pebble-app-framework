@@ -53,11 +53,11 @@ export default defineConfig({
       reporter: ['text', 'html', 'json-summary'],
       reportsDirectory: 'coverage',
       // every tree that has specs so the number covers the whole suite, whether the run starts
-      // in the framework or in a repo mounting it
+      // in the framework, in a face, or in a family with its faces one folder down
       include: [
         `${ENGINE_PREFIX}ts/**`, `${ENGINE_PREFIX}tools/**`,
         'src/pkjs/**', 'src/tools/**',
-        'watchfaces/**/src/pkjs/**', 'watchfaces/**/src/tools/**',
+        '*/src/pkjs/**', '*/src/tools/**',
       ],
       exclude: [
         '**/*.spec.ts',

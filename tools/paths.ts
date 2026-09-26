@@ -1,9 +1,9 @@
 /**
  * Where the framework sits, and where the repo mounting it sits.
  *
- * A repo of faces mounts the framework as a submodule one folder down, most often at lib/, so its
- * faces, build sandboxes, vendor/ and node_modules/ live one level above the framework. The folder can
- * have any name. Checked out on its own, the framework is its own workspace and holds no faces.
+ * A face or a family mounts the framework one folder down, most often at lib/, so its faces, build
+ * sandboxes, and node_modules/ live one level above the framework. The folder can have any name. Checked
+ * out on its own, the framework is its own workspace and holds no faces.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -12,7 +12,10 @@ import { createRequire } from 'node:module';
 /** Where a face keeps its appinfo, relative to the face's own folder. */
 export const APPINFO_REL = path.join('config', 'pebble.appinfo.json');
 
-/** Whether a folder's package.json lists a workspace by name, in the plain list form or under packages. */
+/**
+ * Whether a folder's package.json lists a workspace by name, as `name`, `./name`, or `name/`, in the plain
+ * list form or under packages.
+ */
 function listsWorkspace(dir: string, name: string): boolean {
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
@@ -25,20 +28,33 @@ function listsWorkspace(dir: string, name: string): boolean {
 }
 
 /**
+ * Whether a folder is a family: a core/ beside at least one face.
+ *
+ * @param dir The folder to look in.
+ * @return True when the folder holds a core/ and a face beside it.
+ */
+export function isFamilyRoot(dir: string): boolean {
+  if (!fs.existsSync(path.join(dir, 'core'))) {
+    return false;
+  }
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .some((entry) => entry.isDirectory() && fs.existsSync(path.join(dir, entry.name, APPINFO_REL)));
+}
+
+/**
  * The workspace a framework folder belongs to: the repo of faces above it, or the framework itself.
  *
- * The folder above counts as a repo of faces when its package.json lists the framework's folder in
- * workspaces and it holds faces, in a watchfaces/ folder or at its own root. The name the framework's
- * folder was given plays no part. The workspaces listing is what stops a framework cloned on its own
- * from mistaking whatever folder it sits in for a repo of faces.
+ * The folder above counts when its package.json lists the framework's folder in workspaces and it is
+ * a face, or a family with its faces beside a core/. The name the framework's folder was given plays no
+ * part. The workspaces listing is what stops a framework cloned on its own from mistaking whatever
+ * folder it sits in for a repo of faces.
  *
  * @param engine The framework's folder.
  * @return The repo of faces mounting it, or the framework's own folder when nothing mounts it.
  */
 export function workspaceFor(engine: string): string {
   const parent = path.dirname(engine);
-  const holdsFaces = fs.existsSync(path.join(parent, 'watchfaces'))
-    || fs.existsSync(path.join(parent, APPINFO_REL));
+  const holdsFaces = fs.existsSync(path.join(parent, APPINFO_REL)) || isFamilyRoot(parent);
   return holdsFaces && listsWorkspace(parent, path.basename(engine)) ? parent : engine;
 }
 

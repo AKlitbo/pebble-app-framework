@@ -1,8 +1,8 @@
-// typechecks the Clay builder sources: a face's own under src/pkjs/clay/builder/, a family core's
-// under core/pkjs/clay/builder/, and the shared ones under lib/ts/clay/builder/
+// typechecks the Clay builder sources: a face's own under src/pkjs/clay/builder/ and the shared ones
+// under lib/ts/clay/builder/. a family's are named one by one in tools/typecheck.ts
 // run by npm run typecheck. gen:<face>:clay is what actually bundles those pieces
 {
   "extends": "../tsconfig.json",
-  "include": ["../../src/pkjs/clay/builder/**/*.ts", "../../watchfaces/**/pkjs/clay/builder/**/*.ts", "../ts/clay/builder/**/*.ts"],
+  "include": ["../../src/pkjs/clay/builder/**/*.ts", "../ts/clay/builder/**/*.ts"],
   "exclude": ["../../node_modules", "../../**/*.spec.ts", "../../**/*.manifest.ts"]
 }

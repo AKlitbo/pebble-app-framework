@@ -1,0 +1,7 @@
+{
+  "name": "family-root",
+  "private": true,
+  "workspaces": [
+    "lib"
+  ]
+}

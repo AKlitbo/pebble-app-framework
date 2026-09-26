@@ -17,7 +17,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { appinfoPath, faceRelative, familyCoreFor, listFaceNames } from '../faces.ts';
+import { appinfoPath, faceRelative, familyCoreFor, familyNameFor, listFaceNames } from '../faces.ts';
 import { writeIfChanged } from '../files.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
 
@@ -154,12 +154,24 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
   };
 }
 
-/** Where one sandbox's sources sit, each folder relative to the repo root with forward slashes. */
+/**
+ * Where one sandbox's sources sit, each folder relative to the repo root with forward slashes, plus the
+ * family's name and what the target installs as.
+ */
 export interface SandboxDirs {
   engine: string;     // the framework, such as lib
-  face: string;       // the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
-  familyCore: string; // the face's family core, such as watchfaces/mosaic/core, or empty for none
+  face: string;       // the face, such as gridlock in a family, or . for a face on its own
+  familyCore: string; // the face's family core, which is core in a family, or empty for none
+  family: string;     // the family's name, such as mosaic, or empty for none
   watchface: boolean; // true for a face target, false for an app one, which builds with -DBUILD_WATCHAPP
+}
+
+/**
+ * A value as it goes inside the template's single-quoted Python strings. A backslash or a quote in a
+ * folder name, as in Andrew's Faces, would otherwise end the string and break the wscript.
+ */
+function pythonQuoted(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 }
 
 /**
@@ -176,9 +188,10 @@ export interface SandboxDirs {
  */
 export function fillWscript(template: string, dirs: SandboxDirs): string {
   return template
-    .split('{{ENGINE_DIR}}').join(dirs.engine)
-    .split('{{FACE_DIR}}').join(dirs.face)
-    .split('{{FAMILY_CORE_DIR}}').join(dirs.familyCore)
+    .split('{{ENGINE_DIR}}').join(pythonQuoted(dirs.engine))
+    .split('{{FACE_DIR}}').join(pythonQuoted(dirs.face))
+    .split('{{FAMILY_CORE_DIR}}').join(pythonQuoted(dirs.familyCore))
+    .split('{{FAMILY}}').join(pythonQuoted(dirs.family))
     .split('{{WATCHFACE}}').join(dirs.watchface ? 'True' : 'False');
 }
 
@@ -217,6 +230,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
     engine: ENGINE_REL,
     face: rel,
     familyCore: core ? path.relative(ROOT, core).split(path.sep).join('/') : '',
+    family: familyNameFor(ROOT, rel) || '',
     watchface: target.watchface,
   };
   writeIfChanged(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));

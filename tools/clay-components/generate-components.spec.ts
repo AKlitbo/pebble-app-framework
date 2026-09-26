@@ -99,10 +99,10 @@ describe('inPrecedence', () => {
   // from disk, so the folders never have to exist
   const base = path.resolve('/repo');
   const ROOTS = {
-    face: { base: path.join(base, 'watchfaces', 'mosaic', 'gridlock', 'src'), builder: path.join('pkjs', 'clay', 'builder') },
-    core: { base: path.join(base, 'watchfaces', 'mosaic', 'core'), builder: path.join('pkjs', 'clay', 'builder') },
+    face: { base: path.join(base, 'gridlock', 'src'), builder: path.join('pkjs', 'clay', 'builder') },
+    core: { base: path.join(base, 'core'), builder: path.join('pkjs', 'clay', 'builder') },
     lib: { base: path.join(base, 'lib', 'ts'), builder: path.join('clay', 'builder') },
-    faceRoot: path.join(base, 'watchfaces', 'mosaic', 'gridlock'),
+    faceRoot: path.join(base, 'gridlock'),
   };
 
   /**
@@ -110,12 +110,12 @@ describe('inPrecedence', () => {
    * the importer's own folder first would hand it core's copy, and the face's override would never ship.
    */
   test('tries a core import under the face first', () => {
-    const wanted = path.join(base, 'watchfaces', 'mosaic', 'core', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets');
+    const wanted = path.join(base, 'core', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets');
 
     const result = inPrecedence(ROOTS, wanted);
 
     expect(result).toEqual([
-      path.join(base, 'watchfaces', 'mosaic', 'gridlock', 'src', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets'),
+      path.join(base, 'gridlock', 'src', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets'),
       wanted,
       path.join(base, 'lib', 'ts', 'clay', 'builder', 'ts', 'layout', 'presets'),
     ]);

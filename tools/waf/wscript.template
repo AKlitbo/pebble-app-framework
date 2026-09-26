@@ -2,13 +2,13 @@
 # GENERATED from tools/waf/wscript.template by tools/manifest/build-manifests.ts.
 # Do not edit targets/<target>/wscript. Edit the template instead.
 #
-# Waf build rules for one build target. build-manifests.ts fills in the three
+# Waf build rules for one build target. build-manifests.ts fills in the
 # folders below when it writes this sandbox (targets/<target>/), so the build
 # never has to work out where the framework or the face sits.
 #
 # Stage the face's sources, its family core and the framework's C into this
 # folder, then hand the build (sources, per-platform compile, bundle, .pbw
-# archive) to the framework's py/waf_helpers.py. Only those three folders differ between
+# archive) to the framework's py/waf_helpers.py. Only those folders differ between
 # targets, which is why this is generated rather than committed per face.
 # ==============================================================================
 import os.path
@@ -20,6 +20,7 @@ SOURCE = {
     'engine': '{{ENGINE_DIR}}',
     'face': '{{FACE_DIR}}',
     'family_core': '{{FAMILY_CORE_DIR}}',
+    'family': '{{FAMILY}}',
 }
 
 # what this target installs as. an app target compiles with -DBUILD_WATCHAPP, which is how a face

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Build watchface(s) (.pbw) from source. A face sits at the repo root in a repo of one, or under
-# watchfaces/, at the top level or one deeper inside a family folder. Run from WSL.
+# Build watchface(s) (.pbw) from source. The folder mounting the framework is one face, or a family
+# with its faces beside its core/. Run from WSL.
 # Regenerates the manifest from the face's config/pebble.appinfo.json and compiles
 # the TypeScript pkjs into targets/<target>/emit/, then runs pebble build in that sandbox.
 #   <framework>/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
@@ -60,7 +60,7 @@ build_face() {
 # lookup that died would read as a repo with nothing to build
 names=$("${node_ts[@]}" "$engine/tools/manifest/build-manifests.ts" --faces)
 if [[ -z "$names" ]]; then
-  echo "no faces found. A face is a folder holding config/pebble.appinfo.json, at the repo root or under watchfaces/" >&2
+  echo "no faces found. A face is a folder holding config/pebble.appinfo.json, at the repo root or beside the core/ of a family there" >&2
   exit 1
 fi
 

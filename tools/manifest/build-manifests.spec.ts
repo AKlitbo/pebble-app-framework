@@ -37,12 +37,23 @@ describe('fillWscript', () => {
   test('fills every folder the real template asks for', () => {
     const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
 
-    const result = fillWscript(template, { engine: 'engine', face: 'watchfaces/mosaic/gridlock', familyCore: 'watchfaces/mosaic/core', watchface: true });
+    const result = fillWscript(template, { engine: 'engine', face: 'gridlock', familyCore: 'core', family: 'mosaic', watchface: true });
 
     expect(result).not.toContain('{{');
     expect(result).toContain("'engine': 'engine'");
-    expect(result).toContain("'face': 'watchfaces/mosaic/gridlock'");
-    expect(result).toContain("'family_core': 'watchfaces/mosaic/core'");
+    expect(result).toContain("'face': 'gridlock'");
+    expect(result).toContain("'family_core': 'core'");
+    expect(result).toContain("'family': 'mosaic'");
+  });
+
+  /** A quote in a folder name ended the Python string it was written into, and waf failed on a syntax error far from the cause. */
+  test('writes a folder name with a quote or a backslash as a working Python string', () => {
+    const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
+
+    const result = fillWscript(template, { engine: "andrew's lib", face: "andrew's face", familyCore: 'core', family: 'andrews', watchface: true });
+
+    expect(result).toContain("'engine': 'andrew\\'s lib'");
+    expect(result).toContain("'face': 'andrew\\'s face'");
   });
 
   /**
@@ -56,7 +67,7 @@ describe('fillWscript', () => {
   ])('writes the watchface flag as %s the way python reads it', (watchface, expected) => {
     const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
 
-    const result = fillWscript(template, { engine: 'engine', face: '.', familyCore: '', watchface });
+    const result = fillWscript(template, { engine: 'engine', face: '.', familyCore: '', family: '', watchface });
 
     expect(result).toContain(expected);
   });

@@ -18,8 +18,8 @@
  *
  * emit/ is written straight into the target's waf staging sandbox (targets/<target>/) so the
  * native build never has to stage it. tsc roots at the repo root (the framework sits outside any
- * one face), so the tree keeps its source shape: emit/watchfaces/<face>/src/pkjs/index.js, or
- * emit/src/pkjs/index.js for a face at the repo root, beside the framework's emit/<framework folder>/ts/**.
+ * one face), so the tree keeps its source shape: emit/<face>/src/pkjs/index.js for a face in a family,
+ * or emit/src/pkjs/index.js for a face on its own, beside the framework's emit/<framework folder>/ts/**.
  * The wscript tells waf_helpers.build_face which of those the entry is.
  *
  * A face that ships several targets (Gridlock's watchface and watchapp) compiles once. The emit tree
@@ -47,13 +47,13 @@ const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'config', 'tsconfig.pkjs.json');
  * face into each target's sandbox.
  */
 export interface FacePaths {
-  faceSrc: string;   // watchfaces/<sourceFace>/src/pkjs
+  faceSrc: string;   // <sourceFace>/src/pkjs
   sandbox: string;   // targets/<target>
   emit: string;      // targets/<target>/emit
-  emitPkjs: string;  // targets/<target>/emit/watchfaces/<sourceFace>/src/pkjs
+  emitPkjs: string;  // targets/<target>/emit/<sourceFace>/src/pkjs
   icaljsTo: string;  // targets/<target>/emit/<framework folder>/ts/calendar/icaljs.js
   tsconfig: string;  // targets/<target>/tsconfig.pkjs.json (generated)
-  skipDir: string;   // watchfaces/<sourceFace>/src/pkjs/clay/builder
+  skipDir: string;   // <sourceFace>/src/pkjs/clay/builder
 }
 
 /**

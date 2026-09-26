@@ -2,24 +2,29 @@
  * Specs for the step that checks a face release before anything is built.
  *
  * This is the last thing between a pushed tag and a published release that cannot be taken back cleanly.
- * What is worth pinning is that each thing that should stop a release does, that a face is found in either
- * repo layout, and that a release that passes gets notes built from its changelog entry.
+ * What is worth pinning is that each thing that should stop a release does, that a face in a family is
+ * found in the family's folder, and that a release that passes gets notes built from its changelog entry.
  *
- * Each spec builds a small repo of faces in a temporary folder, and fakes git and gh.
+ * Each spec builds a small repo of faces in a temporary folder, and fakes gh.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore, fakeExec } from '../../../shared/fakes.js';
+import { tempDir } from '../../../../ts/testing/temp-dir.ts';
 import prepareRelease from './prepare-release.js';
+
+// the framework's own tools, which each spec's lib/ links to as a filled lib/ would carry them
+const TOOLS = path.resolve(import.meta.dirname, '..', '..', '..', '..', 'tools');
 
 const CHANGELOG = '# Changelog\n\n## [1.11.0] - 2026-09-07\n\n### Added\n\n- Added a Next Alarm readout.\n';
 
 let workspace;
+let libWritten;
 
 beforeEach(() => {
-  workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'prepare-release-'));
+  workspace = tempDir('prepare-release-');
+  libWritten = false;
   vi.stubEnv('GITHUB_WORKSPACE', workspace);
   vi.stubEnv('RUNNER_TEMP', workspace);
   vi.stubEnv('GITHUB_REPOSITORY', 'AKlitbo/pebble-watchface-lcars');
@@ -27,7 +32,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  fs.rmSync(workspace, { recursive: true, force: true });
   vi.unstubAllEnvs();
 });
 
@@ -38,21 +42,31 @@ function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog
   fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), changelog);
 }
 
-const TAGGED = ({ command, args }) => {
-  if (command === 'git' && args.includes('--points-at')) {
-    return { stdout: 'v1.2.0\n' };
-  }
+const UNRELEASED = ({ command }) => {
   if (command === 'gh') {
     return { exitCode: 1, stderr: 'release not found\n' };
   }
   return {};
 };
 
-async function prepare(answer = TAGGED) {
+/** Runs the step, with a framework at lib/ unless the spec put its own framework in place. */
+async function prepare(answer = UNRELEASED) {
+  if (!libWritten) {
+    writeLib();
+  }
   const core = fakeCore();
   const exec = fakeExec(answer);
   await prepareRelease({ core, exec });
   return { core, exec };
+}
+
+/** Puts a framework copy at a project's lib/, with its tools, as paf sync leaves it. */
+function writeLib({ version = '3.0.0', project = '.' } = {}) {
+  libWritten = true;
+  const lib = path.join(workspace, project, 'lib');
+  fs.mkdirSync(lib, { recursive: true });
+  fs.symlinkSync(TOOLS, path.join(lib, 'tools'), 'junction');
+  fs.writeFileSync(path.join(lib, 'package.json'), JSON.stringify(version ? { name: 'pebble-app-framework', version } : { name: 'pebble-app-framework' }));
 }
 
 describe('prepare-release', () => {
@@ -69,32 +83,6 @@ describe('prepare-release', () => {
     expect(core.setOutput).toHaveBeenCalledWith('title', 'LCARS Stardate 1.11.0');
     expect(core.setOutput).toHaveBeenCalledWith('notes-file', notesFile);
     expect(fs.readFileSync(notesFile, 'utf8')).toBe('Released 2026-09-07.\n\n### Added\n\n- Added a Next Alarm readout.\n');
-  });
-
-  /** One step serves both repo layouts, so a face inside a family folder has to be found as well as one at the root. */
-  test('finds a face inside a family folder under watchfaces/', async () => {
-    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'core'), { recursive: true });
-    writeFace('watchfaces/mosaic/gridlock', { name: 'gridlock', version: '1.3.1', changelog: '## [1.3.1] - 2026-09-07\n\n- Fixed the grey bell.\n' });
-    vi.stubEnv('RELEASE_TAG', 'gridlock-v1.3.1');
-
-    const { core } = await prepare();
-
-    expect(core.setFailed).not.toHaveBeenCalled();
-    expect(core.setOutput).toHaveBeenCalledWith('face', 'gridlock');
-  });
-
-  /** A release on an untagged framework ships code that no framework version names, so nobody can say what it was built on. */
-  test('stops when the framework is not on a tag', async () => {
-    writeFace('.');
-
-    const { core } = await prepare(({ command, args }) => {
-      if (command === 'git' && args.includes('--points-at')) {
-        return { stdout: 'wip\n' };
-      }
-      return command === 'git' ? { stdout: '2f22717\n' } : {};
-    });
-
-    expect(core.setFailed).toHaveBeenCalledWith('The framework is at 2f22717, which is not a framework tag. Move lib to a framework tag before releasing.');
   });
 
   /** A face with no version in its appinfo builds as the repo's version, and its tag could never match undefined. */
@@ -167,7 +155,7 @@ describe('prepare-release', () => {
   test('stops when the tag is already released', async () => {
     writeFace('.');
 
-    const { core, exec } = await prepare(({ command, args }) => (command === 'gh' ? { exitCode: 0 } : TAGGED({ command, args })));
+    const { core, exec } = await prepare(({ command, args }) => (command === 'gh' ? { exitCode: 0 } : UNRELEASED({ command, args })));
 
     expect(exec.getExecOutput).toHaveBeenCalledWith('gh', ['release', 'view', 'lcars-stardate-v1.11.0', '--repo', 'AKlitbo/pebble-watchface-lcars'], { ignoreReturnCode: true, silent: true });
     expect(core.setFailed).toHaveBeenCalledWith('lcars-stardate-v1.11.0 is already released. Delete that release first to publish it again.');
@@ -177,8 +165,57 @@ describe('prepare-release', () => {
   test('stops when gh cannot check for a release at all', async () => {
     writeFace('.');
 
-    const { core } = await prepare(({ command, args }) => (command === 'gh' ? { exitCode: 4, stderr: 'HTTP 401: Bad credentials\n' } : TAGGED({ command, args })));
+    const { core } = await prepare(({ command, args }) => (command === 'gh' ? { exitCode: 4, stderr: 'HTTP 401: Bad credentials\n' } : UNRELEASED({ command, args })));
 
     expect(core.setFailed).toHaveBeenCalledWith('gh could not check whether lcars-stardate-v1.11.0 is already released. HTTP 401: Bad credentials');
+  });
+
+  /** lib/ holds a tag's shipped files with no git to ask, so the release names the version its package.json carries. */
+  test('names the framework by the version in lib/package.json', async () => {
+    writeFace('.');
+    writeLib({ version: '3.0.0' });
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).not.toHaveBeenCalled();
+    expect(core.setOutput).toHaveBeenCalledWith('engine-tag', 'v3.0.0');
+  });
+
+  /** A lib/ with no version gives no way to tell which release it holds, so the release stops. */
+  test('stops on a lib/ with no version', async () => {
+    writeFace('.');
+    writeLib({ version: '' });
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).toHaveBeenCalledWith('lib/package.json names no framework version, so there is no telling which release it holds.');
+  });
+
+  /** An action loaded at its own tag has a framework of its own beside it, and asking that one would name the wrong release. */
+  test('stops when the face has no lib/', async () => {
+    writeFace('.');
+    libWritten = true;
+
+    const { core, exec } = await prepare();
+
+    expect(core.setFailed).toHaveBeenCalledWith('lib/ holds no framework, so there is no telling which release the face builds on. Run paf sync before this step.');
+    expect(exec.getExecOutput).not.toHaveBeenCalled();
+  });
+
+  /**
+   * A family builds from its own folder. Looking at the repo root instead would find no changelog there
+   * and stop the release, or read another project's framework.
+   */
+  test('releases a face in a family project from the family folder', async () => {
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'core'), { recursive: true });
+    writeLib({ version: '3.1.0', project: 'watchfaces/mosaic' });
+    writeFace('watchfaces/mosaic/gridlock', { name: 'gridlock', version: '1.3.1', changelog: '## [1.3.1] - 2026-09-07\n\n- Fixed the grey bell.\n' });
+    vi.stubEnv('RELEASE_TAG', 'gridlock-v1.3.1');
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).not.toHaveBeenCalled();
+    expect(core.setOutput).toHaveBeenCalledWith('engine-tag', 'v3.1.0');
+    expect(fs.readFileSync(path.join(workspace, 'release-notes.md'), 'utf8')).toBe('Released 2026-09-07.\n\n- Fixed the grey bell.\n');
   });
 });

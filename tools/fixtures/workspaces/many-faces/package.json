@@ -1,9 +1,0 @@
-{
-  "name": "many-faces",
-  "private": true,
-  "workspaces": {
-    "packages": [
-      "lib"
-    ]
-  }
-}

@@ -6,7 +6,7 @@
  * that an entry nobody dated is not read as dated.
  */
 import { describe, expect, test } from 'vitest';
-import { isDated, readChangelogEntry, splitTag, pickFrameworkTag } from './lib.js';
+import { isDated, readChangelogEntry, splitTag } from './lib.js';
 
 const CHANGELOG = [
   '# Changelog - LCARS Stardate',
@@ -106,28 +106,5 @@ describe('splitTag with a label', () => {
     const result = splitTag('gridlock-v3.0.0-very.1');
 
     expect(result).toEqual({ face: 'gridlock', version: '3.0.0-very.1' });
-  });
-});
-
-describe('pickFrameworkTag', () => {
-  /** git describe named one tag of several, so a face released on the final version could report its candidate. */
-  test('takes the release over its own candidate', () => {
-    const result = pickFrameworkTag(['v3.0.0-rc.27', 'v3.0.0']);
-
-    expect(result).toBe('v3.0.0');
-  });
-
-  /** Candidates compare by number, or rc.9 would read as newer than rc.27. */
-  test('takes the highest candidate by number', () => {
-    const result = pickFrameworkTag(['v3.0.0-rc.9', 'v3.0.0-rc.27']);
-
-    expect(result).toBe('v3.0.0-rc.27');
-  });
-
-  /** Any tag at all passed as a framework version, so a stray wip tag let a release through. */
-  test('finds nothing in tags that are not versions', () => {
-    const result = pickFrameworkTag(['wip', 'backup']);
-
-    expect(result).toBeNull();
   });
 });

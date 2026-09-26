@@ -8,8 +8,9 @@ targets/<target>/.
 Every folder in the source dict the wscript passes is relative to the repo root:
 
     engine       the framework, such as lib
-    face         the face, such as watchfaces/mosaic/gridlock, or . for a face at the root
-    family_core  the face's family core, such as watchfaces/mosaic/core, or empty for none
+    face         the face, such as gridlock in a family, or . for a face on its own
+    family_core  the face's family core, which is core in a family, or empty for none
+    family       the family's name, such as mosaic, or empty for none
 """
 
 import os
@@ -24,14 +25,17 @@ def _repo_root(ctx):
     return ctx.path.parent.parent
 
 
-def _family_name(source):
+def _family_name(ctx, source):
     """
-    The family a face belongs to, which is the folder its family core sits in, or None for a face
-    in no family.
+    The family a face belongs to, or None for a face in no family. build-manifests.ts works the
+    name out, since a family at the root of its own project has no folder above its core to read.
     """
     if not source['family_core']:
         return None
-    return os.path.basename(os.path.dirname(os.path.normpath(source['family_core'])))
+    # a sandbox wscript written by an older framework has no family key
+    if 'family' not in source:
+        ctx.fatal('This sandbox names no family. Run build-manifests.ts again to rewrite it.')
+    return source['family'] or None
 
 
 # the framework's C roots the build compiles. everything else in the framework (its ts/, tools/,
@@ -76,11 +80,11 @@ def stage_shared_sources(ctx, source):
     for name in ENGINE_C_ROOTS:
         sources[os.path.join(source['engine'], 'c', name)] = os.path.join(engine_root, 'c', name)
 
-    # a face nested inside a family folder also gets that family's core: code shared by a handful
+    # a face in a family also gets that family's core: code shared by a handful
     # of related faces but not by all of them, so it cannot live in the framework. it is staged under
     # the family's own name, and that name is a path segment the build synthesises rather than one
     # anybody types, which is what keeps a family header from colliding with a face-local folder
-    family = _family_name(source)
+    family = _family_name(ctx, source)
     if family:
         sources[os.path.join('family', family)] = os.path.join(repo_root, source['family_core'], 'c')
 
@@ -318,8 +322,8 @@ def build_face(ctx, source, extra_cflags=None):
     ctx.env = cached_env
 
     # emit/ keeps the source tree's shape, so the entry sits under the face's own folder: straight
-    # at emit/src/pkjs/ for a face at the root, deeper for one under watchfaces/, and under the face
-    # rather than the sandbox when a face feeds several targets
+    # at emit/src/pkjs/ for a face on its own, one folder deeper for a face in a family, and under the
+    # face rather than the sandbox when a face feeds several targets
     entry = ctx.path.find_node(os.path.normpath(os.path.join('emit', source['face'], 'src', 'pkjs', 'index.js')))
     if not entry:
         ctx.fatal('No pkjs entry in emit/: did build:pkjs run for this face?')

@@ -10,15 +10,13 @@
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },
-  // the framework's own specs, then the faces of a repo mounting it at lib/, at its root or under watchfaces/
+  // the framework's own specs, then those of a face mounting it at lib/
   // the two .d.ts files declare globals the specs use without importing them
   "include": [
     "../**/*.spec.ts",
     "../../src/**/*.spec.ts",
-    "../../watchfaces/**/*.spec.ts",
     "../ts/pkjs/pebble.d.ts",
-    "../../src/pkjs/generated.d.ts",
-    "../../watchfaces/**/src/pkjs/generated.d.ts"
+    "../../src/pkjs/generated.d.ts"
   ],
   // the docs site specs import packages only the docs install has, so docs/tsconfig.json checks them
   "exclude": [
