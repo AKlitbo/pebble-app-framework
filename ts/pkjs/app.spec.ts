@@ -94,6 +94,9 @@ describe('seedConfigFromWatch', () => {
     { type: 'locationsearch', messageKey: 'LOCATION_NAME' },
   ];
 
+  // a settings page with one time zone picker on it
+  const zonePage = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true }];
+
   beforeEach(() => {
     localStorage.clear();
   });
@@ -220,21 +223,35 @@ describe('seedConfigFromWatch', () => {
   });
 
   /**
+   * The watch holds a slider stepping in tenths as ten times its value. Seeding that as it came
+   * made the next restore scale it again, so 1.5 reached the watch as 150 and fell back to the
+   * default.
+   */
+  test('seeds a slider back at the scale the page keeps it', () => {
+    const sliderPage = [{ type: 'slider', messageKey: 'RATE', step: 0.1 }];
+
+    seedConfigFromWatch({ RATE: 'RATE' }, { RATE: 15 }, sliderPage);
+
+    const result = stored('RATE');
+    expect(result).toBe(1.5);
+  });
+
+  /**
    * A phone that lost its store, through a new phone or the app's data being cleared, opened the
    * settings page on an empty Alternate Time Zone while the watch carried on showing the old one.
    * Saving from there sent nothing back and the panel dropped to UTC.
    */
   test('seeds a timezone field from the watch', () => {
-    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' }, []);
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '-420,Phoenix' }, zonePage);
 
     const result = stored('CLOCK_TIMEZONE_1');
 
     expect(result).toBe('-420,Phoenix');
   });
 
-  /** A face may name a key TIMEZONE for something that holds no place, so only a string seeds. */
-  test('skips a timezone key that did not arrive as a string', () => {
-    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 }, []);
+  /** A number off the watch is not a saved place, and seeding it would leave the picker showing nothing. */
+  test('skips a timezone value that did not arrive as a string', () => {
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: 1 }, zonePage);
 
     const result = seeded('CLOCK_TIMEZONE_1');
 
@@ -250,7 +267,7 @@ describe('seedConfigFromWatch', () => {
     const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: saved }));
 
-    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' }, []);
+    seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' }, zonePage);
 
     const result = stored('CLOCK_TIMEZONE_1');
 
@@ -266,16 +283,37 @@ describe('wrapStoredConfig', () => {
   test('keeps an array whole inside the wrapper', () => {
     const config = { DAYS: ['mon', 'wed'] };
 
-    const result = wrapStoredConfig(config, []);
+    const result = wrapStoredConfig(config, [], { DAYS: 1 });
 
     expect(result.DAYS).toEqual({ value: ['mon', 'wed'] });
+  });
+
+  /**
+   * A face update can rename or drop a setting while the phone still holds the old name. With no key
+   * for it Clay sent it as undefined0, and a restore the phone could not send left the watch on its
+   * defaults.
+   */
+  test('leaves out a setting the face has no key for', () => {
+    const result = wrapStoredConfig({ OLD_NAME: '1', CLOCK_DATE_FORMAT: '%d' }, [], { CLOCK_DATE_FORMAT: 3 });
+
+    expect(Object.keys(result)).toEqual(['CLOCK_DATE_FORMAT']);
+  });
+
+  /**
+   * An array key sits in message_keys under its base name alone. Looked up whole, SLOT[1] had no
+   * key, so a restore left it out and Clay wrote the phone's copy back without it.
+   */
+  test('keeps a setting on an array key', () => {
+    const result = wrapStoredConfig({ 'SLOT[1]': 'weather' }, [], { SLOT: 20 });
+
+    expect(result['SLOT[1]']).toEqual({ value: 'weather' });
   });
 
   /** A slider stepping in tenths goes to the watch scaled by ten, so 1.5 left unscaled reached it as 1. */
   test('gives a slider the precision its step carries', () => {
     const page = [{ type: 'section', items: [{ type: 'slider', messageKey: 'RATE', step: 0.1 }] }];
 
-    const result = wrapStoredConfig({ RATE: 1.5 }, page);
+    const result = wrapStoredConfig({ RATE: 1.5 }, page, { RATE: 2 });
 
     expect(result.RATE).toEqual({ value: 1.5, precision: 1 });
   });
@@ -283,6 +321,7 @@ describe('wrapStoredConfig', () => {
 
 describe('retimeSettings', () => {
   const timezoneKeys = { CLOCK_TIMEZONE_1: 11 };
+  const zonePage = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true }];
   // a June evening, when London is an hour ahead of UTC and the saved offset of 0 is a winter one
   const nowMs = Date.UTC(2026, 5, 10, 22, 0);
 
@@ -290,30 +329,63 @@ describe('retimeSettings', () => {
   test('rewrites a saved place into the offset it reads today', () => {
     const dict = { 11: JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' }) };
 
-    const result = retimeSettings(dict, timezoneKeys, nowMs);
+    const result = retimeSettings(dict, timezoneKeys, zonePage, nowMs);
 
     expect(result[11]).toBe('60,London');
   });
 
   /**
-   * A field with nothing saved in it must not go out as an empty string. The watch reads that as
-   * zero minutes under no name, so a working Time Zone panel falls to UTC labelled TZ.
+   * A picker on an array key was not found, so the watch got the saved place's JSON, read its offset
+   * as 0, and showed text from inside the JSON as the city name.
    */
-  test('drops a timezone field with nothing saved in it', () => {
-    const dict = { 11: '' };
+  test('rewrites a picker on an array key', () => {
+    const arrayPage = [{ type: 'locationsearch', messageKey: 'CLOCK_TZ[1]', timeZone: true }];
+    const dict = { 21: JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' }) };
 
-    const result = retimeSettings(dict, timezoneKeys, nowMs);
+    const result = retimeSettings(dict, { CLOCK_TZ: 20 }, arrayPage, nowMs);
 
-    expect(11 in result).toBe(false);
+    expect(result[21]).toBe('60,London');
   });
 
-  /** A face may name a key TIMEZONE for a toggle, and blanking one would leave it stuck. */
-  test('leaves a timezone key that is not a string alone', () => {
+  /**
+   * Clearing the picker saves nothing for the field. Dropping it from the save left the watch on the
+   * old city while the phone showed none, so it goes out empty and the watch shows no zone.
+   */
+  test('sends a cleared timezone field as empty', () => {
+    const dict = { 11: '' };
+
+    const result = retimeSettings(dict, timezoneKeys, zonePage, nowMs);
+
+    expect(result[11]).toBe('');
+  });
+
+  /** A value that is not a string is not a saved place, and blanking it would leave the setting stuck. */
+  test('leaves a timezone field that is not a string alone', () => {
     const dict = { 11: 3 };
 
-    const result = retimeSettings(dict, timezoneKeys, nowMs);
+    const result = retimeSettings(dict, timezoneKeys, zonePage, nowMs);
 
     expect(result[11]).toBe(3);
+  });
+
+  /** The page marks a picker as a time zone, so a face can name its key anything and still get a working clock. */
+  test('rewrites a marked picker whatever its key is called', () => {
+    const dict = { 12: JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' }) };
+    const page = [{ type: 'section', items: [{ type: 'locationsearch', messageKey: 'SECOND_CLOCK', timeZone: true }] }];
+
+    const result = retimeSettings(dict, { SECOND_CLOCK: 12 }, page, nowMs);
+
+    expect(result[12]).toBe('60,London');
+  });
+
+  /** A key that only looks like a time zone is not one, and rewriting it would send the watch a place it never asked for. */
+  test('leaves an unmarked key named like a time zone alone', () => {
+    const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
+    const page = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1' }];
+
+    const result = retimeSettings({ 11: saved }, timezoneKeys, page, nowMs);
+
+    expect(result[11]).toBe(saved);
   });
 });
 
@@ -329,7 +401,9 @@ describe('startPebbleApp weather', () => {
 
   class FakeClay {
     registerComponent() {}
-    getSettings() {
+    // Clay parses the page's response as JSON and throws on anything else
+    getSettings(response: string) {
+      JSON.parse(response);
       return {};
     }
     generateUrl() {
@@ -387,6 +461,9 @@ describe('startPebbleApp weather', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    // a fixed Wednesday noon in New York, so the market gates and the calendar window give the
+    // same answer whenever and wherever the suite runs
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 16, 0));
     localStorage.clear();
     saveCity('Phoenix', 33.4);
     sent = installFakeXhr();
@@ -400,6 +477,7 @@ describe('startPebbleApp weather', () => {
     pebble.restore();
     // the location specs stub this, and a stub left behind would steer a later spec's gps path
     Reflect.deleteProperty(navigator, 'geolocation');
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
@@ -444,6 +522,38 @@ describe('startPebbleApp weather', () => {
     expect(sent[1].url).toContain('latitude=32.2');
     expect(sends).toHaveLength(1);
     expect(sends[0][0]).toMatchObject({ WEATHER_TEMPERATURE: 30 });
+  });
+
+  /**
+   * Some phones close the page with CANCELLED rather than the settings, and Clay throws on it. The
+   * throw escaped the listener, and nothing was saved, so no feature should refetch either.
+   */
+  test('ignores a page that closes without settings', () => {
+    start([weather]);
+    fire('ready');
+    fire('showConfiguration');
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    fire('webviewclosed', { response: 'CANCELLED' });
+    vi.advanceTimersByTime(SETTINGS_REFETCH_DELAY_MS);
+
+    expect(sent).toHaveLength(1);
+  });
+
+  /**
+   * A fetch still out when the wearer switched units could answer in the moment before the refetch,
+   * and its reading in the old unit reached the watch after the switch, as 20F for 20 degrees C.
+   */
+  test('drops a reading that lands after a save and before its refetch', () => {
+    start([weather]);
+    fire('ready');
+    fire('showConfiguration');
+    saveCity('Tucson', 32.2);
+    fire('webviewclosed', { response: '{}' });
+
+    sent[0].respond(200, currentBody(20));
+
+    expect(weatherSends()).toHaveLength(0);
   });
 
   /**
@@ -635,10 +745,11 @@ describe('startPebbleApp stock and calendar', () => {
   const OTHER_FEED_URL = 'https://example.com/other.ics';
 
   // saves the settings and the stock cache the app reads when it starts, then starts it with the
-  // features a face like Gridlock opts into
+  // features a face like Gridlock opts into. a saved strip came from a fetch, so it carries a stamp
   function start(settings: Record<string, unknown>, savedStrip: number[] | null = null, features = [stocks, calendar]) {
+    const lastFetchMs = savedStrip ? Date.now() - 60000 : 0;
     localStorage.setItem('clay-settings', JSON.stringify(settings));
-    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs: 0, strip: savedStrip }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs, strip: savedStrip }));
     app.startPebbleApp({ clayConfig: [], features });
   }
 
@@ -654,6 +765,9 @@ describe('startPebbleApp stock and calendar', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    // a fixed Wednesday noon in New York, so the market gates and the calendar window give the
+    // same answer whenever and wherever the suite runs
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 16, 0));
     localStorage.clear();
     sent = installFakeXhr();
     pebble = withFakePebble();
@@ -702,6 +816,80 @@ describe('startPebbleApp stock and calendar', () => {
     expect(result[result.length - 1]).not.toEqual(SAVED_STRIP);
   });
 
+  /**
+   * A fetch the network ate says nothing about the quotes. Sending its strip put NET ERROR in every
+   * slot over the last good quotes, and the watch kept it through a relaunch.
+   */
+  test('keeps the last good strip on the watch when the provider never answered', () => {
+    // Yahoo needs no key, so the fetch really goes out. a provider missing its key answers at once
+    start({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' }, SAVED_STRIP, [stocks]);
+    pebble.fire('ready');
+
+    sent.forEach((request) => request.fail());
+
+    const result = sendsOf('STOCK_STRIP');
+    expect(result[result.length - 1]).toEqual(SAVED_STRIP);
+  });
+
+  /** A face that lists stocks without the strip key has nowhere to put one, and a send under an undefined key tied up the outbox. */
+  test('sends nothing for a face without the strip key', () => {
+    stripKeys.STOCK_STRIP = undefined as unknown as string;
+    start({ STOCK_SYMBOLS: 'AAPL' }, SAVED_STRIP, [stocks]);
+
+    pebble.fire('ready');
+
+    const result = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'undefined' in dict);
+    stripKeys.STOCK_STRIP = 'STOCK_STRIP';
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * A mistyped ticker answers NO SYMBOL and still spends a call. The time of that call stayed in
+   * memory only, so every restart of the phone's JS forgot it and let another call through.
+   */
+  test('keeps the time of a call spent on an answer with nothing good across a restart', () => {
+    start({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'APPL' }, null, [stocks]);
+    pebble.fire('ready');
+
+    sent.forEach((request) => request.respond(200, JSON.stringify({ status: 'error', code: 404, message: 'symbol not found' })));
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).lastFetchMs;
+    expect(result).toBeGreaterThan(0);
+  });
+
+  /**
+   * The provider lookup ignores case but the quota gate compared the name exactly, so a select
+   * saving TwelveData got the right provider with no gate on it at all.
+   */
+  test('gates a provider saved with capitals the same as one saved in lowercase', () => {
+    start({ STOCK_PROVIDER: 'TwelveData', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'AAPL' }, null, [stocks]);
+    pebble.fire('ready');
+    sent.forEach((request) => request.respond(200, JSON.stringify({ symbol: 'AAPL', close: '150', change: '1', percent_change: '0.5', datetime: '2026-07-01' })));
+    const before = sent.length;
+
+    pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+
+    expect(sent.length).toBe(before);
+  });
+
+  /**
+   * A round still out for the old symbols when the wearer saved new ones answered in the moment
+   * before the refetch, and put the old list back on the phone as the strip to keep.
+   */
+  test('drops a late answer for the symbols the wearer just replaced', () => {
+    start({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' }, null, [stocks]);
+    pebble.fire('ready');
+    const oldRequest = sent[sent.length - 1];
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'TSLA' }));
+    pebble.fire('webviewclosed', { response: '{}' });
+
+    oldRequest.respond(200, JSON.stringify({ chart: { result: [{ meta: { symbol: 'AAPL', regularMarketPrice: 261.74, chartPreviousClose: 260.5, regularMarketTime: 1719849600 } }], error: null } }));
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).strip;
+    expect(result).toBeNull();
+  });
+
   /** Deleting every upcoming event has to clear the watch, or the deleted events stay on the agenda for good. */
   test('sends an empty agenda when the feed has nothing coming up', () => {
     start({ CALENDAR_ICS_URL: FEED_URL });
@@ -748,6 +936,30 @@ describe('startPebbleApp stock and calendar', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).not.toEqual([0]);
+  });
+
+  /**
+   * A download of the old feed still out when the wearer saved a new URL answered in the moment
+   * before the refetch, and pushed the old agenda to the watch. When the new feed's download then
+   * failed, it stayed there, on the watch and in its flash, until the next poll answered.
+   */
+  test('drops the old feed answering in the moment before the refetch for a new one', () => {
+    // a day out from the faked now, so the event sits inside the agenda's window
+    const stamp = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    const withEvent = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:' + stamp +
+      '\r\nSUMMARY:Dentist\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+    start({ CALENDAR_ICS_URL: FEED_URL });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ CALENDAR_ICS_URL: OTHER_FEED_URL }));
+    pebble.fire('webviewclosed', { response: '{}' });
+
+    feedRequest().respond(200, withEvent);
+    vi.advanceTimersByTime(SETTINGS_REFETCH_DELAY_MS);
+
+    const result = sendsOf('CALENDAR_STRIP');
+
+    expect(result).toEqual([]);
   });
 
   /**
@@ -846,6 +1058,7 @@ describe('startPebbleApp settings restore', () => {
     SETTINGS_FRESH: 'SETTINGS_FRESH',
     CLOCK_DATE_FORMAT: 'CLOCK_DATE_FORMAT',
     APPEARANCE_THEME: 'APPEARANCE_THEME',
+    CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1',
   };
 
   class FakeClay {
@@ -867,9 +1080,12 @@ describe('startPebbleApp settings restore', () => {
     }
   }
 
+  // the keys the face under test declares. a spec for a face without SETTINGS_FRESH swaps them
+  let keys: Record<string, string> = restoreKeys;
+
   function fakeModule(id: string): unknown {
     if (id === 'message_keys') {
-      return restoreKeys;
+      return keys;
     }
     if (id === '@rebble/clay/src/js/index') {
       return FakeClay;
@@ -904,8 +1120,12 @@ describe('startPebbleApp settings restore', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    // a fixed Wednesday noon in New York, so the market gates and the calendar window give the
+    // same answer whenever and wherever the suite runs
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 16, 0));
     localStorage.clear();
     installFakeXhr();
+    keys = restoreKeys;
     pebble = withFakePebble();
     restoreLoad = stubModuleLoad(fakeModule);
   });
@@ -974,6 +1194,7 @@ describe('startPebbleApp settings restore', () => {
   /**
    * The watch only ends fresh on a message marked as the settings page's. An unmarked restore would
    * sit in memory, never reach flash, and the watch would ask to be restored again on every launch.
+   * A restore carries 1, so the watch does not convert a reading already in the unit it brings.
    */
   test('marks the restore as the settings page message', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
@@ -982,12 +1203,13 @@ describe('startPebbleApp settings restore', () => {
 
     watchReplies(true, '%Y-%m-%d');
 
-    expect(restoreSends()[0]).toMatchObject({ SETTINGS_FRESH: 0 });
+    expect(restoreSends()[0]).toMatchObject({ SETTINGS_FRESH: 1 });
   });
 
   /**
    * A save from the settings page is the other message that ends fresh. Unmarked, a watch that lost
-   * its restore would keep the save only until the next relaunch.
+   * its restore would keep the save only until the next relaunch. It carries 0, since a first save
+   * on a fresh watch read as a restore and a unit switch there left 21 degrees C showing as 21F.
    */
   test('marks a save from the settings page', () => {
     app.startPebbleApp({ clayConfig: [] });
@@ -1013,6 +1235,69 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
+   * The features fetch on ready with the defaults, before the seed lands. Nothing refetched after
+   * it, so a watch on Fahrenheit got a Celsius reading and showed 22F for a 72F day until the next
+   * poll. Each feature sees the seed the way it sees a save, so one whose settings moved refetches.
+   */
+  test('lets each feature compare its settings around the seed', () => {
+    const calls: string[] = [];
+    const feature = () => ({
+      configOpened: () => calls.push('opened:' + JSON.stringify(localStorage.getItem('clay-settings'))),
+      configSaved: () => calls.push('saved:' + stored('CLOCK_DATE_FORMAT')),
+    });
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
+    pebble.fire('ready');
+
+    watchReplies(false, '%Y-%m-%d');
+
+    expect(calls).toEqual(['opened:null', 'saved:%Y-%m-%d']);
+  });
+
+  /**
+   * A face without SETTINGS_FRESH seeds on every launch. Its first seed, into an empty phone, gets
+   * the same refetch as the fresh path, and a later one leaves the features alone, since a refetch
+   * forced on every launch would spend a stock provider's quota.
+   */
+  test('lets features compare around only the first seed on a face without SETTINGS_FRESH', () => {
+    const { SETTINGS_FRESH: dropped, ...withoutFresh } = restoreKeys;
+    keys = withoutFresh;
+    const calls: string[] = [];
+    const feature = () => ({
+      configOpened: () => calls.push('opened'),
+      configSaved: () => calls.push('saved'),
+    });
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
+
+    expect(dropped).toBe('SETTINGS_FRESH');
+    expect(calls).toEqual(['opened', 'saved']);
+  });
+
+  /**
+   * A seed landing while the page is open replaced the snapshot the page opened on and then cleared
+   * it, so closing the page counted every setting as changed and stocks spent its quota on a forced
+   * fetch. The page's own close is left to compare its settings.
+   */
+  test('leaves the hooks to a settings page that is open', () => {
+    const calls: string[] = [];
+    const feature = () => ({
+      configOpened: () => calls.push('opened'),
+      configSaved: () => calls.push('saved'),
+    });
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+
+    watchReplies(false, '%Y-%m-%d');
+
+    expect(calls).toEqual(['opened']);
+    expect(stored('CLOCK_DATE_FORMAT')).toBe('%Y-%m-%d');
+  });
+
+  /**
    * With settings on both sides the phone is the truth and the watch already agrees, so a launch
    * must change neither. Seeding here would overwrite the phone from a watch that is a save behind.
    */
@@ -1026,6 +1311,42 @@ describe('startPebbleApp settings restore', () => {
     expect(stored('CLOCK_DATE_FORMAT')).toBe('%d.%m.%Y');
     expect(restoreSends()).toHaveLength(0);
   });
+  /**
+   * One feature that throws in its ready hook stopped every feature after it and the refresh timer,
+   * so stocks and the calendar never loaded and nothing refreshed for the rest of the session.
+   */
+  test('runs the other features when one throws', () => {
+    const later = vi.fn();
+    const broken: Feature = () => ({ ready() { throw new Error('no geolocation'); } });
+    const fine: Feature = () => ({ ready: later, refresh: later });
+    app.startPebbleApp({ clayConfig: [], features: [broken, fine] });
+
+    pebble.fire('ready');
+    vi.advanceTimersByTime(5 * 60 * 1000);
+
+    expect(later).toHaveBeenCalledTimes(2);
+  });
+
+  /**
+   * A save already carries the zone the wearer picked, but the push on the next background tick did
+   * not know that and sent the same zone again, one wasted wake of the watch per save.
+   */
+  test('does not push a zone again that a settings save already sent', () => {
+    const zonePage = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true }];
+    const london = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
+    app.startPebbleApp({ clayConfig: zonePage });
+    pebble.fire('ready');
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: london }));
+    pebble.fire('webviewclosed', { response: JSON.stringify({ CLOCK_TIMEZONE_1: { value: london } }) });
+    const afterSave = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_TIMEZONE_1' in dict).length;
+
+    vi.advanceTimersByTime(5 * 60 * 1000);
+
+    const result = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_TIMEZONE_1' in dict).length;
+    expect(afterSave).toBe(1);
+    expect(result).toBe(1);
+  });
+
 });
 
 describe('collectDefaults', () => {

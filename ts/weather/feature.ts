@@ -9,7 +9,7 @@
  */
 
 // the `any`s that remain in this file sit at two genuinely-dynamic boundaries: the provider result
-// and the Clay settings the user saved to localStorage, which validCoord and getManualLocation read
+// and the Clay settings the user saved to localStorage, which getManualLocation reads
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import weather from './weather';
 import weatherUtil from './util';
@@ -17,15 +17,19 @@ import type { WeatherResult } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
-import { getConfig, readBool, readValue, watchSettings } from '../pkjs/settings-store';
+import { getConfig, readBool, readText, readValue, watchSettings } from '../pkjs/settings-store';
 import type { Feature, FeatureContext, FeatureHooks } from '../pkjs/feature';
+import { readPlace } from '../pkjs/place';
+import { phoneZone } from '../pkjs/timezone';
+import conditions from './conditions';
+
+export { validCoord } from '../pkjs/place';
 import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
+import { createRound, finishRound, roundIsCurrent, shutOutRound, startRound } from '../pkjs/round';
+import type { RoundState } from '../pkjs/round';
 
 /** The weather round state runWeatherRound carries between calls. */
-export interface WeatherState {
-  inFlight: boolean;
-  round: number;
-}
+export type WeatherState = RoundState;
 
 /** The helpers runWeatherRound needs, passed in so the specs can swap them. */
 export interface WeatherDeps {
@@ -91,18 +95,6 @@ export const GPS_WATCHDOG_MS = 10000;
 const WEATHER_ROUND_TIMEOUT_MS = 60 * 1000;
 
 /**
- * Reports whether a coordinate pair is within the valid geographic range.
- *
- * @param lat The latitude to check.
- * @param lon The longitude to check.
- * @return True when both values are numbers within range.
- */
-export function validCoord(lat: any, lon: any): boolean {
-  return typeof lat === 'number' && lat >= -90 && lat <= 90 &&
-    typeof lon === 'number' && lon >= -180 && lon <= 180;
-}
-
-/**
  * Reads the manual location the user picked in settings.
  *
  * @param config The parsed Clay settings.
@@ -110,47 +102,48 @@ export function validCoord(lat: any, lon: any): boolean {
  *   saved value does not hold a valid coordinate pair.
  */
 export function getManualLocation(config: any): { coords: { lat: number; lon: number }; label: string } | null {
-  const raw = readValue(config.LOCATION_NAME, '');
-
-  if (!raw) {
+  // a corrupt or out-of-range blob comes back without coordinates, so bad coords never go on
+  const place = readPlace(readValue(config.LOCATION_NAME, ''));
+  if (!place || place.lat === undefined || place.lon === undefined) {
     return null;
   }
 
-  try {
-    let parsed = raw;
-
-    if (typeof raw === 'string') {
-      parsed = JSON.parse(raw);
-    }
-
-    // skip a corrupt or out-of-range blob instead of sending bad coords on
-    if (parsed && validCoord(parsed.lat, parsed.lon)) {
-      return {
-        coords: { lat: parsed.lat, lon: parsed.lon },
-        label: parsed.label || '',
-      };
-    }
-  } catch (error) {
-    // fall through on parsing error
-  }
-
-  return null;
+  return { coords: { lat: place.lat, lon: place.lon }, label: place.label };
 }
+
+// the failures a retry seconds later cannot fix, since they wait on the wearer's settings or on the
+// provider's quota coming back. each retry of one would spend a call on that quota, and a paired
+// Open-Meteo call with it
+const SETTINGS_FAILURES = ['NO API KEY', 'INVALID KEY', 'NO LOCATION', 'LOC NOT FOUND', 'RATE LIMIT'];
 
 /**
  * Decides how long to wait before retrying a weather fetch, or null when no retry
- * should run. A successful fetch never retries, and the attempts are capped.
+ * should run. A successful fetch never retries, nor does one that failed on the wearer's
+ * settings, such as a bad key, and the attempts are capped.
  *
  * @param resultOk Whether the fetch that just finished succeeded.
  * @param attempt How many retries have already run.
+ * @param condition The failed fetch's status word, such as NET ERROR or INVALID KEY.
  * @return The delay in milliseconds before the next retry, or null when no retry should run.
  */
-export function weatherRetryDelayMs(resultOk: boolean, attempt: number): number | null {
-  if (resultOk || attempt >= WEATHER_RETRY_DELAYS_MS.length) {
+export function weatherRetryDelayMs(resultOk: boolean, attempt: number, condition = ''): number | null {
+  if (resultOk || attempt >= WEATHER_RETRY_DELAYS_MS.length || SETTINGS_FAILURES.includes(condition)) {
     return null;
   }
 
   return WEATHER_RETRY_DELAYS_MS[attempt];
+}
+
+/**
+ * The sky in words for a condition token, such as "Partly Cloudy" for PCLDY or PCLDY_NIGHT.
+ *
+ * @param condition The condition token, with or without its night suffix.
+ * @return The words, or the vocabulary's fallback for a token it does not know.
+ */
+export function conditionLabel(condition: unknown): string {
+  const base = String(condition || '').replace(/_NIGHT$/, '');
+  const entry = conditions.conditions.find((item) => item.token === base);
+  return entry ? entry.labelLong : conditions.fallback.labelLong;
 }
 
 /**
@@ -168,32 +161,22 @@ export function weatherRetryDelayMs(resultOk: boolean, attempt: number): number 
  * @param deps The fetch, send, and timeout helpers to use.
  */
 export function runWeatherRound(state: WeatherState, force: boolean, deps: WeatherDeps): void {
-  if (state.inFlight && !force) {
+  const started = startRound(state, force);
+  if (started === null) {
     return;
   }
+  const round = started;
 
-  const round = ++state.round; // a new round number tells any round still running to stop
-
-  state.inFlight = true;
-
-  // bumping the round number again shuts out anything this round still has pending
-  function finishRound() {
-    state.round++;
-    state.inFlight = false;
-  }
-
+  // every attempt shares the one round, so a retry is still this round and its watchdog closes it
   function attempt(retry: number) {
-    // a fetch that never calls back would hold off every later ask, so give up on it after a cap
-    const watchdog = setTimeout(() => {
-      if (round === state.round) {
-        finishRound();
-      }
-    }, deps.timeoutMs);
+    // a fetch that never calls back would hold off every later ask, so give up on it after a cap.
+    // a round a forced one has taken over is left alone
+    const watchdog = setTimeout(() => finishRound(state, round), deps.timeoutMs);
 
     deps.fetchWeather((result) => {
       clearTimeout(watchdog);
 
-      if (round !== state.round) {
+      if (!roundIsCurrent(state, round)) {
         return; // a forced round replaced this one, or the watchdog already closed it
       }
 
@@ -205,15 +188,17 @@ export function runWeatherRound(state: WeatherState, force: boolean, deps: Weath
         console.error('Error sending weather info to Pebble: ' + error);
       }
 
-      const retryMs = weatherRetryDelayMs(result.ok, retry);
+      const retryMs = weatherRetryDelayMs(result.ok, retry, result.condition);
 
       if (retryMs === null) {
-        finishRound();
+        finishRound(state, round);
         return;
       }
 
+      // the retry only runs while this round is still the one out. a forced round, or a save's
+      // shut-out, in the wait drops it
       setTimeout(() => {
-        if (round === state.round) {
+        if (roundIsCurrent(state, round)) {
           attempt(retry + 1);
         }
       }, retryMs);
@@ -245,10 +230,10 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     return { requests: ['WEATHER_REQUEST'] };
   }
 
-  const weatherSettings = watchSettings(WEATHER_KEYS);
+  const weatherSettings = watchSettings(WEATHER_KEYS, defaults);
 
   // weather round state mutated in place by runWeatherRound
-  const state: WeatherState = { inFlight: false, round: 0 };
+  const state: WeatherState = createRound();
 
   // who asked lately, so a slow tick or a watch ask does not fetch what another just did
   const asks = createAsks();
@@ -264,6 +249,11 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       [messageKeys.WEATHER_CONDITIONS]: result.condition,
       [messageKeys.WEATHER_OK]: result.ok ? 1 : 0,
     };
+
+    // the sky in words, for a face that shows it. the watch has no table of its own for these
+    if (messageKeys.WEATHER_CONDITION_LABEL !== undefined) {
+      dict[messageKeys.WEATHER_CONDITION_LABEL] = conditionLabel(result.condition);
+    }
 
     // extra readings only sent for faces that declare the keys
     // a missing value is left out so the watch keeps its placeholder
@@ -310,8 +300,8 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     const config = getConfig();
 
     const opts: any = {
-      provider: String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER)),
-      key: String(readValue(config.WEATHER_API_KEY, defaults.WEATHER_API_KEY || '')).trim().slice(0, 64),
+      provider: String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER || 'openmeteo')),
+      key: readText(config.WEATHER_API_KEY, String(defaults.WEATHER_API_KEY || '')).trim().slice(0, 64),
       fahrenheit: readBool(config.WEATHER_TEMPERATURE_UNIT, defaults.WEATHER_TEMPERATURE_UNIT as boolean),
       coords: null,
       label: undefined,
@@ -320,6 +310,8 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       wantForecast: messageKeys.WEATHER_FORECAST_HOURLY !== undefined || messageKeys.WEATHER_FORECAST_DAILY !== undefined,
       // the readings this face has keys for, so a provider can skip a request that only brings others
       fields: EXTRA_WEATHER_FIELDS.filter(({ key }) => messageKeys[key] !== undefined).map(({ field }) => field),
+      // the watch keeps the phone's clock, so a provider that can answer in the phone's zone does
+      zone: phoneZone(Date.now()) || undefined,
     };
 
     const useGps = readBool(config.LOCATION_USE_GPS, defaults.LOCATION_USE_GPS as boolean);
@@ -446,8 +438,8 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       }
     },
 
-    // Clay saves the new settings before the app's webviewclosed handler runs, so the old values
-    // are captured here while the page is still open
+    // the page's settings are saved once it closes, so the old values are captured here while
+    // they are still in place
     configOpened() {
       weatherSettings.opened();
     },
@@ -457,6 +449,11 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     // is folded into this refetch
     configSaved() {
       if (weatherSettings.changed()) {
+        // a round still out for the old settings would land in the moment before the forced
+        // refetch, and a reading in the old unit would reach the watch after the switch. shutting
+        // it out drops that answer, a retry it is waiting on, and its own close
+        shutOutRound(state);
+
         // forced so it replaces a round still fetching with the old location or provider
         refetchAfterSave(asks, refetchDelayMs, () => getWeather(true));
       }

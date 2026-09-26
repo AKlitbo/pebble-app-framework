@@ -109,6 +109,12 @@ function shouldThrottleStockFetch(provider: string, force: boolean, lastFetchMs:
 
   const sinceLast = now - lastFetchMs;
 
+  // a stamp in the future means the phone's clock went back after it was saved. counting it as due
+  // costs one fetch, where holding it would shut the gate until the clock caught up
+  if (sinceLast < 0) {
+    return false;
+  }
+
   if (provider === 'twelvedata') {
     const floor = marketPhase(now) === 'open' ? TD_OPEN_FLOOR_MS : TD_CLOSED_FLOOR_MS;
     return sinceLast < floor;
@@ -120,6 +126,11 @@ function shouldThrottleStockFetch(provider: string, force: boolean, lastFetchMs:
     // already holding today's close so nothing new lands until tomorrow
     if (lastAsOf && lastAsOf === et.date) {
       return true;
+    }
+    // no stamp means this phone has never fetched, such as after its storage was cleared. the last
+    // close is worth one call at any hour, where holding it would leave the strip blank until an evening
+    if (!lastFetchMs) {
+      return false;
     }
     // the close only publishes after the bell so only chase it in the evening window
     if (phaseOf(et) === 'postclose') {

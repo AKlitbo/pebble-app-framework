@@ -171,6 +171,9 @@ describe('cacheBust', () => {
   test.each([
     ['https://x', 'https://x?_=1000'],
     ['https://x?symbol=AAPL', 'https://x?symbol=AAPL&_=1000'],
+    // a stamp after the # never reaches the server, so a cache could hand back the old feed
+    ['https://x/cal.ics#work', 'https://x/cal.ics?_=1000#work'],
+    ['https://x/cal.ics?a=1#work', 'https://x/cal.ics?a=1&_=1000#work'],
   ])('stamps %s', (url, expected) => {
     const result = cacheBust(url, 1000);
 

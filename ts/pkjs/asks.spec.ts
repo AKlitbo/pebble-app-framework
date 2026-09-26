@@ -43,6 +43,16 @@ describe('slowTickShouldFetch', () => {
     expect(result).toBe(false);
   });
 
+  /** A tick in the moment before a save's refetch ran fetched too, which spent a metered stock call twice. */
+  test('waits while a save refetch is pending', () => {
+    const asks = createAsks();
+    asks.savePending = true;
+
+    const result = slowTickShouldFetch(asks);
+
+    expect(result).toBe(false);
+  });
+
   /** A watch out of range stops asking, and the phone has to keep the data fresh on its own. */
   test('fetches on the next slow tick once the watch stops asking', () => {
     const asks = createAsks();

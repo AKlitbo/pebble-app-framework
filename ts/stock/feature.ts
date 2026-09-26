@@ -14,14 +14,14 @@ import type { StockQuote } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
-import { getConfig, readValue, watchSettings } from '../pkjs/settings-store';
+import { getConfig, readText, readValue, watchSettings } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
 import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
+import { finishRound, roundIsCurrent, shutOutRound, startRound } from '../pkjs/round';
+import type { RoundState } from '../pkjs/round';
 
 /** Fetch state carried across stock rounds, mutated in place by runStockRound. */
-export interface StockState {
-  inFlight: boolean;
-  round: number;
+export interface StockState extends RoundState {
   lastFetchMs: number;
   lastAsOf: string;
 }
@@ -90,27 +90,25 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
   // a round already running would spend the quota twice if a second trigger (the ready
   // event plus the watch's own STOCK_REQUEST) landed before it finished. a forced fetch (a
   // settings change that may have swapped symbols) takes over instead of being dropped
-  if (state.inFlight && !force) {
+  const started = startRound(state, force);
+  if (started === null) {
     return;
   }
+  const round = started;
 
   // every slot starts as a failed quote so the array is never sparse. when the watchdog closes a
   // round early the symbols that never answered still pack as one record each, so the count the
   // watch reads always matches the records behind it
   const results: StockQuote[] = symbols.map(() => stockUtil.status('ERR'));
   let pending = symbols.length;
-  const round = ++state.round; // a new round number tells any round still running to stop
-  state.inFlight = true;
 
-  // closes the round exactly once: bumping the round number again shuts out a late watchdog
-  // or a straggling reply then records when the fetch finished and sends whatever quotes arrived
-  function finishRound() {
-    if (round !== state.round) {
+  // closes the round exactly once. finishRound shuts out a late watchdog or a straggling reply,
+  // then this records when the fetch finished and sends whatever quotes arrived
+  function closeRound() {
+    if (!finishRound(state, round)) {
       return; // a newer forced round took over, or this one already closed
     }
-    state.round++;
     clearTimeout(watchdog);
-    state.inFlight = false;
 
     // a good quote records when the fetch finished, and the trading day so Alpha Vantage knows once
     // it holds today. a round where the provider answered with nothing good, such as NO SYMBOL for a
@@ -131,22 +129,22 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
   // if a provider never calls back (a hung request the xhr timeout somehow misses) the
   // in-flight flag would stay stuck and block every future fetch so force the round closed
   // after a cap. packing tolerates the missing slots as failed quotes
-  const watchdog = setTimeout(finishRound, deps.timeoutMs);
+  const watchdog = setTimeout(closeRound, deps.timeoutMs);
 
   symbols.forEach((symbol, index) => {
     function onQuote(result: StockQuote) {
-      if (round !== state.round) {
+      if (!roundIsCurrent(state, round)) {
         return; // taken over or already closed
       }
       results[index] = result;
       if (--pending === 0) {
-        finishRound();
+        closeRound();
       }
     }
 
-    // a single symbol that throws right away (say a bad URL from odd input) must not
-    // strand the whole round with pending stuck above zero so treat it as a failed quote
-    // and let the other symbols finish
+    // a symbol that throws right away, say a bad URL from odd input, counts as a failed quote, so
+    // pending still reaches zero and the other symbols finish. every provider returns straight
+    // after it calls back, so a throw only ever comes before an answer and no quote counts twice
     try {
       deps.fetchQuote(symbol, onQuote);
     } catch (err) {
@@ -164,7 +162,7 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
  *   settings page.
  */
 const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
-  const stockSettings = watchSettings(STOCK_KEYS);
+  const stockSettings = watchSettings(STOCK_KEYS, defaults);
 
   // fetch state carried across stock rounds and mutated in place by runStockRound. the two
   // throttle stamps come back off the phone because this JS is killed and restarted at will and
@@ -189,7 +187,9 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
 
   /** Sends already-packed watchlist bytes to the watch, unless the watch holds them already. */
   function pushStockBytes(bytes: number[] | null) {
-    if (!bytes) {
+    // a face that lists the feature but not the strip key has nowhere to put a strip, and a send
+    // under an undefined key would hold the outbox through its retries at cold boot
+    if (!bytes || messageKeys.STOCK_STRIP === undefined) {
       return;
     }
 
@@ -200,29 +200,38 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
   /** Sends the packed watchlist strip to the watch, and keeps it for the next run. */
   function sendStocks(results: StockQuote[]) {
     const bytes = wire.packStockStrip(results);
-    pushStockBytes(bytes);
+
+    // a round the provider never answered, a network blip, says nothing about the quotes, so the
+    // watch keeps the last good strip rather than NET ERROR in every slot. an answer the wearer has
+    // to act on, such as INVALID KEY, still goes out, and so do errors when nothing good is kept
+    const unanswered = results.every((quote) => !quote || (!quote.ok && UNANSWERED.includes(quote.status || '')));
+    pushStockBytes(unanswered && savedStrip ? savedStrip : bytes);
 
     // a round where every quote failed would cache a strip of ERRs and show them tomorrow, so
-    // only a real reading is worth keeping. runStockRound stamps the throttle from the same first
-    // good quote just before it calls this, so the stamps below are already the new ones
+    // only a real reading is kept as the strip. the stamps are kept whenever runStockRound moved
+    // them, which it does for a provider's answer with nothing good in it too, or a restart would
+    // forget that the call was spent and the gate would let the next one through
     if (bytes && results.some((quote) => quote && quote.ok)) {
       savedStrip = bytes;
-      stockCache.save(localStorage, {
-        lastAsOf: stockState.lastAsOf,
-        lastFetchMs: stockState.lastFetchMs,
-        strip: bytes,
-      });
     }
+    stockCache.save(localStorage, {
+      lastAsOf: stockState.lastAsOf,
+      lastFetchMs: stockState.lastFetchMs,
+      strip: savedStrip,
+    });
   }
 
   /**
    * Forgets the strip kept for a shut quota gate and the throttle stamps that go with it.
    *
-   * Both describe quotes for the old symbols, provider, or key. Keeping them meant a forced fetch
-   * that failed after a symbol change left the old strip to go back to the watch on the next held
-   * request, and the stamps holding the gate shut on quotes nobody asked for any more.
+   * Both describe quotes for the old symbols, provider, or key. So a forced fetch that fails after
+   * a change leaves nothing of the old list to push back to the watch, and the gate opens on the new
+   * list's own quotes.
    */
   function forgetStrip() {
+    // a round still out for the old list would land in the moment before the forced refetch and put
+    // the old strip and stamps back. shutting it out drops its late answers and its own close with them
+    shutOutRound(stockState);
     savedStrip = null;
     stockState.lastFetchMs = 0;
     stockState.lastAsOf = '';
@@ -258,9 +267,10 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     }
 
     const config = getConfig();
-    const provider = String(readValue(config.STOCK_PROVIDER, defaults.STOCK_PROVIDER || 'finnhub'));
-    const key = String(readValue(config.STOCK_API_KEY, defaults.STOCK_API_KEY || '')).trim().slice(0, 64);
-    const symbols = parseSymbols(readValue(config.STOCK_SYMBOLS, defaults.STOCK_SYMBOLS || ''));
+    // lowercased once, since the provider lookup ignores case and the quota gate has to agree with it
+    const provider = String(readValue(config.STOCK_PROVIDER, defaults.STOCK_PROVIDER || 'finnhub')).toLowerCase();
+    const key = readText(config.STOCK_API_KEY, String(defaults.STOCK_API_KEY || '')).trim().slice(0, 64);
+    const symbols = parseSymbols(readText(config.STOCK_SYMBOLS, String(defaults.STOCK_SYMBOLS || '')));
 
     if (!symbols.length) {
       clearStocks();

@@ -44,7 +44,7 @@ describe('Clay serialisation safety', () => {
     expect(result).toMatch(/^function\s*\(/);
   });
 
-  /** An arrow initialize would serialise fine but lose the `this` Clay binds, so $element is undefined. */
+  /** An arrow initialize would serialize fine but lose the `this` Clay binds, so $element is undefined. */
   test('does not declare initialize as an arrow function', () => {
     const result = String(component.initialize);
 

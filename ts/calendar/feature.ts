@@ -10,9 +10,10 @@ import type { CalendarEvent } from './ical';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request, cacheBust } from '../pkjs/request';
-import { getConfig, readValue, watchSettings } from '../pkjs/settings-store';
+import { getConfig, readText, watchSettings } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
 import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
+import { createRound, finishRound, shutOutRound, startRound } from '../pkjs/round';
 
 /**
  * Starts the calendar feature for a face.
@@ -23,14 +24,12 @@ import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } fro
  *   settings page.
  */
 const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
-  const feedSetting = watchSettings(['CALENDAR_ICS_URL']);
+  const feedSetting = watchSettings(['CALENDAR_ICS_URL'], defaults);
 
-  // counts fetches, so only the newest one reaches the watch. a URL change starts one while
-  // another is still out, and the two can answer in any order
-  let fetches = 0;
-
-  // a feed download is still out. request() settles every call within its watchdog, so it clears
-  let inFlight = false;
+  // which download is the current one. a URL change starts one while another is still out, and
+  // the two can answer in any order, so only the newest reaches the watch. request() settles every
+  // call within its watchdog, so a round always ends
+  const state = createRound();
 
   // who asked lately, so a slow tick or a watch ask does not fetch what another just did
   const asks = createAsks();
@@ -41,7 +40,7 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
 
   /** Reads the current iCal feed URL from the Clay config. */
   function calendarUrl(): string {
-    const url = String(readValue(getConfig().CALENDAR_ICS_URL, defaults.CALENDAR_ICS_URL || '')).trim();
+    const url = readText(getConfig().CALENDAR_ICS_URL, String(defaults.CALENDAR_ICS_URL || '')).trim();
 
     // a Subscribe link, such as an iCloud public calendar, starts webcal://, which is https to
     // every calendar app. the phone's request knows no such scheme and fails on it every time
@@ -71,19 +70,17 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
       return;
     }
 
-    if (inFlight && !force) {
+    // a download already out answers an unforced call. a forced one, for a changed URL, takes
+    // over, and the old download's answer is dropped when it lands
+    const round = startRound(state, Boolean(force));
+    if (round === null) {
       return;
     }
 
-    const myFetch = ++fetches;
-
-    // a newer fetch takes over from any still out, whose answer the count check below drops, so
-    // nothing is left holding the gate. without this, clearing the feed while a download was out
-    // left the gate shut for the rest of the session
-    inFlight = false;
-
     const url = calendarUrl();
     if (!url) {
+      // no feed means nothing to download, so the round ends here rather than holding the gate
+      finishRound(state, round);
       sendCalendar([]);
       return;
     }
@@ -94,14 +91,11 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
     const bustedUrl = cacheBust(url, Date.now());
 
     console.log('Calendar: fetching feed');
-    inFlight = true;
     request(bustedUrl, (error, body) => {
       // a newer fetch is out or already answered, so this one says nothing current
-      if (myFetch !== fetches) {
+      if (!finishRound(state, round)) {
         return;
       }
-
-      inFlight = false;
 
       if (error) {
         console.error('Calendar fetch failed: ' + error);
@@ -163,6 +157,10 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
     configSaved() {
       // a changed iCal URL refetches straight away, so a new feed shows without waiting for the next poll
       if (feedSetting.changed()) {
+        // a download still out for the old feed would land in the moment before the forced refetch
+        // and push the old agenda to the watch, where it stays if the new feed's download fails.
+        // shutting it out drops that answer
+        shutOutRound(state);
         refetchAfterSave(asks, refetchDelayMs, () => getCalendar(true));
       }
     },

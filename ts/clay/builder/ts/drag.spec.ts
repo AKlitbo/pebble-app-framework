@@ -128,7 +128,7 @@ describe('pointercancel', () => {
     expect(spec.dropOutside).not.toHaveBeenCalled();
   });
 
-  /** A builder that never lifts anything out of its model needs no cancel, so the old single path has to keep working. */
+  /** A spec that leaves out cancel still has to end the drag on a pointer cancel, so dropOutside runs for it too. */
   test('falls back to dropOutside for a spec with no cancel', () => {
     const spec = specWith();
     const drag = createDrag<string, number>(spec);

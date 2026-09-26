@@ -45,6 +45,31 @@ export function readValue(value: any, fallback: any): any {
 }
 
 /**
+ * Reads a text Clay setting, applying a fallback only when it was never saved.
+ *
+ * A text field the wearer emptied saves an empty string, and that is their choice, so it is kept.
+ * Taking the fallback for it would bring a field with a default straight back, and a cleared
+ * watchlist or calendar link could never be cleared.
+ *
+ * @param value The raw Clay value, which may already be unwrapped or still wrapped.
+ * @param fallback What to return when the value is missing.
+ * @return The setting as a string, or the fallback.
+ */
+export function readText(value: any, fallback: string): string {
+  let result = value;
+
+  if (result && typeof result === 'object' && 'value' in result) {
+    result = result.value;
+  }
+
+  if (result === undefined || result === null) {
+    return fallback;
+  }
+
+  return String(result);
+}
+
+/**
  * Reads a boolean Clay setting, applying a fallback when it is unset.
  *
  * @param value The raw Clay value.
@@ -57,15 +82,22 @@ export function readBool(value: any, fallback: boolean): boolean {
 }
 
 /**
- * Snapshots the settings behind a key list so a later save can be diffed against them. Each
- * value is JSON-encoded so objects compare by content.
+ * Snapshots the settings behind a key list so a later save can be diffed against them. A setting
+ * with nothing saved reads as its default, which is what a fetch used for it, so a first save or
+ * seed that writes the default back does not count as a change. A single value compares by its
+ * text, since a default declared as the number 0 comes back from Clay as the string "0", and
+ * anything else is JSON-encoded so objects compare by content.
  *
  * @param keys The settings to snapshot, by message key.
- * @return Each setting's JSON, in the same order as the keys.
+ * @param defaults The face's config defaults, read for a setting with nothing saved.
+ * @return Each setting as text, in the same order as the keys.
  */
-export function settingsSnapshot(keys: string[]): string[] {
+export function settingsSnapshot(keys: string[], defaults: Record<string, unknown> = {}): string[] {
   const config = getConfig();
-  return keys.map((key) => JSON.stringify(config[key]));
+  return keys.map((key) => {
+    const value = config[key] === undefined ? defaults[key] : config[key];
+    return ['string', 'number', 'boolean'].includes(typeof value) ? String(value) : JSON.stringify(value);
+  });
 }
 
 /**
@@ -99,14 +131,15 @@ export interface SettingsWatch {
  * one of its own settings moved rather than on every save.
  *
  * @param keys The settings to watch, by message key.
+ * @param defaults The face's config defaults, read for a setting with nothing saved.
  * @return The watch. Call opened when the page opens and changed once it has saved.
  */
-export function watchSettings(keys: string[]): SettingsWatch {
+export function watchSettings(keys: string[], defaults: Record<string, unknown> = {}): SettingsWatch {
   let before: string[] | null = null;
 
   return {
     opened() {
-      before = settingsSnapshot(keys);
+      before = settingsSnapshot(keys, defaults);
     },
 
     changed() {
@@ -114,7 +147,7 @@ export function watchSettings(keys: string[]): SettingsWatch {
 
       before = null;
 
-      return settingsChanged(keys, snapshot, settingsSnapshot(keys));
+      return settingsChanged(keys, snapshot, settingsSnapshot(keys, defaults));
     },
   };
 }

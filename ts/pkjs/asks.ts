@@ -44,13 +44,14 @@ export function askShouldFetch(asks: FeatureAsks): boolean {
  * Decides whether a slow tick should start a fetch.
  *
  * A tick that follows one of the watch's asks would only fetch the same data again. The tick
- * fetches when nothing asked since the last one, such as a watch out of range.
+ * fetches when nothing asked since the last one, such as a watch out of range. A save's refetch
+ * that is still waiting to run owns the next fetch, so a tick that lands in that moment waits.
  *
  * @param asks The ask state to read and update in place.
  * @return True when the tick should start a fetch.
  */
 export function slowTickShouldFetch(asks: FeatureAsks): boolean {
-  const due = !asks.sinceSlowTick;
+  const due = !asks.sinceSlowTick && !asks.savePending;
 
   asks.sinceSlowTick = false;
 

@@ -16,7 +16,7 @@ export type RequestFn = (url: string, callback: (err: string | null, body?: stri
 export function request(url: string, callback: (err: string | null, body?: string) => void): void {
   const xhr = new XMLHttpRequest();
 
-  // fire the callback exactly once. the pebble app's XHR doesn't reliably honor xhr.timeout, so
+  // fire the callback exactly once. the pebble app's XHR doesn't reliably honour xhr.timeout, so
   // a request can hang forever with no onload/onerror/ontimeout, which strands the whole fetch
   // (the watch just sits blank). an independent watchdog guarantees the caller always hears back
   let settled = false;
@@ -86,14 +86,22 @@ export function safeParse(body: string): unknown {
  * Adds a query param that changes on every call, so no HTTP cache between the phone and the
  * provider can hand back an old reply. Providers ignore the extra param.
  *
+ * The stamp goes before any #fragment, since nothing after the # reaches the server. A signed URL,
+ * such as an S3 presigned link, is refused once the stamp changes its query. That costs a feed
+ * served that way, where skipping the stamp would bring back the stale copies it is here to beat,
+ * and the feeds calendars hand out are not signed.
+ *
  * @param url The URL to fetch.
  * @param nowMs The time to stamp it with, normally Date.now().
  * @return The URL with its `_=` stamp added.
  */
 export function cacheBust(url: string, nowMs: number): string {
-  const separator = url.indexOf('?') === -1 ? '?' : '&';
+  const hash = url.indexOf('#');
+  const base = hash === -1 ? url : url.slice(0, hash);
+  const fragment = hash === -1 ? '' : url.slice(hash);
+  const separator = base.indexOf('?') === -1 ? '?' : '&';
 
-  return `${url}${separator}_=${nowMs}`;
+  return `${base}${separator}_=${nowMs}${fragment}`;
 }
 
 /**

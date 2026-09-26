@@ -14,7 +14,7 @@ export type SendFn = (dict: AppMessageDict, onOk: () => void, onFail: () => void
 /** What queueSend looks like at the call site. */
 export type QueueSendFn = (dict: AppMessageDict, onOk?: () => void, onFail?: () => void) => void;
 
-/** How many times a nacked send is retried before it is dropped and the queue moves on. */
+/** How many tries a send gets, the first one included, before it is dropped and the queue moves on. */
 export const SEND_RETRIES = 3;
 
 /** How long to back off after a nack before retrying the same head. */
@@ -43,6 +43,21 @@ export function createSendQueue(send: SendFn): QueueSendFn {
   const items: QueueItem[] = [];
   let sending = false;
 
+  /**
+   * Runs a settled send's callback, then the next send. A callback that throws is logged, so it
+   * neither stalls the queue behind it nor escapes into an unrelated send's ack.
+   */
+  function finish(callback?: () => void): void {
+    try {
+      if (callback) {
+        callback();
+      }
+    } catch (error) {
+      console.error('send queue: callback threw', error);
+    }
+    pump();
+  }
+
   /** Sends the next queued item, if the queue is free and something is waiting. */
   function pump(): void {
     if (sending || items.length === 0) {
@@ -52,7 +67,10 @@ export function createSendQueue(send: SendFn): QueueSendFn {
     const item = items[0];
 
     // resolve each send exactly once. a lost ack/nack (neither callback ever fires) would otherwise
-    // leave sending true forever and wedge the whole queue, so a watchdog counts as a failure
+    // leave sending true forever and wedge the whole queue, so a watchdog counts as a failure.
+    // an ack that turns up after the watchdog is ignored, so a send that only ran slow goes again
+    // and the watch can take the same dict twice. that costs one repeat send, which the watch
+    // writes nothing for, where following a late ack would need the queue to track sends it gave up on
     let settled = false;
     /**
      * Settles the send in flight, whichever way it finishes.
@@ -70,10 +88,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
       if (ok) {
         sending = false;
         items.shift();
-        if (item.onOk) {
-          item.onOk();
-        }
-        pump();
+        finish(item.onOk);
         return;
       }
 
@@ -83,10 +98,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
       if (item.tries >= SEND_RETRIES) {
         sending = false;
         items.shift();
-        if (item.onFail) {
-          item.onFail();
-        }
-        pump();
+        finish(item.onFail);
         return;
       }
 
@@ -148,6 +160,10 @@ export function createDedupedSender(queueSend: QueueSendFn, label: string): Dedu
         return;
       }
 
+      // held from the moment it is queued, so an identical push while it waits is dropped. if the
+      // queued one then fails its tries, the dropped one is not sent again, and the next push that
+      // comes along is. that costs a reading until the next push, where holding it only once acked
+      // would send every push made while one waits
       held = next;
 
       queueSend(

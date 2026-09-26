@@ -36,6 +36,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.useRealTimers();
 });
 
@@ -99,6 +100,25 @@ describe('createSendQueue', () => {
     calls[0].ok();
 
     expect(onOk).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * A callback is caller code, and one that threw skipped starting the next send, so everything
+   * queued behind it waited on some unrelated send to come along.
+   */
+  test('starts the next send when a callback throws', () => {
+    const { calls, send } = recordingSend();
+    const queueSend = createSendQueue(send);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    queueSend({ a: 1 }, () => {
+      throw new Error('caller bug');
+    });
+    queueSend({ b: 2 });
+
+    calls[0].ok();
+
+    expect(calls).toHaveLength(2);
+    expect(calls[1].dict).toEqual({ b: 2 });
   });
 
   /** A nack usually just means a momentarily busy outbox, so the same dict must go again. */

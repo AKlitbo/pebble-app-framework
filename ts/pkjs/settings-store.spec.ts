@@ -10,7 +10,7 @@
  */
 
 import { describe, test, expect, beforeEach } from 'vitest';
-import { getConfig, readBool, readValue, watchSettings } from './settings-store';
+import { getConfig, readBool, readText, readValue, watchSettings } from './settings-store';
 
 describe('getConfig', () => {
   beforeEach(() => {
@@ -40,6 +40,35 @@ describe('getConfig', () => {
     const result = getConfig();
 
     expect(result).toEqual({});
+  });
+});
+
+describe('readText', () => {
+  /**
+   * A wearer who empties a field with a default saved an empty string. Taking the default for it
+   * kept fetching the default tickers or feed however often they cleared it.
+   */
+  test('keeps an emptied field rather than taking the default', () => {
+    const result = readText('', 'AAPL');
+
+    expect(result).toBe('');
+  });
+
+  /** A field that was never saved has no choice in it yet, so it gets the default. */
+  test.each([
+    ['null', null],
+    ['undefined', undefined],
+  ])('takes the default for a field never saved (%s)', (label, value) => {
+    const result = readText(value, 'AAPL');
+
+    expect(result).toBe('AAPL');
+  });
+
+  /** Clay wraps some values as {value}, so the wrapper must come off or the field reads as an object. */
+  test('unwraps a Clay value wrapper', () => {
+    const result = readText({ value: 'MSFT' }, 'AAPL');
+
+    expect(result).toBe('MSFT');
   });
 });
 
@@ -127,6 +156,34 @@ describe('watchSettings', () => {
     const result = watch.changed();
 
     expect(result).toBe(true);
+  });
+
+  /**
+   * A first run has nothing saved, and the fetch on ready used the default. A seed that wrote the
+   * same value back counted as a change, and weather spent a second metered call on the same answer.
+   */
+  test('reads a setting with nothing saved as its default', () => {
+    const watch = watchSettings(['WEATHER_TEMPERATURE_UNIT'], { WEATHER_TEMPERATURE_UNIT: false });
+    watch.opened();
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_TEMPERATURE_UNIT: false }));
+
+    const result = watch.changed();
+
+    expect(result).toBe(false);
+  });
+
+  /**
+   * A default declared as the number 0 comes back from Clay as the string "0". Compared as JSON the
+   * two differed, so a first save of anything counted as a unit change and spent a metered call.
+   */
+  test('matches a number default against the string Clay saves', () => {
+    const watch = watchSettings(['WEATHER_TEMPERATURE_UNIT'], { WEATHER_TEMPERATURE_UNIT: 0 });
+    watch.opened();
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_TEMPERATURE_UNIT: '0' }));
+
+    const result = watch.changed();
+
+    expect(result).toBe(false);
   });
 
   /** With no snapshot the page never reported opening, so the safe answer is to refetch. */

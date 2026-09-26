@@ -148,6 +148,18 @@ describe('shouldThrottleStockFetch', () => {
       expect(result).toBe(true);
     });
 
+    /**
+     * A stamp saved while the phone's clock ran ahead sits in the future once the clock is put
+     * right. Held against it, every poll stayed throttled until the real clock passed the stamp.
+     */
+    test('lets a poll through when the last fetch is stamped in the future', () => {
+      const now = etMs(1, 10, 0);
+
+      const result = schedule.shouldThrottleStockFetch('twelvedata', false, now + 3 * 60 * 60 * 1000, '', now);
+
+      expect(result).toBe(false);
+    });
+
     /** Past the 15-min floor an open-market poll must go, or the quote sits stale during trading. */
     test('lets an open poll through once the 15-minute floor has passed', () => {
       const now = etMs(1, 10, 0);
@@ -181,7 +193,7 @@ describe('shouldThrottleStockFetch', () => {
     test('idles during the open session', () => {
       const now = etMs(1, 10, 0);
 
-      const result = schedule.shouldThrottleStockFetch('alphavantage', false, 0, '', now);
+      const result = schedule.shouldThrottleStockFetch('alphavantage', false, now - TWO_HOURS, '', now);
 
       expect(result).toBe(true);
     });
@@ -230,9 +242,21 @@ describe('shouldThrottleStockFetch', () => {
     test('idles overnight', () => {
       const now = etMs(1, 3, 0);
 
-      const result = schedule.shouldThrottleStockFetch('alphavantage', false, 0, '', now);
+      const result = schedule.shouldThrottleStockFetch('alphavantage', false, now - TWO_HOURS, '', now);
 
       expect(result).toBe(true);
+    });
+
+    /**
+     * A phone whose storage was cleared has no stamp, and the watch only forces a fetch on a save.
+     * Holding it outside the evening window left the strip blank until the next weekday close.
+     */
+    test('lets the first poll through at any hour when it has never fetched', () => {
+      const now = etMs(1, 10, 0);
+
+      const result = schedule.shouldThrottleStockFetch('alphavantage', false, 0, '', now);
+
+      expect(result).toBe(false);
     });
   });
 

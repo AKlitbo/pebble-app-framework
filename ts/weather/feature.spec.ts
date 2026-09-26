@@ -13,6 +13,7 @@ import {
   weatherRetryDelayMs,
   runWeatherRound,
   WEATHER_RETRY_DELAYS_MS,
+  conditionLabel,
 } from './feature';
 
 describe('validCoord', () => {
@@ -74,6 +75,20 @@ describe('getManualLocation', () => {
   });
 });
 
+describe('conditionLabel', () => {
+  /** The watch has no word table of its own, so a wrong or missing word here is what the panel shows. */
+  test.each([
+    ['PCLDY', 'Partly Cloudy'],
+    ['PCLDY_NIGHT', 'Partly Cloudy'],
+    ['NOPE', 'Unknown'],
+    [undefined, 'Unknown'],
+  ])('reads %s as %s', (token, expected) => {
+    const result = conditionLabel(token);
+
+    expect(result).toBe(expected);
+  });
+});
+
 describe('weatherRetryDelayMs', () => {
   /** A successful fetch that still scheduled a retry would re-poll the provider for no reason. */
   test('returns null when the fetch succeeded', () => {
@@ -94,6 +109,30 @@ describe('weatherRetryDelayMs', () => {
     const result = weatherRetryDelayMs(false, 1);
 
     expect(result).toBe(15000);
+  });
+
+  /**
+   * A bad key fails the same way seconds later, so each retry spent another call on the provider's
+   * quota, plus the paired Open-Meteo call, for an answer that could not change.
+   */
+  test('returns null for a failure that waits on the settings', () => {
+    const result = weatherRetryDelayMs(false, 0, 'INVALID KEY');
+
+    expect(result).toBe(null);
+  });
+
+  /** A provider's call cap does not lift seconds later, so each retry only spent more of it. */
+  test('returns null for a rate limit', () => {
+    const result = weatherRetryDelayMs(false, 0, 'RATE LIMIT');
+
+    expect(result).toBe(null);
+  });
+
+  /** A network failure can clear by the next try, so it still retries. */
+  test('still retries a network failure', () => {
+    const result = weatherRetryDelayMs(false, 0, 'NET ERROR');
+
+    expect(result).toBe(5000);
   });
 
   /** Uncapped retries would loop forever on a genuinely bad key or a dead feed. */
