@@ -62,15 +62,18 @@ heading, intro        page title and lead paragraph (both optional)</p>
 appearanceItems [ClayConfigItem]            extra controls inside the Appearance section
 clockItems      [ClayConfigItem]            extra controls inside the Clock section
 bluetooth { description? }                   always shown
-date     { label?, description?, default?, beats?, options? }
-steps    { label?, description?, capabilities? }</p>
+date     { label?, description?, default?, beats?, options? }</p>
 <p>Optional sections (present = included, omitted = excluded):
+steps       { label?, description?, capabilities? }  the steps control in the Health section
+battery     { label?, description? }         the battery readout control in the Health section
 theme       { label?, description?, options? }  the theme picker. options is the theme list,
 and a picker given none has nothing to offer
 clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
 location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
 weather     {}                               marker, adds the provider picker to the Weather section
-temperature {}                               marker, adds the unit dropdown to the Weather section</p>
+temperature {}                               marker, adds the unit dropdown to the Weather section
+calendar    { description?, items? }         the iCal link, then a face's own calendar controls
+stocks      { description?, items? }         the data source, key, and tickers, then a face's own controls</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -81,7 +84,7 @@ temperature {}                               marker, adds the unit dropdown to t
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The assembled Clay config array, ready to hand to Clay.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/pkjs/config-builder.ts#L442">pkjs/config-builder.ts:442</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/8fd82100b75f602f928a16bffd2373cdf4c837d2/ts/pkjs/config-builder.ts#L559">pkjs/config-builder.ts:559</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -99,12 +102,12 @@ temperature {}                               marker, adds the unit dropdown to t
 <h3 class="tsd-anchor-link" id="beatsdateoptions"><span>beats<wbr/>Date<wbr/>Options</span><a href="#beatsdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">beatsDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/pkjs/config-builder.ts#L477">pkjs/config-builder.ts:477</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/8fd82100b75f602f928a16bffd2373cdf4c837d2/ts/pkjs/config-builder.ts#L593">pkjs/config-builder.ts:593</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="defaultdateoptions"><span>default<wbr/>Date<wbr/>Options</span><a href="#defaultdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">defaultDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/02060c8384c2056f5ef9113dee1fe40cf089302c/ts/pkjs/config-builder.ts#L476">pkjs/config-builder.ts:476</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/8fd82100b75f602f928a16bffd2373cdf4c837d2/ts/pkjs/config-builder.ts#L592">pkjs/config-builder.ts:592</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

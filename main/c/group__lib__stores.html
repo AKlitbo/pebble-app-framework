@@ -399,6 +399,8 @@ void&#160;</td><td class="memItemRight"><b>store_cadence_fire</b> (void)</td></t
 <tr class="memdesc:gaee79556bd3009dd1478b61913e5368d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The next wall-clock second a poll of this interval falls due.  <br /></td></tr>
 <tr class="memitem:ga997e6ccf70b96c79e2500b83af6e54dc" id="r_ga997e6ccf70b96c79e2500b83af6e54dc"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga997e6ccf70b96c79e2500b83af6e54dc">store_poll_due</a> (int poll_min, time_t *next, time_t now)</td></tr>
 <tr class="memdesc:ga997e6ccf70b96c79e2500b83af6e54dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <code class="param">next</code> has come round, moving it on to the following deadline when it has.  <br /></td></tr>
+<tr class="memitem:ga8bf76bddf8844add6cd6e7c0684b8ee0" id="r_ga8bf76bddf8844add6cd6e7c0684b8ee0"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga8bf76bddf8844add6cd6e7c0684b8ee0">store_poll_reconnect_due</a> (int age_s, int poll_min)</td></tr>
+<tr class="memdesc:ga8bf76bddf8844add6cd6e7c0684b8ee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a reading is worth asking for again now that the phone is back.  <br /></td></tr>
 <tr class="memitem:ga30b8b33c3204c012230afe0eb9e8d594" id="r_ga30b8b33c3204c012230afe0eb9e8d594"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga30b8b33c3204c012230afe0eb9e8d594">store_poll_set</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, int poll_min, bool live, time_t now)</td></tr>
 <tr class="memdesc:ga30b8b33c3204c012230afe0eb9e8d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its init and its reconfigure both do.  <br /></td></tr>
 <tr class="memitem:ga576c21d8f643934d22918c3fb2cbeeef" id="r_ga576c21d8f643934d22918c3fb2cbeeef"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga576c21d8f643934d22918c3fb2cbeeef">store_poll_turn</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, time_t now)</td></tr>
@@ -1135,6 +1137,46 @@ Store tags</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The second the next poll is due. </dd></dl>
+
+</div>
+</div>
+<a id="ga8bf76bddf8844add6cd6e7c0684b8ee0" name="ga8bf76bddf8844add6cd6e7c0684b8ee0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8bf76bddf8844add6cd6e7c0684b8ee0">&#9670;&#160;</a></span>store_poll_reconnect_due()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool store_poll_reconnect_due </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>age_s</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>poll_min</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether a reading is worth asking for again now that the phone is back. </p>
+<p>The phone's side may have been closed the whole time it was away, so a face catches up a reading that went stale meanwhile. Only a reading that never arrived, or one at least its own interval old, is asked for, so bluetooth dropping in and out cannot fetch faster than the normal polling. Polling turned off is left alone, the same as its store.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">age_s</td><td>Seconds since the reading arrived, or below 0 when it never has. </td></tr>
+    <tr><td class="paramname">poll_min</td><td>Minutes between polls. 0 or less means polling is off. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether to ask for the reading again. </dd></dl>
 
 </div>
 </div>

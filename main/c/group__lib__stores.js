@@ -188,6 +188,7 @@ var group__lib__stores =
     [ "store_fetch_turn", "group__lib__stores.html#gae24dbc83a69a2c585fc08c07f2d27091", null ],
     [ "store_poll_due", "group__lib__stores.html#ga997e6ccf70b96c79e2500b83af6e54dc", null ],
     [ "store_poll_next", "group__lib__stores.html#gaee79556bd3009dd1478b61913e5368d4", null ],
+    [ "store_poll_reconnect_due", "group__lib__stores.html#ga8bf76bddf8844add6cd6e7c0684b8ee0", null ],
     [ "store_poll_set", "group__lib__stores.html#ga30b8b33c3204c012230afe0eb9e8d594", null ],
     [ "store_poll_turn", "group__lib__stores.html#ga576c21d8f643934d22918c3fb2cbeeef", null ],
     [ "store_restore", "group__lib__stores.html#ga286178630dd827b7d2e677742541e280", null ],
