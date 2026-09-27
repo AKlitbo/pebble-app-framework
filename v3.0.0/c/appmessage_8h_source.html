@@ -1,0 +1,283 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: c/pebble/io/appmessage/appmessage.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v3.0.0" selected>v3.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">appmessage.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="appmessage_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;pebble.h&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="weather__reading_8h.html">weather/weather_reading.h</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">// per-channel handler types. a store or a face registers only the channels it cares about, so</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">// the appmessage pipeline stays separate from who reads the data</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb">   29</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb">WeatherHandler</a>)(<span class="keyword">const</span> <a class="code hl_struct" href="structWeatherMessage.html">WeatherMessage</a> *msg);</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030">   37</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030">CoordsHandler</a>)(<span class="keyword">const</span> <span class="keywordtype">char</span> *lat, <span class="keyword">const</span> <span class="keywordtype">char</span> *lon);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">   45</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">SettingsChangedHandler</a>)(<span class="keywordtype">bool</span> time_or_date_changed);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9">   54</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9">UnitChangedHandler</a>)(<span class="keywordtype">bool</span> fahrenheit);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">   62</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">StockStripHandler</a>)(<span class="keyword">const</span> uint8_t *buf, uint16_t len);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">   70</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a>)(<span class="keyword">const</span> uint8_t *buf, uint16_t len);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment">// the custom-colours string can be too big for one persist key, so it rides its own handler</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">// instead of the settings table. inbound the face splits it and stores it. outbound the</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">// provider rebuilds it into the buffer appmessage hands over, so nobody keeps a worst-case</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="comment">// buffer alive between sends</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">   82</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a>)(<span class="keyword">const</span> <span class="keywordtype">char</span> *combined);</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">   91</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a>)(<span class="keywordtype">char</span> *out, <span class="keywordtype">size_t</span> n);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="group__lib__io.html#ga8bfcc8d396856901aeea684974fdb15c">   94</a></span><span class="preprocessor">#define APPMESSAGE_CUSTOM_COLORS_MAX 502</span></div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">  102</a></span><span class="keyword">typedef</span> void (*<a class="code hl_typedef" href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">InboxCompleteHandler</a>)(void);</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga8760e9417f2f894915a0950dc1fdab07">appmessage_on_weather</a>(<a class="code hl_typedef" href="group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb">WeatherHandler</a> cb);                   </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga7c64814ef2b8dcd4ee38743e31fb58d2">appmessage_on_coords</a>(<a class="code hl_typedef" href="group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030">CoordsHandler</a> cb);                     </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gad9d1d40d059728d240df1d07fd713323">appmessage_on_settings_changed</a>(<a class="code hl_typedef" href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">SettingsChangedHandler</a> cb);  </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gab58b5b73b9f4c46fa2b249e2378b71b3">appmessage_on_unit_changed</a>(<a class="code hl_typedef" href="group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9">UnitChangedHandler</a> cb);          </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga45a5f177aabba862b779b38b5b4ed288">appmessage_on_stock_strip</a>(<a class="code hl_typedef" href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">StockStripHandler</a> cb);            </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga1ab2899a032be1fe4ab307e70f8bf3cd">appmessage_on_calendar_strip</a>(<a class="code hl_typedef" href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a> cb);      </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gacd479537bb794bc2cc1f07b4db3fb830">appmessage_on_custom_colors</a>(<a class="code hl_typedef" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a> cb);        </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gaf7a398e20625029f2e376405e9132660">appmessage_set_custom_colors_provider</a>(<a class="code hl_typedef" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a> cb); </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#ga502ebf1b6d9c87b77f5f708cd7424f86">appmessage_add_inbox_complete</a>(<a class="code hl_typedef" href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">InboxCompleteHandler</a> cb);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span></div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gab954f122b1dd5b44dfd5bda314c53831">appmessage_open</a>(uint32_t inbox_size);</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span></div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gaf552756e4da1e1818775bb984bdd36c0">appmessage_request_weather</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gac7dbcd76bf92e5bbf684d2c9849b5ebf">appmessage_request_stock</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span></div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__io.html#gac18380f0c5fdc613452b569ef4d88c35">appmessage_request_calendar</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span></div>
+<div class="ttc" id="agroup__lib__io_html_ga1ab2899a032be1fe4ab307e70f8bf3cd"><div class="ttname"><a href="group__lib__io.html#ga1ab2899a032be1fe4ab307e70f8bf3cd">appmessage_on_calendar_strip</a></div><div class="ttdeci">void appmessage_on_calendar_strip(CalendarStripHandler cb)</div><div class="ttdoc">Packed agenda strip.</div><div class="ttdef"><b>Definition</b> appmessage.c:87</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga45a5f177aabba862b779b38b5b4ed288"><div class="ttname"><a href="group__lib__io.html#ga45a5f177aabba862b779b38b5b4ed288">appmessage_on_stock_strip</a></div><div class="ttdeci">void appmessage_on_stock_strip(StockStripHandler cb)</div><div class="ttdoc">Packed watchlist strip.</div><div class="ttdef"><b>Definition</b> appmessage.c:86</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga502ebf1b6d9c87b77f5f708cd7424f86"><div class="ttname"><a href="group__lib__io.html#ga502ebf1b6d9c87b77f5f708cd7424f86">appmessage_add_inbox_complete</a></div><div class="ttdeci">void appmessage_add_inbox_complete(InboxCompleteHandler cb)</div><div class="ttdoc">Adds work to run once after a whole inbound message is handled, after every channel in it.</div><div class="ttdef"><b>Definition</b> appmessage.c:91</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga59b6055d84a446d8b469ba7ef8883030"><div class="ttname"><a href="group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030">CoordsHandler</a></div><div class="ttdeci">void(*) CoordsHandler(const char *lat, const char *lon)</div><div class="ttdoc">Called with a fresh pair of coordinates.</div><div class="ttdef"><b>Definition</b> appmessage.h:37</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga5e383acfcc7c48eb2dd8caac176bf5cb"><div class="ttname"><a href="group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb">WeatherHandler</a></div><div class="ttdeci">void(*) WeatherHandler(const WeatherMessage *msg)</div><div class="ttdoc">Called with one weather message, holding every group of readings it carried.</div><div class="ttdef"><b>Definition</b> appmessage.h:29</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga6daf051587a0083e33af5e4d0847f931"><div class="ttname"><a href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a></div><div class="ttdeci">void(*) CustomColorsHandler(const char *combined)</div><div class="ttdoc">Called inbound with the combined custom-colours string, for the face to split and store.</div><div class="ttdef"><b>Definition</b> appmessage.h:82</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga6efc27e8b660e10498f1678ddecc05dc"><div class="ttname"><a href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a></div><div class="ttdeci">void(*) CustomColorsProvider(char *out, size_t n)</div><div class="ttdoc">Called outbound to rebuild the combined custom-colours string before a settings reply is sent.</div><div class="ttdef"><b>Definition</b> appmessage.h:91</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga6fb408316f6f72341bf67751cdbd36d9"><div class="ttname"><a href="group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9">UnitChangedHandler</a></div><div class="ttdeci">void(*) UnitChangedHandler(bool fahrenheit)</div><div class="ttdoc">Called when the wearer switches the temperature unit on the settings page.</div><div class="ttdef"><b>Definition</b> appmessage.h:54</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga7c64814ef2b8dcd4ee38743e31fb58d2"><div class="ttname"><a href="group__lib__io.html#ga7c64814ef2b8dcd4ee38743e31fb58d2">appmessage_on_coords</a></div><div class="ttdeci">void appmessage_on_coords(CoordsHandler cb)</div><div class="ttdoc">Latitude and longitude.</div><div class="ttdef"><b>Definition</b> appmessage.c:83</div></div>
+<div class="ttc" id="agroup__lib__io_html_ga8760e9417f2f894915a0950dc1fdab07"><div class="ttname"><a href="group__lib__io.html#ga8760e9417f2f894915a0950dc1fdab07">appmessage_on_weather</a></div><div class="ttdeci">void appmessage_on_weather(WeatherHandler cb)</div><div class="ttdoc">One weather message, every group it carried.</div><div class="ttdef"><b>Definition</b> appmessage.c:82</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaa75e1339172964d75887a1c2b7b464fe"><div class="ttname"><a href="group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe">SettingsChangedHandler</a></div><div class="ttdeci">void(*) SettingsChangedHandler(bool time_or_date_changed)</div><div class="ttdoc">Called after a settings save that changed something.</div><div class="ttdef"><b>Definition</b> appmessage.h:45</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaad5cc31baad613ac137e95653cdab162"><div class="ttname"><a href="group__lib__io.html#gaad5cc31baad613ac137e95653cdab162">StockStripHandler</a></div><div class="ttdeci">void(*) StockStripHandler(const uint8_t *buf, uint16_t len)</div><div class="ttdoc">Called with a packed watchlist strip. The handler owns the wire format.</div><div class="ttdef"><b>Definition</b> appmessage.h:62</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaae586b1981cefa58e0284ec05e167205"><div class="ttname"><a href="group__lib__io.html#gaae586b1981cefa58e0284ec05e167205">InboxCompleteHandler</a></div><div class="ttdeci">void(*) InboxCompleteHandler(void)</div><div class="ttdoc">Called once after every inbox message is fully handled.</div><div class="ttdef"><b>Definition</b> appmessage.h:102</div></div>
+<div class="ttc" id="agroup__lib__io_html_gab58b5b73b9f4c46fa2b249e2378b71b3"><div class="ttname"><a href="group__lib__io.html#gab58b5b73b9f4c46fa2b249e2378b71b3">appmessage_on_unit_changed</a></div><div class="ttdeci">void appmessage_on_unit_changed(UnitChangedHandler cb)</div><div class="ttdoc">The wearer switched the temperature unit.</div><div class="ttdef"><b>Definition</b> appmessage.c:85</div></div>
+<div class="ttc" id="agroup__lib__io_html_gab954f122b1dd5b44dfd5bda314c53831"><div class="ttname"><a href="group__lib__io.html#gab954f122b1dd5b44dfd5bda314c53831">appmessage_open</a></div><div class="ttdeci">void appmessage_open(uint32_t inbox_size)</div><div class="ttdoc">Register the SDK callbacks and open the inbox and outbox.</div><div class="ttdef"><b>Definition</b> appmessage.c:738</div></div>
+<div class="ttc" id="agroup__lib__io_html_gac18380f0c5fdc613452b569ef4d88c35"><div class="ttname"><a href="group__lib__io.html#gac18380f0c5fdc613452b569ef4d88c35">appmessage_request_calendar</a></div><div class="ttdeci">void appmessage_request_calendar(void)</div><div class="ttdoc">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence....</div><div class="ttdef"><b>Definition</b> appmessage.c:308</div></div>
+<div class="ttc" id="agroup__lib__io_html_gac7dbcd76bf92e5bbf684d2c9849b5ebf"><div class="ttname"><a href="group__lib__io.html#gac7dbcd76bf92e5bbf684d2c9849b5ebf">appmessage_request_stock</a></div><div class="ttdeci">void appmessage_request_stock(void)</div><div class="ttdoc">Asks the phone for fresh quotes. The stock store calls this on its turn on the shared cadence....</div><div class="ttdef"><b>Definition</b> appmessage.c:301</div></div>
+<div class="ttc" id="agroup__lib__io_html_gacd479537bb794bc2cc1f07b4db3fb830"><div class="ttname"><a href="group__lib__io.html#gacd479537bb794bc2cc1f07b4db3fb830">appmessage_on_custom_colors</a></div><div class="ttdeci">void appmessage_on_custom_colors(CustomColorsHandler cb)</div><div class="ttdoc">Inbound: splits and stores the combined string.</div><div class="ttdef"><b>Definition</b> appmessage.c:88</div></div>
+<div class="ttc" id="agroup__lib__io_html_gad9d1d40d059728d240df1d07fd713323"><div class="ttname"><a href="group__lib__io.html#gad9d1d40d059728d240df1d07fd713323">appmessage_on_settings_changed</a></div><div class="ttdeci">void appmessage_on_settings_changed(SettingsChangedHandler cb)</div><div class="ttdoc">A setting changed on the phone.</div><div class="ttdef"><b>Definition</b> appmessage.c:84</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaea56a19672a4978e838e9d0a8753405b"><div class="ttname"><a href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a></div><div class="ttdeci">void(*) CalendarStripHandler(const uint8_t *buf, uint16_t len)</div><div class="ttdoc">Called with a packed agenda strip. The store owns the wire format.</div><div class="ttdef"><b>Definition</b> appmessage.h:70</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaf552756e4da1e1818775bb984bdd36c0"><div class="ttname"><a href="group__lib__io.html#gaf552756e4da1e1818775bb984bdd36c0">appmessage_request_weather</a></div><div class="ttdeci">void appmessage_request_weather(void)</div><div class="ttdoc">Asks the phone for a fresh weather reading. The weather store calls this on its turn on the shared ca...</div><div class="ttdef"><b>Definition</b> appmessage.c:285</div></div>
+<div class="ttc" id="agroup__lib__io_html_gaf7a398e20625029f2e376405e9132660"><div class="ttname"><a href="group__lib__io.html#gaf7a398e20625029f2e376405e9132660">appmessage_set_custom_colors_provider</a></div><div class="ttdeci">void appmessage_set_custom_colors_provider(CustomColorsProvider cb)</div><div class="ttdoc">Outbound: rebuilds the combined string.</div><div class="ttdef"><b>Definition</b> appmessage.c:89</div></div>
+<div class="ttc" id="astructWeatherMessage_html"><div class="ttname"><a href="structWeatherMessage.html">WeatherMessage</a></div><div class="ttdoc">One weather message as the transport read it, before anything is kept.</div><div class="ttdef"><b>Definition</b> weather_reading.h:43</div></div>
+<div class="ttc" id="aweather__reading_8h_html"><div class="ttname"><a href="weather__reading_8h.html">weather_reading.h</a></div><div class="ttdoc">One weather message off the phone, and the reading it leaves behind.</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>appmessage</b></li><li class="navelem"><a href="appmessage_8h.html">appmessage.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
