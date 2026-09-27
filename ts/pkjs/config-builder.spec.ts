@@ -10,6 +10,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import buildConfig from './config-builder';
 import type { ClayConfigItem } from '../clay/types';
+import { STOCK_PROVIDERS } from '../stock/stock';
 
 /** Collects every messageKey the config publishes, at any depth, so a nested item is not missed. */
 function collectMessageKeys(config: ClayConfigItem[]): string[] {
@@ -42,12 +43,41 @@ describe('buildConfig wire contract', () => {
 
     expect(keys).toEqual(expect.arrayContaining([
       'APPEARANCE_THEME', 'CONNECTION_BLUETOOTH_ICON', 'CONNECTION_VIBE_CONNECT', 'CONNECTION_VIBE_DISCONNECT',
-      'CLOCK_DATE_FORMAT', 'CLOCK_TIME_FORMAT', 'HEALTH_STEPS_MODE',
+      'CLOCK_DATE_FORMAT', 'CLOCK_TIME_FORMAT',
     ]));
   });
 });
 
 describe('buildConfig optional sections', () => {
+  /** A face with no stats readout declares no health keys, so the page must not offer one it never reads. */
+  test('leaves the health section out unless the face shows steps or battery', () => {
+    const config = buildConfig({ theme: minimalTheme });
+
+    const result = config.some((section) => (section.items || []).some((item) => item.defaultValue === 'Health'));
+
+    expect(result).toBe(false);
+  });
+
+  /** A face with a battery readout and no steps gets the battery control alone, under a heading that says so. */
+  test('gives a battery-only face the battery control and no steps control', () => {
+    const config = buildConfig({ theme: minimalTheme, battery: {} });
+
+    const result = collectMessageKeys(config);
+
+    expect(result).toContain('BATTERY_DISPLAY');
+    expect(result).not.toContain('HEALTH_STEPS_MODE');
+    expect(config.some((section) => (section.items || []).some((item) => item.defaultValue === 'Battery'))).toBe(true);
+  });
+
+  /** A face that shows steps has to get the control that picks what the readout shows. */
+  test('includes the steps control when the face shows steps', () => {
+    const config = buildConfig({ theme: minimalTheme, steps: {} });
+
+    const result = collectMessageKeys(config);
+
+    expect(result).toContain('HEALTH_STEPS_MODE');
+  });
+
   /** A face that opts out of weather/location/temperature must not publish those keys,
    *  or the phone offers settings the watch never reads. */
   test('omits the optional keys when their sections are absent', () => {
@@ -61,6 +91,7 @@ describe('buildConfig optional sections', () => {
     expect(keys).not.toContain('WEATHER_PROVIDER');
     expect(keys).not.toContain('WEATHER_API_KEY');
     expect(keys).not.toContain('WEATHER_TEMPERATURE_UNIT');
+    expect(keys).not.toContain('HEALTH_STEPS_MODE');
   });
 
   /** If presence inclusion breaks, a full-featured face silently loses its weather,
@@ -203,5 +234,47 @@ describe('buildConfig time format choices', () => {
     const timeSelect = findItemByKey(config, 'CLOCK_TIME_FORMAT');
 
     expect(timeSelect.options.map((option) => option.value)).toEqual([0, 1, 4, 2, 3]);
+  });
+});
+
+describe('buildConfig stocks and calendar', () => {
+  /** A face without stocks or a calendar must not offer settings its watch never reads. */
+  test('leaves both sections out unless the face asks', () => {
+    const config = buildConfig({});
+
+    const result = collectMessageKeys(config);
+
+    expect(result).not.toContain('STOCK_SYMBOLS');
+    expect(result).not.toContain('CALENDAR_ICS_URL');
+  });
+
+  /** These are the keys the phone's stock and calendar features read, so a face asking for the sections has to get them. */
+  test('publishes the keys the stock and calendar features read', () => {
+    const config = buildConfig({ stocks: {}, calendar: {} });
+
+    const result = collectMessageKeys(config);
+
+    expect(result).toEqual(expect.arrayContaining(['STOCK_PROVIDER', 'STOCK_API_KEY', 'STOCK_SYMBOLS', 'CALENDAR_ICS_URL']));
+  });
+
+  /** A face's own controls, such as a refresh interval its watch reads, belong in the same section. */
+  test('adds a face\'s own controls under the tickers', () => {
+    const config = buildConfig({ stocks: { items: [{ type: 'select', messageKey: 'STOCK_POLL' }] } });
+
+    const result = findItemByKey(config, 'STOCK_POLL');
+
+    expect(result).toBeDefined();
+  });
+
+  /**
+   * A data source the phone has no provider for fetches nothing, and the watchlist stays empty. A
+   * provider with no option can never be picked.
+   */
+  test('offers the data sources the stock feature has a provider for', () => {
+    const config = buildConfig({ stocks: {} });
+
+    const result = (findItemByKey(config, 'STOCK_PROVIDER')?.options as { value: string }[]).map((option) => option.value).sort();
+
+    expect(result).toEqual([...STOCK_PROVIDERS].sort());
   });
 });

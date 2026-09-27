@@ -41,6 +41,12 @@ export interface ConfigBuilderOptions {
   weather?: unknown;
   temperature?: unknown;
   battery?: { label?: string; description?: string };
+  /** Stock quotes: the data source, its key, and the tickers. description replaces the lead line, and
+   * items adds a face's own controls under the tickers, such as a refresh interval its watch reads. */
+  stocks?: { description?: string; items?: ClayConfigItem[] };
+  /** The calendar feed: the private iCal link. description replaces the lead line, and items adds a
+   * face's own controls under it, such as reminders its watch buzzes for. */
+  calendar?: { description?: string; items?: ClayConfigItem[] };
   layoutSections?: ClayConfigItem[];
 }
 
@@ -237,13 +243,17 @@ export function clockSection(options: ConfigBuilderOptions): ClayConfigItem {
 }
 
 /**
- * The Health section: what the stats slot shows, and the battery readout when asked for. It is on
- * every page, since the stats slot is.
+ * The Health section: what the stats slot shows, and the battery readout, each when asked for. A face
+ * that shows neither gets no section, and so declares no health keys.
  *
  * @param options The per-section description, read for steps and battery.
- * @return The section.
+ * @return The section, or null for a face that asks for neither.
  */
-export function healthSection(options: ConfigBuilderOptions): ClayConfigItem {
+export function healthSection(options: ConfigBuilderOptions): ClayConfigItem | null {
+  if (!options.steps && !options.battery) {
+    return null;
+  }
+
   const steps = options.steps || {};
 
   // when the steps control is the only thing in this section and it is filtered out, the heading
@@ -254,10 +264,14 @@ export function healthSection(options: ConfigBuilderOptions): ClayConfigItem {
   const healthItems: ClayConfigItem[] = [
     {
       'type': 'heading',
-      'defaultValue': 'Health',
+      // with no steps control the section holds the battery control alone, and is titled for it
+      'defaultValue': options.steps ? 'Health' : 'Battery',
       ...(healthHeadingCapabilities ? { 'capabilities': healthHeadingCapabilities } : {}),
     },
-    {
+  ];
+
+  if (options.steps) {
+    healthItems.push({
       'type': 'select',
       'messageKey': 'HEALTH_STEPS_MODE',
       'label': steps.label || 'Stats Readout',
@@ -269,8 +283,8 @@ export function healthSection(options: ConfigBuilderOptions): ClayConfigItem {
         { 'label': 'Distance (Kilometers)', 'value': 2 },
       ],
       ...(steps.capabilities ? { 'capabilities': steps.capabilities } : {}),
-    },
-  ];
+    });
+  }
 
   if (options.battery) {
     healthItems.push({
@@ -400,7 +414,7 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
         'description': 'Only required if you selected OpenWeatherMap or WeatherAPI above.',
         'attributes': {
           'placeholder': 'Paste your private API key here...',
-          'limit': 64,
+          'maxlength': 64,
         },
       }
     );
@@ -409,6 +423,106 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
   return {
     'type': 'section',
     'items': weatherItems,
+  };
+}
+
+/**
+ * The Stock section: where quotes come from, the key that source needs, and the tickers to show.
+ *
+ * @param options The per-section description, read for stocks.
+ * @return The section, or null for a face that shows no stocks.
+ */
+export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | null {
+  if (!options.stocks) {
+    return null;
+  }
+
+  return {
+    'type': 'section',
+    'items': [
+      {
+        'type': 'heading',
+        'defaultValue': 'Stock Preferences',
+      },
+      {
+        'type': 'text',
+        'defaultValue': options.stocks.description || 'Set your ticker or tickers below. Most sources need a free API key, and Yahoo does not.',
+      },
+      {
+        'type': 'select',
+        'messageKey': 'STOCK_PROVIDER',
+        'label': 'Data Source',
+        'description': 'Finnhub gives real-time US quotes. Yahoo is real-time too and needs no key, with the widest market coverage, but it is an unofficial feed that can change without notice. Twelve Data adds global markets on a free key. Alpha Vantage is end-of-day only, so it grabs the day\'s close once after the closing bell.',
+        'defaultValue': 'finnhub',
+        // the sources are listed here rather than read from ts/stock, since this file is in every face's
+        // phone bundle and importing the stock feature would bundle its providers into faces without
+        // stocks. a spec checks the list against the providers the feature has
+        'options': [
+          { 'label': 'Finnhub (Real-Time, Free Key)', 'value': 'finnhub' },
+          { 'label': 'Yahoo (Real-Time, No Key)', 'value': 'yahoo' },
+          { 'label': 'Twelve Data (Global, Free Key)', 'value': 'twelvedata' },
+          { 'label': 'Alpha Vantage (End-of-Day, Free Key)', 'value': 'alphavantage' },
+        ],
+      },
+      {
+        'type': 'input',
+        'messageKey': 'STOCK_API_KEY',
+        'label': 'API Key',
+        'description': 'Grab a free key from your chosen provider and paste it here. Yahoo needs no key, so leave this blank when you pick it.',
+        'attributes': {
+          'placeholder': 'Paste your private API key here...',
+          'maxlength': 64,
+        },
+      },
+      {
+        'type': 'input',
+        'messageKey': 'STOCK_SYMBOLS',
+        'label': 'Tickers',
+        'description': 'Up to four symbols, separated by commas (e.g. AAPL, MSFT, TSLA, NVDA).',
+        'attributes': {
+          'placeholder': 'AAPL, MSFT, TSLA, NVDA',
+          'maxlength': 64,
+        },
+      },
+      ...(options.stocks.items || []),
+    ],
+  };
+}
+
+/**
+ * The Calendar section: the private iCal link the phone fetches events from.
+ *
+ * @param options The per-section description, read for calendar.
+ * @return The section, or null for a face that shows no calendar.
+ */
+export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem | null {
+  if (!options.calendar) {
+    return null;
+  }
+
+  return {
+    'type': 'section',
+    'items': [
+      {
+        'type': 'heading',
+        'defaultValue': 'Calendar Preferences',
+      },
+      {
+        'type': 'text',
+        'defaultValue': options.calendar.description || 'Paste your private iCal link below to show your upcoming events.',
+      },
+      {
+        'type': 'input',
+        'messageKey': 'CALENDAR_ICS_URL',
+        'label': 'iCal URL',
+        'description': 'Paste any calendar\'s private iCal (.ics) address. Google Calendar: Settings and sharing, Integrate calendar, "Secret address in iCal format". Apple iCloud: share a calendar as Public. Outlook: publish the calendar. Treat the link like a password: anyone with it can read your calendar.',
+        'attributes': {
+          'placeholder': 'https://.../calendar.ics',
+          'maxlength': 512,
+        },
+      },
+      ...(options.calendar.items || []),
+    ],
   };
 }
 
@@ -426,15 +540,18 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
  *   clockItems      [ClayConfigItem]            extra controls inside the Clock section
  *   bluetooth { description? }                   always shown
  *   date     { label?, description?, default?, beats?, options? }
- *   steps    { label?, description?, capabilities? }
  *
  * Optional sections (present = included, omitted = excluded):
+ *   steps       { label?, description?, capabilities? }  the steps control in the Health section
+ *   battery     { label?, description? }         the battery readout control in the Health section
  *   theme       { label?, description?, options? }  the theme picker. options is the theme list,
  *                                                   and a picker given none has nothing to offer
  *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
  *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
  *   weather     {}                               marker, adds the provider picker to the Weather section
  *   temperature {}                               marker, adds the unit dropdown to the Weather section
+ *   calendar    { description?, items? }         the iCal link, then a face's own calendar controls
+ *   stocks      { description?, items? }         the data source, key, and tickers, then a face's own controls
  *
  * @param options The per-section description to build the page from.
  * @return The assembled Clay config array, ready to hand to Clay.
@@ -454,10 +571,9 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
     ...(options.layoutSections || []),
     bluetoothSection(options),
     clockSection(options),
-    healthSection(options),
   ];
 
-  [locationSection(options), weatherSection(options)].forEach((section) => {
+  [healthSection(options), locationSection(options), weatherSection(options), calendarSection(options), stocksSection(options)].forEach((section) => {
     if (section) {
       config.push(section);
     }

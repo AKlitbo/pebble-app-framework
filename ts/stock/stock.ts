@@ -25,6 +25,9 @@ const PROVIDERS: Record<string, StockProvider> = {
   twelvedata: twelvedata,
 };
 
+/** The data sources a settings page can offer, which are the ones fetchQuote has a provider for. */
+export const STOCK_PROVIDERS = Object.keys(PROVIDERS);
+
 /**
  * Looks up a quote for one symbol using the configured provider.
  *
