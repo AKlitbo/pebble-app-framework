@@ -10,7 +10,7 @@ The shared framework behind my Pebble watchfaces and watchapps. It holds the dev
 **Framework Code**
 
 * **`c/`**: the device code. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/dev/` is the screenshot harness, which no release build links. `c/spec/` holds the host test harness.
-* **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its `testing/` folder holds helpers the TypeScript specs share and never ships to a face.
+* **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its `testing/` folder holds helpers the TypeScript specs share. It ships to a face project with the rest of `ts/`, since the specs that check a face's generated files run there.
 * **`py/`**: the waf helpers that stage and build a face.
 * **`css/`**: the Pebble-64 colour palette the frame backgrounds use.
 
@@ -20,10 +20,11 @@ The shared framework behind my Pebble watchfaces and watchapps. It holds the dev
 * **`config/`**: the shared tsconfig, eslint and vitest setup.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
 * **`build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
+* **`project/`**: `toolchain.json`, the SDK, pebble-tool, and Node the framework is built with. paf and `setup-pebble` read it from a face project's `lib/`.
 
 **CI and Docs**
 
-* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The framework's workflows run the verify actions, `build-doxygen`, `build-docs-site`, and `publish-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face, each reached as `lib/.github/actions/<name>`.
+* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The framework's workflows run the verify actions, `build-doxygen`, `build-docs-site`, and `publish-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face. A workflow loads them from this repo at a tag, such as `AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v3.0.0`, and passes the face each one works on. Actions at any later tag keep reading a face project made at 3.0.0 or after, since a project can stay on its tag for good.
 * **`.github/shared/`**: the helpers and spec fakes the scripts in `.github/actions/` share.
 * **`docs/doxygen/`**: the Doxygen theme, logo, main page, and header.
 * **`docs/typedoc/`**: the look laid over TypeDoc's default theme.
@@ -32,16 +33,16 @@ The shared framework behind my Pebble watchfaces and watchapps. It holds the dev
 
 ## Using It
 
-The framework does not build on its own. It is mounted as a git submodule one folder down inside a repo of faces, most often at `lib/`, and that repo lists the folder as an npm workspace so the framework's dependencies install once. A repo holding one face keeps it at the root, laid out like a plain Pebble project with `config/`, `src/` and `resources/`. A repo of several keeps each at `watchfaces/<face>/`, or at `watchfaces/<family>/<face>/` beside the code the family shares.
+The framework does not build on its own. It sits one folder down inside a face project, at `lib/`, and the project lists that folder as an npm workspace so the framework's dependencies install once. A face project is a face on its own, laid out like a plain Pebble project with `config/`, `src/` and `resources/`, or a family, with its `core/` and one folder per face. A repo is one face project, or keeps several side by side under `watchfaces/`, with apps under `watchapps/` if it likes. The two folders only sort faces from apps, and a project in either is laid out the same.
+
+[paf](https://github.com/AKlitbo/pebble-app-framework-cli) keeps each project on its own framework tag. A project's `paf.json` names the tag, and paf fills `lib/` with the files the framework's `package.json` `files` list names, then builds and checks the project in place.
 
 ```sh
-git submodule add https://github.com/AKlitbo/pebble-app-framework.git lib
-git config core.hooksPath lib/.githooks
-npm install
-bash lib/build.sh <face>
+paf sync
+paf build <face>
 ```
 
-A repo of faces reaches the framework's tools through scripts in its own `package.json`, each running `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON` on the tool. The generators take a face name, and run for every face that needs them when given none.
+A face project reaches the framework's tools through scripts in its own `package.json`, each running `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON` on the tool. The generators take a face name, and run for every face that needs them when given none.
 
 | Script | Tool | Face |
 | :-- | :-- | :-- |
@@ -52,22 +53,13 @@ A repo of faces reaches the framework's tools through scripts in its own `packag
 | `dev:clay` | `tools/dev/clay-preview.ts` | required |
 | `typecheck` | `tools/typecheck.ts` | none |
 
-The folder can have any name, as long as it sits straight under the repo root and the repo's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework's C into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore.
+`gen:icons` reads its SVG sources from the folder a project names as `"framework": { "iconSources": "<folder>" }` in its `package.json`, or from the `ICON_SOURCES` environment variable when it names none.
 
-Each repo pins an exact framework commit, so a framework change reaches a face only when that repo moves its `lib` pointer.
+The folder can have any name, as long as it sits straight under the project and the project's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework's C into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore. paf always mounts the framework at `lib/`, and the face actions read it there.
 
 ## Versions
 
-Framework releases are git tags such as `v1.0.0`. A repo using the framework moves its `lib` pointer to a tag:
-
-```sh
-git -C lib fetch --tags
-git -C lib checkout v1.0.0
-git add lib
-git commit -m "move the framework to v1.0.0"
-```
-
-`git submodule status` then shows the tag beside the commit. Work between releases can point `lib` at any commit, but a face release checks that `lib` sits exactly on a tag and stops if it does not.
+Framework releases are git tags such as `v1.0.0`. A face project moves with `paf pin <project> <tag>`, which shows the changelog between the two tags first. A face release reads the framework's version from `lib/package.json` and stops when it names none.
 
 ## Tests
 
@@ -91,7 +83,7 @@ npm --prefix docs run typecheck
 npm --prefix docs run format:check    # or format to fix the templates, stylesheets, and theme script
 ```
 
-A few specs also check real faces, such as whether each face's generated Clay components and thumbnails are up to date. They skip here and run in a repo that mounts the framework at `lib/` beside its `watchfaces/`.
+A few specs also check real faces, such as whether each face's generated Clay components and thumbnails are up to date. They skip here and run in a face project that mounts the framework at `lib/`.
 
 ## Docs
 
