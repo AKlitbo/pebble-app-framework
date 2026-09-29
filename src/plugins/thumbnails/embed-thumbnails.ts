@@ -18,7 +18,7 @@
  * The sizes a png may come in belong to the face too, since each face draws its own panel shapes,
  * so module-meta.ts exports them beside the module list as thumbnailSizes.
  *
- * Run: npm run gen:thumbnails -- <face>, or with no face for every face with a resources/thumbnails
+ * Run: paf gen <face> thumbnails, or by hand with no face for every face with a resources/thumbnails
  * folder. It reports what it encoded and throws if anything is stray or missing.
  */
 import fs from 'node:fs';
@@ -33,7 +33,13 @@ import type { Thumbs } from '../../ts/clay/builder/ts/types.ts';
 // the PNGs and that face's module list and the asset it writes
 const requireMeta = createRequire(import.meta.url);
 
-function thumbsDir(face: string): string {
+/**
+ * Where a face keeps its panel PNGs.
+ *
+ * @param face The face.
+ * @return The face's resources/thumbnails folder.
+ */
+export function thumbsDir(face: string): string {
   return path.join(faceDir(face), 'resources', 'thumbnails');
 }
 
@@ -195,8 +201,8 @@ export interface Built {
 /**
  * Reads the PNGs and encodes them inline, without touching the output.
  *
- * Split from build so the spec can ask what the generator *would* write and compare it to
- * the committed copy, the way generate-components.ts does.
+ * Split from build so check-thumbnails.ts can ask what the generator would write and compare it
+ * to the committed copy.
  *
  * @param face The face to read PNGs and module list for.
  * @return What this run would produce, encoded source plus what it found on the way.

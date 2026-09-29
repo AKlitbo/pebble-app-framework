@@ -8,14 +8,16 @@
  * resize. A bitmap over 16 colours packs at eight bits per pixel instead of four, which doubles
  * the heap the watch needs to hold the frame and can keep a full-screen frame from loading at all,
  * so which pixels get folded and which are left alone is worth pinning. missingStylesheets stops a
- * bake whose colours sheet is gone, which Firefox renders without complaint. The render pipeline
+ * bake whose colours sheet is gone, which Firefox renders without complaint. discoverFrames and
+ * discoverThemes decide which frames and themes --theme all bakes, so one missed keeps an old
+ * background and a stray one bakes over a real one. The render pipeline
  * itself drives Firefox and sharp and is left to integration use, npm run gen:frame.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { capColors, facePlatforms, missingStylesheets, outFor, parseArgs } from './generate-frame';
+import { capColors, discoverFrames, discoverThemes, facePlatforms, missingStylesheets, outFor, parseArgs } from './generate-frame';
 import type { FaceConfig } from './generate-frame';
 import { WORKSPACE } from '../../tools/paths';
 import { tempDir } from '../../ts/testing/temp-dir';
@@ -91,7 +93,7 @@ describe('parseArgs', () => {
   test('falls back to the face defaults when no options are given', () => {
     const result = parseArgs([], THEMED);
 
-    expect(result).toEqual({ frame: 'classic', scale: 4, theme: null, outOverride: null });
+    expect(result).toEqual({ frame: 'classic', scale: 4, theme: null, allFrames: false, outOverride: null });
   });
 
   /** Passing the file name as it sits on disk would otherwise look for voyager.html.html and stop. */
@@ -106,6 +108,23 @@ describe('parseArgs', () => {
     const result = parseArgs(['--theme', 'mono'], UNTHEMED);
 
     expect(result.theme).toBeNull();
+  });
+
+  /**
+   * A face without themes has one page per look, and paf gen <face> all passes --theme all to every
+   * face. Read as one frame, it rebaked only the default and left every other background stale.
+   */
+  test('reads --theme all as every frame for a face without themes', () => {
+    const result = parseArgs(['--theme', 'all'], UNTHEMED);
+
+    expect(result).toMatchObject({ theme: null, allFrames: true });
+  });
+
+  /** A frame named beside --theme all re-baked every frame the face has, and overwrote every background. */
+  test('bakes only the named frame when one is named beside --theme all', () => {
+    const result = parseArgs(['voyager', '--theme', 'all'], UNTHEMED);
+
+    expect(result).toMatchObject({ frame: 'voyager', allFrames: false });
   });
 
   /** --theme all is how every colourway gets re-baked in one run, so it has to reach the bake. */
@@ -185,6 +204,16 @@ describe('outFor', () => {
     const result = outFor(opts, 'mono', 2, THEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(WORKSPACE, 'preview', 'override-mono~emery.png'));
+  });
+
+  /** Every frame of a face without themes baked to one --out name would leave only the last frame there. */
+  test('names each frame beside --out when every frame of a face without themes is baked', () => {
+    vi.spyOn(process, 'cwd').mockReturnValue(WORKSPACE);
+    const opts = parseArgs(['--theme', 'all', '--out', 'preview/override.png'], UNTHEMED);
+
+    const result = outFor({ ...opts, frame: 'padd' }, null, 1, UNTHEMED, IMAGES, 'emery');
+
+    expect(result).toBe(path.join(WORKSPACE, 'preview', 'override-padd~emery.png'));
   });
 
   /**
@@ -288,5 +317,46 @@ describe('missingStylesheets', () => {
     const result = missingStylesheets([through]);
 
     expect(result).toEqual([through]);
+  });
+});
+
+describe('discoverFrames', () => {
+  /** A frame counted once per platform would be baked, and written, once per platform over itself. */
+  test('names each frame once however many platforms it has a page for', () => {
+    const dir = tempDir('frames-');
+    for (const file of ['classic~emery.html', 'classic~gabbro.html', 'padd~emery.html', 'frame.config.json']) {
+      fs.writeFileSync(path.join(dir, file), '');
+    }
+
+    const result = discoverFrames(dir);
+
+    expect(result).toEqual(['classic', 'padd']);
+  });
+});
+
+describe('discoverThemes', () => {
+  /**
+   * A theme missed here is never baked by --theme all, so that colourway keeps the background it had
+   * before. A sheet read as a theme that is not one, such as theme_.css, bakes the base frame over its own
+   * background with a theme's colours.
+   */
+  test('names each theme from its sheet and skips other stylesheets and a sheet with no name', () => {
+    const dir = tempDir('themes-');
+    for (const file of ['theme_red.css', 'theme_blue.css', 'frame.css', 'pebble-colors.css', 'theme_.css']) {
+      fs.writeFileSync(path.join(dir, file), '');
+    }
+
+    const result = discoverThemes(dir);
+
+    expect(result).toEqual(['blue', 'red']);
+  });
+
+  /** A face with no theme sheets bakes its base frame under --theme all, so a missing css folder has to read as no themes. */
+  test('names no themes when the face has no css folder', () => {
+    const dir = tempDir('themes-');
+
+    const result = discoverThemes(path.join(dir, 'css'));
+
+    expect(result).toEqual([]);
   });
 });

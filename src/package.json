@@ -13,5 +13,16 @@
     "esbuild": "^0.28.2",
     "ical.js": "^2.2.1",
     "typescript": "^5.9.3"
+  },
+  "paf": {
+    "gen": {
+      "clay": {
+        "script": "tools/clay-components/generate-components.ts",
+        "when": "src/pkjs/clay/builder"
+      }
+    },
+    "check": [
+      "tools/clay-components/check-components.ts"
+    ]
   }
 }

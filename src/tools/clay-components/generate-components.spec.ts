@@ -6,22 +6,18 @@
  * the CSS squeeze, and the finished wrapper. Those run against a small recipe
  * under fixtures/, so they need no face.
  *
- * The staleness checks regenerate every component a face commits and compare it
- * to the committed file, so an edited piece cannot ship without its `npm run gen:clay`.
- * They run where the framework is mounted beside faces that commit components.
+ * Whether a face's committed components are current is check-components.ts, which paf check runs
+ * in the face's unit.
  */
 
 import { execFileSync } from 'node:child_process';
-import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { describe, test, expect } from 'vitest';
-import { listFaceNames, faceDir } from '../faces';
 import { ENGINE } from '../paths';
 import {
-  rootsFor,
   findManifests,
   findInitPiece,
   buildEntrySource,
@@ -177,8 +173,7 @@ describe('buildComponentSource', () => {
   /**
    * The output names each bundled module by a path fixed to the fixture roots, not to the folder
    * the command runs from. A path that followed the working folder would rewrite every committed
-   * component on a run from a subfolder and fail the staleness check below with nothing really
-   * changed.
+   * component on a run from a subfolder and fail check-components.ts with nothing really changed.
    */
   test('gives the same source whatever folder it runs from', async () => {
     const { manifestPath } = fixtureManifest();
@@ -204,56 +199,5 @@ describe('buildComponentSource', () => {
     const result = await buildComponentSource(manifestPath, FIXTURE_ROOTS);
 
     expect(result.output).toBe(path.join(FIXTURE_FACE, 'src', 'pkjs', 'clay', 'sample-component.g.js'));
-  });
-});
-
-/** Whether a face commits a bundled component, found by its output rather than its manifests. */
-function hasCommittedComponent(face: string): boolean {
-  const clayDir = path.join(faceDir(face), 'src', 'pkjs', 'clay');
-  return fs.existsSync(clayDir) && fs.readdirSync(clayDir).some((name) => name.endsWith('-component.g.js'));
-}
-
-const FACE_NAMES = listFaceNames();
-
-/**
- * Every face that ships a Clay builder, with the manifests it builds.
- *
- * Discovered rather than listed, so a new face carrying a builder is guarded the day it lands
- * instead of the day someone remembers to add it here. A face with no builder yields no
- * manifests and contributes no tests.
- */
-const BUILDER_FACES = FACE_NAMES
-  .map((face) => ({ face, roots: rootsFor(face) }))
-  .map((entry) => ({ ...entry, manifests: findManifests(entry.roots) }))
-  .filter((entry) => entry.manifests.length > 0);
-
-/** The faces that commit a component, found by output so they can check the discovery above. */
-const COMMITTING_FACES = FACE_NAMES.filter((face) => hasCommittedComponent(face));
-
-describe.skipIf(COMMITTING_FACES.length === 0)('generated components', () => {
-  /**
-   * The staleness checks below are generated from what the discovery found, so a discovery that
-   * quietly returned nothing would leave this suite green with nothing in it. Every face that
-   * commits a component has to be found here, and losing one has to fail rather than pass silently.
-   */
-  test('covers every face that commits a component', () => {
-    const result = BUILDER_FACES.map((entry) => entry.face);
-
-    expect(result).toEqual(COMMITTING_FACES);
-  });
-
-  BUILDER_FACES.forEach(({ face, roots, manifests }) => {
-    manifests.forEach((manifestPath) => {
-      const name = manifestPath.replace(/\\/g, '/').split('/').pop();
-
-      /** A piece edit without a gen:clay run would ship a config page that ignores the change. */
-      test(`${face}: ${name} output is not stale`, async () => {
-        const built = await buildComponentSource(manifestPath, roots);
-
-        const committed = fs.readFileSync(built.output, 'utf8').replace(/\r\n/g, '\n');
-
-        expect(committed).toBe(built.source);
-      });
-    });
   });
 });

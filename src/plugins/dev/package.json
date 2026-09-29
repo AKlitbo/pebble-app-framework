@@ -3,5 +3,17 @@
   "description": "The screenshot harness and the Clay settings preview, for designing a face.",
   "author": "Null Syntax",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
-  "private": true
+  "private": true,
+  "paf": {
+    "gen": {},
+    "check": [],
+    "tools": {
+      "clay-preview": {
+        "script": "clay-preview.ts"
+      },
+      "tap-walk": {
+        "script": "tap-walk.sh"
+      }
+    }
+  }
 }

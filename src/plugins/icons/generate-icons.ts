@@ -7,8 +7,9 @@
  *   uxwing, heart, feet, thermometer, and friends (key "ux")
  *   svgrepo, bluetooth on and slash (key "sr")
  *
- * The folder is whatever the workspace's package.json names as framework.iconSources, relative to
- * that package.json. Without one, ICON_SOURCES names it, which is how paf hands over its own copy.
+ * The folder is whatever the unit's paf.config.json names as the icons plugin's sources setting,
+ * relative to the unit. Without one, the ICON_SOURCES environment variable names it, which is how a
+ * tool that fetched the sources for the unit passes them in.
  *
  * The face declares what it needs in resources/icons.json,
  * mapping an icon name to its vendored svg and final pixel size:
@@ -29,22 +30,17 @@
  *   2. rewrites config/pebble.appinfo.json's media block so name -> file stays in sync
  *
  * Re-run after editing a manifest:
- *   npm run gen:icons -- <face>    for one face
- *   npm run gen:icons              for every face with a resources/icons.json
+ *   paf gen <face> icons    for one face
+ * Run by hand with no face, it does every face with a resources/icons.json.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
-import type { MediaEntry } from '../../tools/manifest/build-manifests.ts';
+import { buildMedia, iconsManifestPath, mediaOf, replaceMediaArray } from './media.ts';
+import type { IconManifest } from './media.ts';
 import { appinfoPath, faceDir, listFaceNames } from '../../tools/faces.ts';
 import { WORKSPACE } from '../../tools/paths.ts';
-
-/** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */
-export type IconSpec = { svg: string; size: [number, number]; trim?: boolean };
-
-/** resources/icons.json, keyed by icon name (the file basename). */
-export type IconManifest = Record<string, IconSpec>;
 
 const ROOT = WORKSPACE;
 
@@ -144,7 +140,7 @@ async function render(
   const input = opts.trim ? await trimToGlyph(svgText) : Buffer.from(svgText);
   await sharp(input)
     .resize(width, height, {
-      // fit contain ensures svgs with weird aspect ratios dont stretch padding the rest of the bounding box with the transparent background
+      // fit: contain keeps an svg with a weird aspect ratio from stretching, and pads the rest of the box with the transparent background
       fit: 'contain',
       background: TRANSPARENT,
     })
@@ -152,24 +148,34 @@ async function render(
     .toFile(outputFile);
 }
 
-/** The part of a workspace's package.json that says where the icon sources are. */
-export type IconSourcesPkg = { framework?: { iconSources?: string } };
+/** The part of a unit's paf.config.json that says where the icon sources are. */
+export type IconSourcesConfig = { plugins?: { icons?: { sources?: string } } };
 
 /**
- * Where a workspace keeps its icon sources, or null when nothing says.
+ * The icon sources folder a unit's paf.config.json names, as written, or undefined when it names none.
  *
- * The workspace's own setting wins, so a repo that keeps its sources somewhere of its own is never
+ * @param config The unit's paf.config.json.
+ * @return The icons plugin's sources setting.
+ */
+export function iconSourcesSetting(config: IconSourcesConfig): string | undefined {
+  return config.plugins && config.plugins.icons && config.plugins.icons.sources;
+}
+
+/**
+ * Where a unit keeps its icon sources, or null when nothing says.
+ *
+ * The unit's own setting wins, so a repo that keeps its sources somewhere of its own is never
  * pointed elsewhere. The environment is the fallback, which is how a tool that fetched the sources
- * for the workspace passes them in. Nothing is assumed past that, since a guessed folder that turns
- * out empty fails on every icon rather than on the missing setting.
+ * for the unit passes them in. Nothing is assumed past that, since a guessed folder that turns out
+ * empty fails on every icon rather than on the missing setting.
  *
- * @param root The workspace folder, which the setting is relative to.
- * @param pkg The workspace's package.json.
+ * @param root The unit's folder, which the setting is relative to.
+ * @param config The unit's paf.config.json.
  * @param fromEnv The ICON_SOURCES environment variable.
  * @return The folder's absolute path, or null.
  */
-export function iconSourcesDir(root: string, pkg: IconSourcesPkg, fromEnv: string | undefined): string | null {
-  const setting = pkg.framework && pkg.framework.iconSources;
+export function iconSourcesDir(root: string, config: IconSourcesConfig, fromEnv: string | undefined): string | null {
+  const setting = iconSourcesSetting(config);
   if (setting) {
     return path.resolve(root, setting);
   }
@@ -188,139 +194,10 @@ function svgPath(sources: string, ref: string): string {
   return path.join(sources, dir, `${ref.slice(slash + 1)}.svg`);
 }
 
-/**
- * Turns an icon's basename into its Pebble resource id, for example "wi-clear" into
- * "ICON_WI_CLEAR".
- *
- * @param basename The icon's file basename.
- * @return Its Pebble resource id.
- */
-export function resourceName(basename: string): string {
-  return 'ICON_' + basename.toUpperCase().replace(/-/g, '_');
-}
-
-// a media entry is a face icon when it is a bitmap under an icons/ dir. media file paths
-// are relative to the face's resources/ dir, so this matches both a face's own
-// "icons/foo.png" and a shared "../../../lib/resources/icons/foo.png"
-function isIconEntry(entry: MediaEntry): boolean {
-  return entry.type === 'bitmap' && typeof entry.file === 'string' && /(^|\/)icons\//.test(entry.file);
-}
-
-/**
- * Merges a manifest's icons into an existing media array. Non-icon entries (fonts,
- * background images) keep their place and order. The icon block is replaced in
- * full and lands where the first old icon sat (or just before the fonts on a face
- * that had none). An icon the old block already had keeps its own extra fields, such
- * as a `memoryFormat` or `targetPlatforms`, while its path points at the face's own
- * render. Pure so it can be tested without touching disk.
- *
- * @param media The face's current media array.
- * @param manifest The face's icons.json manifest.
- * @return The media array with its icon block replaced from the manifest.
- */
-export function buildMedia(media: MediaEntry[], manifest: IconManifest): MediaEntry[] {
-  const previous = new Map(media.filter(isIconEntry).map((entry) => [entry.name, entry]));
-  const icons: MediaEntry[] = Object.keys(manifest).map((name) => ({
-    ...previous.get(resourceName(name)),
-    type: 'bitmap',
-    name: resourceName(name),
-    file: `icons/${name}.png`,
-  }));
-
-  let insertAt = media.findIndex(isIconEntry);
-  if (insertAt === -1) {
-    const firstFont = media.findIndex((entry) => entry.type === 'font');
-    insertAt = firstFont === -1 ? media.length : firstFont;
-  }
-
-  const keptBefore = media.slice(0, insertAt).filter((entry) => !isIconEntry(entry));
-  const keptAfter = media.slice(insertAt).filter((entry) => !isIconEntry(entry));
-
-  return [...keptBefore, ...icons, ...keptAfter];
-}
-
-// serialize one media entry. bitmaps ride on a single line for a scannable list
-// fonts keep their multi-line block so their extra fields (like characterRegex) stay put.
-// every field a bitmap has goes on its line, so a background's memoryFormat or
-// targetPlatforms survives. type, name, and file lead so a plain entry reads the same as always
-function formatEntry(entry: MediaEntry, indent: string): string {
-  if (entry.type === 'bitmap') {
-    const lead = ['type', 'name', 'file'].filter((key) => key in entry);
-    const keys = [...lead, ...Object.keys(entry).filter((key) => lead.indexOf(key) === -1)];
-    const fields = keys.map((key) => `${JSON.stringify(key)}: ${JSON.stringify((entry as Record<string, unknown>)[key])}`);
-    return `${indent}{ ${fields.join(', ')} }`;
-  }
-
-  return JSON.stringify(entry, null, 2)
-    .split('\n')
-    .map((line) => indent + line)
-    .join('\n');
-}
-
-/**
- * Splices the rebuilt media array back into the raw package.json text and leaves every
- * other byte of the file untouched. Bracket matching steps over array-valued fields
- * inside an entry (like a font's targetPlatforms) and quoted brackets in strings.
- *
- * @param raw The face's package.json text, unparsed.
- * @param newMedia The media array to splice in, in place of the existing one.
- * @return The same text with its media array replaced.
- */
-export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
-  // the key followed by its array, since "media" can also sit earlier in the file as a string value
-  const key = /"media"\s*:\s*\[/.exec(raw);
-  if (!key) {
-    throw new Error('no "media" array in package.json');
-  }
-
-  const keyAt = key.index;
-  const open = keyAt + key[0].length - 1;
-  let depth = 0, close = -1, inString = false, escaped = false;
-  for (let i = open; i < raw.length; i++) {
-    const char = raw[i];
-    if (inString) {
-      if (escaped) {
-        escaped = false;
-      } else if (char === '\\') {
-        escaped = true;
-      } else if (char === '"') {
-        inString = false;
-      }
-      continue;
-    }
-    if (char === '"') {
-      inString = true;
-    } else if (char === '[') {
-      depth++;
-    } else if (char === ']') {
-      depth--;
-      if (depth === 0) {
-        close = i;
-        break;
-      }
-    }
-  }
-  if (close === -1) {
-    throw new Error('unterminated "media" array in package.json');
-  }
-
-  const lineStart = raw.lastIndexOf('\n', keyAt) + 1;
-  // the pattern matches an empty run too so the fallback only keeps the types honest
-  const mediaIndent = (raw.slice(lineStart, keyAt).match(/^\s*/) || [''])[0];
-  const entryIndent = mediaIndent + '  ';
-
-  const body = newMedia.map((entry) => formatEntry(entry, entryIndent)).join(',\n');
-  return raw.slice(0, open + 1) + '\n' + body + '\n' + mediaIndent + raw.slice(close);
-}
-
-// rewrite a face's config so its media icon block matches the manifest. the media array sits
-// under pebble.resources (a generated package.json) or top-level resources
-// (pebble.appinfo.json the manifests are generated from) so accept either
+// rewrite a face's config so its media icon block matches the manifest
 function syncMedia(pkgPath: string, manifest: IconManifest): void {
   const raw = fs.readFileSync(pkgPath, 'utf8');
-  const pkg = JSON.parse(raw);
-  const resources = (pkg.pebble && pkg.pebble.resources) || pkg.resources;
-  const media = resources && resources.media;
+  const media = mediaOf(raw);
   if (!Array.isArray(media)) {
     throw new Error(`no resources.media array in ${pkgPath}`);
   }
@@ -401,11 +278,11 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
 async function iconsFor(face: string, sources: string): Promise<void> {
   const dir = faceDir(face);
   // resources (icons.json + rendered PNGs) and the appinfo live under the face dir
-  const manifestPath = path.join(dir, 'resources', 'icons.json');
+  const manifestPath = iconsManifestPath(face);
   const manifest: IconManifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
   const rendered = await renderFace(dir, manifest, sources);
   // the media list is synced into the face's appinfo. its package.json is regenerated from
-  // it at build time (or with npm run build:manifests -- <face>)
+  // it at build time, when paf build runs build-manifests.ts
   syncMedia(appinfoPath(face), manifest);
 
   console.log(`Rendered ${rendered} icons for ${face}.`);
@@ -414,25 +291,27 @@ async function iconsFor(face: string, sources: string): Promise<void> {
 /** Renders the icons for the face named on the command line, or for every face with a resources/icons.json. */
 async function main(): Promise<void> {
   const face = process.argv[2];
-  const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(path.join(faceDir(name), 'resources', 'icons.json')));
+  const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(iconsManifestPath(name)));
   if (faces.length === 0) {
     return;
   }
   // a named face with no icons says so, before the sources folder it would never read is asked for.
   // with no face named, the list above already holds only faces with icons
-  if (face && !fs.existsSync(path.join(faceDir(face), 'resources', 'icons.json'))) {
+  if (face && !fs.existsSync(iconsManifestPath(face))) {
     throw new Error(`No resources/icons.json under ${faceDir(face)}`);
   }
 
-  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-  const sources = iconSourcesDir(ROOT, pkg, process.env.ICON_SOURCES);
+  const configFile = path.join(ROOT, 'paf.config.json');
+  const config: IconSourcesConfig = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
+  const setting = iconSourcesSetting(config);
+  const sources = iconSourcesDir(ROOT, config, process.env.ICON_SOURCES);
   if (!sources) {
-    throw new Error(`No icon sources folder. Name it as "framework": { "iconSources": "<folder>" } in ${path.join(ROOT, 'package.json')}`);
+    throw new Error(`No icon sources folder. Name it as "plugins": { "icons": { "sources": "<folder>" } } in ${configFile}`);
   }
   // a folder that is not there would leave every icon on its committed PNG with a warning each and pass,
   // which reads as a run that worked
   if (!fs.existsSync(sources) || !fs.statSync(sources).isDirectory()) {
-    const from = pkg.framework && pkg.framework.iconSources ? `"framework.iconSources" in ${path.join(ROOT, 'package.json')}` : 'ICON_SOURCES';
+    const from = setting ? `plugins.icons.sources in ${configFile}` : 'ICON_SOURCES';
     throw new Error(`The icon sources folder ${sources} is not there. It comes from ${from}.`);
   }
   if (!holdsIconSets(sources)) {

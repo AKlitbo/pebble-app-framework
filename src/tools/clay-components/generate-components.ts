@@ -14,8 +14,8 @@
  * initialize followed by `init.call(this)` so the manipulator's this still binds
  * the Clay component.
  *
- * Run with `npm run gen:clay -- <face>`, or with no face to rebuild every face that has a builder.
- * Outputs are committed, and the spec fails when they drift from the pieces.
+ * Run with `paf gen <face> clay`, or by hand with no face to rebuild every face that has a builder.
+ * Outputs are committed, and check-components.ts fails when they drift from the pieces.
  */
 
 import fs from 'node:fs';
@@ -24,6 +24,7 @@ import esbuild from 'esbuild';
 import { createRequire } from 'node:module';
 import { faceDir, familyCoreDir, listFaceNames } from '../faces.ts';
 import { ENGINE, WORKSPACE } from '../paths.ts';
+import { readText } from '../files.ts';
 
 // the manifests are loaded by path at runtime which an import specifier cannot do
 // require(esm) hands back the namespace so the manifest lands on .default
@@ -136,11 +137,6 @@ export type Manifest = {
   hookPrefix: string;
   doc: string[];
 };
-
-/** Reads a file with line endings normalized so Windows checkouts diff clean. */
-function readText(filePath: string): string {
-  return fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
-}
 
 /**
  * Every *.manifest.ts recipe across all three builder roots.
@@ -377,8 +373,8 @@ async function buildComponentSource(manifestPath: string, roots: Roots): Promise
   const style = buildStyle(manifest.styles.map(asset));
   const doc = manifest.doc.map((line) => (line ? ` * ${line}` : ' *')).join('\n');
 
-  const source = `// generated from ${relManifest} by tools/clay-components/generate-components.ts
-// do not edit by hand: run \`npm run gen:clay\` after changing the sources
+  const source = `// generated from ${relManifest} by the Clay generator
+// do not edit by hand: run \`paf gen <face> clay\` after changing the sources
 /**
 ${doc}
  */
@@ -430,7 +426,7 @@ async function generateAll(face: string): Promise<void> {
 
 if (import.meta.main) {
   const face = process.argv[2];
-  // no face means every face that has a builder, found the same way the staleness spec finds them
+  // no face means every face that has a builder, found by its manifests the way check-components.ts finds them
   const faces = face ? [face] : listFaceNames().filter((name) => findManifests(rootsFor(name)).length > 0);
 
   // esbuild only takes a resolve plugin through its async API so the run ends on a

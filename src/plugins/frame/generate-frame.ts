@@ -14,8 +14,8 @@
  *
  * The build does not bake frames. The PNGs under resources/images/ are committed. Run this
  * by hand to re-bake one during design:
- *   npm run gen:frame -- <face> [frame]
- *   npm run gen:frame -- <face> <frame> --scale 4 --out resources/images/background.png
+ *   paf gen <face> frame [frame]
+ *   paf gen <face> frame <frame> --scale 4 --out resources/images/background.png
  */
 import path from 'node:path';
 import fs from 'node:fs';
@@ -229,8 +229,16 @@ export function capColors(rgba: Uint8Array, limit: number): Uint8Array {
   return rgba;
 }
 
-/** Every theme_<name>.css under frame/css by name. */
-function discoverThemes(cssDir: string): string[] {
+/**
+ * Every theme a face has, by the name its frame/css/theme_<name>.css sheet carries.
+ *
+ * @param cssDir The face's frame/css folder.
+ * @return Each theme's name, sorted, or none when the face has no css folder.
+ */
+export function discoverThemes(cssDir: string): string[] {
+  if (!fs.existsSync(cssDir)) {
+    return [];
+  }
   return fs
     .readdirSync(cssDir)
     .map((file) => file.match(/^theme_(.+)\.css$/))
@@ -239,11 +247,28 @@ function discoverThemes(cssDir: string): string[] {
     .sort();
 }
 
+/**
+ * Every frame a face has, by the name its <frame>~<platform>.html pages share.
+ *
+ * @param frameDir The face's frame folder.
+ * @return Each frame's name once, however many platforms it has a page for, sorted.
+ */
+export function discoverFrames(frameDir: string): string[] {
+  const names = fs
+    .readdirSync(frameDir)
+    .map((file) => file.match(/^(.+)~[a-z]+\.html$/))
+    .filter((match): match is RegExpMatchArray => match !== null)
+    .map((match) => match[1]);
+  return [...new Set(names)].sort();
+}
+
 /** Parsed command-line options. */
 interface Options {
   frame: string;
   scale: number;
   theme: string | null;
+  /** Every frame the face has rather than one, which --theme all means for a face without themes when no frame is named. */
+  allFrames: boolean;
   outOverride: string | null;
 }
 
@@ -272,12 +297,15 @@ export function parseArgs(argv: string[], face: FaceConfig): Options {
     }
   }
 
+  // a face without themes has one page per look, so all there means every frame it has, unless one
+  // is named. paf gen <face> all passes --theme all to every face the same way, naming none
+  const allFrames = !face.supportsTheme && theme === 'all' && positional.length === 0;
   if (!face.supportsTheme) {
     theme = null;
   }
 
   const frame = (positional[0] || face.defaultFrame).replace(/\.html$/i, '');
-  return { frame, scale, theme, outOverride };
+  return { frame, scale, theme, allFrames, outOverride };
 }
 
 /**
@@ -301,9 +329,11 @@ export function outFor(
 ): string {
   const tag = '~' + platform;
   if (opts.outOverride) {
-    // several themes each get their own file beside the one --out names, rather than landing over
-    // the committed backgrounds a preview run meant to leave alone
-    const suffix = themeName && themeCount > 1 ? `-${themeName}` : '';
+    // several themes, or every frame of a face without themes, each get their own file beside the
+    // one --out names, rather than landing over each other or the committed backgrounds
+    const frameSuffix = opts.allFrames ? `-${opts.frame}` : '';
+    const themeSuffix = themeName && themeCount > 1 ? `-${themeName}` : '';
+    const suffix = frameSuffix + themeSuffix;
     return path.resolve(ROOT, opts.outOverride).replace(/(\.png)?$/i, suffix + tag + '.png');
   }
 
@@ -375,26 +405,29 @@ async function main(): Promise<void> {
   const opts = parseArgs(argv.slice(1), faceCfg);
 
   // each platform bakes from its own HTML, and one without it is skipped so the rest still bake
-  const bakes = facePlatforms(dirs.appinfo)
-    .map((platform) => ({ platform, html: path.join(dirs.frameDir, `${opts.frame}~${platform}.html`) }))
+  const frames = opts.allFrames ? discoverFrames(dirs.frameDir) : [opts.frame];
+  const platforms = facePlatforms(dirs.appinfo);
+  const bakes = frames
+    .flatMap((frame) => platforms.map((platform) => ({ frame, platform, html: path.join(dirs.frameDir, `${frame}~${platform}.html`) })))
     .filter((bake) => {
       if (fs.existsSync(bake.html)) {
         return true;
       }
-      console.warn(`warning: ${path.relative(ROOT, bake.html)} not found, so ${bake.platform} gets no ${opts.frame} frame`);
+      console.warn(`warning: ${path.relative(ROOT, bake.html)} not found, so ${bake.platform} gets no ${bake.frame} frame`);
       return false;
     });
   if (bakes.length === 0) {
-    console.error(`No frame HTML found for ${opts.frame} on any platform the face targets`);
+    console.error(`No frame HTML found for ${frames.join(', ')} on any platform the face targets`);
     process.exit(1);
   }
 
   let themes: (string | null)[];
   if (opts.theme === 'all') {
+    // a face with no theme sheets has just its base frame. paf gen <face> all asks every face for
+    // all its themes the same way, so that is what all means there
     themes = discoverThemes(dirs.cssDir);
     if (themes.length === 0) {
-      console.error(`No theme_*.css files found in ${dirs.cssDir}`);
-      process.exit(1);
+      themes = [null];
     }
   } else if (opts.theme) {
     themes = [opts.theme];
@@ -474,7 +507,7 @@ async function main(): Promise<void> {
       await page.waitForTimeout(200);
 
       const screenshot = await page.locator('.viewport').screenshot();
-      const out = outFor(opts, themeName, themes.length, faceCfg, dirs.imagesDir, bake.platform);
+      const out = outFor({ ...opts, frame: bake.frame }, themeName, themes.length, faceCfg, dirs.imagesDir, bake.platform);
       fs.mkdirSync(path.dirname(out), { recursive: true });
 
       const resized = sharp(screenshot)

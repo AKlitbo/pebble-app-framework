@@ -9,19 +9,17 @@
  * happens to an icon whose source this machine does not have. Everything else in
  * the pipeline is sharp I/O, covered by eyeballing the PNGs.
  *
- * The last group checks the media block a face has committed still matches its icons.json. The
- * rendered PNGs are not checked, since re-rasterizing them needs sharp and takes real time, but the
- * media array is the half the C side reads its RESOURCE_ID names from. It runs where the framework is
- * mounted beside faces that declare icons.
+ * Whether a face's committed media block still matches its icons.json is check-icons.ts, which paf
+ * check runs in the face's unit.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 import { describe, test, expect } from 'vitest';
-import { whiten, resourceName, buildMedia, replaceMediaArray, iconSourcesDir, renderFace, holdsIconSets } from './generate-icons';
-import type { IconManifest } from './generate-icons';
-import { appinfoPath, listFaceNames, faceDir } from '../../tools/faces';
+import { whiten, iconSourcesDir, renderFace, holdsIconSets } from './generate-icons';
+import { resourceName, buildMedia, replaceMediaArray } from './media';
+import type { IconManifest } from './media';
 import { tempDir } from '../../ts/testing/temp-dir';
 
 describe('whiten', () => {
@@ -233,55 +231,15 @@ describe('replaceMediaArray', () => {
   });
 });
 
-/** Where a face declares the icons it wants. */
-function manifestPath(face: string): string {
-  return path.join(faceDir(face), 'resources', 'icons.json');
-}
-
-/** The media array out of a face's config, wherever that config keeps it. */
-function mediaOf(raw: string): unknown {
-  const parsed = JSON.parse(raw);
-  const resources = (parsed.pebble && parsed.pebble.resources) || parsed.resources;
-  return resources && resources.media;
-}
-
-/** The faces that declare icons, which is how the generator itself picks them. */
-const ICON_FACES = listFaceNames().filter((face) => fs.existsSync(manifestPath(face)));
-
-describe.skipIf(ICON_FACES.length === 0)('generated media', () => {
-  /**
-   * The per-face checks below come from what the discovery found, so a face whose config has no
-   * media array would be silently uncheckable rather than failing. A face that declares icons and
-   * has nowhere to put them is a broken setup, and it should say so here.
-   */
-  test('every face declaring icons has a media array to sync', () => {
-    const result = ICON_FACES.filter((face) => !Array.isArray(mediaOf(fs.readFileSync(appinfoPath(face), 'utf8'))));
-
-    expect(result).toEqual([]);
-  });
-
-  ICON_FACES.forEach((face) => {
-    /** An icon added to icons.json without a gen:icons run leaves the C side with no RESOURCE_ID for it, so the face fails to build. */
-    test(`${face}: the media block is not stale`, () => {
-      const manifest = JSON.parse(fs.readFileSync(manifestPath(face), 'utf8')) as IconManifest;
-      const raw = fs.readFileSync(appinfoPath(face), 'utf8');
-
-      const result = replaceMediaArray(raw, buildMedia(mediaOf(raw) as never, manifest));
-
-      expect(result).toBe(raw);
-    });
-  });
-});
-
 describe('iconSourcesDir', () => {
   /** A repo that keeps its sources somewhere of its own must not be pointed at a copy fetched for it. */
-  test('takes the workspace setting over the environment', () => {
-    const result = iconSourcesDir(path.join('/work', 'mosaic'), { framework: { iconSources: '../../vendor' } }, '/cache/icons');
+  test('takes the unit setting over the environment', () => {
+    const result = iconSourcesDir(path.join('/work', 'mosaic'), { plugins: { icons: { sources: '../../vendor' } } }, '/cache/icons');
 
     expect(result).toBe(path.resolve('/vendor'));
   });
 
-  /** A tool that fetched the sources passes them this way, and a workspace with no setting has to take them. */
+  /** A tool that fetched the sources passes them this way, and a unit with no setting has to take them. */
   test('falls back to the environment', () => {
     const result = iconSourcesDir(path.join('/work', 'mosaic'), {}, '/cache/icons');
 

@@ -56,7 +56,7 @@ jobs:
         id: install
         run: npm ci
 
-      # the checks over real faces skip here and run in the repos that mount the framework
+      # the framework's own specs. the live API blocks skip unless their switches are set
       - name: Test
         uses: ./.github/actions/verify-vitest
 

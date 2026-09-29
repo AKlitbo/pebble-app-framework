@@ -7,11 +7,11 @@
  * shows you the console error when the page refuses to render, which on the watch just looks like
  * a settings screen that never appears. That is the real reason it earns its keep.
  *
- * Run from the root of a face repo, where `npm run dev:clay` points at lib/plugins/dev/clay-preview.ts.
+ * Run from the unit that holds the face, through paf:
  *
- * Run once:   npm run dev:clay -- <face>
- * Keep fresh: npm run dev:clay -- <face> --watch   (then refresh the browser)
- * As a user:  npm run dev:clay -- <face> --settings=saved.json
+ * Run once:   paf tool <face> clay-preview
+ * Keep fresh: paf tool <face> clay-preview --watch   (then refresh the browser)
+ * As a user:  paf tool <face> clay-preview --settings=saved.json
  *
  * Opens to: lib/plugins/dev/clay-preview.html
  *
@@ -35,7 +35,7 @@ const OUT = path.join(import.meta.dirname, 'clay-preview.html');
 
 const face = process.argv[2];
 if (!face || face.startsWith('--')) {
-  console.error('usage: node plugins/dev/clay-preview.ts <face> [--watch] [--platform=emery|gabbro]');
+  console.error('usage: paf tool <face> clay-preview [--watch] [--platform=emery|gabbro]');
   process.exit(1);
 }
 
@@ -213,7 +213,7 @@ if (process.argv.indexOf('--watch') !== -1) {
   };
 
   console.log('watching for changes. refresh the browser after each save.');
-  console.log('note: edits under clay/builder need `npm run gen:clay -- ' + face + '` first.');
+  console.log('note: edits under clay/builder need `paf gen ' + face + ' clay` first.');
   watched.forEach((dir) => {
     fs.watch(dir, { recursive: true }, () => {
       if (timer) { clearTimeout(timer); }

@@ -1,5 +1,5 @@
 /**
- * File writing the build tools share.
+ * File reading and writing the build tools share.
  */
 import fs from 'node:fs';
 
@@ -23,4 +23,17 @@ export function writeIfChanged(file: string, text: string): boolean {
   }
   fs.writeFileSync(file, text);
   return true;
+}
+
+/**
+ * Reads a text file with every \r\n turned into \n.
+ *
+ * A Windows checkout can hand back \r\n, and a generated file compared byte for byte against one
+ * written with \n would read as stale.
+ *
+ * @param file The file to read.
+ * @return Its text, with \n line endings only.
+ */
+export function readText(file: string): string {
+  return fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
 }

@@ -6,5 +6,16 @@
   "private": true,
   "dependencies": {
     "sharp": "^0.35.4"
+  },
+  "paf": {
+    "gen": {
+      "icons": {
+        "script": "generate-icons.ts",
+        "when": "resources/icons.json"
+      }
+    },
+    "check": [
+      "check-icons.ts"
+    ]
   }
 }

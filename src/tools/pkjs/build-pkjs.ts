@@ -25,7 +25,7 @@
  * A face that ships several targets (Gridlock's watchface and watchapp) compiles once. The emit tree
  * does not depend on the target, so the first target's emit/ is copied whole into each of the others.
  *
- * Run via `npm run build:pkjs -- <face>`, and by build.sh before every Pebble build.
+ * build.sh runs it before every Pebble build, which is what paf build runs.
  */
 import fs from 'node:fs';
 import path from 'node:path';

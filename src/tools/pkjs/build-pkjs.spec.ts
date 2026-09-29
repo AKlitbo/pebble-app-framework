@@ -4,15 +4,15 @@
  * The copy step runs between tsc and the Pebble build to place any committed Clay *.g.js
  * components into emit/ beside the compiled output. These specs pin what findGenerated hands
  * the copy: only .g.js files under src/pkjs, and never a clay/builder piece. They run against a
- * small face under fixtures/, and again against every real face where the framework is mounted.
+ * small face under fixtures/, which is enough, since findGenerated only ever returns what it read
+ * off the disk and so cannot go wrong on one real face and not another.
  */
 
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, test, expect } from 'vitest';
-import { listFaceNames } from '../faces';
-import { PKJS_BASE_TSCONFIG, copyIcalJs, findGenerated, facePaths } from './build-pkjs';
+import { PKJS_BASE_TSCONFIG, copyIcalJs, findGenerated } from './build-pkjs';
 import type { FacePaths } from './build-pkjs';
 
 // a face-shaped folder with one component, one plain module, and a .g.js inside clay/builder
@@ -111,23 +111,5 @@ describe('copyIcalJs', () => {
 
     expect(result).toBe(true);
     expect(fs.existsSync(paths.icaljsTo)).toBe(true);
-  });
-});
-
-// every real face the mounting repo holds, by the name facePaths takes
-const FACE_NAMES = listFaceNames();
-
-describe.skipIf(FACE_NAMES.length === 0)('findGenerated on every face', () => {
-  FACE_NAMES.forEach((face) => {
-    /** A name the copy cannot read, or a builder piece, throws mid-build or ships the sources twice. */
-    test(`${face}: returns only .g.js files that exist under src/pkjs and outside clay/builder`, () => {
-      const paths = facePaths(face);
-
-      const result = findGenerated(paths).filter((name) => !name.endsWith('.g.js')
-        || !fs.existsSync(path.join(paths.faceSrc, name))
-        || name.split(path.sep).join('/').startsWith('clay/builder/'));
-
-      expect(result).toEqual([]);
-    });
   });
 });

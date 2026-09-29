@@ -13,20 +13,22 @@
 # Because DEV_FORCE_TIME pins the clock, the same state renders byte-identical, so
 # sha256 is a reliable identity + "back to start" signal.
 #
-# Run from WSL, from the root of a face repo that mounts the framework at lib/:
-#   lib/plugins/dev/tap-walk.sh --target=gridlock-face
+# Run from WSL, from the unit that holds the face, through paf or by hand:
+#   paf tool ridgeline tap-walk
+#   lib/plugins/dev/tap-walk.sh ridgeline
 #
-# The target is the build sandbox name, which is the face name for most faces and the
-# per-target name for a face that ships several (gridlock-face, gridlock-app).
+# The face comes first and names the build sandbox too. A face that ships several targets
+# builds each in a sandbox of its own (gridlock-face, gridlock-app), so --target picks one:
+#   lib/plugins/dev/tap-walk.sh gridlock --target=gridlock-face
 #
 # Assumes the target is already built and installed on the emery emulator. Pass
-# --install to build + install first, which needs --face when the two names differ.
+# --install to build + install first.
 
 set -euo pipefail
 
 EMULATOR="emery"
 TARGET=""           # the sandbox under targets/, e.g. ridgeline or gridlock-face
-FACE=""             # the source face for build.sh, when it differs from the target
+FACE=""             # the face, which build.sh builds and which names the sandbox by default
 OUT_DIR=".tmp/tap-walk-shots"   # scratch output, gitignored via .tmp
 SETTLE=0.9          # seconds to let the firmware redraw after a tap
 MAX_TAPS=200        # hard stop so we never loop forever
@@ -38,18 +40,43 @@ for arg in "$@"; do
         --emulator=*) EMULATOR="${arg#*=}" ;;
         --out=*) OUT_DIR="${arg#*=}" ;;
         --target=*) TARGET="${arg#*=}" ;;
-        --face=*) FACE="${arg#*=}" ;;
         -h|--help)
             grep '^#' "$0" | sed 's/^# \?//'
             exit 0
             ;;
-        *) echo "unknown arg: $arg" >&2; exit 1 ;;
+        -*) echo "unknown arg: $arg" >&2; exit 1 ;;
+        *)
+            if [[ -n "$FACE" ]]; then
+                echo "unknown arg: $arg" >&2
+                exit 1
+            fi
+            FACE="$arg"
+            ;;
     esac
 done
 
-if [[ -z "$TARGET" ]]; then
-    echo "no target given. pass --target=<sandbox>, e.g. --target=ridgeline or --target=gridlock-face" >&2
+if [[ -z "$FACE" ]]; then
+    echo "no face given. pass it first, e.g. tap-walk.sh ridgeline, or tap-walk.sh gridlock --target=gridlock-face" >&2
     exit 1
+fi
+
+# the face names the sandbox too, unless --target picks one of a face's several. the targets come
+# from the lookup the build itself uses, so a face that ships several is asked which one whether or
+# not it has been built yet
+FRAMEWORK="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [[ -z "$TARGET" ]]; then
+    # the lookup runs on its own first, since a failure inside the read below would go unseen
+    if ! LISTED="$(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON "$FRAMEWORK/tools/manifest/build-manifests.ts" --targets "$FACE")"; then
+        echo "could not read the targets for $FACE. check the face's name and its config/pebble.appinfo.json" >&2
+        exit 1
+    fi
+    TARGETS=()
+    [[ -n "$LISTED" ]] && mapfile -t TARGETS <<< "$LISTED"
+    if (( ${#TARGETS[@]} > 1 )); then
+        echo "$FACE ships several targets. pick one with --target, from: ${TARGETS[*]}" >&2
+        exit 1
+    fi
+    TARGET="${TARGETS[0]:-$FACE}"
 fi
 
 PBW="targets/$TARGET/build/$TARGET.pbw"
@@ -59,7 +86,7 @@ if [[ "$DO_INSTALL" == "1" ]]; then
     # face while the .pbw is named after the target
     echo ">> building + installing $TARGET on $EMULATOR"
     # this script sits in <framework>/plugins/dev/, so build.sh is two folders up whatever the framework is called
-    bash "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/build.sh" "${FACE:-$TARGET}"
+    bash "$FRAMEWORK/build.sh" "$FACE"
     pebble install --emulator "$EMULATOR" "$PBW"
     sleep 2
 fi

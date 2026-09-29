@@ -6,20 +6,13 @@
  * mis-split name silently hands a thumbnail to the wrong panel or drops it as a stray.
  * buildSource pins the emitted shape and the stable ordering, because an unstable order would
  * churn the committed asset on every run.
+ *
+ * Whether a face's committed asset is current is check-thumbnails.ts, which paf check runs in the
+ * face's unit.
  */
 
 import { describe, test, expect } from 'vitest';
-import fs from 'node:fs';
-import path from 'node:path';
-import { listFaceNames, faceDir } from '../../tools/faces';
-import { indexBySlug, classify, buildSource, missingSlugs, encodeThumbnails, outFile } from './embed-thumbnails';
-
-/**
- * Every face that ships thumbnails, found by looking for the folder rather than by a list here,
- * so a new face is guarded the day it lands.
- */
-const THUMB_FACES = listFaceNames()
-  .filter((face) => fs.existsSync(path.join(faceDir(face), 'resources', 'thumbnails')));
+import { indexBySlug, classify, buildSource, missingSlugs } from './embed-thumbnails';
 
 const bySlug = {
   battery: { label: 'Battery', order: 0 },
@@ -149,42 +142,5 @@ describe('missingSlugs', () => {
     const result = missingSlugs(meta, { battery: true });
 
     expect(result).toEqual([]);
-  });
-});
-
-/** The faces that commit a thumbnail asset, found by output so they can check the discovery above. */
-const COMMITTING_FACES = listFaceNames()
-  .filter((face) => fs.existsSync(outFile(face)));
-
-describe.skipIf(COMMITTING_FACES.length === 0)('generated asset', () => {
-  /**
-   * The per-face checks below come from what the discovery found, so a discovery that quietly
-   * returned nothing would leave this suite green with nothing in it. Every face that commits the
-   * asset has to be found by its thumbnails folder. They run where the framework is mounted beside
-   * faces that commit the asset.
-   */
-  test('covers every face that commits a thumbnail asset', () => {
-    const result = THUMB_FACES;
-
-    expect(result).toEqual(COMMITTING_FACES);
-  });
-
-  THUMB_FACES.forEach((face) => {
-    /** A new module or a re-shot png without gen:thumbnails ships a config page showing stale previews. */
-    test(`${face}: module-thumbnails.g.js output is not stale`, () => {
-      const built = encodeThumbnails(face);
-
-      const committed = fs.readFileSync(outFile(face), 'utf8').replace(/\r\n/g, '\n');
-
-      expect(committed).toBe(built.source);
-    });
-
-    /** A png naming no module, or a module with no png, means the previews and the catalogue disagree. */
-    test(`${face}: every png maps to a module and every module has a png`, () => {
-      const result = encodeThumbnails(face);
-
-      expect(result.stray).toEqual([]);
-      expect(result.missing).toEqual([]);
-    });
   });
 });
