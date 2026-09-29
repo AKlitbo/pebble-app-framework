@@ -12,8 +12,6 @@
     "@rebble/clay": "1.1.0",
     "esbuild": "^0.28.2",
     "ical.js": "^2.2.1",
-    "playwright": "^1.63.0",
-    "sharp": "^0.35.4",
     "typescript": "^5.9.3"
   }
 }

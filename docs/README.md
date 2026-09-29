@@ -6,6 +6,8 @@ The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverag
 
 ## Layout
 
+* **`Doxyfile`**: the Doxygen settings. Doxygen runs from the repo root, so every path inside it is from there.
+* **`typedoc.json`**: the TypeDoc settings, with its paths from this folder.
 * **`doxygen/`**: the Doxygen theme in `pebble.css`, the header template, the main page, the logo and favicon, and the copied-in doxygen-awesome files under `awesome/`.
 * **`typedoc/`**: the look laid over TypeDoc's default theme.
 * **`site/`**: the site's own parts. `templates/` holds the home page, the shell every other page uses, the footer, the shared bar, and the theme toggle. `site.css`, `site-bar.css` and `coverage.css` are the stylesheets. `theme.js` is the light and dark switch every page loads, and `versions.js` fills the version picker.
@@ -21,7 +23,7 @@ Run these from the repo root in this order, since the home page reads both cover
 ```sh
 npm ci
 npm ci --prefix docs
-doxygen
+doxygen docs/Doxyfile
 npm --prefix docs run ts
 npx vitest run --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C tests/c/spec coverage

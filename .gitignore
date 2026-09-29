@@ -25,5 +25,5 @@ Thumbs.db
 # the API keys the live specs read
 .env
 
-# the local Clay settings preview, rebuilt by src/tools/dev/clay-preview.ts on demand
+# the local Clay settings preview, rebuilt by src/plugins/dev/clay-preview.ts on demand
 clay-preview.html

@@ -10,7 +10,7 @@ const { readWarnings } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
   const wanted = process.env.VERSION;
-  const doxyfile = existingPath(process.env.DOXYFILE || 'Doxyfile', 'doxyfile');
+  const doxyfile = existingPath(process.env.DOXYFILE || 'docs/Doxyfile', 'doxyfile');
 
   let version;
   try {

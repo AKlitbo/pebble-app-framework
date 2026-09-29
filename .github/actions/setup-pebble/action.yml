@@ -11,7 +11,7 @@ description: >
 inputs:
   face:
     description: >
-      A face that paf sync has already filled and installed. Its framework's project/toolchain.json names
+      A face that paf sync has already filled and installed. Its framework's toolchain.json names
       the Node major, SDK, and pebble-tool to install, over node-version, sdk-version, and
       pebble-tool-version.
     required: false

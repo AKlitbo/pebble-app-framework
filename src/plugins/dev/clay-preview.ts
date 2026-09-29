@@ -7,13 +7,13 @@
  * shows you the console error when the page refuses to render, which on the watch just looks like
  * a settings screen that never appears. That is the real reason it earns its keep.
  *
- * Run from the root of a face repo, where `npm run dev:clay` points at lib/tools/dev/clay-preview.ts.
+ * Run from the root of a face repo, where `npm run dev:clay` points at lib/plugins/dev/clay-preview.ts.
  *
  * Run once:   npm run dev:clay -- <face>
  * Keep fresh: npm run dev:clay -- <face> --watch   (then refresh the browser)
  * As a user:  npm run dev:clay -- <face> --settings=saved.json
  *
- * Opens to: lib/tools/dev/clay-preview.html
+ * Opens to: lib/plugins/dev/clay-preview.html
  *
  * --settings seeds the page from a { messageKey: value } file, which is what "open the settings on
  * a watch you have already configured" actually means. Without it every preview is a brand new
@@ -24,9 +24,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { facePaths, compile, copyGenerated, writeTsconfig } from '../pkjs/build-pkjs.ts';
-import { appinfoPath, familyCoreDir } from '../faces.ts';
-import { ENGINE, ENGINE_REL } from '../paths.ts';
+import { facePaths, compile, copyGenerated, writeTsconfig } from '../../tools/pkjs/build-pkjs.ts';
+import { appinfoPath, familyCoreDir } from '../../tools/faces.ts';
+import { ENGINE, ENGINE_REL } from '../../tools/paths.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 
 const requireHost = createRequire(import.meta.url);
@@ -35,7 +35,7 @@ const OUT = path.join(import.meta.dirname, 'clay-preview.html');
 
 const face = process.argv[2];
 if (!face || face.startsWith('--')) {
-  console.error('usage: node tools/dev/clay-preview.ts <face> [--watch] [--platform=emery|gabbro]');
+  console.error('usage: node plugins/dev/clay-preview.ts <face> [--watch] [--platform=emery|gabbro]');
   process.exit(1);
 }
 

@@ -9,7 +9,7 @@ inputs:
   typedoc-options:
     description: The TypeDoc options file to build from, relative to the repo root.
     required: false
-    default: typedoc.json
+    default: docs/typedoc.json
   vitest-config:
     description: The Vitest config to measure coverage with, relative to the repo root.
     required: false

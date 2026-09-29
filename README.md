@@ -11,7 +11,7 @@ The shared framework behind my Pebble watchfaces and watchapps. It holds the dev
 
 * **`c/`**: the device code. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/dev/` is the screenshot harness, which no release build links. `c/spec/` holds the host test harness.
 * **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its `testing/` folder holds helpers the TypeScript specs share. It ships to a face project with the rest of `ts/`, since the specs that check a face's generated files run there.
-* **`py/`**: the waf helpers that stage and build a face.
+* **`waf/`**: the waf helpers that stage and build a face, and the wscript template each build target gets.
 * **`css/`**: the Pebble-64 colour palette the frame backgrounds use.
 
 **Tooling**
@@ -92,7 +92,7 @@ To build it locally, run these from the repo root in this order. Doxygen, `make`
 
 ```sh
 npm ci --prefix docs           # TypeDoc and marked, kept out of the framework's own install
-doxygen                        # the C docs
+doxygen docs/Doxyfile          # the C docs
 npm --prefix docs run ts       # the TypeScript docs
 npx vitest run --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
 make -C tests/c/spec coverage  # the C coverage report, which needs gcovr

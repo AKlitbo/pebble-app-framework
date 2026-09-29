@@ -13,7 +13,7 @@ make
 
 `make` builds every `*.spec.c` under `src/c` as a standalone [Unity](https://github.com/ThrowTheSwitch/Unity) program against the code it covers, runs it, and returns non-zero on any failure. It takes about a second and doubles as the CI gate. `make clean` drops `build/`.
 
-Specs sit next to their source (like `*.spec.ts`) and never reach the watch, since `src/py/waf_helpers.py` leaves `**/*.spec.c` out when it stages the framework's C. Adding one needs no Makefile entry: drop `foo.spec.c` beside `foo.c` and it is found, built and run.
+Specs sit next to their source (like `*.spec.ts`) and never reach the watch, since `src/waf/paf_staging.py` leaves `**/*.spec.c` out when it stages the framework's C. Adding one needs no Makefile entry: drop `foo.spec.c` beside `foo.c` and it is found, built and run.
 
 ## What Is Not Here
 
@@ -33,7 +33,7 @@ A few units under `src/c/pebble` sit on the near side of that line anyway. `stor
 
 * Source: [ThrowTheSwitch/Unity](https://github.com/ThrowTheSwitch/Unity), the three `src/` files `unity.c`, `unity.h`, and `unity_internals.h`.
 * Pinned to [v2.6.1](https://github.com/ThrowTheSwitch/Unity/releases/tag/v2.6.1), commit `cbcd08fa7de711053a3deec6339ee89cad5d2697`.
-* License: MIT.
+* Licence: MIT.
 
 To update, re-pull the three files from a release tag (never `master`), then bump the tag and commit above:
 

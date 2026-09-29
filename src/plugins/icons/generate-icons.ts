@@ -36,9 +36,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
-import type { MediaEntry } from '../manifest/build-manifests.ts';
-import { appinfoPath, faceDir, listFaceNames } from '../faces.ts';
-import { WORKSPACE } from '../paths.ts';
+import type { MediaEntry } from '../../tools/manifest/build-manifests.ts';
+import { appinfoPath, faceDir, listFaceNames } from '../../tools/faces.ts';
+import { WORKSPACE } from '../../tools/paths.ts';
 
 /** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */
 export type IconSpec = { svg: string; size: [number, number]; trim?: boolean };

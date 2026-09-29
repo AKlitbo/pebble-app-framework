@@ -21,7 +21,7 @@ import sharp from 'sharp';
 import { describe, test, expect } from 'vitest';
 import { whiten, resourceName, buildMedia, replaceMediaArray, iconSourcesDir, renderFace, holdsIconSets } from './generate-icons';
 import type { IconManifest } from './generate-icons';
-import { appinfoPath, listFaceNames, faceDir } from '../faces';
+import { appinfoPath, listFaceNames, faceDir } from '../../tools/faces';
 import { tempDir } from '../../ts/testing/temp-dir';
 
 describe('whiten', () => {

@@ -1,0 +1,10 @@
+{
+  "name": "@paf/icons",
+  "description": "Turns a face's vendored SVG glyphs into its Pebble icon PNGs.",
+  "author": "Null Syntax",
+  "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
+  "private": true,
+  "dependencies": {
+    "sharp": "^0.35.4"
+  }
+}

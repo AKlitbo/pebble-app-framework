@@ -17,7 +17,7 @@ import { pathToFileURL } from 'node:url';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { capColors, facePlatforms, missingStylesheets, outFor, parseArgs } from './generate-frame';
 import type { FaceConfig } from './generate-frame';
-import { WORKSPACE } from '../paths';
+import { WORKSPACE } from '../../tools/paths';
 import { tempDir } from '../../ts/testing/temp-dir';
 
 /** Flatten [r, g, b, a] pixels into the raw buffer sharp hands over. */

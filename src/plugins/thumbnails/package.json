@@ -1,0 +1,7 @@
+{
+  "name": "@paf/thumbnails",
+  "description": "Inlines a face's panel thumbnails as base64 so the Clay layout builder can show them.",
+  "author": "Null Syntax",
+  "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
+  "private": true
+}

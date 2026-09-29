@@ -26,7 +26,7 @@ const ROOT_PKG = path.join(ROOT, 'package.json');
 // every target's wscript comes from one template with only its folders filled in, so it is
 // generated rather than committed per face. a sandbox missing its wscript makes `pebble build`
 // report "This project is very outdated" instead of anything useful
-const WSCRIPT_TEMPLATE = path.join(ENGINE, 'tools', 'waf', 'wscript.template');
+const WSCRIPT_TEMPLATE = path.join(ENGINE, 'waf', 'wscript.template');
 
 /**
  * One entry in config/pebble.appinfo.json's resources.media: a bitmap or font the SDK

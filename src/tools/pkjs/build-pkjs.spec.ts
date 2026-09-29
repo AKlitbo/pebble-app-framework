@@ -12,7 +12,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, test, expect } from 'vitest';
 import { listFaceNames } from '../faces';
-import { copyIcalJs, findGenerated, facePaths } from './build-pkjs';
+import { PKJS_BASE_TSCONFIG, copyIcalJs, findGenerated, facePaths } from './build-pkjs';
 import type { FacePaths } from './build-pkjs';
 
 // a face-shaped folder with one component, one plain module, and a .g.js inside clay/builder
@@ -29,6 +29,18 @@ const FIXTURE_PATHS: FacePaths = {
   tsconfig: path.join(FIXTURE, 'targets', 'face', 'tsconfig.pkjs.json'),
   skipDir: path.join(FIXTURE_SRC, 'clay', 'builder'),
 };
+
+describe('PKJS_BASE_TSCONFIG', () => {
+  /**
+   * Every face's generated tsconfig extends this file by path, so a move that misses the constant
+   * breaks every face's phone build with nothing in the framework to notice.
+   */
+  test('names a file the framework ships', () => {
+    const result = fs.existsSync(PKJS_BASE_TSCONFIG);
+
+    expect(result).toBe(true);
+  });
+});
 
 describe('findGenerated', () => {
   /** Everything it returns is a committed .g.js component, and plain modules are left to tsc. */

@@ -14,7 +14,7 @@
 # sha256 is a reliable identity + "back to start" signal.
 #
 # Run from WSL, from the root of a face repo that mounts the framework at lib/:
-#   lib/tools/dev/tap-walk.sh --target=gridlock-face
+#   lib/plugins/dev/tap-walk.sh --target=gridlock-face
 #
 # The target is the build sandbox name, which is the face name for most faces and the
 # per-target name for a face that ships several (gridlock-face, gridlock-app).
@@ -58,7 +58,7 @@ if [[ "$DO_INSTALL" == "1" ]]; then
     # a face that ships several targets builds them all under its own name, so build.sh wants the
     # face while the .pbw is named after the target
     echo ">> building + installing $TARGET on $EMULATOR"
-    # this script sits in <framework>/tools/dev/, so build.sh is two folders up whatever the framework is called
+    # this script sits in <framework>/plugins/dev/, so build.sh is two folders up whatever the framework is called
     bash "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/build.sh" "${FACE:-$TARGET}"
     pebble install --emulator "$EMULATOR" "$PBW"
     sleep 2

@@ -22,8 +22,8 @@ import fs from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { firefox } from 'playwright';
 import sharp from 'sharp';
-import { faceDir } from '../faces.ts';
-import { APPINFO_REL, WORKSPACE } from '../paths.ts';
+import { faceDir } from '../../tools/faces.ts';
+import { APPINFO_REL, WORKSPACE } from '../../tools/paths.ts';
 
 /** Native screen size per Pebble platform (px). */
 interface Dims {

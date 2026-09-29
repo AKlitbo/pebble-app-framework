@@ -1,8 +1,8 @@
 /**
  * @file dev_walk.c
  * @brief The shared frame-face dev harness. It seeds the stores from a fixed fixture and
- * drives the theme walk. Always compiled, but the linker drops it from any face that never
- * calls it, which is every release build.
+ * drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops
+ * it from any face that never calls it, which is every release build.
  *
  * @ingroup lib_dev
  */

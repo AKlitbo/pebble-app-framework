@@ -30,7 +30,7 @@ function figure(percent) {
 }
 
 module.exports = step(async ({ core, exec }) => {
-  const typedocOptions = existingPath(process.env.TYPEDOC_OPTIONS || 'typedoc.json', 'typedoc-options');
+  const typedocOptions = existingPath(process.env.TYPEDOC_OPTIONS || 'docs/typedoc.json', 'typedoc-options');
   const vitestConfig = existingPath(process.env.VITEST_CONFIG || 'vitest.config.ts', 'vitest-config');
 
   // each part that fails leaves its message for the step and its output for the summary

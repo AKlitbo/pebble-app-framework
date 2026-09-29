@@ -38,7 +38,8 @@ import { ENGINE, ENGINE_REL, WORKSPACE, icaljsBundle } from '../paths.ts';
 const requireHost = createRequire(import.meta.url);
 
 const ROOT = WORKSPACE;
-const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'config', 'tsconfig.pkjs.json');
+/** The framework's pkjs compiler options, which every face's generated tsconfig extends. */
+export const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'tsconfig.pkjs.json');
 
 /**
  * The paths this tool reads and writes. The sandbox is named after the build target. Its

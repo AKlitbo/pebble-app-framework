@@ -2,7 +2,7 @@
  * Reads the SDK, pebble-tool, and Node a face's framework was built with.
  *
  * A face that has its own framework in lib/ builds with the toolchain that framework records in
- * project/toolchain.json, so a build in CI uses what the framework was tested with, and a pinned version
+ * toolchain.json, so a build in CI uses what the framework was tested with, and a pinned version
  * can be cached where latest never can. The face's lib/ has to be filled before this runs.
  */
 const fs = require('node:fs');
@@ -18,7 +18,7 @@ module.exports = step(async ({ core }) => {
 
   const { project, framework, rel: relOf } = faceProject(workspace, face);
 
-  const file = path.join(framework, 'project', 'toolchain.json');
+  const file = path.join(framework, 'toolchain.json');
   const rel = relOf(file);
   if (!fs.existsSync(file)) {
     fail(`${rel} is missing. Fill the face's lib/ before this step, from a framework that records its toolchain.`);

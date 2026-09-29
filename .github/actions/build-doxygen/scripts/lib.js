@@ -8,7 +8,7 @@
 
 // /home/runner/work/engine/engine/c/core/math/pct.h:20: warning: Member PCT_MAX (macro definition) of file pct.h is not documented.
 const LOCATED = /^(.*?):(\d+): (warning|error): (.*)$/;
-// warning: ignoring unsupported tag 'HTML_TIMESTAMP' at line 1234, file Doxyfile
+// warning: ignoring unsupported tag 'HTML_TIMESTAMP' at line 1234, file docs/Doxyfile
 const UNLOCATED = /^(warning|error): (.*)$/;
 
 /**

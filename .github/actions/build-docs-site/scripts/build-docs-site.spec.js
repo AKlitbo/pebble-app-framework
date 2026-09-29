@@ -48,7 +48,7 @@ async function build({ results = {}, summaries = SUMMARIES } = {}) {
 
 beforeEach(() => {
   vi.stubEnv('GITHUB_WORKSPACE', '/home/runner/work/engine/engine');
-  vi.stubEnv('TYPEDOC_OPTIONS', 'typedoc.json');
+  vi.stubEnv('TYPEDOC_OPTIONS', 'docs/typedoc.json');
   vi.stubEnv('VITEST_CONFIG', 'vitest.config.ts');
   // the two config paths are names the fake stands behind, not files on the machine running the specs
   vi.spyOn(fs, 'statSync').mockReturnValue({ isFile: () => true });
@@ -112,7 +112,7 @@ describe('build-docs-site', () => {
   test('puts a TypeDoc warning with no file on the options file', async () => {
     const { core } = await build({ results: { typedoc: { exitCode: 4, stdout: TYPEDOC_WARNINGS } } });
 
-    expect(core.warning).toHaveBeenCalledWith('The entry point src/ts/missing.ts does not exist', { title: 'TypeDoc Warning', file: 'typedoc.json' });
+    expect(core.warning).toHaveBeenCalledWith('The entry point src/ts/missing.ts does not exist', { title: 'TypeDoc Warning', file: 'docs/typedoc.json' });
   });
 
   /** A TypeDoc that crashed after a warning showed only the warning, so the reason it stopped never reached the summary. */
@@ -131,7 +131,7 @@ describe('build-docs-site', () => {
 
     const { core } = await build({ results: { typedoc: { exitCode: 4, stdout: output } } });
 
-    expect(core.warning).toHaveBeenCalledWith(expect.any(String), { title: 'TypeDoc Warning', file: 'typedoc.json' });
+    expect(core.warning).toHaveBeenCalledWith(expect.any(String), { title: 'TypeDoc Warning', file: 'docs/typedoc.json' });
   });
 
   /** A failing spec makes the coverage run exit nonzero, and publishing then would hide a red suite. */

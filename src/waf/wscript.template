@@ -1,5 +1,5 @@
 # ==============================================================================
-# GENERATED from tools/waf/wscript.template by tools/manifest/build-manifests.ts.
+# GENERATED from waf/wscript.template by tools/manifest/build-manifests.ts.
 # Do not edit targets/<target>/wscript. Edit the template instead.
 #
 # Waf build rules for one build target. build-manifests.ts fills in the
@@ -8,7 +8,7 @@
 #
 # Stage the face's sources, its family core and the framework's C into this
 # folder, then hand the build (sources, per-platform compile, bundle, .pbw
-# archive) to the framework's py/waf_helpers.py. Only those folders differ between
+# archive) to the framework's waf/paf_staging.py and waf/paf_build.py. Only those folders differ between
 # targets, which is why this is generated rather than committed per face.
 # ==============================================================================
 import os.path
@@ -47,16 +47,17 @@ def configure(ctx):
 def build(ctx):
     # load the shared waf helpers from the framework at the repo root. the staged copy of the framework
     # here does not exist until stage_shared_sources runs, so load from the real one
-    helpers = os.path.join(ctx.path.parent.parent.abspath(), SOURCE['engine'], 'py')
+    helpers = os.path.join(ctx.path.parent.parent.abspath(), SOURCE['engine'], 'waf')
     if helpers not in sys.path:
         sys.path.insert(0, helpers)
 
-    import waf_helpers
+    import paf_staging
+    import paf_build
 
     # stage before loading the SDK: pebble_sdk scans resources/ as it loads, so the
     # shared sources have to be in place first
-    waf_helpers.stage_shared_sources(ctx, SOURCE)
+    paf_staging.stage_shared_sources(ctx, SOURCE)
 
     ctx.load('pebble_sdk')
 
-    waf_helpers.build_face(ctx, SOURCE, [] if WATCHFACE else ['-DBUILD_WATCHAPP'])
+    paf_build.build_face(ctx, SOURCE, [] if WATCHFACE else ['-DBUILD_WATCHAPP'])

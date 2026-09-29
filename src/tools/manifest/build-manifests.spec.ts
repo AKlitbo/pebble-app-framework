@@ -35,7 +35,7 @@ function makeConfig(): SharedAppinfo {
 describe('fillWscript', () => {
   /** A placeholder left unfilled sends waf looking for a folder named after it, and every build in that sandbox fails. */
   test('fills every folder the real template asks for', () => {
-    const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
+    const template = fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'waf', 'wscript.template'), 'utf8');
 
     const result = fillWscript(template, { engine: 'engine', face: 'gridlock', familyCore: 'core', family: 'mosaic', watchface: true });
 
@@ -48,7 +48,7 @@ describe('fillWscript', () => {
 
   /** A quote in a folder name ended the Python string it was written into, and waf failed on a syntax error far from the cause. */
   test('writes a folder name with a quote or a backslash as a working Python string', () => {
-    const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
+    const template = fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'waf', 'wscript.template'), 'utf8');
 
     const result = fillWscript(template, { engine: "andrew's lib", face: "andrew's face", familyCore: 'core', family: 'andrews', watchface: true });
 
@@ -65,7 +65,7 @@ describe('fillWscript', () => {
     [true, 'WATCHFACE = True'],
     [false, 'WATCHFACE = False'],
   ])('writes the watchface flag as %s the way python reads it', (watchface, expected) => {
-    const template = fs.readFileSync(path.join(import.meta.dirname, '..', 'waf', 'wscript.template'), 'utf8');
+    const template = fs.readFileSync(path.join(import.meta.dirname, '..', '..', 'waf', 'wscript.template'), 'utf8');
 
     const result = fillWscript(template, { engine: 'engine', face: '.', familyCore: '', family: '', watchface });
 

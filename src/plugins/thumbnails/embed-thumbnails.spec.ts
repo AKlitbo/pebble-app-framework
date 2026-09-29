@@ -11,7 +11,7 @@
 import { describe, test, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { listFaceNames, faceDir } from '../faces';
+import { listFaceNames, faceDir } from '../../tools/faces';
 import { indexBySlug, classify, buildSource, missingSlugs, encodeThumbnails, outFile } from './embed-thumbnails';
 
 /**
@@ -127,7 +127,7 @@ describe('buildSource', () => {
   test('emits the generated banner and the module.exports wrapper', () => {
     const result = buildSource({}, {});
 
-    expect(result).toContain('// do not edit by hand: run `npm run gen:thumbnails` after changing the pictures');
+    expect(result).toContain('// do not edit by hand: run `paf gen <face> thumbnails` after changing the pictures');
     expect(result).toContain('module.exports = {');
   });
 });

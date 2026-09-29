@@ -6,7 +6,8 @@
   "include": [
     "tools/**/*.ts",
     "*.config.ts",
-    "src/tools/**/*.ts"
+    "src/tools/**/*.ts",
+    "src/plugins/**/*.ts"
   ],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

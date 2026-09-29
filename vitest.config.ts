@@ -42,7 +42,7 @@ export default defineConfig({
       reporter: ['text', 'html', 'json-summary'],
       reportsDirectory: 'coverage',
       // every tree that has specs so the number covers the whole suite
-      include: ['src/ts/**', 'src/tools/**', 'tools/**'],
+      include: ['src/ts/**', 'src/tools/**', 'src/plugins/**', 'tools/**'],
       exclude: [
         '**/*.spec.ts',
         '**/*.d.ts',

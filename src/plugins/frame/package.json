@@ -1,0 +1,11 @@
+{
+  "name": "@paf/frame",
+  "description": "Bakes a face's HTML frame into background PNGs, and carries the Pebble palette stylesheet the frames link to.",
+  "author": "Null Syntax",
+  "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
+  "private": true,
+  "dependencies": {
+    "playwright": "^1.63.0",
+    "sharp": "^0.35.4"
+  }
+}

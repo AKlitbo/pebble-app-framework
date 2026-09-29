@@ -8,7 +8,8 @@
     "node": ">=24.2"
   },
   "workspaces": [
-    "src"
+    "src",
+    "src/plugins/*"
   ],
   "scripts": {
     "test": "vitest run",

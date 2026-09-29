@@ -10,9 +10,9 @@ inputs:
     required: false
     default: '1.18.0'
   doxyfile:
-    description: The Doxyfile to build from, relative to the repo root.
+    description: The Doxyfile to build from, relative to the repo root. Doxygen runs from the repo root, so the paths inside it are too.
     required: false
-    default: Doxyfile
+    default: docs/Doxyfile
 
 runs:
   using: composite

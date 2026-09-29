@@ -14,7 +14,7 @@ const WORKSPACE = '/home/runner/work/engine/engine';
 
 const WARNINGS = [
   `${WORKSPACE}/c/core/math/pct.h:20: warning: Member PCT_MAX (macro definition) of file pct.h is not documented.`,
-  "warning: ignoring unsupported tag 'HTML_TIMESTAMP' at line 1234, file Doxyfile",
+  "warning: ignoring unsupported tag 'HTML_TIMESTAMP' at line 1234, file docs/Doxyfile",
   `${WORKSPACE}/README.md:65: warning: unable to resolve reference to 'LICENSE' for \\ref command`,
 ].join('\n');
 
@@ -28,7 +28,7 @@ async function build({ version = '1.18.0 (8e760943e5d9581a444cf327f43a0b4d20d294
 beforeEach(() => {
   vi.stubEnv('GITHUB_WORKSPACE', WORKSPACE);
   vi.stubEnv('VERSION', '1.18.0');
-  vi.stubEnv('DOXYFILE', 'Doxyfile');
+  vi.stubEnv('DOXYFILE', 'docs/Doxyfile');
   // the Doxyfile is a name the fake stands behind, not a file on the machine running the specs
   vi.spyOn(fs, 'statSync').mockReturnValue({ isFile: () => true });
 });
@@ -55,7 +55,7 @@ describe('build-doxygen', () => {
   test('passes a build with no warnings', async () => {
     const { core, exec } = await build();
 
-    expect(exec.getExecOutput).toHaveBeenCalledWith('doxygen', ['Doxyfile'], { ignoreReturnCode: true });
+    expect(exec.getExecOutput).toHaveBeenCalledWith('doxygen', ['docs/Doxyfile'], { ignoreReturnCode: true });
     expect(core.setFailed).not.toHaveBeenCalled();
     expect(core.summary.addRaw.mock.calls[0][0]).toContain('Built with no warnings.');
   });
@@ -76,9 +76,9 @@ describe('build-doxygen', () => {
   test('puts a warning with no file on the Doxyfile', async () => {
     const { core } = await build({ result: { exitCode: 0, stderr: WARNINGS } });
 
-    expect(core.warning).toHaveBeenCalledWith("ignoring unsupported tag 'HTML_TIMESTAMP' at line 1234, file Doxyfile", {
+    expect(core.warning).toHaveBeenCalledWith("ignoring unsupported tag 'HTML_TIMESTAMP' at line 1234, file docs/Doxyfile", {
       title: 'Doxygen Warning',
-      file: 'Doxyfile',
+      file: 'docs/Doxyfile',
       startLine: undefined,
     });
   });

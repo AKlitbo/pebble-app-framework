@@ -5,9 +5,9 @@
  * accelerometer-tap theme "walk" for deterministic screenshots. Each tap steps to the next
  * theme on the same fixed data and the same fixed clock.
  *
- * `lib` owns the walk and the fixture. A face owns only its switches, see each face's
- * `src/c/dev/dev.h`, and passes them in. Always compiled but never called by a release build,
- * so the linker drops it all.
+ * The dev plugin owns the walk and the fixture. A face owns only its switches, in its own
+ * `src/c/dev/dev.h`, and passes them in. Compiled for any face that lists the dev plugin, but never
+ * called by a release build, so the linker drops it all.
  *
  * @ingroup lib_dev
  */

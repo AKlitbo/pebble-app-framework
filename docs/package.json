@@ -13,7 +13,7 @@
     "typecheck": "tsc -p tsconfig.json",
     "format": "prettier --write \"site/**/*.{html,css,js}\" typedoc/pebble.css doxygen/pebble.css",
     "format:check": "prettier --check \"site/**/*.{html,css,js}\" typedoc/pebble.css doxygen/pebble.css",
-    "ts": "typedoc --options ../typedoc.json",
+    "ts": "typedoc --options typedoc.json",
     "site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-site.ts"
   },
   "devDependencies": {

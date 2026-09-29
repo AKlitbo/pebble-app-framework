@@ -1,7 +1,7 @@
 # Host unit tests for the pure src/c code. Run under WSL or any Linux with gcc.
 # Each *.spec.c anywhere under src/c is a standalone Unity program. `make` builds
 # and runs them all and returns non-zero if any test fails, so it doubles as the
-# CI gate. The spec files never reach the watch, since waf_helpers.py leaves them out
+# CI gate. The spec files never reach the watch, since the waf build's paf_staging.py leaves them out
 # when it stages the framework's C.
 #
 # Most of these cover src/c/core: date and moon and beats maths, number and text
@@ -19,7 +19,9 @@ CC      ?= cc
 # CI fails on any warning, and the Pebble toolchain's gcc has no such warning to match it
 CFLAGS  ?= -std=c11 -Wall -Wextra -Wno-unused-parameter -Wno-stringop-truncation -fwrapv -O2
 # host/ holds the stub pebble.h that lets the pure src/c/pebble sources compile off the watch
-INCLUDES = -I../../../src/c/core -I../../../src/c/pebble -Ihost -Iunity
+# a plugin's C folder is a root too, so its spec includes its headers the way a face does
+PLUGIN_C = $(wildcard ../../../src/plugins/*/c)
+INCLUDES = -I../../../src/c/core -I../../../src/c/pebble $(addprefix -I,$(PLUGIN_C)) -Ihost -Iunity
 # Unity flushes after each test, so a spec that crashes still shows the FAIL lines printed before it.
 # stdout to a pipe is buffered, and a crash loses whatever is still in the buffer
 DEFINES = -DUNITY_USE_FLUSH_STDOUT
@@ -30,8 +32,8 @@ UNITY = unity/unity.c
 # every pure core source, minus the spec files themselves
 CORE_SRC = $(shell find ../../../src/c/core -name '*.c' ! -name '*.spec.c')
 
-# every colocated spec anywhere under src/c, three folders up from here
-SPECS = $(shell find ../../../src/c -name '*.spec.c')
+# every colocated spec anywhere under src/c or a plugin's c/, three folders up from here
+SPECS = $(shell find ../../../src/c $(PLUGIN_C) -name '*.spec.c')
 
 # a coverage build runs the same specs with no optimizing, so a line marked as run really ran
 # the sources are named relative to this folder, and gcov later runs from somewhere else, so
@@ -45,11 +47,13 @@ COVERAGE_FLAGS = $(filter-out -O%,$(CFLAGS)) -O0 -g --coverage -fprofile-abs-pat
 
 # compile each spec fresh, then run it right away. every spec gets the whole of core, plus its own
 # sibling source when it has one outside core (a header-only unit has none, and needs none)
+# each binary is named by the spec's path from src/, so a plugin spec and a core spec that share a
+# file name never share a binary or its coverage data
 test:
 	@mkdir -p $(BUILD)
 	@fail=0; \
 	for spec in $(SPECS); do \
-	  name=$$(basename $$spec .spec.c); \
+	  name=$$(echo "$${spec#../../../src/}" | sed -e 's|\.spec\.c$$||' -e 's|/|_|g'); \
 	  bin=$(BUILD)/$$name; \
 	  sibling=$${spec%.spec.c}.c; \
 	  case " $(CORE_SRC) " in *" $$sibling "*) sibling="";; esac; \
@@ -67,7 +71,7 @@ coverage:
 	@mkdir -p $(COVERAGE_OUT)
 	@$(MAKE) --no-print-directory test BUILD=$(COVERAGE_BUILD) CFLAGS="$(COVERAGE_FLAGS)"
 	gcovr --root ../../.. --object-directory $(COVERAGE_BUILD) \
-	  --filter ../../../src/c/core/ --filter ../../../src/c/pebble/ --exclude '.*\.spec\.c$$' \
+	  --filter ../../../src/c/core/ --filter ../../../src/c/pebble/ --filter ../../../src/plugins/ --exclude '.*\.spec\.c$$' \
 	  --html-nested $(COVERAGE_OUT)/index.html --html-title "Host C Specs" \
 	  --json-summary $(COVERAGE_OUT)/summary.json
 

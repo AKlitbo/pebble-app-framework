@@ -1,14 +1,14 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "name": "Pebble App Framework: Phone API",
-  "entryPoints": ["src/ts"],
+  "entryPoints": ["../src/ts"],
   "entryPointStrategy": "expand",
-  "exclude": ["src/ts/**/*.spec.ts", "src/ts/**/*.d.ts", "src/ts/clay/builder/**", "src/ts/testing/**"],
-  "tsconfig": "src/tsconfig.json",
-  "out": "docs/site/dist/ts",
+  "exclude": ["../src/ts/**/*.spec.ts", "../src/ts/**/*.d.ts", "../src/ts/clay/builder/**", "../src/ts/testing/**"],
+  "tsconfig": "../src/tsconfig.json",
+  "out": "site/dist/ts",
   "readme": "none",
   "excludeInternal": true,
   "intentionallyNotExported": ["AppMessageDict"],
   "treatWarningsAsErrors": true,
-  "customCss": "docs/typedoc/pebble.css"
+  "customCss": "typedoc/pebble.css"
 }
