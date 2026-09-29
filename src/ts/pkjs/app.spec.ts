@@ -979,9 +979,9 @@ describe('startPebbleApp stock and calendar', () => {
   });
 
   /**
-   * The phone downloaded the whole feed on every 5 minute tick, whatever refresh interval the wearer
-   * picked for the watch. It now leaves the refresh to the watch's asks, and fills in with a download
-   * on a slow tick only once the watch has gone quiet.
+   * The refresh is left to the watch's asks, with a download on a slow tick only once the watch has
+   * gone quiet. A refresh tied only to the phone's own 5 minute tick would download the whole feed
+   * however slowly the wearer set the watch to refresh.
    */
   test('leaves the refresh to the watch until it stops asking', () => {
     start({ CALENDAR_ICS_URL: FEED_URL });

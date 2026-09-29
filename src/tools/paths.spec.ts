@@ -15,7 +15,7 @@ import { tempDir } from '../ts/testing/temp-dir';
 const WORKSPACES = path.join(import.meta.dirname, 'fixtures', 'workspaces');
 
 describe('workspaceFor', () => {
-  /** A repo that mounts the framework under a name other than lib would otherwise see every tool treat the framework as standing alone. */
+  /** A repo that mounts the framework under a name other than paf would otherwise see every tool treat the framework as standing alone. */
   test('finds the repo of faces whatever the framework folder is called', () => {
     const result = workspaceFor(path.join(WORKSPACES, 'one-face', 'engine'));
 
@@ -27,16 +27,16 @@ describe('workspaceFor', () => {
     const root = tempDir('packages-object-');
     fs.mkdirSync(path.join(root, 'config'));
     fs.writeFileSync(path.join(root, 'config', 'pebble.appinfo.json'), '{ "name": "gridlock" }');
-    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: { packages: ['lib'] } }));
+    fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: { packages: ['paf'] } }));
 
-    const result = workspaceFor(path.join(root, 'lib'));
+    const result = workspaceFor(path.join(root, 'paf'));
 
     expect(result).toBe(root);
   });
 
   /** A framework mounted inside a family has to find the family as its home, or its faces are never built. */
   test('finds a family that holds its faces beside a core', () => {
-    const result = workspaceFor(path.join(WORKSPACES, 'family-root', 'lib'));
+    const result = workspaceFor(path.join(WORKSPACES, 'family-root', 'paf'));
 
     expect(result).toBe(path.join(WORKSPACES, 'family-root'));
   });

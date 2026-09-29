@@ -50,9 +50,9 @@ export function resourceName(basename: string): string {
   return 'ICON_' + basename.toUpperCase().replace(/-/g, '_');
 }
 
-// a media entry is a face icon when it is a bitmap under an icons/ dir. media file paths
-// are relative to the face's resources/ dir, so this matches both a face's own
-// "icons/foo.png" and a shared "../../../lib/resources/icons/foo.png"
+// a media entry is a face icon when it is a bitmap under an icons/ folder. media file paths
+// are relative to the face's resources/ folder, so this matches a face's own "icons/foo.png"
+// and an icons/ folder anywhere further up the path
 function isIconEntry(entry: MediaEntry): boolean {
   return entry.type === 'bitmap' && typeof entry.file === 'string' && /(^|\/)icons\//.test(entry.file);
 }

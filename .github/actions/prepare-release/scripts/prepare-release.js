@@ -6,7 +6,7 @@
  * names has to exist with that version in its appinfo, its changelog entry has to be dated and written, and
  * the tag cannot already be released.
  *
- * The face is found with tools/faces.ts from the face's own lib/, the same way its build finds it, even
+ * The face is found with tools/faces.ts from the face's own paf/, the same way its build finds it, even
  * when the action comes from a newer tag. That file is TypeScript, and the Node that github-script runs
  * on loads it directly.
  */
@@ -14,7 +14,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
-const { fail, step, firstLine, markdownTable, isVersionTag, readJson, faceProject } = require('../../../shared/lib');
+const { fail, step, firstLine, markdownTable, isVersionTag, readJson, faceProject, fillHint } = require('../../../shared/lib');
 const { splitTag, readChangelogEntry, isDated } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
@@ -27,30 +27,30 @@ module.exports = step(async ({ core, exec }) => {
     fail(`Tag '${tag}' is not shaped <face>-v<version>, such as lcars-stardate-v1.11.0.`);
   }
 
-  const { project, framework: lib, rel } = faceProject(workspace, parts.face);
-  const libRel = rel(lib);
+  const { project, framework, rel } = faceProject(workspace, parts.face);
+  const frameworkRel = rel(framework);
 
   // an action loaded at its own tag has a framework beside it that is not the face's. only the
   // framework the face builds with says which release it is on
-  const libPackageRel = `${libRel}/package.json`;
-  if (!fs.existsSync(path.join(lib, 'package.json'))) {
-    fail(`${libRel}/ holds no framework, so there is no telling which release the face builds on. Run paf sync before this step.`);
+  const frameworkPackageRel = `${frameworkRel}/package.json`;
+  if (!fs.existsSync(path.join(framework, 'package.json'))) {
+    fail(`${frameworkRel}/ holds no framework, so there is no telling which release the face builds on. ${fillHint(project)}`);
   }
 
-  // a release ships on a named framework version. lib/ holds a tag's files, and its package.json version
+  // a release ships on a named framework version. paf/ holds a tag's files, and its package.json version
   // says which release it came from
-  // that version carries no pre-release label, so a lib/ filled from a candidate tag or a local clone reads
-  // as the release. the sync that fills lib/ in the same workflow refuses a local clone, and candidate tags
+  // that version carries no pre-release label, so a paf/ filled from a candidate tag or a local clone reads
+  // as the release. the sync that fills paf/ in the same workflow refuses a local clone, and candidate tags
   // are never released from, so the version is enough to hold a release to
-  const libPackage = readJson(path.join(lib, 'package.json'), libPackageRel);
-  const engineTag = libPackage.version && isVersionTag(`v${libPackage.version}`) ? `v${libPackage.version}` : null;
+  const frameworkPackage = readJson(path.join(framework, 'package.json'), frameworkPackageRel);
+  const engineTag = frameworkPackage.version && isVersionTag(`v${frameworkPackage.version}`) ? `v${frameworkPackage.version}` : null;
   if (!engineTag) {
-    fail(`${libPackageRel} names no framework version, so there is no telling which release it holds.`);
+    fail(`${frameworkPackageRel} names no framework version, so there is no telling which release it holds.`);
   }
 
-  const { findFaces } = await import(pathToFileURL(path.join(lib, 'tools', 'faces.ts')).href);
-  const { APPINFO_REL } = await import(pathToFileURL(path.join(lib, 'tools', 'paths.ts')).href);
-  const { faceVersion } = await import(pathToFileURL(path.join(lib, 'tools', 'manifest', 'build-manifests.ts')).href);
+  const { findFaces } = await import(pathToFileURL(path.join(framework, 'tools', 'faces.ts')).href);
+  const { APPINFO_REL } = await import(pathToFileURL(path.join(framework, 'tools', 'paths.ts')).href);
+  const { faceVersion } = await import(pathToFileURL(path.join(framework, 'tools', 'manifest', 'build-manifests.ts')).href);
   let faces;
   try {
     faces = findFaces(project);

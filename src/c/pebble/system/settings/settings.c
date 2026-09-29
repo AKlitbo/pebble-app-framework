@@ -283,7 +283,7 @@ static void load_schema(const SettingsSchema *schema)
 
     int stored = persist_get_size(schema->key);
 
-    // let the face lift a legacy (pre-versioning) blob it recognises by size then
+    // let the face lift a legacy (pre-versioning) blob it recognizes by size then
     // re-save versioned. a schema with no legacy history passes migrate = NULL
     if (schema->migrate && schema->migrate(stored))
     {

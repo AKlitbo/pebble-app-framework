@@ -159,7 +159,7 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
  * family's name and what the target installs as.
  */
 export interface SandboxDirs {
-  engine: string;     // the framework, such as lib
+  engine: string;     // the framework, such as paf
   face: string;       // the face, such as gridlock in a family, or . for a face on its own
   familyCore: string; // the face's family core, which is core in a family, or empty for none
   family: string;     // the family's name, such as mosaic, or empty for none

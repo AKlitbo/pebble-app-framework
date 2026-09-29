@@ -99,7 +99,7 @@ static int s_settled_hours; ///< How many finished hours are already read and ke
 static bool s_steps_pending;   ///< True between init and the first bucket read, which is held back until the face has painted
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved history
 
-// --- health service reads (no-op stubs without PBL_HEALTH) ---
+// --- health service reads (stubs that do nothing without PBL_HEALTH) ---
 
 #if defined(PBL_HEALTH)
 /**
@@ -500,7 +500,8 @@ static void refresh_hr(void)
 }
 
 /**
- * @brief Refresh the daily activity scalars (steps, distance, calories, sleep, active).
+ * @brief Refresh the day's activity totals, steps, distance, calories, sleep, and active time, and
+ * the hourly step counts.
  *
  * These are whole-day sums that move once a minute at most, but movement events arrive every few
  * seconds while walking, and every metric bar steps costs a blocking flash read. So the reads are

@@ -4,7 +4,7 @@
  *
  * The stores read the wall clock themselves but hand it to these two, so the deciding is pure and
  * testable while the clock reading stays at the edge. What matters here is not the arithmetic but
- * the two ways a deadline goes wrong: firing more often than the interval, which spends the user's
+ * the ways a deadline goes wrong: firing more often than the interval, which spends the user's
  * phone battery and a provider's quota, and never firing at all, which leaves the face showing
  * yesterday's weather with nothing to say it is stale. The polling state on top of them decides
  * when polling is on at all, so a store seeded with fixtures or switched off never asks. The

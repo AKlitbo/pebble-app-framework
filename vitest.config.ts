@@ -32,7 +32,8 @@ export default defineConfig({
     // dotenv/config reads .env for the live-API vars
     setupFiles: ['dotenv/config'],
     // a zone whose clocks change, so a spec built from local dates runs across daylight saving
-    // wherever it runs. a UTC runner, or a zone that never changes, passed the old all-day sum too
+    // wherever it runs. summing an all-day event's seconds across a day whose length shifts lands
+    // on the wrong wall-clock day, and a UTC runner or a zone that never changes would not catch it
     env: { TZ: 'America/Toronto' },
     // generous enough to cover a live API round-trip when those blocks are on
     testTimeout: 15000,

@@ -1,10 +1,10 @@
 /**
  * Specs for reading a saved place back.
  *
- * The weather fetch and a time zone field both read the value a location field saved, and each
- * accepted a slightly different set of shapes. One reader now takes the union: the place as JSON,
- * the place already parsed, and the "offset,label" an older time zone field kept. What is worth
- * pinning is that each shape still reads, and that a bad coordinate never reaches a provider.
+ * The weather fetch and a time zone field both read the value a location field saved, and between
+ * them they need a slightly different set of shapes. The reader takes their union: the place as
+ * JSON, the place already parsed, and the "offset,label" an older time zone field kept. What is
+ * worth pinning is that each shape still reads, and that a bad coordinate never reaches a provider.
  */
 
 import { describe, test, expect } from 'vitest';

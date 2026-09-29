@@ -102,7 +102,7 @@ describe('buildMedia', () => {
   /** A re-gen must replace the existing icon block wholesale, not stack a second copy beside it. */
   test('replaces existing icon entries instead of appending', () => {
     const media = [
-      { type: 'bitmap', name: 'ICON_WI_CLEAR', file: '../../../lib/resources/icons/wi-clear.png' },
+      { type: 'bitmap', name: 'ICON_WI_CLEAR', file: '../../../paf/resources/icons/wi-clear.png' },
       { type: 'bitmap', name: 'ICON_DROPPED', file: 'icons/dropped.png' },
     ];
 
@@ -197,9 +197,9 @@ describe('replaceMediaArray', () => {
   });
 
   /**
-   * A bitmap that is not an icon keeps every field it had. Writing only type, name, and file
-   * dropped a background's memoryFormat and targetPlatforms on every gen:icons run, so it came
-   * back at the wrong colour depth or on platforms it was never meant for.
+   * A bitmap that is not an icon keeps every field it had. Writing only type, name, and file would
+   * drop a background's memoryFormat and targetPlatforms on every icons run, so it would come back
+   * at the wrong colour depth or on platforms it was never meant for.
    */
   test('keeps the extra fields on a bitmap that is not an icon', () => {
     const raw = '{ "media": [] }';

@@ -3,9 +3,9 @@
  * @brief Host tests for unpacking the agenda off the wire.
  *
  * Untrusted bytes going into fixed buffers, with every length in the run being the phone's word
- * rather than ours. The three things worth pinning: a count past the array is pinned and does not
- * walk off the end, a length that reaches past the message is refused, and a message that stops
- * halfway leaves the caller's agenda alone instead of half replacing it.
+ * rather than ours. What is worth pinning: a count past the array is pinned and does not walk off
+ * the end, a length that reaches past the message is refused, and a message that stops halfway
+ * leaves the caller's agenda alone instead of half replacing it.
  */
 #include "unity.h"
 

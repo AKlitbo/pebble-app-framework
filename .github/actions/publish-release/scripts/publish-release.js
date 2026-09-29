@@ -9,7 +9,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { fail, step, firstLine, markdownTable, isPrereleaseTag, readJson, faceProject } = require('../../../shared/lib');
+const { fail, step, firstLine, markdownTable, isPrereleaseTag, readJson, faceProject, fillHint } = require('../../../shared/lib');
 const { assetName } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
@@ -20,12 +20,12 @@ module.exports = step(async ({ core, exec }) => {
   const repo = process.env.GITHUB_REPOSITORY ? ['--repo', process.env.GITHUB_REPOSITORY] : [];
 
   // the face's targets and its build output sit in the folder it builds from, and the targets come from
-  // the framework in that folder's lib/
-  const { project, framework: lib, rel: projectRel } = faceProject(workspace, face);
-  if (!fs.existsSync(path.join(lib, 'package.json'))) {
-    fail(`${projectRel(lib)}/ holds no framework, so there is no telling which targets the face builds. Run paf sync before this step.`);
+  // the framework in that folder's paf/
+  const { project, framework, rel: projectRel } = faceProject(workspace, face);
+  if (!fs.existsSync(path.join(framework, 'package.json'))) {
+    fail(`${projectRel(framework)}/ holds no framework, so there is no telling which targets the face builds. ${fillHint(project)}`);
   }
-  const manifests = path.join(lib, 'tools', 'manifest', 'build-manifests.ts');
+  const manifests = path.join(framework, 'tools', 'manifest', 'build-manifests.ts');
   const listed = await exec.getExecOutput('node', ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', manifests, '--targets', face], { ignoreReturnCode: true, silent: true, cwd: project });
   const targets = listed.stdout.split(/\s+/).filter(Boolean);
   if (listed.exitCode !== 0 || targets.length === 0) {

@@ -18,7 +18,7 @@
  * @brief Identity of a known (shared) setting, used for typed reads and indexing.
  *
  * Face-only settings sit in the same field table but carry an id of SETTING_COUNT
- * or greater, so they are serialised yet never indexed for a shared read.
+ * or greater, so they are serialized yet never indexed for a shared read.
  */
 typedef enum
 {
@@ -71,12 +71,12 @@ typedef struct
  *
  * Its storage key, current schema version, frozen v1 blob size, the face struct to
  * load into (its first byte must be the uint8_t version), that struct's size, the
- * field table that drives defaults/sanitize/serialisation, and an optional migration
+ * field table that drives defaults/sanitize/serialization, and an optional migration
  * hook to rescue pre-versioned data.
  *
  * A face can persist more than one struct by chaining schemas through companion: each
  * schema points to the next and the last one is NULL. settings_init walks the chain so
- * load, save, serialise, and inbox decode all cover every schema. Each link owns its own
+ * load, save, serialize, and inbox decode all cover every schema. Each link owns its own
  * key, version, and blob, so a domain (e.g. weather or a colour table) can sit in its own
  * key instead of bloating the main one. The typed reads (settings_u8/str) index the whole
  * chain and remember each field's owning schema, so a shared field (id < SETTING_COUNT)

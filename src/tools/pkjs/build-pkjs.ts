@@ -1,8 +1,8 @@
 /**
  * Builds targets/<target>/emit/, the only tree the Pebble bundler reads for a build target.
  *
- * Four steps that have to happen in this order, which is why they live in one tool
- * rather than an && chain in package.json:
+ * The steps run in this order, which is why they live in one tool rather than an
+ * && chain in package.json:
  *
  *   clean    tsc never prunes its outDir, so a deleted or renamed .ts would leave its old
  *            .js behind. waf globs emit/**\/*.js with no filter, so that zombie ships: it
@@ -20,7 +20,7 @@
  * native build never has to stage it. tsc roots at the repo root (the framework sits outside any
  * one face), so the tree keeps its source shape: emit/<face>/src/pkjs/index.js for a face in a family,
  * or emit/src/pkjs/index.js for a face on its own, beside the framework's emit/<framework folder>/ts/**.
- * The wscript tells waf_helpers.build_face which of those the entry is.
+ * The wscript tells paf_build.build_face which of those the entry is.
  *
  * A face that ships several targets (Gridlock's watchface and watchapp) compiles once. The emit tree
  * does not depend on the target, so the first target's emit/ is copied whole into each of the others.

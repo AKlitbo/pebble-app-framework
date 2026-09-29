@@ -3,10 +3,10 @@
 # with its faces beside its core/. Run from WSL.
 # Regenerates the manifest from the face's config/pebble.appinfo.json and compiles
 # the TypeScript pkjs into targets/<target>/emit/, then runs pebble build in that sandbox.
-#   <framework>/build.sh <face>            build a face (e.g. lib/build.sh lcars-stardate)
+#   <framework>/build.sh <face>            build a face (e.g. paf/build.sh lcars-stardate)
 #   <framework>/build.sh all               build every face in the repo
 #   <framework>/build.sh <face> --clean    pebble clean first (needed after a messageKey change)
-# Any other args forward to pebble build (e.g. lib/build.sh lcars-stardate --debug).
+# Any other args forward to pebble build (e.g. paf/build.sh lcars-stardate --debug).
 set -euo pipefail
 engine="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 node_ts=(node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON)

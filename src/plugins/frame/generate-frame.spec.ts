@@ -11,7 +11,7 @@
  * bake whose colours sheet is gone, which Firefox renders without complaint. discoverFrames and
  * discoverThemes decide which frames and themes --theme all bakes, so one missed keeps an old
  * background and a stray one bakes over a real one. The render pipeline
- * itself drives Firefox and sharp and is left to integration use, npm run gen:frame.
+ * itself drives Firefox and sharp and is left to integration use, `paf gen <face> frame`.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -194,8 +194,8 @@ describe('outFor', () => {
   });
 
   /**
-   * --out across several themes was ignored, so a preview run meant to leave the face alone wrote
-   * over its committed backgrounds. Each theme now lands beside the --out path under its own name.
+   * Each theme lands beside the --out path under its own name. Sharing one --out across several
+   * themes would overwrite the face's committed backgrounds during a preview run meant to leave them alone.
    */
   test('names each theme beside --out when more than one theme is baked', () => {
     vi.spyOn(process, 'cwd').mockReturnValue(WORKSPACE);
@@ -287,7 +287,7 @@ describe('missingStylesheets', () => {
     const dir = tempDir('frame-');
     fs.writeFileSync(path.join(dir, 'frame.css'), '');
     const here = pathToFileURL(path.join(dir, 'frame.css')).href;
-    const gone = pathToFileURL(path.join(dir, 'lib', 'css', 'pebble-colors.css')).href;
+    const gone = pathToFileURL(path.join(dir, 'paf', 'plugins', 'frame', 'css', 'pebble-colors.css')).href;
 
     const result = missingStylesheets([here, gone]);
 

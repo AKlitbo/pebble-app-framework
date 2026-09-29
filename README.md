@@ -7,58 +7,83 @@ The shared framework behind my Pebble watchfaces and watchapps. It holds the dev
 
 ## Layout
 
-**Framework Code**
+**What Ships**
 
-* **`c/`**: the device code. `c/core/` is pure and host-testable. `c/pebble/` needs the SDK. `c/dev/` is the screenshot harness, which no release build links. `c/spec/` holds the host test harness.
-* **`ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay). Its `testing/` folder holds helpers the TypeScript specs share. It ships to a face project with the rest of `ts/`, since the specs that check a face's generated files run there.
-* **`waf/`**: the waf helpers that stage and build a face, and the wscript template each build target gets.
-* **`css/`**: the Pebble-64 colour palette the frame backgrounds use.
+Everything a face gets lives under `src/`, and paf copies that folder into each face project's `paf/`, leaving out the specs, their fixtures, and any plugin the project does not list.
 
-**Tooling**
+* **`src/c/`**: the device code. `core/` is pure and host-testable. `pebble/` needs the SDK.
+* **`src/ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay), and `generated.d.ts`, which types every `*.g` module a generator writes. Its `testing/` folder holds helpers the framework's specs share, which a face's own specs can use too.
+* **`src/tools/`**: the tools a face builds with: the Clay component generator, the pkjs build, the manifest build, and the check that a face's Clay components are current.
+* **`src/waf/`**: the waf helpers that stage and build a face, and the wscript template each build target gets.
+* **`src/plugins/`**: what a face opts into, each with its own `package.json` and dependencies. A plugin is mostly tools, but it can carry watch C too, which the build stages beside the framework's own.
+* **`src/build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
+* **`src/toolchain.json`**: the SDK, pebble-tool, and Node the framework is built with. paf and `setup-pebble` read it from a face project's `paf/`.
+* **`src/tsconfig.json`**, **`src/tsconfig.pkjs.json`**, **`src/tsconfig.spec.json`**, and **`src/tsconfig.tools.json`**: the compiler options a face's TypeScript builds with, and the ones its own spec and tools tsconfigs extend.
 
-* **`tools/`**: manifest, pkjs, icon, frame, thumbnail and Clay component generators.
-* **`config/`**: the shared tsconfig, eslint and vitest setup.
+**Plugins**
+
+A face project lists the plugins it wants in its `paf.config.json`, and paf copies only those.
+
+* **`frame`**: bakes a face's HTML frame into background PNGs, and carries `css/pebble-colors.css`, the Pebble-64 palette the frames link to. It needs Playwright and `sharp`.
+* **`icons`**: turns the face's vendored SVG glyphs into its icon PNGs, and checks the appinfo media block is current. It needs `sharp`.
+* **`thumbnails`**: inlines the panel PNGs as base64 so the Clay layout builder shows real panels, and checks the asset is current.
+* **`dev`**: the screenshot harness in `c/dev/`, the Clay settings preview, and `tap-walk.sh`.
+
+**Developing the Framework**
+
+* **`tools/`**: `typecheck.ts` and `build-conditions.ts`, which only ever run in this repo.
+* **`tests/c/spec/`**: the host C test harness. The specs themselves sit beside the code they cover.
+* **`eslint.config.ts`**, **`vitest.config.ts`**, and the **`tsconfig.*.json`** files at the root: the framework's own lint, test, and typecheck setup. A face keeps its own. The root **`tsconfig.json`** holds no files and points an editor at those projects.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
-* **`build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
-* **`project/`**: `toolchain.json`, the SDK, pebble-tool, and Node the framework is built with. paf and `setup-pebble` read it from a face project's `lib/`.
 
 **CI and Docs**
 
-* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The framework's workflows run the verify actions, `build-doxygen`, `build-docs-site`, and `publish-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face. A workflow loads them from this repo at a tag, such as `AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v3.0.0`, and passes the face each one works on. Actions at any later tag keep reading a face project made at 3.0.0 or after, since a project can stay on its tag for good.
+* **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The framework's workflows run the verify actions, `build-doxygen`, `build-docs-site`, and `publish-docs-site`. The face repos' workflows run `setup-pebble`, `report-memory` and `render-memory` in CI, and `prepare-release`, `setup-pebble` and `publish-release` to release a face. A workflow loads them from this repo at a tag, such as `AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v4.0.0`, and passes the face each one works on. Actions at a 4.x tag read a face project filled by paf 2.0.0, from its `paf/`.
 * **`.github/shared/`**: the helpers and spec fakes the scripts in `.github/actions/` share.
-* **`docs/doxygen/`**: the Doxygen theme, logo, main page, and header.
-* **`docs/typedoc/`**: the look laid over TypeDoc's default theme.
-* **`docs/site/`**: the docs site's page templates, its stylesheets for the pages, the shared bar, and the coverage reports, the theme script, and the version picker's script.
-* **`docs/tools/`**: renders the docs site's home page and its changelog, notices, and licence pages, and puts the shared bar on every page Doxygen, TypeDoc, and the coverage reports write.
+* **`docs/`**: the docs site, with the Doxygen and TypeDoc settings, their themes, the page templates, and the tools that build it. The [`docs/` README](docs/README.md) covers it.
 
 ## Using It
 
-The framework does not build on its own. It sits one folder down inside a face project, at `lib/`, and the project lists that folder as an npm workspace so the framework's dependencies install once. A face project is a face on its own, laid out like a plain Pebble project with `config/`, `src/` and `resources/`, or a family, with its `core/` and one folder per face. A repo is one face project, or keeps several side by side under `watchfaces/`, with apps under `watchapps/` if it likes. The two folders only sort faces from apps, and a project in either is laid out the same.
+The framework does not build on its own. paf 2.0.0 copies it into each face project at `paf/`, and the project lists `paf` and `paf/plugins/*` as npm workspaces so the framework's dependencies, and each listed plugin's, install once. That listing is also how the tools tell a mounted framework from one checked out on its own, so without it every generator and check stops and says to list them. A face project is a face on its own, laid out like a plain Pebble project with `config/`, `src/` and `resources/`, or a family, with its `core/` and one folder per face. A repo is one face project, or keeps several side by side under `watchfaces/`, with apps under `watchapps/` if it likes. The two folders only sort faces from apps, and a project in either is laid out the same.
 
-[paf](https://github.com/AKlitbo/pebble-app-framework-cli) keeps each project on its own framework tag. A project's `paf.json` names the tag, and paf fills `lib/` with the files the framework's `package.json` `files` list names, then builds and checks the project in place.
+[paf](https://github.com/AKlitbo/pebble-app-framework-cli) keeps each project on its own framework tag. A project's `paf.config.json` names the tag, the plugins it wants, and each plugin's settings. `paf pin` writes `framework` and `commit`, so a project starts with `paf pin` rather than a commit typed by hand:
 
-```sh
-paf sync
-paf build <face>
+```json
+{
+  "framework": "v4.0.0",
+  "commit": "…",
+  "plugins": {
+    "icons": { "sources": "../../vendor" },
+    "frame": {},
+    "thumbnails": {}
+  },
+  "gen": {
+    "palette": { "script": "core/tools/palette.ts", "after": "clay" }
+  }
+}
 ```
 
-A face project reaches the framework's tools through scripts in its own `package.json`, each running `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON` on the tool. The generators take a face name, and run for every face that needs them when given none.
+`gen` lists the project's own generators, each with its script, relative to the project, and the generator it runs after, so `paf gen <face> all` runs them in their place among the framework's and the plugins'.
 
-| Script | Tool | Face |
-| :-- | :-- | :-- |
-| `gen:clay` | `tools/clay-components/generate-components.ts` | optional |
-| `gen:thumbnails` | `tools/thumbnails/embed-thumbnails.ts` | optional |
-| `gen:icons` | `tools/icons/generate-icons.ts` | optional |
-| `gen:frame` | `tools/frame/generate-frame.ts` | required, then the frame |
-| `dev:clay` | `tools/dev/clay-preview.ts` | required |
+paf finds the framework's tools through a `paf` key in the framework's `package.json` and in each plugin's, so a face project needs no scripts pointing into `paf/`. Each generator there names what a face has to hold for `paf gen <face> all` to run it, a file or a folder. For a path under `src/pkjs/`, a face in a family also counts its family core's matching folder under `core/pkjs/`, since the Clay generator reads both.
 
-`gen:icons` reads its SVG sources from the folder a project names as `"framework": { "iconSources": "<folder>" }` in its `package.json`, or from the `ICON_SOURCES` environment variable when it names none.
+```sh
+paf sync                     # fill paf/ and install
+paf gen <face> all           # every generator the face has inputs for
+paf gen <face> <kind>        # one of clay, icons, frame, or thumbnails
+paf check                    # that each face's generated output is current
+paf build <face>             # the .pbw, from WSL
+paf tool <face> clay-preview # a plugin's tool, here the dev plugin's Clay preview
+paf test
+paf lint
+paf typecheck
+```
 
-The folder can have any name, as long as it sits straight under the project and the project's `package.json` lists it in `workspaces`. That listing is how the tools tell a mounted framework from one checked out on its own. Faces import the framework by relative path, so their imports use whatever name the repo picked, and the build stages the framework's C into `targets/<target>/` under that same name. Build output all lands in `targets/`, which the repo should ignore. paf always mounts the framework at `lib/`, and the face actions read it there.
+The `icons` plugin reads its SVG sources from `plugins.icons.sources` in `paf.config.json`, relative to the project, or from the `ICON_SOURCES` environment variable when it names none. Faces import the framework by relative path from `paf/`, and the build stages the framework's C and any listed plugin's C into `targets/<target>/`. Build output all lands in `targets/`, which the repo should ignore.
 
 ## Versions
 
-Framework releases are git tags such as `v1.0.0`. A face project moves with `paf pin <project> <tag>`, which shows the changelog between the two tags first. A face release reads the framework's version from `lib/package.json` and stops when it names none.
+Framework releases are git tags such as `v4.0.0`, and framework 4 needs paf 2.0.0. A face project moves with `paf pin <project> <tag>`, which shows the changelog between the two tags first. A face release reads the framework's version from `paf/package.json` and stops when it names none.
 
 ## Tests
 
@@ -82,11 +107,11 @@ npm --prefix docs run typecheck
 npm --prefix docs run format:check    # or format to fix the templates, stylesheets, and theme script
 ```
 
-A few specs also check real faces, such as whether each face's generated Clay components and thumbnails are up to date. They skip here and run in a face project that mounts the framework at `lib/`.
+The checks that each real face's generated Clay components, icon media, and thumbnails are up to date run in a face project, as `paf check`.
 
 ## Docs
 
-The docs site is built from four parts. Doxygen 1.18.0 builds the C docs from the doc comments in `c/`, TypeDoc builds the TypeScript docs from the exported code in `ts/`, and both test suites write a coverage report. A small script then builds the home page from this README, the changelog, the notices, and the licences. An older Doxygen ignores settings the Doxyfile uses.
+Doxygen 1.18.0 builds the C docs from the doc comments in `src/c/` and the plugins, TypeDoc builds the TypeScript docs from the exported code in `src/ts/`, and both test suites write a coverage report. A small script then builds the home page, which links this README on GitHub, and a page each for the changelog, the notices, and the licences. An older Doxygen ignores settings the Doxyfile uses.
 
 To build it locally, run these from the repo root in this order. Doxygen, `make`, and gcovr need WSL or Linux.
 

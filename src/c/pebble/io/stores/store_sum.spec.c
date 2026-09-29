@@ -2,10 +2,10 @@
  * @file store_sum.spec.c
  * @brief Host tests for the checksum the stores compare before saving.
  *
- * The stores skip a flash write when the sum of a reading matches the one they last wrote. So the
- * cases worth pinning are the two ways that goes wrong. A new sync time on its own must not count
- * as a change, or every poll writes again. A real change, even one byte or two values trading
- * places, must count, or the new reading is lost on the next relaunch.
+ * The stores skip a flash write when the sum of a reading matches the one they last wrote. So what
+ * is worth pinning is where that goes wrong. A new sync time on its own must not count as a
+ * change, or every poll writes again. A real change, even one byte or two values trading places,
+ * must count, or the new reading is lost on the next relaunch.
  */
 #include "unity.h"
 

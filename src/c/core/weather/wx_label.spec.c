@@ -32,7 +32,7 @@ void test_wx_label_short_keeps_a_day_token(void)
     TEST_ASSERT_EQUAL_STRING("SUNNY", out);
 }
 
-/** @brief No token at all reads UNKNOWN, as the lookup this replaced did, rather than a blank slot. */
+/** @brief No token at all reads UNKNOWN rather than a blank slot. */
 void test_wx_label_short_reads_a_missing_token_as_unknown(void)
 {
     char out[16];

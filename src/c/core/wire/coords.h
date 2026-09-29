@@ -19,7 +19,7 @@
  * empty string, or a word like "NO LOCK". A coordinate always carries digits and those never do,
  * which is the whole of the test.
  *
- * Both halves have to hold up. Half a fix is not half a place, it is not a place, and keeping one
+ * Both halves have to hold up. Half a fix is not half a place. It is not a place, and keeping one
  * is how a longitude goes missing and stays missing.
  *
  * @param lat The latitude as the phone sent it.

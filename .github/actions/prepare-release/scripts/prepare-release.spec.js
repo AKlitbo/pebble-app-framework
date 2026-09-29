@@ -14,17 +14,17 @@ import { fakeCore, fakeExec } from '../../../shared/fakes.js';
 import { tempDir } from '../../../../src/ts/testing/temp-dir.ts';
 import prepareRelease from './prepare-release.js';
 
-// the framework's own tools, which each spec's lib/ links to as a filled lib/ would carry them
+// the framework's own tools, which each spec's paf/ links to as a filled paf/ would carry them
 const TOOLS = path.resolve(import.meta.dirname, '..', '..', '..', '..', 'src', 'tools');
 
 const CHANGELOG = '# Changelog\n\n## [1.11.0] - 2026-09-07\n\n### Added\n\n- Added a Next Alarm readout.\n';
 
 let workspace;
-let libWritten;
+let frameworkWritten;
 
 beforeEach(() => {
   workspace = tempDir('prepare-release-');
-  libWritten = false;
+  frameworkWritten = false;
   vi.stubEnv('GITHUB_WORKSPACE', workspace);
   vi.stubEnv('RUNNER_TEMP', workspace);
   vi.stubEnv('GITHUB_REPOSITORY', 'AKlitbo/pebble-watchface-lcars');
@@ -49,10 +49,10 @@ const UNRELEASED = ({ command }) => {
   return {};
 };
 
-/** Runs the step, with a framework at lib/ unless the spec put its own framework in place. */
+/** Runs the step, with a framework at paf/ unless the spec put its own framework in place. */
 async function prepare(answer = UNRELEASED) {
-  if (!libWritten) {
-    writeLib();
+  if (!frameworkWritten) {
+    writeFramework();
   }
   const core = fakeCore();
   const exec = fakeExec(answer);
@@ -60,13 +60,13 @@ async function prepare(answer = UNRELEASED) {
   return { core, exec };
 }
 
-/** Puts a framework copy at a project's lib/, with its tools, as paf sync leaves it. */
-function writeLib({ version = '3.0.0', project = '.' } = {}) {
-  libWritten = true;
-  const lib = path.join(workspace, project, 'lib');
-  fs.mkdirSync(lib, { recursive: true });
-  fs.symlinkSync(TOOLS, path.join(lib, 'tools'), 'junction');
-  fs.writeFileSync(path.join(lib, 'package.json'), JSON.stringify(version ? { name: 'pebble-app-framework', version } : { name: 'pebble-app-framework' }));
+/** Puts a framework copy at a project's paf/, with its tools, as paf sync leaves it. */
+function writeFramework({ version = '3.0.0', project = '.' } = {}) {
+  frameworkWritten = true;
+  const framework = path.join(workspace, project, 'paf');
+  fs.mkdirSync(framework, { recursive: true });
+  fs.symlinkSync(TOOLS, path.join(framework, 'tools'), 'junction');
+  fs.writeFileSync(path.join(framework, 'package.json'), JSON.stringify(version ? { name: 'pebble-app-framework', version } : { name: 'pebble-app-framework' }));
 }
 
 describe('prepare-release', () => {
@@ -170,10 +170,10 @@ describe('prepare-release', () => {
     expect(core.setFailed).toHaveBeenCalledWith('gh could not check whether lcars-stardate-v1.11.0 is already released. HTTP 401: Bad credentials');
   });
 
-  /** lib/ holds a tag's shipped files with no git to ask, so the release names the version its package.json carries. */
-  test('names the framework by the version in lib/package.json', async () => {
+  /** paf/ holds a tag's shipped files with no git to ask, so the release names the version its package.json carries. */
+  test('names the framework by the version in paf/package.json', async () => {
     writeFace('.');
-    writeLib({ version: '3.0.0' });
+    writeFramework({ version: '3.0.0' });
 
     const { core } = await prepare();
 
@@ -181,24 +181,24 @@ describe('prepare-release', () => {
     expect(core.setOutput).toHaveBeenCalledWith('engine-tag', 'v3.0.0');
   });
 
-  /** A lib/ with no version gives no way to tell which release it holds, so the release stops. */
-  test('stops on a lib/ with no version', async () => {
+  /** A paf/ with no version gives no way to tell which release it holds, so the release stops. */
+  test('stops on a paf/ with no version', async () => {
     writeFace('.');
-    writeLib({ version: '' });
+    writeFramework({ version: '' });
 
     const { core } = await prepare();
 
-    expect(core.setFailed).toHaveBeenCalledWith('lib/package.json names no framework version, so there is no telling which release it holds.');
+    expect(core.setFailed).toHaveBeenCalledWith('paf/package.json names no framework version, so there is no telling which release it holds.');
   });
 
   /** An action loaded at its own tag has a framework of its own beside it, and asking that one would name the wrong release. */
-  test('stops when the face has no lib/', async () => {
+  test('stops when the face has no paf/', async () => {
     writeFace('.');
-    libWritten = true;
+    frameworkWritten = true;
 
     const { core, exec } = await prepare();
 
-    expect(core.setFailed).toHaveBeenCalledWith('lib/ holds no framework, so there is no telling which release the face builds on. Run paf sync before this step.');
+    expect(core.setFailed).toHaveBeenCalledWith('paf/ holds no framework, so there is no telling which release the face builds on. Run paf sync before this step.');
     expect(exec.getExecOutput).not.toHaveBeenCalled();
   });
 
@@ -208,7 +208,7 @@ describe('prepare-release', () => {
    */
   test('releases a face in a family project from the family folder', async () => {
     fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'core'), { recursive: true });
-    writeLib({ version: '3.1.0', project: 'watchfaces/mosaic' });
+    writeFramework({ version: '3.1.0', project: 'watchfaces/mosaic' });
     writeFace('watchfaces/mosaic/gridlock', { name: 'gridlock', version: '1.3.1', changelog: '## [1.3.1] - 2026-09-07\n\n- Fixed the grey bell.\n' });
     vi.stubEnv('RELEASE_TAG', 'gridlock-v1.3.1');
 

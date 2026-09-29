@@ -5,13 +5,13 @@
  * real feed throws at us: UTC, zoned and floating times, all-day dates, folded lines, escaped
  * text, and the future-window filter that keeps the agenda short.
  *
- * Two of those carry most of the weight. A zoned time has to land on the right instant whether
- * the phone knows the zone or only the feed does, since being out by an hour looks exactly like
- * a calendar that works. And a repeating event has to be walked out into real occurrences, since
- * showing only its first one looks exactly like an empty calendar.
+ * A zoned time has to land on the right instant whether the phone knows the zone or only the feed
+ * does, since being out by an hour looks exactly like a calendar that works. A repeating event has
+ * to be walked out into real occurrences too, since showing only its first one looks exactly like
+ * an empty calendar.
  *
  * The awkward calendar shapes are driven through a whole feed rather than poked at directly,
- * because a feed is the only input this ever gets and the reading of it is a library's job now.
+ * because a feed is the only input this ever gets and reading it is ical.js's job.
  */
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
@@ -580,10 +580,9 @@ describe('parseIcal all-day events', () => {
   });
 
   /**
-   * The day the clocks go forward is 23 hours long. Ending an all-day event 24 hours after its start
-   * ran it an hour into the next day, where it shaded the Timeline and stayed on the agenda. Both
-   * ends are local midnights, so this holds in any zone and fails on the old sum wherever the clocks
-   * change.
+   * The day the clocks go forward is 23 hours long, so ending an all-day event 24 hours after its
+   * start would run it an hour into the next day, shading the Timeline and keeping it on the agenda
+   * too long. Both ends are read as local midnights instead, which holds in any zone the clocks change in.
    */
   test('ends an all-day event on the next midnight across a clock change', () => {
     const source = feed('BEGIN:VEVENT\r\nDTSTART;VALUE=DATE:20260308\r\nSUMMARY:Daylight saving\r\nEND:VEVENT\r\n');
@@ -657,7 +656,7 @@ describe('parseIcal window and ordering', () => {
 });
 
 /**
- * The awkward calendar shapes, each of which was once read wrong here.
+ * The awkward calendar shapes, the ones a naive reader gets wrong.
  *
  * These are the cases worth keeping whatever engine is underneath, because every one of them
  * fails silently: a birthday on the wrong day or a meeting that never appears looks exactly like

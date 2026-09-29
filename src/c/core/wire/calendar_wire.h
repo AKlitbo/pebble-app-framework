@@ -7,7 +7,7 @@
  * against the length it was handed. The bytes come off a phone, so none of it is trusted: the
  * lengths are the phone's word for how long things are and the room is ours.
  *
- * The packer on the other side is lib/ts/pkjs/wire.ts, and the two have to agree exactly.
+ * The packer on the other side is ts/pkjs/wire.ts, and the two have to agree exactly.
  *
  * @ingroup lib_core
  */

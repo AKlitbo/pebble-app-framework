@@ -312,8 +312,8 @@ void test_cstring_is_clean_accepts_plain_text(void)
  *
  * The one that matters. UTF-8 puts bytes above 0x7E in a name like Zurich, and a range test that
  * only trusts plain ASCII throws the whole name away, resets the field to its default and saves
- * that back. The user picks a city, it works, and next boot it is London again. Sao Paulo drifts
- * four hours doing it.
+ * that back. The user picks a city and it works, but next boot it is London again. Sao Paulo
+ * drifts four hours doing it.
  */
 void test_cstring_is_clean_accepts_utf8(void)
 {

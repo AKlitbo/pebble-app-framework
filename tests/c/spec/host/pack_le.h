@@ -3,7 +3,7 @@
  * @brief Little-endian byte writers for the wire specs, so each one builds a message the way the
  * phone packs it.
  *
- * Specs only. The watch never writes these layouts, it only reads them, so nothing here belongs in
+ * Specs only. The watch never writes these layouts. It only reads them, so nothing here belongs in
  * the shipped `bytes_le.h`. Every writer takes the offset to write at and hands back the offset just
  * past what it wrote, so a spec can chain them to build a message field by field.
  */

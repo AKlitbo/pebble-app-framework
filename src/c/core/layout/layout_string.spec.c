@@ -6,7 +6,7 @@
  * watch. Say yes to an empty one and the face swaps to a blank screen at dusk. Say no to a good
  * one and the layout the user built never appears at all.
  *
- * The "0" sentinel is the case worth pinning hardest. A cleared grid is sent as that rather than
+ * The "0" marker is the case worth pinning hardest. A cleared grid is sent as that rather than
  * as an empty string, because an empty cstring is skipped on the way in and would never reach the
  * watch to clear anything.
  */
@@ -17,7 +17,7 @@
 void setUp(void) {}
 void tearDown(void) {}
 
-// as many module numbers as a face's catalog might hold, which is all this needs to know
+// as many module numbers as a face's catalogue might hold, which is all this needs to know
 #define TYPES 40
 
 /** @brief A real layout reads as having blocks, which is the case everything else is measured against. */
@@ -28,8 +28,8 @@ void test_a_placed_block_counts(void)
     TEST_ASSERT_TRUE(result);
 }
 
-/** @brief The sentinel a cleared grid is sent as reads as empty, or clearing one would never take. */
-void test_the_cleared_sentinel_is_empty(void)
+/** @brief The marker a cleared grid is sent as reads as empty, or clearing one would never take. */
+void test_the_cleared_marker_is_empty(void)
 {
     bool result = layout_has_any_block("0", TYPES);
 
@@ -52,7 +52,7 @@ void test_null_is_empty(void)
     TEST_ASSERT_FALSE(result);
 }
 
-/** @brief A module number the catalog does not have is junk, not something to place. */
+/** @brief A module number the catalogue does not have is junk, not something to place. */
 void test_a_module_past_the_catalog_does_not_count(void)
 {
     bool result = layout_has_any_block("99,0,0,2,2", TYPES);
@@ -148,7 +148,7 @@ int main(void)
 {
     UNITY_BEGIN();
     RUN_TEST(test_a_placed_block_counts);
-    RUN_TEST(test_the_cleared_sentinel_is_empty);
+    RUN_TEST(test_the_cleared_marker_is_empty);
     RUN_TEST(test_an_empty_string_is_empty);
     RUN_TEST(test_null_is_empty);
     RUN_TEST(test_a_module_past_the_catalog_does_not_count);

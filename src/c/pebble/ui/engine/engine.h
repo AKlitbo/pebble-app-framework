@@ -40,9 +40,14 @@ typedef struct
 } EngineSlot;
 
 /**
- * @brief Fills `out` with the current slots and returns the count. A static face returns a
- * fixed list. A dynamic face works it out from settings. `bounds` is the window's root
- * bounds, handy for a full-window draw-slot (overlays that paint at absolute coords).
+ * @brief Fills the caller's slots and returns the count. A static face returns a fixed list.
+ * A dynamic face works it out from settings.
+ *
+ * @param out Where to write the slots.
+ * @param max How many slots `out` holds.
+ * @param bounds The window's root bounds, handy for a full-window draw-slot (overlays that
+ * paint at absolute coords).
+ * @return How many slots were written.
  */
 typedef uint8_t (*EngineBuild)(EngineSlot *out, uint8_t max, GRect bounds);
 

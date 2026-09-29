@@ -64,7 +64,7 @@ static inline bool store_restore(uint32_t key, void *state, size_t size, uint8_t
 }
 
 /**
- * @brief Save a store's blob with its tag stamped in, so the next restore can recognise it.
+ * @brief Save a store's blob with its tag stamped in, so the next restore can recognize it.
  *
  * @param key The persist slot the face handed the store.
  * @param[in,out] state The struct to write, with its tag stamped in on the way. Its first field

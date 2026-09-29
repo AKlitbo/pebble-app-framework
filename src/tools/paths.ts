@@ -1,7 +1,7 @@
 /**
  * Where the framework sits, and where the repo mounting it sits.
  *
- * A face or a family mounts the framework one folder down, most often at lib/, so its faces, build
+ * A face or a family mounts the framework one folder down, at paf/ when paf fills it, so its faces, build
  * sandboxes, and node_modules/ live one level above the framework. The folder can have any name. Checked
  * out on its own, the framework is its own workspace and holds no faces.
  */
@@ -68,8 +68,8 @@ export const WORKSPACE = workspaceFor(ENGINE);
 export const MOUNTED = WORKSPACE !== ENGINE;
 
 /**
- * The framework's folder relative to the workspace, with forward slashes: lib in a repo that mounts it
- * there, or . when the framework is checked out on its own. Anything that writes the framework's path into
+ * The framework's folder relative to the workspace, with forward slashes: paf in a unit paf fills,
+ * or . when the framework is checked out on its own. Anything that writes the framework's path into
  * a build uses this rather than assuming a name.
  */
 export const ENGINE_REL = path.relative(WORKSPACE, ENGINE).split(path.sep).join('/') || '.';

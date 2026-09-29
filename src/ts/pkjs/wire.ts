@@ -140,11 +140,7 @@ function toAscii(text: string, max?: number): string {
 
 /**
  * Pushes a length byte then the text as 7-bit ASCII, which is how every string field on the
- * wire is laid out.
- *
- * @param bytes The strip being built.
- * @param text The text for the field, at whatever length it arrives.
- * @param max How many characters the field on the watch holds.
+ * wire is laid out. The text is capped to the field's length on the watch before it goes out.
  */
 function pushAscii(bytes: number[], text: string, max: number): void {
   const ascii = toAscii(text, max);

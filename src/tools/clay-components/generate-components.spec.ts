@@ -97,7 +97,7 @@ describe('inPrecedence', () => {
   const ROOTS = {
     face: { base: path.join(base, 'gridlock', 'src'), builder: path.join('pkjs', 'clay', 'builder') },
     core: { base: path.join(base, 'core'), builder: path.join('pkjs', 'clay', 'builder') },
-    lib: { base: path.join(base, 'lib', 'ts'), builder: path.join('clay', 'builder') },
+    lib: { base: path.join(base, 'paf', 'ts'), builder: path.join('clay', 'builder') },
     faceRoot: path.join(base, 'gridlock'),
   };
 
@@ -113,13 +113,13 @@ describe('inPrecedence', () => {
     expect(result).toEqual([
       path.join(base, 'gridlock', 'src', 'pkjs', 'clay', 'builder', 'ts', 'layout', 'presets'),
       wanted,
-      path.join(base, 'lib', 'ts', 'clay', 'builder', 'ts', 'layout', 'presets'),
+      path.join(base, 'paf', 'ts', 'clay', 'builder', 'ts', 'layout', 'presets'),
     ]);
   });
 
   /** A piece reaching outside every builder dir names one real file, so there is nothing to shadow. */
   test('leaves a path outside every builder dir alone', () => {
-    const wanted = path.join(base, 'lib', 'ts', 'clay', 'location-component');
+    const wanted = path.join(base, 'paf', 'ts', 'clay', 'location-component');
 
     const result = inPrecedence(ROOTS, wanted);
 

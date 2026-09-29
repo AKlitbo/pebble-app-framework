@@ -3,7 +3,7 @@
  * @brief Font registry. A face loads its custom fonts once, each under a small integer slot id,
  * and the rest of the ui looks them up by id so layout tables can stay static, carrying an id
  * rather than a live GFont handle. The registry does not care which fonts they are. The face
- * owns the slots and what they mean, see the face's own `draw/fonts.h`. This just maps an id to
+ * owns the slots and what they mean. See the face's own `draw/fonts.h`. This just maps an id to
  * its handle.
  *
  * @ingroup lib_ui

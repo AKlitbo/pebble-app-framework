@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore, tempTree } from './fakes.js';
 import path from 'node:path';
-import { existingPath, faceProject, fail, fenceFor, findFaceProject, markdownTable, repoPath, step } from './lib.js';
+import { existingPath, faceProject, fail, fenceFor, fillHint, findFaceProject, markdownTable, repoPath, step } from './lib.js';
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -136,8 +136,8 @@ describe('findFaceProject', () => {
   });
 
   /**
-   * A folder of faces with no core/ is not a family, and the tools in its lib/ find no faces there. Taken
-   * as the project, the release read a lib/ whose tools could not find the face.
+   * A folder of faces with no core/ is not a family, and the tools in its paf/ find no faces there. Taken
+   * as the project, the release read a paf/ whose tools could not find the face.
    */
   test('finds nothing in a folder under watchfaces/ that is neither a family nor a face', () => {
     const root = tree({ 'watchfaces/contour/ridgeline/config/pebble.appinfo.json': '{ "name": "ridgeline" }' });
@@ -226,12 +226,32 @@ describe('findFaceProject', () => {
 });
 
 describe('faceProject', () => {
-  /** A mistyped release tag fell back to the repo root and stopped on a lib/ that was never there, rather than on the name. */
+  /** A mistyped release tag fell back to the repo root and stopped on a paf/ that was never there, rather than on the name. */
   test('stops on a face the repo does not have', () => {
     const root = tree({ 'watchfaces/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }' });
 
     const result = () => faceProject(root, 'gridlok');
 
     expect(result).toThrow("This repo has no face called 'gridlok'.");
+  });
+});
+
+describe('fillHint', () => {
+  /** A unit paf 1.0.0 filled has its framework in lib/, and telling it to sync again only fills lib/ again. */
+  test('names the paf a unit needs when its framework is in lib/', () => {
+    const root = tree({ 'lib/package.json': '{ "name": "pebble-app-framework" }' });
+
+    const result = fillHint(root);
+
+    expect(result).toBe('Its framework is in lib/, which paf 1.0.0 fills. This framework needs paf 2.0.0, which fills paf/.');
+  });
+
+  /** A unit with no framework at all only needs a sync. */
+  test('says to sync when the unit holds no framework', () => {
+    const root = tree({ 'config/pebble.appinfo.json': '{ "name": "gridlock" }' });
+
+    const result = fillHint(root);
+
+    expect(result).toBe('Run paf sync before this step.');
   });
 });

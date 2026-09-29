@@ -6,7 +6,7 @@
  * its own symbol length. Nothing about it is fixed width, so the reader walks it and checks every
  * step against the length it was handed. The bytes come off a phone, so none of it is trusted.
  *
- * The packer on the other side is lib/ts/pkjs/wire.ts, and the two have to agree exactly.
+ * The packer on the other side is ts/pkjs/wire.ts, and the two have to agree exactly.
  *
  * @ingroup lib_core
  */

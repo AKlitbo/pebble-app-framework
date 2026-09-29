@@ -198,8 +198,8 @@ describe('pointerup', () => {
 
 describe('a second finger', () => {
   /**
-   * A second finger on the screen sends its own moves and releases. Following them jumped the
-   * ghost to that finger and dropped the panel wherever it lifted.
+   * A second finger on the screen sends its own moves and releases. Following them would jump the
+   * ghost to that finger and drop the panel wherever it lifted.
    */
   test('leaves the drag to the finger that started it', () => {
     const spec = specWith({ hitTest: () => 3, allows: () => true });
@@ -214,8 +214,8 @@ describe('a second finger', () => {
   });
 
   /**
-   * A new drag starting over one still under way replaced it and left the old ghost stuck on the
-   * page, with the lifted item never put back.
+   * A new drag starting over one still under way would replace it and leave the old ghost stuck on
+   * the page, with the lifted item never put back.
    */
   test('cancels the drag under way before starting another', () => {
     const cancel = vi.fn();

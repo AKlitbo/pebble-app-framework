@@ -11,7 +11,7 @@ cd tests/c/spec
 make
 ```
 
-`make` builds every `*.spec.c` under `src/c` as a standalone [Unity](https://github.com/ThrowTheSwitch/Unity) program against the code it covers, runs it, and returns non-zero on any failure. It takes about a second and doubles as the CI gate. `make clean` drops `build/`.
+`make` builds every `*.spec.c` under `src/c` and each plugin's `c/` as a standalone [Unity](https://github.com/ThrowTheSwitch/Unity) program against the code it covers, runs it, and returns non-zero on any failure. It takes about a second and doubles as the CI gate. `make clean` drops `build/`.
 
 Specs sit next to their source (like `*.spec.ts`) and never reach the watch, since `src/waf/paf_staging.py` leaves `**/*.spec.c` out when it stages the framework's C. Adding one needs no Makefile entry: drop `foo.spec.c` beside `foo.c` and it is found, built and run.
 

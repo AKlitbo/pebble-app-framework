@@ -78,9 +78,9 @@ describe('copyIcalJs', () => {
       ...FIXTURE_PATHS,
       emit,
       emitPkjs: path.join(emit, 'src', 'pkjs'),
-      icaljsTo: path.join(emit, 'lib', 'ts', 'calendar', 'icaljs.js'),
+      icaljsTo: path.join(emit, 'paf', 'ts', 'calendar', 'icaljs.js'),
     };
-    emitted('lib/ts/calendar/ical.js', '"use strict";\nconst icaljs = require("./icaljs");\n');
+    emitted('paf/ts/calendar/ical.js', '"use strict";\nconst icaljs = require("./icaljs");\n');
   });
 
   afterEach(() => {
@@ -92,9 +92,9 @@ describe('copyIcalJs', () => {
    * there says nothing. A face that never requires it would carry the library in every build for nothing.
    */
   test('skips ical.js when the calendar reader is only there for its types', () => {
-    emitted('src/pkjs/index.js', '"use strict";\nconst app = require("../../lib/ts/pkjs/app");\n');
-    emitted('lib/ts/pkjs/app.js', '"use strict";\nconst wire = require("./wire");\n');
-    emitted('lib/ts/pkjs/wire.js', '"use strict";\n');
+    emitted('src/pkjs/index.js', '"use strict";\nconst app = require("../../paf/ts/pkjs/app");\n');
+    emitted('paf/ts/pkjs/app.js', '"use strict";\nconst wire = require("./wire");\n');
+    emitted('paf/ts/pkjs/wire.js', '"use strict";\n');
 
     const result = copyIcalJs(paths);
 
@@ -104,8 +104,8 @@ describe('copyIcalJs', () => {
 
   /** A face that reads a calendar requires the library at runtime, and without the copy that require fails on the phone. */
   test('copies ical.js when the entry requires the calendar reader', () => {
-    emitted('src/pkjs/index.js', '"use strict";\nconst calendar = require("../../lib/ts/calendar/feature");\n');
-    emitted('lib/ts/calendar/feature.js', '"use strict";\nconst ical = require("./ical");\n');
+    emitted('src/pkjs/index.js', '"use strict";\nconst calendar = require("../../paf/ts/calendar/feature");\n');
+    emitted('paf/ts/calendar/feature.js', '"use strict";\nconst ical = require("./ical");\n');
 
     const result = copyIcalJs(paths);
 

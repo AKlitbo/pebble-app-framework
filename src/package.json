@@ -2,7 +2,7 @@
   "name": "pebble-app-framework",
   "author": "Null Syntax",
   "version": "4.0.0",
-  "description": "The shared framework behind my Pebble watchfaces and watchapps, which paf mounts at lib/.",
+  "description": "The shared framework behind my Pebble watchfaces and watchapps, which paf mounts at paf/.",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
   "engines": {

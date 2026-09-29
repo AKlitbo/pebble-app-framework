@@ -13,7 +13,7 @@
  * Keep fresh: paf tool <face> clay-preview --watch   (then refresh the browser)
  * As a user:  paf tool <face> clay-preview --settings=saved.json
  *
- * Opens to: lib/plugins/dev/clay-preview.html
+ * Opens to: paf/plugins/dev/clay-preview.html
  *
  * --settings seeds the page from a { messageKey: value } file, which is what "open the settings on
  * a watch you have already configured" actually means. Without it every preview is a brand new

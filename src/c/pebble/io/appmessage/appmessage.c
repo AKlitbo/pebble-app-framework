@@ -378,7 +378,7 @@ static bool write_settings(DictionaryIterator *iter)
 }
 
 /**
- * @brief Queue the settings reply so it serialises with the data requests through the one outbox.
+ * @brief Queue the settings reply so it serializes with the data requests through the one outbox.
  */
 static void send_settings(void)
 {

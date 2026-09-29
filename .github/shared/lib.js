@@ -272,7 +272,7 @@ function appinfoName(root, dir) {
 /**
  * Finds a face by name, and the project folder it builds from.
  *
- * The project is the folder with the framework in its lib/. A repo that is one face or one family is a
+ * The project is the folder with the framework in its paf/. A repo that is one face or one family is a
  * project itself. A repo of several keeps each face and each family under watchfaces/ or watchapps/ as
  * a project of its own. The two folders only sort faces from apps, and a project in either is laid out
  * the same. A face goes by the name the tools give it where it builds: its appinfo's when it is a project
@@ -287,7 +287,7 @@ function appinfoName(root, dir) {
  */
 function findFaceProject(repoRoot, name) {
   // inside a project this repeats the rules of tools/faces.ts, so a new place a face can sit in one has
-  // to be added in both. the face has to be found before its lib/ is known, so faces.ts cannot be asked first
+  // to be added in both. the face has to be found before its paf/ is known, so faces.ts cannot be asked first
   // a face's name is one folder name, so one reaching into another folder, or out of the repo, is none
   if (!name || /[\\/]/.test(name) || name === '.' || name === '..') {
     return null;
@@ -324,7 +324,7 @@ function findFaceProject(repoRoot, name) {
 }
 
 /**
- * The project folder a face builds from, and the framework in its lib/.
+ * The project folder a face builds from, and the framework in its paf/.
  *
  * @param root The repo root.
  * @param name The face's name, or empty for the repo root.
@@ -337,12 +337,26 @@ function faceProject(root, name) {
     fail(`This repo has no face called '${name}'.`);
   }
   const project = found ? found.project : path.resolve(root);
-  const framework = path.join(project, 'lib');
+  const framework = path.join(project, 'paf');
   const rel = (file = '') => path.relative(root, path.resolve(project, file)).split(path.sep).join('/') || '.';
   return { project, framework, rel };
 }
 
+/**
+ * What a failure about a unit with no framework in its paf/ should tell the user to do. A unit
+ * filled by paf 1.0.0 has its framework in lib/ instead, and syncing again with that paf only fills
+ * lib/ again, so it is told which paf it needs rather than to sync.
+ *
+ * @param project The unit's folder.
+ * @return The sentence to end the failure with.
+ */
+function fillHint(project) {
+  return fs.existsSync(path.join(project, 'lib', 'package.json'))
+    ? 'Its framework is in lib/, which paf 1.0.0 fills. This framework needs paf 2.0.0, which fills paf/.'
+    : 'Run paf sync before this step.';
+}
+
 module.exports = {
   fail, step, insideRepo, existingPath, repoPath, fenceFor, outputTail, markdownTable, firstLine, stripColour, readJson,
-  isVersionTag, compareVersionTags, isPrereleaseTag, findFaceProject, faceProject,
+  isVersionTag, compareVersionTags, isPrereleaseTag, findFaceProject, faceProject, fillHint,
 };

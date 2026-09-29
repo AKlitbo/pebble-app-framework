@@ -57,15 +57,12 @@ const isEnum = (value: any) => typeof value === 'string' || typeof value === 'nu
 const asBool = (value: any) => value === 1;
 
 /**
- * The face's timezone settings, by the name to read them under and the key they ride on.
+ * Every timezone field on the face's settings page, sections included, by the name it saves under
+ * and the key it rides on the wire.
  *
  * A timezone setting is a `locationsearch` item marked `timeZone: true` on the settings page. The
  * Clay store keys on the name and an AppMessage dict keys on the number, so anything handling a
  * timezone field needs both halves. A picker whose key the face does not declare is left out.
- *
- * @param items The face's settings page, sections included.
- * @param messageKeys The face's message_keys map.
- * @return Every timezone field on the page that the face declares.
  */
 function timezoneFieldsIn(items: ClayConfigItem[], messageKeys: any): Array<{ name: string; key: number }> {
   const fields: Array<{ name: string; key: number }> = [];
@@ -118,11 +115,8 @@ export function retimeSettings(dict: AppMessageDict, messageKeys: any, clayConfi
 }
 
 /**
- * Walks the settings page and records the type of every item that has a message key.
- *
- * @param items The Clay config items, sections included.
- * @param into The map to fill, from message key name to item type.
- * @return The same map.
+ * Walks the settings page, sections included, and records the type of every item that has a
+ * message key into the map passed in, keyed by message key name.
  */
 function itemTypes(items: ClayConfigItem[], into: Record<string, string> = {}): Record<string, string> {
   items.forEach((item) => {

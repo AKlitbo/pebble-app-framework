@@ -7,7 +7,7 @@
  * enough, where those two have to check at every step, and it is why these two fill the caller's
  * strip as they go rather than handing over a finished copy.
  *
- * The packer on the other side is lib/ts/pkjs/wire.ts, and the two have to agree exactly.
+ * The packer on the other side is ts/pkjs/wire.ts, and the two have to agree exactly.
  *
  * @ingroup lib_core
  */

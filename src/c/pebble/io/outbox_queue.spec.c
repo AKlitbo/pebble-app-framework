@@ -3,7 +3,7 @@
  * @brief Host tests for the outbox's queue, failed set and in-flight slot.
  *
  * The transport does the sending and the timers, but what to send next is decided here, so the
- * deciding is testable off the watch. What matters is not the array shuffling but the two ways a
+ * deciding is testable off the watch. What matters is not the array shuffling but the ways a
  * poll goes missing: a nacked request dropped instead of held, which leaves the face on a stale
  * reading until the next interval, and a repeat poll queued twice, which spends a metered
  * provider's quota on an answer already on its way.

@@ -34,5 +34,5 @@ export interface RawOption {
 
 // ModuleMeta is not here. a face's clay/module-meta.ts is runtime code that
 // config.ts ships so a type import from this folder would drag it into the
-// compiled bundle. it lives in lib/ts/clay/types.ts with the other shapes the
+// compiled bundle. it lives in the framework's ts/clay/types.ts with the other shapes the
 // shipped page uses

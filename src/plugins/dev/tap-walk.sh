@@ -15,11 +15,11 @@
 #
 # Run from WSL, from the unit that holds the face, through paf or by hand:
 #   paf tool ridgeline tap-walk
-#   lib/plugins/dev/tap-walk.sh ridgeline
+#   paf/plugins/dev/tap-walk.sh ridgeline
 #
 # The face comes first and names the build sandbox too. A face that ships several targets
 # builds each in a sandbox of its own (gridlock-face, gridlock-app), so --target picks one:
-#   lib/plugins/dev/tap-walk.sh gridlock --target=gridlock-face
+#   paf/plugins/dev/tap-walk.sh gridlock --target=gridlock-face
 #
 # Assumes the target is already built and installed on the emery emulator. Pass
 # --install to build + install first.

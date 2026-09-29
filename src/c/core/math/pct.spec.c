@@ -2,9 +2,8 @@
  * @file pct.spec.c
  * @brief Host tests for the goal percentage.
  *
- * Every goal panel draws its bar off this, so the two things worth pinning are the ones that are
- * not arithmetic: a goal of zero must not divide, and a beaten goal must not fill past the end of
- * the bar.
+ * Every goal panel draws its bar off this. What is worth pinning is not the arithmetic: a goal of
+ * zero must not divide, and a beaten goal must not fill past the end of the bar.
  */
 #include "unity.h"
 

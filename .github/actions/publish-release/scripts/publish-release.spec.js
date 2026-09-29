@@ -26,8 +26,8 @@ beforeEach(() => {
   vi.stubEnv('VERSION', '1.3.1');
   vi.stubEnv('TITLE', 'Gridlock 1.3.1');
   vi.stubEnv('NOTES_FILE', path.join(workspace, 'release-notes.md'));
-  fs.mkdirSync(path.join(workspace, 'lib'));
-  fs.writeFileSync(path.join(workspace, 'lib', 'package.json'), '{}');
+  fs.mkdirSync(path.join(workspace, 'paf'));
+  fs.writeFileSync(path.join(workspace, 'paf', 'package.json'), '{}');
   fs.mkdirSync(path.join(workspace, 'config'));
   fs.writeFileSync(path.join(workspace, 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
 });
@@ -85,8 +85,8 @@ describe('publish-release', () => {
   test('attaches the pbw a family project built', async () => {
     fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'config'), { recursive: true });
     fs.rmSync(path.join(workspace, 'config'), { recursive: true });
-    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'lib'));
-    fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'lib', 'package.json'), '{}');
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'paf'));
+    fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'paf', 'package.json'), '{}');
     fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'core'));
     fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
     writeTarget('gridlock', ['emery'], { project: 'watchfaces/mosaic' });
@@ -94,17 +94,17 @@ describe('publish-release', () => {
     const { core, exec } = await publish(({ command }) => (command === 'node' ? { stdout: 'gridlock\n' } : {}));
 
     expect(core.setFailed).not.toHaveBeenCalled();
-    expect(exec.getExecOutput).toHaveBeenCalledWith('node', expect.arrayContaining([path.join(workspace, 'watchfaces', 'mosaic', 'lib', 'tools', 'manifest', 'build-manifests.ts')]), expect.objectContaining({ cwd: path.join(workspace, 'watchfaces', 'mosaic') }));
+    expect(exec.getExecOutput).toHaveBeenCalledWith('node', expect.arrayContaining([path.join(workspace, 'watchfaces', 'mosaic', 'paf', 'tools', 'manifest', 'build-manifests.ts')]), expect.objectContaining({ cwd: path.join(workspace, 'watchfaces', 'mosaic') }));
     expect(fs.readFileSync(path.join(workspace, 'release-assets', 'gridlock-emery-1.3.1.pbw'), 'utf8')).toBe('gridlock');
   });
 
-  /** The action's own framework copy looks for faces in the action's folder, so without the face's lib/ there is nothing to ask. */
-  test('stops before node when the face has no lib/', async () => {
-    fs.rmSync(path.join(workspace, 'lib'), { recursive: true });
+  /** The action's own framework copy looks for faces in the action's folder, so without the face's paf/ there is nothing to ask. */
+  test('stops before node when the face has no paf/', async () => {
+    fs.rmSync(path.join(workspace, 'paf'), { recursive: true });
 
     const { core, exec } = await publish();
 
-    expect(core.setFailed).toHaveBeenCalledWith('lib/ holds no framework, so there is no telling which targets the face builds. Run paf sync before this step.');
+    expect(core.setFailed).toHaveBeenCalledWith('paf/ holds no framework, so there is no telling which targets the face builds. Run paf sync before this step.');
     expect(exec.getExecOutput).not.toHaveBeenCalled();
   });
 
