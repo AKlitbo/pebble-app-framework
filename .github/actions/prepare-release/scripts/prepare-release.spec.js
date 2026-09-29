@@ -11,11 +11,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore, fakeExec } from '../../../shared/fakes.js';
-import { tempDir } from '../../../../ts/testing/temp-dir.ts';
+import { tempDir } from '../../../../src/ts/testing/temp-dir.ts';
 import prepareRelease from './prepare-release.js';
 
 // the framework's own tools, which each spec's lib/ links to as a filled lib/ would carry them
-const TOOLS = path.resolve(import.meta.dirname, '..', '..', '..', '..', 'tools');
+const TOOLS = path.resolve(import.meta.dirname, '..', '..', '..', '..', 'src', 'tools');
 
 const CHANGELOG = '# Changelog\n\n## [1.11.0] - 2026-09-07\n\n### Added\n\n- Added a Next Alarm readout.\n';
 

@@ -67,7 +67,7 @@ function vitestWrites(report, exitCode) {
     if (report) {
       fs.writeFileSync(target, JSON.stringify(report));
     }
-    return { exitCode, stdout: ' RUN  v4.1.10', stderr: report ? '' : 'Error: Failed to load config/vitest.config.ts' };
+    return { exitCode, stdout: ' RUN  v4.1.10', stderr: report ? '' : 'Error: Failed to load vitest.config.ts' };
   };
 }
 
@@ -82,7 +82,7 @@ beforeEach(() => {
   runnerTemp = fs.mkdtempSync(path.join(os.tmpdir(), 'verify-vitest-'));
   vi.stubEnv('RUNNER_TEMP', runnerTemp);
   vi.stubEnv('GITHUB_WORKSPACE', WORKSPACE);
-  vi.stubEnv('VITEST_CONFIG', 'config/vitest.config.ts');
+  vi.stubEnv('VITEST_CONFIG', 'vitest.config.ts');
   // the config path is a name the fake stands behind, not a file on the machine running the specs
   vi.spyOn(fs, 'statSync').mockReturnValue({ isFile: () => true });
 });
@@ -100,7 +100,7 @@ describe('verify-vitest', () => {
 
     const [[command, args]] = exec.getExecOutput.mock.calls;
     expect(command).toBe('npx');
-    expect(args).toEqual(expect.arrayContaining(['run', '--config', 'config/vitest.config.ts', '--reporter=default', '--reporter=json', '--includeTaskLocation']));
+    expect(args).toEqual(expect.arrayContaining(['run', '--config', 'vitest.config.ts', '--reporter=default', '--reporter=json', '--includeTaskLocation']));
   });
 
   /** A clean run has to pass, and the counts on the summary show how much ran. */
@@ -146,7 +146,7 @@ describe('verify-vitest', () => {
   test('names the config in the summary heading', async () => {
     const { core } = await verify(vitestWrites(PASSING_REPORT, 0));
 
-    expect(core.summary.addRaw.mock.calls[0][0]).toContain('## Vitest (config/vitest.config.ts)');
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('## Vitest (vitest.config.ts)');
   });
 
   /** A broken config writes no report at all, and treating no failures as a pass would ship an untested change. */
@@ -154,6 +154,6 @@ describe('verify-vitest', () => {
     const { core } = await verify(vitestWrites(null, 1));
 
     expect(core.setFailed).toHaveBeenCalledWith('Vitest exited 1 without writing its results, so it never got as far as running the specs.');
-    expect(core.summary.addRaw.mock.calls[0][0]).toContain('Failed to load config/vitest.config.ts');
+    expect(core.summary.addRaw.mock.calls[0][0]).toContain('Failed to load vitest.config.ts');
   });
 });

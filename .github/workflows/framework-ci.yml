@@ -154,8 +154,8 @@ jobs:
         uses: ./.github/actions/verify-typecheck
         with:
           projects: |
-            tsconfig.json
-            config/tsconfig.builder.json
-            config/tsconfig.tools.json
-            config/tsconfig.spec.json
+            src/tsconfig.json
+            tsconfig.builder.json
+            tsconfig.tools.json
+            tsconfig.spec.json
             docs/tsconfig.json

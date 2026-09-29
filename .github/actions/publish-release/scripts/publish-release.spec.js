@@ -11,7 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore, fakeExec } from '../../../shared/fakes.js';
-import { tempDir } from '../../../../ts/testing/temp-dir.ts';
+import { tempDir } from '../../../../src/ts/testing/temp-dir.ts';
 import publishRelease from './publish-release.js';
 
 let workspace;

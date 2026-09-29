@@ -1,0 +1,15 @@
+// the compiler options for specs, which run under Vitest in node or jsdom
+// a face's spec tsconfig extends this and names its own include and exclude, and so does the framework's
+// pebble.d.ts declares globals the specs use without importing them, so it comes in with the options
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    // the builder specs run in jsdom, so they need the DOM types
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
+  },
+  "files": ["ts/pkjs/pebble.d.ts"]
+}

@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { vi } from 'vitest';
-import { tempDir } from '../../ts/testing/temp-dir.ts';
+import { tempDir } from '../../src/ts/testing/temp-dir.ts';
 
 /**
  * Writes files into a fresh temp folder, which is removed once the spec that made it has run.

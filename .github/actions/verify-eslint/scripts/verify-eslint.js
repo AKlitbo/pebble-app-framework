@@ -10,7 +10,7 @@ const { fail, step, repoPath, existingPath, markdownTable, outputTail } = requir
 const { readLint } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
-  const config = existingPath(process.env.ESLINT_CONFIG || 'config/eslint.config.ts', 'config');
+  const config = existingPath(process.env.ESLINT_CONFIG || 'eslint.config.ts', 'config');
 
   // silent, since the JSON would bury the log. each problem is written back out below as its own line
   const run = await exec.getExecOutput('npx', ['--no-install', 'eslint', '.', '--config', config, '--format', 'json'], {

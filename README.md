@@ -51,7 +51,6 @@ A face project reaches the framework's tools through scripts in its own `package
 | `gen:icons` | `tools/icons/generate-icons.ts` | optional |
 | `gen:frame` | `tools/frame/generate-frame.ts` | required, then the frame |
 | `dev:clay` | `tools/dev/clay-preview.ts` | required |
-| `typecheck` | `tools/typecheck.ts` | none |
 
 `gen:icons` reads its SVG sources from the folder a project names as `"framework": { "iconSources": "<folder>" }` in its `package.json`, or from the `ICON_SOURCES` environment variable when it names none.
 
@@ -66,9 +65,9 @@ Framework releases are git tags such as `v1.0.0`. A face project moves with `paf
 Everything here runs on its own, with no faces needed:
 
 ```sh
-make -C c/spec      # the host C suite
+make -C tests/c/spec  # the host C suite
 npm ci
-npm test            # providers, Clay pieces, build tools against fixtures/, and the action scripts
+npm test              # providers, Clay pieces, build tools against fixtures/, and the action scripts
 npm run lint
 npm run typecheck
 ```
@@ -95,8 +94,8 @@ To build it locally, run these from the repo root in this order. Doxygen, `make`
 npm ci --prefix docs           # TypeDoc and marked, kept out of the framework's own install
 doxygen                        # the C docs
 npm --prefix docs run ts       # the TypeScript docs
-npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
-make -C c/spec coverage        # the C coverage report, which needs gcovr
+npx vitest run --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
+make -C tests/c/spec coverage  # the C coverage report, which needs gcovr
 npm --prefix docs run site     # the home page and the pages around it, last since it reads both coverage reports
 ```
 
@@ -111,10 +110,10 @@ The [`docs/` README](docs/README.md) covers that folder's layout, its own script
 
 **Source Code:** © 2026 Andrew Klitbo (Null Syntax), dual-licensed. You may choose either:
 
-* the [GNU Affero General Public License v3.0 or later](LICENSES/AGPL-3.0-or-later.txt), or
-* the [PolyForm Noncommercial License 1.0.0](LICENSES/PolyForm-Noncommercial-1.0.0.txt).
+* the [GNU Affero General Public License v3.0 or later](src/LICENSES/AGPL-3.0-or-later.txt), or
+* the [PolyForm Noncommercial License 1.0.0](src/LICENSES/PolyForm-Noncommercial-1.0.0.txt).
 
-See [LICENSE](LICENSE) and [NOTICES](NOTICES.md). The early history of this code was published in [pebble-watchfaces](https://github.com/AKlitbo/pebble-watchfaces) under the PolyForm Noncommercial License, and copies taken from that history keep those terms.
+See [LICENSE](LICENSE), [src/NOTICES.md](src/NOTICES.md) for the third-party work that ships with the framework, and [NOTICES.md](NOTICES.md) for what only the docs site uses. The early history of this code was published in [pebble-watchfaces](https://github.com/AKlitbo/pebble-watchfaces) under the PolyForm Noncommercial License, and copies taken from that history keep those terms.
 
 ## AI Training
 

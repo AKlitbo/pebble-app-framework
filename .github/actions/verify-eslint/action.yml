@@ -7,7 +7,7 @@ inputs:
   config:
     description: The ESLint config to run with, relative to the repo root.
     required: false
-    default: config/eslint.config.ts
+    default: eslint.config.ts
 
 runs:
   using: composite

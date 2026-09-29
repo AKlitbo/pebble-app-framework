@@ -1,0 +1,12 @@
+// typechecks the framework's build and generator scripts plus the configs beside this one, with
+// the same options a face's tools extend
+// run by npm run typecheck. these run under node so they never ship to the watch
+{
+  "extends": "./src/tsconfig.tools.json",
+  "include": [
+    "tools/**/*.ts",
+    "*.config.ts",
+    "src/tools/**/*.ts"
+  ],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}

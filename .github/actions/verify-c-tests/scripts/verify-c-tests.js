@@ -12,7 +12,7 @@ const { fail, step, repoPath, markdownTable, outputTail } = require('../../../sh
 const { readSuite } = require('./lib');
 
 // the Makefile lives here, and every path the suite prints is relative to it
-const SPEC_DIR = 'c/spec';
+const SPEC_DIR = 'tests/c/spec';
 
 module.exports = step(async ({ core, exec }) => {
   // the headers and Unity's lines go to stdout while gcc and the shell's crash line go to stderr

@@ -1,6 +1,6 @@
 name: Verify C Tests
 description: >
-  Runs the host C suite with make -C c/spec, and reports each failing test, each spec that did not
+  Runs the host C suite with make -C tests/c/spec, and reports each failing test, each spec that did not
   build, and each spec that stopped before reporting, as annotations and a job summary.
 
 runs:

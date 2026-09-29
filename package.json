@@ -1,53 +1,32 @@
 {
-  "name": "pebble-app-framework",
+  "name": "pebble-app-framework-dev",
   "author": "Null Syntax",
-  "version": "3.0.0",
-  "description": "The shared framework behind my Pebble watchfaces and watchapps, which paf mounts at lib/.",
+  "description": "The repo pebble-app-framework is developed in. What ships is src/, with its own package.json.",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
-  "files": [
-    "build.sh",
-    "c/core",
-    "c/dev",
-    "c/pebble",
-    "config",
-    "css",
-    "py",
-    "tools",
-    "ts",
-    "tsconfig.json",
-    "project/toolchain.json",
-    "CHANGELOG.md",
-    "LICENSE",
-    "LICENSES",
-    "NOTICES.md",
-    "!**/*.spec.c"
-  ],
   "engines": {
     "node": ">=24.2"
   },
+  "workspaces": [
+    "src"
+  ],
   "scripts": {
-    "test": "vitest run --config config/vitest.config.ts",
-    "test:coverage": "vitest run --config config/vitest.config.ts --coverage",
-    "lint": "eslint . --config config/eslint.config.ts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --config eslint.config.ts",
     "typecheck": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/typecheck.ts",
     "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@rebble/clay": "1.1.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^24.19.0",
     "@vitest/coverage-v8": "^4.1.11",
     "dotenv": "^17.4.2",
-    "esbuild": "^0.28.2",
     "eslint": "^10.11.0",
     "globals": "^17.12.0",
-    "ical.js": "^2.2.1",
     "jiti": "^2.7.0",
     "jsdom": "^29.1.1",
-    "playwright": "^1.63.0",
-    "sharp": "^0.35.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.1",
     "vitest": "^4.1.11"

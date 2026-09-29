@@ -23,8 +23,8 @@ npm ci
 npm ci --prefix docs
 doxygen
 npm --prefix docs run ts
-npx vitest run --config config/vitest.config.ts --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
-make -C c/spec coverage
+npx vitest run --coverage --coverage.reportsDirectory=docs/site/dist/coverage/ts
+make -C tests/c/spec coverage
 npm --prefix docs run site
 ```
 

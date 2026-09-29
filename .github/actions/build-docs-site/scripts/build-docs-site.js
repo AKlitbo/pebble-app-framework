@@ -30,8 +30,8 @@ function figure(percent) {
 }
 
 module.exports = step(async ({ core, exec }) => {
-  const typedocOptions = existingPath(process.env.TYPEDOC_OPTIONS || 'config/typedoc.json', 'typedoc-options');
-  const vitestConfig = existingPath(process.env.VITEST_CONFIG || 'config/vitest.config.ts', 'vitest-config');
+  const typedocOptions = existingPath(process.env.TYPEDOC_OPTIONS || 'typedoc.json', 'typedoc-options');
+  const vitestConfig = existingPath(process.env.VITEST_CONFIG || 'vitest.config.ts', 'vitest-config');
 
   // each part that fails leaves its message for the step and its output for the summary
   const problems = [];
@@ -67,9 +67,9 @@ module.exports = step(async ({ core, exec }) => {
     problems.push({ message: `Vitest exited ${vitest.exitCode} while measuring coverage. The summary shows the end of its output.`, output: vitest });
   }
 
-  const make = await run('C Coverage', 'make', ['-C', 'c/spec', 'coverage']);
+  const make = await run('C Coverage', 'make', ['-C', 'tests/c/spec', 'coverage']);
   if (make.exitCode !== 0) {
-    problems.push({ message: `make -C c/spec coverage exited ${make.exitCode}, so a C spec or gcovr failed.`, output: make });
+    problems.push({ message: `make -C tests/c/spec coverage exited ${make.exitCode}, so a C spec or gcovr failed.`, output: make });
   }
 
   const pages = await run('Site Pages', 'npm', ['--prefix', 'docs', 'run', 'site']);

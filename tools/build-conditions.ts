@@ -2,10 +2,10 @@
 /**
  * Generates the C weather-condition lookups from the shared vocabulary.
  *
- * Reads the framework's ts/weather/conditions.ts and ts/pkjs/wire.ts, the two tables the phone owns,
- * and writes
- *   c/pebble/ui/weather/icons_table.g.h          (token  -> icon resource)
- *   c/core/wire/wire_caps.g.h                    (the strip caps both sides bound against)
+ * Reads the framework's src/ts/weather/conditions.ts and src/ts/pkjs/wire.ts, the two tables the phone
+ * owns, and writes
+ *   src/c/pebble/ui/weather/icons_table.g.h      (token  -> icon resource)
+ *   src/c/core/wire/wire_caps.g.h                (the strip caps both sides bound against)
  *
  * Each header carries its own Doxygen blocks, so the generated lookups show up in the framework docs
  * like any hand-written file.
@@ -17,11 +17,14 @@
  * Run via `npm run build:conditions` after editing either source.
  */
 import path from 'node:path';
-import conditionVocabulary from '../ts/weather/conditions.ts';
-import { WIRE_CAPS } from '../ts/pkjs/wire.ts';
-import type { ConditionVocabulary } from '../ts/weather/conditions.ts';
-import { writeIfChanged } from './files.ts';
-import { ENGINE, WORKSPACE } from './paths.ts';
+import conditionVocabulary from '../src/ts/weather/conditions.ts';
+import { WIRE_CAPS } from '../src/ts/pkjs/wire.ts';
+import type { ConditionVocabulary } from '../src/ts/weather/conditions.ts';
+import { writeIfChanged } from '../src/tools/files.ts';
+import { ENGINE } from '../src/tools/paths.ts';
+
+/** The framework repo's root, which the written paths are logged from. */
+const ROOT = path.resolve(import.meta.dirname, '..');
 
 const WEATHER_DIR = path.join(ENGINE, 'c', 'pebble', 'ui', 'weather');
 const ICONS_OUT = path.join(WEATHER_DIR, 'icons_table.g.h');
@@ -42,7 +45,7 @@ function bannerLines(fileName: string, brief: string, source = 'ts/weather/condi
     `//     Source: the framework's ${source}`,
     '//',
     '//     Changes to this file may be lost if the code is regenerated.',
-    '//     Edit the source and run `npm run build:conditions` instead.',
+    '//     Edit the source and run `npm run build:conditions` in the framework repo instead.',
     '// </auto-generated>',
     '//------------------------------------------------------------------------------',
     '/**',
@@ -182,7 +185,7 @@ export const GENERATED: GeneratedHeader[] = [
 /** Writes every generated header that changed from its source and logs which ones it wrote. */
 function main() {
   const written = GENERATED.filter((header) => writeIfChanged(header.out, header.build()))
-    .map((header) => path.relative(WORKSPACE, header.out).split(path.sep).join('/'));
+    .map((header) => path.relative(ROOT, header.out).split(path.sep).join('/'));
 
   const count = conditionVocabulary.conditions.length;
   console.log(written.length ? `generated ${written.join(', ')} (${count} conditions)` : `every header already matches (${count} conditions)`);

@@ -94,16 +94,30 @@ describe('rewriteImage', () => {
 describe('rewriteLink', () => {
   /** The README links the licence texts by repo path, which is a 404 on Pages. */
   test('sends a licence text to its site page', () => {
-    const result = rewriteLink('LICENSES/AGPL-3.0-or-later.txt', HOME);
+    const result = rewriteLink('src/LICENSES/AGPL-3.0-or-later.txt', HOME);
 
     expect(result).toBe('licences/agpl-3.0-or-later/');
   });
 
   /** Without the climb back up, a link on a licence page would land inside the licence folder. */
   test('climbs back to the root from a page further down', () => {
-    const result = rewriteLink('NOTICES.md', { root: '../../', commit: 'abc1234' });
+    const result = rewriteLink('src/NOTICES.md', { root: '../../', commit: 'abc1234' });
 
     expect(result).toBe('../../notices/');
+  });
+
+  /** The root NOTICES.md is the second half of the notices page, so a link to it opens that page rather than the file on GitHub. */
+  test('sends the root notices file to the notices page', () => {
+    const result = rewriteLink('NOTICES.md', HOME);
+
+    expect(result).toBe('notices/');
+  });
+
+  /** The root notices point at the shipped ical.js notice, which has to land on that section of the page rather than reload it. */
+  test('keeps a fragment on a link to a site page', () => {
+    const result = rewriteLink('src/NOTICES.md#icaljs', HOME);
+
+    expect(result).toBe('notices/#icaljs');
   });
 
   /** A repo file with no page of its own still has to open something real. */
@@ -115,9 +129,40 @@ describe('rewriteLink', () => {
 
   /** GitHub reads a link that starts with a slash from the repo root, and on Pages it pointed outside the site. */
   test('reads a leading slash as the repo root', () => {
-    const result = rewriteLink('/c/core/clock/timeband.h', HOME);
+    const result = rewriteLink('/src/c/core/clock/timeband.h', HOME);
 
-    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/c/core/clock/timeband.h');
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/src/c/core/clock/timeband.h');
+  });
+
+  /** A root link that steps down and back up still names a real file, so it has to reach its page rather than a blob URL with .. in it. */
+  test('tidies a leading-slash link that climbs back up', () => {
+    const result = rewriteLink('/src/../LICENSE', HOME);
+
+    expect(result).toBe('licences/');
+  });
+
+  /**
+   * GitHub reads a relative link in a markdown file under src/ from src/. Read from the repo root
+   * instead, a link that works on GitHub opens the wrong file on the site.
+   */
+  test('reads a relative link from the markdown file\'s own folder', () => {
+    const result = rewriteLink('../docs/site/octicons/LICENSE', { ...HOME, folder: 'src' });
+
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/docs/site/octicons/LICENSE');
+  });
+
+  /** src/LICENSE is the copy that ships, and a link to it from src/ belongs on the licence page like the root one. */
+  test('sends the shipped licence to the licence page', () => {
+    const result = rewriteLink('LICENSE', { ...HOME, folder: 'src' });
+
+    expect(result).toBe('licences/');
+  });
+
+  /** A link that climbs out of the repo has no file on GitHub, and a blob URL with ../ in it is a dead link. */
+  test('leaves a link that climbs out of the repo as written', () => {
+    const result = rewriteLink('../../elsewhere/LICENSE', { ...HOME, folder: 'src' });
+
+    expect(result).toBe('../../elsewhere/LICENSE');
   });
 
   /** Rewriting a full URL or an anchor would break a link that already works. */

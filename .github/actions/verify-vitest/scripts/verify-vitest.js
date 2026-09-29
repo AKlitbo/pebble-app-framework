@@ -14,7 +14,7 @@ const { fail, step, repoPath, existingPath, markdownTable, outputTail } = requir
 const { readReport } = require('./lib');
 
 module.exports = step(async ({ core, exec }) => {
-  const config = existingPath(process.env.VITEST_CONFIG || 'config/vitest.config.ts', 'config');
+  const config = existingPath(process.env.VITEST_CONFIG || 'vitest.config.ts', 'config');
 
   // a report left from an earlier run on the same runner would pass for this one, so it goes first
   const results = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'vitest-results.json');

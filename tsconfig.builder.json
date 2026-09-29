@@ -1,0 +1,7 @@
+// typechecks the framework's shared Clay builder sources under src/ts/clay/builder/
+// run by npm run typecheck. the Clay generator is what actually bundles those pieces
+{
+  "extends": "./src/tsconfig.json",
+  "include": ["src/ts/clay/builder/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.manifest.ts"]
+}

@@ -1,0 +1,8 @@
+// typechecks the framework's *.spec.ts suite, with the same options a face's specs extend
+// run by npm run typecheck
+{
+  "extends": "./src/tsconfig.spec.json",
+  "include": ["**/*.spec.ts"],
+  // the docs site specs import packages only the docs install has, so docs/tsconfig.json checks them
+  "exclude": ["node_modules", "docs"]
+}

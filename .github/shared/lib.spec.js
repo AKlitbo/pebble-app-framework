@@ -50,11 +50,11 @@ describe('repoPath', () => {
     expect(result).toBe('ts/stock/cache.spec.ts');
   });
 
-  /** gcc and Unity print paths relative to c/spec, and left that way every C failure would point outside the repo. */
+  /** gcc and Unity print paths relative to tests/c/spec, and left that way every C failure would point outside the repo. */
   test('joins a relative path onto the folder the tool ran in', () => {
-    const result = repoPath('../core/math/pct.spec.c', 'c/spec');
+    const result = repoPath('../../../src/c/core/math/pct.spec.c', 'tests/c/spec');
 
-    expect(result).toBe('c/core/math/pct.spec.c');
+    expect(result).toBe('src/c/core/math/pct.spec.c');
   });
 
   /** A local run on Windows prints backslashes and can change the drive letter's case, and neither may stop the match. */

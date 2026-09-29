@@ -15,7 +15,7 @@ const ESC = String.fromCharCode(27);
 
 const TYPEDOC_WARNINGS = [
   `${ESC}[93m[warning]${ESC}[0m StartOptions, defined in pebble-app-framework/ts/pkjs/app.ts, is referenced by pkjs/app.default.__type.startPebbleApp.__type.options but not included in the documentation`,
-  `${ESC}[93m[warning]${ESC}[0m The entry point ../ts/missing.ts does not exist`,
+  `${ESC}[93m[warning]${ESC}[0m The entry point src/ts/missing.ts does not exist`,
   `${ESC}[93m[warning]${ESC}[0m Found 0 errors and 2 warnings`,
   // with treatWarningsAsErrors on, TypeDoc closes with this, and it is no warning of its own
   `${ESC}[91m[error]${ESC}[0m html output could not be generated due to the errors above`,
@@ -48,8 +48,8 @@ async function build({ results = {}, summaries = SUMMARIES } = {}) {
 
 beforeEach(() => {
   vi.stubEnv('GITHUB_WORKSPACE', '/home/runner/work/engine/engine');
-  vi.stubEnv('TYPEDOC_OPTIONS', 'config/typedoc.json');
-  vi.stubEnv('VITEST_CONFIG', 'config/vitest.config.ts');
+  vi.stubEnv('TYPEDOC_OPTIONS', 'typedoc.json');
+  vi.stubEnv('VITEST_CONFIG', 'vitest.config.ts');
   // the two config paths are names the fake stands behind, not files on the machine running the specs
   vi.spyOn(fs, 'statSync').mockReturnValue({ isFile: () => true });
 });
@@ -112,12 +112,12 @@ describe('build-docs-site', () => {
   test('puts a TypeDoc warning with no file on the options file', async () => {
     const { core } = await build({ results: { typedoc: { exitCode: 4, stdout: TYPEDOC_WARNINGS } } });
 
-    expect(core.warning).toHaveBeenCalledWith('The entry point ../ts/missing.ts does not exist', { title: 'TypeDoc Warning', file: 'config/typedoc.json' });
+    expect(core.warning).toHaveBeenCalledWith('The entry point src/ts/missing.ts does not exist', { title: 'TypeDoc Warning', file: 'typedoc.json' });
   });
 
   /** A TypeDoc that crashed after a warning showed only the warning, so the reason it stopped never reached the summary. */
   test('puts the output on the summary when TypeDoc stops past its warnings', async () => {
-    const output = `${ESC}[93m[warning]${ESC}[0m The entry point ../ts/missing.ts does not exist\nRangeError: Maximum call stack size exceeded`;
+    const output = `${ESC}[93m[warning]${ESC}[0m The entry point src/ts/missing.ts does not exist\nRangeError: Maximum call stack size exceeded`;
 
     const { core } = await build({ results: { typedoc: { exitCode: 7, stdout: output } } });
 
@@ -131,7 +131,7 @@ describe('build-docs-site', () => {
 
     const { core } = await build({ results: { typedoc: { exitCode: 4, stdout: output } } });
 
-    expect(core.warning).toHaveBeenCalledWith(expect.any(String), { title: 'TypeDoc Warning', file: 'config/typedoc.json' });
+    expect(core.warning).toHaveBeenCalledWith(expect.any(String), { title: 'TypeDoc Warning', file: 'typedoc.json' });
   });
 
   /** A failing spec makes the coverage run exit nonzero, and publishing then would hide a red suite. */
@@ -152,7 +152,7 @@ describe('build-docs-site', () => {
     });
 
     expect(core.setFailed).toHaveBeenCalledWith(
-      'TypeDoc reported 2 warning(s). The docs only publish from a build with none. make -C c/spec coverage exited 2, so a C spec or gcovr failed.'
+      'TypeDoc reported 2 warning(s). The docs only publish from a build with none. make -C tests/c/spec coverage exited 2, so a C spec or gcovr failed.'
     );
   });
 

@@ -10,26 +10,26 @@ import { fakeCore, fakeExec } from '../../../shared/fakes.js';
 import verifyCTests from './verify-c-tests.js';
 
 const PASSING = [
-  "make: Entering directory '/home/runner/work/engine/engine/c/spec'",
-  '== ../core/math/series.spec.c ==',
-  '../core/math/series.spec.c:24:test_lo_and_hi_cover_the_run:PASS',
+  "make: Entering directory '/home/runner/work/engine/engine/tests/c/spec'",
+  '== ../../../src/c/core/math/series.spec.c ==',
+  '../../../src/c/core/math/series.spec.c:24:test_lo_and_hi_cover_the_run:PASS',
   '',
   '-----------------------',
   '6 Tests 0 Failures 0 Ignored ',
   'OK',
-  "make: Leaving directory '/home/runner/work/engine/engine/c/spec'",
+  "make: Leaving directory '/home/runner/work/engine/engine/tests/c/spec'",
 ].join('\n');
 
 const BROKEN = [
-  '== ../core/math/pct.spec.c ==',
-  '../core/math/pct.spec.c:70:test_nothing_done_is_zero:FAIL: Expected 7 Was 0',
+  '== ../../../src/c/core/math/pct.spec.c ==',
+  '../../../src/c/core/math/pct.spec.c:70:test_nothing_done_is_zero:FAIL: Expected 7 Was 0',
   '-----------------------',
   '8 Tests 1 Failures 0 Ignored ',
   'FAIL',
-  '== ../core/units/wind.spec.c ==',
-  "../core/units/wind.spec.c:100:29: error: expected expression before ';' token",
-  "../core/units/wind.spec.c:100:25: warning: unused variable 'x' [-Wunused-variable]",
-  '== ../core/text/text_case.spec.c ==',
+  '== ../../../src/c/core/units/wind.spec.c ==',
+  "../../../src/c/core/units/wind.spec.c:100:29: error: expected expression before ';' token",
+  "../../../src/c/core/units/wind.spec.c:100:25: warning: unused variable 'x' [-Wunused-variable]",
+  '== ../../../src/c/core/text/text_case.spec.c ==',
   'Segmentation fault (core dumped)',
   'make: *** [Makefile:36: test] Error 1',
 ].join('\n');
@@ -59,26 +59,26 @@ describe('verify-c-tests', () => {
    * gcc and the crash line go to stderr and the spec headers to stdout. Read as two streams, every
    * compiler error lands under the last spec and the one that really broke reads as a crash.
    */
-  test('runs make in c/spec with stderr folded into stdout', async () => {
+  test('runs make in tests/c/spec with stderr folded into stdout', async () => {
     const { exec } = await verify({ exitCode: 0, stdout: PASSING });
 
-    expect(exec.getExecOutput).toHaveBeenCalledWith('bash', ['-c', 'make -C c/spec 2>&1'], { ignoreReturnCode: true });
+    expect(exec.getExecOutput).toHaveBeenCalledWith('bash', ['-c', 'make -C tests/c/spec 2>&1'], { ignoreReturnCode: true });
   });
 
   /** make can fail after every spec passes, such as a clean-up rule, and only its exit code says so. */
   test('fails when make exits with an error even though every spec passed', async () => {
     const { core } = await verify({ exitCode: 2, stdout: PASSING });
 
-    expect(core.setFailed).toHaveBeenCalledWith('make -C c/spec exited 2 even though every spec passed. The log shows what stopped it.');
+    expect(core.setFailed).toHaveBeenCalledWith('make -C tests/c/spec exited 2 even though every spec passed. The log shows what stopped it.');
   });
 
-  /** The paths Unity prints are relative to c/spec, and a failure pointed there lands on no file in the PR. */
+  /** The paths Unity prints are relative to tests/c/spec, and a failure pointed there lands on no file in the PR. */
   test('annotates a failing test on its line in the repo', async () => {
     const { core } = await verify({ exitCode: 2, stdout: BROKEN });
 
     expect(core.error).toHaveBeenCalledWith('Expected 7 Was 0', {
       title: 'test_nothing_done_is_zero',
-      file: 'c/core/math/pct.spec.c',
+      file: 'src/c/core/math/pct.spec.c',
       startLine: 70,
     });
   });
@@ -89,13 +89,13 @@ describe('verify-c-tests', () => {
 
     expect(core.error).toHaveBeenCalledWith("expected expression before ';' token", {
       title: 'Compiler Error',
-      file: 'c/core/units/wind.spec.c',
+      file: 'src/c/core/units/wind.spec.c',
       startLine: 100,
       startColumn: 29,
     });
     expect(core.warning).toHaveBeenCalledWith("unused variable 'x' [-Wunused-variable]", {
       title: 'Compiler Warning',
-      file: 'c/core/units/wind.spec.c',
+      file: 'src/c/core/units/wind.spec.c',
       startLine: 100,
       startColumn: 25,
     });
@@ -103,8 +103,8 @@ describe('verify-c-tests', () => {
 
   /** A warning in a core file came once per spec, and GitHub's ten annotations a step ran out before the real failure. */
   test('reports a warning every spec repeats only once', async () => {
-    const warning = "../core/text/fit.c:12:5: warning: unused variable 'y' [-Wunused-variable]";
-    const stdout = ['== ../core/math/pct.spec.c ==', warning, '1 Tests 0 Failures 0 Ignored', '== ../core/math/series.spec.c ==', warning, '1 Tests 0 Failures 0 Ignored'].join('\n');
+    const warning = "../../../src/c/core/text/fit.c:12:5: warning: unused variable 'y' [-Wunused-variable]";
+    const stdout = ['== ../../../src/c/core/math/pct.spec.c ==', warning, '1 Tests 0 Failures 0 Ignored', '== ../../../src/c/core/math/series.spec.c ==', warning, '1 Tests 0 Failures 0 Ignored'].join('\n');
 
     const { core } = await verify({ exitCode: 0, stdout });
 
@@ -113,17 +113,17 @@ describe('verify-c-tests', () => {
 
   /** gcc names itself rather than a file for a warning about its flags, and that warning passed the no-warnings rule. */
   test('fails on a warning gcc prints about its own flags', async () => {
-    const stdout = ['== ../core/math/pct.spec.c ==', "cc1: warning: command-line option '-Wfoo' is valid for C++ but not for C", '1 Tests 0 Failures 0 Ignored'].join('\n');
+    const stdout = ['== ../../../src/c/core/math/pct.spec.c ==', "cc1: warning: command-line option '-Wfoo' is valid for C++ but not for C", '1 Tests 0 Failures 0 Ignored'].join('\n');
 
     const { core } = await verify({ exitCode: 0, stdout });
 
-    expect(core.warning).toHaveBeenCalledWith("command-line option '-Wfoo' is valid for C++ but not for C", expect.objectContaining({ file: 'c/spec/Makefile' }));
+    expect(core.warning).toHaveBeenCalledWith("command-line option '-Wfoo' is valid for C++ but not for C", expect.objectContaining({ file: 'tests/c/spec/Makefile' }));
     expect(core.setFailed).toHaveBeenCalledWith('Every test passed, but the compiler printed 1 warning(s). The watch build treats a warning as an error.');
   });
 
   /** The watch build treats a warning as an error, so a warning passed here broke every face that moved up to the commit. */
   test('fails a suite that passes with a compiler warning', async () => {
-    const stdout = ['== ../core/math/pct.spec.c ==', '../core/math/pct.c:12:5: warning: comparison is always false [-Wtype-limits]', '1 Tests 0 Failures 0 Ignored'].join('\n');
+    const stdout = ['== ../../../src/c/core/math/pct.spec.c ==', '../../../src/c/core/math/pct.c:12:5: warning: comparison is always false [-Wtype-limits]', '1 Tests 0 Failures 0 Ignored'].join('\n');
 
     const { core } = await verify({ exitCode: 0, stdout });
 
@@ -136,7 +136,7 @@ describe('verify-c-tests', () => {
 
     expect(core.error).toHaveBeenCalledWith('Stopped before it reported its results. Segmentation fault (core dumped).', {
       title: 'Spec Did Not Finish',
-      file: 'c/core/text/text_case.spec.c',
+      file: 'src/c/core/text/text_case.spec.c',
     });
   });
 
@@ -150,9 +150,9 @@ describe('verify-c-tests', () => {
   /** A spec that failed and then crashed was left out of the count, so the message said no test failed. */
   test('counts the failures of a spec that crashed after them', async () => {
     const crashed = [
-      '== ../core/text/text_case.spec.c ==',
-      '../core/text/text_case.spec.c:12:test_upper:FAIL: Expected 1 Was 0',
-      '../core/text/text_case.spec.c:20:test_lower:FAIL: Expected 1 Was 0',
+      '== ../../../src/c/core/text/text_case.spec.c ==',
+      '../../../src/c/core/text/text_case.spec.c:12:test_upper:FAIL: Expected 1 Was 0',
+      '../../../src/c/core/text/text_case.spec.c:20:test_lower:FAIL: Expected 1 Was 0',
       'Segmentation fault (core dumped)',
     ].join('\n');
 
@@ -165,7 +165,7 @@ describe('verify-c-tests', () => {
   test('fails when make runs no spec at all', async () => {
     const { core } = await verify({ exitCode: 2, stderr: "make: *** No rule to make target 'test'.  Stop." });
 
-    expect(core.setFailed).toHaveBeenCalledWith('make -C c/spec exited 2 without running any spec.');
+    expect(core.setFailed).toHaveBeenCalledWith('make -C tests/c/spec exited 2 without running any spec.');
     expect(core.summary.addRaw.mock.calls[0][0]).toContain('No rule to make target');
   });
 });

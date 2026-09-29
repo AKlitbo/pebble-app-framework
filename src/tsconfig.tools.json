@@ -1,0 +1,10 @@
+// the compiler options for tools and configs that node runs straight from their .ts source
+// a face's tools tsconfig extends this and names its own include and exclude, and so does the framework's
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
+  }
+}

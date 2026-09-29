@@ -13,7 +13,7 @@ import verifyEslint from './verify-eslint.js';
 const WORKSPACE = '/home/runner/work/engine/engine';
 
 const RESULTS = [
-  { filePath: `${WORKSPACE}/config/vitest.config.ts`, messages: [], errorCount: 0, warningCount: 0 },
+  { filePath: `${WORKSPACE}/vitest.config.ts`, messages: [], errorCount: 0, warningCount: 0 },
   {
     filePath: `${WORKSPACE}/tools/faces.ts`,
     messages: [
@@ -44,7 +44,7 @@ async function verify(result) {
 
 beforeEach(() => {
   vi.stubEnv('GITHUB_WORKSPACE', WORKSPACE);
-  vi.stubEnv('ESLINT_CONFIG', 'config/eslint.config.ts');
+  vi.stubEnv('ESLINT_CONFIG', 'eslint.config.ts');
   // the config path is a name the fake stands behind, not a file on the machine running the specs
   vi.spyOn(fs, 'statSync').mockReturnValue({ isFile: () => true });
 });
@@ -59,7 +59,7 @@ describe('verify-eslint', () => {
   test('lints the repo with its config and asks for JSON', async () => {
     const { exec } = await verify({ exitCode: 0, stdout: '[]' });
 
-    expect(exec.getExecOutput).toHaveBeenCalledWith('npx', ['--no-install', 'eslint', '.', '--config', 'config/eslint.config.ts', '--format', 'json'], {
+    expect(exec.getExecOutput).toHaveBeenCalledWith('npx', ['--no-install', 'eslint', '.', '--config', 'eslint.config.ts', '--format', 'json'], {
       ignoreReturnCode: true,
       silent: true,
     });

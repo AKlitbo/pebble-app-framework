@@ -29,6 +29,7 @@ import {
   renderMarkdown,
   renderSiteBar,
   rootFor,
+  SITE_NOTICES,
   splitTitle,
   type GeneratedPage,
   type SiteSection,
@@ -164,7 +165,7 @@ function pagesUnder(folder: string): string[] {
     .filter((relative) => !SKIPPED.has(relative));
 }
 
-const version = (JSON.parse(read('package.json')) as { version: string }).version;
+const version = (JSON.parse(read('src/package.json')) as { version: string }).version;
 // a PR build checks out the merge commit GitHub makes, which is on no branch, so the PR's own head goes first
 const commit = process.env.PR_HEAD_SHA || process.env.GITHUB_SHA || git('rev-parse', 'HEAD');
 // a PR build's ref name is its merge ref, so the branch it came from is tried first
@@ -210,11 +211,23 @@ write('index.html', fillTemplate(template('landing.html'), {
   footer: footer(''),
 }));
 
-for (const markdownPage of [PAGES.changelog, PAGES.notices]) {
-  const markdown = splitTitle(read(markdownPage.file));
-  const relative = `${markdownPage.folder}index.html`;
-  page(relative, markdown.title || markdownPage.title, renderMarkdown(markdown.body, { root: rootFor(relative), commit }));
-}
+const changelog = splitTitle(read(PAGES.changelog.file));
+const changelogPage = `${PAGES.changelog.folder}index.html`;
+page(changelogPage, changelog.title || PAGES.changelog.title, renderMarkdown(changelog.body, { root: rootFor(changelogPage), commit, folder: path.posix.dirname(PAGES.changelog.file) }));
+
+// the notices page is the notices that ship with the framework, then the docs site's own from the root
+// file. each half's links are read from its own file's folder
+// each half numbers its own heading ids, so a heading the two files shared would get the same id twice
+const shippedNotices = splitTitle(read(PAGES.notices.file));
+const siteNotices = splitTitle(read(SITE_NOTICES));
+const noticesPage = `${PAGES.notices.folder}index.html`;
+const noticesLinks = { root: rootFor(noticesPage), commit };
+page(
+  noticesPage,
+  shippedNotices.title || PAGES.notices.title,
+  renderMarkdown(shippedNotices.body, { ...noticesLinks, folder: path.posix.dirname(PAGES.notices.file) })
+    + renderMarkdown(siteNotices.body, { ...noticesLinks, folder: path.posix.dirname(SITE_NOTICES) })
+);
 
 // each full text's link is its folder worked out from the licence page's own folder, so either can move
 const licenceLinks = LICENCES.map((licence) => `<li><a href="${path.posix.relative(PAGES.licence.folder, licence.folder)}/">${escapeHtml(licence.title)}</a></li>`).join('\n');

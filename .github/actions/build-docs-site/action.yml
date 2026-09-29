@@ -9,11 +9,11 @@ inputs:
   typedoc-options:
     description: The TypeDoc options file to build from, relative to the repo root.
     required: false
-    default: config/typedoc.json
+    default: typedoc.json
   vitest-config:
     description: The Vitest config to measure coverage with, relative to the repo root.
     required: false
-    default: config/vitest.config.ts
+    default: vitest.config.ts
   gcovr-version:
     description: The gcovr release to install for the C coverage report, such as 8.6.
     required: false

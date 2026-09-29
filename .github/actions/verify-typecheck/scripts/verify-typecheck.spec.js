@@ -10,7 +10,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { fakeCore, fakeExec } from '../../../shared/fakes.js';
 import verifyTypecheck from './verify-typecheck.js';
 
-const PROJECTS = 'tsconfig.json\nconfig/tsconfig.tools.json\n\nconfig/tsconfig.spec.json\n';
+const PROJECTS = 'tsconfig.json\ntsconfig.tools.json\n\ntsconfig.spec.json\n';
 
 const TOOLS_ERRORS = [
   "tools/faces.ts(12,5): error TS2345: Argument of type '{ a: number; }' is not assignable to parameter of type 'Face'.",
@@ -39,27 +39,27 @@ afterEach(() => {
 describe('verify-typecheck', () => {
   /** Stopping at the first failing project hides every error in the ones after it. */
   test('runs every project even after one fails', async () => {
-    const { exec } = await verify({ 'config/tsconfig.tools.json': { exitCode: 2, stdout: TOOLS_ERRORS } });
+    const { exec } = await verify({ 'tsconfig.tools.json': { exitCode: 2, stdout: TOOLS_ERRORS } });
 
     const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[3]);
-    expect(projects).toEqual(['tsconfig.json', 'config/tsconfig.tools.json', 'config/tsconfig.spec.json']);
+    expect(projects).toEqual(['tsconfig.json', 'tsconfig.tools.json', 'tsconfig.spec.json']);
   });
 
   /** One renamed tsconfig stopped the step before any project ran, so the others' type errors waited for another push. */
   test('checks the other projects when one tsconfig is missing', async () => {
-    fs.statSync.mockImplementation((file) => (file === 'config/tsconfig.tools.json' ? undefined : { isFile: () => true }));
+    fs.statSync.mockImplementation((file) => (file === 'tsconfig.tools.json' ? undefined : { isFile: () => true }));
 
     const { core, exec } = await verify({});
 
     const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[3]);
-    expect(projects).toEqual(['tsconfig.json', 'config/tsconfig.spec.json']);
-    expect(core.error).toHaveBeenCalledWith("project 'config/tsconfig.tools.json' does not exist.", { title: 'Missing Project' });
+    expect(projects).toEqual(['tsconfig.json', 'tsconfig.spec.json']);
+    expect(core.error).toHaveBeenCalledWith("project 'tsconfig.tools.json' does not exist.", { title: 'Missing Project' });
     expect(core.setFailed).toHaveBeenCalled();
   });
 
   /** A type error that loses its second line loses the part that says which property is missing. */
   test('annotates each error on its line with its full explanation', async () => {
-    const { core } = await verify({ 'config/tsconfig.tools.json': { exitCode: 2, stdout: TOOLS_ERRORS } });
+    const { core } = await verify({ 'tsconfig.tools.json': { exitCode: 2, stdout: TOOLS_ERRORS } });
 
     expect(core.error).toHaveBeenCalledWith(
       "Argument of type '{ a: number; }' is not assignable to parameter of type 'Face'.\nProperty 'name' is missing in type '{ a: number; }' but required in type 'Face'.",
@@ -71,12 +71,12 @@ describe('verify-typecheck', () => {
   /** A project error has no file of its own, and an annotation with none would not say which tsconfig broke. */
   test('puts a project-level error on the project file', async () => {
     const { core } = await verify({
-      'config/tsconfig.spec.json': { exitCode: 1, stdout: "error TS5058: The specified path does not exist: 'config/missing.json'." },
+      'tsconfig.spec.json': { exitCode: 1, stdout: "error TS5058: The specified path does not exist: 'config/missing.json'." },
     });
 
     expect(core.error).toHaveBeenCalledWith("The specified path does not exist: 'config/missing.json'.", {
       title: 'TS5058',
-      file: 'config/tsconfig.spec.json',
+      file: 'tsconfig.spec.json',
       startLine: undefined,
       startColumn: undefined,
     });

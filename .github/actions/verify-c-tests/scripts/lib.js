@@ -1,5 +1,5 @@
 /**
- * Reads the host C suite's output, the way `make -C c/spec` prints it.
+ * Reads the host C suite's output, the way `make -C tests/c/spec` prints it.
  *
  * The Makefile prints a `== <spec> ==` header before each spec, then gcc's messages for a spec that did
  * not build, or Unity's lines for one that ran. Unity prints a FAIL line for each failing test and closes
@@ -7,14 +7,14 @@
  * counter under it is a spec that never finished.
  */
 
-// == ../core/math/pct.spec.c ==
+// == ../../../src/c/core/math/pct.spec.c ==
 const HEADER = /^== (.+\.spec\.c) ==$/;
 // 8 Tests 4 Failures 0 Ignored
 const COUNTER = /^(\d+) Tests (\d+) Failures (\d+) Ignored$/;
-// ../core/math/pct.spec.c:54:test_nothing_done_is_zero:FAIL: Expected 7 Was 0
+// ../../../src/c/core/math/pct.spec.c:54:test_nothing_done_is_zero:FAIL: Expected 7 Was 0
 const RESULT = /^(.+?\.c):(\d+):(\w+):(FAIL|IGNORE)(?::\s*(.*))?$/;
-// ../core/units/wind.spec.c:100:29: error: expected expression before ';' token
-// ../core/math/pct.spec.c:3:10: fatal error: pct.h: No such file or directory
+// ../../../src/c/core/units/wind.spec.c:100:29: error: expected expression before ';' token
+// ../../../src/c/core/math/pct.spec.c:3:10: fatal error: pct.h: No such file or directory
 const COMPILER = /^(.+?\.[ch]):(\d+):(\d+): (fatal error|error|warning): (.*)$/;
 // cc1: warning: command-line option '-Wfoo' is valid for C++ but not for C
 // gcc: error: missing.c: No such file or directory
@@ -31,7 +31,7 @@ const CRASH = /Segmentation fault|Bus error|Aborted|Floating point exception|Ill
 /**
  * Splits the suite's output into one entry per spec, with everything each one reported.
  *
- * @param output The combined output of `make -C c/spec`.
+ * @param output The combined output of `make -C tests/c/spec`.
  * @return The specs in the order they ran. Each has its file, its counts or null when it printed none,
  *   its failing and ignored tests, its compiler messages, and the crash line if it had one.
  */

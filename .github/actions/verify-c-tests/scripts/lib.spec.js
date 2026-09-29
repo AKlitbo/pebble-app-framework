@@ -10,28 +10,28 @@ import { describe, expect, test } from 'vitest';
 import { readSuite } from './lib.js';
 
 const OUTPUT = [
-  "make: Entering directory '/home/runner/work/engine/engine/c/spec'",
-  '== ../core/math/series.spec.c ==',
-  '../core/math/series.spec.c:24:test_lo_and_hi_cover_the_run:PASS',
+  "make: Entering directory '/home/runner/work/engine/engine/tests/c/spec'",
+  '== ../../../src/c/core/math/series.spec.c ==',
+  '../../../src/c/core/math/series.spec.c:24:test_lo_and_hi_cover_the_run:PASS',
   '',
   '-----------------------',
   '6 Tests 0 Failures 0 Ignored ',
   'OK',
-  '== ../core/math/pct.spec.c ==',
-  '../core/math/pct.spec.c:54:test_a_zero_goal_does_not_divide:FAIL: Expected 7 Was 0',
-  '../core/math/pct.spec.c:61:test_skipped_for_now:IGNORE',
-  '../core/math/pct.spec.c:70:test_nothing_done_is_zero:FAIL',
+  '== ../../../src/c/core/math/pct.spec.c ==',
+  '../../../src/c/core/math/pct.spec.c:54:test_a_zero_goal_does_not_divide:FAIL: Expected 7 Was 0',
+  '../../../src/c/core/math/pct.spec.c:61:test_skipped_for_now:IGNORE',
+  '../../../src/c/core/math/pct.spec.c:70:test_nothing_done_is_zero:FAIL',
   '',
   '-----------------------',
   '8 Tests 2 Failures 1 Ignored ',
   'FAIL',
-  '== ../core/units/wind.spec.c ==',
-  "../core/units/wind.spec.c: In function 'broken':",
-  "../core/units/wind.spec.c:100:29: error: expected expression before ';' token",
+  '== ../../../src/c/core/units/wind.spec.c ==',
+  "../../../src/c/core/units/wind.spec.c: In function 'broken':",
+  "../../../src/c/core/units/wind.spec.c:100:29: error: expected expression before ';' token",
   '  100 | void broken(void) { int x = ; }',
   '      |                             ^',
-  "../core/units/wind.spec.c:100:25: warning: unused variable 'x' [-Wunused-variable]",
-  '== ../core/text/text_case.spec.c ==',
+  "../../../src/c/core/units/wind.spec.c:100:25: warning: unused variable 'x' [-Wunused-variable]",
+  '== ../../../src/c/core/text/text_case.spec.c ==',
   'Segmentation fault (core dumped)',
   'make: *** [Makefile:36: test] Error 1',
 ].join('\n');
@@ -50,8 +50,8 @@ describe('readSuite', () => {
     const [, pct] = readSuite(OUTPUT);
 
     expect(pct.failures).toEqual([
-      { file: '../core/math/pct.spec.c', line: 54, test: 'test_a_zero_goal_does_not_divide', message: 'Expected 7 Was 0' },
-      { file: '../core/math/pct.spec.c', line: 70, test: 'test_nothing_done_is_zero', message: '' },
+      { file: '../../../src/c/core/math/pct.spec.c', line: 54, test: 'test_a_zero_goal_does_not_divide', message: 'Expected 7 Was 0' },
+      { file: '../../../src/c/core/math/pct.spec.c', line: 70, test: 'test_nothing_done_is_zero', message: '' },
     ]);
   });
 
@@ -61,26 +61,26 @@ describe('readSuite', () => {
 
     expect(wind.counts).toBeNull();
     expect(wind.compiler).toEqual([
-      { file: '../core/units/wind.spec.c', line: 100, column: 29, severity: 'error', message: "expected expression before ';' token" },
-      { file: '../core/units/wind.spec.c', line: 100, column: 25, severity: 'warning', message: "unused variable 'x' [-Wunused-variable]" },
+      { file: '../../../src/c/core/units/wind.spec.c', line: 100, column: 29, severity: 'error', message: "expected expression before ';' token" },
+      { file: '../../../src/c/core/units/wind.spec.c', line: 100, column: 25, severity: 'warning', message: "unused variable 'x' [-Wunused-variable]" },
     ]);
   });
 
   /** A missing header is gcc's fatal error, and missing it would count a spec that never built as one that crashed. */
   test('reads a fatal error as an error', () => {
-    const output = '== ../core/math/pct.spec.c ==\n../core/math/pct.spec.c:3:10: fatal error: pct.h: No such file or directory';
+    const output = '== ../../../src/c/core/math/pct.spec.c ==\n../../../src/c/core/math/pct.spec.c:3:10: fatal error: pct.h: No such file or directory';
 
     const [pct] = readSuite(output);
 
     expect(pct.compiler).toEqual([
-      { file: '../core/math/pct.spec.c', line: 3, column: 10, severity: 'error', message: 'pct.h: No such file or directory' },
+      { file: '../../../src/c/core/math/pct.spec.c', line: 3, column: 10, severity: 'error', message: 'pct.h: No such file or directory' },
     ]);
   });
 
   /** A function declared but never compiled in fails at the link, with no file and line of the usual shape to match. */
   test('reads a link failure as an error against the spec', () => {
     const output = [
-      '== ../core/math/pct.spec.c ==',
+      '== ../../../src/c/core/math/pct.spec.c ==',
       "/usr/bin/ld: /tmp/ccX.o: in function `test_x': pct.spec.c:(.text+0x1a): undefined reference to `pct_of'",
       'collect2: error: ld returned 1 exit status',
     ].join('\n');
@@ -90,7 +90,7 @@ describe('readSuite', () => {
     expect(pct.compiler).toHaveLength(2);
     // the collect2 line that closes it belongs to the spec too, and landing it on the Makefile blamed the build setup
     for (const note of pct.compiler) {
-      expect(note).toMatchObject({ file: '../core/math/pct.spec.c', line: undefined, severity: 'error' });
+      expect(note).toMatchObject({ file: '../../../src/c/core/math/pct.spec.c', line: undefined, severity: 'error' });
     }
   });
 
@@ -98,6 +98,6 @@ describe('readSuite', () => {
   test('keeps the crash line for a spec that died before its counter', () => {
     const [, , , textCase] = readSuite(OUTPUT);
 
-    expect(textCase).toMatchObject({ file: '../core/text/text_case.spec.c', counts: null, crash: 'Segmentation fault (core dumped)' });
+    expect(textCase).toMatchObject({ file: '../../../src/c/core/text/text_case.spec.c', counts: null, crash: 'Segmentation fault (core dumped)' });
   });
 });

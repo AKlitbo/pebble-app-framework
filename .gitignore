@@ -1,4 +1,4 @@
-# build output, including the host C test binaries under c/spec/build/
+# build output, including the host C test binaries under tests/c/spec/build/
 build/
 
 # the docs site, rebuilt from the source on every run
@@ -25,5 +25,5 @@ Thumbs.db
 # the API keys the live specs read
 .env
 
-# the local Clay settings preview, rebuilt by tools/dev/clay-preview.ts on demand
+# the local Clay settings preview, rebuilt by src/tools/dev/clay-preview.ts on demand
 clay-preview.html

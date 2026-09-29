@@ -1,24 +1,12 @@
+// points an editor at the framework's builder, spec, and tools projects, since it only looks for a
+// tsconfig.json above the file it opens, and the one it finds first, src/tsconfig.json, covers only the
+// runtime in src/ts/
+// it holds no files of its own, and npm run typecheck checks each project on its own
 {
-  "compilerOptions": {
-    "target": "ES2015",
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "lib": ["ES2020", "DOM"],
-    "strict": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true
-  },
-  "include": ["../src/pkjs/**/*.ts", "ts/**/*.ts"],
-  "exclude": [
-    "../node_modules",
-    "../targets",
-    "../src/pkjs/clay/builder/**",
-    "ts/clay/builder/**",
-    "ts/testing/**",
-    "../**/*.spec.ts"
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.builder.json" },
+    { "path": "./tsconfig.spec.json" },
+    { "path": "./tsconfig.tools.json" }
   ]
 }

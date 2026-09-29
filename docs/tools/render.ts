@@ -5,6 +5,7 @@
  * GitHub, so a link to it goes there. Everything here takes what it needs as arguments and hands back a
  * string, so build-site.ts is the only part that reads the disk, git, or the clock.
  */
+import path from 'node:path';
 import { Marked, type Token } from 'marked';
 
 /** Where the framework lives on GitHub. A link to a repo file with no page on the site opens it here. */
@@ -27,15 +28,37 @@ export interface SitePage {
  * moves takes every link to it along.
  */
 export const PAGES = {
-  changelog: { file: 'CHANGELOG.md', folder: 'changelog/', title: 'Changelog' },
-  notices: { file: 'NOTICES.md', folder: 'notices/', title: 'Third-Party Notices' },
+  changelog: { file: 'src/CHANGELOG.md', folder: 'changelog/', title: 'Changelog' },
+  notices: { file: 'src/NOTICES.md', folder: 'notices/', title: 'Third-Party Notices' },
   licence: { file: 'LICENSE', folder: 'licences/', title: 'Licence' },
-  agpl: { file: 'LICENSES/AGPL-3.0-or-later.txt', folder: 'licences/agpl-3.0-or-later/', title: 'GNU Affero General Public License v3.0 or later' },
-  polyform: { file: 'LICENSES/PolyForm-Noncommercial-1.0.0.txt', folder: 'licences/polyform-noncommercial-1.0.0/', title: 'PolyForm Noncommercial License 1.0.0' },
+  agpl: { file: 'src/LICENSES/AGPL-3.0-or-later.txt', folder: 'licences/agpl-3.0-or-later/', title: 'GNU Affero General Public License v3.0 or later' },
+  polyform: { file: 'src/LICENSES/PolyForm-Noncommercial-1.0.0.txt', folder: 'licences/polyform-noncommercial-1.0.0/', title: 'PolyForm Noncommercial License 1.0.0' },
 } satisfies Record<string, SitePage>;
 
+/**
+ * The notices for what only the docs site uses. The notices page shows them after the ones that ship
+ * with the framework, which src/NOTICES.md holds.
+ */
+export const SITE_NOTICES = 'NOTICES.md';
+
 // the same pages by file, for the link rewriting
-const SITE_PAGES = new Map<string, string>(Object.values(PAGES).map((page) => [page.file, page.folder]));
+// src/LICENSE is the copy that ships with the framework, and the root one covers the whole repo, so
+// its page stands in for both. the root NOTICES.md is the second half of the notices page
+const SITE_PAGES = new Map<string, string>([
+  ...Object.values(PAGES).map((page): [string, string] => [page.file, page.folder]),
+  ['src/LICENSE', PAGES.licence.folder],
+  [SITE_NOTICES, PAGES.notices.folder],
+]);
+
+/**
+ * A link or image path as a path from the repo root, the way GitHub reads it. A leading slash already
+ * starts at the root, and anything else starts in the markdown file's own folder. A path that climbs
+ * out of the repo has no file to point at, so it comes back as null.
+ */
+function repoTarget(href: string, folder: string): string | null {
+  const target = href.startsWith('/') ? path.posix.normalize(href.slice(1)) : path.posix.normalize(path.posix.join(folder, href));
+  return target === '..' || target.startsWith('../') ? null : target;
+}
 
 const ENTITIES: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 
@@ -48,6 +71,11 @@ export interface LinkOptions {
   root: string;
   /** The commit the site is built from, so a link to a repo file opens the file as it was then. */
   commit: string;
+  /**
+   * The repo folder the markdown file sits in, with forward slashes, such as `src`. GitHub reads a
+   * relative link from there, so the site does too. Left out, it is the repo root.
+   */
+  folder?: string;
 }
 
 /**
@@ -96,9 +124,11 @@ export function rewriteLink(href: string, options: LinkOptions): string {
     return href;
   }
 
-  // GitHub reads a link that starts with / from the repo root, so it is a repo path like any other
   const hashAt = href.indexOf('#');
-  const target = (hashAt === -1 ? href : href.slice(0, hashAt)).replace(/^\.?\//, '');
+  const target = repoTarget(hashAt === -1 ? href : href.slice(0, hashAt), options.folder ?? '');
+  if (target === null) {
+    return href;
+  }
   const fragment = hashAt === -1 ? '' : href.slice(hashAt);
 
   const page = SITE_PAGES.get(target);
@@ -123,7 +153,8 @@ export function rewriteImage(src: string, options: LinkOptions): string {
   if (src.startsWith('//') || /^[a-z][a-z0-9+.-]*:/i.test(src)) {
     return src;
   }
-  return `${REPO_URL}/raw/${options.commit}/${src.replace(/^\.?\//, '')}`;
+  const target = repoTarget(src, options.folder ?? '');
+  return target === null ? src : `${REPO_URL}/raw/${options.commit}/${target}`;
 }
 
 /** Every token after `from` joined back into markdown, which is exactly the source they were read from. */

@@ -1,0 +1,20 @@
+// the compiler options the framework's TypeScript builds with, over its phone runtime in ts/
+// a face's own tsconfigs extend this and name their own files, and so do the framework's
+// the include keeps an editor from checking the tools and specs beside ts/ against these options
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
+  },
+  "include": ["ts/**/*.ts"],
+  "exclude": ["ts/clay/builder/**", "ts/testing/**", "**/*.spec.ts"]
+}

@@ -7,7 +7,7 @@ inputs:
   config:
     description: The Vitest config to run with, relative to the repo root.
     required: false
-    default: config/vitest.config.ts
+    default: vitest.config.ts
 
 runs:
   using: composite
