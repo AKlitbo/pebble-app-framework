@@ -29,9 +29,10 @@ typedef enum
 } DevWalkMode;
 
 /**
- * @brief Inits every store from the default fixture, with `live` set to false and a pinned
- * clock, so the face shows fixed data that no live reading can stomp. Call in place of the
- * live store inits.
+ * @brief Inits the clock, weather, health, system, and location stores from the default fixture,
+ * with `live` set to false and a pinned clock, so the face shows fixed data that no live reading can
+ * stomp. Weather and location are only filled for a face that declares their keys, and left empty
+ * otherwise. Call in place of those stores' live inits.
  *
  * @param hour The pinned clock hour (0-23).
  * @param min The pinned clock minute.

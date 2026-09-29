@@ -7,6 +7,7 @@
  * @ingroup lib_io
  */
 #include "io/appmessage/appmessage.h"
+#include "io/appmessage/appmessage_features.h"
 
 #include "io/callback_list.h"
 #include "io/outbox_queue.h"
@@ -16,31 +17,6 @@
 #include "system/settings/settings.h"
 #include "wire/wire_caps.g.h"
 #include <limits.h>
-
-// a face has weather when it declares all four of these. the watch asks with the first and reads a
-// reading off the other three, so all four are one decision. the ok flag is the one that tells a
-// failed fetch from a reading, and a face without it would show "NO GPS" as a live 0 degrees.
-// a face that declares none opted out of weather and builds without it. a face that declares only
-// some has a typo or a gap, which would otherwise build and go wrong on the watch, so the build
-// stops and names each missing key
-#if defined(HAS_MESSAGE_KEY_WEATHER_REQUEST) && defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE) && \
-    defined(HAS_MESSAGE_KEY_WEATHER_CONDITIONS) && defined(HAS_MESSAGE_KEY_WEATHER_OK)
-#define APPMESSAGE_HAS_WEATHER 1
-#elif defined(HAS_MESSAGE_KEY_WEATHER_REQUEST) || defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE) || \
-    defined(HAS_MESSAGE_KEY_WEATHER_CONDITIONS) || defined(HAS_MESSAGE_KEY_WEATHER_OK)
-#if !defined(HAS_MESSAGE_KEY_WEATHER_REQUEST)
-#error "weather needs WEATHER_REQUEST in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
-#endif
-#if !defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE)
-#error "weather needs WEATHER_TEMPERATURE in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
-#endif
-#if !defined(HAS_MESSAGE_KEY_WEATHER_CONDITIONS)
-#error "weather needs WEATHER_CONDITIONS in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
-#endif
-#if !defined(HAS_MESSAGE_KEY_WEATHER_OK)
-#error "weather needs WEATHER_OK in messageKeys. A face with weather declares WEATHER_REQUEST, WEATHER_TEMPERATURE, WEATHER_CONDITIONS, and WEATHER_OK"
-#endif
-#endif
 
 // each weather group below is read whole, so a face that declares only part of one would get
 // none of it and leave those panels on dashes with nothing to say why. the build stops instead
@@ -590,7 +566,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // coordinates arrive pre-formatted as dash strings like "33-44" and "-112-07". a fix is the
     // pair, so both have to be there and both have to be strings. one missing, or one a face's
     // formatter sent as a number, would hand the store an empty half and blank a good coordinate
-#if defined(HAS_MESSAGE_KEY_LOCATION_LATITUDE) && defined(HAS_MESSAGE_KEY_LOCATION_LONGITUDE)
+#if defined(APPMESSAGE_HAS_LOCATION)
     const char *lat = tuple_str_or(dict_find(iterator, MESSAGE_KEY_LOCATION_LATITUDE), NULL);
     const char *lon = tuple_str_or(dict_find(iterator, MESSAGE_KEY_LOCATION_LONGITUDE), NULL);
     if (lat && lon && s_handlers.on_coords)

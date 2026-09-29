@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Added `io/appmessage/appmessage_features.h`, which defines `APPMESSAGE_HAS_WEATHER` and `APPMESSAGE_HAS_LOCATION` from the face's message keys. A face's own C can read them in place of testing the `HAS_MESSAGE_KEY_*` defines itself.
+
 ### Changed
 
+- The dev harness now fills the weather and location stores only for a face that declares their keys, and sets them up empty otherwise, so a face without weather no longer boots the harness with a reading it cannot show.
+- **Breaking:** A face that declares only one of `LOCATION_LATITUDE` and `LOCATION_LONGITUDE` now fails to build, with the missing key named. Declare both, or neither.
 - **Breaking:** Everything a face gets now lives under `src/` in the framework repo, and `paf 2.0.0` copies that folder into a unit with the specs and fixtures left out. Move the repo to `paf 2.0.0` before pinning a unit to this version.
 - **Breaking:** `gen:frame`, `gen:icons`, `gen:thumbnails`, and the dev tools are now plugins, each in its own folder under `plugins/` with its own `package.json`: `plugins/frame/`, `plugins/icons/`, `plugins/thumbnails/`, and `plugins/dev/`. `paf 2.0.0` copies a plugin into a unit only when the unit lists it under `plugins` in `paf.config.json`. Point a face's `gen:frame`, `gen:icons`, and `gen:thumbnails` scripts at `plugins/frame/generate-frame.ts`, `plugins/icons/generate-icons.ts`, and `plugins/thumbnails/embed-thumbnails.ts`. Add `paf/plugins/*` to the unit's `workspaces`, so each plugin's own dependencies install with it. A unit without `frame` no longer installs Playwright.
 - **Breaking:** `css/pebble-colors.css` is now part of the `frame` plugin, at `plugins/frame/css/pebble-colors.css`. Point each frame HTML's stylesheet link there.

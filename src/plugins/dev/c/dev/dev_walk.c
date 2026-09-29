@@ -15,6 +15,7 @@
 #include "io/stores/health_store.h"
 #include "io/stores/system_store.h"
 #include "io/stores/location_store.h"
+#include "io/appmessage/appmessage_features.h"
 #include "system/settings/settings.h"
 #include "ui/engine/engine.h"
 
@@ -81,7 +82,8 @@ static int s_hour;                  ///< The hour the face pinned the clock to
 static int s_minute;                ///< The minute the face pinned the clock to
 
 /**
- * @brief Seed the clock, weather, health, and system stores from one shot.
+ * @brief Seed the clock, weather, health, and system stores from one shot. A face without weather
+ * gets an empty weather store, so it never boots the harness with a reading it cannot show.
  *
  * The stores are only ever seeded here with live off, and neither takes a subscription on that
  * path, so seeding again on a tap re-seeds rather than stacking handlers.
@@ -98,12 +100,18 @@ static void seed_shot(const DevShot *shot)
     pinned.tm_sec = 0;
     time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
 
+#if defined(APPMESSAGE_HAS_WEATHER)
     // spread the empty seed so every reading the shot does not set (humidity, wind, uv, ...)
     // reads as "--" rather than a bogus 0
     WeatherSeed wx = WEATHER_SEED_EMPTY;
     wx.temp = shot->temp;
     wx.cond = shot->cond;
     weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
+#else
+    // a face without weather can still link a weather readout, so the store is set up empty and
+    // every reading shows dashes rather than the zeros an untouched store holds
+    weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, NULL);
+#endif
 
     HealthSeed health = {.hr = shot->hr, .steps = shot->steps, .calories = s_fixed.calories,
                          .sleep_min = s_fixed.sleep_min, .active_min = s_fixed.active_min,
@@ -158,8 +166,12 @@ void dev_walk_seed_stores(int hour, int min)
 
     seed_shot(&s_shots[0]);
 
+#if defined(APPMESSAGE_HAS_LOCATION)
     LocationSeed location = {.lat = s_fixed.lat, .lon = s_fixed.lon};
     location_store_init((LocationConfig){.live = false}, &location);
+#else
+    location_store_init((LocationConfig){.live = false}, NULL);
+#endif
 }
 
 void dev_walk_init(DevWalkMode mode, void (*apply_theme)(void))

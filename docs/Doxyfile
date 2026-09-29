@@ -2531,7 +2531,11 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = PBL_HEALTH "_Static_assert(x,y)=" "__attribute__(x)="
+# the message keys appmessage_features.h tests, so its APPMESSAGE_HAS_* switches show in the docs
+PREDEFINED             = PBL_HEALTH "_Static_assert(x,y)=" "__attribute__(x)=" \
+                         HAS_MESSAGE_KEY_WEATHER_REQUEST HAS_MESSAGE_KEY_WEATHER_TEMPERATURE \
+                         HAS_MESSAGE_KEY_WEATHER_CONDITIONS HAS_MESSAGE_KEY_WEATHER_OK \
+                         HAS_MESSAGE_KEY_LOCATION_LATITUDE HAS_MESSAGE_KEY_LOCATION_LONGITUDE
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
