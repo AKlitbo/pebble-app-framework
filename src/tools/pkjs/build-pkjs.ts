@@ -25,15 +25,16 @@
  * A face that ships several targets (Gridlock's watchface and watchapp) compiles once. The emit tree
  * does not depend on the target, so the first target's emit/ is copied whole into each of the others.
  *
- * build.sh runs it before every Pebble build, which is what paf build runs.
+ * build.ts runs it before every Pebble build, which is what paf build runs.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { appinfoPath, faceRelative } from '../faces.ts';
-import { resolveTargets } from '../manifest/build-manifests.ts';
-import { ENGINE, ENGINE_REL, WORKSPACE, icaljsBundle } from '../paths.ts';
+import { faceRelative } from '../shared/faces.ts';
+import { faceTargetNames } from '../manifest/build-manifests.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE, icaljsBundle } from '../shared/paths.ts';
+import { ToolError, exitCodeOf, reportFailure } from '../shared/tool-error.ts';
 
 const requireHost = createRequire(import.meta.url);
 
@@ -139,7 +140,7 @@ export function compile(p: FacePaths): void {
   // status is null when a signal killed it, so anything but a clean 0 has to fail here.
   // letting a compile error through would copy over a half-built emit/ and still exit 0
   if (result.status !== 0) {
-    throw new Error(`tsc exited ${result.status === null ? `on signal ${result.signal}` : result.status}`);
+    throw new ToolError(`tsc exited ${result.status === null ? `on signal ${result.signal}` : result.status}`, exitCodeOf(result));
   }
 }
 
@@ -246,14 +247,14 @@ export function copyIcalJs(p: FacePaths): boolean {
   // a larger work
   const from = icaljsBundle();
   if (!from || !fs.existsSync(from)) {
-    throw new Error('ical.js is missing from node_modules, run npm install');
+    throw new ToolError('ical.js is missing from node_modules, run npm install');
   }
   fs.mkdirSync(path.dirname(p.icaljsTo), { recursive: true });
   fs.copyFileSync(from, p.icaljsTo);
   return true;
 }
 
-/** What building a face's pkjs did, for the one line build.sh prints. */
+/** What building a face's pkjs did, for the one line printed after it. */
 export interface FaceBuild {
   targets: string[];
   generated: string[];
@@ -271,7 +272,7 @@ export interface FaceBuild {
  * @return The targets built, the generated components copied, and whether ical.js went in.
  */
 export function buildFace(face: string): FaceBuild {
-  const targets = resolveTargets(JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8'))).map((target) => target.name);
+  const targets = faceTargetNames(face);
   const [first, ...rest] = targets.map((target) => facePaths(target, face));
 
   cleanEmit(first);
@@ -288,16 +289,28 @@ export function buildFace(face: string): FaceBuild {
   return { targets, generated, icaljs };
 }
 
-function main(): void {
-  const face = process.argv[2];
-  if (!face) {
-    console.error('usage: build-pkjs.ts <face>');
-    process.exit(1);
-  }
-
-  const built = buildFace(face);
+/**
+ * The one line that says what a face's pkjs build did.
+ *
+ * @param face The face that was built.
+ * @param built What buildFace returned for it.
+ * @return The line, naming the targets, the components copied, and whether ical.js went in.
+ */
+export function describeBuild(face: string, built: FaceBuild): string {
   const where = path.relative(ROOT, facePaths(built.targets[0], face).emitPkjs).split(path.sep).join('/');
-  console.log(`built emit/ for ${built.targets.join(', ')} and copied ${built.generated.length} generated components into ${where}/${built.icaljs ? ', plus ical.js' : ''}`);
+  return `built emit/ for ${built.targets.join(', ')} and copied ${built.generated.length} generated components into ${where}/${built.icaljs ? ', plus ical.js' : ''}`;
+}
+
+function main(): void {
+  try {
+    const face = process.argv[2];
+    if (!face) {
+      throw new ToolError('usage: node paf/tools/pkjs/build-pkjs.ts <face>, which paf build runs before every build');
+    }
+    console.log(describeBuild(face, buildFace(face)));
+  } catch (error) {
+    reportFailure(error);
+  }
 }
 
 if (import.meta.main) {

@@ -8,9 +8,10 @@
  * paf check runs this from the unit when it lists the thumbnails plugin.
  */
 import fs from 'node:fs';
-import { checkFace, facesToCheck, runCheck } from '../../tools/checks.ts';
+import { checkFace, runCheck } from '../../tools/shared/checks.ts';
 import { encodeThumbnails, outFile, thumbsDir } from './embed-thumbnails.ts';
-import { readText } from '../../tools/files.ts';
+import { readText } from '../../tools/shared/files.ts';
+import { listFaceNames } from '../../tools/shared/faces.ts';
 
 /**
  * Every face whose thumbnail asset is stale or disagrees with its module list.
@@ -20,7 +21,7 @@ import { readText } from '../../tools/files.ts';
 export async function checkThumbnails(): Promise<string[]> {
   const problems: string[] = [];
 
-  for (const face of facesToCheck()) {
+  for (const face of listFaceNames()) {
     await checkFace(face, problems, () => {
       const hasFolder = fs.existsSync(thumbsDir(face));
       const committed = fs.existsSync(outFile(face));

@@ -100,7 +100,7 @@ def build_face(ctx, source, extra_cflags=None):
     # face rather than the sandbox when a face feeds several targets
     entry = ctx.path.find_node(os.path.normpath(os.path.join('emit', source['face'], 'src', 'pkjs', 'index.js')))
     if not entry:
-        ctx.fatal('No pkjs entry in emit/. build.sh runs the pkjs build first, so build the face with paf build.')
+        ctx.fatal('No pkjs entry in emit/. tools/build.ts runs the pkjs build first, so build the face with paf build.')
     js_entry = entry.path_from(ctx.path)
 
     ctx.set_group('bundle')

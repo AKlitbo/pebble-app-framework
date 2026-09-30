@@ -15,6 +15,9 @@
     "typescript": "^5.9.3"
   },
   "paf": {
+    "build": {
+      "script": "tools/build.ts"
+    },
     "gen": {
       "clay": {
         "script": "tools/clay-components/generate-components.ts",

@@ -286,8 +286,8 @@ function appinfoName(root, dir) {
  * @return The project and face folders, or null when the repo has no such face.
  */
 function findFaceProject(repoRoot, name) {
-  // inside a project this repeats the rules of tools/faces.ts, so a new place a face can sit in one has
-  // to be added in both. the face has to be found before its paf/ is known, so faces.ts cannot be asked first
+  // inside a project this repeats the rules of tools/shared/faces.ts, so a new place a face can sit
+  // in one has to be added in both. the face has to be found before its paf/ is known, so faces.ts cannot be asked first
   // a face's name is one folder name, so one reaching into another folder, or out of the repo, is none
   if (!name || /[\\/]/.test(name) || name === '.' || name === '..') {
     return null;

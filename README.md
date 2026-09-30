@@ -13,10 +13,10 @@ Everything a face gets lives under `src/`, and paf copies that folder into each 
 
 * **`src/c/`**: the device code. `core/` is pure and host-testable. `pebble/` needs the SDK.
 * **`src/ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay), and `generated.d.ts`, which types every `*.g` module a generator writes. Its `testing/` folder holds helpers the framework's specs share, which a face's own specs can use too.
-* **`src/tools/`**: the tools a face builds with: the Clay component generator, the pkjs build, the manifest build, and the check that a face's Clay components are current.
+* **`src/tools/`**: the tools a face builds with: the Clay component generator, the pkjs build, the manifest build, and the check that a face's Clay components are current. `shared/` holds the helpers they and the plugins share, such as the face lookup and the framework's paths, which a face's own tools and configs can import too.
 * **`src/waf/`**: the waf helpers that stage and build a face, and the wscript template each build target gets.
 * **`src/plugins/`**: what a face opts into, each with its own `package.json` and dependencies. A plugin is mostly tools, but it can carry watch C too, which the build stages beside the framework's own.
-* **`src/build.sh`**: builds a face's `.pbw` from WSL with the Pebble SDK installed.
+* **`src/tools/build.ts`**: builds a face's `.pbw` from WSL with the Pebble SDK installed, which is what `paf build` runs.
 * **`src/toolchain.json`**: the SDK, pebble-tool, and Node the framework is built with. paf and `setup-pebble` read it from a face project's `paf/`.
 * **`src/tsconfig.json`**, **`src/tsconfig.pkjs.json`**, **`src/tsconfig.spec.json`**, and **`src/tsconfig.tools.json`**: the compiler options a face's TypeScript builds with, and the ones its own spec and tools tsconfigs extend.
 
@@ -27,7 +27,7 @@ A face project lists the plugins it wants in its `paf.config.json`, and paf copi
 * **`frame`**: bakes a face's HTML frame into background PNGs, and carries `css/pebble-colors.css`, the Pebble-64 palette the frames link to. It needs Playwright and `sharp`.
 * **`icons`**: turns the face's vendored SVG glyphs into its icon PNGs, and checks the appinfo media block is current. It needs `sharp`.
 * **`thumbnails`**: inlines the panel PNGs as base64 so the Clay layout builder shows real panels, and checks the asset is current.
-* **`dev`**: the screenshot harness in `c/dev/`, the Clay settings preview, and `tap-walk.sh`.
+* **`dev`**: the screenshot harness in `c/dev/`, the Clay settings preview in `clay-preview.ts`, and `tap-walk.ts`, which screenshots every state of a face's dev tap walk.
 
 **Developing the Framework**
 

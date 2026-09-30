@@ -5,6 +5,9 @@
   "compilerOptions": {
     "moduleDetection": "force",
     "allowImportingTsExtensions": true,
+    // node runs these by stripping the types, which refuses syntax that emits code, such as a
+    // constructor parameter property or an enum, so the typecheck refuses it first
+    "erasableSyntaxOnly": true,
     "types": ["node"]
   }
 }

@@ -24,10 +24,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { faceDir, listFaceNames } from '../../tools/faces.ts';
+import { faceDir, listFaceNames } from '../../tools/shared/faces.ts';
 // the builders read the emitted asset so generate to the types they consume
 import type { ModuleMeta } from '../../ts/clay/types.ts';
 import type { Thumbs } from '../../ts/clay/builder/ts/types.ts';
+import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 
 // every path this touches hangs off the face it is handed
 // the PNGs and that face's module list and the asset it writes
@@ -55,7 +56,13 @@ export function outFile(face: string): string {
 
 /** A face's module-meta.ts, loaded by path because which face it is is only known at runtime. */
 function moduleMetaFile(face: string): { default: Record<string, ModuleMeta>; thumbnailSizes?: unknown } {
-  return requireMeta(path.join(faceDir(face), 'src', 'pkjs', 'clay', 'module-meta.ts'));
+  const file = path.join(faceDir(face), 'src', 'pkjs', 'clay', 'module-meta.ts');
+  // the thumbnails are matched against the face's module list, so a face without one set up its
+  // thumbnails folder too early, which is its mistake rather than the tool's
+  if (!fs.existsSync(file)) {
+    throw new ToolError(`${face} has a resources/thumbnails folder but no src/pkjs/clay/module-meta.ts to match its thumbnails against`);
+  }
+  return requireMeta(file);
 }
 
 /** A face's own module list. */
@@ -76,7 +83,7 @@ function metaFor(face: string): Record<string, ModuleMeta> {
 export function sizesFor(face: string): string[] {
   const sizes = moduleMetaFile(face).thumbnailSizes;
   if (!Array.isArray(sizes) || !sizes.length || !sizes.every((size) => typeof size === 'string')) {
-    throw new Error(`module-meta.ts for ${face} has to export thumbnailSizes, the panel sizes its thumbnails come in`);
+    throw new ToolError(`module-meta.ts for ${face} has to export thumbnailSizes, the panel sizes its thumbnails come in`);
   }
   return sizes;
 }
@@ -108,7 +115,7 @@ export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
   Object.keys(meta).forEach((label, index) => {
     const slug = meta[label].slug;
     if (bySlug[slug]) {
-      throw new Error(`modules "${bySlug[slug].label}" and "${label}" share the slug "${slug}"`);
+      throw new ToolError(`modules "${bySlug[slug].label}" and "${label}" share the slug "${slug}"`);
     }
     bySlug[slug] = { label: label, order: index };
   });
@@ -247,6 +254,10 @@ export function encodeThumbnails(face: string): Built {
  * @param face The face to build the thumbnail asset for.
  */
 export function build(face: string): void {
+  if (!fs.existsSync(thumbsDir(face))) {
+    throw new ToolError(`${face} has no resources/thumbnails folder to embed`);
+  }
+
   const built = encodeThumbnails(face);
 
   // check before writing. a stray png names a slug no module claims and a missing
@@ -254,10 +265,10 @@ export function build(face: string): void {
   // writing first would clobber the good committed asset with a broken one on the
   // way to throwing and nothing would force a checkout
   if (built.stray.length) {
-    throw new Error(`stray png with no module (${built.stray.length}): ${built.stray.join(', ')}`);
+    throw new ToolError(`stray png with no module (${built.stray.length}): ${built.stray.join(', ')}`);
   }
   if (built.missing.length) {
-    throw new Error(`module with no png (${built.missing.length}): ${built.missing.join(', ')}`);
+    throw new ToolError(`module with no png (${built.missing.length}): ${built.missing.join(', ')}`);
   }
 
   const out = outFile(face);
@@ -269,8 +280,12 @@ export function build(face: string): void {
 }
 
 if (import.meta.main) {
-  const face = process.argv[2];
-  // no face means every face that ships thumbnails, found by its thumbnails folder
-  const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(thumbsDir(name)));
-  faces.forEach((name) => build(name));
+  try {
+    const face = process.argv[2];
+    // no face means every face that ships thumbnails, found by its thumbnails folder
+    const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(thumbsDir(name)));
+    faces.forEach((name) => build(name));
+  } catch (error) {
+    reportFailure(error);
+  }
 }

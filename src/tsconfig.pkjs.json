@@ -1,7 +1,7 @@
 // base compiler options for the pkjs runtime build, which compiles a face's src/pkjs and the
 // framework's ts/ into emit/.
 // build-pkjs.ts generates a per-face targets/<face>/tsconfig.pkjs.json that extends this and
-// supplies rootDir/outDir/include for the face being built. build.sh runs it before every build.
+// supplies rootDir/outDir/include for the face being built. tools/build.ts runs it before every build.
 // the only tsconfig the framework ships that emits rather than just checks.
 // comments are dropped from the emit, since nothing on the phone reads them and they only make the
 // bundle bigger. the framework's ts/ carries no licence header that has to ship. ical.js keeps its

@@ -22,8 +22,9 @@ import fs from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { firefox } from 'playwright';
 import sharp from 'sharp';
-import { faceDir } from '../../tools/faces.ts';
-import { APPINFO_REL, WORKSPACE } from '../../tools/paths.ts';
+import { faceDir } from '../../tools/shared/faces.ts';
+import { APPINFO_REL, WORKSPACE } from '../../tools/shared/paths.ts';
+import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 
 /** Native screen size per Pebble platform (px). */
 interface Dims {
@@ -92,8 +93,11 @@ function faceDirs(face: string): FaceDirs {
   };
 }
 
-/** Reads and parses a face's frame.config.json. */
-function loadFaceConfig(dirs: FaceDirs): FaceConfig {
+/** Reads and parses a face's frame.config.json, which a face with a frame to bake holds. */
+function loadFaceConfig(face: string, dirs: FaceDirs): FaceConfig {
+  if (!fs.existsSync(dirs.config)) {
+    throw new ToolError(`${face} has no frame/frame.config.json to bake from`);
+  }
   return JSON.parse(fs.readFileSync(dirs.config, 'utf8'));
 }
 
@@ -396,12 +400,11 @@ async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const face = argv[0];
   if (!face || face.startsWith('-')) {
-    console.error('usage: generate-frame.ts <face> [frame] [--scale N] [--theme name|all] [--out path]');
-    process.exit(1);
+    throw new ToolError('usage: node paf/plugins/frame/generate-frame.ts <face> [frame] [--scale N] [--theme name|all] [--out path], which paf gen <face> frame runs');
   }
 
   const dirs = faceDirs(face);
-  const faceCfg = loadFaceConfig(dirs);
+  const faceCfg = loadFaceConfig(face, dirs);
   const opts = parseArgs(argv.slice(1), faceCfg);
 
   // each platform bakes from its own HTML, and one without it is skipped so the rest still bake
@@ -417,8 +420,7 @@ async function main(): Promise<void> {
       return false;
     });
   if (bakes.length === 0) {
-    console.error(`No frame HTML found for ${frames.join(', ')} on any platform the face targets`);
-    process.exit(1);
+    throw new ToolError(`No frame HTML found for ${frames.join(', ')} on any platform the face targets`);
   }
 
   let themes: (string | null)[];
@@ -451,7 +453,7 @@ async function main(): Promise<void> {
     const missing = missingStylesheets(links).filter((url) => !(themed && url.includes('theme_')));
     if (missing.length) {
       await browser.close();
-      throw new Error(`${path.relative(ROOT, bake.html)} links stylesheets the browser cannot load: ${missing.join(', ')}`);
+      throw new ToolError(`${path.relative(ROOT, bake.html)} links stylesheets the browser cannot load: ${missing.join(', ')}`);
     }
   }
 
@@ -462,7 +464,7 @@ async function main(): Promise<void> {
   for (const bake of bakes) {
     const { w: screenW, h: screenH } = PLATFORM_DIMS[bake.platform];
     const html = bake.html;
-    const fileUrl = 'file://' + html.replace(/\\/g, '/');
+    const fileUrl = pathToFileURL(html).href;
 
     for (const themeName of themes) {
       await page.goto(fileUrl, { waitUntil: 'networkidle' });
@@ -470,7 +472,7 @@ async function main(): Promise<void> {
       if (themeName) {
         const themeCss = path.join(dirs.cssDir, `theme_${themeName}.css`);
         if (!fs.existsSync(themeCss)) {
-          throw new Error(`Theme stylesheet not found: ${themeCss}`);
+          throw new ToolError(`Theme stylesheet not found: ${themeCss}`);
         }
         await page.evaluate(() => {
           document.querySelectorAll('link[href*="theme_"]').forEach((link) => link.remove());
@@ -536,8 +538,9 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((err) => {
-    console.error(err);
-    process.exit(1);
+  // Firefox stays open when a bake throws, and it keeps node running, so the run ends here
+  main().catch((error) => {
+    reportFailure(error);
+    process.exit();
   });
 }

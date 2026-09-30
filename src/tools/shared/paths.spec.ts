@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { workspaceFor } from './paths';
-import { tempDir } from '../ts/testing/temp-dir';
+import { tempDir } from '../../ts/testing/temp-dir';
 
 const WORKSPACES = path.join(import.meta.dirname, 'fixtures', 'workspaces');
 

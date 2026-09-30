@@ -22,9 +22,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import esbuild from 'esbuild';
 import { createRequire } from 'node:module';
-import { faceDir, familyCoreDir, listFaceNames } from '../faces.ts';
-import { ENGINE, WORKSPACE } from '../paths.ts';
-import { readText } from '../files.ts';
+import { faceDir, familyCoreDir, listFaceNames } from '../shared/faces.ts';
+import { ENGINE, WORKSPACE } from '../shared/paths.ts';
+import { readText } from '../shared/files.ts';
+import { ToolError, reportFailure } from '../shared/tool-error.ts';
 
 // the manifests are loaded by path at runtime which an import specifier cannot do
 // require(esm) hands back the namespace so the manifest lands on .default
@@ -34,10 +35,10 @@ const ROOT = WORKSPACE;
 
 /** Where a root keeps its builder pieces, relative to the root itself. */
 const FACE_BUILDER_REL = path.join('pkjs', 'clay', 'builder');
-const LIB_BUILDER_REL = path.join('clay', 'builder');
+const ENGINE_BUILDER_REL = path.join('clay', 'builder');
 
 /** One place builder pieces can live: the directory holding them. */
-type Root = { base: string; builder: string };
+export type Root = { base: string; builder: string };
 
 /**
  * The three roots a builder piece can come from, face first.
@@ -45,51 +46,41 @@ type Root = { base: string; builder: string };
  * Each mirrors the others: the same path below a root's builder dir names the same piece
  * wherever it lives, so a lookup falls back by swapping one builder dir for another. That is the
  * same rule the C build follows, where a face-local header wins over the family's, and the
- * family's over lib's.
+ * family's over the framework's.
  *
- * lib is never null. A face in no family has no core, and reaches lib directly.
+ * The framework's root is never null. A face in no family has no core, and reaches the framework
+ * directly.
  */
-type Roots = { face: Root; core: Root | null; lib: Root; faceRoot: string };
+export type Roots = { face: Root; core: Root | null; engine: Root; faceRoot: string };
 
 /**
  * Builds the three builder roots this face pulls pieces from: its own src, its family core if
- * it has one, and lib.
+ * it has one, and the framework.
  *
  * @param face The face to look up.
  * @return The face's roots, in precedence order.
  */
-function rootsFor(face: string): Roots {
+export function rootsFor(face: string): Roots {
   const core = familyCoreDir(face);
   return {
     face: { base: path.join(faceDir(face), 'src'), builder: FACE_BUILDER_REL },
     core: core ? { base: core, builder: FACE_BUILDER_REL } : null,
-    lib: { base: path.join(ENGINE, 'ts'), builder: LIB_BUILDER_REL },
+    engine: { base: path.join(ENGINE, 'ts'), builder: ENGINE_BUILDER_REL },
     faceRoot: faceDir(face),
   };
 }
 
-/** The roots in precedence order: a face shadows its family, and both shadow lib. */
+/** The roots in precedence order: a face shadows its family, and both shadow the framework. */
 function rootList(roots: Roots): Root[] {
-  return [roots.face, roots.core, roots.lib].filter(Boolean) as Root[];
+  return [roots.face, roots.core, roots.engine].filter(Boolean) as Root[];
 }
 
-/**
- * A root's builder directory.
- *
- * @param root The root to resolve.
- * @return The root's builder directory.
- */
+/** A root's builder directory. */
 function builderDir(root: Root): string {
   return path.join(root.base, root.builder);
 }
 
-/**
- * The first root whose builder dir actually holds this relative path, or null.
- *
- * @param roots The roots to search, in precedence order.
- * @param rel The path to look for, relative to a root's builder directory.
- * @return The matching file's full path, or null when none of the roots have it.
- */
+/** The first root whose builder dir actually holds this relative path, or null. */
 function resolveIn(roots: Roots, rel: string): string | null {
   for (const root of rootList(roots)) {
     const full = path.join(builderDir(root), rel);
@@ -112,7 +103,7 @@ function resolveIn(roots: Roots, rel: string): string | null {
  * @param full The full path an import resolved to.
  * @return The same relative path under each root, face first, or just the path itself.
  */
-function inPrecedence(roots: Roots, full: string): string[] {
+export function inPrecedence(roots: Roots, full: string): string[] {
   const all = rootList(roots);
 
   for (const from of all) {
@@ -142,15 +133,15 @@ export type Manifest = {
  * Every *.manifest.ts recipe across all three builder roots.
  *
  * A face that ships its own copy of a manifest shadows the family's, and the family's shadows
- * lib's, so they are keyed by filename rather than concatenated.
+ * the framework's, so they are keyed by filename rather than concatenated.
  *
  * @param roots The roots to search.
  * @return Every manifest's full path, one per filename, sorted.
  */
-function findManifests(roots: Roots): string[] {
+export function findManifests(roots: Roots): string[] {
   const byName = new Map<string, string>();
 
-  // least specific first so a family shadows lib and a face shadows both
+  // least specific first so a family shadows the framework and a face shadows both
   for (const root of rootList(roots).slice().reverse()) {
     const dir = builderDir(root);
     if (!fs.existsSync(dir)) {
@@ -175,10 +166,10 @@ function findManifests(roots: Roots): string[] {
  * @param manifest The manifest to search, its name and pieces list.
  * @return The init piece's path.
  */
-function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): string {
+export function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): string {
   const initPiece = manifest.pieces.find((piece) => path.basename(piece).replace(/\.[jt]s$/, '') === 'init');
   if (!initPiece) {
-    throw new Error(`${manifest.name}: no piece named init`);
+    throw new ToolError(`${manifest.name}: no piece named init`);
   }
   return initPiece;
 }
@@ -191,7 +182,7 @@ function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): string {
  * @param initPiece The piece to re-export as the bundle's value.
  * @return The entry source, ready to hand esbuild as its stdin input.
  */
-function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string): string {
+export function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string): string {
   const lines = manifest.pieces.map((piece) => `require(${JSON.stringify('./' + piece)});`);
   lines.push(`module.exports = require(${JSON.stringify('./' + initPiece)});`);
   return lines.join('\n');
@@ -202,13 +193,10 @@ function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string)
  *
  * A shared piece can name a face-specific neighbour (the layout builder's geometry, say, or that
  * face's presets) and a face piece can name a shared one, so no side has to spell out where the
- * others live. A face's own copy wins even when a core or lib piece is the one importing it, the
- * same way the manifests themselves shadow each other.
+ * others live. A face's own copy wins even when a core or framework piece is the one importing
+ * it, the same way the manifests themselves shadow each other.
  *
- * There is no bail on a missing core: a face in no family still reaches lib through here.
- *
- * @param roots The roots to retry a missing import under.
- * @return The esbuild plugin that does the retrying.
+ * There is no bail on a missing core: a face in no family still reaches the framework through here.
  */
 function overlayPlugin(roots: Roots): esbuild.Plugin {
   return {
@@ -236,14 +224,7 @@ function overlayPlugin(roots: Roots): esbuild.Plugin {
   };
 }
 
-/**
- * Bundles a manifest's pieces into the ES2015 IIFE that becomes initialize.
- *
- * @param manifest The manifest whose pieces to bundle.
- * @param manifestDir The directory to resolve the manifest's own relative imports from.
- * @param roots The roots to fall back through when a piece imports one under another root.
- * @return The bundled source, trimmed of trailing blank lines.
- */
+/** Bundles a manifest's pieces into the ES2015 IIFE that becomes initialize. */
 async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: Roots): Promise<string> {
   const initPiece = findInitPiece(manifest);
   const result = await esbuild.build({
@@ -274,10 +255,6 @@ async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: 
  * The indent reaches the lines inside a multi-line template literal too, which would change that
  * string. No builder piece holds one, and keeping them apart means parsing the bundle, where the
  * indent only has to keep the generated file readable.
- *
- * @param text The block to indent.
- * @param indent The indent to add to each non empty line.
- * @return The trimmed, indented block.
  */
 function indentBlock(text: string, indent: string): string {
   return text
@@ -294,9 +271,6 @@ function indentBlock(text: string, indent: string): string {
  * The lines are joined with nothing between them, so text wrapped across two lines would run
  * together. No template wraps text, and a space between every line would change every generated
  * component, so a template keeps each run of text on one line.
- *
- * @param templatePath The template file to read.
- * @return The template, blank lines dropped and the rest joined with no separator.
  */
 function buildTemplate(templatePath: string): string {
   return readText(templatePath)
@@ -316,7 +290,7 @@ function buildTemplate(templatePath: string): string {
  * @param css The stylesheet source to squeeze.
  * @return The squeezed stylesheet, ready to inline.
  */
-function minifyCss(css: string): string {
+export function minifyCss(css: string): string {
   // comments and quoted strings come out in one pass, so a quote inside a comment cannot start a
   // string. each string waits under a marker the squeeze cannot touch and goes back after it
   const strings: string[] = [];
@@ -339,12 +313,7 @@ function minifyCss(css: string): string {
     .replace(/@@css-string-(\d+)@@/g, (marker, index: string) => strings[Number(index)]);
 }
 
-/**
- * The css files minified and joined into the one style string Clay injects.
- *
- * @param stylePaths The stylesheet files to read, in the order they should be joined.
- * @return The joined, minified style string.
- */
+/** The css files minified and joined into the one style string Clay injects. */
 function buildStyle(stylePaths: string[]): string {
   return stylePaths.map((stylePath) => minifyCss(readText(stylePath))).join('');
 }
@@ -356,14 +325,14 @@ function buildStyle(stylePaths: string[]): string {
  * @param roots The roots to resolve the manifest's template, styles, and pieces from.
  * @return The component's source and the output path it belongs at.
  */
-async function buildComponentSource(manifestPath: string, roots: Roots): Promise<{ output: string; source: string }> {
+export async function buildComponentSource(manifestPath: string, roots: Roots): Promise<{ output: string; source: string }> {
   const manifest: Manifest = requireManifest(manifestPath).default;
   const manifestDir = path.dirname(manifestPath);
   // repo-root relative so the line reads the same whichever root the manifest came
   // from and whether or not the face sits inside a family folder
   const relManifest = path.relative(ROOT, manifestPath).replace(/\\/g, '/');
 
-  // the template and the stylesheets follow the same face-then-core-then-lib lookup
+  // the template and the stylesheets follow the same face-then-core-then-framework lookup
   // as the pieces so a face can restyle just its own builder and take the rest from
   // the family
   const asset = (name: string): string => resolveIn(roots, name) || path.join(manifestDir, name);
@@ -409,15 +378,18 @@ ${bundle}
   return { output: path.join(roots.faceRoot, manifest.output), source };
 }
 
-/**
- * Builds and writes every component for one face.
- *
- * @param face The face to build components for.
- */
+/** Builds and writes every component for one face. */
 async function generateAll(face: string): Promise<void> {
   const roots = rootsFor(face);
+  const manifests = findManifests(roots);
 
-  for (const manifestPath of findManifests(roots)) {
+  // a face with no builder stops the run, since one that writes nothing and exits 0 reads as a
+  // generate that worked
+  if (manifests.length === 0) {
+    throw new ToolError(`${face} has no Clay builder to generate from, under src/pkjs/clay/builder in the face or pkjs/clay/builder in its family core`);
+  }
+
+  for (const manifestPath of manifests) {
     const built = await buildComponentSource(manifestPath, roots);
     fs.writeFileSync(built.output, built.source);
     console.log(`wrote ${path.relative(roots.faceRoot, built.output)} (${built.source.length} bytes)`);
@@ -426,33 +398,11 @@ async function generateAll(face: string): Promise<void> {
 
 if (import.meta.main) {
   const face = process.argv[2];
-  // no face means every face that has a builder, found by its manifests the way check-components.ts finds them
-  const faces = face ? [face] : listFaceNames().filter((name) => findManifests(rootsFor(name)).length > 0);
-
-  // esbuild only takes a resolve plugin through its async API so the run ends on a
-  // promise. rethrowing off-tick makes a failure a non-zero exit rather than a
-  // silent unhandled rejection
-  faces.reduce((chain, name) => chain.then(() => generateAll(name)), Promise.resolve()).catch((error) => {
-    setTimeout(() => {
-      throw error;
-    });
-  });
+  // esbuild only takes a resolve plugin through its async API, so the run ends on a promise. the
+  // faces are found inside it too, so a lookup that fails reports the same way a failed build does
+  Promise.resolve()
+    // no face means every face that has a builder, found by its manifests the way check-components.ts finds them
+    .then(() => (face ? [face] : listFaceNames().filter((name) => findManifests(rootsFor(name)).length > 0)))
+    .then((faces) => faces.reduce((chain, name) => chain.then(() => generateAll(name)), Promise.resolve()))
+    .catch(reportFailure);
 }
-
-export {
-  builderDir,
-  rootsFor,
-  resolveIn,
-  inPrecedence,
-  overlayPlugin,
-  findManifests,
-  findInitPiece,
-  buildEntrySource,
-  bundleInitialize,
-  generateAll,
-  indentBlock,
-  buildTemplate,
-  minifyCss,
-  buildStyle,
-  buildComponentSource,
-};

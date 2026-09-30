@@ -192,7 +192,7 @@ describe('resolveTargets', () => {
   test('returns the inline single target when there is no targets map', () => {
     const config = { ...makeConfig(), name: 'radar-array', watchface: true };
 
-    const result = resolveTargets(config);
+    const result = resolveTargets(config, 'radar-array');
 
     expect(result).toEqual([{ name: 'radar-array', watchface: true, menuIcon: undefined }]);
   });
@@ -207,7 +207,7 @@ describe('resolveTargets', () => {
       },
     };
 
-    const result = resolveTargets(config);
+    const result = resolveTargets(config, 'gridlock');
 
     expect(result).toEqual([
       { name: 'gridlock-face', watchface: true },
@@ -219,7 +219,7 @@ describe('resolveTargets', () => {
   test('throws on an empty targets map', () => {
     const config = { ...makeConfig(), targets: {} };
 
-    const call = () => resolveTargets(config);
+    const call = () => resolveTargets(config, 'gridlock');
 
     expect(call).toThrow(/empty targets map/);
   });
@@ -228,17 +228,20 @@ describe('resolveTargets', () => {
   test('throws on a target with no name', () => {
     const config = { ...makeConfig(), targets: { watchface: { watchface: true } as never } };
 
-    const call = () => resolveTargets(config);
+    const call = () => resolveTargets(config, 'gridlock');
 
     expect(call).toThrow(/target "watchface" has no name/);
   });
 
-  /** An appinfo with no identity at all is a build-input mistake, so it must fail loudly not silently. */
-  test('throws when there is neither a targets map nor a name', () => {
+  /**
+   * An appinfo with no identity at all is a build-input mistake, so it must fail loudly not silently,
+   * and name the face, since a build of every face otherwise leaves the reader to guess which appinfo.
+   */
+  test('throws when there is neither a targets map nor a name, naming the face', () => {
     const config = makeConfig();
 
-    const call = () => resolveTargets(config);
+    const call = () => resolveTargets(config, 'gridlock');
 
-    expect(call).toThrow(/neither a targets map nor a top-level name/);
+    expect(call).toThrow("gridlock's appinfo declares neither a targets map nor a top-level name");
   });
 });

@@ -1,7 +1,7 @@
 /**
  * Names the release assets.
  *
- * build.sh leaves one <target>.pbw per target with no version in the name, which is fine for a build and
+ * The build leaves one <target>.pbw per target with no version in the name, which is fine for a build and
  * useless on a release page where several versions sit side by side.
  */
 

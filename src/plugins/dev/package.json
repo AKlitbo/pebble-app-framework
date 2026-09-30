@@ -12,7 +12,7 @@
         "script": "clay-preview.ts"
       },
       "tap-walk": {
-        "script": "tap-walk.sh"
+        "script": "tap-walk.ts"
       }
     }
   }

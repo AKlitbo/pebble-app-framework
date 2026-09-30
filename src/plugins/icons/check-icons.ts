@@ -11,12 +11,12 @@
  * paf check runs this from the unit when it lists the icons plugin.
  */
 import fs from 'node:fs';
-import { appinfoPath } from '../../tools/faces.ts';
-import { checkFace, facesToCheck, runCheck } from '../../tools/checks.ts';
+import { appinfoPath, listFaceNames } from '../../tools/shared/faces.ts';
+import { checkFace, runCheck } from '../../tools/shared/checks.ts';
 import { buildMedia, iconsManifestPath, mediaOf, replaceMediaArray } from './media.ts';
 import type { IconManifest } from './media.ts';
 import type { MediaEntry } from '../../tools/manifest/build-manifests.ts';
-import { readText } from '../../tools/files.ts';
+import { readText } from '../../tools/shared/files.ts';
 
 /**
  * Every face whose media block is stale or missing.
@@ -26,7 +26,7 @@ import { readText } from '../../tools/files.ts';
 export async function checkIcons(): Promise<string[]> {
   const problems: string[] = [];
 
-  for (const face of facesToCheck()) {
+  for (const face of listFaceNames()) {
     await checkFace(face, problems, () => {
       const manifestFile = iconsManifestPath(face);
       if (!fs.existsSync(manifestFile)) {

@@ -10,10 +10,10 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { faceDir } from '../faces.ts';
-import { checkFace, facesToCheck, runCheck } from '../checks.ts';
+import { faceDir, listFaceNames } from '../shared/faces.ts';
+import { checkFace, runCheck } from '../shared/checks.ts';
 import { buildComponentSource, findManifests, rootsFor } from './generate-components.ts';
-import { readText } from '../files.ts';
+import { readText } from '../shared/files.ts';
 
 /** Every bundled component a face commits, by its full path, found by its output rather than its manifests. */
 function committedComponents(face: string): string[] {
@@ -37,7 +37,7 @@ function faceRel(face: string, file: string): string {
 export async function checkComponents(): Promise<string[]> {
   const problems: string[] = [];
 
-  for (const face of facesToCheck()) {
+  for (const face of listFaceNames()) {
     await checkFace(face, problems, async () => {
       const roots = rootsFor(face);
       const written = new Set<string>();

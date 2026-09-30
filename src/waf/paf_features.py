@@ -14,7 +14,7 @@ def read_manifest(ctx):
     """
     pkg_node = ctx.path.find_node('package.json')
     if not pkg_node:
-        ctx.fatal('No package.json in this sandbox. Run build-manifests.ts again to rewrite it.')
+        ctx.fatal('No package.json in this sandbox. Build the face with paf build, which writes it.')
 
     try:
         with open(pkg_node.abspath(), 'r') as pkg_f:
@@ -60,9 +60,8 @@ def feature_cflags(ctx, manifest):
     if 'ICON_WEATHER_NOW_NA' in names:
         cflags.append('-DHAS_WEATHER_ICONS=1')
 
-    # a face that bundles both Quiet Time marks can draw the slot either way, the way
-    # bluetooth does. one that only ships the muted one draws it when it applies and
-    # leaves the slot empty otherwise
+    # a face that bundles both Quiet Time marks can draw the slot either way, as Bluetooth does
+    # one that only ships the muted one draws it when it applies and leaves the slot empty otherwise
     if 'ICON_QUIET_ON' in names:
         cflags.append('-DHAS_QUIET_PAIR=1')
 

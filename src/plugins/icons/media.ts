@@ -6,7 +6,7 @@
  * Kept apart from the rasterizer so the icon check can compare media blocks without loading sharp.
  */
 import path from 'node:path';
-import { faceDir } from '../../tools/faces.ts';
+import { faceDir } from '../../tools/shared/faces.ts';
 import type { MediaEntry } from '../../tools/manifest/build-manifests.ts';
 
 /** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */

@@ -13,7 +13,8 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { APPINFO_REL, WORKSPACE, isFamilyRoot } from './paths.ts';
+import { APPINFO_REL, MOUNTED, WORKSPACE, isFamilyRoot } from './paths.ts';
+import { ToolError } from './tool-error.ts';
 
 /** Whether a directory is a face rather than, say, a family's shared core. */
 function isFace(dir: string): boolean {
@@ -44,7 +45,7 @@ export function findFaces(root: string): Face[] {
   if (isFace(root)) {
     const appinfo = JSON.parse(fs.readFileSync(path.join(root, APPINFO_REL), 'utf8'));
     if (!appinfo.name) {
-      throw new Error(`the face at the repo root needs a name in its ${APPINFO_REL}`);
+      throw new ToolError(`the face at the repo root needs a name in its ${APPINFO_REL}`);
     }
     found.push({ name: appinfo.name, rel: '.' });
   }
@@ -101,7 +102,7 @@ export function familyNameFor(root: string, rel: string): string | null {
   // folder can be named builds
   // eslint-disable-next-line no-control-regex
   if (!name || name.startsWith('.') || /["'\\/\x00-\x1f]/.test(name)) {
-    throw new Error(`the family name "${name}" cannot start with a dot or hold a quote, a slash, or a backslash. Set "framework": { "family": "<name>" } in ${path.join(family, 'package.json')}`);
+    throw new ToolError(`the family name "${name}" cannot start with a dot or hold a quote, a slash, or a backslash. Set "framework": { "family": "<name>" } in ${path.join(family, 'package.json')}`);
   }
   return name;
 }
@@ -129,10 +130,9 @@ let workspaceFaces: Face[] | null = null;
  *
  * The lookup runs once per process and the answer is kept, so a tool that asks for a face by name
  * again and again reads the folders only once.
- *
- * @return Every face found, ordered by name.
  */
-export function listFaces(): Face[] {
+function listFaces(): Face[] {
+  requireMounted();
   if (!workspaceFaces) {
     workspaceFaces = findFaces(WORKSPACE);
   }
@@ -142,10 +142,24 @@ export function listFaces(): Face[] {
 /**
  * Every face's name, the handle the build, the CI matrix and release tags use.
  *
- * @return Every face's name, ordered the same way as listFaces.
+ * @return Every face's name, ordered by name.
  */
 export function listFaceNames(): string[] {
   return listFaces().map((face) => face.name);
+}
+
+/**
+ * Stops a tool that works on a unit's faces when no unit mounts the framework.
+ *
+ * The framework on its own holds no faces, so without this a unit that does not list paf in its
+ * workspaces would be told it has no faces, or no such face, when its faces are right there.
+ *
+ * @param mounted Whether a unit mounts the framework, which a spec passes in.
+ */
+export function requireMounted(mounted: boolean = MOUNTED): void {
+  if (!mounted) {
+    throw new ToolError("No unit with faces mounts this framework. List paf and paf/plugins/* in the unit's package.json workspaces, and check each face is a folder holding config/pebble.appinfo.json, at the unit's root or beside the core/ of a family there.");
+  }
 }
 
 /**
@@ -157,7 +171,7 @@ export function listFaceNames(): string[] {
 export function faceRelative(face: string): string {
   const match = listFaces().find((entry) => entry.name === face);
   if (!match) {
-    throw new Error(`no such face: ${face} (no ${APPINFO_REL} at the repo root or beside a family core names it)`);
+    throw new ToolError(`no such face: ${face} (no ${APPINFO_REL} at the repo root or beside a family core names it)`);
   }
   return match.rel;
 }

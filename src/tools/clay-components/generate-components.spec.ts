@@ -16,7 +16,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { describe, test, expect } from 'vitest';
-import { ENGINE } from '../paths';
+import { ENGINE } from '../shared/paths';
 import {
   findManifests,
   findInitPiece,
@@ -24,6 +24,7 @@ import {
   minifyCss,
   buildComponentSource,
   inPrecedence,
+  type Roots,
 } from './generate-components';
 
 // the manifests are loaded by path, the same way the generator does it
@@ -36,10 +37,10 @@ const FIXTURE_FACE = path.join(import.meta.dirname, 'fixtures', 'face');
 const GENERATOR = path.join(import.meta.dirname, 'generate-components.ts');
 
 /** The fixture's builder roots, shaped the way rootsFor builds them for a face in no family. */
-const FIXTURE_ROOTS = {
+const FIXTURE_ROOTS: Roots = {
   face: { base: path.join(FIXTURE_FACE, 'src'), builder: path.join('pkjs', 'clay', 'builder') },
   core: null,
-  lib: { base: path.join(ENGINE, 'ts'), builder: path.join('clay', 'builder') },
+  engine: { base: path.join(ENGINE, 'ts'), builder: path.join('clay', 'builder') },
   faceRoot: FIXTURE_FACE,
 };
 
@@ -94,10 +95,10 @@ describe('inPrecedence', () => {
   // three made-up roots laid out the way rootsFor builds them for a face in a family. nothing is read
   // from disk, so the folders never have to exist
   const base = path.resolve('/repo');
-  const ROOTS = {
+  const ROOTS: Roots = {
     face: { base: path.join(base, 'gridlock', 'src'), builder: path.join('pkjs', 'clay', 'builder') },
     core: { base: path.join(base, 'core'), builder: path.join('pkjs', 'clay', 'builder') },
-    lib: { base: path.join(base, 'paf', 'ts'), builder: path.join('clay', 'builder') },
+    engine: { base: path.join(base, 'paf', 'ts'), builder: path.join('clay', 'builder') },
     faceRoot: path.join(base, 'gridlock'),
   };
 

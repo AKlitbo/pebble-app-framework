@@ -20,8 +20,8 @@ import path from 'node:path';
 import conditionVocabulary from '../src/ts/weather/conditions.ts';
 import { WIRE_CAPS } from '../src/ts/pkjs/wire.ts';
 import type { ConditionVocabulary } from '../src/ts/weather/conditions.ts';
-import { writeIfChanged } from '../src/tools/files.ts';
-import { ENGINE } from '../src/tools/paths.ts';
+import { writeIfChanged } from '../src/tools/shared/files.ts';
+import { ENGINE } from '../src/tools/shared/paths.ts';
 
 /** The framework repo's root, which the written paths are logged from. */
 const ROOT = path.resolve(import.meta.dirname, '..');

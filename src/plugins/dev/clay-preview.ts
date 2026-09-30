@@ -24,22 +24,29 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { facePaths, compile, copyGenerated, writeTsconfig } from '../../tools/pkjs/build-pkjs.ts';
-import { appinfoPath, familyCoreDir } from '../../tools/faces.ts';
-import { ENGINE, ENGINE_REL } from '../../tools/paths.ts';
+import { facePaths, compile, copyGenerated, writeTsconfig, type FacePaths } from '../../tools/pkjs/build-pkjs.ts';
+import { appinfoPath, familyCoreDir } from '../../tools/shared/faces.ts';
+import { ENGINE, ENGINE_REL } from '../../tools/shared/paths.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
+import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 
 const requireHost = createRequire(import.meta.url);
 
 const OUT = path.join(import.meta.dirname, 'clay-preview.html');
 
 const face = process.argv[2];
-if (!face || face.startsWith('--')) {
-  console.error('usage: paf tool <face> clay-preview [--watch] [--platform=emery|gabbro]');
-  process.exit(1);
-}
 
-const paths = facePaths(face);
+// a bad face stops here with the one line every tool gives, before anything is built
+let paths: FacePaths;
+try {
+  if (!face || face.startsWith('--')) {
+    throw new ToolError('usage: paf tool <face> clay-preview [--watch] [--platform=emery|gabbro]');
+  }
+  paths = facePaths(face);
+} catch (error) {
+  reportFailure(error);
+  process.exit();
+}
 
 // the bundle pokes at a few host globals while it builds the page, so give it harmless stand-ins
 // under plain node. a defined Pebble (not "pypkjs") is what makes generateUrl hand back a
@@ -74,7 +81,12 @@ const seed = process.argv.slice(3).find((arg) => arg.startsWith('--settings='));
 if (typeof host.localStorage === 'undefined') {
   const store: Record<string, string> = {};
   if (seed) {
-    store['clay-settings'] = fs.readFileSync(seed.slice('--settings='.length), 'utf8');
+    const file = seed.slice('--settings='.length);
+    if (!fs.existsSync(file)) {
+      reportFailure(new ToolError(`${seed} names no file`));
+      process.exit();
+    }
+    store['clay-settings'] = fs.readFileSync(file, 'utf8');
   }
   host.localStorage = {
     getItem: function (key: string) { return key in store ? store[key] : null; },
@@ -180,10 +192,22 @@ function build(): void {
   console.log('[' + stamp + '] wrote ' + OUT + ' (' + html.length + ' bytes) for ' + face);
 }
 
-writeTsconfig(face, paths);
-compile(paths);
-copyGenerated(paths);
-build();
+// a first build that fails stops with the one line every tool gives, and tsc's own exit code
+try {
+  // the page is built from the face's own src/pkjs/config.ts. a face without one has nothing to
+  // preview, and going on would stop on a missing folder or file with a stack that reads as a bug here
+  if (!fs.existsSync(path.join(paths.faceSrc, 'config.ts'))) {
+    throw new ToolError(`${face} has no src/pkjs/config.ts of its own, which is the settings page this previews`);
+  }
+
+  writeTsconfig(face, paths);
+  compile(paths);
+  copyGenerated(paths);
+  build();
+} catch (error) {
+  reportFailure(error);
+  process.exit();
+}
 
 if (process.argv.indexOf('--watch') !== -1) {
   // the face's page, the family core's shared sections, and the framework's ts, which the page

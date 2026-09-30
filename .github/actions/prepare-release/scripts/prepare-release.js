@@ -6,8 +6,8 @@
  * names has to exist with that version in its appinfo, its changelog entry has to be dated and written, and
  * the tag cannot already be released.
  *
- * The face is found with tools/faces.ts from the face's own paf/, the same way its build finds it, even
- * when the action comes from a newer tag. That file is TypeScript, and the Node that github-script runs
+ * The face is found with tools/shared/faces.ts from the face's own paf/, the same way its build finds
+ * it, even when the action comes from a newer tag. That file is TypeScript, and the Node that github-script runs
  * on loads it directly.
  */
 const fs = require('node:fs');
@@ -48,8 +48,8 @@ module.exports = step(async ({ core, exec }) => {
     fail(`${frameworkPackageRel} names no framework version, so there is no telling which release it holds.`);
   }
 
-  const { findFaces } = await import(pathToFileURL(path.join(framework, 'tools', 'faces.ts')).href);
-  const { APPINFO_REL } = await import(pathToFileURL(path.join(framework, 'tools', 'paths.ts')).href);
+  const { findFaces } = await import(pathToFileURL(path.join(framework, 'tools', 'shared', 'faces.ts')).href);
+  const { APPINFO_REL } = await import(pathToFileURL(path.join(framework, 'tools', 'shared', 'paths.ts')).href);
   const { faceVersion } = await import(pathToFileURL(path.join(framework, 'tools', 'manifest', 'build-manifests.ts')).href);
   let faces;
   try {

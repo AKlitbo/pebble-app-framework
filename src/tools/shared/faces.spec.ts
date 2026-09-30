@@ -9,8 +9,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { tempDir } from '../ts/testing/temp-dir';
-import { findFaces, familyCoreFor, familyNameFor } from './faces';
+import { tempDir } from '../../ts/testing/temp-dir';
+import { findFaces, familyCoreFor, familyNameFor, requireMounted } from './faces';
 
 const WORKSPACES = path.join(import.meta.dirname, 'fixtures', 'workspaces');
 const ONE_FACE = path.join(WORKSPACES, 'one-face');
@@ -127,5 +127,14 @@ describe('familyNameFor', () => {
     const result = familyNameFor(ONE_FACE, '.');
 
     expect(result).toBeNull();
+  });
+});
+
+describe('requireMounted', () => {
+  /** A unit that forgot to list paf in its workspaces would otherwise pass every check having checked nothing. */
+  test('stops when no unit mounts the framework, naming the workspaces', () => {
+    const call = () => requireMounted(false);
+
+    expect(call).toThrow(/List paf and paf\/plugins\/\* in the unit's package.json workspaces/);
   });
 });

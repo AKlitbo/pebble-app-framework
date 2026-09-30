@@ -9,7 +9,7 @@
  * Run via npm test, or npm run test:coverage.
  */
 import { defineConfig } from 'vitest/config';
-import { icaljsBundle } from './src/tools/paths.ts';
+import { icaljsBundle } from './src/tools/shared/paths.ts';
 
 // where the watch's ical.js actually lives. src/ts/calendar/icaljs.d.ts describes it but the source
 // tree has no such file. the build copies ical.js's prebuilt ES5 CommonJS bundle into emit/ beside

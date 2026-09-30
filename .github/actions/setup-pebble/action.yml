@@ -1,6 +1,6 @@
 name: Setup Pebble
 description: >
-  Installs Node, the project's npm dependencies, pebble-tool and the Pebble SDK so `bash paf/build.sh`
+  Installs Node, the project's npm dependencies, pebble-tool and the Pebble SDK so `paf build`
   can run, then checks the toolchain answers and puts the pebble-tool and SDK versions on the job summary.
   Given a face that paf sync has already filled and installed, it installs the Node, SDK, and pebble-tool
   that face's framework records. Linux runners only.

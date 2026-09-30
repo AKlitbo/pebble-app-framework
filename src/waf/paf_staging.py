@@ -34,9 +34,6 @@ def _family_name(ctx, source):
     """
     if not source['family_core']:
         return None
-    # a sandbox wscript written by an older framework has no family key
-    if 'family' not in source:
-        ctx.fatal('This sandbox names no family. Run build-manifests.ts again to rewrite it.')
     return source['family'] or None
 
 
@@ -144,7 +141,7 @@ def stage_shared_sources(ctx, source):
     repo_root = _repo_root(ctx).abspath()
     face_root = os.path.normpath(os.path.join(repo_root, source['face']))
     if not os.path.isfile(os.path.join(face_root, 'config', 'pebble.appinfo.json')):
-        ctx.fatal('No face at "{}". Run build-manifests.ts again to rewrite this sandbox.'.format(source['face']))
+        ctx.fatal('No face at "{}". Build the face with paf build, which rewrites this sandbox.'.format(source['face']))
 
     engine_root = os.path.join(repo_root, source['engine'])
     sources = {

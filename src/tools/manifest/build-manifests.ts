@@ -11,15 +11,16 @@
  * sandbox targets/<target name>/, so there is one manifest per target rather than per face.
  * The manifest is a gitignored build input written as plain JSON. Nobody reads it by hand.
  * `pebble build` needs package.json to exist before it runs, so each build regenerates it
- * via build.sh. A file whose contents would not change is left alone, so its mtime does too.
+ * via tools/build.ts. A file whose contents would not change is left alone, so its mtime does too.
  *
- * Usage: node tools/manifest/build-manifests.ts --faces | [--targets] <face>
+ * Usage: node tools/manifest/build-manifests.ts [--targets] <face>
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { appinfoPath, faceRelative, familyCoreFor, familyNameFor, listFaceNames } from '../faces.ts';
-import { writeIfChanged } from '../files.ts';
-import { ENGINE, ENGINE_REL, WORKSPACE } from '../paths.ts';
+import { appinfoPath, faceRelative, familyCoreFor, familyNameFor, listFaceNames } from '../shared/faces.ts';
+import { writeIfChanged } from '../shared/files.ts';
+import { ENGINE, ENGINE_REL, WORKSPACE } from '../shared/paths.ts';
+import { ToolError, reportFailure } from '../shared/tool-error.ts';
 
 const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
@@ -80,24 +81,25 @@ type Appinfo = SharedAppinfo & Partial<Target> & { version?: string; targets?: T
  * targets, each with its own sandbox under targets/<target name>/.
  *
  * @param config The parsed appinfo to read the target or targets from.
+ * @param face The face the appinfo belongs to, which a mistake in it names.
  * @return Every build target this face declares.
  */
-export function resolveTargets(config: Appinfo): Target[] {
+export function resolveTargets(config: Appinfo, face: string): Target[] {
   if (config.targets) {
     // an empty map or a target with no name reached the sandbox step as targets/undefined, or as
     // a TypeError that named nothing
     const targets = Object.entries(config.targets);
     if (targets.length === 0) {
-      throw new Error('appinfo declares an empty targets map');
+      throw new ToolError(`${face}'s appinfo declares an empty targets map`);
     }
     const unnamed = targets.find(([, target]) => !target || !target.name);
     if (unnamed) {
-      throw new Error(`appinfo target "${unnamed[0]}" has no name`);
+      throw new ToolError(`${face}'s appinfo target "${unnamed[0]}" has no name`);
     }
     return targets.map(([, target]) => target);
   }
   if (!config.name) {
-    throw new Error('appinfo declares neither a targets map nor a top-level name');
+    throw new ToolError(`${face}'s appinfo declares neither a targets map nor a top-level name`);
   }
   return [{ name: config.name, watchface: config.watchface ?? false, menuIcon: config.menuIcon }];
 }
@@ -117,7 +119,7 @@ export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] 
   if (target.menuIcon) {
     const entry = media.find((item) => item.name === target.menuIcon);
     if (!entry) {
-      throw new Error(`menuIcon ${target.menuIcon} is not in the media list`);
+      throw new ToolError(`target ${target.name}'s menuIcon ${target.menuIcon} is not in the media list`);
     }
     entry.menuIcon = true;
   }
@@ -235,7 +237,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
   };
   writeIfChanged(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));
 
-  // stdout carries only the sandbox paths build.sh reads back, so the note goes to stderr
+  // stdout is kept for the sandbox paths the bare face prints, so the note goes to stderr
   console.error(`Sandbox targets/${target.name} is ready (source face ${face} ${version}, watchface=${target.watchface}).`);
   return outDir;
 }
@@ -267,62 +269,95 @@ export function findTargetClash(targetsByFace: Record<string, string[]>): string
   return null;
 }
 
+/**
+ * A face's appinfo, read from its config/pebble.appinfo.json.
+ *
+ * @param face The face to read.
+ * @return The parsed appinfo.
+ */
+export function readAppinfo(face: string): Appinfo {
+  return JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8'));
+}
+
+/**
+ * The name of every target a face declares, which is also the name of each one's sandbox.
+ *
+ * @param face The face to read.
+ * @return The target names, in the order the face declares them.
+ */
+export function faceTargetNames(face: string): string[] {
+  return resolveTargets(readAppinfo(face), face).map((target) => target.name);
+}
+
+/** Every face's target names, kept once read, since a build of every face checks each against them. */
+let targetNames: Record<string, string[]> | null = null;
+
 /** Every face's target names, leaving out a face whose appinfo does not read, since its own build reports that. */
 function allTargetNames(): Record<string, string[]> {
+  if (targetNames) {
+    return targetNames;
+  }
   const byFace: Record<string, string[]> = {};
   for (const name of listFaceNames()) {
     try {
-      byFace[name] = resolveTargets(JSON.parse(fs.readFileSync(appinfoPath(name), 'utf8'))).map((target) => target.name);
+      byFace[name] = faceTargetNames(name);
     } catch {
       // unreadable, so it has no targets to clash with
     }
   }
 
+  targetNames = byFace;
   return byFace;
 }
 
 /**
- * Writes every target sandbox for a face and prints each sandbox's absolute path, one per line, so
- * build.sh writes and finds them in one run. With --targets it only prints the face's target names,
- * and with --faces every face in the repo, one per line, so build.sh can check a name and loop over
- * them with the same lookup every other tool uses.
+ * Writes every target sandbox a face declares.
+ *
+ * A target name another face already uses stops it before anything is written, since the two would
+ * build into one sandbox and the second would quietly replace the first's .pbw.
+ *
+ * @param face The face to write sandboxes for.
+ * @return Each sandbox's absolute path, in the order the face declares its targets.
  */
-function main() {
-  const args = process.argv.slice(2);
-
-  if (args[0] === '--faces') {
-    for (const name of listFaceNames()) {
-      console.log(name);
-    }
-    return;
-  }
-
-  const listOnly = args[0] === '--targets';
-  const face = listOnly ? args[1] : args[0];
-  if (!face) {
-    console.error('usage: build-manifests.ts --faces | [--targets] <face>');
-    process.exit(1);
-  }
-
-  const config: Appinfo = JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8'));
-  const targets = resolveTargets(config);
-
-  if (listOnly) {
-    for (const target of targets) {
-      console.log(target.name);
-    }
-    return;
-  }
+export function writeSandboxes(face: string): string[] {
+  const config = readAppinfo(face);
+  const targets = resolveTargets(config, face);
 
   const clash = findTargetClash({ ...allTargetNames(), [face]: targets.map((target) => target.name) });
   if (clash) {
-    console.error(clash);
-    process.exit(1);
+    throw new ToolError(clash);
   }
 
   const rootPkg: RootPkg = JSON.parse(fs.readFileSync(ROOT_PKG, 'utf8'));
-  for (const target of targets) {
-    console.log(writeTarget(face, config, rootPkg, target));
+  return targets.map((target) => writeTarget(face, config, rootPkg, target));
+}
+
+/**
+ * What the command line asks for, as the lines it prints.
+ *
+ * With --targets it is a face's target names, so a script outside the framework's TypeScript uses
+ * the same lookup every tool does. A bare face writes its sandboxes and gives their paths.
+ * tools/build.ts calls writeSandboxes itself, so that is there for running by hand.
+ */
+function run(args: string[]): string[] {
+  const listOnly = args[0] === '--targets';
+  const face = listOnly ? args[1] : args[0];
+  if (!face) {
+    throw new ToolError('usage: build-manifests.ts [--targets] <face>');
+  }
+  if (listOnly) {
+    return faceTargetNames(face);
+  }
+  return writeSandboxes(face);
+}
+
+function main() {
+  try {
+    for (const line of run(process.argv.slice(2))) {
+      console.log(line);
+    }
+  } catch (error) {
+    reportFailure(error);
   }
 }
 

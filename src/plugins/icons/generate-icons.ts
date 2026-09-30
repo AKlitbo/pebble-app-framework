@@ -39,8 +39,9 @@ import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
 import { buildMedia, iconsManifestPath, mediaOf, replaceMediaArray } from './media.ts';
 import type { IconManifest } from './media.ts';
-import { appinfoPath, faceDir, listFaceNames } from '../../tools/faces.ts';
-import { WORKSPACE } from '../../tools/paths.ts';
+import { appinfoPath, faceDir, listFaceNames } from '../../tools/shared/faces.ts';
+import { WORKSPACE } from '../../tools/shared/paths.ts';
+import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 
 const ROOT = WORKSPACE;
 
@@ -188,7 +189,7 @@ function svgPath(sources: string, ref: string): string {
   const key = slash === -1 ? '' : ref.slice(0, slash);
   const dir = VENDOR_DIRS[key];
   if (!dir) {
-    throw new Error(`Unknown vendor key in svg ref "${ref}" (expected one of: ${Object.keys(VENDOR_DIRS).join(', ')})`);
+    throw new ToolError(`Unknown vendor key in svg ref "${ref}" (expected one of: ${Object.keys(VENDOR_DIRS).join(', ')})`);
   }
 
   return path.join(sources, dir, `${ref.slice(slash + 1)}.svg`);
@@ -199,7 +200,7 @@ function syncMedia(pkgPath: string, manifest: IconManifest): void {
   const raw = fs.readFileSync(pkgPath, 'utf8');
   const media = mediaOf(raw);
   if (!Array.isArray(media)) {
-    throw new Error(`no resources.media array in ${pkgPath}`);
+    throw new ToolError(`no resources.media array in ${pkgPath}`);
   }
 
   fs.writeFileSync(pkgPath, replaceMediaArray(raw, buildMedia(media, manifest)));
@@ -251,13 +252,13 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
       const out = path.join(outDir, `${name}.png`);
       if (!fs.existsSync(src)) {
         if (!fs.existsSync(out)) {
-          throw new Error(`Missing source: ${src} (for ${name})`);
+          throw new ToolError(`Missing source: ${src} (for ${name})`);
         }
         // every render comes out at exactly the size asked for, so a PNG of another size was made
         // before icons.json changed, and keeping it would draw the old size in the new spot
         const kept = await sharp(out).metadata();
         if (kept.width !== spec.size[0] || kept.height !== spec.size[1]) {
-          throw new Error(`Missing source: ${src} (for ${name}), and its PNG is ${kept.width}x${kept.height} where icons.json asks for ${spec.size[0]}x${spec.size[1]}`);
+          throw new ToolError(`Missing source: ${src} (for ${name}), and its PNG is ${kept.width}x${kept.height} where icons.json asks for ${spec.size[0]}x${spec.size[1]}`);
         }
         console.warn(`warning: ${src} is missing, so ${name} keeps the PNG it has`);
         continue;
@@ -298,7 +299,7 @@ async function main(): Promise<void> {
   // a named face with no icons says so, before the sources folder it would never read is asked for.
   // with no face named, the list above already holds only faces with icons
   if (face && !fs.existsSync(iconsManifestPath(face))) {
-    throw new Error(`No resources/icons.json under ${faceDir(face)}`);
+    throw new ToolError(`No resources/icons.json under ${faceDir(face)}`);
   }
 
   const configFile = path.join(ROOT, 'paf.config.json');
@@ -306,17 +307,17 @@ async function main(): Promise<void> {
   const setting = iconSourcesSetting(config);
   const sources = iconSourcesDir(ROOT, config, process.env.ICON_SOURCES);
   if (!sources) {
-    throw new Error(`No icon sources folder. Name it as "plugins": { "icons": { "sources": "<folder>" } } in ${configFile}`);
+    throw new ToolError(`No icon sources folder. Name it as "plugins": { "icons": { "sources": "<folder>" } } in ${configFile}`);
   }
   // a folder that is not there would leave every icon on its committed PNG with a warning each and pass,
   // which reads as a run that worked
   if (!fs.existsSync(sources) || !fs.statSync(sources).isDirectory()) {
     const from = setting ? `plugins.icons.sources in ${configFile}` : 'ICON_SOURCES';
-    throw new Error(`The icon sources folder ${sources} is not there. It comes from ${from}.`);
+    throw new ToolError(`The icon sources folder ${sources} is not there. It comes from ${from}.`);
   }
   if (!holdsIconSets(sources)) {
     const sets = Object.values(VENDOR_DIRS).map((dir) => dir.split(path.sep).join('/')).join(', ');
-    throw new Error(`The icon sources folder ${sources} holds none of the icon sets (${sets}). Check that it is the folder holding them.`);
+    throw new ToolError(`The icon sources folder ${sources} holds none of the icon sets (${sets}). Check that it is the folder holding them.`);
   }
 
   for (const name of faces) {
@@ -325,8 +326,5 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
+  main().catch(reportFailure);
 }

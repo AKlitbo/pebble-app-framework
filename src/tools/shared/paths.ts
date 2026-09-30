@@ -59,7 +59,7 @@ export function workspaceFor(engine: string): string {
 }
 
 /** The framework root. */
-export const ENGINE = path.resolve(import.meta.dirname, '..');
+export const ENGINE = path.resolve(import.meta.dirname, '..', '..');
 
 /** The repo mounting the framework, or the framework itself when it is checked out on its own. */
 export const WORKSPACE = workspaceFor(ENGINE);
