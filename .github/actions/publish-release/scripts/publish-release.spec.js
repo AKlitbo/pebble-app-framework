@@ -28,8 +28,7 @@ beforeEach(() => {
   vi.stubEnv('NOTES_FILE', path.join(workspace, 'release-notes.md'));
   fs.mkdirSync(path.join(workspace, 'paf'));
   fs.writeFileSync(path.join(workspace, 'paf', 'package.json'), '{}');
-  fs.mkdirSync(path.join(workspace, 'config'));
-  fs.writeFileSync(path.join(workspace, 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
+  fs.writeFileSync(path.join(workspace, 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
 });
 
 afterEach(() => {
@@ -83,12 +82,12 @@ describe('publish-release', () => {
 
   /** A family with its own framework builds into its own targets/, so reading the repo root's would find no pbw and stop the release. */
   test('attaches the pbw a family project built', async () => {
-    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'config'), { recursive: true });
-    fs.rmSync(path.join(workspace, 'config'), { recursive: true });
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock'), { recursive: true });
+    fs.rmSync(path.join(workspace, 'pebble.appinfo.json'));
     fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'paf'));
     fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'paf', 'package.json'), '{}');
     fs.mkdirSync(path.join(workspace, 'watchfaces', 'mosaic', 'core'));
-    fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
+    fs.writeFileSync(path.join(workspace, 'watchfaces', 'mosaic', 'gridlock', 'pebble.appinfo.json'), JSON.stringify({ name: 'gridlock' }));
     writeTarget('gridlock', ['emery'], { project: 'watchfaces/mosaic' });
 
     const { core, exec } = await publish(({ command }) => (command === 'node' ? { stdout: 'gridlock\n' } : {}));

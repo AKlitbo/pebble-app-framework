@@ -9,8 +9,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
-/** Where a face keeps its appinfo, relative to the face's own folder. */
-export const APPINFO_REL = path.join('config', 'pebble.appinfo.json');
+/** The appinfo that makes a folder a face, which sits at the face's own root. */
+export const APPINFO_REL = 'pebble.appinfo.json';
 
 /**
  * Whether a folder's package.json lists a workspace by name, as `name`, `./name`, or `name/`, in the plain

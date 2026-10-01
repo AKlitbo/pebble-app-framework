@@ -257,14 +257,20 @@ function isPrereleaseTag(name) {
   return isVersionTag(name) && parseVersionTag(name).pre.length > 0;
 }
 
-/** Whether a folder holds a face. */
-function holdsFace(dir) {
-  return fs.existsSync(path.join(dir, 'config', 'pebble.appinfo.json'));
+/** The appinfo that makes a folder a face, at the face's own root. */
+const APPINFO = 'pebble.appinfo.json';
+
+/** Where framework 3 keeps a face's appinfo, which a unit moving to this framework moves up a folder. */
+const OLD_APPINFO = path.join('config', 'pebble.appinfo.json');
+
+/** Whether a folder holds a face, by the appinfo at the place given. */
+function holdsFace(dir, appinfo) {
+  return fs.existsSync(path.join(dir, appinfo));
 }
 
 /** The name in a face's appinfo, which names it when the face is the root of its project. */
-function appinfoName(root, dir) {
-  const file = path.join(dir, 'config', 'pebble.appinfo.json');
+function appinfoName(root, dir, appinfo) {
+  const file = path.join(dir, appinfo);
   const rel = path.relative(root, file).split(path.sep).join('/');
   return readJson(file, rel).name;
 }
@@ -283,9 +289,10 @@ function appinfoName(root, dir) {
  *
  * @param repoRoot The repo root.
  * @param name The face's name.
+ * @param appinfo Where a face keeps its appinfo, from the face's own folder.
  * @return The project and face folders, or null when the repo has no such face.
  */
-function findFaceProject(repoRoot, name) {
+function findFaceProject(repoRoot, name, appinfo = APPINFO) {
   // inside a project this repeats the rules of tools/shared/faces.ts, so a new place a face can sit
   // in one has to be added in both. the face has to be found before its paf/ is known, so faces.ts cannot be asked first
   // a face's name is one folder name, so one reaching into another folder, or out of the repo, is none
@@ -307,11 +314,11 @@ function findFaceProject(repoRoot, name) {
 
   const found = [];
   for (const project of projects) {
-    if (holdsFace(project)) {
-      if (appinfoName(root, project) === name) {
+    if (holdsFace(project, appinfo)) {
+      if (appinfoName(root, project, appinfo) === name) {
         found.push({ project, face: project });
       }
-    } else if (fs.existsSync(path.join(project, 'core')) && holdsFace(path.join(project, name))) {
+    } else if (fs.existsSync(path.join(project, 'core')) && holdsFace(path.join(project, name), appinfo)) {
       found.push({ project, face: path.join(project, name) });
     }
   }
@@ -334,7 +341,11 @@ function findFaceProject(repoRoot, name) {
 function faceProject(root, name) {
   const found = name ? findFaceProject(root, name) : null;
   if (name && !found) {
-    fail(`This repo has no face called '${name}'.`);
+    // a face still laid out for framework 3 is named, since the lookup above only reads this framework's layout
+    const old = findFaceProject(root, name, OLD_APPINFO);
+    const where = old ? path.relative(root, path.join(old.face, OLD_APPINFO)).split(path.sep).join('/') : '';
+    const hint = old ? ` ${where} is where framework 3 keeps an appinfo, and the actions at this tag read a face laid out for framework 4. Move it up a folder, or load the actions at a 3.x tag.` : '';
+    fail(`This repo has no face called '${name}'.${hint}`);
   }
   const project = found ? found.project : path.resolve(root);
   const framework = path.join(project, 'paf');

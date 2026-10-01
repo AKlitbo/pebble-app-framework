@@ -1,7 +1,7 @@
 /**
  * Builds a face's .pbw, or every face's, from WSL with the Pebble SDK installed.
  *
- * For each face it writes every target's sandbox from the face's config/pebble.appinfo.json,
+ * For each face it writes every target's sandbox from the face's pebble.appinfo.json,
  * compiles the phone code into each sandbox's emit/, then runs pebble build in each sandbox. The
  * face project is one face, or a family with its faces beside its core/.
  *

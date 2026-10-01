@@ -27,7 +27,7 @@
  *
  * This:
  *   1. renders each glyph into resources/icons/<name>.png
- *   2. rewrites config/pebble.appinfo.json's media block so name -> file stays in sync
+ *   2. rewrites pebble.appinfo.json's media block so name -> file stays in sync
  *
  * Re-run after editing a manifest:
  *   paf gen <face> icons    for one face

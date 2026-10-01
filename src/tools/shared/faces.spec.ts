@@ -35,6 +35,16 @@ describe('findFaces', () => {
     ]);
   });
 
+  /**
+   * paf and the release actions read a root with an appinfo as one face. Listing the folder beside its
+   * core/ as well would have paf check cover a face that paf build says does not exist.
+   */
+  test('finds only the root face when a face folder sits beside a core under it', () => {
+    const result = findFaces(path.join(WORKSPACES, 'root-face-with-core'));
+
+    expect(result).toEqual([{ name: 'top', rel: '.' }]);
+  });
+
   /** A folder holding no faces, like a framework on its own, has nothing to build. */
   test('finds nothing in a folder with no faces', () => {
     const result = findFaces(WORKSPACES);
@@ -76,8 +86,8 @@ describe('familyNameFor', () => {
   test('takes the family name from its package.json over its folder', () => {
     const root = tempDir('pebble-watchfaces-sketchbook-');
     fs.mkdirSync(path.join(root, 'core'));
-    fs.mkdirSync(path.join(root, 'ridgeline', 'config'), { recursive: true });
-    fs.writeFileSync(path.join(root, 'ridgeline', 'config', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
+    fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
     fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ framework: { family: 'sketchbook' } }));
 
     const result = familyNameFor(root, 'ridgeline');
@@ -89,8 +99,8 @@ describe('familyNameFor', () => {
   test('refuses a family name that is not a plain folder name', () => {
     const root = tempDir('family-name-');
     fs.mkdirSync(path.join(root, 'core'));
-    fs.mkdirSync(path.join(root, 'ridgeline', 'config'), { recursive: true });
-    fs.writeFileSync(path.join(root, 'ridgeline', 'config', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
+    fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
     fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ framework: { family: "it's" } }));
 
     const result = () => familyNameFor(root, 'ridgeline');
@@ -102,8 +112,8 @@ describe('familyNameFor', () => {
   test('takes a family name with a space in it', () => {
     const root = path.join(tempDir('family-name-'), 'my faces');
     fs.mkdirSync(path.join(root, 'core'), { recursive: true });
-    fs.mkdirSync(path.join(root, 'ridgeline', 'config'), { recursive: true });
-    fs.writeFileSync(path.join(root, 'ridgeline', 'config', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
+    fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
 
     const result = familyNameFor(root, 'ridgeline');
 
@@ -114,8 +124,8 @@ describe('familyNameFor', () => {
   test('takes a family name with a dot in it', () => {
     const root = path.join(tempDir('family-name-'), 'line.v2');
     fs.mkdirSync(path.join(root, 'core'), { recursive: true });
-    fs.mkdirSync(path.join(root, 'ridgeline', 'config'), { recursive: true });
-    fs.writeFileSync(path.join(root, 'ridgeline', 'config', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
+    fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
+    fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
 
     const result = familyNameFor(root, 'ridgeline');
 

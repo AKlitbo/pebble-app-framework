@@ -1,7 +1,7 @@
 /**
  * Finding a face's source directory.
  *
- * A face is a directory holding config/pebble.appinfo.json. The folder mounting the framework is either
+ * A face is a directory holding pebble.appinfo.json. The folder mounting the framework is either
  * one face, or a family with its faces beside the code they share ({core,ridgeline,...}).
  *
  * A family's core/ carries no appinfo, which is what keeps it from being mistaken for a face, and
@@ -29,6 +29,7 @@ function byName(first: Face, second: Face): number {
   if (first.name === second.name) {
     return 0;
   }
+
   return first.name < second.name ? -1 : 1;
 }
 
@@ -40,15 +41,19 @@ function byName(first: Face, second: Face): number {
  * @return Every face found, ordered by name.
  */
 export function findFaces(root: string): Face[] {
-  const found: Face[] = [];
-
+  // a root that is a face is that one face and nothing else, which is how paf and the release actions
+  // read it too. a face folder beside a core/ under it is not built, since no other tool would find it
   if (isFace(root)) {
     const appinfo = JSON.parse(fs.readFileSync(path.join(root, APPINFO_REL), 'utf8'));
+
     if (!appinfo.name) {
       throw new ToolError(`the face at the repo root needs a name in its ${APPINFO_REL}`);
     }
-    found.push({ name: appinfo.name, rel: '.' });
+
+    return [{ name: appinfo.name, rel: '.' }];
   }
+
+  const found: Face[] = [];
 
   // a family: its faces are the root's children that carry an appinfo
   if (isFamilyRoot(root)) {
@@ -75,6 +80,7 @@ export function findFaces(root: string): Face[] {
  */
 export function familyCoreFor(root: string, rel: string): string | null {
   const family = familyFolder(root, rel);
+
   return family ? path.join(family, 'core') : null;
 }
 
@@ -92,10 +98,13 @@ export function familyCoreFor(root: string, rel: string): string | null {
  */
 export function familyNameFor(root: string, rel: string): string | null {
   const family = familyFolder(root, rel);
+
   if (!family) {
     return null;
   }
+
   const name = familySetting(family) || path.basename(path.resolve(family));
+
   // the name goes into the generated wscript as a string and into the sandbox as a folder, so a quote,
   // a backslash, or a control character would break the one, and a slash or .. would stage the family's
   // C outside the other. any leading dot is refused, which takes in .. along with it. anything else a
@@ -104,6 +113,7 @@ export function familyNameFor(root: string, rel: string): string | null {
   if (!name || name.startsWith('.') || /["'\\/\x00-\x1f]/.test(name)) {
     throw new ToolError(`the family name "${name}" cannot start with a dot or hold a quote, a slash, or a backslash. Set "framework": { "family": "<name>" } in ${path.join(family, 'package.json')}`);
   }
+
   return name;
 }
 
@@ -111,6 +121,7 @@ export function familyNameFor(root: string, rel: string): string | null {
 function familySetting(family: string): string | null {
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(family, 'package.json'), 'utf8'));
+
     return typeof pkg.framework?.family === 'string' && pkg.framework.family ? pkg.framework.family : null;
   } catch {
     return null;
@@ -133,9 +144,11 @@ let workspaceFaces: Face[] | null = null;
  */
 function listFaces(): Face[] {
   requireMounted();
+
   if (!workspaceFaces) {
     workspaceFaces = findFaces(WORKSPACE);
   }
+
   return workspaceFaces;
 }
 
@@ -158,7 +171,7 @@ export function listFaceNames(): string[] {
  */
 export function requireMounted(mounted: boolean = MOUNTED): void {
   if (!mounted) {
-    throw new ToolError("No unit with faces mounts this framework. List paf and paf/plugins/* in the unit's package.json workspaces, and check each face is a folder holding config/pebble.appinfo.json, at the unit's root or beside the core/ of a family there.");
+    throw new ToolError("No unit with faces mounts this framework. List paf and paf/plugins/* in the unit's package.json workspaces, and check each face is a folder holding pebble.appinfo.json, at the unit's root or beside the core/ of a family there.");
   }
 }
 
@@ -170,9 +183,11 @@ export function requireMounted(mounted: boolean = MOUNTED): void {
  */
 export function faceRelative(face: string): string {
   const match = listFaces().find((entry) => entry.name === face);
+
   if (!match) {
     throw new ToolError(`no such face: ${face} (no ${APPINFO_REL} at the repo root or beside a family core names it)`);
   }
+
   return match.rel;
 }
 
@@ -187,7 +202,7 @@ export function faceDir(face: string): string {
 }
 
 /**
- * A face's config/pebble.appinfo.json, by name.
+ * A face's pebble.appinfo.json, by name.
  *
  * @param face The face's name.
  * @return The appinfo's absolute path.

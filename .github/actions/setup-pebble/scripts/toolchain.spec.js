@@ -26,7 +26,7 @@ describe('toolchain', () => {
     repo({
       'watchfaces/mosaic/core/.gitkeep': '',
       'watchfaces/mosaic/paf/toolchain.json': '{ "format": 1, "sdk": "4.33.1", "pebbleTool": "5.0.40", "node": 24 }',
-      'watchfaces/mosaic/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }',
+      'watchfaces/mosaic/gridlock/pebble.appinfo.json': '{ "name": "gridlock" }',
       'watchfaces/mosaic/node_modules/.package-lock.json': '{}',
     });
     vi.stubEnv('FACE', 'gridlock');
@@ -45,7 +45,7 @@ describe('toolchain', () => {
     repo({
       'watchfaces/mosaic/core/.gitkeep': '',
       'watchfaces/mosaic/paf/toolchain.json': '{ "format": 1, "sdk": "4.33.1", "pebbleTool": "5.0.40", "node": 24 }',
-      'watchfaces/mosaic/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }',
+      'watchfaces/mosaic/gridlock/pebble.appinfo.json': '{ "name": "gridlock" }',
     });
     vi.stubEnv('FACE', 'gridlock');
     const core = fakeCore();
@@ -59,7 +59,7 @@ describe('toolchain', () => {
   test('names a toolchain file that holds no object', async () => {
     repo({
       'watchfaces/ide-vscode/paf/toolchain.json': 'null',
-      'watchfaces/ide-vscode/config/pebble.appinfo.json': '{ "name": "ide-vscode" }',
+      'watchfaces/ide-vscode/pebble.appinfo.json': '{ "name": "ide-vscode" }',
     });
     vi.stubEnv('FACE', 'ide-vscode');
     const core = fakeCore();
@@ -73,7 +73,7 @@ describe('toolchain', () => {
   test('stops on a toolchain format it does not read', async () => {
     repo({
       'watchfaces/ide-vscode/paf/toolchain.json': '{ "format": 99, "sdk": "4.33.1", "pebbleTool": "5.0.40", "node": 24 }',
-      'watchfaces/ide-vscode/config/pebble.appinfo.json': '{ "name": "ide-vscode" }',
+      'watchfaces/ide-vscode/pebble.appinfo.json': '{ "name": "ide-vscode" }',
     });
     vi.stubEnv('FACE', 'ide-vscode');
     const core = fakeCore();
@@ -87,7 +87,7 @@ describe('toolchain', () => {
   test('stops on a toolchain with no pebble-tool version', async () => {
     repo({
       'watchfaces/ide-vscode/paf/toolchain.json': '{ "format": 1, "sdk": "4.33.1", "node": 24 }',
-      'watchfaces/ide-vscode/config/pebble.appinfo.json': '{ "name": "ide-vscode" }',
+      'watchfaces/ide-vscode/pebble.appinfo.json': '{ "name": "ide-vscode" }',
     });
     vi.stubEnv('FACE', 'ide-vscode');
     const core = fakeCore();
@@ -100,7 +100,7 @@ describe('toolchain', () => {
   /** Without the framework filled in there is nothing to read, and installing latest instead would hide it. */
   test('stops when the face\'s paf/ has no toolchain', async () => {
     repo({
-      'watchfaces/ide-vscode/config/pebble.appinfo.json': '{ "name": "ide-vscode" }',
+      'watchfaces/ide-vscode/pebble.appinfo.json': '{ "name": "ide-vscode" }',
     });
     vi.stubEnv('FACE', 'ide-vscode');
     const core = fakeCore();

@@ -1,5 +1,5 @@
 /**
- * Generate targets/<target>/package.json from a face's config/pebble.appinfo.json.
+ * Generate targets/<target>/package.json from a face's pebble.appinfo.json.
  *
  * pebble.appinfo.json holds the Pebble appinfo (uuid, messageKeys, the whole resource
  * list) plus the per-face build identity: the release name, the watchface flag, and (for
@@ -31,7 +31,7 @@ const ROOT_PKG = path.join(ROOT, 'package.json');
 const WSCRIPT_TEMPLATE = path.join(ENGINE, 'waf', 'wscript.template');
 
 /**
- * One entry in config/pebble.appinfo.json's resources.media: a bitmap or font the SDK
+ * One entry in pebble.appinfo.json's resources.media: a bitmap or font the SDK
  * packs. generate-icons.ts rewrites the bitmap rows, so it reads this shape too.
  */
 export type MediaEntry = { type: string; name: string; file?: string; menuIcon?: boolean; [key: string]: unknown };
@@ -271,7 +271,7 @@ export function findTargetClash(targetsByFace: Record<string, string[]>): string
 }
 
 /**
- * A face's appinfo, read from its config/pebble.appinfo.json.
+ * A face's appinfo, read from its pebble.appinfo.json.
  *
  * @param face The face to read.
  * @return The parsed appinfo.

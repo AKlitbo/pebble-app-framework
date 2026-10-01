@@ -68,7 +68,7 @@ module.exports = step(async ({ core, exec }) => {
   // the version comes from the same place the build takes it, so a face with none in its appinfo is held
   // to the repo's own version
   const faceRel = rel(face.rel);
-  const appinfoRel = path.posix.join(faceRel, APPINFO_REL.split(path.sep).join('/'));
+  const appinfoRel = path.posix.join(faceRel, APPINFO_REL);
   const appinfo = readJson(path.join(workspace, appinfoRel), appinfoRel);
   const projectPackageRel = rel('package.json');
   const projectPackage = path.join(project, 'package.json');

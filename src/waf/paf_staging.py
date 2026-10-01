@@ -42,6 +42,9 @@ def _family_name(ctx, source):
 # of the sandbox, since the PebbleKit JS reaches the build already compiled into emit/
 ENGINE_C_ROOTS = ('core', 'pebble')
 
+# the appinfo that makes a folder a face, at the face's own root. tools/shared/paths.ts names it too
+APPINFO = 'pebble.appinfo.json'
+
 
 def _plugin_c_roots(ctx, engine_root):
     """
@@ -140,7 +143,7 @@ def stage_shared_sources(ctx, source):
 
     repo_root = _repo_root(ctx).abspath()
     face_root = os.path.normpath(os.path.join(repo_root, source['face']))
-    if not os.path.isfile(os.path.join(face_root, 'config', 'pebble.appinfo.json')):
+    if not os.path.isfile(os.path.join(face_root, APPINFO)):
         ctx.fatal('No face at "{}". Build the face with paf build, which rewrites this sandbox.'.format(source['face']))
 
     engine_root = os.path.join(repo_root, source['engine'])

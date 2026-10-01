@@ -34,8 +34,7 @@ beforeEach(() => {
   vi.stubEnv('RUNNER_TEMP', workspace);
   vi.stubEnv('FACE', 'ridgeline');
   vi.stubEnv('BUILD_LOG', 'build-ridgeline.log');
-  fs.mkdirSync(path.join(workspace, 'config'));
-  fs.writeFileSync(path.join(workspace, 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline' }));
+  fs.writeFileSync(path.join(workspace, 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline' }));
 });
 
 afterEach(() => {
@@ -75,10 +74,10 @@ describe('report-memory', () => {
 
   /** A family with its own framework builds into its own targets/, so reading the repo root's would report every size as 0. */
   test('reads the binaries a family project built', async () => {
-    fs.rmSync(path.join(workspace, 'config'), { recursive: true });
-    fs.mkdirSync(path.join(workspace, 'watchfaces', 'contour', 'ridgeline', 'config'), { recursive: true });
+    fs.rmSync(path.join(workspace, 'pebble.appinfo.json'));
+    fs.mkdirSync(path.join(workspace, 'watchfaces', 'contour', 'ridgeline'), { recursive: true });
     fs.mkdirSync(path.join(workspace, 'watchfaces', 'contour', 'core'));
-    fs.writeFileSync(path.join(workspace, 'watchfaces', 'contour', 'ridgeline', 'config', 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline' }));
+    fs.writeFileSync(path.join(workspace, 'watchfaces', 'contour', 'ridgeline', 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline' }));
     writeBinary('gabbro', 22132, 24888, 'watchfaces/contour');
     writeBinary('emery', 22844, 25592, 'watchfaces/contour');
 

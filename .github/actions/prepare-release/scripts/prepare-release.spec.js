@@ -37,8 +37,8 @@ afterEach(() => {
 
 function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog = CHANGELOG, targetPlatforms = ['emery', 'gabbro'] } = {}) {
   const dir = path.join(workspace, rel);
-  fs.mkdirSync(path.join(dir, 'config'), { recursive: true });
-  fs.writeFileSync(path.join(dir, 'config', 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version, targetPlatforms }));
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version, targetPlatforms }));
   fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), changelog);
 }
 
@@ -101,7 +101,7 @@ describe('prepare-release', () => {
 
     const { core } = await prepare();
 
-    expect(core.setFailed).toHaveBeenCalledWith('config/pebble.appinfo.json lists no targetPlatforms. Add them so the release can name what each pbw installs on.');
+    expect(core.setFailed).toHaveBeenCalledWith('pebble.appinfo.json lists no targetPlatforms. Add them so the release can name what each pbw installs on.');
   });
 
   /** A version with build metadata was never read as a pre-release, so a candidate went out marked Latest. */
@@ -130,7 +130,7 @@ describe('prepare-release', () => {
 
     const { core } = await prepare();
 
-    expect(core.setFailed).toHaveBeenCalledWith('Tag lcars-stardate-v1.11.0 says version 1.11.0, but neither config/pebble.appinfo.json nor package.json sets a version.');
+    expect(core.setFailed).toHaveBeenCalledWith('Tag lcars-stardate-v1.11.0 says version 1.11.0, but neither pebble.appinfo.json nor package.json sets a version.');
   });
 
   /** A tag typed with the wrong version would publish a release whose name disagrees with what the watch reports. */
@@ -139,7 +139,7 @@ describe('prepare-release', () => {
 
     const { core } = await prepare();
 
-    expect(core.setFailed).toHaveBeenCalledWith('Tag lcars-stardate-v1.11.0 says version 1.11.0, but config/pebble.appinfo.json says 1.10.0.');
+    expect(core.setFailed).toHaveBeenCalledWith('Tag lcars-stardate-v1.11.0 says version 1.11.0, but pebble.appinfo.json says 1.10.0.');
   });
 
   /** An entry still marked Unreleased means the changelog was never finished, and it would ship as the notes. */

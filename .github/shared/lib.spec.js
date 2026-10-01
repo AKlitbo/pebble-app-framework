@@ -127,7 +127,7 @@ describe('findFaceProject', () => {
   test('finds the family folder a face in it builds from', () => {
     const root = tree({
       'watchfaces/mosaic/core/.gitkeep': '',
-      'watchfaces/mosaic/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }',
+      'watchfaces/mosaic/gridlock/pebble.appinfo.json': '{ "name": "gridlock" }',
     });
 
     const result = findFaceProject(root, 'gridlock');
@@ -140,7 +140,7 @@ describe('findFaceProject', () => {
    * as the project, the release read a paf/ whose tools could not find the face.
    */
   test('finds nothing in a folder under watchfaces/ that is neither a family nor a face', () => {
-    const root = tree({ 'watchfaces/contour/ridgeline/config/pebble.appinfo.json': '{ "name": "ridgeline" }' });
+    const root = tree({ 'watchfaces/contour/ridgeline/pebble.appinfo.json': '{ "name": "ridgeline" }' });
 
     const result = findFaceProject(root, 'ridgeline');
 
@@ -152,7 +152,7 @@ describe('findFaceProject', () => {
    * its folder instead, its release tag never matched the face the build made.
    */
   test('finds a face that is its own project by its appinfo name', () => {
-    const root = tree({ 'watchfaces/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock-face" }' });
+    const root = tree({ 'watchfaces/gridlock/pebble.appinfo.json': '{ "name": "gridlock-face" }' });
 
     const result = findFaceProject(root, 'gridlock-face');
 
@@ -163,7 +163,7 @@ describe('findFaceProject', () => {
   test('finds a face in a family under watchapps/', () => {
     const root = tree({
       'watchapps/toolbox/core/.gitkeep': '',
-      'watchapps/toolbox/timer/config/pebble.appinfo.json': '{ "name": "timer" }',
+      'watchapps/toolbox/timer/pebble.appinfo.json': '{ "name": "timer" }',
     });
 
     const result = findFaceProject(root, 'timer');
@@ -175,7 +175,7 @@ describe('findFaceProject', () => {
   test('finds a face straight under a family at the repo root', () => {
     const root = tree({
       'core/.gitkeep': '',
-      'ridgeline/config/pebble.appinfo.json': '{ "name": "ridgeline" }',
+      'ridgeline/pebble.appinfo.json': '{ "name": "ridgeline" }',
     });
 
     const result = findFaceProject(root, 'ridgeline');
@@ -185,7 +185,7 @@ describe('findFaceProject', () => {
 
   /** A repo that is one face names it in its appinfo, since the folder is named after wherever it was cloned. */
   test('finds a face at the repo root by its appinfo name', () => {
-    const root = tree({ 'config/pebble.appinfo.json': '{ "name": "lcars-stardate" }' });
+    const root = tree({ 'pebble.appinfo.json': '{ "name": "lcars-stardate" }' });
 
     const result = findFaceProject(root, 'lcars-stardate');
 
@@ -196,9 +196,9 @@ describe('findFaceProject', () => {
   test('stops on two faces with the same name', () => {
     const root = tree({
       'watchfaces/mosaic/core/.gitkeep': '',
-      'watchfaces/mosaic/clock/config/pebble.appinfo.json': '{ "name": "clock" }',
+      'watchfaces/mosaic/clock/pebble.appinfo.json': '{ "name": "clock" }',
       'watchapps/toolbox/core/.gitkeep': '',
-      'watchapps/toolbox/clock/config/pebble.appinfo.json': '{ "name": "clock" }',
+      'watchapps/toolbox/clock/pebble.appinfo.json': '{ "name": "clock" }',
     });
 
     const result = () => findFaceProject(root, 'clock');
@@ -217,7 +217,7 @@ describe('findFaceProject', () => {
 
   /** A face input reaching out of the repo climbed to the filesystem root, and the toolchain and build output were read from there. */
   test('finds nothing for a name that reaches into another folder', () => {
-    const base = tree({ 'repo/core/.gitkeep': '', 'other/face/config/pebble.appinfo.json': '{ "name": "face" }' });
+    const base = tree({ 'repo/core/.gitkeep': '', 'other/face/pebble.appinfo.json': '{ "name": "face" }' });
 
     const result = findFaceProject(path.join(base, 'repo'), '../other/face');
 
@@ -228,11 +228,23 @@ describe('findFaceProject', () => {
 describe('faceProject', () => {
   /** A mistyped release tag fell back to the repo root and stopped on a paf/ that was never there, rather than on the name. */
   test('stops on a face the repo does not have', () => {
-    const root = tree({ 'watchfaces/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }' });
+    const root = tree({ 'watchfaces/gridlock/pebble.appinfo.json': '{ "name": "gridlock" }' });
 
     const result = () => faceProject(root, 'gridlok');
 
     expect(result).toThrow("This repo has no face called 'gridlok'.");
+  });
+
+  /** A unit still on framework 3 was told its face did not exist, with nothing to say its appinfo sat in the old place. */
+  test('names an appinfo still in config/ when the face is not found', () => {
+    const root = tree({
+      'watchfaces/mosaic/core/.gitkeep': '',
+      'watchfaces/mosaic/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }',
+    });
+
+    const result = () => faceProject(root, 'gridlock');
+
+    expect(result).toThrow('watchfaces/mosaic/gridlock/config/pebble.appinfo.json is where framework 3 keeps an appinfo');
   });
 });
 
@@ -248,7 +260,7 @@ describe('fillHint', () => {
 
   /** A unit with no framework at all only needs a sync. */
   test('says to sync when the unit holds no framework', () => {
-    const root = tree({ 'config/pebble.appinfo.json': '{ "name": "gridlock" }' });
+    const root = tree({ 'pebble.appinfo.json': '{ "name": "gridlock" }' });
 
     const result = fillHint(root);
 
