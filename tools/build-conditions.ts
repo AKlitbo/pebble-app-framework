@@ -22,6 +22,7 @@ import { WIRE_CAPS } from '../src/ts/pkjs/wire.ts';
 import type { ConditionVocabulary } from '../src/ts/weather/conditions.ts';
 import { writeIfChanged } from '../src/tools/shared/files.ts';
 import { ENGINE } from '../src/tools/shared/paths.ts';
+import { isMainScript } from '../src/tools/shared/entry.ts';
 
 /** The framework repo's root, which the written paths are logged from. */
 const ROOT = path.resolve(import.meta.dirname, '..');
@@ -191,6 +192,6 @@ function main() {
   console.log(written.length ? `generated ${written.join(', ')} (${count} conditions)` : `every header already matches (${count} conditions)`);
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main();
 }

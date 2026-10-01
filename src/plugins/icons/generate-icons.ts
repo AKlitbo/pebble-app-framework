@@ -42,6 +42,7 @@ import type { IconManifest } from './media.ts';
 import { appinfoPath, faceDir, listFaceNames } from '../../tools/shared/faces.ts';
 import { WORKSPACE } from '../../tools/shared/paths.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
 
 const ROOT = WORKSPACE;
 
@@ -325,6 +326,6 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main().catch(reportFailure);
 }

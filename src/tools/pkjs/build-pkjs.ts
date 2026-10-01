@@ -35,6 +35,7 @@ import { faceRelative } from '../shared/faces.ts';
 import { faceTargetNames } from '../manifest/build-manifests.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE, icaljsBundle } from '../shared/paths.ts';
 import { ToolError, exitCodeOf, reportFailure } from '../shared/tool-error.ts';
+import { isMainScript } from '../shared/entry.ts';
 
 const requireHost = createRequire(import.meta.url);
 
@@ -313,6 +314,6 @@ function main(): void {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main();
 }

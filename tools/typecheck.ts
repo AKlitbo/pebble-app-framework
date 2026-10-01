@@ -12,6 +12,7 @@
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { isMainScript } from '../src/tools/shared/entry.ts';
 
 const requireHost = createRequire(import.meta.url);
 
@@ -64,6 +65,6 @@ async function main(): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main();
 }

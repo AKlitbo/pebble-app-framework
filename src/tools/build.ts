@@ -20,6 +20,7 @@ import { buildFace, describeBuild } from './pkjs/build-pkjs.ts';
 import { runPebble, type PebbleRun, type PebbleRunner } from './shared/pebble.ts';
 import { ToolError, reportFailure } from './shared/tool-error.ts';
 import { listFaceNames } from './shared/faces.ts';
+import { isMainScript } from './shared/entry.ts';
 
 /** What a build was asked for. */
 export type BuildArgs = {
@@ -132,6 +133,6 @@ function main(): void {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main();
 }

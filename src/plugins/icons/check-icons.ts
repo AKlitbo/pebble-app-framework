@@ -17,6 +17,7 @@ import { buildMedia, iconsManifestPath, mediaOf, replaceMediaArray } from './med
 import type { IconManifest } from './media.ts';
 import type { MediaEntry } from '../../tools/manifest/build-manifests.ts';
 import { readText } from '../../tools/shared/files.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
 
 /**
  * Every face whose media block is stale or missing.
@@ -50,6 +51,6 @@ export async function checkIcons(): Promise<string[]> {
   return problems;
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   runCheck('icon media', checkIcons);
 }

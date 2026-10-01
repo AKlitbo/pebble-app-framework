@@ -11,12 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a `paf` key to the framework's `package.json` and to each plugin's, naming the build, its generators, what a face has to hold for each to apply, the checks it adds to `paf check`, and the tools `paf tool <face> <name>` runs. For a path under `src/pkjs/`, a family face's core counts too, at the matching folder under `core/pkjs/`. `paf build`, `paf gen`, `paf check`, and `paf tool` read them, so a face's `package.json` no longer needs scripts that point into the framework. A face's own generators go under `gen` in its `paf.config.json`, each naming its script and the generator it runs after.
 - Added `tools/build.ts`, which builds a face's `.pbw` with the same arguments and steps as `build.sh`, under Node like the framework's other tools.
 - Added `io/appmessage/appmessage_features.h`, which defines `APPMESSAGE_HAS_WEATHER` and `APPMESSAGE_HAS_LOCATION` from the face's message keys. A face's own C can read them in place of testing the `HAS_MESSAGE_KEY_*` defines itself.
+- Added `isMainScript` in `tools/shared/entry.ts`, which a tool calls as `if (isMainScript(import.meta))` to run only when started as the script. A face's own tools can use it in place of reading `import.meta.main`.
 - Added `tools/clay-components/check-components.ts`, `plugins/icons/check-icons.ts`, and `plugins/thumbnails/check-thumbnails.ts`, which `paf check` runs to find a face's committed Clay components, icon media, and thumbnails that are out of date. Each checks every face on its own, so one broken face is reported without hiding the rest, and a check that finds no faces to look at fails rather than passing.
 - Added `tsconfig.spec.json` and `tsconfig.tools.json`, which hold the compiler options for a face's specs and for its tools and configs that run under Node. A face's own spec and tools tsconfigs extend them from `paf/` and set their own `include` and `exclude`. The spec one brings in `ts/pkjs/pebble.d.ts` through its `files`, so a face's spec tsconfig no longer lists it and sets no `files` of its own.
 - **Breaking:** Added `ts/generated.d.ts`, which types every `*.g` module, whether a framework generator or the unit's own wrote it. The pkjs build takes it in from `paf/ts/`, and so does a face tsconfig that includes `paf/ts/**/*.d.ts`. Delete the face's own `declare module '*.g'`, since two copies clash and stop the build.
 
 ### Changed
 
+- The framework now runs under Node 22.18 or newer on Node 22, as well as 24.2 or newer. Its `engines` reads `^22.18.0 || >=24.2.0`, which is every Node with `import.meta.main`. A face's CI still installs Node 24, which `setup-pebble` reads from `toolchain.json`.
 - **Breaking:** This version needs `paf 2.0.0`, which renames a unit's `paf.json` to `paf.config.json` and adds the unit's plugin list to it. Everything a face gets now lives under `src/` in the framework repo, and `paf 2.0.0` copies that folder into a unit, leaving out the specs, their fixtures, and any plugin the unit does not list.
 - **Breaking:** A unit's framework folder is `paf/` rather than `lib/`. Change every import from `lib/` to `paf/`, the `extends` and globs in each tsconfig, the `workspaces` entry to `paf` and `paf/plugins/*`, and anything that runs a tool under `lib/`. The `.gitignore` lines for `lib/` and `lib.paf-*/` become `paf/` and `paf.paf-*/`. The face actions at this tag read the framework from `paf/`, so load them at `@v4.0.0` in the face's workflows. A unit still holding a `lib/` from `paf 1.0.0` is told so rather than told to sync again.
 - **Breaking:** `tools/faces.ts`, `tools/paths.ts`, and `tools/files.ts` are now in `tools/shared/`, beside the new `checks.ts` and `tool-error.ts`. Point a face tool's imports there, as in `paf/tools/shared/faces.ts`.
@@ -48,6 +50,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed `tools/dev/tap-walk.sh`. Replace anything that runs it with `paf tool <face> tap-walk`.
 - **Breaking:** Removed `listFaces` from `tools/shared/faces.ts` and the `--faces` option of `tools/manifest/build-manifests.ts`. Use `listFaceNames` for either. Also removed the `builderDir`, `resolveIn`, `overlayPlugin`, `bundleInitialize`, `generateAll`, `indentBlock`, `buildTemplate`, and `buildStyle` exports of `tools/clay-components/generate-components.ts`, which only the generator itself uses.
 - **Breaking:** Removed the framework's specs from a face's test run, including the ones that checked a face's committed Clay components, icon media, and thumbnails. Those checks are now scripts, so add `paf check` to a face repo's CI beside `paf test`, `paf lint`, and `paf typecheck`.
+
+### Fixed
+
+- Fixed every framework tool exiting 0 having done nothing under a Node with no `import.meta.main`, which is 22 before 22.18, any 23, and 24 before 24.2. A generator reported success with nothing written, and `build.sh` stopped saying the unit had no faces. Each tool now stops with exit code 1 and names the Nodes that have it.
 
 ## [3.0.0] - 2026-09-27
 

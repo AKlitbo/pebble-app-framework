@@ -26,6 +26,7 @@ import { faceDir, familyCoreDir, listFaceNames } from '../shared/faces.ts';
 import { ENGINE, WORKSPACE } from '../shared/paths.ts';
 import { readText } from '../shared/files.ts';
 import { ToolError, reportFailure } from '../shared/tool-error.ts';
+import { isMainScript } from '../shared/entry.ts';
 
 // the manifests are loaded by path at runtime which an import specifier cannot do
 // require(esm) hands back the namespace so the manifest lands on .default
@@ -396,7 +397,7 @@ async function generateAll(face: string): Promise<void> {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   const face = process.argv[2];
   // esbuild only takes a resolve plugin through its async API, so the run ends on a promise. the
   // faces are found inside it too, so a lookup that fails reports the same way a failed build does

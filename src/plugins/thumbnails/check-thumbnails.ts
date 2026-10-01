@@ -12,6 +12,7 @@ import { checkFace, runCheck } from '../../tools/shared/checks.ts';
 import { encodeThumbnails, outFile, thumbsDir } from './embed-thumbnails.ts';
 import { readText } from '../../tools/shared/files.ts';
 import { listFaceNames } from '../../tools/shared/faces.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
 
 /**
  * Every face whose thumbnail asset is stale or disagrees with its module list.
@@ -50,6 +51,6 @@ export async function checkThumbnails(): Promise<string[]> {
   return problems;
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   runCheck('thumbnails', checkThumbnails);
 }

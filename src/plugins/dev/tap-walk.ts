@@ -29,6 +29,7 @@ import { faceTargetNames } from '../../tools/manifest/build-manifests.ts';
 import { WORKSPACE } from '../../tools/shared/paths.ts';
 import { runPebble, type PebbleRunner } from '../../tools/shared/pebble.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
 
 /** The most taps a walk takes before it gives up on ever getting back to the start. */
 const MAX_TAPS = 200;
@@ -420,6 +421,6 @@ function main(): void {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main();
 }

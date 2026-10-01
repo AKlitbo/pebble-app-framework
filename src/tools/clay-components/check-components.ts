@@ -14,6 +14,7 @@ import { faceDir, listFaceNames } from '../shared/faces.ts';
 import { checkFace, runCheck } from '../shared/checks.ts';
 import { buildComponentSource, findManifests, rootsFor } from './generate-components.ts';
 import { readText } from '../shared/files.ts';
+import { isMainScript } from '../shared/entry.ts';
 
 /** Every bundled component a face commits, by its full path, found by its output rather than its manifests. */
 function committedComponents(face: string): string[] {
@@ -64,6 +65,6 @@ export async function checkComponents(): Promise<string[]> {
   return problems;
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   runCheck('Clay components', checkComponents);
 }

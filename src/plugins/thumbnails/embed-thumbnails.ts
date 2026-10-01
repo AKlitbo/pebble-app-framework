@@ -29,6 +29,7 @@ import { faceDir, listFaceNames } from '../../tools/shared/faces.ts';
 import type { ModuleMeta } from '../../ts/clay/types.ts';
 import type { Thumbs } from '../../ts/clay/builder/ts/types.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
 
 // every path this touches hangs off the face it is handed
 // the PNGs and that face's module list and the asset it writes
@@ -279,7 +280,7 @@ export function build(face: string): void {
   console.log('encoded: ' + built.modules + ' modules, ' + built.panels + ' panels');
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   try {
     const face = process.argv[2];
     // no face means every face that ships thumbnails, found by its thumbnails folder

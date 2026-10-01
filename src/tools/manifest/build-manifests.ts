@@ -21,6 +21,7 @@ import { appinfoPath, faceRelative, familyCoreFor, familyNameFor, listFaceNames 
 import { writeIfChanged } from '../shared/files.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE } from '../shared/paths.ts';
 import { ToolError, reportFailure } from '../shared/tool-error.ts';
+import { isMainScript } from '../shared/entry.ts';
 
 const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
@@ -361,6 +362,6 @@ function main() {
   }
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   main();
 }

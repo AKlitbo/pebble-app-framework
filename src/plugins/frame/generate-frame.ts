@@ -25,6 +25,7 @@ import sharp from 'sharp';
 import { faceDir } from '../../tools/shared/faces.ts';
 import { APPINFO_REL, WORKSPACE } from '../../tools/shared/paths.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
 
 /** Native screen size per Pebble platform (px). */
 interface Dims {
@@ -537,7 +538,7 @@ async function main(): Promise<void> {
   await browser.close();
 }
 
-if (import.meta.main) {
+if (isMainScript(import.meta)) {
   // Firefox stays open when a bake throws, and it keeps node running, so the run ends here
   main().catch((error) => {
     reportFailure(error);

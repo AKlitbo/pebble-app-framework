@@ -29,6 +29,13 @@ import { appinfoPath, familyCoreDir } from '../../tools/shared/faces.ts';
 import { ENGINE, ENGINE_REL } from '../../tools/shared/paths.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
+import { isMainScript } from '../../tools/shared/entry.ts';
+
+// the preview does its work as the file loads, so an import would build a page and could exit the
+// importer. nothing imports it, and this keeps it that way
+if (!isMainScript(import.meta)) {
+  throw new Error('clay-preview.ts runs as a script, since it builds its page as it loads, so it cannot be imported');
+}
 
 const requireHost = createRequire(import.meta.url);
 
