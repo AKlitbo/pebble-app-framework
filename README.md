@@ -27,13 +27,14 @@ A face project lists the plugins it wants in its `paf.config.json`, and paf copi
 * **`frame`**: bakes a face's HTML frame into background PNGs, and carries `css/pebble-colors.css`, the Pebble-64 palette the frames link to. It needs Playwright and `sharp`.
 * **`icons`**: turns the face's vendored SVG glyphs into its icon PNGs, and checks the appinfo media block is current. It needs `sharp`.
 * **`thumbnails`**: inlines the panel PNGs as base64 so the Clay layout builder shows real panels, and checks the asset is current.
+* **`code-style`**: the house ESLint style a unit is linted with by `paf lint`, and Prettier for its CSS, JSON, and YAML through `paf format`, which is off until the unit turns it on. It brings ESLint and Prettier with it.
 * **`dev`**: the screenshot harness in `c/dev/`, the Clay settings preview in `clay-preview.ts`, and `tap-walk.ts`, which screenshots every state of a face's dev tap walk.
 
 **Developing the Framework**
 
 * **`tools/`**: `typecheck.ts` and `build-conditions.ts`, which only ever run in this repo.
 * **`tests/c/spec/`**: the host C test harness. The specs themselves sit beside the code they cover.
-* **`eslint.config.ts`**, **`vitest.config.ts`**, and the **`tsconfig.*.json`** files at the root: the framework's own lint, test, and typecheck setup. A face keeps its own. The root **`tsconfig.json`** holds no files and points an editor at those projects.
+* **`eslint.config.ts`**, **`vitest.config.ts`**, and the **`tsconfig.*.json`** files at the root: the framework's own lint, test, and typecheck setup. Its lint takes the house style from the `code-style` plugin. A face keeps its own test and typecheck setup. The root **`tsconfig.json`** holds no files and points an editor at those projects.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
 
 **CI and Docs**
@@ -44,7 +45,7 @@ A face project lists the plugins it wants in its `paf.config.json`, and paf copi
 
 ## Using It
 
-The framework does not build on its own. paf 2.0.0 copies it into each face project at `paf/`, and the project lists `paf` and `paf/plugins/*` as npm workspaces so the framework's dependencies, and each listed plugin's, install once. That listing is also how the tools tell a mounted framework from one checked out on its own, so without it every generator and check stops and says to list them. A face project is a face on its own, with its `pebble.appinfo.json`, `src/`, and `resources/` at its root, or a family, with its `core/` and one folder per face. A face is any of those folders holding a `pebble.appinfo.json`, and a project's `config/` holds only the project's own tool configs, such as its tsconfigs, `eslint.config.ts`, and `vitest.config.ts`. A repo is one face project, or keeps several side by side under `watchfaces/`, with apps under `watchapps/` if it likes. The two folders only sort faces from apps, and a project in either is laid out the same.
+The framework does not build on its own. paf 2.0.0 copies it into each face project at `paf/`, and the project lists `paf` and `paf/plugins/*` as npm workspaces so the framework's dependencies, and each listed plugin's, install once. That listing is also how the tools tell a mounted framework from one checked out on its own, so without it every generator and check stops and says to list them. A face project is a face on its own, with its `pebble.appinfo.json`, `src/`, and `resources/` at its root, or a family, with its `core/` and one folder per face. A face is any of those folders holding a `pebble.appinfo.json`, and a project's `config/` holds only the project's own tool configs, such as its tsconfigs and `vitest.config.ts`. A repo is one face project, or keeps several side by side under `watchfaces/`, with apps under `watchapps/` if it likes. The two folders only sort faces from apps, and a project in either is laid out the same.
 
 [paf](https://github.com/AKlitbo/pebble-app-framework-cli) keeps each project on its own framework tag. A project's `paf.config.json` names the tag, the plugins it wants, and each plugin's settings. `paf pin` writes `framework` and `commit`, so a project starts with `paf pin` rather than a commit typed by hand:
 
@@ -75,7 +76,8 @@ paf check                    # that each face's generated output is current
 paf build <face>             # the .pbw, from WSL
 paf tool <face> clay-preview # a plugin's tool, here the dev plugin's Clay preview
 paf test
-paf lint
+paf lint [--fix]             # the house style, from the code-style plugin
+paf format [--check]         # Prettier over CSS, JSON, and YAML, once the project turns it on
 paf typecheck
 ```
 
@@ -97,7 +99,7 @@ npm run lint
 npm run typecheck
 ```
 
-The docs site tools have a package of their own in `docs/`, with their own scripts, so a repo of faces never installs TypeDoc, marked, or Prettier:
+The docs site tools have a package of their own in `docs/`, with their own scripts, so a repo of faces never installs TypeDoc or marked, and gets Prettier only with the `code-style` plugin:
 
 ```sh
 npm ci --prefix docs

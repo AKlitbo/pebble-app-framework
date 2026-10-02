@@ -100,7 +100,7 @@ jobs:
         uses: ./.github/actions/verify-eslint
 
       # Prettier keeps the docs site's templates, stylesheets, and theme script tidy
-      # it sits in the docs package's own install, so a repo of faces never needs it
+      # the docs package installs its own, apart from the one the code-style plugin brings a face
       # each check runs whether or not the one before it passed, so one push shows every failure. a failed docs
       # install or a failed root install stops them, since each would only fail on the missing packages and bury
       # the install's own error

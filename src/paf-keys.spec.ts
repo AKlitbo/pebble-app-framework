@@ -13,6 +13,8 @@ import { describe, expect, test } from 'vitest';
 /** The shape of a paf key, as far as the files it names go. */
 type PafKey = {
   build?: { script: string };
+  lint?: { script: string };
+  format?: { script: string };
   gen?: Record<string, { script: string }>;
   check?: string[];
   tools?: Record<string, { script: string }>;
@@ -40,7 +42,7 @@ function pafKey(dir: string): PafKey | undefined {
 /** Every file a paf key names, relative to its package's folder. */
 function namedFiles(key: PafKey): string[] {
   return [
-    ...(key.build ? [key.build.script] : []),
+    ...[key.build, key.lint, key.format].flatMap((entry) => (entry ? [entry.script] : [])),
     ...Object.values(key.gen ?? {}).map((entry) => entry.script),
     ...(key.check ?? []),
     ...Object.values(key.tools ?? {}).map((entry) => entry.script),

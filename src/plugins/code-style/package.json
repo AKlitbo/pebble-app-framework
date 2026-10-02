@@ -1,0 +1,27 @@
+{
+  "name": "@paf/code-style",
+  "description": "The house ESLint style a unit is linted with, and Prettier for its CSS, JSON, and YAML.",
+  "author": "Null Syntax",
+  "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
+  "private": true,
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "jiti": "^2.7.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.70.1"
+  },
+  "paf": {
+    "lint": {
+      "script": "lint.ts"
+    },
+    "format": {
+      "script": "format.ts"
+    },
+    "gen": {},
+    "check": []
+  }
+}
