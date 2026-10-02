@@ -118,6 +118,40 @@ jobs:
         if: ${{ !cancelled() && steps.docs-install.outcome == 'success' }}
         run: npm --prefix docs run lint
 
+  # units made from nothing, with no lock, filled from this checkout, one with no plugin and one for each
+  # plugin. every face repo's units carry a lock from an earlier install, which can hide a package npm
+  # leaves out of a new one, so nothing else notices a plugin whose packages do not install for a new unit
+  # with no lock it takes the newest version each range allows, so a release upstream can fail it with no
+  # change here, which is what a new unit would meet that day
+  fresh-unit:
+    name: Check a Unit Made From Nothing
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # paf is built and installed from its own repo at the release this framework goes with
+      - uses: actions/checkout@v7
+        with:
+          repository: AKlitbo/pebble-app-framework-cli
+          ref: v2.0.0
+          path: .paf-cli
+
+      - name: Install paf
+        working-directory: .paf-cli
+        run: |
+          npm ci --no-audit --no-fund
+          npm install --global --no-audit --no-fund .
+
+      # the check loads nothing from this repo's own install, so the root packages are not installed
+      - name: Check
+        run: npm run check:fresh-unit
+
   typecheck:
     name: Typecheck the TypeScript Projects
     runs-on: ubuntu-latest

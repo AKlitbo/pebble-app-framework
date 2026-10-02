@@ -32,7 +32,7 @@ A face project lists the plugins it wants in its `paf.config.json`, and paf copi
 
 **Developing the Framework**
 
-* **`tools/`**: `typecheck.ts` and `build-conditions.ts`, which only ever run in this repo.
+* **`tools/`**: `typecheck.ts`, `build-conditions.ts`, and `fresh-unit.ts` with the `paf-key.ts` it shares with a spec, which only ever run in this repo. `npm run check:fresh-unit` makes units with no lock, one with no plugin and one for each plugin, fills each from this checkout with `paf use local`, and checks that every package named is installed, every script a `paf` key names loads, and `paf check`, `paf typecheck`, `paf lint`, and `paf format` run. A package a new unit's install leaves out is caught here, where a unit that already has a lock would hide it. Every unit runs to the end, so one broken plugin does not hide the next. It needs this repo's own git checkout, paf installed, and the network.
 * **`tests/c/spec/`**: the host C test harness. The specs themselves sit beside the code they cover.
 * **`eslint.config.ts`**, **`vitest.config.ts`**, and the **`tsconfig.*.json`** files at the root: the framework's own lint, test, and typecheck setup. Its lint takes the house style from the `code-style` plugin. A face keeps its own test and typecheck setup. The root **`tsconfig.json`** holds no files and points an editor at those projects.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.

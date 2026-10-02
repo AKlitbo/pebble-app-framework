@@ -9,16 +9,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-
-/** The shape of a paf key, as far as the files it names go. */
-type PafKey = {
-  build?: { script: string };
-  lint?: { script: string };
-  format?: { script: string };
-  gen?: Record<string, { script: string }>;
-  check?: string[];
-  tools?: Record<string, { script: string }>;
-};
+import { namedScripts } from '../tools/paf-key.ts';
+import type { PafKey } from '../tools/paf-key.ts';
 
 const SRC = import.meta.dirname;
 
@@ -39,16 +31,6 @@ function pafKey(dir: string): PafKey | undefined {
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')).paf : undefined;
 }
 
-/** Every file a paf key names, relative to its package's folder. */
-function namedFiles(key: PafKey): string[] {
-  return [
-    ...[key.build, key.lint, key.format].flatMap((entry) => (entry ? [entry.script] : [])),
-    ...Object.values(key.gen ?? {}).map((entry) => entry.script),
-    ...(key.check ?? []),
-    ...Object.values(key.tools ?? {}).map((entry) => entry.script),
-  ];
-}
-
 describe('the paf keys', () => {
   /** A plugin with no package.json or no key offers paf nothing to run, so listing it would do nothing. */
   test.each(NAMED)('%s carries a paf key', (_name, dir) => {
@@ -59,14 +41,14 @@ describe('the paf keys', () => {
 
   /** A key naming a moved or renamed file fails the first paf gen or paf check in every face that lists it. */
   test.each(NAMED)('%s names only files it ships', (_name, dir) => {
-    const result = namedFiles(pafKey(dir) ?? {}).filter((file) => !fs.existsSync(path.join(dir, file)));
+    const result = namedScripts(pafKey(dir) ?? {}).filter((file) => !fs.existsSync(path.join(dir, file)));
 
     expect(result).toEqual([]);
   });
 
   /** paf leaves specs and fixtures out of a unit's copy, so a key naming one fails in every face though the file is here. */
   test.each(NAMED)('%s names no file paf leaves out of a unit', (_name, dir) => {
-    const result = namedFiles(pafKey(dir) ?? {}).filter((file) => /\.spec\.(ts|c)$/.test(file) || file.split('/').includes('fixtures'));
+    const result = namedScripts(pafKey(dir) ?? {}).filter((file) => /\.spec\.(ts|c)$/.test(file) || file.split('/').includes('fixtures'));
 
     expect(result).toEqual([]);
   });

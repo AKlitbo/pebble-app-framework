@@ -16,7 +16,8 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --config eslint.config.ts",
     "typecheck": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/typecheck.ts",
-    "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts"
+    "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts",
+    "check:fresh-unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/fresh-unit.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
