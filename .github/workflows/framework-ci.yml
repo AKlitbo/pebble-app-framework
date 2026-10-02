@@ -99,8 +99,14 @@ jobs:
       - name: Lint
         uses: ./.github/actions/verify-eslint
 
-      # Prettier keeps the docs site's templates, stylesheets, and theme script tidy
-      # the docs package installs its own, apart from the one the code-style plugin brings a face
+      # the framework's own CSS, JSON, and YAML, held to what the code-style plugin holds a unit to
+      # it leaves the docs site and the two docs themes, which the docs package checks below
+      - name: Check the Formatting
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run format:check
+
+      # the docs package formats the docs site's templates, stylesheets, and theme script, and the TypeDoc and
+      # Doxygen themes, with a Prettier of its own and settings of its own
       # each check runs whether or not the one before it passed, so one push shows every failure. a failed docs
       # install or a failed root install stops them, since each would only fail on the missing packages and bury
       # the install's own error

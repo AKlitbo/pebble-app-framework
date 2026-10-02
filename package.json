@@ -15,6 +15,9 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "lint": "eslint . --config eslint.config.ts",
+    "lint:fix": "eslint . --fix --config eslint.config.ts",
+    "format": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/format.ts",
+    "format:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/format.ts --check",
     "typecheck": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/typecheck.ts",
     "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts",
     "check:fresh-unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/fresh-unit.ts"
@@ -29,6 +32,7 @@
     "globals": "^17.12.0",
     "jiti": "^2.7.0",
     "jsdom": "^29.1.1",
+    "prettier": "^3.9.6",
     "typescript": "^5.9.3",
     "vitest": "^4.1.11"
   }
