@@ -40,6 +40,7 @@ export default {
   initialize: function (this: HiddenStoreContext): void {
     const extra = this.config && this.config.storeClass;
     const element = this.$element && this.$element[0];
+
     if (extra && element) {
       element.classList.add(extra);
     }

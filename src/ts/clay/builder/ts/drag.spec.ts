@@ -23,6 +23,7 @@ function pointerDown(pointerId?: number): PointerEvent {
 /** A pointer event from one finger. jsdom's MouseEvent has no pointerId, so it is added afterwards. */
 function fingerEvent(doc: Document, type: string, pointerId: number, x: number, y: number): void {
   const event = new MouseEvent(type, { clientX: x, clientY: y });
+
   Object.defineProperty(event, 'pointerId', { value: pointerId });
   doc.dispatchEvent(event);
 }
@@ -143,6 +144,7 @@ describe('pointercancel', () => {
   test('does nothing when no drag is under way', () => {
     const cancel = vi.fn();
     const spec = specWith({ cancel: cancel });
+
     createDrag<string, number>(spec);
 
     document.dispatchEvent(new Event('pointercancel'));

@@ -23,6 +23,7 @@ module.exports = step(async ({ core, exec }) => {
   const repo = process.env.GITHUB_REPOSITORY ? ['--repo', process.env.GITHUB_REPOSITORY] : [];
 
   const parts = splitTag(tag);
+
   if (!parts) {
     fail(`Tag '${tag}' is not shaped <face>-v<version>, such as lcars-stardate-v1.11.0.`);
   }
@@ -33,6 +34,7 @@ module.exports = step(async ({ core, exec }) => {
   // an action loaded at its own tag has a framework beside it that is not the face's. only the
   // framework the face builds with says which release it is on
   const frameworkPackageRel = `${frameworkRel}/package.json`;
+
   if (!fs.existsSync(path.join(framework, 'package.json'))) {
     fail(`${frameworkRel}/ holds no framework, so there is no telling which release the face builds on. ${fillHint(project)}`);
   }
@@ -44,6 +46,7 @@ module.exports = step(async ({ core, exec }) => {
   // are never released from, so the version is enough to hold a release to
   const frameworkPackage = readJson(path.join(framework, 'package.json'), frameworkPackageRel);
   const engineTag = frameworkPackage.version && isVersionTag(`v${frameworkPackage.version}`) ? `v${frameworkPackage.version}` : null;
+
   if (!engineTag) {
     fail(`${frameworkPackageRel} names no framework version, so there is no telling which release it holds.`);
   }
@@ -52,15 +55,19 @@ module.exports = step(async ({ core, exec }) => {
   const { APPINFO_REL } = await import(pathToFileURL(path.join(framework, 'tools', 'shared', 'paths.ts')).href);
   const { faceVersion } = await import(pathToFileURL(path.join(framework, 'tools', 'manifest', 'build-manifests.ts')).href);
   let faces;
+
   try {
     faces = findFaces(project);
   } catch (error) {
     // a face's appinfo that does not parse or has no name stops the lookup
     fail(`The faces in this repo could not be listed. ${error.message}`);
   }
+
   const face = faces.find((entry) => entry.name === parts.face);
+
   if (!face) {
     const known = faces.map((entry) => entry.name).join(', ') || 'none';
+
     fail(`Tag ${tag} names the face '${parts.face}', which this repo does not have. The faces here are: ${known}.`);
   }
 
@@ -75,17 +82,21 @@ module.exports = step(async ({ core, exec }) => {
   const repoPackage = fs.existsSync(projectPackage) ? readJson(projectPackage, projectPackageRel) : {};
   const version = faceVersion(appinfo, repoPackage);
   const versionFrom = appinfo.version ? appinfoRel : projectPackageRel;
+
   if (!version) {
     fail(`Tag ${tag} says version ${parts.version}, but neither ${appinfoRel} nor ${projectPackageRel} sets a version.`);
   }
+
   if (version !== parts.version) {
     fail(`Tag ${tag} says version ${parts.version}, but ${versionFrom} says ${version}.`);
   }
+
   // publish-release marks a version with a label as a pre-release, and reads the label the shared way.
   // a version it cannot read, such as one with build metadata, would go out as Latest
   if (!isVersionTag(`v${version}`)) {
     fail(`Version ${version} is not shaped X.Y.Z or X.Y.Z-label, such as 1.11.0 or 1.11.0-rc.1.`);
   }
+
   // the release names each pbw by the platforms it installs on, and finding none out after the SDK
   // install and the whole build wastes both
   if (!Array.isArray(appinfo.targetPlatforms) || appinfo.targetPlatforms.length === 0) {
@@ -94,16 +105,21 @@ module.exports = step(async ({ core, exec }) => {
 
   const changelogRel = path.posix.join(faceRel, 'CHANGELOG.md');
   const changelogPath = path.join(workspace, changelogRel);
+
   if (!fs.existsSync(changelogPath)) {
     fail(`${changelogRel} is missing, so there are no release notes to publish.`);
   }
+
   const entry = readChangelogEntry(fs.readFileSync(changelogPath, 'utf8'), parts.version);
+
   if (!entry) {
     fail(`${changelogRel} has no [${parts.version}] entry. Write it before releasing.`);
   }
+
   if (!isDated(entry.date)) {
     fail(`${changelogRel} has [${parts.version}] dated '${entry.date || 'nothing'}'. Date the heading, such as ${parts.version} - 2026-09-07, before releasing.`);
   }
+
   if (!entry.body) {
     fail(`The [${parts.version}] entry in ${changelogRel} is empty. Write it before releasing.`);
   }
@@ -111,17 +127,21 @@ module.exports = step(async ({ core, exec }) => {
   // republishing over a shipped release is not something to do quietly, so an existing one stops here
   // any other failure is gh unable to look at all, which would only resurface once the build is done
   const viewed = await exec.getExecOutput('gh', ['release', 'view', tag, ...repo], { ignoreReturnCode: true, silent: true });
+
   if (viewed.exitCode === 0) {
     fail(`${tag} is already released. Delete that release first to publish it again.`);
   }
+
   if (!/release not found/i.test(viewed.stderr)) {
     fail(`gh could not check whether ${tag} is already released. ${firstLine(viewed.stderr)}`);
   }
 
   const notesFile = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'release-notes.md');
+
   fs.writeFileSync(notesFile, `Released ${entry.date}.\n\n${entry.body}\n`);
 
   const title = `${appinfo.displayName || face.name} ${parts.version}`;
+
   core.setOutput('face', face.name);
   core.setOutput('version', parts.version);
   core.setOutput('title', title);
@@ -133,6 +153,7 @@ module.exports = step(async ({ core, exec }) => {
     '',
     markdownTable(['Face', 'Version', 'Framework', 'Changelog'], [[face.name, parts.version, engineTag, `${changelogRel} (${entry.date})`]]),
   ];
+
   await core.summary.addRaw(summary.join('\n'), true).write();
   core.info(`${tag} is ready to release on framework ${engineTag}.`);
 });

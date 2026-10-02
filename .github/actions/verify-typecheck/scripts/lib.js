@@ -19,9 +19,11 @@ const UNLOCATED = /^(error|warning) (TS\d+): (.*)$/;
  */
 function readTsc(output) {
   const errors = [];
+
   for (const line of String(output).split(/\r?\n/)) {
     const located = LOCATED.exec(line);
     const unlocated = located ? null : UNLOCATED.exec(line);
+
     if (located) {
       errors.push({
         file: located[1],
@@ -37,6 +39,7 @@ function readTsc(output) {
       errors[errors.length - 1].message += `\n${line.trim()}`;
     }
   }
+
   return errors;
 }
 

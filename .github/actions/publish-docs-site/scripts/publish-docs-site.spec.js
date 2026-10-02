@@ -33,6 +33,7 @@ beforeEach(() => {
   vi.stubEnv('FOLDER', 'main');
   // the site input is a repo path, and the build it names sits in the temporary folder
   const realCopy = fs.cpSync;
+
   vi.spyOn(fs, 'statSync').mockReturnValue({ isFile: () => false });
   vi.spyOn(fs, 'cpSync').mockImplementation((_source, target, options) => realCopy(built, target, options));
 });
@@ -53,37 +54,49 @@ afterEach(() => {
  */
 function remote({ branchExists = true, pushes = [{}], existing = [], unchanged = false } = {}) {
   let pushCount = 0;
+
   return ({ args }) => {
     const [command] = args;
+
     if (command === 'log') {
       return { stdout: 'Andrew\nme@example.com\nabc1234\n' };
     }
+
     if (command === 'ls-remote') {
       return { exitCode: branchExists ? 0 : 2 };
     }
+
     if (command === 'rev-parse' && args[1] === 'FETCH_HEAD') {
       return { stdout: 'parent1\n' };
     }
+
     if (command === 'rev-parse') {
       return { stdout: unchanged ? 'tree1\n' : 'tree0\n' };
     }
+
     if (command === 'worktree' && args[1] === 'add') {
       for (const folder of existing) {
         fs.mkdirSync(path.join(worktree, folder), { recursive: true });
       }
+
       return {};
     }
+
     if (command === 'write-tree') {
       return { stdout: 'tree1\n' };
     }
+
     if (args.includes('commit-tree')) {
       return { stdout: 'commit1\n' };
     }
+
     if (command === 'push') {
       const result = pushes[Math.min(pushCount, pushes.length - 1)];
+
       pushCount += 1;
       return result;
     }
+
     return {};
   };
 }
@@ -91,8 +104,10 @@ function remote({ branchExists = true, pushes = [{}], existing = [], unchanged =
 async function publish(answer) {
   const core = fakeCore();
   const exec = fakeExec(answer);
+
   await publishDocsSite({ core, exec });
   const calls = exec.getExecOutput.mock.calls.map(([, args, options]) => ({ args, cwd: options && options.cwd }));
+
   return { core, calls };
 }
 
@@ -104,6 +119,7 @@ describe('publish-docs-site', () => {
     expect(core.setFailed).not.toHaveBeenCalled();
     expect(calls.some((call) => call.args[0] === 'rm' && call.cwd === worktree)).toBe(true);
     const commitTree = calls.find((call) => call.args.includes('commit-tree'));
+
     expect(commitTree.args).not.toContain('-p');
   });
 
@@ -119,9 +135,11 @@ describe('publish-docs-site', () => {
     const { calls } = await publish(remote({ existing: ['v2.0.0'] }));
 
     const commitTree = calls.find((call) => call.args.includes('commit-tree'));
+
     expect(commitTree.args).toEqual(expect.arrayContaining(['-p', 'parent1']));
     expect(calls.find((call) => call.args[0] === 'push').args).toEqual(['push', 'origin', 'commit1:refs/heads/gh-pages']);
     const listed = JSON.parse(fs.readFileSync(path.join(worktree, 'versions.json'), 'utf8'));
+
     expect(listed.versions).toEqual(expect.arrayContaining(['main', 'v2.0.0']));
     expect(fs.readFileSync(path.join(worktree, 'main', 'index.html'), 'utf8')).toBe('the new build');
   });

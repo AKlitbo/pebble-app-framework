@@ -16,6 +16,7 @@ import { icaljsBundle } from './src/tools/shared/paths.ts';
 // the compiled calendar code, so the specs aim at that same bundle and run what the watch runs.
 // the lookup is the one the build uses, so the specs and the build can never find different copies
 const ICALJS = icaljsBundle();
+
 if (!ICALJS) {
   throw new Error('ical.js is not installed, run npm install');
 }

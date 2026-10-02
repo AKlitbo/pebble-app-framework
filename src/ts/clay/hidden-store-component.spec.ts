@@ -129,6 +129,7 @@ describe('initialize', () => {
   /** A throw inside initialize takes the whole settings page down, so a missing config must be survivable. */
   test('does not throw when the config is absent', () => {
     const { context } = mount();
+
     // Clay can hand over an item with no config at all, which the harness type does not allow for
     (context as { config?: unknown }).config = undefined;
 
@@ -140,6 +141,7 @@ describe('initialize', () => {
   /** Same again for an unmounted element: a crash here costs the user the entire config screen. */
   test('does not throw when the element is missing', () => {
     const { context } = mount({ storeClass: 'gl-layouts' });
+
     context.$element = [];
 
     const result = () => context.initialize();

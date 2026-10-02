@@ -85,6 +85,7 @@ describe('familyNameFor', () => {
   /** CI checks a family repo out under the repo's name, and a family named after that broke every core include there. */
   test('takes the family name from its package.json over its folder', () => {
     const root = tempDir('pebble-watchfaces-sketchbook-');
+
     fs.mkdirSync(path.join(root, 'core'));
     fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
     fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
@@ -98,6 +99,7 @@ describe('familyNameFor', () => {
   /** The name goes into the generated wscript as a string, and a quote in it broke the build far from the cause. */
   test('refuses a family name that is not a plain folder name', () => {
     const root = tempDir('family-name-');
+
     fs.mkdirSync(path.join(root, 'core'));
     fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
     fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
@@ -111,6 +113,7 @@ describe('familyNameFor', () => {
   /** A family folder with a space in its name built before the name was checked, and refusing it stopped every face in the family. */
   test('takes a family name with a space in it', () => {
     const root = path.join(tempDir('family-name-'), 'my faces');
+
     fs.mkdirSync(path.join(root, 'core'), { recursive: true });
     fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
     fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');
@@ -123,6 +126,7 @@ describe('familyNameFor', () => {
   /** A family folder named with a dot built before the name was checked, and refusing it stopped every face in the family. */
   test('takes a family name with a dot in it', () => {
     const root = path.join(tempDir('family-name-'), 'line.v2');
+
     fs.mkdirSync(path.join(root, 'core'), { recursive: true });
     fs.mkdirSync(path.join(root, 'ridgeline'), { recursive: true });
     fs.writeFileSync(path.join(root, 'ridgeline', 'pebble.appinfo.json'), '{ "name": "ridgeline" }');

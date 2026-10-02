@@ -189,6 +189,7 @@ describe('requestJson', () => {
       calls.push(url);
       callback(err, body);
     };
+
     return { calls, stub };
   }
 

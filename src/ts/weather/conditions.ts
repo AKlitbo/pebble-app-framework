@@ -91,8 +91,10 @@ function codeFor(token: string): number {
 
   const base = String(token).replace(/_NIGHT$/, '');
   const index = conditions.findIndex((entry) => entry.token === base);
+
   return index < 0 ? UNKNOWN_CODE : index;
 }
 
 const vocabulary = { fallback, conditions, UNKNOWN_CODE, FORECAST_NIGHT_BIT, codeFor };
+
 export default vocabulary;

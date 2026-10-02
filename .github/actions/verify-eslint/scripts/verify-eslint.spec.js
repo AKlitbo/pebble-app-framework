@@ -38,6 +38,7 @@ const WARNINGS_ONLY = [
 async function verify(result) {
   const core = fakeCore();
   const exec = fakeExec(() => result);
+
   await verifyEslint({ core, exec });
   return { core, exec };
 }

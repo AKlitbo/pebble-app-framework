@@ -57,14 +57,17 @@ export interface Mounted {
  */
 export function mount(component: ClayComponentDefinition, config?: Record<string, unknown>): Mounted {
   const holder = document.createElement('div');
+
   holder.innerHTML = component.template;
   const root = holder.firstChild as HTMLElement;
 
   const ctx = { $element: [root], config: config || {}, trigger: vi.fn() } as BoundContext;
+
   if (typeof component.manipulator !== 'string') {
     ctx.set = component.manipulator.set.bind(ctx);
     ctx.get = component.manipulator.get.bind(ctx);
   }
+
   ctx.initialize = component.initialize.bind(ctx);
 
   return { ctx, root };

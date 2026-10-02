@@ -37,6 +37,7 @@ afterEach(() => {
 
 function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog = CHANGELOG, targetPlatforms = ['emery', 'gabbro'] } = {}) {
   const dir = path.join(workspace, rel);
+
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version, targetPlatforms }));
   fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), changelog);
@@ -46,6 +47,7 @@ const UNRELEASED = ({ command }) => {
   if (command === 'gh') {
     return { exitCode: 1, stderr: 'release not found\n' };
   }
+
   return {};
 };
 
@@ -54,8 +56,10 @@ async function prepare(answer = UNRELEASED) {
   if (!frameworkWritten) {
     writeFramework();
   }
+
   const core = fakeCore();
   const exec = fakeExec(answer);
+
   await prepareRelease({ core, exec });
   return { core, exec };
 }
@@ -64,6 +68,7 @@ async function prepare(answer = UNRELEASED) {
 function writeFramework({ version = '3.0.0', project = '.' } = {}) {
   frameworkWritten = true;
   const framework = path.join(workspace, project, 'paf');
+
   fs.mkdirSync(framework, { recursive: true });
   fs.symlinkSync(TOOLS, path.join(framework, 'tools'), 'junction');
   fs.writeFileSync(path.join(framework, 'package.json'), JSON.stringify(version ? { name: 'pebble-app-framework', version } : { name: 'pebble-app-framework' }));
@@ -78,6 +83,7 @@ describe('prepare-release', () => {
 
     expect(core.setFailed).not.toHaveBeenCalled();
     const notesFile = path.join(workspace, 'release-notes.md');
+
     expect(core.setOutput).toHaveBeenCalledWith('face', 'lcars-stardate');
     expect(core.setOutput).toHaveBeenCalledWith('version', '1.11.0');
     expect(core.setOutput).toHaveBeenCalledWith('title', 'LCARS Stardate 1.11.0');

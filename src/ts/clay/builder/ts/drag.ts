@@ -123,6 +123,7 @@ export function createDrag<TPayload, TTarget>(
     }
 
     const box = ghost.getBoundingClientRect();
+
     ghost.style.left = x - box.width / 2 + 'px';
     ghost.style.top = y - box.height / 2 + 'px';
   }
@@ -135,6 +136,7 @@ export function createDrag<TPayload, TTarget>(
   /** Starts an active drag: builds the ghost, drops it onto the page, and places it at the pointer. */
   function begin(payload: TPayload, x: number, y: number): void {
     const ghost = spec.ghost(payload);
+
     doc.body.appendChild(ghost);
     active = { payload: payload, ghost: ghost };
     place(ghost, x, y);
@@ -151,6 +153,7 @@ export function createDrag<TPayload, TTarget>(
 
     const target = spec.hitTest(x, y);
     const allowed = target !== null && spec.allows(active.payload, target);
+
     spec.highlight(active.payload, target, allowed);
   }
 
@@ -175,6 +178,7 @@ export function createDrag<TPayload, TTarget>(
     }
 
     const payload = active && active.payload;
+
     end();
 
     if (payload === null || payload === undefined) {
@@ -201,10 +205,13 @@ export function createDrag<TPayload, TTarget>(
 
       if (moved) {
         const payload = armed.payload;
+
         armed = null;
+
         if (spec.lift) {
           spec.lift(payload);
         }
+
         begin(payload, event.clientX, event.clientY);
       }
     }
@@ -228,6 +235,7 @@ export function createDrag<TPayload, TTarget>(
 
     const payload = active.payload;
     const target = spec.hitTest(event.clientX, event.clientY);
+
     end();
 
     if (target !== null && spec.allows(payload, target)) {

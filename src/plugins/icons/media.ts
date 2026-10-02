@@ -36,6 +36,7 @@ export function iconsManifestPath(face: string): string {
 export function mediaOf(raw: string): unknown {
   const parsed = JSON.parse(raw);
   const resources = (parsed.pebble && parsed.pebble.resources) || parsed.resources;
+
   return resources && resources.media;
 }
 
@@ -79,8 +80,10 @@ export function buildMedia(media: MediaEntry[], manifest: IconManifest): MediaEn
   }));
 
   let insertAt = media.findIndex(isIconEntry);
+
   if (insertAt === -1) {
     const firstFont = media.findIndex((entry) => entry.type === 'font');
+
     insertAt = firstFont === -1 ? media.length : firstFont;
   }
 
@@ -99,6 +102,7 @@ function formatEntry(entry: MediaEntry, indent: string): string {
     const lead = ['type', 'name', 'file'].filter((key) => key in entry);
     const keys = [...lead, ...Object.keys(entry).filter((key) => lead.indexOf(key) === -1)];
     const fields = keys.map((key) => `${JSON.stringify(key)}: ${JSON.stringify((entry as Record<string, unknown>)[key])}`);
+
     return `${indent}{ ${fields.join(', ')} }`;
   }
 
@@ -120,6 +124,7 @@ function formatEntry(entry: MediaEntry, indent: string): string {
 export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   // the key followed by its array, since "media" can also sit earlier in the file as a string value
   const key = /"media"\s*:\s*\[/.exec(raw);
+
   if (!key) {
     throw new Error('no "media" array in package.json');
   }
@@ -127,8 +132,10 @@ export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   const keyAt = key.index;
   const open = keyAt + key[0].length - 1;
   let depth = 0, close = -1, inString = false, escaped = false;
+
   for (let i = open; i < raw.length; i++) {
     const char = raw[i];
+
     if (inString) {
       if (escaped) {
         escaped = false;
@@ -137,20 +144,24 @@ export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
       } else if (char === '"') {
         inString = false;
       }
+
       continue;
     }
+
     if (char === '"') {
       inString = true;
     } else if (char === '[') {
       depth++;
     } else if (char === ']') {
       depth--;
+
       if (depth === 0) {
         close = i;
         break;
       }
     }
   }
+
   if (close === -1) {
     throw new Error('unterminated "media" array in package.json');
   }
@@ -161,5 +172,6 @@ export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   const entryIndent = mediaIndent + '  ';
 
   const body = newMedia.map((entry) => formatEntry(entry, entryIndent)).join(',\n');
+
   return raw.slice(0, open + 1) + '\n' + body + '\n' + mediaIndent + raw.slice(close);
 }

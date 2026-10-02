@@ -37,6 +37,7 @@ module.exports = step(async ({ core, exec }) => {
   const problems = [];
   const run = async (title, command, args) => {
     const result = await core.group(`${command} ${args.join(' ')}`, () => exec.getExecOutput(command, args, { ignoreReturnCode: true }));
+
     return { title, ...result };
   };
 
@@ -50,12 +51,14 @@ module.exports = step(async ({ core, exec }) => {
     const file = inRepo ? warning.file : typedocOptions;
     const annotate = warning.severity === 'error' ? core.error : core.warning;
     const title = warning.severity === 'error' ? 'TypeDoc Error' : 'TypeDoc Warning';
+
     annotate(warning.message, warning.line ? { title, file, startLine: warning.line } : { title, file });
     return [warning.line ? `${file}:${warning.line}` : file, warning.severity, firstLine(warning.message)];
   });
   // a warning makes TypeDoc exit nonzero on its own, so its output only goes on the summary when there is no
   // warning to explain the exit or when it stopped for a reason past its warnings, such as a crash
   const typedocStopped = typedoc.exitCode !== 0 && !/output could not be generated due to the errors above/.test(typedoc.stdout + typedoc.stderr);
+
   if (warnings.length > 0) {
     problems.push({ message: `TypeDoc reported ${warnings.length} warning(s). The docs only publish from a build with none.`, output: typedocStopped ? typedoc : undefined });
   } else if (typedoc.exitCode !== 0) {
@@ -63,16 +66,19 @@ module.exports = step(async ({ core, exec }) => {
   }
 
   const vitest = await run('TypeScript Coverage', 'npx', ['--no-install', 'vitest', 'run', '--config', vitestConfig, '--coverage', `--coverage.reportsDirectory=${TS_COVERAGE}`]);
+
   if (vitest.exitCode !== 0) {
     problems.push({ message: `Vitest exited ${vitest.exitCode} while measuring coverage. The summary shows the end of its output.`, output: vitest });
   }
 
   const make = await run('C Coverage', 'make', ['-C', 'tests/c/spec', 'coverage']);
+
   if (make.exitCode !== 0) {
     problems.push({ message: `make -C tests/c/spec coverage exited ${make.exitCode}, so a C spec or gcovr failed.`, output: make });
   }
 
   const pages = await run('Site Pages', 'npm', ['--prefix', 'docs', 'run', 'site']);
+
   if (pages.exitCode !== 0) {
     problems.push({ message: `npm --prefix docs run site exited ${pages.exitCode}.`, output: pages });
   }
@@ -87,16 +93,20 @@ module.exports = step(async ({ core, exec }) => {
       ['Site pages', pages.exitCode === 0 ? 'built' : 'failed'],
     ]),
   ];
+
   if (rows.length > 0) {
     summary.push('', '### TypeDoc Warnings', '', markdownTable(['Where', 'Severity', 'Message'], rows));
   }
+
   for (const problem of problems.filter((each) => each.output)) {
     summary.push('', `### ${problem.output.title}`, '', outputTail(`${problem.output.stdout}\n${problem.output.stderr}`));
   }
+
   await core.summary.addRaw(summary.join('\n'), true).write();
 
   if (problems.length > 0) {
     fail(problems.map((problem) => problem.message).join(' '));
   }
+
   core.info('Built the docs site with no warnings.');
 });

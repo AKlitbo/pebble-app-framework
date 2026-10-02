@@ -24,8 +24,10 @@ export function request(url: string, callback: (err: string | null, body?: strin
     if (settled) {
       return;
     }
+
     settled = true;
     clearTimeout(watchdog);
+
     // call back with just the error when there is no body, so a caller checking the
     // callback's arity still gets the shape it expects
     if (body === undefined) {

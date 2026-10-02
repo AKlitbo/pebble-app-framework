@@ -30,6 +30,7 @@ function listVersions(folders) {
   const releases = folders.filter((name) => isVersionFolder(name) && name !== 'main').sort(compareVersionTags).reverse();
   const versions = folders.includes('main') ? ['main', ...releases] : releases;
   const latest = releases.find((name) => !isPrereleaseTag(name)) || null;
+
   return { latest, versions };
 }
 
@@ -79,10 +80,12 @@ function pushWasBeaten(stderr) {
 async function publishWithRetries(attempt, tries) {
   for (let count = 1; count <= tries; count++) {
     const outcome = await attempt(count);
+
     if (outcome !== 'beaten') {
       return { outcome, tries: count };
     }
   }
+
   return { outcome: 'beaten', tries };
 }
 

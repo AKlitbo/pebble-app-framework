@@ -34,6 +34,7 @@ interface AlphaVantageResponse {
  */
 function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const start = util.begin(opts, true);
+
   if (start.error) {
     return done(start.error);
   }
@@ -53,12 +54,14 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     if (json['Error Message']) {
       return done(util.status('Invalid Key'));
     }
+
     if (json.Information || json.Note) {
       return done(util.status('Rate Limit'));
     }
 
     // an unknown symbol comes back as an empty Global Quote object
     const quote = json['Global Quote'];
+
     if (!quote || quote['05. price'] === undefined) {
       return done(util.status('No Symbol'));
     }

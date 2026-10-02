@@ -18,6 +18,7 @@ module.exports = step(async ({ core, exec }) => {
 
   // a report left from an earlier run on the same runner would pass for this one, so it goes first
   const results = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'vitest-results.json');
+
   fs.rmSync(results, { force: true });
 
   const args = [
@@ -42,6 +43,7 @@ module.exports = step(async ({ core, exec }) => {
 
   const rows = failures.map((failure) => {
     const file = repoPath(failure.file);
+
     core.error(failure.message, { title: failure.name, file, startLine: failure.line });
     return [failure.line ? `${file}:${failure.line}` : file, failure.name, failure.message];
   });
@@ -55,20 +57,26 @@ module.exports = step(async ({ core, exec }) => {
       [[counts.files, counts.failedFiles, counts.tests, counts.passedTests, counts.failedTests, counts.skippedTests]]
     ),
   ];
+
   if (rows.length > 0) {
     summary.push('', '### Failures', '', markdownTable(['Where', 'Test', 'Message'], rows));
   }
+
   const failedWithoutTests = run.exitCode !== 0 && failures.length === 0;
+
   if (failedWithoutTests) {
     summary.push('', '### Why Vitest Failed', '', outputTail([run.stdout, run.stderr].join('\n')));
   }
+
   await core.summary.addRaw(summary.join('\n'), true).write();
 
   if (failedWithoutTests) {
     fail(`Vitest exited ${run.exitCode} with no failing test, such as from an unhandled error or a coverage threshold. The summary shows the end of its output.`);
   }
+
   if (failures.length > 0 || run.exitCode !== 0) {
     fail(`${counts.failedTests} test(s) failed across ${counts.failedFiles} spec file(s), and Vitest exited ${run.exitCode}.`);
   }
+
   core.info(`All ${counts.passedTests} tests in ${counts.files} spec files passed, with ${counts.skippedTests} skipped.`);
 });

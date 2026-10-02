@@ -31,6 +31,7 @@ describe('stock cache round trip', () => {
   /** If the stamps did not survive the trip the throttle reopens and the quota burns again. */
   test('reads back what it wrote', () => {
     const storage = fakeStorage();
+
     cache.save(storage, FULL);
 
     const result = cache.load(storage);
@@ -120,6 +121,7 @@ describe('the gate surviving a restart', () => {
    */
   test('a poll straight after a restart is still throttled', () => {
     const storage = fakeStorage();
+
     cache.save(storage, { lastAsOf: '', lastFetchMs: POSTCLOSE - THIRTY_MIN, strip: null });
 
     // the restart: everything in memory is gone and only what the phone kept comes back
@@ -136,6 +138,7 @@ describe('the gate surviving a restart', () => {
    */
   test('a restart still knows it is holding today\'s close', () => {
     const storage = fakeStorage();
+
     cache.save(storage, { lastAsOf: '2026-07-01', lastFetchMs: 0, strip: null });
 
     const restored = cache.load(storage);
@@ -147,6 +150,7 @@ describe('the gate surviving a restart', () => {
   /** The strip has to come back too or a watch with an empty store shows nothing till tomorrow. */
   test('a restart still has a strip to show while the gate is shut', () => {
     const storage = fakeStorage();
+
     cache.save(storage, FULL);
 
     const restored = cache.load(storage);

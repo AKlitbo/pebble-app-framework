@@ -18,6 +18,7 @@ const WX = '/v1/forecast.json';
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: WeatherOpts, request: RequestFn): WeatherResult {
   let result!: WeatherResult;
+
   weatherapi.fetch(opts, request, (received) => { result = received; });
   return result;
 }

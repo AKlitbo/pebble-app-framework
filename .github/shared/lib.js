@@ -38,6 +38,7 @@ function step(run) {
       if (!(error instanceof ExpectedFailure)) {
         throw error;
       }
+
       args.core.setFailed(error.message);
       return undefined;
     }
@@ -56,9 +57,11 @@ function step(run) {
  */
 function insideRepo(given, label) {
   const normalized = posix.normalize(String(given).replace(/\\/g, '/'));
+
   if (normalized === '..' || normalized.startsWith('../') || posix.isAbsolute(normalized) || /^[A-Za-z]:/.test(normalized)) {
     fail(`${label} '${given}' has to be a relative path inside the repo.`);
   }
+
   return normalized;
 }
 
@@ -73,9 +76,11 @@ function insideRepo(given, label) {
  */
 function existingPath(given, label) {
   const normalized = insideRepo(given, label);
+
   if (!fs.statSync(normalized, { throwIfNoEntry: false })) {
     fail(`${label} '${given}' does not exist.`);
   }
+
   return normalized;
 }
 
@@ -93,10 +98,12 @@ function existingPath(given, label) {
 function repoPath(file, cwd = '.') {
   const given = String(file).replace(/\\/g, '/');
   const root = (process.env.GITHUB_WORKSPACE || process.cwd()).replace(/\\/g, '/').replace(/\/+$/, '');
+
   if (posix.isAbsolute(given) || /^[A-Za-z]:\//.test(given)) {
     // a Windows drive letter can print in either case, so the workspace is matched without case
     return given.toLowerCase().startsWith(`${root.toLowerCase()}/`) ? given.slice(root.length + 1) : given;
   }
+
   return posix.normalize(posix.join(cwd.replace(/\\/g, '/'), given));
 }
 
@@ -111,6 +118,7 @@ function repoPath(file, cwd = '.') {
  */
 function fenceFor(text) {
   const longest = Math.max(0, ...(String(text).match(/`+/g) || []).map((run) => run.length));
+
   return '`'.repeat(Math.max(3, longest + 1));
 }
 
@@ -124,6 +132,7 @@ function fenceFor(text) {
 function outputTail(text, count = 40) {
   const lines = String(text || '').trimEnd().split(/\r?\n/).slice(-count).join('\n');
   const fence = fenceFor(lines);
+
   return `${fence}text\n${lines}\n${fence}`;
 }
 
@@ -143,6 +152,7 @@ function markdownTable(headings, rows) {
   const escapeTags = (text) => text.split(/(`[^`]*`)/).map((part, index) => (index % 2 === 1 ? part : part.replace(/</g, '&lt;').replace(/>/g, '&gt;'))).join('');
   const cell = (value) => escapeTags(String(value).replace(/\|/g, '\\|').replace(/\r?\n/g, ' '));
   const row = (cells) => `| ${cells.map(cell).join(' | ')} |`;
+
   return [row(headings), row(headings.map(() => '---')), ...rows.map(row)].join('\n');
 }
 
@@ -202,6 +212,7 @@ function isVersionTag(name) {
 /** A release tag's parts, with the pre-release label split on its dots. */
 function parseVersionTag(name) {
   const match = VERSION_TAG.exec(String(name));
+
   return { release: [Number(match[1]), Number(match[2]), Number(match[3])], pre: match[4] ? match[4].split('.') : [] };
 }
 
@@ -212,16 +223,20 @@ function comparePre(first, second) {
     const secondPart = second[index];
     const firstIsNumber = /^\d+$/.test(firstPart);
     const secondIsNumber = /^\d+$/.test(secondPart);
+
     if (firstIsNumber && secondIsNumber && Number(firstPart) !== Number(secondPart)) {
       return Number(firstPart) - Number(secondPart);
     }
+
     if (firstIsNumber !== secondIsNumber) {
       return firstIsNumber ? -1 : 1;
     }
+
     if (!firstIsNumber && firstPart !== secondPart) {
       return firstPart < secondPart ? -1 : 1;
     }
   }
+
   return first.length - second.length;
 }
 
@@ -236,14 +251,17 @@ function comparePre(first, second) {
 function compareVersionTags(first, second) {
   const older = parseVersionTag(first);
   const newer = parseVersionTag(second);
+
   for (let index = 0; index < 3; index++) {
     if (older.release[index] !== newer.release[index]) {
       return older.release[index] - newer.release[index];
     }
   }
+
   if (older.pre.length === 0 || newer.pre.length === 0) {
     return newer.pre.length - older.pre.length;
   }
+
   return comparePre(older.pre, newer.pre);
 }
 
@@ -272,6 +290,7 @@ function holdsFace(dir, appinfo) {
 function appinfoName(root, dir, appinfo) {
   const file = path.join(dir, appinfo);
   const rel = path.relative(root, file).split(path.sep).join('/');
+
   return readJson(file, rel).name;
 }
 
@@ -299,10 +318,13 @@ function findFaceProject(repoRoot, name, appinfo = APPINFO) {
   if (!name || /[\\/]/.test(name) || name === '.' || name === '..') {
     return null;
   }
+
   const root = path.resolve(repoRoot);
   const projects = [root];
+
   for (const folder of ['watchfaces', 'watchapps']) {
     const dir = path.join(root, folder);
+
     if (fs.existsSync(dir)) {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         if (entry.isDirectory()) {
@@ -313,6 +335,7 @@ function findFaceProject(repoRoot, name, appinfo = APPINFO) {
   }
 
   const found = [];
+
   for (const project of projects) {
     if (holdsFace(project, appinfo)) {
       if (appinfoName(root, project, appinfo) === name) {
@@ -325,8 +348,10 @@ function findFaceProject(repoRoot, name, appinfo = APPINFO) {
 
   if (found.length > 1) {
     const where = found.map((match) => path.relative(root, match.face).split(path.sep).join('/') || '.').join(' and ');
+
     fail(`Two faces are named '${name}', at ${where}. A face's name has to be unique in the repo.`);
   }
+
   return found[0] || null;
 }
 
@@ -340,16 +365,20 @@ function findFaceProject(repoRoot, name, appinfo = APPINFO) {
  */
 function faceProject(root, name) {
   const found = name ? findFaceProject(root, name) : null;
+
   if (name && !found) {
     // a face still laid out for framework 3 is named, since the lookup above only reads this framework's layout
     const old = findFaceProject(root, name, OLD_APPINFO);
     const where = old ? path.relative(root, path.join(old.face, OLD_APPINFO)).split(path.sep).join('/') : '';
     const hint = old ? ` ${where} is where framework 3 keeps an appinfo, and the actions at this tag read a face laid out for framework 4. Move it up a folder, or load the actions at a 3.x tag.` : '';
+
     fail(`This repo has no face called '${name}'.${hint}`);
   }
+
   const project = found ? found.project : path.resolve(root);
   const framework = path.join(project, 'paf');
   const rel = (file = '') => path.relative(root, path.resolve(project, file)).split(path.sep).join('/') || '.';
+
   return { project, framework, rel };
 }
 

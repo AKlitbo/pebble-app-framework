@@ -57,12 +57,15 @@ const FORECAST_NO_TEMP = WIRE_CAPS.FORECAST_NO_TEMP;
 function clampInt(value: number, bits: number): number {
   const limit = Math.pow(2, bits - 1);
   let rounded = Math.round(Number(value) || 0);
+
   if (rounded > limit - 1) {
     rounded = limit - 1;
   }
+
   if (rounded < -limit) {
     rounded = -limit;
   }
+
   return rounded;
 }
 
@@ -75,6 +78,7 @@ function clampInt(value: number, bits: number): number {
 function int16Bytes(value: number | null | undefined): number[] {
   const reading = (value === null || value === undefined) ? FORECAST_NO_TEMP : clampInt(value, 16);
   const wrapped = reading < 0 ? reading + 0x10000 : reading;
+
   return [wrapped & 0xff, (wrapped >> 8) & 0xff];
 }
 
@@ -112,26 +116,31 @@ function toAscii(text: string, max?: number): string {
 
   for (let i = 0; i < text.length && out.length < limit;) {
     const code = text.codePointAt(i) as number;
+
     i += code > 0xffff ? 2 : 1;
 
     if (isModifier(code)) {
       joined = code === 0x200d;
       continue;
     }
+
     if (joined) {
       joined = false;
       continue; // glued onto the one before, so already counted
     }
 
     const isFlagHalf = code >= 0x1f1e6 && code <= 0x1f1ff;
+
     if (isFlagHalf && flagOpen) {
       flagOpen = false;
       continue;
     }
+
     flagOpen = isFlagHalf;
 
     // an accented letter splits into the letter and its accent, and only the letter is kept
     const plain = String.fromCodePoint(code).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
     out += /^[\x20-\x7e]+$/.test(plain) ? plain.slice(0, limit - out.length) : '?';
   }
 
@@ -144,7 +153,9 @@ function toAscii(text: string, max?: number): string {
  */
 function pushAscii(bytes: number[], text: string, max: number): void {
   const ascii = toAscii(text, max);
+
   bytes.push(ascii.length);
+
   for (let i = 0; i < ascii.length; i++) {
     bytes.push(ascii.charCodeAt(i));
   }
@@ -157,10 +168,12 @@ function pushAscii(bytes: number[], text: string, max: number): void {
 function leBytes(value: number, byteCount: number): number[] {
   let wrapped = value < 0 ? value + Math.pow(2, byteCount * 8) : value;
   const out = [];
+
   for (let i = 0; i < byteCount; i++) {
     out.push(wrapped % 256);
     wrapped = Math.floor(wrapped / 256);
   }
+
   return out;
 }
 
@@ -178,6 +191,7 @@ function packForecastHourly(hourly: HourlyStrip | null | undefined): number[] | 
 
   const cols = hourly.cols.slice(0, FORECAST_MAX_COLS);
   const bytes = [cols.length, hourly.baseHour & 0xff, hourly.stepHours & 0xff];
+
   cols.forEach((col) => {
     bytes.push(col.code & 0xff, ...int16Bytes(col.temp));
   });
@@ -198,6 +212,7 @@ function packForecastDaily(daily: DailyStrip | null | undefined): number[] | nul
 
   const cols = daily.cols.slice(0, FORECAST_MAX_COLS);
   const bytes = [cols.length, daily.baseWeekday & 0xff];
+
   cols.forEach((col) => {
     bytes.push(col.code & 0xff, ...int16Bytes(col.tempMax), ...int16Bytes(col.tempMin));
   });

@@ -18,10 +18,12 @@ import { tempDir } from '../../src/ts/testing/temp-dir.ts';
  */
 export function tempTree(files, prefix = 'action-spec-') {
   const root = tempDir(prefix);
+
   for (const [file, text] of Object.entries(files)) {
     fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     fs.writeFileSync(path.join(root, file), text);
   }
+
   return root;
 }
 
@@ -35,6 +37,7 @@ export function tempTree(files, prefix = 'action-spec-') {
  */
 export function fakeCore() {
   const summary = { addRaw: vi.fn(), write: vi.fn(async () => summary) };
+
   summary.addRaw.mockReturnValue(summary);
   return {
     setFailed: vi.fn(),

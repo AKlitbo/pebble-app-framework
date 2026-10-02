@@ -30,18 +30,21 @@ export async function checkIcons(): Promise<string[]> {
   for (const face of listFaceNames()) {
     await checkFace(face, problems, () => {
       const manifestFile = iconsManifestPath(face);
+
       if (!fs.existsSync(manifestFile)) {
         return;
       }
 
       const raw = readText(appinfoPath(face));
       const media = mediaOf(raw);
+
       if (!Array.isArray(media)) {
         problems.push(`${face}: declares icons in resources/icons.json, but its appinfo has no media array to hold them`);
         return;
       }
 
       const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8')) as IconManifest;
+
       if (replaceMediaArray(raw, buildMedia(media as MediaEntry[], manifest)) !== raw) {
         problems.push(`${face}: the appinfo media block is stale, run paf gen ${face} icons`);
       }

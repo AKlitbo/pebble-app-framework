@@ -78,6 +78,7 @@ export function readText(value: any, fallback: string): string {
  */
 export function readBool(value: any, fallback: boolean): boolean {
   const result = readValue(value, fallback);
+
   return result === true || result === 'true' || result === 1 || result === '1';
 }
 
@@ -94,8 +95,10 @@ export function readBool(value: any, fallback: boolean): boolean {
  */
 export function settingsSnapshot(keys: string[], defaults: Record<string, unknown> = {}): string[] {
   const config = getConfig();
+
   return keys.map((key) => {
     const value = config[key] === undefined ? defaults[key] : config[key];
+
     return ['string', 'number', 'boolean'].includes(typeof value) ? String(value) : JSON.stringify(value);
   });
 }

@@ -36,6 +36,7 @@ describe('slowTickShouldFetch', () => {
   /** The watch polls every 30 minutes and the phone ticked every 30 too, so each reading was fetched once per end. */
   test('skips the slow tick that follows a watch ask', () => {
     const asks = createAsks();
+
     askShouldFetch(asks);
 
     const result = slowTickShouldFetch(asks);
@@ -46,6 +47,7 @@ describe('slowTickShouldFetch', () => {
   /** A tick in the moment before a save's refetch ran fetched too, which spent a metered stock call twice. */
   test('waits while a save refetch is pending', () => {
     const asks = createAsks();
+
     asks.savePending = true;
 
     const result = slowTickShouldFetch(asks);
@@ -56,6 +58,7 @@ describe('slowTickShouldFetch', () => {
   /** A watch out of range stops asking, and the phone has to keep the data fresh on its own. */
   test('fetches on the next slow tick once the watch stops asking', () => {
     const asks = createAsks();
+
     askShouldFetch(asks);
     slowTickShouldFetch(asks);
 
@@ -78,6 +81,7 @@ describe('refetchAfterSave', () => {
   test('holds watch asks back until the refetch runs', () => {
     const asks = createAsks();
     const refetch = vi.fn();
+
     refetchAfterSave(asks, 250, refetch);
 
     const result = askShouldFetch(asks);
@@ -90,6 +94,7 @@ describe('refetchAfterSave', () => {
   test('runs the refetch and lets asks through again after the delay', () => {
     const asks = createAsks();
     const refetch = vi.fn();
+
     refetchAfterSave(asks, 250, refetch);
     vi.advanceTimersByTime(250);
 

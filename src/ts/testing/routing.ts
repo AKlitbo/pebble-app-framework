@@ -18,11 +18,13 @@ export function routing(byPath: Record<string, { err?: string | null; body?: str
     calls.push(url);
 
     const key = Object.keys(byPath).find((path) => url.includes(path));
+
     if (!key) {
       throw new Error('unexpected request url: ' + url);
     }
 
     const response = byPath[key];
+
     callback(response.err || null, response.body);
   };
 }

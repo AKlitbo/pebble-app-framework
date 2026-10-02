@@ -25,6 +25,7 @@ describe('workspaceFor', () => {
   /** npm also takes workspaces as an object with a packages list, and a repo written that way has to be found too. */
   test('reads a workspaces listing written as a packages object', () => {
     const root = tempDir('packages-object-');
+
     fs.writeFileSync(path.join(root, 'pebble.appinfo.json'), '{ "name": "gridlock" }');
     fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ workspaces: { packages: ['paf'] } }));
 

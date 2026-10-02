@@ -29,19 +29,23 @@ export interface IoPanelOpts {
  */
 export function buildIoPanel(panel: HTMLElement, opts: IoPanelOpts): void {
   const title = document.createElement('div');
+
   title.className = opts.css.title;
   title.textContent = opts.title;
   panel.appendChild(title);
 
   const textarea = document.createElement('textarea');
+
   textarea.className = opts.css.textarea;
   textarea.value = opts.value;
   panel.appendChild(textarea);
 
   const buttons = document.createElement('div');
+
   buttons.className = opts.css.buttons;
 
   const copyButton = document.createElement('button');
+
   copyButton.type = 'button';
   copyButton.className = opts.css.button;
   copyButton.textContent = 'Copy';
@@ -56,6 +60,7 @@ export function buildIoPanel(panel: HTMLElement, opts: IoPanelOpts): void {
   buttons.appendChild(copyButton);
 
   const applyButton = document.createElement('button');
+
   applyButton.type = 'button';
   applyButton.className = opts.css.button + ' primary';
   applyButton.textContent = 'Apply';

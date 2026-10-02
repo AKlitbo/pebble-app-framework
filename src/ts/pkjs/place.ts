@@ -37,11 +37,13 @@ export function validCoord(lat: unknown, lon: unknown): boolean {
 /** The "offset,label" a time zone field held before the zone was kept, or null when it is not one. */
 function readOffsetLabel(text: string): SavedPlace | null {
   const comma = text.indexOf(',');
+
   if (comma <= 0) {
     return null;
   }
 
   const offset = Number(text.substring(0, comma));
+
   if (!isFinite(offset)) {
     return null;
   }
@@ -86,6 +88,7 @@ export function readPlace(saved: unknown): SavedPlace | null {
   }
 
   const offset = Number(blob.offset);
+
   if (blob.offset !== undefined && blob.offset !== null && isFinite(offset)) {
     place.offset = Math.round(offset);
   }

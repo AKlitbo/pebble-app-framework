@@ -233,6 +233,7 @@ describe('seedConfigFromWatch', () => {
     seedConfigFromWatch({ RATE: 'RATE' }, { RATE: 15 }, sliderPage);
 
     const result = stored('RATE');
+
     expect(result).toBe(1.5);
   });
 
@@ -265,6 +266,7 @@ describe('seedConfigFromWatch', () => {
    */
   test('keeps a place the phone already saved for a timezone field', () => {
     const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
+
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: saved }));
 
     seedConfigFromWatch({ CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' }, { CLOCK_TIMEZONE_1: '60,London' }, zonePage);
@@ -419,9 +421,11 @@ describe('startPebbleApp weather', () => {
     if (id === 'message_keys') {
       return keys;
     }
+
     if (id === '@rebble/clay/src/js/index') {
       return FakeClay;
     }
+
     return undefined;
   }
 
@@ -502,6 +506,7 @@ describe('startPebbleApp weather', () => {
     sent[0].respond(200, currentBody(21));
 
     const sends = weatherSends();
+
     expect(sends).toHaveLength(1);
     expect(sends[0][0]).toMatchObject({ WEATHER_OK: 1, WEATHER_TEMPERATURE: 21 });
   });
@@ -519,6 +524,7 @@ describe('startPebbleApp weather', () => {
     sent[1].respond(200, currentBody(30));
 
     const sends = weatherSends();
+
     expect(sent[1].url).toContain('latitude=32.2');
     expect(sends).toHaveLength(1);
     expect(sends[0][0]).toMatchObject({ WEATHER_TEMPERATURE: 30 });
@@ -562,12 +568,14 @@ describe('startPebbleApp weather', () => {
    */
   test('runs the coordinate formatter on a failed fetch', () => {
     const formatCoords = vi.fn((_keys: Record<string, number>, result: { lat?: number }) => ({ LAT: result.lat === undefined ? 'NO LOCK' : String(result.lat) }));
+
     start([weather.withCoords(formatCoords)]);
     fire('ready');
 
     sent[0].respond(500, '{}');
 
     const sends = weatherSends();
+
     expect(sends[0][0]).toMatchObject({ WEATHER_OK: 0, LAT: 'NO LOCK' });
   });
 
@@ -579,6 +587,7 @@ describe('startPebbleApp weather', () => {
     sent[0].respond(200, currentBody(21));
 
     const sends = weatherSends();
+
     expect(sends[0][0]).toMatchObject({ WEATHER_OK: 1, LAT: '33.4' });
   });
 
@@ -599,6 +608,7 @@ describe('startPebbleApp weather', () => {
   test('fetches nothing and says why when an opted-in face is missing a weather key', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const rest: Record<string, string> = { ...weatherKeys };
+
     delete rest.WEATHER_CONDITIONS;
     keys = rest;
     start([weather]);
@@ -687,6 +697,7 @@ describe('startPebbleApp weather', () => {
    */
   test('warns once when the watch asks for weather that no listed feature answers', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
     start([]);
 
     askForWeather();
@@ -731,9 +742,11 @@ describe('startPebbleApp stock and calendar', () => {
     if (id === 'message_keys') {
       return stripKeys;
     }
+
     if (id === '@rebble/clay/src/js/index') {
       return FakeClay;
     }
+
     return undefined;
   }
 
@@ -748,6 +761,7 @@ describe('startPebbleApp stock and calendar', () => {
   // features a face like Gridlock opts into. a saved strip came from a fetch, so it carries a stamp
   function start(settings: Record<string, unknown>, savedStrip: number[] | null = null, features = [stocks, calendar]) {
     const lastFetchMs = savedStrip ? Date.now() - 60000 : 0;
+
     localStorage.setItem('clay-settings', JSON.stringify(settings));
     localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs, strip: savedStrip }));
     app.startPebbleApp({ clayConfig: [], features });
@@ -812,6 +826,7 @@ describe('startPebbleApp stock and calendar', () => {
     pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
 
     const result = sendsOf('STOCK_STRIP');
+
     expect(result[0]).toEqual(SAVED_STRIP);
     expect(result[result.length - 1]).not.toEqual(SAVED_STRIP);
   });
@@ -828,6 +843,7 @@ describe('startPebbleApp stock and calendar', () => {
     sent.forEach((request) => request.fail());
 
     const result = sendsOf('STOCK_STRIP');
+
     expect(result[result.length - 1]).toEqual(SAVED_STRIP);
   });
 
@@ -839,6 +855,7 @@ describe('startPebbleApp stock and calendar', () => {
     pebble.fire('ready');
 
     const result = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'undefined' in dict);
+
     stripKeys.STOCK_STRIP = 'STOCK_STRIP';
     expect(result).toEqual([]);
   });
@@ -854,6 +871,7 @@ describe('startPebbleApp stock and calendar', () => {
     sent.forEach((request) => request.respond(200, JSON.stringify({ status: 'error', code: 404, message: 'symbol not found' })));
 
     const result = JSON.parse(localStorage.getItem('stock-cache') as string).lastFetchMs;
+
     expect(result).toBeGreaterThan(0);
   });
 
@@ -880,6 +898,7 @@ describe('startPebbleApp stock and calendar', () => {
     start({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' }, null, [stocks]);
     pebble.fire('ready');
     const oldRequest = sent[sent.length - 1];
+
     pebble.fire('showConfiguration');
     localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'TSLA' }));
     pebble.fire('webviewclosed', { response: '{}' });
@@ -887,6 +906,7 @@ describe('startPebbleApp stock and calendar', () => {
     oldRequest.respond(200, JSON.stringify({ chart: { result: [{ meta: { symbol: 'AAPL', regularMarketPrice: 261.74, chartPreviousClose: 260.5, regularMarketTime: 1719849600 } }], error: null } }));
 
     const result = JSON.parse(localStorage.getItem('stock-cache') as string).strip;
+
     expect(result).toBeNull();
   });
 
@@ -920,6 +940,7 @@ describe('startPebbleApp stock and calendar', () => {
     const stamp = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
     const withEvent = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:' + stamp +
       '\r\nSUMMARY:Dentist\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+
     start({ CALENDAR_ICS_URL: FEED_URL });
     pebble.fire('ready');
     pebble.fire('showConfiguration');
@@ -948,6 +969,7 @@ describe('startPebbleApp stock and calendar', () => {
     const stamp = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
     const withEvent = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nDTSTART:' + stamp +
       '\r\nSUMMARY:Dentist\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n';
+
     start({ CALENDAR_ICS_URL: FEED_URL });
     pebble.fire('ready');
     pebble.fire('showConfiguration');
@@ -974,6 +996,7 @@ describe('startPebbleApp stock and calendar', () => {
     feedRequest().respond(200, 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nEND:VCALENDAR\r\n');
 
     const downloads = sent.filter((request) => request.url.startsWith(FEED_URL));
+
     expect(downloads).toHaveLength(1);
     expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
   });
@@ -991,6 +1014,7 @@ describe('startPebbleApp stock and calendar', () => {
     // the phone's refresh ticks every 5 minutes and every sixth one is slow
     vi.advanceTimersByTime(30 * 60 * 1000);
     const afterHalfHour = sent.filter((request) => request.url.startsWith(FEED_URL)).length;
+
     vi.advanceTimersByTime(30 * 60 * 1000);
     const afterHour = sent.filter((request) => request.url.startsWith(FEED_URL)).length;
 
@@ -1012,6 +1036,7 @@ describe('startPebbleApp stock and calendar', () => {
     pebble.fire('appmessage', { payload: { CALENDAR_REQUEST: 1 } });
 
     const result = sent.filter((request) => request.url.startsWith(OTHER_FEED_URL));
+
     expect(result).toHaveLength(1);
   });
 
@@ -1022,6 +1047,7 @@ describe('startPebbleApp stock and calendar', () => {
     pebble.fire('ready');
 
     const result = sent.map((request) => request.url);
+
     expect(result.some((url) => url.startsWith(FEED_URL))).toBe(true);
   });
 
@@ -1069,8 +1095,10 @@ describe('startPebbleApp settings restore', () => {
     getSettings(json: string) {
       const settings = JSON.parse(json);
       const dict: Record<string, unknown> = {};
+
       Object.keys(settings).forEach((key) => {
         const setting = settings[key];
+
         dict[key] = setting && typeof setting === 'object' ? setting.value : setting;
       });
       return dict;
@@ -1087,9 +1115,11 @@ describe('startPebbleApp settings restore', () => {
     if (id === 'message_keys') {
       return keys;
     }
+
     if (id === '@rebble/clay/src/js/index') {
       return FakeClay;
     }
+
     return undefined;
   }
 
@@ -1099,12 +1129,14 @@ describe('startPebbleApp settings restore', () => {
   /** The watch's reply to SETTINGS_REQUEST, marked by the request key, carrying its settings and whether it booted empty. */
   function watchReplies(fresh: boolean, dateFormat: string) {
     const payload = { SETTINGS_REQUEST: 1, SETTINGS_FRESH: fresh ? 1 : 0, CLOCK_DATE_FORMAT: dateFormat, APPEARANCE_THEME: 2 };
+
     pebble.fire('appmessage', { payload });
   }
 
   /** The request the phone sent on ready, by its value. */
   function requestSent() {
     const requests = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'SETTINGS_REQUEST' in dict);
+
     return requests.map(([dict]) => dict.SETTINGS_REQUEST);
   }
 
@@ -1149,6 +1181,7 @@ describe('startPebbleApp settings restore', () => {
     watchReplies(true, '%Y-%m-%d');
 
     const result = restoreSends();
+
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5' });
     expect(stored('CLOCK_DATE_FORMAT')).toBe('%d.%m.%Y');
@@ -1245,6 +1278,7 @@ describe('startPebbleApp settings restore', () => {
       configOpened: () => calls.push('opened:' + JSON.stringify(localStorage.getItem('clay-settings'))),
       configSaved: () => calls.push('saved:' + stored('CLOCK_DATE_FORMAT')),
     });
+
     app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
     pebble.fire('ready');
 
@@ -1260,12 +1294,14 @@ describe('startPebbleApp settings restore', () => {
    */
   test('lets features compare around only the first seed on a face without SETTINGS_FRESH', () => {
     const { SETTINGS_FRESH: dropped, ...withoutFresh } = restoreKeys;
+
     keys = withoutFresh;
     const calls: string[] = [];
     const feature = () => ({
       configOpened: () => calls.push('opened'),
       configSaved: () => calls.push('saved'),
     });
+
     app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
     pebble.fire('ready');
 
@@ -1287,6 +1323,7 @@ describe('startPebbleApp settings restore', () => {
       configOpened: () => calls.push('opened'),
       configSaved: () => calls.push('saved'),
     });
+
     app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
     pebble.fire('ready');
     pebble.fire('showConfiguration');
@@ -1319,6 +1356,7 @@ describe('startPebbleApp settings restore', () => {
     const later = vi.fn();
     const broken: Feature = () => ({ ready() { throw new Error('no geolocation'); } });
     const fine: Feature = () => ({ ready: later, refresh: later });
+
     app.startPebbleApp({ clayConfig: [], features: [broken, fine] });
 
     pebble.fire('ready');
@@ -1334,6 +1372,7 @@ describe('startPebbleApp settings restore', () => {
   test('does not push a zone again that a settings save already sent', () => {
     const zonePage = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true }];
     const london = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
+
     app.startPebbleApp({ clayConfig: zonePage });
     pebble.fire('ready');
     localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_TIMEZONE_1: london }));
@@ -1343,6 +1382,7 @@ describe('startPebbleApp settings restore', () => {
     vi.advanceTimersByTime(5 * 60 * 1000);
 
     const result = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_TIMEZONE_1' in dict).length;
+
     expect(afterSave).toBe(1);
     expect(result).toBe(1);
   });

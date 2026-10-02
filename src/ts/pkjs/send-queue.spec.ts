@@ -109,6 +109,7 @@ describe('createSendQueue', () => {
   test('starts the next send when a callback throws', () => {
     const { calls, send } = recordingSend();
     const queueSend = createSendQueue(send);
+
     vi.spyOn(console, 'error').mockImplementation(() => {});
     queueSend({ a: 1 }, () => {
       throw new Error('caller bug');
@@ -176,6 +177,7 @@ describe('createSendQueue', () => {
     const onFail = vi.fn();
 
     queueSend({ a: 1 }, undefined, onFail);
+
     for (let attempt = 0; attempt < SEND_RETRIES; attempt++) {
       calls[calls.length - 1].fail();
       vi.advanceTimersByTime(SEND_RETRY_MS);
@@ -192,6 +194,7 @@ describe('createSendQueue', () => {
 
     queueSend({ a: 1 });
     queueSend({ b: 2 });
+
     for (let attempt = 0; attempt < SEND_RETRIES; attempt++) {
       calls[calls.length - 1].fail();
       vi.advanceTimersByTime(SEND_RETRY_MS);
@@ -223,6 +226,7 @@ describe('createSendQueue', () => {
     const onFail = vi.fn();
 
     queueSend({ a: 1 }, undefined, onFail);
+
     for (let attempt = 0; attempt < SEND_RETRIES; attempt++) {
       vi.advanceTimersByTime(SEND_WATCHDOG_MS);
       vi.advanceTimersByTime(SEND_RETRY_MS);
@@ -294,6 +298,7 @@ describe('createSendQueue', () => {
     queueSend({ weather: 1 });
     queueSend({ stocks: 1 });
     queueSend({ calendar: 1 });
+
     for (let index = 0; index < 4; index++) {
       expect(calls).toHaveLength(index + 1);
       calls[index].ok();

@@ -159,6 +159,7 @@ describe('runWeatherRound', () => {
       sendWeather: vi.fn(),
       timeoutMs: 60000,
     };
+
     return { callbacks, deps };
   }
 
@@ -186,6 +187,7 @@ describe('runWeatherRound', () => {
   test('ignores an unforced round while a retry is waiting', () => {
     const state = freshState();
     const { callbacks, deps } = heldFetches();
+
     runWeatherRound(state, false, deps);
     callbacks[0]({ ok: false });
 
@@ -202,6 +204,7 @@ describe('runWeatherRound', () => {
   test('lets a forced round replace a running one and ignores the old result', () => {
     const state = freshState();
     const { callbacks, deps } = heldFetches();
+
     runWeatherRound(state, false, deps);
 
     runWeatherRound(state, true, deps);
@@ -217,6 +220,7 @@ describe('runWeatherRound', () => {
   test('drops the pending retry when a forced round replaces it', () => {
     const state = freshState();
     const { callbacks, deps } = heldFetches();
+
     runWeatherRound(state, false, deps);
     callbacks[0]({ ok: false });
 
@@ -230,6 +234,7 @@ describe('runWeatherRound', () => {
   test('frees the round via the watchdog when a fetch never calls back', () => {
     const state = freshState();
     const { callbacks, deps } = heldFetches();
+
     runWeatherRound(state, false, deps);
 
     vi.advanceTimersByTime(deps.timeoutMs);
@@ -242,6 +247,7 @@ describe('runWeatherRound', () => {
   test('frees the round once the retries are used up', () => {
     const state = freshState();
     const { callbacks, deps } = heldFetches();
+
     runWeatherRound(state, false, deps);
 
     callbacks[0]({ ok: false });
@@ -258,6 +264,7 @@ describe('runWeatherRound', () => {
   test('frees the round when sending the result throws', () => {
     const state = freshState();
     const { callbacks, deps } = heldFetches();
+
     deps.sendWeather.mockImplementation(() => {
       throw new Error('bad dict');
     });

@@ -20,14 +20,17 @@ module.exports = step(async ({ core }) => {
 
   const file = path.join(framework, 'toolchain.json');
   const rel = relOf(file);
+
   if (!fs.existsSync(file)) {
     fail(`${rel} is missing. ${fillHint(project)}`);
   }
 
   const toolchain = readJson(file, rel);
+
   if (!toolchain || typeof toolchain !== 'object' || Array.isArray(toolchain)) {
     fail(`${rel} does not hold a toolchain object.`);
   }
+
   if (!FORMATS.includes(toolchain.format)) {
     fail(`${rel} is format ${toolchain.format}, which this action does not read. Load the actions from a newer framework tag.`);
   }
@@ -39,13 +42,16 @@ module.exports = step(async ({ core }) => {
 
   core.setOutput('sdk', String(toolchain.sdk));
   core.setOutput('pebble-tool', String(toolchain.pebbleTool));
+
   if (toolchain.node) {
     core.setOutput('node', String(toolchain.node));
   }
+
   // paf sync installs the project along with its paf/, and a build without node_modules would fail far
   // from the cause on a missing package
   if (!fs.existsSync(path.join(project, 'node_modules'))) {
     fail(`${relOf(project)} has no node_modules. Run paf sync before this step.`);
   }
+
   core.info(`${face} builds with SDK ${toolchain.sdk} and pebble-tool ${toolchain.pebbleTool}, from ${rel}.`);
 });

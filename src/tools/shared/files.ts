@@ -21,6 +21,7 @@ export function writeIfChanged(file: string, text: string): boolean {
   } catch {
     // missing, so it gets written below
   }
+
   fs.writeFileSync(file, text);
   return true;
 }

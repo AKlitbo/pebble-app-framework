@@ -25,20 +25,26 @@ module.exports = step(async ({ core }) => {
   if (!log) {
     fail('No log was given. Pass the build log the build step tees its output to.');
   }
+
   // the log is held inside the repo like every other action's path input
   const logPath = path.join(workspace, insideRepo(log, 'log'));
+
   if (!fs.existsSync(logPath)) {
     fail(`No build log at ${log}. The build step has to tee its output there.`);
   }
+
   const text = fs.readFileSync(logPath, 'utf8');
+
   if (!text.includes('APP MEMORY USAGE')) {
     fail(`${log} has no memory report. Either the build did not get as far as linking, or it was incremental and had nothing to relink.`);
   }
 
   const { rows: blocks, incomplete } = readBuildLog(text);
+
   for (const block of incomplete) {
     core.warning(`${block.target} on ${block.platform} printed a memory header without all its figures, so it has no row.`, { title: `${face} Memory` });
   }
+
   if (blocks.length === 0) {
     fail(`${log} has a memory report, but none of its figures could be read. The SDK may have changed how it prints them.`);
   }
@@ -52,17 +58,21 @@ module.exports = step(async ({ core }) => {
     const binPath = path.join(workspace, binRel);
     let image = 0;
     let virtualSize = 0;
+
     if (fs.existsSync(binPath)) {
       const binary = fs.readFileSync(binPath);
+
       image = binary.length;
       virtualSize = readVirtualSize(binary);
     } else {
       core.warning(`${binRel} is missing, so its app image and static size read as 0.`, { title: `${face} Memory` });
     }
+
     return { face, target: block.target, platform: block.platform, image, virtualSize, resources: block.resources, footprint: block.footprint, free: block.free };
   });
 
   const file = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'memory', `${face}.json`);
+
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(rows));
   core.setOutput('file', file);

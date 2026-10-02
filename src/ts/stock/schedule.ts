@@ -31,6 +31,7 @@ const AV_POLL_FLOOR_MS = 120 * MINUTE_MS;
  */
 function etParts(now: number): { weekday: number; hour: number; minute: number; date: string } {
   const parts = zoneParts(ET_ZONE, now);
+
   if (!parts) {
     // a runtime that cannot read the zone must not read as a weekday inside market hours, or a
     // metered provider gets polled through the weekend. Sunday with a shut clock is the safe answer
@@ -77,12 +78,15 @@ function phaseOf(et: { weekday: number; hour: number; minute: number }): MarketP
   }
 
   const minutes = et.hour * 60 + et.minute;
+
   if (minutes >= 9 * 60 + 30 && minutes < 16 * 60) {
     return 'open';
   }
+
   if (minutes >= 16 * 60 && minutes < 22 * 60) {
     return 'postclose';
   }
+
   return 'closed';
 }
 
@@ -117,6 +121,7 @@ function shouldThrottleStockFetch(provider: string, force: boolean, lastFetchMs:
 
   if (provider === 'twelvedata') {
     const floor = marketPhase(now) === 'open' ? TD_OPEN_FLOOR_MS : TD_CLOSED_FLOOR_MS;
+
     return sinceLast < floor;
   }
 
@@ -127,15 +132,18 @@ function shouldThrottleStockFetch(provider: string, force: boolean, lastFetchMs:
     if (lastAsOf && lastAsOf === et.date) {
       return true;
     }
+
     // no stamp means this phone has never fetched, such as after its storage was cleared. the last
     // close is worth one call at any hour, where holding it would leave the strip blank until an evening
     if (!lastFetchMs) {
       return false;
     }
+
     // the close only publishes after the bell so only chase it in the evening window
     if (phaseOf(et) === 'postclose') {
       return sinceLast < AV_POLL_FLOOR_MS;
     }
+
     return true;
   }
 

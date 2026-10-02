@@ -53,12 +53,15 @@ describe('phoneZone', () => {
   /** Swaps the runtime's zone name for one test and puts the real one back after. */
   function withRuntimeZone(zone: string | (() => never), run: () => void): void {
     const real = Intl.DateTimeFormat;
+
     (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = () => {
       if (typeof zone === 'function') {
         return zone();
       }
+
       return { resolvedOptions: () => ({ timeZone: zone }) };
     };
+
     try {
       run();
     } finally {

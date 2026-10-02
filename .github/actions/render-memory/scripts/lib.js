@@ -44,12 +44,14 @@ function rankRows(rows) {
       const imagePct = (row.image * 100) / IMAGE_LIMIT;
       const staticPct = (row.virtualSize * 100) / STATIC_LIMIT;
       const tighter = staticPct > imagePct ? 'static size' : 'app image';
+
       return { ...row, imagePct, staticPct, worst: Math.max(imagePct, staticPct), tighter, measured: row.image > 0 && row.virtualSize > 0 };
     })
     .sort((first, second) => {
       if (first.measured !== second.measured) {
         return first.measured ? 1 : -1;
       }
+
       return second.worst - first.worst;
     });
 }
@@ -68,15 +70,18 @@ function kb(bytes, decimals) {
 function renderReport(ranked) {
   const rows = ranked.map((row) => {
     let mark = '';
+
     if (row.worst >= ALARM_AT) {
       mark = ' :rotating_light:';
     } else if (row.worst >= WARN_AT) {
       mark = ' :warning:';
     }
+
     // the mark goes on whichever limit the row is closest to
     const imageMark = row.tighter === 'app image' ? mark : '';
     const staticMark = row.tighter === 'static size' ? mark : '';
     const unmeasured = 'not measured :grey_question:';
+
     return [
       `**${row.face}**`,
       `\`${row.target}\``,

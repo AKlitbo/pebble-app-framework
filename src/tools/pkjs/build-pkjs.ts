@@ -40,6 +40,7 @@ import { isMainScript } from '../shared/entry.ts';
 const requireHost = createRequire(import.meta.url);
 
 const ROOT = WORKSPACE;
+
 /** The framework's pkjs compiler options, which every face's generated tsconfig extends. */
 export const PKJS_BASE_TSCONFIG = path.join(ENGINE, 'tsconfig.pkjs.json');
 
@@ -73,6 +74,7 @@ export function facePaths(target: string, sourceFace: string = target): FacePath
   const faceSrc = path.join(ROOT, rel, 'src', 'pkjs');
   const sandbox = path.join(ROOT, 'targets', target);
   const emit = path.join(sandbox, 'emit');
+
   return {
     faceSrc,
     sandbox,
@@ -121,6 +123,7 @@ export function writeTsconfig(sourceFace: string, p: FacePaths): void {
       '../../**/*.spec.ts',
     ],
   };
+
   fs.mkdirSync(p.sandbox, { recursive: true });
   fs.writeFileSync(p.tsconfig, JSON.stringify(tsconfig, null, 2) + '\n');
 }
@@ -157,8 +160,10 @@ export function findGenerated(p: FacePaths): string[] {
     if (current === p.skipDir) {
       return;
     }
+
     for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
       const full = path.join(current, entry.name);
+
       if (entry.isDirectory()) {
         walk(full);
       } else if (entry.name.endsWith('.g.js')) {
@@ -166,6 +171,7 @@ export function findGenerated(p: FacePaths): string[] {
       }
     }
   };
+
   walk(p.faceSrc);
   return found.sort();
 }
@@ -178,11 +184,14 @@ export function findGenerated(p: FacePaths): string[] {
  */
 export function copyGenerated(p: FacePaths): string[] {
   const names = findGenerated(p);
+
   for (const name of names) {
     const to = path.join(p.emitPkjs, name);
+
     fs.mkdirSync(path.dirname(to), { recursive: true });
     fs.copyFileSync(path.join(p.faceSrc, name), to);
   }
+
   return names;
 }
 
@@ -204,17 +213,21 @@ export function requires(from: string, to: string): boolean {
 
   while (pending.length) {
     const file = pending.pop() as string;
+
     if (file === target) {
       return true;
     }
+
     if (seen.has(file) || !fs.existsSync(file)) {
       continue;
     }
+
     seen.add(file);
 
     for (const match of fs.readFileSync(file, 'utf8').matchAll(/require\(["'](\.{1,2}\/[^"']+)["']\)/g)) {
       const base = path.resolve(path.dirname(file), match[1]);
       const found = [base, base + '.js', path.join(base, 'index.js')].find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+
       if (found) {
         pending.push(found);
       }
@@ -247,9 +260,11 @@ export function copyIcalJs(p: FacePaths): boolean {
   // ts/calendar/icaljs.d.ts says it does. keeping it a file of its own is also what MPL 2.0 asks of
   // a larger work
   const from = icaljsBundle();
+
   if (!from || !fs.existsSync(from)) {
     throw new ToolError('ical.js is missing from node_modules, run npm install');
   }
+
   fs.mkdirSync(path.dirname(p.icaljsTo), { recursive: true });
   fs.copyFileSync(from, p.icaljsTo);
   return true;
@@ -299,15 +314,18 @@ export function buildFace(face: string): FaceBuild {
  */
 export function describeBuild(face: string, built: FaceBuild): string {
   const where = path.relative(ROOT, facePaths(built.targets[0], face).emitPkjs).split(path.sep).join('/');
+
   return `built emit/ for ${built.targets.join(', ')} and copied ${built.generated.length} generated components into ${where}/${built.icaljs ? ', plus ical.js' : ''}`;
 }
 
 function main(): void {
   try {
     const face = process.argv[2];
+
     if (!face) {
       throw new ToolError('usage: node paf/tools/pkjs/build-pkjs.ts <face>, which paf build runs before every build');
     }
+
     console.log(describeBuild(face, buildFace(face)));
   } catch (error) {
     reportFailure(error);

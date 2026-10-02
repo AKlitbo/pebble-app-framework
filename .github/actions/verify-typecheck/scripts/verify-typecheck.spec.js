@@ -21,6 +21,7 @@ const TOOLS_ERRORS = [
 async function verify(answers) {
   const core = fakeCore();
   const exec = fakeExec(({ args }) => answers[args[3]] || {});
+
   await verifyTypecheck({ core, exec });
   return { core, exec };
 }
@@ -42,6 +43,7 @@ describe('verify-typecheck', () => {
     const { exec } = await verify({ 'tsconfig.tools.json': { exitCode: 2, stdout: TOOLS_ERRORS } });
 
     const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[3]);
+
     expect(projects).toEqual(['tsconfig.json', 'tsconfig.tools.json', 'tsconfig.spec.json']);
   });
 
@@ -52,6 +54,7 @@ describe('verify-typecheck', () => {
     const { core, exec } = await verify({});
 
     const projects = exec.getExecOutput.mock.calls.map(([, args]) => args[3]);
+
     expect(projects).toEqual(['tsconfig.json', 'tsconfig.spec.json']);
     expect(core.error).toHaveBeenCalledWith("project 'tsconfig.tools.json' does not exist.", { title: 'Missing Project' });
     expect(core.setFailed).toHaveBeenCalled();

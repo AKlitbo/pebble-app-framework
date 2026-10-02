@@ -42,6 +42,7 @@ export function describeFailure(error: unknown): string {
   if (error instanceof ToolError) {
     return error.message;
   }
+
   return error instanceof Error ? (error.stack ?? error.message) : String(error);
 }
 

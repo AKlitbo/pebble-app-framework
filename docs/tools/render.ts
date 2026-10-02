@@ -57,6 +57,7 @@ const SITE_PAGES = new Map<string, string>([
  */
 function repoTarget(href: string, folder: string): string | null {
   const target = href.startsWith('/') ? path.posix.normalize(href.slice(1)) : path.posix.normalize(path.posix.join(folder, href));
+
   return target === '..' || target.startsWith('../') ? null : target;
 }
 
@@ -126,15 +127,19 @@ export function rewriteLink(href: string, options: LinkOptions): string {
 
   const hashAt = href.indexOf('#');
   const target = repoTarget(hashAt === -1 ? href : href.slice(0, hashAt), options.folder ?? '');
+
   if (target === null) {
     return href;
   }
+
   const fragment = hashAt === -1 ? '' : href.slice(hashAt);
 
   const page = SITE_PAGES.get(target);
+
   if (page !== undefined) {
     return `${options.root}${page}${fragment}`;
   }
+
   return `${REPO_URL}/blob/${options.commit}/${target}${fragment}`;
 }
 
@@ -153,7 +158,9 @@ export function rewriteImage(src: string, options: LinkOptions): string {
   if (src.startsWith('//') || /^[a-z][a-z0-9+.-]*:/i.test(src)) {
     return src;
   }
+
   const target = repoTarget(src, options.folder ?? '');
+
   return target === null ? src : `${REPO_URL}/raw/${options.commit}/${target}`;
 }
 
@@ -165,9 +172,11 @@ function joinRaw(tokens: Token[], from: number): string {
 /** The index of the first token at or after `from` that is not just blank lines. */
 function firstContent(tokens: Token[], from: number): number {
   let index = from;
+
   while (index < tokens.length && tokens[index].type === 'space') {
     index++;
   }
+
   return index;
 }
 
@@ -189,6 +198,7 @@ export function splitTitle(markdown: string): { title: string; body: string } {
   if (first === undefined || first.type !== 'heading' || first.depth !== 1) {
     return { title: '', body: markdown };
   }
+
   return { title: plainText(first.tokens ?? []), body: joinRaw(tokens, index + 1) };
 }
 
@@ -215,21 +225,26 @@ function createMarked(options: LinkOptions): Marked {
         // already took as its own id, such as one titled Fixed 1
         const base = slug(plainText(tokens));
         let id = base;
+
         while (used.has(id)) {
           const next = (used.get(base) ?? 0) + 1;
+
           used.set(base, next);
           id = `${base}-${next}`;
         }
+
         used.set(id, 0);
 
         return `<h${depth} id="${id}">${this.parser.parseInline(tokens)}</h${depth}>\n`;
       },
       link({ href, title, tokens }) {
         const titleAttribute = title ? ` title="${escapeHtml(title)}"` : '';
+
         return `<a href="${escapeHtml(rewriteLink(href, options))}"${titleAttribute}>${this.parser.parseInline(tokens)}</a>`;
       },
       image({ href, title, text }) {
         const titleAttribute = title ? ` title="${escapeHtml(title)}"` : '';
+
         return `<img src="${escapeHtml(rewriteImage(href, options))}" alt="${escapeHtml(text)}"${titleAttribute}>`;
       },
       code({ text, lang }) {
@@ -237,6 +252,7 @@ function createMarked(options: LinkOptions): Marked {
         // word names the language
         const language = (lang || '').split(/\s+/)[0];
         const className = language ? ` class="language-${escapeHtml(language)}"` : '';
+
         return `<pre><code${className}>${escapeHtml(text)}</code></pre>\n`;
       },
     },
@@ -337,14 +353,17 @@ export function fillTemplate(template: string, values: Record<string, string>): 
     if (!Object.prototype.hasOwnProperty.call(values, name)) {
       throw new Error(`The template names {{${name}}} but nothing was given for it.`);
     }
+
     used.add(name);
     return values[name];
   });
 
   const unused = Object.keys(values).filter((name) => !used.has(name));
+
   if (unused.length > 0) {
     throw new Error(`Nothing in the template uses ${unused.map((name) => `{{${name}}}`).join(', ')}.`);
   }
+
   return result;
 }
 
@@ -439,10 +458,12 @@ export function addSiteBar(html: string, kind: GeneratedPage, head: string, bar:
 
   const headEnd = html.indexOf('</head>');
   const spot = BAR_SPOTS[kind].pattern.exec(html);
+
   if (headEnd === -1 || spot === null) {
     throw new Error(`A ${kind} page has no ${headEnd === -1 ? '</head>' : String(BAR_SPOTS[kind].pattern)} to put the site bar at.`);
   }
 
   const barAt = BAR_SPOTS[kind].before ? spot.index : spot.index + spot[0].length;
+
   return html.slice(0, headEnd) + headTags + html.slice(headEnd, barAt) + barLine + html.slice(barAt);
 }

@@ -18,5 +18,6 @@ import type { Thumbs } from '../types';
  */
 export function thumbByLabel(thumbs: Thumbs, label: string, size: string): string | null {
   const byModule = thumbs[label];
+
   return (byModule && byModule[size]) || null;
 }

@@ -23,9 +23,11 @@ function recordingWalk(states: string[]): { calls: string[]; io: WalkIo } {
     screenshot() {
       calls.push('shoot');
       const state = shots.shift();
+
       if (state === undefined) {
         throw new Error('the walk took more screenshots than the spec has states');
       }
+
       return Buffer.from(state);
     },
     tap() {
@@ -39,6 +41,7 @@ function recordingWalk(states: string[]): { calls: string[]; io: WalkIo } {
     },
     folder: '.tmp/tap-walk-shots',
   };
+
   return { calls, io };
 }
 
@@ -171,6 +174,7 @@ describe('clearOut', () => {
   /** An --out naming a file would otherwise end the walk on a raw error from reading it as a folder. */
   test('refuses an out that is a file, and leaves it alone', () => {
     const file = path.join(dir, 'README.md');
+
     fs.writeFileSync(file, 'notes');
 
     const call = () => clearOut(file);

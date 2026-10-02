@@ -32,24 +32,33 @@ const COMPILE_ERROR = /^\[(warning|error)\] (?:\.\/)?(\S+?):(\d+):\d+ - (?:error
  */
 function readTypedocWarnings(output) {
   const warnings = [];
+
   for (const line of stripColour(output).split(/\r?\n/)) {
     const located = LOCATED.exec(line.trim());
+
     if (located) {
       warnings.push({ file: located[1], line: Number(located[2]), severity: located[3], message: located[4] });
       continue;
     }
+
     const compileError = COMPILE_ERROR.exec(line.trim());
+
     if (compileError) {
       warnings.push({ file: compileError[2], line: Number(compileError[3]), severity: compileError[1], message: compileError[4] });
       continue;
     }
+
     const match = LINE.exec(line.trim());
+
     if (!match || TALLY.test(match[2]) || NOT_GENERATED.test(match[2])) {
       continue;
     }
+
     const defined = DEFINED_IN.exec(match[2]);
+
     warnings.push({ file: defined ? defined[1] : undefined, severity: match[1], message: match[2] });
   }
+
   return warnings;
 }
 
@@ -66,6 +75,7 @@ function percentOrNull(value) {
  */
 function readVitestLines(json) {
   const lines = json && json.total && json.total.lines;
+
   return lines ? percentOrNull(lines.pct) : null;
 }
 

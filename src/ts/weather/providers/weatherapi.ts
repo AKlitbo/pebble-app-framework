@@ -52,11 +52,13 @@ export interface WeatherApiForecastDay {
  */
 function phoneTodayOf(days: WeatherApiForecastDay[], epochSeconds: unknown): WeatherApiForecastDay | null {
   const epochMs = Number(epochSeconds) * 1000;
+
   if (!Number.isFinite(epochMs) || !days.some((forecast) => forecast.date)) {
     return days[0] || null;
   }
 
   const today = util.phoneDayOf(epochMs, util.phoneOffsetMinutes(epochMs));
+
   return days.find((forecast) => forecast.date === today) || null;
 }
 

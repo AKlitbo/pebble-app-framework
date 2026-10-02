@@ -60,11 +60,13 @@ export function zoneParts(zone: string, nowMs: number): ZoneParts | null {
     const parts = formatterFor(zone).formatToParts(new Date(nowMs));
 
     const lookup: Record<string, string> = {};
+
     parts.forEach((part) => { lookup[part.type] = part.value; });
 
     const year = Number(lookup.year);
     const month = Number(lookup.month);
     const day = Number(lookup.day);
+
     if (!isFinite(year) || !isFinite(month) || !isFinite(day)) {
       return null;
     }
@@ -95,11 +97,13 @@ export function zoneParts(zone: string, nowMs: number): ZoneParts | null {
  */
 export function offsetMinutes(zone: string, nowMs: number): number | null {
   const parts = zoneParts(zone, nowMs);
+
   if (!parts) {
     return null;
   }
 
   const wall = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute);
+
   if (!isFinite(wall)) {
     return null;
   }
@@ -128,6 +132,7 @@ export function toWire(saved: unknown, nowMs: number): string {
   // a string that is not a place at all goes through as it came, since a face may keep something
   // else in a field of this kind
   const place = readPlace(saved);
+
   if (!place) {
     return saved;
   }
@@ -150,6 +155,7 @@ export function toWire(saved: unknown, nowMs: number): string {
  */
 export function phoneZone(nowMs: number): string | null {
   let zone: string;
+
   try {
     zone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
   } catch (error) {

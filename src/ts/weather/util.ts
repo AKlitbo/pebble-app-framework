@@ -88,8 +88,10 @@ export type DoneFn = (result: WeatherResult) => void;
 // a night-capable row adds both its day token and the "<token>_NIGHT" form the wire
 // carries after dark so shorten() still knows a token once it is night-promoted
 const KNOWN_TOKENS = new Set<string>();
+
 for (const entry of conditions.conditions) {
   KNOWN_TOKENS.add(entry.token);
+
   if (entry.nightResource) {
     KNOWN_TOKENS.add(`${entry.token}_NIGHT`);
   }
@@ -110,17 +112,29 @@ function wmoToCondition(code: unknown): string {
   // Open-Meteo sends null for an hour or day it has no code for. null reads as 0 in a comparison,
   // so without this it lands on FOGGY, and Number(null) would read as CLEAR
   if (typeof code !== 'number' || !Number.isFinite(code)) { return 'UNKNOWN'; }
+
   if (code === 0) { return 'CLEAR'; }
+
   if (code === 1 || code === 2) { return 'PCLDY'; }
+
   if (code === 3) { return 'CLDY'; }
+
   if (code <= 48) { return 'FOGGY'; }
+
   if (code <= 55) { return 'DRZL'; }
+
   if (code <= 57) { return 'FZDZ'; }
+
   if (code <= 65) { return 'RAIN'; }
+
   if (code <= 67) { return 'FZRN'; }
+
   if (code <= 77) { return 'SNOW'; }
+
   if (code <= 82) { return 'SHWR'; }
+
   if (code <= 86) { return 'SNSH'; }
+
   if (code <= 99) { return 'STRM'; }
 
   return 'UNKNOWN';
@@ -185,9 +199,11 @@ function shorten(text: string): string {
   }
 
   const upper = text.toUpperCase();
+
   if (CONDITION_ALIASES[upper]) {
     return CONDITION_ALIASES[upper];
   }
+
   if (KNOWN_TOKENS.has(upper)) {
     return upper;
   }
@@ -215,11 +231,13 @@ function degToCompass(degrees: unknown): string {
   }
 
   const value = Number(degrees);
+
   if (!Number.isFinite(value)) {
     return '';
   }
 
   const sector = Math.round((value % 360) / 22.5) % 16;
+
   return COMPASS[(sector + 16) % 16];
 }
 
@@ -234,6 +252,7 @@ function degToCompass(degrees: unknown): string {
  */
 function minutesFromIso(iso: unknown): number | null {
   const match = /T(\d{2}):(\d{2})/.exec(String(iso || ''));
+
   return match ? Number(match[1]) * 60 + Number(match[2]) : null;
 }
 
@@ -291,11 +310,13 @@ function shiftDayMinutes(minutes: number | null, shift: number): number | null {
  */
 function minutesFromUnix(unixSeconds: unknown): number | null {
   const unix = Number(unixSeconds);
+
   if (unixSeconds === null || unixSeconds === undefined || !Number.isFinite(unix)) {
     return null;
   }
 
   const local = new Date(unix * 1000);
+
   return local.getHours() * 60 + local.getMinutes();
 }
 
@@ -307,12 +328,14 @@ function minutesFromUnix(unixSeconds: unknown): number | null {
  */
 function minutesFrom12Hour(timeStr: unknown): number | null {
   const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(String(timeStr || '').trim());
+
   if (!match) {
     return null;
   }
 
   let hours = parseInt(match[1], 10);
   const isPM = match[3].toUpperCase() === 'PM';
+
   if (hours === 12) {
     hours = isPM ? 12 : 0;
   } else if (isPM) {
@@ -341,12 +364,14 @@ function minutesAtPhone(minutes: number | null, localtime: unknown, epochSeconds
 
   const match = /^(\d{4})-(\d{2})-(\d{2}) (\d{1,2}):(\d{2})$/.exec(String(localtime || ''));
   const epoch = Number(epochSeconds);
+
   if (!match || !Number.isFinite(epoch)) {
     return minutes;
   }
 
   const wall = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]));
   const locationOffset = Math.round((wall - Math.floor(epoch / 60) * 60000) / 60000);
+
   return shiftDayMinutes(minutes, phoneOffsetMinutes(epoch * 1000) - locationOffset);
 }
 
@@ -383,13 +408,16 @@ function attachExtras(result: WeatherResult, extra: Record<string, unknown> | nu
     // a provider says "no reading" with null, and Number(null) is 0, so only a real number or a
     // numeric string counts. otherwise the watch shows 0% rain or UV 0 where it should show a dash
     const raw = extra[name];
+
     if (typeof raw !== 'number' && !(typeof raw === 'string' && raw.trim() !== '')) {
       return;
     }
 
     const value = Number(raw);
+
     if (Number.isFinite(value)) {
       const rounded = Math.round(value);
+
       target[name] = TEMPERATURE_EXTRAS.includes(name) ? Math.min(199, Math.max(-99, rounded)) : rounded;
     }
   });
@@ -468,6 +496,7 @@ function ok(
   extra?: Record<string, unknown>
 ): WeatherResult {
   const value = Number(temperature);
+
   if (!Number.isFinite(value)) {
     // a missing or non-numeric provider field would otherwise round to NaN and ship as a real reading
     return status('No Wx Data');

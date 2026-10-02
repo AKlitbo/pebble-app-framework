@@ -30,6 +30,7 @@ function upload(face, rows) {
 
 async function render() {
   const core = fakeCore();
+
   await renderMemory({ core });
   return core;
 }
@@ -56,6 +57,7 @@ describe('render-memory', () => {
     expect(core.warning).toHaveBeenCalledTimes(1);
     expect(core.warning).toHaveBeenCalledWith('lcars-stardate on emery is at 85% of its static size limit.', { title: 'lcars-stardate Memory' });
     const summary = core.summary.addRaw.mock.calls[0][0];
+
     expect(summary.indexOf('**lcars-stardate**')).toBeLessThan(summary.indexOf('**radar-array**'));
     expect(core.setFailed).not.toHaveBeenCalled();
   });

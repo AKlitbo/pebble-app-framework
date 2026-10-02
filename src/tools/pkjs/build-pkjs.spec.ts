@@ -68,6 +68,7 @@ describe('copyIcalJs', () => {
   // writes one emitted CommonJS file under the temporary emit/
   function emitted(rel: string, source: string): void {
     const file = path.join(emit, rel);
+
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, source);
   }

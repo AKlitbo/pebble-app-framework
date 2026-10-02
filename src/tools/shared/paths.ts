@@ -20,6 +20,7 @@ function listsWorkspace(dir: string, name: string): boolean {
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
     const workspaces = Array.isArray(pkg.workspaces) ? pkg.workspaces : pkg.workspaces && pkg.workspaces.packages;
+
     return Array.isArray(workspaces)
       && workspaces.some((entry: unknown) => typeof entry === 'string' && entry.replace(/^\.\//, '').replace(/\/+$/, '') === name);
   } catch (error) {
@@ -37,6 +38,7 @@ export function isFamilyRoot(dir: string): boolean {
   if (!fs.existsSync(path.join(dir, 'core'))) {
     return false;
   }
+
   return fs.readdirSync(dir, { withFileTypes: true })
     .some((entry) => entry.isDirectory() && fs.existsSync(path.join(dir, entry.name, APPINFO_REL)));
 }
@@ -55,6 +57,7 @@ export function isFamilyRoot(dir: string): boolean {
 export function workspaceFor(engine: string): string {
   const parent = path.dirname(engine);
   const holdsFaces = fs.existsSync(path.join(parent, APPINFO_REL)) || isFamilyRoot(parent);
+
   return holdsFaces && listsWorkspace(parent, path.basename(engine)) ? parent : engine;
 }
 
@@ -86,6 +89,7 @@ export const ENGINE_REL = path.relative(WORKSPACE, ENGINE).split(path.sep).join(
 export function icaljsBundle(): string | null {
   try {
     const entry = createRequire(path.join(ENGINE, 'package.json')).resolve('ical.js');
+
     return path.join(path.dirname(entry), 'ical.es5.min.cjs');
   } catch {
     return null;

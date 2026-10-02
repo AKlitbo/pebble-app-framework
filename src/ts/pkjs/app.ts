@@ -43,9 +43,11 @@ export function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
     if (item.messageKey && item.defaultValue !== undefined) {
       defaults[item.messageKey] = item.defaultValue;
     }
+
     if (item.items) {
       Object.assign(defaults, collectDefaults(item.items));
     }
+
     return defaults;
   }, {});
 }
@@ -71,14 +73,17 @@ function timezoneFieldsIn(items: ClayConfigItem[], messageKeys: any): Array<{ na
     list.forEach((item) => {
       // an array key such as CLOCK_TZ[1] is looked up through its base name, the same as the restore
       const key = item.type === 'locationsearch' && item.timeZone && item.messageKey ? keyIdFor(messageKeys, item.messageKey) : undefined;
+
       if (key !== undefined) {
         fields.push({ name: item.messageKey as string, key });
       }
+
       if (item.items) {
         walk(item.items);
       }
     });
   };
+
   walk(items);
 
   return fields;
@@ -123,6 +128,7 @@ function itemTypes(items: ClayConfigItem[], into: Record<string, string> = {}): 
     if (item.messageKey) {
       into[item.messageKey] = item.type;
     }
+
     if (item.items) {
       itemTypes(item.items, into);
     }
@@ -138,8 +144,10 @@ function sliderPrecisions(items: ClayConfigItem[], into: Record<string, number> 
   items.forEach((item) => {
     if (item.type === 'slider' && item.messageKey && typeof item.step === 'number') {
       const decimals = String(item.step).split('.')[1];
+
       into[item.messageKey] = decimals ? decimals.length : 0;
     }
+
     if (item.items) {
       sliderPrecisions(item.items, into);
     }
@@ -171,6 +179,7 @@ export function wrapStoredConfig(config: Record<string, any>, clayConfig: ClayCo
     if (keyIdFor(messageKeys, name) === undefined) {
       return;
     }
+
     wrapped[name] = name in precisions ? { value: config[name], precision: precisions[name] } : { value: config[name] };
   });
   return wrapped;
@@ -192,6 +201,7 @@ export function keyIdFor(messageKeys: any, name: string): number | undefined {
   }
 
   const slot = /^(.+)\[(\d+)\]$/.exec(name);
+
   if (!slot || typeof messageKeys[slot[1]] !== 'number') {
     return undefined;
   }
@@ -250,6 +260,7 @@ export function seedConfigFromWatch(messageKeys: any, payload: any, clayConfig: 
 
   Object.keys(types).forEach((name) => {
     const messageKey = keyIdFor(messageKeys, name);
+
     if (messageKey === undefined || !(messageKey in payload)) {
       return;
     }
@@ -345,11 +356,13 @@ function startPebbleApp(options: StartOptions): void {
 
     timezoneFields.forEach((field) => {
       const saved = readValue(config[field.name], '');
+
       if (typeof saved !== 'string') {
         return;
       }
 
       const value = timezone.toWire(saved, Date.now());
+
       if (!value || lastTimezoneValues[field.name] === value) {
         return;
       }
@@ -377,6 +390,7 @@ function startPebbleApp(options: StartOptions): void {
    */
   function pageSettings(json: string, restore: boolean): AppMessageDict {
     const dict = retimeSettings(clay.getSettings(json), messageKeys, clayConfig, Date.now());
+
     if (messageKeys.SETTINGS_FRESH !== undefined) {
       dict[messageKeys.SETTINGS_FRESH] = restore ? 1 : 0;
     }
@@ -391,9 +405,11 @@ function startPebbleApp(options: StartOptions): void {
    */
   function sendPageSettings(json: string, restore: boolean): void {
     const dict = pageSettings(json, restore);
+
     queueSend(dict, () => {
       timezoneFields.forEach((field) => {
         const value = dict[field.key];
+
         if (typeof value === 'string') {
           lastTimezoneValues[field.name] = value;
         }
@@ -448,6 +464,7 @@ function startPebbleApp(options: StartOptions): void {
   function backgroundRefresh() {
     refreshTick++;
     const slow = refreshTick % SLOW_REFRESH_EVERY === 0;
+
     pushTimezones();
     eachFeature((feature) => feature.refresh?.(slow));
   }
@@ -459,6 +476,7 @@ function startPebbleApp(options: StartOptions): void {
     // a face with the fresh flag and settings already on the phone only needs to know whether the
     // watch booted empty, so it asks for that one field. anything else seeds from the whole snapshot
     const freshOnly = messageKeys.SETTINGS_FRESH !== undefined && Object.keys(getConfig()).length > 0;
+
     queueSend({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
 
     // a watch that just rebooted holds no timezones, so every one goes out again
@@ -471,6 +489,7 @@ function startPebbleApp(options: StartOptions): void {
     if (refreshTimer) {
       clearInterval(refreshTimer);
     }
+
     refreshTick = 0;
     refreshTimer = setInterval(backgroundRefresh, REFRESH_MS);
   });
@@ -547,6 +566,7 @@ function startPebbleApp(options: StartOptions): void {
 
   Pebble.addEventListener('webviewclosed', (event) => {
     pageOpen = false;
+
     if (!event || !event.response) {
       return;
     }

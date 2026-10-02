@@ -19,6 +19,7 @@ const FC = '/v1/forecast';
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: WeatherOpts, request: RequestFn): WeatherResult {
   let result!: WeatherResult;
+
   openmeteo.fetch(opts, request, (received) => { result = received; });
   return result;
 }
@@ -798,6 +799,7 @@ describe('fetchForecast', () => {
   /** Runs the forecast helper synchronously and returns whatever it hands back. */
   function runForecast(opts: WeatherOpts, request: RequestFn): ForecastCols | null {
     let result: ForecastCols | null = null;
+
     openmeteo.fetchForecast(opts, request, (received) => { result = received; });
     return result;
   }

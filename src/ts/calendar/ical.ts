@@ -72,9 +72,11 @@ function toEpoch(time: ICAL.Time): number {
  */
 function durationOf(event: ICAL.Event): number {
   const seconds = event.duration.toSeconds();
+
   if (seconds > 0) {
     return seconds;
   }
+
   return event.startDate.isDate ? DAY_SECONDS : HOUR_SECONDS;
 }
 
@@ -88,8 +90,10 @@ function durationOf(event: ICAL.Event): number {
 function toCalendarEvent(event: ICAL.Event, start: ICAL.Time, duration: number): CalendarEvent {
   const startEpoch = toEpoch(start);
   let endEpoch = startEpoch + duration;
+
   if (start.isDate) {
     const end = start.clone();
+
     end.addDuration(event.duration.toSeconds() > 0 ? event.duration : ICAL.Duration.fromSeconds(DAY_SECONDS));
     endEpoch = toEpoch(end);
   }
@@ -110,6 +114,7 @@ function toCalendarEvent(event: ICAL.Event, start: ICAL.Time, duration: number):
  */
 function isCancelled(block: ICAL.Component): boolean {
   const status = block.getFirstPropertyValue('status');
+
   return typeof status === 'string' && status.toUpperCase() === 'CANCELLED';
 }
 
@@ -122,9 +127,11 @@ function isCancelled(block: ICAL.Component): boolean {
 function readOccurrence(event: ICAL.Event, time: ICAL.Time, duration: number): CalendarEvent | null {
   try {
     const details = event.getOccurrenceDetails(time);
+
     if (isCancelled(details.item.component)) {
       return null;
     }
+
     return toCalendarEvent(details.item, details.startDate, durationOf(details.item));
   } catch (error) {
     return toCalendarEvent(event, time, duration);
@@ -161,6 +168,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
 
   for (let step = 0; step < MAX_STEPS && !finished; step++) {
     const next = iterator.next();
+
     if (!next) {
       finished = true;
       break;
@@ -199,6 +207,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
     // full, but the pass below still runs, since an occurrence moved in from past the window can
     // be sooner than most of these
     out.push(occurrence);
+
     if (out.length >= MAX_EVENTS) {
       finished = true;
       break;
@@ -215,6 +224,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
   moved.forEach((id) => {
     const recurrenceId = exceptions[id].recurrenceId;
     const occurrence = walked.has(toEpoch(recurrenceId)) ? null : readOccurrence(event, recurrenceId, duration);
+
     if (occurrence) {
       out.push(occurrence);
     }
@@ -239,19 +249,23 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
   // that day's midnight. six days on from now would cut the last day at whatever time the feed
   // was fetched, keeping a morning event on it and dropping an evening one
   const end = new Date(now * 1000);
+
   end.setHours(0, 0, 0, 0);
   end.setDate(end.getDate() + LOOKAHEAD_DAYS + 1);
   const horizon = Math.floor(end.getTime() / 1000) - 1;
 
   let root: ICAL.Component;
+
   try {
     const jcal = ICAL.parse(String(text || ''));
+
     // a component is [name, properties, subcomponents]. an empty body parses to a bare [], which
     // builds a Component happily and only throws once something is read off it. that is no calendar
     // at all, so the shape is checked here rather than left to surface deeper in
     if (!Array.isArray(jcal) || jcal.length < 3) {
       return null;
     }
+
     root = new ICAL.Component(jcal);
   } catch (error) {
     // the feed is not iCal at all. a fetch can hand back an error page or a truncated body, which
@@ -270,9 +284,11 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
   // the moved occurrences grouped by UID once, so each rule finds its own without walking every
   // override in the feed. a feed of busy recurring meetings would otherwise take one full walk per rule
   const overridesByUid = new Map<unknown, ICAL.Component[]>();
+
   overrides.forEach((block) => {
     const uid = block.getFirstPropertyValue('uid');
     const group = overridesByUid.get(uid);
+
     if (group) {
       group.push(block);
     } else {
@@ -283,6 +299,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
   // a cancelled event is kept in the feed rather than taken out, so it is left off the agenda here.
   // its overrides still go by its UID below, so a cancelled series does not come back as loose ones
   const events: CalendarEvent[] = [];
+
   liveMasters.forEach((block) => {
     // each rule gets only the moved occurrences carrying its own UID, passed in by hand. left to
     // itself ical.js hands every RECURRENCE-ID in the calendar to every rule without checking the
@@ -293,6 +310,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
     // with no start. one unreadable event is not worth losing the others over
     try {
       const event = new ICAL.Event(block, { exceptions: own });
+
       events.push(...occurrencesOf(event, now, horizon));
     } catch (error) {
       console.error('calendar: skipped an event it could not read', error);
@@ -301,12 +319,15 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
 
   // an override whose rule is not in the feed still happens, so it reads as a plain event
   const knownUids = new Set(masters.map((block) => block.getFirstPropertyValue('uid')));
+
   overrides.forEach((block) => {
     if (knownUids.has(block.getFirstPropertyValue('uid')) || isCancelled(block)) {
       return;
     }
+
     try {
       const event = new ICAL.Event(block);
+
       events.push(toCalendarEvent(event, event.startDate, durationOf(event)));
     } catch (error) {
       // unreadable, so skip it

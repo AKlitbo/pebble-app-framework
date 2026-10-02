@@ -15,6 +15,7 @@ import type { RequestFn, StockOpts, StockQuote } from '../util';
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: StockOpts, request: RequestFn): StockQuote {
   let result!: StockQuote;
+
   twelvedata.fetch(opts, request, (received) => { result = received; });
   return result;
 }

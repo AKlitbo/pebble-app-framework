@@ -18,6 +18,7 @@ function recordingPebble(runs: PebbleRun[]): { calls: string[]; run: PebbleRunne
     calls.push(`${path.basename(sandbox)}: pebble ${args.join(' ')}`);
     return runs.shift() ?? { status: 0, signal: null };
   };
+
   return { calls, run };
 }
 

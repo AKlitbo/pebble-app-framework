@@ -44,8 +44,10 @@ function reportProblems(name: string, problems: string[]): void {
     console.log(`${name}: every face is current`);
     return;
   }
+
   for (const problem of problems) {
     console.error(problem);
   }
+
   process.exitCode = 1;
 }

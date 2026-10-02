@@ -55,6 +55,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
     } catch (error) {
       console.error('send queue: callback threw', error);
     }
+
     pump();
   }
 
@@ -63,6 +64,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
     if (sending || items.length === 0) {
       return;
     }
+
     sending = true;
     const item = items[0];
 
@@ -82,6 +84,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
       if (settled) {
         return;
       }
+
       settled = true;
       clearTimeout(watchdog);
 
@@ -95,6 +98,7 @@ export function createSendQueue(send: SendFn): QueueSendFn {
       // a nack usually just means the outbox was momentarily busy, so back off and retry the same
       // head a few times before dropping it and moving on so one stuck send can't wedge the queue
       item.tries++;
+
       if (item.tries >= SEND_RETRIES) {
         sending = false;
         items.shift();
@@ -155,6 +159,7 @@ export function createDedupedSender(queueSend: QueueSendFn, label: string): Dedu
   return {
     push(dict: AppMessageDict): void {
       const next = JSON.stringify(dict);
+
       if (next === held) {
         console.log(`${label}: unchanged, skipping send`);
         return;

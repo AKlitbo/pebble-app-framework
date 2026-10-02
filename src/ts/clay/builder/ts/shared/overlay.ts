@@ -33,6 +33,7 @@ export function createOverlayHost(overlayClass: string, panelClass: string, dism
     if (backdrop && backdrop.parentNode) {
       backdrop.parentNode.removeChild(backdrop);
     }
+
     if (panel && panel.parentNode) {
       panel.parentNode.removeChild(panel);
     }
@@ -46,6 +47,7 @@ export function createOverlayHost(overlayClass: string, panelClass: string, dism
 
     backdrop = document.createElement('div');
     backdrop.className = overlayClass;
+
     if (dismissOnTap) {
       backdrop.addEventListener('click', close);
     }

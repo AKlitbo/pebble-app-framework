@@ -47,6 +47,7 @@ const FIXTURE_ROOTS: Roots = {
 /** The fixture manifest, its path and its directory. */
 function fixtureManifest() {
   const manifestPath = findManifests(FIXTURE_ROOTS)[0];
+
   return { manifestPath, manifest: requireManifest(manifestPath).default, dir: path.dirname(manifestPath) };
 }
 

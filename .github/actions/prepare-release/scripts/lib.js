@@ -23,9 +23,11 @@ const LINK_REFERENCE = /^\[[^\]]+\]: \S/;
  */
 function splitTag(tag) {
   const match = /^(.+)-v(\d.*)$/.exec(String(tag));
+
   if (!match) {
     return null;
   }
+
   return { face: match[1], version: match[2] };
 }
 
@@ -41,17 +43,21 @@ function readChangelogEntry(text, version) {
   const lines = String(text).split(/\r?\n/).map((line) => line.trimEnd());
   const start = lines.findIndex((line) => {
     const heading = HEADING.exec(line);
+
     return heading !== null && heading[1] === version;
   });
+
   if (start === -1) {
     return null;
   }
 
   const body = [];
+
   for (const line of lines.slice(start + 1)) {
     if (HEADING.test(line) || LINK_REFERENCE.test(line)) {
       break;
     }
+
     body.push(line);
   }
 
@@ -68,9 +74,11 @@ function isDated(date) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return false;
   }
+
   // a month past 12 reads as no date at all, and a day past the month's end rolls over into another one,
   // so a date is only real when it reads back the same
   const parsed = new Date(`${date}T00:00:00Z`);
+
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === date;
 }
 

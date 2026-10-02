@@ -19,9 +19,11 @@ import { isMainScript } from '../shared/entry.ts';
 /** Every bundled component a face commits, by its full path, found by its output rather than its manifests. */
 function committedComponents(face: string): string[] {
   const clayDir = path.join(faceDir(face), 'src', 'pkjs', 'clay');
+
   if (!fs.existsSync(clayDir)) {
     return [];
   }
+
   return fs.readdirSync(clayDir).filter((name) => name.endsWith('-component.g.js')).map((name) => path.resolve(clayDir, name));
 }
 
@@ -45,8 +47,10 @@ export async function checkComponents(): Promise<string[]> {
 
       for (const manifestPath of findManifests(roots)) {
         const built = await buildComponentSource(manifestPath, roots);
+
         written.add(path.resolve(built.output));
         const committed = fs.existsSync(built.output) ? readText(built.output) : null;
+
         if (committed !== built.source) {
           problems.push(`${face}: ${faceRel(face, built.output)} is stale, run paf gen ${face} clay`);
         }

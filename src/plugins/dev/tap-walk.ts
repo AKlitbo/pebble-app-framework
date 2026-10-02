@@ -129,20 +129,24 @@ export type WalkResult = {
  */
 export function parseTapWalkArgs(args: string[]): TapWalkArgs {
   const parsed: TapWalkArgs = { face: '', install: false, emulator: 'emery', out: DEFAULT_OUT, target: null, help: false };
+
   if (args.includes('-h') || args.includes('--help')) {
     return { ...parsed, help: true };
   }
 
   const [face, ...rest] = args;
+
   if (!face || face.startsWith('-')) {
     throw new ToolError('no face given. Pass it first, as in paf tool ridgeline tap-walk, or paf tool gridlock tap-walk --install --target=gridlock-face');
   }
+
   parsed.face = face;
 
   for (const arg of rest) {
     const equals = arg.indexOf('=');
     const flag = equals === -1 ? arg : arg.slice(0, equals);
     const value = equals === -1 ? '' : arg.slice(equals + 1);
+
     if (arg === '--install') {
       parsed.install = true;
     } else if (value && flag === '--emulator') {
@@ -160,6 +164,7 @@ export function parseTapWalkArgs(args: string[]): TapWalkArgs {
   if (parsed.target !== null && !parsed.install) {
     throw new ToolError('--target picks the build --install puts on the emulator, so it needs --install');
   }
+
   return parsed;
 }
 
@@ -180,11 +185,14 @@ export function pickTarget(face: string, declared: string[], wanted: string | nu
     if (!declared.includes(wanted)) {
       throw new ToolError(`${face} has no target ${wanted}. Its targets are: ${declared.join(' ')}`);
     }
+
     return wanted;
   }
+
   if (declared.length > 1) {
     throw new ToolError(`${face} ships several targets. Pick one with --target, from: ${declared.join(' ')}`);
   }
+
   return declared[0];
 }
 
@@ -203,9 +211,11 @@ export function outFolder(out: string, unit: string = WORKSPACE): string {
   const down = path.relative(unit, dir);
   // a folder name can start with two dots, so only a whole .. step counts as leaving the unit
   const inside = down !== '' && down !== '..' && !down.startsWith(`..${path.sep}`) && !path.isAbsolute(down);
+
   if (!inside) {
     throw new ToolError(`--out=${out} is not a folder inside the unit, and the out folder is emptied first. Pick one inside it, such as ${DEFAULT_OUT}`);
   }
+
   return dir;
 }
 
@@ -230,12 +240,16 @@ export function clearOut(dir: string): void {
     if (!fs.statSync(dir).isDirectory()) {
       throw new ToolError(`${dir} is a file, and the shots need a folder. Pick one such as ${DEFAULT_OUT}`);
     }
+
     const stray = fs.readdirSync(dir).filter((name) => !isWalkFile(name));
+
     if (stray.length > 0) {
       throw new ToolError(`${dir} holds files the walk did not write, such as ${stray[0]}. The out folder is emptied first, so pick one that holds only earlier shots, such as ${DEFAULT_OUT}`);
     }
+
     fs.rmSync(dir, { recursive: true });
   }
+
   fs.mkdirSync(dir, { recursive: true });
 }
 
@@ -275,8 +289,10 @@ export function walk(io: WalkIo, maxTaps: number = MAX_TAPS): WalkResult {
   console.log('>> capturing starting state');
   const first = io.screenshot();
   const start = sha256(first);
+
   io.save(0, first);
   const seen = new Set([start]);
+
   console.log(`   ${shotLabel(0)}  ${start}  (start)`);
 
   for (let tap = 1; tap <= maxTaps; tap++) {
@@ -291,15 +307,18 @@ export function walk(io: WalkIo, maxTaps: number = MAX_TAPS): WalkResult {
       if (tap === 1) {
         throw new ToolError(`the first tap drew the same screen as the start, so the taps change nothing on the watch. ${SWITCH_HINT}`);
       }
+
       console.log(`>> wrapped back to start after ${tap} taps`);
       return { taps: tap, states: seen.size };
     }
+
     if (seen.has(shot)) {
       console.log(`   tap ${String(tap).padEnd(3)}   ${shot}  (dup, skipped)`);
       continue;
     }
 
     const index = seen.size;
+
     seen.add(shot);
     io.save(index, png);
     console.log(`   ${shotLabel(index)}  ${shot}`);
@@ -316,6 +335,7 @@ export function walk(io: WalkIo, maxTaps: number = MAX_TAPS): WalkResult {
  */
 function installFace(face: string, target: string, emulator: string): void {
   const pbw = pbwPath(target);
+
   if (!fs.existsSync(pbw)) {
     throw new ToolError(`no build at ${path.relative(WORKSPACE, pbw)}. Build it with paf build ${face} first`);
   }
@@ -332,12 +352,14 @@ function installFace(face: string, target: string, emulator: string): void {
 function pebbleRunner(timeout: number): PebbleRunner {
   return (args, cwd) => {
     const run = spawnSync('pebble', args, { cwd, stdio: ['ignore', 'pipe', 'pipe'], timeout });
+
     // pebble draws progress bars on stderr, which would land between the walk's own lines, so what
     // it prints is held back and shown only when the step fails, where it says why
     if (run.status !== 0) {
       process.stderr.write(run.stdout ?? '');
       process.stderr.write(run.stderr ?? '');
     }
+
     return run;
   };
 }
@@ -362,16 +384,21 @@ function emulatorIo(emulator: string, dir: string, candidate: string): WalkIo {
   // the first shot boots the emulator when it is not running yet, so it gets the longer timeout
   const boot = pebbleRunner(BOOT_TIMEOUT_MS);
   let booted = false;
+
   return {
     folder: path.relative(process.cwd(), dir) || '.',
     screenshot() {
       const run = booted ? step : boot;
+
       booted = true;
       runPebble(['screenshot', '--no-open', '--emulator', emulator, candidate], WORKSPACE, run, where);
+
       if (!fs.existsSync(candidate)) {
         throw new ToolError(`pebble screenshot left no file. Check the ${emulator} emulator is running with the face on it`);
       }
+
       const png = fs.readFileSync(candidate);
+
       fs.rmSync(candidate);
       return png;
     },
@@ -390,6 +417,7 @@ function emulatorIo(emulator: string, dir: string, candidate: string): WalkIo {
 function main(): void {
   try {
     const args = parseTapWalkArgs(process.argv.slice(2));
+
     if (args.help) {
       console.log(USAGE);
       return;
@@ -409,9 +437,11 @@ function main(): void {
     // the screenshot waiting to be checked sits outside the out folder, so a failed step never
     // leaves it among the shots
     const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'tap-walk-'));
+
     try {
       const io = emulatorIo(args.emulator, dir, path.join(scratch, 'candidate.png'));
       const { states } = walk(io);
+
       console.log(`>> ${states} unique states captured in ${io.folder}/`);
     } finally {
       fs.rmSync(scratch, { recursive: true, force: true });

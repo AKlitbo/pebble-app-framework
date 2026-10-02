@@ -19,9 +19,11 @@ const UNLOCATED = /^(warning|error): (.*)$/;
  */
 function readWarnings(output) {
   const warnings = [];
+
   for (const line of String(output).split(/\r?\n/)) {
     const located = LOCATED.exec(line);
     const unlocated = located ? null : UNLOCATED.exec(line);
+
     if (located) {
       warnings.push({ file: located[1], line: Number(located[2]), severity: located[3], message: located[4] });
     } else if (unlocated) {
@@ -30,6 +32,7 @@ function readWarnings(output) {
       warnings[warnings.length - 1].message += `\n${line.trim()}`;
     }
   }
+
   return warnings;
 }
 

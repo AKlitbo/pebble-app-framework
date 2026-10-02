@@ -43,6 +43,7 @@ function readBuildLog(log) {
 
   for (const line of stripColour(log).split(/\r?\n/)) {
     const header = HEADER.exec(line);
+
     if (header) {
       block = { platform: header[1].toLowerCase() };
       held.push(block);
@@ -50,6 +51,7 @@ function readBuildLog(log) {
     }
 
     const leaving = LEAVING.exec(line);
+
     if (leaving) {
       for (const done of held) {
         if (FIELDS.every(([field]) => done[field] !== undefined)) {
@@ -58,6 +60,7 @@ function readBuildLog(log) {
           incomplete.push({ target: leaving[1], platform: done.platform });
         }
       }
+
       held = [];
       block = null;
       continue;
@@ -66,6 +69,7 @@ function readBuildLog(log) {
     if (block) {
       for (const [field, pattern] of FIELDS) {
         const match = pattern.exec(line);
+
         if (match) {
           block[field] = Number(match[1]);
         }
@@ -86,6 +90,7 @@ function readVirtualSize(binary) {
   if (binary.length < VIRTUAL_SIZE_OFFSET + 2) {
     return 0;
   }
+
   return binary.readUInt16LE(VIRTUAL_SIZE_OFFSET);
 }
 

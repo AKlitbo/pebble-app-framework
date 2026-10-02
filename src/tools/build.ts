@@ -43,9 +43,11 @@ export type BuildArgs = {
  */
 export function parseBuildArgs(args: string[]): BuildArgs {
   const [target, ...rest] = args;
+
   if (!target || target.startsWith('-')) {
     throw new ToolError('usage: paf build <face|all> [--clean] [pebble build args...]');
   }
+
   return {
     target,
     clean: rest.includes('--clean'),
@@ -67,9 +69,11 @@ export function facesToBuild(target: string, faces: string[]): string[] {
   if (target === 'all') {
     return faces;
   }
+
   if (!faces.includes(target)) {
     throw new ToolError(`no such face: ${target}. The faces in this repo are: ${faces.join(' ')}`);
   }
+
   return [target];
 }
 
@@ -96,9 +100,11 @@ function spawnPebble(args: string[], sandbox: string): PebbleRun {
 export function buildSandboxes(face: string, sandboxes: string[], clean: boolean, forward: string[], run: PebbleRunner = spawnPebble): void {
   for (const sandbox of sandboxes) {
     console.log(`== building ${path.basename(sandbox)} (face ${face}) ==`);
+
     if (clean) {
       runPebble(['clean'], sandbox, run);
     }
+
     runPebble(['build', ...forward], sandbox, run);
   }
 }
@@ -125,6 +131,7 @@ export function buildOne(face: string, clean: boolean, forward: string[]): void 
 function main(): void {
   try {
     const { target, clean, forward } = parseBuildArgs(process.argv.slice(2));
+
     for (const face of facesToBuild(target, listFaceNames())) {
       buildOne(face, clean, forward);
     }

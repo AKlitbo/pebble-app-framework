@@ -50,6 +50,7 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
   /** Sends the packed agenda to the watch, unless the watch holds it already. An empty list clears it. */
   function sendCalendar(events: CalendarEvent[]) {
     const bytes = wire.packCalendarStrip(events);
+
     if (!bytes) {
       return;
     }
@@ -73,11 +74,13 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
     // a download already out answers an unforced call. a forced one, for a changed URL, takes
     // over, and the old download's answer is dropped when it lands
     const round = startRound(state, Boolean(force));
+
     if (round === null) {
       return;
     }
 
     const url = calendarUrl();
+
     if (!url) {
       // no feed means nothing to download, so the round ends here rather than holding the gate
       finishRound(state, round);
@@ -103,6 +106,7 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
       }
 
       const events = ical.parseIcal(body as string);
+
       if (!events) {
         // an error page or a cut off body says nothing about the calendar, so the watch keeps the
         // agenda it has
@@ -111,6 +115,7 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
       }
 
       console.log('Calendar: parsed ' + events.length + ' upcoming event(s)');
+
       if (events.length) {
         console.log('Calendar: next is "' + events[0].title + '" at ' + new Date(events[0].startEpoch * 1000).toString());
       }

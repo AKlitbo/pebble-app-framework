@@ -37,6 +37,7 @@ interface YahooResponse {
  */
 function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const start = util.begin(opts, false);
+
   if (start.error) {
     return done(start.error);
   }
@@ -51,11 +52,13 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
       if (err && String(err).indexOf('429') !== -1) {
         return done(util.status('Rate Limit'));
       }
+
       return done(util.status('Net Error'));
     }
 
     // an unknown or delisted symbol comes back with result null and an error block
     const chart: YahooChartInner = json.chart || {};
+
     if (chart.error || !chart.result || !chart.result[0]) {
       return done(util.status('No Symbol'));
     }

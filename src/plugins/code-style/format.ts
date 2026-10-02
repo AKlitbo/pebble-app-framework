@@ -53,10 +53,12 @@ export function formats(rel: string): boolean {
   if (parts.slice(0, -1).some(skipsFolder)) {
     return false;
   }
+
   // anything with .g. in its name is generated, and resources/icons.json is a table kept in columns by hand
   if (name.includes('.g.') || TOOL_FILES.has(name) || rel.endsWith('resources/icons.json')) {
     return false;
   }
+
   return /\.(css|json|ya?ml)$/.test(name);
 }
 
@@ -71,8 +73,10 @@ export type FormatRules = {
 /** Every file under a folder that the rules take, as paths from the root with forward slashes, in order. */
 function filesUnder(root: string, rules: FormatRules, folder = ''): string[] {
   const found: string[] = [];
+
   for (const entry of fs.readdirSync(path.join(root, folder), { withFileTypes: true })) {
     const rel = folder ? `${folder}/${entry.name}` : entry.name;
+
     if (entry.isDirectory()) {
       if (!skipsFolder(entry.name) && !rules.leaves?.(rel)) {
         found.push(...filesUnder(root, rules, rel));
@@ -81,6 +85,7 @@ function filesUnder(root: string, rules: FormatRules, folder = ''): string[] {
       found.push(rel);
     }
   }
+
   return found.sort();
 }
 
@@ -116,12 +121,14 @@ export async function formatTree(root: string, rules: FormatRules, check: boolea
       if (!(error instanceof SyntaxError)) {
         throw error;
       }
+
       unread.push(`${rel}: ${error.message.split('\n')[0]}`);
       continue;
     }
 
     if (formatted !== source) {
       changed.push(rel);
+
       if (!check) {
         fs.writeFileSync(file, formatted);
       }
@@ -129,19 +136,24 @@ export async function formatTree(root: string, rules: FormatRules, check: boolea
   }
 
   const problems: string[] = [];
+
   if (unread.length > 0) {
     problems.push(`Prettier could not read ${unread.length} of ${files.length} files:\n${unread.join('\n')}`);
   }
+
   if (check && changed.length > 0) {
     problems.push(`${changed.length} of ${files.length} files are not formatted. Run ${rewrite} to rewrite them:\n${changed.join('\n')}`);
   }
+
   // what a run without --check rewrote is said whether or not another file stopped it
   if (!check) {
     console.log(`formatted ${changed.length} of ${files.length} files`);
   }
+
   if (problems.length > 0) {
     throw new ToolError(problems.join('\n\n'));
   }
+
   if (check) {
     console.log(`all ${files.length} files are formatted`);
   }
@@ -150,13 +162,16 @@ export async function formatTree(root: string, rules: FormatRules, check: boolea
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const unknown = args.find((arg) => arg !== '--check');
+
   if (unknown !== undefined) {
     throw new ToolError(`unknown argument: ${unknown}. paf format takes --check`);
   }
+
   requireMounted();
 
   const configFile = path.join(WORKSPACE, 'paf.config.json');
   const config: CodeStyleConfig = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
+
   if (!prettierIsOn(config)) {
     console.log('Prettier is off for this unit. Turn it on with "plugins": { "code-style": { "prettier": true } } in paf.config.json');
     return;

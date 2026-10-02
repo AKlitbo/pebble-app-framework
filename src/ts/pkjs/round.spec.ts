@@ -13,6 +13,7 @@ describe('startRound', () => {
   /** Each of the watch's re-asks would start its own gps fix and provider fetch, and spend the quota on every one. */
   test('drops an unforced start while a round is running', () => {
     const state = createRound();
+
     startRound(state, false);
 
     const result = startRound(state, false);
@@ -35,6 +36,7 @@ describe('startRound', () => {
   test('starts again once the round has ended', () => {
     const state = createRound();
     const older = startRound(state, false) as number;
+
     finishRound(state, older);
 
     const result = startRound(state, false);
@@ -48,6 +50,7 @@ describe('finishRound', () => {
   test('ends a round once', () => {
     const state = createRound();
     const round = startRound(state, false) as number;
+
     finishRound(state, round);
 
     const result = finishRound(state, round);
@@ -59,6 +62,7 @@ describe('finishRound', () => {
   test('leaves a round alone that a forced start took over', () => {
     const state = createRound();
     const older = startRound(state, false) as number;
+
     startRound(state, true);
 
     const result = finishRound(state, older);
@@ -73,6 +77,7 @@ describe('shutOutRound', () => {
   test('drops the running round', () => {
     const state = createRound();
     const older = startRound(state, false) as number;
+
     shutOutRound(state);
 
     const result = roundIsCurrent(state, older);
@@ -83,6 +88,7 @@ describe('shutOutRound', () => {
   /** The shut-out round's own close is one of the answers dropped, so the flag has to clear with it or every unforced fetch is held off till the JS restarts. */
   test('lets the next unforced start through', () => {
     const state = createRound();
+
     startRound(state, false);
     shutOutRound(state);
 

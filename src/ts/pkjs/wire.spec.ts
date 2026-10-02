@@ -87,6 +87,7 @@ describe('packForecastHourly', () => {
   /** More columns than the watch holds must slice to the cap, or the count byte overstates the strip. */
   test('caps the columns at the watch capacity', () => {
     const tenCols = [];
+
     for (let i = 0; i < 10; i++) {
       tenCols.push({ code: 0, temp: 10 });
     }
@@ -128,6 +129,7 @@ describe('packForecastDaily', () => {
   /** More columns than the watch holds must slice to the cap, or the count byte overstates the strip. */
   test('caps the columns at the watch capacity', () => {
     const tenCols = [];
+
     for (let i = 0; i < 10; i++) {
       tenCols.push({ code: 0, tempMax: 20, tempMin: 10 });
     }
@@ -197,6 +199,7 @@ describe('packStockStrip', () => {
    */
   test('packs a sparse slot so the count still matches the records', () => {
     const sparse = new Array(3);
+
     sparse[0] = okSlot;
     sparse[2] = { ok: true, symbol: 'F', price: 11.92, changePercent: 2.15 };
 
@@ -206,23 +209,27 @@ describe('packStockStrip', () => {
     expect(bytes[0]).toBe(3);
     const lengths = ['AAPL'.length, 0, 'F'.length];
     let offset = 1;
+
     for (const labelLength of lengths) {
       expect(bytes.length).toBeGreaterThanOrEqual(offset + 8 + labelLength);
       expect(bytes[offset + 7]).toBe(labelLength);
       offset += 8 + labelLength;
     }
+
     expect(bytes.length).toBe(offset);
   });
 
   /** The hole itself reads as a failed slot so the watch shows a placeholder, not a stale price. */
   test('packs a sparse slot as a failed quote', () => {
     const sparse = new Array(2);
+
     sparse[0] = okSlot;
 
     const bytes = wire.packStockStrip(sparse);
 
     // the second record starts after count(1) + the first record (8 + 4 label bytes)
     const second = 1 + 8 + 'AAPL'.length;
+
     expect(bytes[second]).toBe(0); // ok = 0
     expect(bytes.slice(second + 1, second + 5)).toEqual([0, 0, 0, 0]); // price = 0
   });

@@ -18,6 +18,7 @@ const OM = 'open-meteo.com/v1/forecast';
 /** Runs the provider synchronously and returns the result object. */
 function run(opts: WeatherOpts, request: RequestFn): WeatherResult {
   let result!: WeatherResult;
+
   owm.fetch(opts, request, (received) => { result = received; });
   return result;
 }
@@ -232,6 +233,7 @@ describe('owm provider', () => {
       expect(result.windDir).toBe('NW');
       // read on the phone's clock, whatever zone the spec runs in
       const midnightUtc = new Date(0);
+
       expect(result.sunrise).toBe(midnightUtc.getHours() * 60 + midnightUtc.getMinutes());
     });
 
@@ -283,6 +285,7 @@ describe('owm provider', () => {
       run({ ...BASE, fahrenheit: true }, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
 
       const omCall = calls.find((url) => url.includes(OM));
+
       expect(omCall).toContain('dew_point_2m');
       expect(omCall).toContain('temperature_2m_max');
       expect(omCall).toContain('temperature_unit=fahrenheit');
@@ -351,6 +354,7 @@ describe('owm provider', () => {
       run({ ...BASE, wantForecast: true }, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
 
       const omCall = calls.find((url) => url.includes(OM));
+
       expect(omCall).toContain('hourly=temperature_2m,weather_code,is_day');
       expect(omCall).toContain('forecast_days=8');
     });
@@ -362,6 +366,7 @@ describe('owm provider', () => {
       run(BASE, routing({ [WX]: { body: WX_OK }, [OM]: { body: '{}' } }, calls));
 
       const omCall = calls.find((url) => url.includes(OM));
+
       expect(omCall).not.toContain('hourly=');
     });
   });

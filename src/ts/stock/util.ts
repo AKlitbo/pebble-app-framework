@@ -82,6 +82,7 @@ function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn,
 // the Number()/isFinite guards below run. saying `number` here would be a lie
 function ok(symbol: string, price: unknown, change: unknown, changePercent: unknown, asOf?: string): StockQuote {
   const value = Number(price);
+
   if (!Number.isFinite(value)) {
     // a missing price would otherwise ship as a real reading of NaN
     return status('NO DATA');
@@ -135,6 +136,7 @@ function begin(opts: StockOpts, needsKey: boolean): BeginResult {
   }
 
   const symbol = String(opts.symbol || '').toUpperCase();
+
   if (!symbol) {
     return { error: status('No Symbol') };
   }
@@ -153,6 +155,7 @@ function begin(opts: StockOpts, needsKey: boolean): BeginResult {
  */
 function isoDateFromUnix(unixSeconds: unknown): string {
   const unix = Number(unixSeconds);
+
   if (!Number.isFinite(unix) || unix <= 0) {
     return '';
   }
@@ -160,6 +163,7 @@ function isoDateFromUnix(unixSeconds: unknown): string {
   // zoneParts answers null rather than throwing, so the fallback hangs off that
   const ms = unix * 1000;
   const parts = zoneParts('America/New_York', ms);
+
   if (parts) {
     return parts.date;
   }

@@ -43,6 +43,7 @@ function check(project: string): Promise<Result> {
     const pretty = process.stderr.isTTY ? 'true' : 'false';
     const child = spawn(process.execPath, [requireHost.resolve('typescript/bin/tsc'), '-p', project, '--pretty', pretty]);
     let output = '';
+
     child.stdout.on('data', (chunk) => { output += chunk; });
     child.stderr.on('data', (chunk) => { output += chunk; });
     child.on('error', (error) => resolve({ project, ok: false, output: String(error) }));

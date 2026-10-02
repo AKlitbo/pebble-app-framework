@@ -258,6 +258,7 @@ describe('iconSourcesDir', () => {
 async function faceWithPng(size: number): Promise<string> {
   const face = tempDir('icons-face-');
   const png = path.join(face, 'resources', 'icons', 'bt-on.png');
+
   fs.mkdirSync(path.dirname(png), { recursive: true });
   await sharp({ create: { width: size, height: size, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } }).png().toFile(png);
   return face;
@@ -267,6 +268,7 @@ describe('holdsIconSets', () => {
   /** A folder a level off holds none of the sets, and keeping every PNG passed a run that rendered nothing. */
   test('finds no sets in a folder that holds none', () => {
     const sources = tempDir('icons-src-');
+
     fs.mkdirSync(path.join(sources, 'vendor'));
 
     const result = holdsIconSets(sources);
@@ -277,6 +279,7 @@ describe('holdsIconSets', () => {
   /** A machine that fetched only some sets still renders from them, so one set is enough. */
   test('finds a folder holding one of the sets', () => {
     const sources = tempDir('icons-src-');
+
     fs.mkdirSync(path.join(sources, 'uxwing'));
 
     const result = holdsIconSets(sources);
@@ -293,6 +296,7 @@ describe('renderFace', () => {
   test('keeps every PNG of a face whose only set is missing', async () => {
     const face = await faceWithPng(12);
     const sources = tempDir('icons-src-');
+
     fs.mkdirSync(path.join(sources, 'uxwing'));
 
     const result = await renderFace(face, { 'bt-on': { svg: 'sr/bluetooth-on', size: [12, 12] } }, sources);
@@ -304,6 +308,7 @@ describe('renderFace', () => {
   test('keeps the PNG it has when the source is missing', async () => {
     const face = await faceWithPng(12);
     const sources = tempDir('icons-src-');
+
     fs.mkdirSync(path.join(sources, 'weather-icons', 'svg'), { recursive: true });
     fs.writeFileSync(path.join(sources, 'weather-icons', 'svg', 'dot.svg'), '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3"/></svg>');
 

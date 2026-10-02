@@ -58,11 +58,13 @@ export function outFile(face: string): string {
 /** A face's module-meta.ts, loaded by path because which face it is is only known at runtime. */
 function moduleMetaFile(face: string): { default: Record<string, ModuleMeta>; thumbnailSizes?: unknown } {
   const file = path.join(faceDir(face), 'src', 'pkjs', 'clay', 'module-meta.ts');
+
   // the thumbnails are matched against the face's module list, so a face without one set up its
   // thumbnails folder too early, which is its mistake rather than the tool's
   if (!fs.existsSync(file)) {
     throw new ToolError(`${face} has a resources/thumbnails folder but no src/pkjs/clay/module-meta.ts to match its thumbnails against`);
   }
+
   return requireMeta(file);
 }
 
@@ -83,9 +85,11 @@ function metaFor(face: string): Record<string, ModuleMeta> {
  */
 export function sizesFor(face: string): string[] {
   const sizes = moduleMetaFile(face).thumbnailSizes;
+
   if (!Array.isArray(sizes) || !sizes.length || !sizes.every((size) => typeof size === 'string')) {
     throw new ToolError(`module-meta.ts for ${face} has to export thumbnailSizes, the panel sizes its thumbnails come in`);
   }
+
   return sizes;
 }
 
@@ -113,11 +117,14 @@ type ThumbFile = { file: string; slug: string; label: string; order: number; siz
  */
 export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
   const bySlug: SlugIndex = {};
+
   Object.keys(meta).forEach((label, index) => {
     const slug = meta[label].slug;
+
     if (bySlug[slug]) {
       throw new ToolError(`modules "${bySlug[slug].label}" and "${label}" share the slug "${slug}"`);
     }
+
     bySlug[slug] = { label: label, order: index };
   });
   return bySlug;
@@ -168,6 +175,7 @@ export function buildSource(thumbs: Thumbs, order: Record<string, number>): stri
     '// do not edit by hand: run `paf gen <face> thumbnails` after changing the pictures',
     'module.exports = {',
   ];
+
   Object.keys(thumbs)
     .sort((a, b) => order[a] - order[b])
     .forEach((label) => {
@@ -175,6 +183,7 @@ export function buildSource(thumbs: Thumbs, order: Record<string, number>): stri
       const parts = Object.keys(sizes)
         .sort()
         .map((size) => JSON.stringify(size) + ': ' + JSON.stringify(sizes[size]));
+
       lines.push('  ' + JSON.stringify(label) + ': { ' + parts.join(', ') + ' },');
     });
   lines.push('};', '');
@@ -232,9 +241,11 @@ export function encodeThumbnails(face: string): Built {
 
   found.forEach((thumb) => {
     const data = fs.readFileSync(path.join(dir, thumb.file)).toString('base64');
+
     if (!thumbs[thumb.label]) {
       thumbs[thumb.label] = {};
     }
+
     thumbs[thumb.label][thumb.size] = 'data:image/png;base64,' + data;
     order[thumb.label] = thumb.order;
     seen[thumb.slug] = true;
@@ -268,14 +279,17 @@ export function build(face: string): void {
   if (built.stray.length) {
     throw new ToolError(`stray png with no module (${built.stray.length}): ${built.stray.join(', ')}`);
   }
+
   if (built.missing.length) {
     throw new ToolError(`module with no png (${built.missing.length}): ${built.missing.join(', ')}`);
   }
 
   const out = outFile(face);
+
   fs.writeFileSync(out, built.source);
 
   const bytes = fs.statSync(out).size;
+
   console.log('wrote ' + out + ' (' + Math.round(bytes / 1024) + ' KB)');
   console.log('encoded: ' + built.modules + ' modules, ' + built.panels + ' panels');
 }
@@ -285,6 +299,7 @@ if (isMainScript(import.meta)) {
     const face = process.argv[2];
     // no face means every face that ships thumbnails, found by its thumbnails folder
     const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(thumbsDir(name)));
+
     faces.forEach((name) => build(name));
   } catch (error) {
     reportFailure(error);

@@ -15,6 +15,7 @@ import { onTestFinished } from 'vitest';
  */
 export function tempDir(prefix: string): string {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+
   onTestFinished(() => fs.rmSync(dir, { recursive: true, force: true }));
   return dir;
 }

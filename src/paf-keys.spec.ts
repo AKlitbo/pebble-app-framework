@@ -28,6 +28,7 @@ const NAMED = PACKAGES.map((dir) => [path.relative(SRC, dir).split(path.sep).joi
 /** The paf key out of a package's package.json, or undefined when it has none or no package.json. */
 function pafKey(dir: string): PafKey | undefined {
   const file = path.join(dir, 'package.json');
+
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')).paf : undefined;
 }
 

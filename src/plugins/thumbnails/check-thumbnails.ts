@@ -31,17 +31,21 @@ export async function checkThumbnails(): Promise<string[]> {
         if (committed) {
           problems.push(`${face}: commits module-thumbnails.g.js, but has no resources/thumbnails folder to build it from`);
         }
+
         return;
       }
 
       const built = encodeThumbnails(face);
       const current = committed ? readText(outFile(face)) : null;
+
       if (current !== built.source) {
         problems.push(`${face}: module-thumbnails.g.js is stale, run paf gen ${face} thumbnails`);
       }
+
       for (const png of built.stray) {
         problems.push(`${face}: resources/thumbnails/${png} names no module`);
       }
+
       for (const slug of built.missing) {
         problems.push(`${face}: the ${slug} module has no thumbnail`);
       }

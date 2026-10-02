@@ -41,6 +41,7 @@ function readStrip(value: unknown): number[] | null {
       return null;
     }
   }
+
   return value as number[];
 }
 
@@ -57,6 +58,7 @@ function readStrip(value: unknown): number[] | null {
 function load(storage: CacheStorage): StockCache {
   try {
     const saved = JSON.parse(storage.getItem(CACHE_KEY) as string);
+
     if (!saved || typeof saved !== 'object') {
       return { lastAsOf: '', lastFetchMs: 0, strip: null };
     }

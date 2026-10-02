@@ -20,15 +20,18 @@ module.exports = step(async ({ core, exec }) => {
   const site = existingPath(process.env.SITE || 'docs/site/dist', 'site');
   const folder = process.env.FOLDER;
   const branch = process.env.BRANCH || 'gh-pages';
+
   if (!isVersionFolder(folder)) {
     fail(`folder '${folder}' is not main or a release tag such as v2.0.0, so it is not published.`);
   }
 
   const git = async (args, cwd = '.') => {
     const result = await exec.getExecOutput('git', args, { cwd, ignoreReturnCode: true });
+
     if (result.exitCode !== 0) {
       fail(`git ${args[0]} exited ${result.exitCode}. ${firstLine(result.stderr)}`);
     }
+
     return result;
   };
 
@@ -45,6 +48,7 @@ module.exports = step(async ({ core, exec }) => {
     // --exit-code makes a missing branch exit 2, which tells it apart from not reaching the remote at all.
     // the full ref is asked for, since a bare name also matches a branch such as archive/gh-pages
     const found = await exec.getExecOutput('git', ['ls-remote', '--exit-code', 'origin', `refs/heads/${branch}`], { ignoreReturnCode: true, silent: true });
+
     if (found.exitCode !== 0 && found.exitCode !== 2) {
       fail(`git ls-remote exited ${found.exitCode}. ${firstLine(found.stderr)}`);
     }
@@ -54,6 +58,7 @@ module.exports = step(async ({ core, exec }) => {
     await exec.getExecOutput('git', ['worktree', 'remove', '--force', worktree], { ignoreReturnCode: true, silent: true });
     fs.rmSync(worktree, { recursive: true, force: true });
     let parent = null;
+
     if (found.exitCode === 0) {
       // by its full ref too, since a bare name finds a tag of the same name before the branch
       await git(['fetch', '--depth=1', 'origin', `refs/heads/${branch}`]);
@@ -66,10 +71,12 @@ module.exports = step(async ({ core, exec }) => {
     }
 
     const target = path.join(worktree, folder);
+
     fs.rmSync(target, { recursive: true, force: true });
     fs.cpSync(site, target, { recursive: true });
 
     const folders = fs.readdirSync(worktree, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+
     listed = listVersions(folders);
     fs.writeFileSync(path.join(worktree, 'versions.json'), `${JSON.stringify(listed, null, 2)}\n`);
     fs.writeFileSync(path.join(worktree, 'index.html'), redirectPage(listed.latest || listed.versions[0]));
@@ -78,6 +85,7 @@ module.exports = step(async ({ core, exec }) => {
 
     await git(['add', '--all'], worktree);
     const tree = (await git(['write-tree'], worktree)).stdout.trim();
+
     if (parent !== null && tree === (await git(['rev-parse', `${parent}^{tree}`], worktree)).stdout.trim()) {
       return 'unchanged';
     }
@@ -86,20 +94,25 @@ module.exports = step(async ({ core, exec }) => {
     const message = `publish the ${folder} docs from ${commit}`;
     const made = await git(['-c', `user.name=${name}`, '-c', `user.email=${email}`, 'commit-tree', tree, ...parentArgs, '-m', message], worktree);
     const pushed = await exec.getExecOutput('git', ['push', 'origin', `${made.stdout.trim()}:refs/heads/${branch}`], { cwd: worktree, ignoreReturnCode: true });
+
     if (pushed.exitCode === 0) {
       return 'pushed';
     }
+
     if (pushWasBeaten(pushed.stderr)) {
       core.info(`Another publish reached ${branch} first, so this one starts again on top of it.`);
       return 'beaten';
     }
+
     fail(`git push exited ${pushed.exitCode}. ${firstLine(pushed.stderr)}`);
   };
 
   const result = await publishWithRetries(attempt, PUSH_TRIES);
+
   if (result.outcome === 'beaten') {
     fail(`Another publish reached ${branch} first on each of ${PUSH_TRIES} tries, so the ${folder} docs did not go up. Run the workflow again.`);
   }
+
   const changed = result.outcome === 'pushed';
   const { versions } = listed;
   const front = listed.latest || versions[0];
@@ -111,6 +124,7 @@ module.exports = step(async ({ core, exec }) => {
     '',
     markdownTable(['Version', 'Note'], versions.map((version) => [version, version === folder ? 'this build' : version === front ? 'front page' : ''])),
   ];
+
   await core.summary.addRaw(summary.join('\n'), true).write();
   core.info(changed ? `Published the ${folder} docs to ${branch}.` : `The ${folder} docs on ${branch} were already up to date.`);
 });

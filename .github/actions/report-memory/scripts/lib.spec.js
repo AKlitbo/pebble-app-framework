@@ -78,6 +78,7 @@ describe('readVirtualSize', () => {
   /** The static size is the limit a face usually hits first, and reading the wrong offset or byte order reports nonsense for it. */
   test('reads virtual_size as a little endian uint16 at 0x80', () => {
     const binary = Buffer.alloc(0x100);
+
     binary.writeUInt16LE(59394, 0x80);
 
     const result = readVirtualSize(binary);

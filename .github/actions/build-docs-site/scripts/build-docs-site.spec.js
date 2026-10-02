@@ -29,19 +29,23 @@ const SUMMARIES = {
 /** Runs the step with each tool answering from `results`, keyed by the tool's name. */
 async function build({ results = {}, summaries = SUMMARIES } = {}) {
   const readFileSync = fs.readFileSync;
+
   vi.spyOn(fs, 'readFileSync').mockImplementation((file, ...rest) => {
     if (typeof file === 'string' && file.startsWith('docs/site/dist/')) {
       if (!(file in summaries)) {
         throw Object.assign(new Error(`ENOENT: ${file}`), { code: 'ENOENT' });
       }
+
       return summaries[file];
     }
+
     return readFileSync(file, ...rest);
   });
 
   const core = fakeCore();
   const tool = (command, args) => (command === 'node' ? 'typedoc' : command === 'npx' ? args[1] : command);
   const exec = fakeExec(({ command, args }) => results[tool(command, args)] || {});
+
   await buildDocsSite({ core, exec });
   return { core, exec };
 }
@@ -65,6 +69,7 @@ describe('build-docs-site', () => {
     const { core } = await build();
 
     const summary = core.summary.addRaw.mock.calls[0][0];
+
     expect(core.setFailed).not.toHaveBeenCalled();
     expect(summary).toContain('| TypeDoc | built with no warnings |');
     expect(summary).toContain('| TypeScript coverage | 77.1% of lines |');
@@ -76,6 +81,7 @@ describe('build-docs-site', () => {
     const { exec } = await build();
 
     const commands = exec.getExecOutput.mock.calls.map(([command, args]) => `${command} ${args[0]}`);
+
     expect(commands).toEqual(['node docs/node_modules/typedoc/bin/typedoc', 'npx --no-install', 'make -C', 'npm --prefix']);
   });
 
@@ -161,6 +167,7 @@ describe('build-docs-site', () => {
     const { core } = await build({ summaries: {} });
 
     const summary = core.summary.addRaw.mock.calls[0][0];
+
     expect(summary).toContain('| TypeScript coverage | no report |');
     expect(summary).toContain('| C coverage | no report |');
   });

@@ -30,6 +30,7 @@ function raw(pixels: number[][]): Uint8Array {
 /** The distinct colours a raw buffer holds, as "r,g,b,a" strings. */
 function colorsIn(buffer: Uint8Array): Set<string> {
   const colors = new Set<string>();
+
   for (let i = 0; i < buffer.length; i += 4) {
     colors.add(Array.from(buffer.slice(i, i + 4)).join(','));
   }
@@ -285,6 +286,7 @@ describe('missingStylesheets', () => {
    */
   test('names a file: sheet that is not there', () => {
     const dir = tempDir('frame-');
+
     fs.writeFileSync(path.join(dir, 'frame.css'), '');
     const here = pathToFileURL(path.join(dir, 'frame.css')).href;
     const gone = pathToFileURL(path.join(dir, 'paf', 'plugins', 'frame', 'css', 'pebble-colors.css')).href;
@@ -311,6 +313,7 @@ describe('missingStylesheets', () => {
   /** A path running through a file threw ENOTDIR, so the run stopped on a raw error rather than naming the sheet. */
   test('names a sheet whose path runs through a file', () => {
     const dir = tempDir('frame-');
+
     fs.writeFileSync(path.join(dir, 'frame.css'), '');
     const through = pathToFileURL(path.join(dir, 'frame.css', 'extra.css')).href;
 
@@ -324,6 +327,7 @@ describe('discoverFrames', () => {
   /** A frame counted once per platform would be baked, and written, once per platform over itself. */
   test('names each frame once however many platforms it has a page for', () => {
     const dir = tempDir('frames-');
+
     for (const file of ['classic~emery.html', 'classic~gabbro.html', 'padd~emery.html', 'frame.config.json']) {
       fs.writeFileSync(path.join(dir, file), '');
     }
@@ -342,6 +346,7 @@ describe('discoverThemes', () => {
    */
   test('names each theme from its sheet and skips other stylesheets and a sheet with no name', () => {
     const dir = tempDir('themes-');
+
     for (const file of ['theme_red.css', 'theme_blue.css', 'frame.css', 'pebble-colors.css', 'theme_.css']) {
       fs.writeFileSync(path.join(dir, file), '');
     }

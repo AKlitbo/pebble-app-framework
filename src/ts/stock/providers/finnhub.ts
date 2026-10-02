@@ -29,6 +29,7 @@ interface FinnhubQuote {
  */
 function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const start = util.begin(opts, true);
+
   if (start.error) {
     return done(start.error);
   }
@@ -43,14 +44,17 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
       if (String(err).indexOf('401') !== -1) {
         return done(util.status('Invalid Key'));
       }
+
       if (String(err).indexOf('429') !== -1) {
         return done(util.status('Rate Limit'));
       }
+
       // the free plan answers 403 for any symbol outside the US, which is a plan limit the
       // wearer can act on rather than a connection problem
       if (String(err).indexOf('403') !== -1) {
         return done(util.status('No Access'));
       }
+
       return done(util.status('Net Error'));
     }
 
@@ -63,6 +67,7 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     // rate cap otherwise treat it as a bad key
     if (json.error) {
       const message = String(json.error).toLowerCase();
+
       return done(util.status(message.indexOf('limit') !== -1 ? 'Rate Limit' : 'Invalid Key'));
     }
 
@@ -70,6 +75,7 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     // means there is nothing to show
     const current = Number(json.c);
     const prevClose = Number(json.pc);
+
     if (current === 0 && prevClose === 0) {
       return done(util.status('No Symbol'));
     }
@@ -80,9 +86,11 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     let change = (json.d === null || json.d === undefined) ? NaN : Number(json.d);
     let changePercent = (json.dp === null || json.dp === undefined) ? NaN : Number(json.dp);
     const derived = util.deriveChange(current, prevClose);
+
     if (!Number.isFinite(change)) {
       change = derived.change;
     }
+
     if (!Number.isFinite(changePercent)) {
       changePercent = derived.changePercent;
     }

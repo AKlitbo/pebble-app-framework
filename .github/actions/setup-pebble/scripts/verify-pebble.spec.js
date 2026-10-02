@@ -21,6 +21,7 @@ function pebble({ version = { stdout: VERSION }, list = { stdout: SDK_LIST } } =
 async function verify(answer) {
   const core = fakeCore();
   const exec = fakeExec(answer);
+
   await verifyPebble({ core, exec });
   return { core, exec };
 }

@@ -12,6 +12,7 @@ import toolchain from './toolchain.js';
 /** Writes files into a fresh temp folder and points the action at it. */
 function repo(files) {
   const root = tempTree(files, 'toolchain-');
+
   vi.stubEnv('GITHUB_WORKSPACE', root);
   return root;
 }

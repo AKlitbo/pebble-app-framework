@@ -19,6 +19,7 @@ function readReport(report) {
 
   for (const file of files) {
     const failed = (file.assertionResults || []).filter((test) => test.status === 'failed');
+
     for (const test of failed) {
       failures.push({
         file: file.name,
@@ -27,6 +28,7 @@ function readReport(report) {
         message: firstLine(test.failureMessages && test.failureMessages[0]) || 'Failed.',
       });
     }
+
     if (file.status === 'failed' && failed.length === 0) {
       failures.push({ file: file.name, line: undefined, name: 'Spec File', message: firstLine(file.message) || 'Failed to run.' });
     }

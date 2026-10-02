@@ -22,32 +22,41 @@ module.exports = step(async ({ core, exec }) => {
   // the face's targets and its build output sit in the folder it builds from, and the targets come from
   // the framework in that folder's paf/
   const { project, framework, rel: projectRel } = faceProject(workspace, face);
+
   if (!fs.existsSync(path.join(framework, 'package.json'))) {
     fail(`${projectRel(framework)}/ holds no framework, so there is no telling which targets the face builds. ${fillHint(project)}`);
   }
+
   const manifests = path.join(framework, 'tools', 'manifest', 'build-manifests.ts');
   const listed = await exec.getExecOutput('node', ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', manifests, '--targets', face], { ignoreReturnCode: true, silent: true, cwd: project });
   const targets = listed.stdout.split(/\s+/).filter(Boolean);
+
   if (listed.exitCode !== 0 || targets.length === 0) {
     fail(`build-manifests.ts --targets ${face} exited ${listed.exitCode} without naming a target. ${firstLine(listed.stderr)}`);
   }
 
   const dest = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'release-assets');
+
   fs.rmSync(dest, { recursive: true, force: true });
   fs.mkdirSync(dest, { recursive: true });
 
   const assets = targets.map((target) => {
     const pbw = path.join(project, 'targets', target, 'build', `${target}.pbw`);
+
     if (!fs.existsSync(pbw)) {
       fail(`${projectRel(`targets/${target}/build/${target}.pbw`)} is missing, so the build did not finish that target.`);
     }
+
     const manifest = readJson(path.join(project, 'targets', target, 'package.json'), projectRel(`targets/${target}/package.json`));
     const platforms = manifest.pebble?.targetPlatforms;
+
     // the SDK builds every platform when the appinfo lists none, and the asset is named by what it installs on
     if (!Array.isArray(platforms) || platforms.length === 0) {
       fail(`${projectRel(`targets/${target}/package.json`)} lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.`);
     }
+
     const name = assetName(target, platforms, version);
+
     fs.copyFileSync(pbw, path.join(dest, name));
     return { name, target, platforms };
   });
@@ -59,11 +68,13 @@ module.exports = step(async ({ core, exec }) => {
   // and attach pbws built from another commit to
   const args = ['release', 'create', tag, ...assets.map((asset) => path.join(dest, asset.name)), '--title', process.env.TITLE, '--notes-file', process.env.NOTES_FILE, '--verify-tag', ...prerelease, ...repo];
   const created = await core.group(`gh release create ${tag}`, () => exec.getExecOutput('gh', args, { ignoreReturnCode: true }));
+
   if (created.exitCode !== 0) {
     fail(`gh release create exited ${created.exitCode}. ${firstLine(created.stderr)}`);
   }
 
   const url = created.stdout.trim();
+
   core.setOutput('url', url);
 
   const summary = [
@@ -73,6 +84,7 @@ module.exports = step(async ({ core, exec }) => {
     '',
     markdownTable(['Asset', 'Target', 'Platforms'], assets.map((asset) => [asset.name, asset.target, asset.platforms.join(', ')])),
   ];
+
   await core.summary.addRaw(summary.join('\n'), true).write();
   core.info(`Published ${tag} with ${assets.length} asset(s).`);
 });

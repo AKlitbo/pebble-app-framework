@@ -37,6 +37,7 @@ const BROKEN = [
 async function verify(result) {
   const core = fakeCore();
   const exec = fakeExec(() => result);
+
   await verifyCTests({ core, exec });
   return { core, exec };
 }

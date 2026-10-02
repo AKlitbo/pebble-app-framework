@@ -104,6 +104,7 @@ describe('manipulator', () => {
   test('keeps the saved zone in what a timezone field persists', () => {
     const { ctx, hidden } = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
     const blob = JSON.stringify({ lat: 52.5, lon: 13.4, label: 'Berlin', offset: 60, tz: 'Europe/Berlin' });
+
     hidden.value = blob;
 
     const result = ctx.get();
@@ -163,6 +164,7 @@ describe('manipulator', () => {
   test('returns the raw json blob for a non-timezone location key', () => {
     const { ctx, hidden } = mount({ messageKey: 'LOCATION_NAME' });
     const blob = JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix', offset: 0 });
+
     hidden.value = blob;
 
     const result = ctx.get();
@@ -186,6 +188,7 @@ describe('initialize', () => {
   /** A 1-char query would spam the geocoder on every keystroke and show a stale dropdown. */
   test('makes no request for queries shorter than 2 chars', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'P');
@@ -198,6 +201,7 @@ describe('initialize', () => {
   /** A missed debounce floods the API, and a wrong endpoint geocodes against the wrong service. */
   test('debounces 300ms then queries the Open-Meteo geocoder with the typed term', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -218,6 +222,7 @@ describe('initialize', () => {
     const evil = '<img src=x onerror=alert(1)>';
 
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'evil');
@@ -235,6 +240,7 @@ describe('initialize', () => {
   /** A mis-joined label shows the wrong place or a comma-littered string when parts are missing. */
   test('formats the label as name, admin1, country and drops missing parts', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'city');
@@ -246,6 +252,7 @@ describe('initialize', () => {
     ] }));
 
     const items = mounted.list.querySelectorAll('.loc-item');
+
     expect(items[0].textContent).toBe('Phoenix, Arizona, United States');
     expect(items[1].textContent).toBe('Berlin');
   });
@@ -253,6 +260,7 @@ describe('initialize', () => {
   /** If selecting a result fails to persist its coordinates and offset, the watch loses the place or has to geocode for itself. */
   test('persists the chosen coordinates, label, and resolved offset on selection', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -287,6 +295,7 @@ describe('initialize', () => {
    */
   test('shows the prompt when the picked place has no zone yet', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -308,6 +317,7 @@ describe('initialize', () => {
    */
   test('keeps the zone the geocoder named before the lookup answers', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Tokyo');
@@ -327,6 +337,7 @@ describe('initialize', () => {
   /** A slow lookup for the first city tapped must not write that city over the one picked after it. */
   test('ignores a zone lookup that answers after a newer pick', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Springfield');
@@ -336,6 +347,7 @@ describe('initialize', () => {
       { name: 'Springfield', admin1: 'Missouri', latitude: 37.2, longitude: -93.3 },
     ] }));
     const items = mounted.list.querySelectorAll('.loc-item');
+
     items[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     items[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     xhrs[2].respond(200, JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
@@ -349,6 +361,7 @@ describe('initialize', () => {
   /** A lookup that lands after the box was edited must not save a city the box no longer shows. */
   test('ignores a zone lookup that answers after the query was edited', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Springfield');
@@ -368,6 +381,7 @@ describe('initialize', () => {
   /** Editing the query after a selection must drop the stored coordinates, so the watch never saves a label that disagrees with its lat/lon. */
   test('clears the stored coordinates when the query is edited', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
     mounted.hidden.value = JSON.stringify({ lat: 33.4, lon: -112, label: 'Phoenix' });
 
@@ -382,6 +396,7 @@ describe('initialize', () => {
    */
   test('prompts to pick from the list while typed text is not a pick', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -392,6 +407,7 @@ describe('initialize', () => {
   /** A prompt still up after the tap that answers it reads as a page that ignored the pick. */
   test('hides the pick prompt once a place is picked', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -407,6 +423,7 @@ describe('initialize', () => {
   /** An emptied box is how a place gets cleared on purpose, so it saves as nothing without a prompt. */
   test('stays quiet when the box is emptied', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -418,6 +435,7 @@ describe('initialize', () => {
   /** Rapid keystrokes must collapse into one request, not one per character that floods the geocoder. */
   test('coalesces rapid keystrokes into a single request', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Ph');
@@ -433,6 +451,7 @@ describe('initialize', () => {
   /** A slower earlier request resolving last must not overwrite the latest query's suggestions, or the user persists the wrong city. */
   test('ignores a stale response that resolves after a newer query', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Pho');
@@ -454,6 +473,7 @@ describe('initialize', () => {
   /** A network failure must hide the list rather than leave a stale dropdown or throw. */
   test('hides the list when the geocoder request errors', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -468,6 +488,7 @@ describe('initialize', () => {
   /** Clicking outside the component must dismiss the dropdown, else a stale suggestion list lingers over the rest of the config webview. */
   test('dismisses the dropdown when clicking outside the component', () => {
     const mounted = mount();
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Phoenix');
@@ -506,12 +527,14 @@ describe('zone search', () => {
   /** The rows a query put up, as the text of each one. */
   function zoneRows(mounted: ReturnType<typeof mount>): string[] {
     const items = mounted.list.querySelectorAll('.loc-item-zone');
+
     return Array.prototype.map.call(items, (item: HTMLElement) => item.firstChild.textContent) as string[];
   }
 
   /** The whole point. No city is called UTC, so without this row the watch can never show it. */
   test('offers UTC for a query of utc', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -524,6 +547,7 @@ describe('zone search', () => {
   /** The word the user asked for. Zulu is not a zone name, so nothing would match it on its own. */
   test('offers UTC for a query of zulu', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'zulu');
@@ -536,6 +560,7 @@ describe('zone search', () => {
   /** The zones need nothing from the network, so a config page opened offline still reaches UTC. */
   test('shows the zone rows before the geocoder has been asked', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -547,6 +572,7 @@ describe('zone search', () => {
   /** A zone that saved no tz would be stuck on today's offset, which is the bug the zone is for. */
   test('persists the zone and its label on picking UTC', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -564,6 +590,7 @@ describe('zone search', () => {
    */
   test('shows a typed offset as its UTC label', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5');
@@ -580,9 +607,11 @@ describe('zone search', () => {
     // the last millisecond of a minute on a January morning, when Berlin is UTC+01:00. any
     // second read of the clock lands a millisecond on, in the next minute
     const lastMs = Date.UTC(2026, 0, 15, 11, 59, 59, 999);
+
     vi.setSystemTime(lastMs);
     const now = vi.spyOn(Date, 'now').mockReturnValue(lastMs + 1);
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'berlin');
@@ -622,6 +651,7 @@ describe('zone search', () => {
    */
   test('keeps the list shut when a zone is tapped before the search runs', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -635,6 +665,7 @@ describe('zone search', () => {
   /** The same reopening from a geocoder answer that lands after the zone was already tapped. */
   test('keeps the list shut when the geocoder answers after a zone is tapped', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -652,6 +683,7 @@ describe('zone search', () => {
    */
   test('stores a whole hour offset as the Etc zone with the sign inverted', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5');
@@ -665,6 +697,7 @@ describe('zone search', () => {
   /** West of UTC flips it the other way, and a reversed pair here is the same ten hour error. */
   test('stores a western whole hour offset as an Etc zone too', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'gmt-8');
@@ -678,6 +711,7 @@ describe('zone search', () => {
   /** There is no Etc zone for a half hour, so the minutes stand alone and fixed says that is meant. */
   test('stores a half hour offset as minutes with no zone', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5:30');
@@ -703,6 +737,7 @@ describe('zone search', () => {
   /** Picking a zone by name has to reach the watch as a word that fits, not as Australia/Adelaide. */
   test('labels a named zone with the city on the end of it', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'adelaide');
@@ -717,6 +752,7 @@ describe('zone search', () => {
   /** Zones are an addition. A city search that stopped working would be a worse face than before. */
   test('still lists the geocoded cities under the zones', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'Berlin');
@@ -731,6 +767,7 @@ describe('zone search', () => {
   /** The weather location needs coordinates, and a row like UTC has none to give it. */
   test('offers no zones on a location field that is not a timezone', () => {
     const mounted = mount({ messageKey: 'LOCATION_NAME' });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -743,6 +780,7 @@ describe('zone search', () => {
   /** The page marks a picker as a time zone, so a key that only looks like one gets a plain place search. */
   test('offers no zones on a field not marked timeZone even when its key names one', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1' });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -755,6 +793,7 @@ describe('zone search', () => {
   /** Offline is the normal way to open the config page, and UTC needs nothing from the network. */
   test('keeps the zone rows up when the geocoder request errors', () => {
     const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
@@ -783,15 +822,18 @@ describe.skipIf(process.env.RUN_LIVE_WEATHER !== '1')('live geocoding', () => {
   const geocode = (query: string) => new Promise<{ results?: Array<Record<string, unknown>> }>((resolve) => {
     const url = 'https://geocoding-api.open-meteo.com/v1/search?name=' +
       encodeURIComponent(query) + '&count=5&language=en&format=json';
+
     fetchRequest(url, (err, body) => resolve(err ? null : JSON.parse(body)));
   });
 
   /** The dropdown renders name and stores latitude, longitude, and zone. Upstream dropping them blanks the suggestions, saves no coords, or saves a city clock as UTC. */
   test('returns results carrying the fields the dropdown reads', async () => {
     const data = await geocode('Phoenix');
+
     expect(Array.isArray(data && data.results)).toBe(true);
 
     const top = data.results[0];
+
     expect(typeof top.name).toBe('string');
     expect(typeof top.latitude).toBe('number');
     expect(typeof top.longitude).toBe('number');
@@ -804,6 +846,7 @@ function utcText(minutes: number): string {
   const away = Math.abs(minutes);
   const hours = String(Math.floor(away / 60)).padStart(2, '0');
   const rest = String(away % 60).padStart(2, '0');
+
   return 'UTC' + (minutes < 0 ? '-' : '+') + hours + ':' + rest;
 }
 
@@ -814,10 +857,12 @@ const SUMMER = Date.UTC(2026, 6, 15, 12, 0);
 /** Types a query into a fresh time zone picker and reads the offset hint beside the named zone. */
 function hintFor(query: string, zone: string): string {
   const mounted = mount({ messageKey: 'CLOCK_TIMEZONE_1', timeZone: true });
+
   mounted.ctx.initialize();
   type(mounted.query, query);
 
   const rows = Array.from(mounted.list.querySelectorAll('.loc-item-zone'));
   const row = rows.find((item) => (item.textContent || '').indexOf(zone) === 0);
+
   return (row && row.querySelector('.loc-hint') && (row.querySelector('.loc-hint') as HTMLElement).textContent) || '';
 }

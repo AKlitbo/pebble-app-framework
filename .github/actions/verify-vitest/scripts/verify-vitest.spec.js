@@ -64,9 +64,11 @@ let runnerTemp;
 function vitestWrites(report, exitCode) {
   return ({ args }) => {
     const target = args.find((arg) => arg.startsWith('--outputFile.json=')).slice('--outputFile.json='.length);
+
     if (report) {
       fs.writeFileSync(target, JSON.stringify(report));
     }
+
     return { exitCode, stdout: ' RUN  v4.1.10', stderr: report ? '' : 'Error: Failed to load vitest.config.ts' };
   };
 }
@@ -74,6 +76,7 @@ function vitestWrites(report, exitCode) {
 async function verify(answer) {
   const core = fakeCore();
   const exec = fakeExec(answer);
+
   await verifyVitest({ core, exec });
   return { core, exec };
 }
@@ -99,6 +102,7 @@ describe('verify-vitest', () => {
     const { exec } = await verify(vitestWrites(PASSING_REPORT, 0));
 
     const [[command, args]] = exec.getExecOutput.mock.calls;
+
     expect(command).toBe('npx');
     expect(args).toEqual(expect.arrayContaining(['run', '--config', 'vitest.config.ts', '--reporter=default', '--reporter=json', '--includeTaskLocation']));
   });

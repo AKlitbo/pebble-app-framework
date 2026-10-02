@@ -88,6 +88,7 @@ describe('readSuite', () => {
     const [pct] = readSuite(output);
 
     expect(pct.compiler).toHaveLength(2);
+
     // the collect2 line that closes it belongs to the spec too, and landing it on the Makefile blamed the build setup
     for (const note of pct.compiler) {
       expect(note).toMatchObject({ file: '../../../src/c/core/math/pct.spec.c', line: undefined, severity: 'error' });

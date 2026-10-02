@@ -85,6 +85,7 @@ interface FaceDirs {
 /** Builds a face's FaceDirs by joining its face directory onto the fixed subpaths. */
 function faceDirs(face: string): FaceDirs {
   const base = faceDir(face);
+
   return {
     appinfo: path.join(base, APPINFO_REL),
     frameDir: path.join(base, 'frame'),
@@ -99,6 +100,7 @@ function loadFaceConfig(face: string, dirs: FaceDirs): FaceConfig {
   if (!fs.existsSync(dirs.config)) {
     throw new ToolError(`${face} has no frame/frame.config.json to bake from`);
   }
+
   return JSON.parse(fs.readFileSync(dirs.config, 'utf8'));
 }
 
@@ -114,8 +116,10 @@ function loadFaceConfig(face: string, dirs: FaceDirs): FaceConfig {
  */
 export function facePlatforms(appinfoPath: string): string[] {
   let listed: unknown[] = [];
+
   try {
     const appinfo = JSON.parse(fs.readFileSync(appinfoPath, 'utf8'));
+
     listed = Array.isArray(appinfo.targetPlatforms) ? appinfo.targetPlatforms : [];
   } catch {
     // no appinfo yet, so fall through to the default
@@ -125,9 +129,11 @@ export function facePlatforms(appinfoPath: string): string[] {
     if (PLATFORM_DIMS[platform]) {
       return true;
     }
+
     console.warn(`warning: no screen size known for ${platform}, so it gets no frame`);
     return false;
   });
+
   return known.length ? known : ['emery'];
 }
 
@@ -173,15 +179,18 @@ export function capColors(rgba: Uint8Array, limit: number): Uint8Array {
 
   for (let i = 0; i < keys.length; i++) {
     const key = bucketKey(rgba[i * 4], rgba[i * 4 + 1], rgba[i * 4 + 2], rgba[i * 4 + 3]);
+
     keys[i] = key;
     counts.set(key, (counts.get(key) || 0) + 1);
   }
 
   const remap = new Map<number, number>();
+
   while (counts.size > limit) {
     // ties break on the key so a re-bake of the same art always folds the same way
     let rarest = 0;
     let rarestCount = Infinity;
+
     for (const [key, count] of counts) {
       if (count < rarestCount || (count === rarestCount && key < rarest)) {
         rarest = key;
@@ -192,12 +201,15 @@ export function capColors(rgba: Uint8Array, limit: number): Uint8Array {
     const [red, green, blue, alpha] = bucketChannels(rarest);
     let nearest = 0;
     let nearestDistance = Infinity;
+
     for (const key of counts.keys()) {
       if (key === rarest) {
         continue;
       }
+
       const [r2, g2, b2, a2] = bucketChannels(key);
       const distance = (r2 - red) ** 2 + (g2 - green) ** 2 + (b2 - blue) ** 2 + (a2 - alpha) ** 2;
+
       if (distance < nearestDistance) {
         nearest = key;
         nearestDistance = distance;
@@ -215,6 +227,7 @@ export function capColors(rgba: Uint8Array, limit: number): Uint8Array {
 
   for (let i = 0; i < keys.length; i++) {
     let target = remap.get(keys[i]);
+
     if (target === undefined) {
       continue;
     }
@@ -225,6 +238,7 @@ export function capColors(rgba: Uint8Array, limit: number): Uint8Array {
     }
 
     const [red, green, blue, alpha] = bucketChannels(target);
+
     rgba[i * 4] = red;
     rgba[i * 4 + 1] = green;
     rgba[i * 4 + 2] = blue;
@@ -244,6 +258,7 @@ export function discoverThemes(cssDir: string): string[] {
   if (!fs.existsSync(cssDir)) {
     return [];
   }
+
   return fs
     .readdirSync(cssDir)
     .map((file) => file.match(/^theme_(.+)\.css$/))
@@ -264,6 +279,7 @@ export function discoverFrames(frameDir: string): string[] {
     .map((file) => file.match(/^(.+)~[a-z]+\.html$/))
     .filter((match): match is RegExpMatchArray => match !== null)
     .map((match) => match[1]);
+
   return [...new Set(names)].sort();
 }
 
@@ -305,11 +321,13 @@ export function parseArgs(argv: string[], face: FaceConfig): Options {
   // a face without themes has one page per look, so all there means every frame it has, unless one
   // is named. paf gen <face> all passes --theme all to every face the same way, naming none
   const allFrames = !face.supportsTheme && theme === 'all' && positional.length === 0;
+
   if (!face.supportsTheme) {
     theme = null;
   }
 
   const frame = (positional[0] || face.defaultFrame).replace(/\.html$/i, '');
+
   return { frame, scale, theme, allFrames, outOverride };
 }
 
@@ -333,17 +351,20 @@ export function outFor(
   platform: string
 ): string {
   const tag = '~' + platform;
+
   if (opts.outOverride) {
     // several themes, or every frame of a face without themes, each get their own file beside the
     // one --out names, rather than landing over each other or the committed backgrounds
     const frameSuffix = opts.allFrames ? `-${opts.frame}` : '';
     const themeSuffix = themeName && themeCount > 1 ? `-${themeName}` : '';
     const suffix = frameSuffix + themeSuffix;
+
     return path.resolve(ROOT, opts.outOverride).replace(/(\.png)?$/i, suffix + tag + '.png');
   }
 
   const base = opts.frame;
   let name: string;
+
   if (themeName) {
     name = `background-${themeName}`;
   } else if (face.bareBackgroundBase && base === face.bareBackgroundBase) {
@@ -400,6 +421,7 @@ export function missingStylesheets(urls: string[]): string[] {
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const face = argv[0];
+
   if (!face || face.startsWith('-')) {
     throw new ToolError('usage: node paf/plugins/frame/generate-frame.ts <face> [frame] [--scale N] [--theme name|all] [--out path], which paf gen <face> frame runs');
   }
@@ -417,18 +439,22 @@ async function main(): Promise<void> {
       if (fs.existsSync(bake.html)) {
         return true;
       }
+
       console.warn(`warning: ${path.relative(ROOT, bake.html)} not found, so ${bake.platform} gets no ${bake.frame} frame`);
       return false;
     });
+
   if (bakes.length === 0) {
     throw new ToolError(`No frame HTML found for ${frames.join(', ')} on any platform the face targets`);
   }
 
   let themes: (string | null)[];
+
   if (opts.theme === 'all') {
     // a face with no theme sheets has just its base frame. paf gen <face> all asks every face for
     // all its themes the same way, so that is what all means there
     themes = discoverThemes(dirs.cssDir);
+
     if (themes.length === 0) {
       themes = [null];
     }
@@ -448,10 +474,12 @@ async function main(): Promise<void> {
   // another platform's frames are rewritten. a themed bake takes out the page's own theme_ links and
   // adds the theme's sheet itself, so a missing one there is never loaded
   const themed = themes[0] !== null;
+
   for (const bake of bakes) {
     await page.goto(pathToFileURL(bake.html).href, { waitUntil: 'networkidle' });
     const links = await page.$$eval('link[rel~="stylesheet" i]', (found) => found.map((link) => (link as HTMLLinkElement).href));
     const missing = missingStylesheets(links).filter((url) => !(themed && url.includes('theme_')));
+
     if (missing.length) {
       await browser.close();
       throw new ToolError(`${path.relative(ROOT, bake.html)} links stylesheets the browser cannot load: ${missing.join(', ')}`);
@@ -472,9 +500,11 @@ async function main(): Promise<void> {
 
       if (themeName) {
         const themeCss = path.join(dirs.cssDir, `theme_${themeName}.css`);
+
         if (!fs.existsSync(themeCss)) {
           throw new ToolError(`Theme stylesheet not found: ${themeCss}`);
         }
+
         await page.evaluate(() => {
           document.querySelectorAll('link[href*="theme_"]').forEach((link) => link.remove());
         });
@@ -488,11 +518,13 @@ async function main(): Promise<void> {
               el.textContent = '';
             });
           }
+
           if (hide) {
             document.querySelectorAll(hide).forEach((el) => {
               (el as HTMLElement).style.display = 'none';
             });
           }
+
           // visibility rather than display so the box still takes up its space
           // it also takes the element's ::before and ::after along with it
           // which is where a frame often keeps its decorations, such as the LCARS end notches
@@ -511,6 +543,7 @@ async function main(): Promise<void> {
 
       const screenshot = await page.locator('.viewport').screenshot();
       const out = outFor({ ...opts, frame: bake.frame }, themeName, themes.length, faceCfg, dirs.imagesDir, bake.platform);
+
       fs.mkdirSync(path.dirname(out), { recursive: true });
 
       const resized = sharp(screenshot)
@@ -519,6 +552,7 @@ async function main(): Promise<void> {
 
       if (faceCfg.maxColors) {
         const raw = await resized.ensureAlpha().raw().toBuffer();
+
         await sharp(capColors(raw, faceCfg.maxColors), {
           raw: { width: screenW, height: screenH, channels: 4 },
         })

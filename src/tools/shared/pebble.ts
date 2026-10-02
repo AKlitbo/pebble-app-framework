@@ -35,26 +35,32 @@ export type PebbleRunner = (args: string[], cwd: string) => PebbleRun;
  */
 export function runPebble(args: string[], cwd: string, run: PebbleRunner, where: string = path.basename(cwd)): void {
   const result = run(args, cwd);
+
   // spawnSync reports a run that hit its timeout as an error too, and blaming a missing SDK for it
   // would send the developer looking in the wrong place
   if (result.error?.code === 'ETIMEDOUT') {
     throw new ToolError(`pebble ${args[0]} did not finish in time in ${where}, so it was stopped`);
   }
+
   // spawnSync says ENOENT for a folder that is not there as well as for a pebble that is not
   if (result.error?.code === 'ENOENT' && !fs.existsSync(cwd)) {
     throw new ToolError(`pebble ${args[0]} could not run in ${where}, since ${cwd} is not there`);
   }
+
   if (result.error?.code === 'ENOENT') {
     throw new ToolError(`pebble could not run: ${result.error.message}. The Pebble SDK has to be installed, which on Windows means WSL`);
   }
+
   if (result.error) {
     throw new ToolError(`pebble ${args[0]} could not run in ${where}: ${result.error.message}`);
   }
+
   // a signal ends the run the way a shell reports it, 128 plus the signal's number, so CI reads
   // an out of memory kill as a kill rather than as an ordinary failure
   if (result.signal) {
     throw new ToolError(`pebble ${args[0]} was stopped by ${result.signal} in ${where}`, exitCodeOf(result));
   }
+
   if (result.status !== 0) {
     throw new ToolError(`pebble ${args[0]} failed in ${where}`, exitCodeOf(result));
   }

@@ -12,6 +12,7 @@ module.exports = step(async ({ core, exec }) => {
   const wanted = process.env.SDK_VERSION || 'latest';
 
   let version;
+
   try {
     version = await exec.getExecOutput('pebble', ['--version'], { ignoreReturnCode: true, silent: true });
   } catch (error) {
@@ -20,6 +21,7 @@ module.exports = step(async ({ core, exec }) => {
   }
 
   const found = readVersion(version.stdout);
+
   if (version.exitCode !== 0 || !found) {
     await core.summary.addRaw(`## Pebble Could Not Run\n\n${outputTail([version.stdout, version.stderr].join('\n'))}`, true).write();
     fail(`pebble --version exited ${version.exitCode} without naming its version.`);
@@ -37,10 +39,13 @@ module.exports = step(async ({ core, exec }) => {
       [[found.tool, found.activeSdk || 'None', sdks.installed.join(', ') || 'None', wanted]]
     ),
   ];
+
   if (notices.length > 0) {
     const rows = notices.map((notice) => [notice.what, notice.current, notice.latest]);
+
     summary.push('', '### Newer Versions Out', '', markdownTable(['What', 'In Use', 'Newest'], rows));
   }
+
   await core.summary.addRaw(summary.join('\n'), true).write();
 
   // a pinned build is meant to stay put, so a newer release is worth a note but never a failure
@@ -51,8 +56,10 @@ module.exports = step(async ({ core, exec }) => {
   if (!found.activeSdk) {
     fail('pebble-tool installed, but no SDK is active, so pebble build has nothing to build with.');
   }
+
   if (wanted !== 'latest' && found.activeSdk !== wanted) {
     fail(`SDK ${wanted} was asked for, but SDK ${found.activeSdk} is active.`);
   }
+
   core.info(`pebble-tool ${found.tool} is ready with SDK ${found.activeSdk}.`);
 });

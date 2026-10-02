@@ -104,6 +104,7 @@ const WEATHER_ROUND_TIMEOUT_MS = 60 * 1000;
 export function getManualLocation(config: any): { coords: { lat: number; lon: number }; label: string } | null {
   // a corrupt or out-of-range blob comes back without coordinates, so bad coords never go on
   const place = readPlace(readValue(config.LOCATION_NAME, ''));
+
   if (!place || place.lat === undefined || place.lon === undefined) {
     return null;
   }
@@ -143,6 +144,7 @@ export function weatherRetryDelayMs(resultOk: boolean, attempt: number, conditio
 export function conditionLabel(condition: unknown): string {
   const base = String(condition || '').replace(/_NIGHT$/, '');
   const entry = conditions.conditions.find((item) => item.token === base);
+
   return entry ? entry.labelLong : conditions.fallback.labelLong;
 }
 
@@ -162,9 +164,11 @@ export function conditionLabel(condition: unknown): string {
  */
 export function runWeatherRound(state: WeatherState, force: boolean, deps: WeatherDeps): void {
   const started = startRound(state, force);
+
   if (started === null) {
     return;
   }
+
   const round = started;
 
   // every attempt shares the one round, so a retry is still this round and its watchdog closes it

@@ -49,6 +49,7 @@ describe('parseIcal timed events', () => {
     const result = ical.parseIcal(source, NOW);
 
     const start = Math.floor(Date.UTC(2026, 6, 10, 20, 0, 0) / 1000);
+
     expect(result[0].startEpoch).toBe(start);
     expect(result[0].endEpoch).toBe(start + 60 * 60);
   });
@@ -515,6 +516,7 @@ describe('parseIcal cancelled events', () => {
     const result = ical.parseIcal(source, NOW);
 
     const starts = result.map((event) => event.startEpoch);
+
     expect(starts).toContain(Math.floor(Date.UTC(2026, 6, 12, 9, 0, 0) / 1000));
     expect(starts).not.toContain(Math.floor(Date.UTC(2026, 6, 13, 9, 0, 0) / 1000));
     expect(starts).toContain(Math.floor(Date.UTC(2026, 6, 14, 9, 0, 0) / 1000));
@@ -574,6 +576,7 @@ describe('parseIcal all-day events', () => {
     const result = ical.parseIcal(source, NOW);
 
     const start = Math.floor(new Date(2026, 6, 11, 0, 0, 0).getTime() / 1000);
+
     expect(result[0].allDay).toBe(true);
     expect(result[0].startEpoch).toBe(start);
     expect(result[0].endEpoch).toBe(start + 24 * 60 * 60);
@@ -632,6 +635,7 @@ describe('parseIcal window and ordering', () => {
     const result = ical.parseIcal(source, NOW);
 
     const titles = result.map((event) => event.title);
+
     expect(titles).toEqual(['Coming up', 'Later this week']);
   });
 
@@ -871,6 +875,7 @@ describe.skipIf(process.env.RUN_LIVE_CALENDAR !== '1' || !process.env.CALENDAR_I
     console.log('Live calendar: ' + events.length + ' upcoming event(s)');
     events.slice(0, 5).forEach((event) => {
       const when = event.allDay ? 'all-day' : new Date(event.startEpoch * 1000).toLocaleString();
+
       console.log('  ' + when + '  ' + event.title + (event.location ? '  @ ' + event.location : ''));
     });
 

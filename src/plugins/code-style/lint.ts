@@ -39,6 +39,7 @@ const UNIT_CONFIGS = ['config/eslint.config.ts', 'eslint.config.ts', 'eslint.con
  */
 export function configFile(unit: string): string {
   const own = UNIT_CONFIGS.map((name) => path.join(unit, ...name.split('/'))).find((file) => fs.existsSync(file));
+
   return own ?? path.join(import.meta.dirname, 'eslint.config.ts');
 }
 
@@ -58,15 +59,18 @@ export function configFrom(config: unknown, file: string): Linter.Config[] {
   if (blocks.length === 0 || !blocks.every((block) => typeof block === 'object' && block !== null)) {
     throw new ToolError(`${file} has no config as its default export, so nothing would be linted. Export a list that spreads the default export of paf/plugins/code-style/eslint.config.ts, with the unit's own rules after it`);
   }
+
   return blocks;
 }
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const unknown = args.find((arg) => arg !== '--fix');
+
   if (unknown !== undefined) {
     throw new ToolError(`unknown argument: ${unknown}. paf lint takes --fix`);
   }
+
   requireMounted();
 
   const fix = args.includes('--fix');
@@ -77,6 +81,7 @@ async function main(): Promise<void> {
   // in the file it went wrong. the line before it says which config was being loaded
   // a config file may export a promise, which ESLint waits for when it loads one itself
   let exported: unknown;
+
   try {
     exported = await (await import(pathToFileURL(file).href)).default;
   } catch (error) {
@@ -88,19 +93,23 @@ async function main(): Promise<void> {
   // ESLint's own error for a pattern that matched nothing
   const eslint = new ESLint({ cwd: WORKSPACE, overrideConfigFile: true, overrideConfig: configFrom(exported, named), fix, errorOnUnmatchedPattern: false });
   const results = await eslint.lintFiles(['.']);
+
   if (results.length === 0) {
     console.log(`nothing to lint, since the unit holds no file ${named} covers`);
     return;
   }
+
   if (fix) {
     await ESLint.outputFixes(results);
   }
 
   const formatter = await eslint.loadFormatter('stylish');
   const report = await formatter.format(results);
+
   if (report) {
     console.log(report);
   }
+
   console.log(`linted with ${named}`);
 
   if (results.some((result) => result.errorCount > 0)) {

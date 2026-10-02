@@ -58,6 +58,7 @@ describe('renderReport', () => {
     const result = renderReport(ranked);
 
     const cells = result.split('\n').find((text) => text.startsWith('| **face**')).split(' | ');
+
     expect(cells[4]).toMatch(new RegExp(`%\\)${mark}$`));
   });
 
@@ -68,6 +69,7 @@ describe('renderReport', () => {
     const result = renderReport(ranked);
 
     const cells = result.split('\n').find((text) => text.startsWith('| **face**')).split(' | ');
+
     expect(cells[3]).toContain(':rotating_light:');
     expect(cells[4]).not.toContain(':rotating_light:');
   });

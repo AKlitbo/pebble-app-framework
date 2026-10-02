@@ -19,6 +19,7 @@ module.exports = step(async ({ core, exec }) => {
   });
 
   let results;
+
   try {
     results = JSON.parse(run.stdout);
   } catch {
@@ -30,6 +31,7 @@ module.exports = step(async ({ core, exec }) => {
   const rows = problems.map((problem) => {
     const file = repoPath(problem.file);
     const annotate = problem.severity === 'error' ? core.error : core.warning;
+
     annotate(problem.message, { title: problem.rule, file, startLine: problem.line, startColumn: problem.column });
     core.info(`${file}:${problem.line}:${problem.column} ${problem.severity} ${problem.message} (${problem.rule})`);
     return [`${file}:${problem.line}:${problem.column}`, problem.severity, problem.rule, problem.message];
@@ -39,13 +41,16 @@ module.exports = step(async ({ core, exec }) => {
   const warnings = problems.length - errors;
 
   const summary = ['## ESLint', '', markdownTable(['Files', 'Errors', 'Warnings'], [[results.length, errors, warnings]])];
+
   if (rows.length > 0) {
     summary.push('', '### Problems', '', markdownTable(['Where', 'Severity', 'Rule', 'Message'], rows));
   }
+
   await core.summary.addRaw(summary.join('\n'), true).write();
 
   if (errors > 0 || run.exitCode !== 0) {
     fail(`ESLint reported ${errors} error(s) and ${warnings} warning(s), and exited ${run.exitCode}.`);
   }
+
   core.info(`ESLint passed over ${results.length} files with ${warnings} warning(s).`);
 });

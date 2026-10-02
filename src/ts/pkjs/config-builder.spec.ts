@@ -24,6 +24,7 @@ function collectMessageKeys(config: ClayConfigItem[]): string[] {
 function findItemByKey(config: ClayConfigItem[], messageKey: string): ClayConfigItem | undefined {
   for (const entry of config) {
     const found = entry.messageKey === messageKey ? entry : findItemByKey(entry.items || [], messageKey);
+
     if (found) {
       return found;
     }

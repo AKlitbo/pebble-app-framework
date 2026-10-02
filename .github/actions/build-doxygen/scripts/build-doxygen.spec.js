@@ -21,6 +21,7 @@ const WARNINGS = [
 async function build({ version = '1.18.0 (8e760943e5d9581a444cf327f43a0b4d20d29482)', result = {} } = {}) {
   const core = fakeCore();
   const exec = fakeExec(({ args }) => (args[0] === '--version' ? { stdout: version } : result));
+
   await buildDoxygen({ core, exec });
   return { core, exec };
 }

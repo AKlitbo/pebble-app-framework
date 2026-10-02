@@ -20,6 +20,7 @@ function assetName(target, platforms, version) {
   if (platforms.length === 1) {
     return `${target}-${platforms[0]}-${version}.pbw`;
   }
+
   return `${target}-${version}.pbw`;
 }
 

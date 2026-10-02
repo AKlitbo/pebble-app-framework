@@ -136,9 +136,11 @@ function gitQuiet(...args: string[]): string {
  */
 function localRef(): string {
   const name = git('rev-parse', '--abbrev-ref', 'HEAD');
+
   if (name !== 'HEAD') {
     return name;
   }
+
   try {
     // a commit with no tag on it fails here, and git's own complaint about that is not worth printing
     return gitQuiet('describe', '--tags', '--exact-match', 'HEAD');
@@ -149,6 +151,7 @@ function localRef(): string {
 
 function write(relative: string, html: string): void {
   const file = path.join(DIST, relative);
+
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, html);
 }
@@ -156,9 +159,11 @@ function write(relative: string, html: string): void {
 /** Every html page under a folder of dist, by its path from dist with forward slashes. */
 function pagesUnder(folder: string): string[] {
   const start = path.join(DIST, folder);
+
   if (!fs.existsSync(start)) {
     return [];
   }
+
   return fs.readdirSync(start, { recursive: true, encoding: 'utf8' })
     .filter((file) => file.endsWith('.html'))
     .map((file) => `${folder}/${file.split(path.sep).join('/')}`)
@@ -193,6 +198,7 @@ function footer(root: string): string {
 
 function page(relative: string, title: string, body: string): void {
   const root = rootFor(relative);
+
   write(relative, fillTemplate(template('page.html'), { root, title: escapeHtml(title), body, siteBar: siteBar(root, null), footer: footer(root) }));
 }
 
@@ -213,6 +219,7 @@ write('index.html', fillTemplate(template('landing.html'), {
 
 const changelog = splitTitle(read(PAGES.changelog.file));
 const changelogPage = `${PAGES.changelog.folder}index.html`;
+
 page(changelogPage, changelog.title || PAGES.changelog.title, renderMarkdown(changelog.body, { root: rootFor(changelogPage), commit, folder: path.posix.dirname(PAGES.changelog.file) }));
 
 // the notices page is the notices that ship with the framework, then the docs site's own from the root
@@ -222,6 +229,7 @@ const shippedNotices = splitTitle(read(PAGES.notices.file));
 const siteNotices = splitTitle(read(SITE_NOTICES));
 const noticesPage = `${PAGES.notices.folder}index.html`;
 const noticesLinks = { root: rootFor(noticesPage), commit };
+
 page(
   noticesPage,
   shippedNotices.title || PAGES.notices.title,
@@ -231,6 +239,7 @@ page(
 
 // each full text's link is its folder worked out from the licence page's own folder, so either can move
 const licenceLinks = LICENCES.map((licence) => `<li><a href="${path.posix.relative(PAGES.licence.folder, licence.folder)}/">${escapeHtml(licence.title)}</a></li>`).join('\n');
+
 page(`${PAGES.licence.folder}index.html`, PAGES.licence.title, `${renderLicenceText(read(PAGES.licence.file))}\n<h2 id="full-texts">Full Texts</h2>\n<ul>\n${licenceLinks}\n</ul>`);
 
 for (const licence of LICENCES) {
@@ -243,12 +252,14 @@ for (const file of SHARED_FILES) {
 
 // the shared bar on every page the other tools wrote
 let barred = 0;
+
 for (const generated of GENERATED) {
   for (const relative of pagesUnder(generated.folder)) {
     const file = path.join(DIST, relative);
     const html = fs.readFileSync(file, 'utf8');
     const root = rootFor(relative);
     const result = addSiteBar(html, generated.kind, generated.head(root), siteBar(root, generated.section));
+
     if (result !== html) {
       fs.writeFileSync(file, result);
       barred++;

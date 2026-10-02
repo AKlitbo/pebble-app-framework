@@ -13,9 +13,11 @@
  */
 function readLint(results) {
   const problems = [];
+
   for (const file of results) {
     for (const message of file.messages) {
       const error = message.severity === 2 || message.fatal === true;
+
       problems.push({
         file: file.filePath,
         line: message.line,
@@ -26,6 +28,7 @@ function readLint(results) {
       });
     }
   }
+
   return problems;
 }
 

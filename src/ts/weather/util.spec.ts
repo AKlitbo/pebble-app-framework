@@ -67,16 +67,20 @@ describe('condition vocabulary single source of truth', () => {
     // mirror the C table: every row contributes its day token plus its
     // "<token>_NIGHT" form when it has a night glyph
     const known = new Set();
+
     for (const entry of conditions.conditions) {
       known.add(entry.token);
+
       if (entry.nightResource) {
         known.add(`${entry.token}_NIGHT`);
       }
     }
 
     const emitted = new Set();
+
     for (let code = 0; code <= 99; code++) {
       const day = util.wmoToCondition(code);
+
       emitted.add(day);
       // the night promotion of every producible day code must also resolve
       emitted.add(util.applyNight(day, false));

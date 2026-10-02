@@ -90,18 +90,24 @@ export function resolveTargets(config: Appinfo, face: string): Target[] {
     // an empty map or a target with no name reached the sandbox step as targets/undefined, or as
     // a TypeError that named nothing
     const targets = Object.entries(config.targets);
+
     if (targets.length === 0) {
       throw new ToolError(`${face}'s appinfo declares an empty targets map`);
     }
+
     const unnamed = targets.find(([, target]) => !target || !target.name);
+
     if (unnamed) {
       throw new ToolError(`${face}'s appinfo target "${unnamed[0]}" has no name`);
     }
+
     return targets.map(([, target]) => target);
   }
+
   if (!config.name) {
     throw new ToolError(`${face}'s appinfo declares neither a targets map nor a top-level name`);
   }
+
   return [{ name: config.name, watchface: config.watchface ?? false, menuIcon: config.menuIcon }];
 }
 
@@ -117,13 +123,17 @@ type RootPkg = { author: string; version: string };
  */
 export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] {
   const media: MediaEntry[] = JSON.parse(JSON.stringify(config.resources.media));
+
   if (target.menuIcon) {
     const entry = media.find((item) => item.name === target.menuIcon);
+
     if (!entry) {
       throw new ToolError(`target ${target.name}'s menuIcon ${target.menuIcon} is not in the media list`);
     }
+
     entry.menuIcon = true;
   }
+
   return media;
 }
 
@@ -221,6 +231,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
   const manifest = buildManifest(config, { author: rootPkg.author, version }, target);
 
   const outDir = path.join(ROOT, 'targets', target.name);
+
   fs.mkdirSync(outDir, { recursive: true });
   writeIfChanged(path.join(outDir, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
 
@@ -236,6 +247,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
     family: familyNameFor(ROOT, rel) || '',
     watchface: target.watchface,
   };
+
   writeIfChanged(path.join(outDir, 'wscript'), fillWscript(fs.readFileSync(WSCRIPT_TEMPLATE, 'utf8'), dirs));
 
   // stdout is kept for the sandbox paths the bare face prints, so the note goes to stderr
@@ -254,15 +266,19 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
  */
 export function findTargetClash(targetsByFace: Record<string, string[]>): string | null {
   const owner = new Map<string, string>();
+
   for (const [face, names] of Object.entries(targetsByFace)) {
     for (const name of names) {
       const other = owner.get(name);
+
       if (other === face) {
         return `target "${name}" is declared twice by ${face}, so one would build over the other in targets/${name}`;
       }
+
       if (other) {
         return `target "${name}" is declared by both ${other} and ${face}, so one would build over the other in targets/${name}`;
       }
+
       owner.set(name, face);
     }
   }
@@ -298,7 +314,9 @@ function allTargetNames(): Record<string, string[]> {
   if (targetNames) {
     return targetNames;
   }
+
   const byFace: Record<string, string[]> = {};
+
   for (const name of listFaceNames()) {
     try {
       byFace[name] = faceTargetNames(name);
@@ -325,11 +343,13 @@ export function writeSandboxes(face: string): string[] {
   const targets = resolveTargets(config, face);
 
   const clash = findTargetClash({ ...allTargetNames(), [face]: targets.map((target) => target.name) });
+
   if (clash) {
     throw new ToolError(clash);
   }
 
   const rootPkg: RootPkg = JSON.parse(fs.readFileSync(ROOT_PKG, 'utf8'));
+
   return targets.map((target) => writeTarget(face, config, rootPkg, target));
 }
 
@@ -343,12 +363,15 @@ export function writeSandboxes(face: string): string[] {
 function run(args: string[]): string[] {
   const listOnly = args[0] === '--targets';
   const face = listOnly ? args[1] : args[0];
+
   if (!face) {
     throw new ToolError('usage: build-manifests.ts [--targets] <face>');
   }
+
   if (listOnly) {
     return faceTargetNames(face);
   }
+
   return writeSandboxes(face);
 }
 

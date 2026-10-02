@@ -33,6 +33,7 @@ export function leavesHere(rel: string): boolean {
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const unknown = args.find((arg) => arg !== '--check');
+
   if (unknown !== undefined) {
     throw new ToolError(`unknown argument: ${unknown}. It takes --check`);
   }

@@ -22,9 +22,11 @@ const NOTICE = /A new (SDK|pebble-tool) is available: v?(\S+) \(current: v?([^)]
  */
 function readVersion(output) {
   const match = VERSION.exec(stripColour(output));
+
   if (!match) {
     return null;
   }
+
   return { tool: match[1], activeSdk: match[2] ? match[2].trim() : '' };
 }
 
@@ -38,20 +40,25 @@ function readSdkList(output) {
   const installed = [];
   let active = '';
   let inInstalled = false;
+
   for (const raw of stripColour(output).split(/\r?\n/)) {
     const line = raw.trim();
+
     if (/^Installed SDKs:/.test(line)) {
       inInstalled = true;
     } else if (/SDKs:$/.test(line) || line === '') {
       inInstalled = false;
     } else if (inInstalled) {
       const [version] = line.split(/\s+/);
+
       installed.push(version);
+
       if (/\(active\)/.test(line)) {
         active = version;
       }
     }
   }
+
   return { installed, active };
 }
 

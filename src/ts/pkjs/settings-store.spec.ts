@@ -138,6 +138,7 @@ describe('watchSettings', () => {
   test('reports no change when only other settings moved', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', THEME: 1 }));
     const watch = watchSettings(['WEATHER_PROVIDER']);
+
     watch.opened();
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', THEME: 2 }));
 
@@ -150,6 +151,7 @@ describe('watchSettings', () => {
   test('reports a change when a watched setting moved', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
     const watch = watchSettings(['WEATHER_PROVIDER']);
+
     watch.opened();
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'openmeteo' }));
 
@@ -164,6 +166,7 @@ describe('watchSettings', () => {
    */
   test('reads a setting with nothing saved as its default', () => {
     const watch = watchSettings(['WEATHER_TEMPERATURE_UNIT'], { WEATHER_TEMPERATURE_UNIT: false });
+
     watch.opened();
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_TEMPERATURE_UNIT: false }));
 
@@ -178,6 +181,7 @@ describe('watchSettings', () => {
    */
   test('matches a number default against the string Clay saves', () => {
     const watch = watchSettings(['WEATHER_TEMPERATURE_UNIT'], { WEATHER_TEMPERATURE_UNIT: 0 });
+
     watch.opened();
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_TEMPERATURE_UNIT: '0' }));
 

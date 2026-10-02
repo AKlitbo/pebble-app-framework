@@ -63,6 +63,7 @@ export type Roots = { face: Root; core: Root | null; engine: Root; faceRoot: str
  */
 export function rootsFor(face: string): Roots {
   const core = familyCoreDir(face);
+
   return {
     face: { base: path.join(faceDir(face), 'src'), builder: FACE_BUILDER_REL },
     core: core ? { base: core, builder: FACE_BUILDER_REL } : null,
@@ -85,6 +86,7 @@ function builderDir(root: Root): string {
 function resolveIn(roots: Roots, rel: string): string | null {
   for (const root of rootList(roots)) {
     const full = path.join(builderDir(root), rel);
+
     if (fs.existsSync(full)) {
       return full;
     }
@@ -109,6 +111,7 @@ export function inPrecedence(roots: Roots, full: string): string[] {
 
   for (const from of all) {
     const rel = path.relative(builderDir(from), full);
+
     if (rel.startsWith('..') || path.isAbsolute(rel)) {
       continue;
     }
@@ -145,6 +148,7 @@ export function findManifests(roots: Roots): string[] {
   // least specific first so a family shadows the framework and a face shadows both
   for (const root of rootList(roots).slice().reverse()) {
     const dir = builderDir(root);
+
     if (!fs.existsSync(dir)) {
       continue;
     }
@@ -169,9 +173,11 @@ export function findManifests(roots: Roots): string[] {
  */
 export function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): string {
   const initPiece = manifest.pieces.find((piece) => path.basename(piece).replace(/\.[jt]s$/, '') === 'init');
+
   if (!initPiece) {
     throw new ToolError(`${manifest.name}: no piece named init`);
   }
+
   return initPiece;
 }
 
@@ -185,6 +191,7 @@ export function findInitPiece(manifest: Pick<Manifest, 'name' | 'pieces'>): stri
  */
 export function buildEntrySource(manifest: Pick<Manifest, 'pieces'>, initPiece: string): string {
   const lines = manifest.pieces.map((piece) => `require(${JSON.stringify('./' + piece)});`);
+
   lines.push(`module.exports = require(${JSON.stringify('./' + initPiece)});`);
   return lines.join('\n');
 }
@@ -213,6 +220,7 @@ function overlayPlugin(roots: Roots): esbuild.Plugin {
         for (const candidate of inPrecedence(roots, wanted)) {
           for (const suffix of ['', '.ts', '.js', '.json', '/index.ts', '/index.js']) {
             const full = candidate + suffix;
+
             if (fs.existsSync(full) && fs.statSync(full).isFile()) {
               return { path: full };
             }
@@ -247,6 +255,7 @@ async function bundleInitialize(manifest: Manifest, manifestDir: string, roots: 
     legalComments: 'none',
     logLevel: 'silent',
   });
+
   return result.outputFiles[0].text.replace(/\r\n/g, '\n').replace(/\n+$/, '');
 }
 
@@ -299,6 +308,7 @@ export function minifyCss(css: string): string {
     if (match.startsWith('/*')) {
       return '';
     }
+
     strings.push(match);
     return `@@css-string-${strings.length - 1}@@`;
   });
@@ -392,6 +402,7 @@ async function generateAll(face: string): Promise<void> {
 
   for (const manifestPath of manifests) {
     const built = await buildComponentSource(manifestPath, roots);
+
     fs.writeFileSync(built.output, built.source);
     console.log(`wrote ${path.relative(roots.faceRoot, built.output)} (${built.source.length} bytes)`);
   }
@@ -399,6 +410,7 @@ async function generateAll(face: string): Promise<void> {
 
 if (isMainScript(import.meta)) {
   const face = process.argv[2];
+
   // esbuild only takes a resolve plugin through its async API, so the run ends on a promise. the
   // faces are found inside it too, so a lookup that fails reports the same way a failed build does
   Promise.resolve()

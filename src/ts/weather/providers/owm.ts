@@ -62,6 +62,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   const tryDone = joinCalls(needOpenMeteo ? 2 : 1, () => {
     if (result && result.ok && extras) {
       util.attachExtras(result, openMeteo.parseExtras(extras));
+
       if (opts.wantForecast) {
         util.attachForecast(result, openMeteo.parseForecast(extras));
       }
@@ -84,6 +85,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     // OWM returns a 'cod' field with the HTTP status. 401 is usually a bad key
     // it comes as a number on success but often a string on errors so normalize first
     const cod = Number(json.cod);
+
     if (Number.isFinite(cod) && cod !== 200) {
       console.log('owm api error:', json.message);
       // a 429 is the key's call cap, which another try seconds later only spends more of
@@ -112,6 +114,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     // OWM lumps every cloud level under main "Clouds". split partly (icon code
     // 02) from overcast (03/04) using the icon code before night promotion
     let cond = json.weather[0].main || '';
+
     if (String(cond).toLowerCase() === 'clouds') {
       cond = icon.slice(0, 2) === '02' ? 'PCLDY' : 'CLDY';
     }

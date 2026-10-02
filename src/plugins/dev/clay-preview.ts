@@ -45,10 +45,12 @@ const face = process.argv[2];
 
 // a bad face stops here with the one line every tool gives, before anything is built
 let paths: FacePaths;
+
 try {
   if (!face || face.startsWith('--')) {
     throw new ToolError('usage: paf tool <face> clay-preview [--watch] [--platform=emery|gabbro]');
   }
+
   paths = facePaths(face);
 } catch (error) {
   reportFailure(error);
@@ -62,7 +64,9 @@ try {
 const host = global as unknown as Record<string, unknown>;
 
 if (typeof host.navigator === 'undefined') { host.navigator = { userAgent: 'node' }; }
+
 if (typeof host.window === 'undefined') { host.window = {}; }
+
 // which watch the page should think it was opened from. Clay filters items by their declared
 // capabilities against this, so it is what shows the round build losing its rectangle-only
 // controls without a watch in hand. firmware is stubbed alongside the platform because Clay
@@ -81,20 +85,25 @@ if (typeof host.Pebble === 'undefined') {
     },
   };
 }
+
 // Clay reads the values it seeds the page with straight out of localStorage under this key, so
 // pre-loading it is all "open the settings again later" takes
 const seed = process.argv.slice(3).find((arg) => arg.startsWith('--settings='));
 
 if (typeof host.localStorage === 'undefined') {
   const store: Record<string, string> = {};
+
   if (seed) {
     const file = seed.slice('--settings='.length);
+
     if (!fs.existsSync(file)) {
       reportFailure(new ToolError(`${seed} names no file`));
       process.exit();
     }
+
     store['clay-settings'] = fs.readFileSync(file, 'utf8');
   }
+
   host.localStorage = {
     getItem: function (key: string) { return key in store ? store[key] : null; },
     setItem: function (key: string, value: string) { store[key] = String(value); },
@@ -107,6 +116,7 @@ if (typeof host.localStorage === 'undefined') {
 const listed: string[] | Record<string, number> = JSON.parse(fs.readFileSync(appinfoPath(face), 'utf8')).messageKeys || [];
 const declared = Array.isArray(listed) ? listed : Object.keys(listed);
 const messageKeysStub: Record<string, number> = {};
+
 declared.forEach((name, i) => { messageKeysStub[name] = 10000 + i; });
 
 stubModuleLoad((id) => (id === 'message_keys' ? messageKeysStub : undefined));
@@ -118,6 +128,7 @@ function htmlFromDataUrl(url: string): string {
   const comma = url.indexOf(',');
   const head = url.slice(0, comma);
   const body = url.slice(comma + 1);
+
   return head.indexOf(';base64') !== -1
     ? Buffer.from(body, 'base64').toString('utf8')
     : decodeURIComponent(body);
@@ -128,7 +139,9 @@ function isComponent(value: unknown): boolean {
   if (!value || typeof value !== 'object') {
     return false;
   }
+
   const candidate = value as { name?: unknown; manipulator?: unknown };
+
   return typeof candidate.name === 'string' && Boolean(candidate.manipulator);
 }
 
@@ -147,13 +160,16 @@ function components(): unknown[] {
     if (!fs.existsSync(dir)) {
       return;
     }
+
     for (const name of fs.readdirSync(dir)) {
       if (!name.endsWith(suffix)) {
         continue;
       }
+
       // the generated .g.js builders are plain CommonJS. the TS ones land on .default
       const mod = requireHost(path.join(dir, name)) as { default?: unknown };
       const candidate = mod.default || mod;
+
       if (isComponent(candidate)) {
         found.push(candidate);
       }
@@ -178,6 +194,7 @@ function build(): void {
   const customClay = (configModule.customClay || null) as (() => void) | null;
 
   const clay = new Clay(configModule.default, customClay, { autoHandleEvents: false });
+
   for (const component of components()) {
     clay.registerComponent(component);
   }
@@ -193,9 +210,11 @@ function build(): void {
   };
 
   const html = htmlFromDataUrl(clay.generateUrl());
+
   fs.writeFileSync(OUT, html);
 
   const stamp = new Date().toISOString().slice(11, 19);
+
   console.log('[' + stamp + '] wrote ' + OUT + ' (' + html.length + ' bytes) for ' + face);
 }
 
@@ -233,6 +252,7 @@ if (process.argv.indexOf('--watch') !== -1) {
   const rebuild = (): void => {
     // node caches required modules, so drop them before the next build
     Object.keys(requireHost.cache).forEach((key) => { delete requireHost.cache[key]; });
+
     try {
       // no cleanEmit here: wiping emit/ would mean a cold tsc on every keystroke
       compile(paths);
@@ -248,6 +268,7 @@ if (process.argv.indexOf('--watch') !== -1) {
   watched.forEach((dir) => {
     fs.watch(dir, { recursive: true }, () => {
       if (timer) { clearTimeout(timer); }
+
       timer = setTimeout(rebuild, 150);
     });
   });

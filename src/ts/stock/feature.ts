@@ -91,9 +91,11 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
   // event plus the watch's own STOCK_REQUEST) landed before it finished. a forced fetch (a
   // settings change that may have swapped symbols) takes over instead of being dropped
   const started = startRound(state, force);
+
   if (started === null) {
     return;
   }
+
   const round = started;
 
   // every slot starts as a failed quote so the array is never sparse. when the watchdog closes a
@@ -108,6 +110,7 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
     if (!finishRound(state, round)) {
       return; // a newer forced round took over, or this one already closed
     }
+
     clearTimeout(watchdog);
 
     // a good quote records when the fetch finished, and the trading day so Alpha Vantage knows once
@@ -117,12 +120,14 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
     // unrecorded, so it retries on the next poll
     const firstGood = results.find((quote) => quote && quote.ok);
     const answered = results.some((quote) => quote && (quote.ok || !UNANSWERED.includes(quote.status || '')));
+
     if (firstGood) {
       state.lastFetchMs = deps.now();
       state.lastAsOf = firstGood.asOf || '';
     } else if (answered) {
       state.lastFetchMs = deps.now();
     }
+
     deps.sendStocks(results);
   }
 
@@ -136,7 +141,9 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
       if (!roundIsCurrent(state, round)) {
         return; // taken over or already closed
       }
+
       results[index] = result;
+
       if (--pending === 0) {
         closeRound();
       }
@@ -205,6 +212,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     // watch keeps the last good strip rather than NET ERROR in every slot. an answer the wearer has
     // to act on, such as INVALID KEY, still goes out, and so do errors when nothing good is kept
     const unanswered = results.every((quote) => !quote || (!quote.ok && UNANSWERED.includes(quote.status || '')));
+
     pushStockBytes(unanswered && savedStrip ? savedStrip : bytes);
 
     // a round where every quote failed would cache a strip of ERRs and show them tomorrow, so
@@ -214,6 +222,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     if (bytes && results.some((quote) => quote && quote.ok)) {
       savedStrip = bytes;
     }
+
     stockCache.save(localStorage, {
       lastAsOf: stockState.lastAsOf,
       lastFetchMs: stockState.lastFetchMs,
@@ -249,6 +258,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       savedStrip = null;
       stockCache.save(localStorage, { lastAsOf: stockState.lastAsOf, lastFetchMs: stockState.lastFetchMs, strip: null });
     }
+
     pushStockBytes(wire.packStockStrip([]));
   }
 
@@ -321,6 +331,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       // the watch drives this on every interval it asks for, so it goes through the provider
       // quota gate like any other routine fetch. only a settings change forces past it
       const held = lastStockBytes;
+
       sender.forget();
 
       // a save's forced refetch is about to answer, so this ask waits for it

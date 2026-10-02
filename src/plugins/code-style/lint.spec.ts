@@ -14,10 +14,12 @@ import { configFile, configFrom } from './lint.ts';
 /** A unit folder holding the files given, each empty. */
 function unitWith(files: string[]): string {
   const unit = tempDir('code-style-');
+
   for (const file of files) {
     fs.mkdirSync(path.dirname(path.join(unit, file)), { recursive: true });
     fs.writeFileSync(path.join(unit, file), '');
   }
+
   return unit;
 }
 

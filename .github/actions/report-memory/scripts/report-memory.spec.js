@@ -43,8 +43,10 @@ afterEach(() => {
 
 function writeBinary(platform, length, virtualSize, project = '.') {
   const dir = path.join(workspace, project, 'targets', 'ridgeline', 'build', platform);
+
   fs.mkdirSync(dir, { recursive: true });
   const binary = Buffer.alloc(length);
+
   binary.writeUInt16LE(virtualSize, 0x80);
   fs.writeFileSync(path.join(dir, 'pebble-app.bin'), binary);
 }
@@ -52,8 +54,10 @@ function writeBinary(platform, length, virtualSize, project = '.') {
 async function report(log = LOG) {
   fs.writeFileSync(path.join(workspace, 'build-ridgeline.log'), log);
   const core = fakeCore();
+
   await reportMemory({ core });
   const file = path.join(workspace, 'memory', 'ridgeline.json');
+
   return { core, rows: fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null };
 }
 

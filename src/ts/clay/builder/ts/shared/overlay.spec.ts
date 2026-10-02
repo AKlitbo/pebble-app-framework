@@ -57,6 +57,7 @@ describe('open', () => {
   test('leaves another host\'s overlay standing', () => {
     const sheet = createOverlayHost('tb-overlay', 'tb-sheet', false);
     const picker = createOverlayHost('tb-pick-overlay', 'tb-pick', true);
+
     sheet.open();
 
     picker.open();
@@ -69,6 +70,7 @@ describe('close', () => {
   /** Leaving either half behind blocks every tap on the settings page underneath it. */
   test('removes both the backdrop and the panel', () => {
     const host = createOverlayHost('tb-overlay', 'tb-sheet', false);
+
     host.open();
 
     host.close();
@@ -79,6 +81,7 @@ describe('close', () => {
   /** Apply closes the panel that the tap-outside handler may have already closed, and a throw there takes the whole config screen down. */
   test('does nothing when there is no open pair', () => {
     const host = createOverlayHost('tb-overlay', 'tb-sheet', true);
+
     host.open();
 
     const result = () => {
@@ -95,6 +98,7 @@ describe('dismissOnTap', () => {
   /** Tap outside is the only way out of the picker, so losing it traps the user in the popup. */
   test('closes the pair when the backdrop is tapped', () => {
     const host = createOverlayHost('tb-pick-overlay', 'tb-pick', true);
+
     host.open();
     const backdrop = document.body.children[0] as HTMLElement;
 
@@ -106,6 +110,7 @@ describe('dismissOnTap', () => {
   /** The sheet only closes through its own Done button, and a stray tap on the dim would drop a half finished edit. */
   test('keeps the pair up when dismissOnTap is off', () => {
     const host = createOverlayHost('tb-overlay', 'tb-sheet', false);
+
     host.open();
     const backdrop = document.body.children[0] as HTMLElement;
 

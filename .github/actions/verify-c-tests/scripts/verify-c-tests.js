@@ -41,6 +41,7 @@ module.exports = step(async ({ core, exec }) => {
     for (const failure of spec.failures) {
       const file = repoPath(failure.file, SPEC_DIR);
       const message = failure.message || 'Failed.';
+
       core.error(message, { title: failure.test, file, startLine: failure.line });
       problems.push([`${file}:${failure.line}`, failure.test, message]);
     }
@@ -48,15 +49,20 @@ module.exports = step(async ({ core, exec }) => {
     for (const note of spec.compiler) {
       const file = repoPath(note.file, SPEC_DIR);
       const key = [file, note.line, note.column, note.severity, note.message].join('|');
+
       if (reported.has(key)) {
         continue;
       }
+
       reported.add(key);
+
       if (note.severity === 'warning') {
         warnings += 1;
       }
+
       const annotate = note.severity === 'error' ? core.error : core.warning;
       const title = note.severity === 'error' ? 'Compiler Error' : 'Compiler Warning';
+
       annotate(note.message, { title, file, startLine: note.line, startColumn: note.column });
       problems.push([note.line ? `${file}:${note.line}` : file, title, note.message]);
     }
@@ -64,6 +70,7 @@ module.exports = step(async ({ core, exec }) => {
     if (spec.counts) {
       continue;
     }
+
     if (spec.compiler.some((note) => note.severity === 'error')) {
       notBuilt += 1;
       continue;
@@ -72,6 +79,7 @@ module.exports = step(async ({ core, exec }) => {
     notFinished += 1;
     const file = repoPath(spec.file, SPEC_DIR);
     const message = `Stopped before it reported its results.${spec.crash ? ` ${spec.crash}.` : ''}`;
+
     core.error(message, { title: 'Spec Did Not Finish', file });
     problems.push([file, 'Spec Did Not Finish', message]);
   }
@@ -92,19 +100,24 @@ module.exports = step(async ({ core, exec }) => {
       [[specs.length, tests, tests - total('failures') - ignored, failures, ignored, notBuilt, notFinished]]
     ),
   ];
+
   if (problems.length > 0) {
     summary.push('', '### Problems', '', markdownTable(['Where', 'What', 'Message'], problems));
   }
+
   await core.summary.addRaw(summary.join('\n'), true).write();
 
   if (failures > 0 || notBuilt > 0 || notFinished > 0) {
     fail(`${failures} test(s) failed, ${notBuilt} spec(s) did not build, and ${notFinished} spec(s) did not finish.`);
   }
+
   if (warnings > 0) {
     fail(`Every test passed, but the compiler printed ${warnings} warning(s). The watch build treats a warning as an error.`);
   }
+
   if (result.exitCode !== 0) {
     fail(`make -C ${SPEC_DIR} exited ${result.exitCode} even though every spec passed. The log shows what stopped it.`);
   }
+
   core.info(`All ${tests} tests in ${specs.length} specs passed.`);
 });

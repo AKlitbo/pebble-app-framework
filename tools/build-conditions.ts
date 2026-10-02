@@ -77,6 +77,7 @@ export function buildIconsTable({ fallback, conditions }: ConditionVocabulary) {
   const fallbackResource = `RESOURCE_ID_ICON_${fallback.resource}`;
 
   const lines = bannerLines('icons_table.g.h', 'Condition token to weather icon resource lookup.');
+
   lines.push(
     '/**',
     ' * @brief Finds the icon resource for a condition token.',
@@ -143,6 +144,7 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
   // a negative value is wrapped, so a macro written as -WEATHER_NO_TEMP reads as a minus and not --
   const entry = (name: string, value: number | string, brief: string) => {
     const text = typeof value === 'number' && value < 0 ? `(${value})` : value;
+
     lines.push(`#define ${name} ${text} ///< ${brief}`);
   };
 
@@ -189,6 +191,7 @@ function main() {
     .map((header) => path.relative(ROOT, header.out).split(path.sep).join('/'));
 
   const count = conditionVocabulary.conditions.length;
+
   console.log(written.length ? `generated ${written.join(', ')} (${count} conditions)` : `every header already matches (${count} conditions)`);
 }
 

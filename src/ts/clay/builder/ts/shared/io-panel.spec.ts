@@ -28,9 +28,11 @@ beforeEach(() => {
   // rather than the call is what proves select() ran first
   document.execCommand = ((command: string) => {
     const textarea = document.querySelector('textarea');
+
     if (command === 'copy' && textarea) {
       copied = textarea.value.slice(textarea.selectionStart, textarea.selectionEnd);
     }
+
     return true;
   }) as typeof document.execCommand;
 });
@@ -42,9 +44,11 @@ afterEach(() => {
 /** Builds the panel into a fresh host, with the pieces a spec drives handed back. */
 function build(overrides?: Partial<IoPanelOpts>) {
   const panel = document.createElement('div');
+
   document.body.appendChild(panel);
 
   const onApply = vi.fn();
+
   buildIoPanel(panel, {
     title: 'Import / Export Colours',
     css: CSS,
@@ -107,6 +111,7 @@ describe('Apply', () => {
   /** Passing the seed instead of the live text silently discards the string the user just pasted in. */
   test('hands the edited text to onApply', () => {
     const { textarea, applyButton, onApply } = build({ value: 'old-layout' });
+
     textarea.value = 'pasted-layout';
 
     applyButton.click();
@@ -137,6 +142,7 @@ describe('Copy', () => {
   /** Copying without selecting first leaves the old clipboard in place, so the user pastes something unrelated to a friend. */
   test('copies the whole textarea contents', () => {
     const { textarea, copyButton } = build();
+
     textarea.value = 'edited-wire-string';
 
     copyButton.click();
@@ -156,6 +162,7 @@ describe('Copy', () => {
   /** A label stuck on Copied! gives the next copy no feedback at all. */
   test('restores the label after copyResetMs', () => {
     const { copyButton } = build();
+
     copyButton.click();
 
     vi.advanceTimersByTime(COPY_RESET_MS - 1);
@@ -168,6 +175,7 @@ describe('Copy', () => {
   /** A hard coded delay would ignore the builder that asks for a longer one, cutting its confirmation short. */
   test('honours the caller\'s reset delay', () => {
     const { copyButton } = build({ copyResetMs: 2000 });
+
     copyButton.click();
 
     vi.advanceTimersByTime(1500);

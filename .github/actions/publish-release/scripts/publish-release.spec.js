@@ -37,8 +37,10 @@ afterEach(() => {
 
 function writeTarget(target, platforms, { built = true, project = '.' } = {}) {
   const dir = path.join(workspace, project, 'targets', target);
+
   fs.mkdirSync(path.join(dir, 'build'), { recursive: true });
   fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ pebble: { targetPlatforms: platforms } }));
+
   if (built) {
     fs.writeFileSync(path.join(dir, 'build', `${target}.pbw`), target);
   }
@@ -48,12 +50,14 @@ const TWO_TARGETS = ({ command }) => {
   if (command === 'node') {
     return { stdout: 'gridlock-face\ngridlock-app\n' };
   }
+
   return { stdout: 'https://github.com/AKlitbo/pebble-watchfaces/releases/tag/gridlock-v1.3.1\n' };
 };
 
 async function publish(answer = TWO_TARGETS) {
   const core = fakeCore();
   const exec = fakeExec(answer);
+
   await publishRelease({ core, exec });
   return { core, exec };
 }
@@ -68,6 +72,7 @@ describe('publish-release', () => {
 
     expect(core.setFailed).not.toHaveBeenCalled();
     const assets = path.join(workspace, 'release-assets');
+
     expect(exec.getExecOutput).toHaveBeenCalledWith('gh', [
       'release', 'create', 'gridlock-v1.3.1',
       path.join(assets, 'gridlock-face-emery-1.3.1.pbw'),
@@ -117,6 +122,7 @@ describe('publish-release', () => {
     const { exec } = await publish();
 
     const created = exec.getExecOutput.mock.calls.find(([command, args]) => command === 'gh' && args[0] === 'release');
+
     expect(created[1]).toContain('--prerelease');
   });
 

@@ -35,9 +35,11 @@ export function select(
     defaultValue: def,
     options: options,
   };
+
   if (description) {
     item.description = description;
   }
+
   return item;
 }
 

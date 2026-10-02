@@ -112,12 +112,15 @@ export default {
       if (value) {
         try {
           const parsed = JSON.parse(value);
+
           if (parsed && parsed.label) {
             label = parsed.label;
           }
+
           if (parsed && typeof parsed.tz === 'string') {
             zone = parsed.tz;
           }
+
           if (parsed && parsed.fixed) {
             fixed = true;
           }
@@ -126,6 +129,7 @@ export default {
           // the label. anything else is corrupt so leave the box empty
           if (typeof value === 'string' && value !== '0') {
             const commaIndex = value.indexOf(',');
+
             if (commaIndex !== -1) {
               label = value.substring(commaIndex + 1);
             }
@@ -141,6 +145,7 @@ export default {
       // zone on purpose and no daylight saving to follow, so it is left alone
       const wantsZone = Boolean(this.config.timeZone);
       const noteEl = root.querySelector('.loc-note') as HTMLElement;
+
       noteEl.style.display = (wantsZone && label && !zone && !fixed) ? 'block' : 'none';
     },
 
@@ -193,13 +198,16 @@ export default {
     // Etc entry though, so UTC goes on by hand. an older webview without the call still reaches
     // every named zone through the city search below
     let zoneNames: string[] = [];
+
     if (wantsZone) {
       try {
         const lister = (Intl as unknown as IntlWithZones).supportedValuesOf;
+
         if (typeof lister === 'function') {
           zoneNames = lister.call(Intl, 'timeZone').slice();
         }
       } catch (error) {}
+
       zoneNames.unshift('UTC');
     }
 
@@ -208,11 +216,14 @@ export default {
     const offsets: Record<string, number> = {};
 
     (root.querySelector('.loc-label') as HTMLElement).textContent = self.config.label || 'Location';
+
     if (self.config.attributes && self.config.attributes.placeholder) {
       queryEl.placeholder = self.config.attributes.placeholder;
     }
+
     if (self.config.description) {
       const descEl = root.querySelector('.description') as HTMLElement;
+
       descEl.textContent = self.config.description;
       descEl.style.display = 'block';
     }
@@ -230,6 +241,7 @@ export default {
     /** Minutes ahead of UTC written the way people say it. */
     function offsetText(minutes: number) {
       const away = Math.abs(minutes);
+
       return 'UTC' + (minutes < 0 ? '-' : '+') + pad(Math.floor(away / 60)) + ':' + pad(away % 60);
     }
 
@@ -248,6 +260,7 @@ export default {
       // leaves the offset a minute short for as long as the page stays open
       const now = Date.now();
       let minutes = 0;
+
       try {
         const parts = new Intl.DateTimeFormat('en-CA', {
           timeZone: zone,
@@ -260,11 +273,13 @@ export default {
         }).formatToParts(new Date(now));
 
         const at: Record<string, string> = {};
+
         parts.forEach(function(part) { at[part.type] = part.value; });
 
         // midnight comes back as hour 24 in some engines, so fold it onto the day it belongs to
         const hour = Number(at.hour) % 24;
         const wall = Date.UTC(Number(at.year), Number(at.month) - 1, Number(at.day), hour, Number(at.minute));
+
         if (isFinite(wall)) {
           minutes = Math.round((wall - Math.floor(now / 60000) * 60000) / 60000);
         }
@@ -297,17 +312,20 @@ export default {
      */
     function offsetChoice(needle: string): ZoneChoice | null {
       const parts = /^(?:utc|gmt)?([+-])(\d{1,2})(?::?(\d{2}))?$/.exec(needle);
+
       if (!parts) {
         return null;
       }
 
       const hours = Number(parts[2]);
       const minutes = Number(parts[3] || 0);
+
       if (hours > 14 || minutes > 59) {
         return null;
       }
 
       const total = (parts[1] === '-' ? -1 : 1) * (hours * 60 + minutes);
+
       if (total === 0) {
         return { zone: 'UTC', label: 'UTC', offset: 0 };
       }
@@ -333,17 +351,20 @@ export default {
       const found: ZoneChoice[] = [];
 
       const typed = offsetChoice(needle);
+
       if (typed) {
         found.push(typed);
       }
 
       // the words people reach for when they mean UTC, none of which is a zone name
       let meansUtc = false;
+
       ['utc', 'zulu', 'gmt', 'greenwich'].forEach(function(alias) {
         if (alias.indexOf(needle) === 0) {
           meansUtc = true;
         }
       });
+
       if (meansUtc && !typed) {
         found.push({ zone: 'UTC', label: 'UTC', offset: 0 });
       }
@@ -352,8 +373,10 @@ export default {
       // that is what makes a query like europe or pacific useful
       const ending: string[] = [];
       const anywhere: string[] = [];
+
       zoneNames.forEach(function(zone) {
         const lower = zone.toLowerCase().replace(/_/g, '');
+
         if (lower.substring(lower.lastIndexOf('/') + 1).indexOf(needle) === 0) {
           ending.push(zone);
         } else if (lower.indexOf(needle) !== -1) {
@@ -365,6 +388,7 @@ export default {
         if (found.length >= 5 || zone === 'UTC') {
           return;
         }
+
         found.push({ zone: zone, label: zoneLabel(zone), offset: zoneOffset(zone) });
       });
 
@@ -376,6 +400,7 @@ export default {
       while (listEl.firstChild) {
         listEl.removeChild(listEl.firstChild);
       }
+
       listEl.classList.remove('show');
     }
 
@@ -388,6 +413,7 @@ export default {
       if (timer) {
         clearTimeout(timer);
       }
+
       timer = null;
       seq++;
       hideList();
@@ -407,17 +433,21 @@ export default {
         if (myPick !== picks) {
           return;
         }
+
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const data = JSON.parse(xhr.responseText);
             let offsetMinutes = 0;
+
             if (typeof data.utc_offset_seconds !== 'undefined') {
               offsetMinutes = Math.round(data.utc_offset_seconds / 60);
             }
+
             // timezone=auto makes the call name the zone as well, and the zone is what the offset
             // is read off later. the minutes are kept as the answer for a watch whose runtime
             // cannot look a zone up
             const zone = typeof data.timezone === 'string' && data.timezone ? data.timezone : (place.timezone || '');
+
             hiddenEl.value = JSON.stringify({
               lat: place.latitude,
               lon: place.longitude,
@@ -434,6 +464,7 @@ export default {
           } catch (error) {}
         }
       };
+
       xhr.open('GET', url);
       xhr.send();
     }
@@ -449,15 +480,18 @@ export default {
 
       zones.forEach(function(choice: ZoneChoice) {
         const item = document.createElement('li');
+
         item.className = 'loc-item loc-item-zone';
         // the full zone name, since Adelaide on its own does not say which one. a typed offset reads
         // its UTC label instead, since its Etc/GMT-5 name carries the sign the other way round
         const offsetRow = choice.label.indexOf('UTC') === 0;
+
         item.textContent = offsetRow ? choice.label : choice.zone || choice.label;
 
         // what that zone reads against UTC, unless the row already says so itself
         if (!offsetRow) {
           const hint = document.createElement('span');
+
           hint.className = 'loc-hint';
           hint.textContent = offsetText(choice.offset);
           item.appendChild(hint);
@@ -487,6 +521,7 @@ export default {
 
       (results || []).forEach(function(place: GeoPlace) {
         const item = document.createElement('li');
+
         item.className = 'loc-item';
         item.textContent = labelFor(place);
         item.addEventListener('click', function(event) {
@@ -498,6 +533,7 @@ export default {
           // save straight away or offline still keeps the right clock. the lookup below only
           // fills in the minutes, or the zone for a place the geocoder gave none
           const zone = typeof place.timezone === 'string' ? place.timezone : '';
+
           hiddenEl.value = JSON.stringify({
             lat: place.latitude,
             lon: place.longitude,
@@ -539,9 +575,11 @@ export default {
         if (mySeq !== seq) {
           return;
         }
+
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const data = JSON.parse(xhr.responseText);
+
             renderResults(zoneRows, data && data.results);
           } catch (error) {
             renderResults(zoneRows, []);
@@ -556,11 +594,13 @@ export default {
           renderResults(zoneRows, []);
         }
       };
+
       xhr.ontimeout = function() {
         if (mySeq === seq) {
           renderResults(zoneRows, []);
         }
       };
+
       xhr.timeout = 10000;
 
       xhr.open('GET', url);
@@ -580,6 +620,7 @@ export default {
       if (timer) {
         clearTimeout(timer);
       }
+
       if (query.length < 2) {
         seq++;
         zoneRows = [];

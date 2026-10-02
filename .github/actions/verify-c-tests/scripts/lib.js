@@ -41,11 +41,13 @@ function readSuite(output) {
 
   for (const line of String(output).split(/\r?\n/).map((raw) => raw.trimEnd())) {
     const header = HEADER.exec(line);
+
     if (header) {
       spec = { file: header[1], counts: null, failures: [], ignored: [], compiler: [], crash: '' };
       specs.push(spec);
       continue;
     }
+
     if (!spec) {
       continue;
     }
@@ -54,10 +56,12 @@ function readSuite(output) {
     const result = RESULT.exec(line);
     const compiler = COMPILER.exec(line);
     const driver = DRIVER.exec(line);
+
     if (counter) {
       spec.counts = { tests: Number(counter[1]), failures: Number(counter[2]), ignored: Number(counter[3]) };
     } else if (result) {
       const entry = { file: result[1], line: Number(result[2]), test: result[3], message: result[5] || '' };
+
       (result[4] === 'FAIL' ? spec.failures : spec.ignored).push(entry);
     } else if (compiler) {
       spec.compiler.push({

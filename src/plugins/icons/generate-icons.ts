@@ -102,18 +102,22 @@ async function trimToGlyph(svgText: string): Promise<Buffer> {
   const { data, info } = await sharp(png).raw().toBuffer({ resolveWithObject: true });
   const channels = info.channels;
   let minX = HI, minY = HI, maxX = -1, maxY = -1;
+
   for (let y = 0; y < HI; y++) {
     for (let x = 0; x < HI; x++) {
       if (data[(y * HI + x) * channels + 3] > 16) {
         if (x < minX) {
           minX = x;
         }
+
         if (x > maxX) {
           maxX = x;
         }
+
         if (y < minY) {
           minY = y;
         }
+
         if (y > maxY) {
           maxY = y;
         }
@@ -140,6 +144,7 @@ async function render(
 ): Promise<void> {
   // sharp requires a buffer here instead of a file path because we modified the raw svg string in memory above
   const input = opts.trim ? await trimToGlyph(svgText) : Buffer.from(svgText);
+
   await sharp(input)
     .resize(width, height, {
       // fit: contain keeps an svg with a weird aspect ratio from stretching, and pads the rest of the box with the transparent background
@@ -178,9 +183,11 @@ export function iconSourcesSetting(config: IconSourcesConfig): string | undefine
  */
 export function iconSourcesDir(root: string, config: IconSourcesConfig, fromEnv: string | undefined): string | null {
   const setting = iconSourcesSetting(config);
+
   if (setting) {
     return path.resolve(root, setting);
   }
+
   return fromEnv ? path.resolve(fromEnv) : null;
 }
 
@@ -189,6 +196,7 @@ function svgPath(sources: string, ref: string): string {
   const slash = ref.indexOf('/');
   const key = slash === -1 ? '' : ref.slice(0, slash);
   const dir = VENDOR_DIRS[key];
+
   if (!dir) {
     throw new ToolError(`Unknown vendor key in svg ref "${ref}" (expected one of: ${Object.keys(VENDOR_DIRS).join(', ')})`);
   }
@@ -200,6 +208,7 @@ function svgPath(sources: string, ref: string): string {
 function syncMedia(pkgPath: string, manifest: IconManifest): void {
   const raw = fs.readFileSync(pkgPath, 'utf8');
   const media = mediaOf(raw);
+
   if (!Array.isArray(media)) {
     throw new ToolError(`no resources.media array in ${pkgPath}`);
   }
@@ -239,6 +248,7 @@ export function holdsIconSets(sources: string): boolean {
  */
 export async function renderFace(dir: string, manifest: IconManifest, sources: string): Promise<number> {
   const outDir = path.join(dir, 'resources', 'icons');
+
   await fs.promises.mkdir(outDir, { recursive: true });
 
   const entries = Object.entries(manifest);
@@ -251,21 +261,26 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
       const [name, spec] = entries[next++];
       const src = svgPath(sources, spec.svg);
       const out = path.join(outDir, `${name}.png`);
+
       if (!fs.existsSync(src)) {
         if (!fs.existsSync(out)) {
           throw new ToolError(`Missing source: ${src} (for ${name})`);
         }
+
         // every render comes out at exactly the size asked for, so a PNG of another size was made
         // before icons.json changed, and keeping it would draw the old size in the new spot
         const kept = await sharp(out).metadata();
+
         if (kept.width !== spec.size[0] || kept.height !== spec.size[1]) {
           throw new ToolError(`Missing source: ${src} (for ${name}), and its PNG is ${kept.width}x${kept.height} where icons.json asks for ${spec.size[0]}x${spec.size[1]}`);
         }
+
         console.warn(`warning: ${src} is missing, so ${name} keeps the PNG it has`);
         continue;
       }
 
       const svg = await fs.promises.readFile(src, 'utf8');
+
       await render(whiten(svg), spec.size, out, { trim: Boolean(spec.trim) });
       rendered++;
     }
@@ -283,6 +298,7 @@ async function iconsFor(face: string, sources: string): Promise<void> {
   const manifestPath = iconsManifestPath(face);
   const manifest: IconManifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
   const rendered = await renderFace(dir, manifest, sources);
+
   // the media list is synced into the face's appinfo. its package.json is regenerated from
   // it at build time, when paf build runs build-manifests.ts
   syncMedia(appinfoPath(face), manifest);
@@ -294,9 +310,11 @@ async function iconsFor(face: string, sources: string): Promise<void> {
 async function main(): Promise<void> {
   const face = process.argv[2];
   const faces = face ? [face] : listFaceNames().filter((name) => fs.existsSync(iconsManifestPath(name)));
+
   if (faces.length === 0) {
     return;
   }
+
   // a named face with no icons says so, before the sources folder it would never read is asked for.
   // with no face named, the list above already holds only faces with icons
   if (face && !fs.existsSync(iconsManifestPath(face))) {
@@ -307,17 +325,22 @@ async function main(): Promise<void> {
   const config: IconSourcesConfig = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
   const setting = iconSourcesSetting(config);
   const sources = iconSourcesDir(ROOT, config, process.env.ICON_SOURCES);
+
   if (!sources) {
     throw new ToolError(`No icon sources folder. Name it as "plugins": { "icons": { "sources": "<folder>" } } in ${configFile}`);
   }
+
   // a folder that is not there would leave every icon on its committed PNG with a warning each and pass,
   // which reads as a run that worked
   if (!fs.existsSync(sources) || !fs.statSync(sources).isDirectory()) {
     const from = setting ? `plugins.icons.sources in ${configFile}` : 'ICON_SOURCES';
+
     throw new ToolError(`The icon sources folder ${sources} is not there. It comes from ${from}.`);
   }
+
   if (!holdsIconSets(sources)) {
     const sets = Object.values(VENDOR_DIRS).map((dir) => dir.split(path.sep).join('/')).join(', ');
+
     throw new ToolError(`The icon sources folder ${sources} holds none of the icon sets (${sets}). Check that it is the folder holding them.`);
   }
 

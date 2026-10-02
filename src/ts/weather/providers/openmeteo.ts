@@ -66,6 +66,7 @@ function roundOrNull(value: unknown): number | null {
   }
 
   const number = Number(value);
+
   return Number.isFinite(number) ? Math.min(199, Math.max(-99, Math.round(number))) : null;
 }
 
@@ -86,6 +87,7 @@ const SAME_CLOCK: PhoneClock = { shiftMinutes: 0, today: null };
  */
 function wallMsOfIso(iso: unknown): number | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(String(iso || ''));
+
   if (!match) {
     return null;
   }
@@ -105,6 +107,7 @@ function wallMsOfIso(iso: unknown): number | null {
 function phoneClockFor(json: OpenMeteoResponse | null): PhoneClock {
   const offsetSeconds = json?.utc_offset_seconds;
   const wallMs = wallMsOfIso(json?.current?.time);
+
   if (typeof offsetSeconds !== 'number' || !Number.isFinite(offsetSeconds) || wallMs === null) {
     return SAME_CLOCK;
   }
@@ -126,6 +129,7 @@ function phoneClockFor(json: OpenMeteoResponse | null): PhoneClock {
  */
 function todayIndex(json: OpenMeteoResponse | null, phone: PhoneClock): number {
   const times = json?.daily?.time;
+
   if (phone.today === null || !Array.isArray(times)) {
     return 0;
   }
@@ -146,6 +150,7 @@ function todayIndex(json: OpenMeteoResponse | null, phone: PhoneClock): number {
 function parseHourly(json: OpenMeteoResponse | null, phone: PhoneClock): HourlyStrip | null {
   const hourly = json?.hourly;
   const current = json?.current;
+
   if (!hourly || !Array.isArray(hourly.time) || !Array.isArray(hourly.temperature_2m)) {
     return null;
   }
@@ -157,21 +162,27 @@ function parseHourly(json: OpenMeteoResponse | null, phone: PhoneClock): HourlyS
 
   const now = current?.time || '';
   let start = times.findIndex((time) => time >= now);
+
   if (start < 0) {
     start = 0;
   }
 
   const cols = [];
+
   for (let column = 0; column < FORECAST_COLS; column++) {
     const index = start + column * HOURLY_STEP_HOURS;
+
     if (index >= times.length) {
       break;
     }
+
     let code = conditions.codeFor(util.wmoToCondition(codes[index]));
+
     // mark the night hours. an unknown code has no night glyph so leave it alone
     if (code !== conditions.UNKNOWN_CODE && isDay[index] === 0) {
       code |= conditions.FORECAST_NIGHT_BIT;
     }
+
     cols.push({
       code: code,
       temp: roundOrNull(temps[index]),
@@ -185,9 +196,11 @@ function parseHourly(json: OpenMeteoResponse | null, phone: PhoneClock): HourlyS
   // a base we can't read would ship a bogus hour the watch labels the whole strip
   // with so drop the strip instead of sending a wrong marker
   const baseMinutes = util.minutesFromIso(times[start]);
+
   if (baseMinutes === null) {
     return null;
   }
+
   const baseHour = Math.floor(baseMinutes / 60);
 
   // the columns sit on the location's whole hours. a phone half an hour off them rounds the label
@@ -206,6 +219,7 @@ function parseHourly(json: OpenMeteoResponse | null, phone: PhoneClock): HourlyS
  */
 function parseDaily(json: OpenMeteoResponse | null, phone: PhoneClock): DailyStrip | null {
   const daily = json?.daily;
+
   if (!daily || !Array.isArray(daily.time)) {
     return null;
   }
@@ -220,11 +234,13 @@ function parseDaily(json: OpenMeteoResponse | null, phone: PhoneClock): DailyStr
   // front. a city ahead starts on the phone's tomorrow, and the watch holds that whole until then
   const today = phone.today;
   const first = today === null ? 0 : times.findIndex((day) => String(day) >= today);
+
   if (first < 0) {
     return null;
   }
 
   const cols = [];
+
   for (let column = first; column < first + FORECAST_COLS && column < times.length; column++) {
     cols.push({
       code: conditions.codeFor(util.wmoToCondition(codes[column])),
@@ -239,9 +255,11 @@ function parseDaily(json: OpenMeteoResponse | null, phone: PhoneClock): DailyStr
 
   // same guard as the hourly strip: a base weekday we can't read would mislabel every day
   const firstDayMs = wallMsOfIso(times[first]);
+
   if (firstDayMs === null) {
     return null;
   }
+
   const baseWeekday = new Date(firstDayMs).getUTCDay();
 
   return { baseWeekday: baseWeekday, cols };
@@ -259,6 +277,7 @@ function parseDaily(json: OpenMeteoResponse | null, phone: PhoneClock): DailyStr
  */
 function parseForecast(json: OpenMeteoResponse | null): ForecastCols {
   const phone = phoneClockFor(json);
+
   return { hourly: parseHourly(json, phone), daily: parseDaily(json, phone) };
 }
 
@@ -375,6 +394,7 @@ function fetchForecast(opts: WeatherOpts, request: RequestFn, done: (forecast: F
     if (json.error) {
       return done(null);
     }
+
     done(parseForecast(json));
   });
 }
@@ -404,6 +424,7 @@ function requestZoned(
     if (json.error && opts.zone && /timezone/i.test(String(json.reason || ''))) {
       return requestZoned({ ...opts, zone: undefined }, urlFor, request, onFail, onJson);
     }
+
     onJson(json);
   });
 }

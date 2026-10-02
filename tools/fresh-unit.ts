@@ -40,9 +40,11 @@ function run(unit: string, doing: string, command: string, args: string[]): stri
   // paf is a .cmd on Windows, which only a shell runs, and a shell splits an argument on its spaces
   const windows = process.platform === 'win32';
   const done = spawnSync(command, windows ? args.map((arg) => (/\s/.test(arg) ? `"${arg}"` : arg)) : args, { cwd: unit, stdio: 'inherit', shell: windows });
+
   if (done.error) {
     return `${command} could not be started. ${done.error.message}`;
   }
+
   return done.status === 0 ? null : `${doing} failed, with ${done.signal ?? `exit code ${done.status}`}`;
 }
 
@@ -65,11 +67,13 @@ try {
 /** Why a script could not be loaded from a unit, or null when it loaded. */
 function loadProblem(unit: string, file: string): string | null {
   const done = spawnSync(process.execPath, ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', '--input-type=module', '-e', LOAD, file], { cwd: unit, encoding: 'utf8', timeout: LOAD_TIMEOUT_MS });
+
   if (done.status === 0) {
     return null;
   }
 
   const said = (done.stdout ?? '').split('\n').find((line) => line.startsWith('FAILED '));
+
   if (said) {
     return said.slice('FAILED '.length);
   }
@@ -77,6 +81,7 @@ function loadProblem(unit: string, file: string): string | null {
   // anything that ended the child some other way says why on its error output, when it says at all
   const ended = done.error?.message ?? done.signal ?? `exit code ${done.status}`;
   const wrote = (done.stderr ?? '').trim().split('\n').filter(Boolean).slice(-3).join(' ');
+
   return `node ended with ${ended}${wrote ? `. ${wrote}` : ''}`;
 }
 
@@ -86,6 +91,7 @@ function installed(unit: string, folder: string, name: string): boolean {
     if (fs.existsSync(path.join(dir, 'node_modules', ...name.split('/'), 'package.json'))) {
       return true;
     }
+
     if (dir === unit) {
       return false;
     }
@@ -102,6 +108,7 @@ function refuseOutsidePackages(temp: string): void {
     if (fs.existsSync(path.join(dir, 'node_modules'))) {
       throw new ToolError(`${path.join(dir, 'node_modules')} sits above the temp folder the units are made in, so a package there could stand in for one a unit's install left out. Remove it, or point TMPDIR or TEMP at a folder with none above it`);
     }
+
     if (dir === path.dirname(dir)) {
       return;
     }
@@ -130,6 +137,7 @@ function unitProblems(unit: string, plugins: string[]): string[] {
   const problems: string[] = [];
 
   console.log('== every package named is installed, and every script a paf key names loads');
+
   for (const dir of [framework, ...plugins.map((name) => path.join(framework, 'plugins', name))]) {
     const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
 
@@ -138,8 +146,10 @@ function unitProblems(unit: string, plugins: string[]): string[] {
         problems.push(`${from(unit, dir)}/package.json names ${name}, which the install left out`);
       }
     }
+
     for (const script of namedScripts(pkg.paf ?? {})) {
       const problem = loadProblem(unit, path.join(dir, script));
+
       if (problem) {
         problems.push(`${from(unit, path.join(dir, script))} did not load. ${problem}`);
       }
@@ -151,16 +161,19 @@ function unitProblems(unit: string, plugins: string[]): string[] {
 
   for (const args of commands) {
     const problem = run(unit, `paf ${args.join(' ')}`, 'paf', args);
+
     if (problem) {
       problems.push(problem);
     }
   }
+
   return problems;
 }
 
 /** Makes one unit listing the plugins given, fills it, and checks it, then removes it. */
 function checkUnit(temp: string, plugins: string[]): string[] {
   const unit = fs.mkdtempSync(path.join(temp, 'paf-fresh-unit-'));
+
   console.log(`\n##### a unit listing ${plugins.length ? plugins.join(', ') : 'no plugin'}`);
 
   try {
@@ -168,6 +181,7 @@ function checkUnit(temp: string, plugins: string[]): string[] {
 
     // a unit that cannot be made or filled has nothing in it to check
     const setUp = run(unit, 'git init', 'git', ['init', '-q', '.']) ?? run(unit, 'paf use local, which fills paf/ and installs', 'paf', ['use', path.basename(unit), 'local', ROOT]);
+
     return setUp ? [setUp] : unitProblems(unit, plugins);
   } finally {
     // a file a scanner or a child that just ended still holds must not turn a pass into a failure, or
@@ -182,6 +196,7 @@ function checkUnit(temp: string, plugins: string[]): string[] {
 
 function main(): void {
   const temp = os.tmpdir();
+
   refuseOutsidePackages(temp);
 
   // a plugin is a folder with a package.json, so a folder a branch switch left behind is not taken for one
@@ -192,8 +207,10 @@ function main(): void {
     .sort();
 
   const failed: string[] = [];
+
   for (const listed of [[], ...plugins.map((name) => [name])]) {
     const problems = checkUnit(temp, listed);
+
     if (problems.length > 0) {
       failed.push(`a unit listing ${listed.join(', ') || 'no plugin'}:\n${problems.map((problem) => `  ${problem}`).join('\n')}`);
     }
@@ -202,6 +219,7 @@ function main(): void {
   if (failed.length > 0) {
     throw new ToolError(`\na unit made from nothing is not whole.\n${failed.join('\n')}`);
   }
+
   console.log(`\na unit made from nothing installs and loads what the framework ships, with no plugin and with each of ${plugins.join(', ')}`);
 }
 

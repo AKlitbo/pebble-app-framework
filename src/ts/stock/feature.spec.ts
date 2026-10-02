@@ -159,6 +159,7 @@ describe('runStockRound', () => {
       runStockRound(state, ['AAPL'], true, deps);
       callbacks[0]({ ok: true, symbol: 'AAPL', price: 1, change: 0, changePercent: 0, asOf: '' });
       const supersededSend = sendStocks.mock.calls.length;
+
       callbacks[1]({ ok: true, symbol: 'AAPL', price: 2, change: 0, changePercent: 0, asOf: '' });
 
       expect(supersededSend).toBe(0);
@@ -180,6 +181,7 @@ describe('runStockRound', () => {
         fetchQuote: () => {}, // never invokes onQuote
         sendStocks, now: () => 100, timeoutMs: 1000,
       };
+
       runStockRound(state, ['AAPL'], false, deps);
       vi.advanceTimersByTime(500);
       runStockRound(state, ['AAPL'], true, deps);
