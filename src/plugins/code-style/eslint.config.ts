@@ -1,8 +1,9 @@
 /**
  * The house style, as an ESLint flat config a unit is linted with as it stands.
  *
- * 2-space indentation, single quotes, semicolons, K&R braces, braces on every control statement, and
- * trailing commas on multiline literals. The framework's own code in paf/ is linted where it is written,
+ * 2-space indentation, single quotes, semicolons, K&R braces, braces on every control statement,
+ * trailing commas on multiline literals, and a blank line around every block and after a run of
+ * declarations. The framework's own code in paf/ is linted where it is written,
  * so a unit's copy is ignored here, along with its swap folders and generated or built output.
  *
  * lint.ts hands this to ESLint, which reads every pattern below from the unit's root. A unit that adds
@@ -45,6 +46,15 @@ export const houseStyleRules = {
   '@stylistic/comma-spacing': 'error',
   '@stylistic/space-before-blocks': 'error',
   '@stylistic/arrow-parens': ['error', 'always'],
+
+  // a blank line either side of every block, and after a run of declarations, so a function reads in
+  // steps rather than as one wall
+  '@stylistic/padding-line-between-statements': ['error',
+    { blankLine: 'always', prev: '*', next: 'block-like' },
+    { blankLine: 'always', prev: 'block-like', next: '*' },
+    { blankLine: 'always', prev: ['const', 'let'], next: '*' },
+    { blankLine: 'any', prev: ['const', 'let'], next: ['const', 'let'] },
+  ],
 
   // always require braces around control statements
   'curly': ['error', 'all'],

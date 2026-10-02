@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The waf build stops when two plugins have a `c/` folder of the same name, when a plugin has a `c/core` or `c/pebble` folder, when a plugin has a C source or header straight inside its `c/`, or when a plugin's C file has the same path as one of the face's own, the framework's, or the family core's. Other files straight inside a plugin's `c/` are skipped.
 - `project/toolchain.json` is now `toolchain.json` at the top of the framework, and the `setup-pebble` action at this tag reads it there.
 - **Breaking:** `config/tsconfig.pkjs.json` is now `tsconfig.pkjs.json` at the top of the framework. Point a unit tsconfig that extends it at `paf/tsconfig.pkjs.json`.
+- **Breaking:** The house ESLint style now wants a blank line before and after every block, and after a run of `const` or `let` declarations. Run `paf lint --fix` to add them.
 - The frame generator's `--theme all` now bakes every frame a face without themes has, and just the base frame for a face with no theme sheets, rather than stopping. `paf gen <face> all` passes it to every face with a frame.
 
 ### Removed

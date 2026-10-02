@@ -6,7 +6,8 @@
  *
  * The house style comes from the code-style plugin, which is what a unit is linted with, so the
  * framework and every face share one copy: 2-space indentation, single quotes, semicolons, K&R braces,
- * mandatory braces for control statements, and trailing commas on multiline literals.
+ * mandatory braces for control statements, trailing commas on multiline literals, and a blank line around
+ * every block and after a run of declarations.
  *
  * The JavaScript in .github/actions/ and .github/shared/ is the CI action scripts, which actions/github-script can only
  * load as plain .js, so it is linted with the same house style. Every other JavaScript file is generated
