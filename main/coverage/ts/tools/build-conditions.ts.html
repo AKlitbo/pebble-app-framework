@@ -62,9 +62,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.67% </span>
+                <span class="strong">88.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>47/53</span>
+                <span class='fraction'>48/54</span>
             </div>
         
             
@@ -83,9 +83,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">90.38% </span>
+                <span class="strong">90.56% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>47/52</span>
+                <span class='fraction'>48/53</span>
             </div>
         
             
@@ -295,7 +295,14 @@
 <a name='L191'></a><a href='#L191'>191</a>
 <a name='L192'></a><a href='#L192'>192</a>
 <a name='L193'></a><a href='#L193'>193</a>
-<a name='L194'></a><a href='#L194'>194</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a>
+<a name='L198'></a><a href='#L198'>198</a>
+<a name='L199'></a><a href='#L199'>199</a>
+<a name='L200'></a><a href='#L200'>200</a>
+<a name='L201'></a><a href='#L201'>201</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,6 +326,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -370,6 +381,7 @@
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -436,6 +448,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -482,6 +495,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -492,10 +506,10 @@
 /**
  * Generates the C weather-condition lookups from the shared vocabulary.
  *
- * Reads the framework's ts/weather/conditions.ts and ts/pkjs/wire.ts, the two tables the phone owns,
- * and writes
- *   c/pebble/ui/weather/icons_table.g.h          (token  -&gt; icon resource)
- *   c/core/wire/wire_caps.g.h                    (the strip caps both sides bound against)
+ * Reads the framework's src/ts/weather/conditions.ts and src/ts/pkjs/wire.ts, the two tables the phone
+ * owns, and writes
+ *   src/c/pebble/ui/weather/icons_table.g.h      (token  -&gt; icon resource)
+ *   src/c/core/wire/wire_caps.g.h                (the strip caps both sides bound against)
  *
  * Each header carries its own Doxygen blocks, so the generated lookups show up in the framework docs
  * like any hand-written file.
@@ -507,11 +521,15 @@
  * Run via `npm run build:conditions` after editing either source.
  */
 import path from 'node:path';
-import conditionVocabulary from '../ts/weather/conditions.ts';
-import { WIRE_CAPS } from '../ts/pkjs/wire.ts';
-import type { ConditionVocabulary } from '../ts/weather/conditions.ts';
-import { writeIfChanged } from './files.ts';
-import { ENGINE, WORKSPACE } from './paths.ts';
+import conditionVocabulary from '../src/ts/weather/conditions.ts';
+import { WIRE_CAPS } from '../src/ts/pkjs/wire.ts';
+import type { ConditionVocabulary } from '../src/ts/weather/conditions.ts';
+import { writeIfChanged } from '../src/tools/shared/files.ts';
+import { ENGINE } from '../src/tools/shared/paths.ts';
+import { isMainScript } from '../src/tools/shared/entry.ts';
+&nbsp;
+/** The framework repo's root, which the written paths are logged from. */
+const ROOT = path.resolve(import.meta.dirname, '..');
 &nbsp;
 const WEATHER_DIR = path.join(ENGINE, 'c', 'pebble', 'ui', 'weather');
 const ICONS_OUT = path.join(WEATHER_DIR, 'icons_table.g.h');
@@ -532,7 +550,7 @@ function bannerLines(fileName: string, brief: string, source = 'ts/weather/condi
     `//     Source: the framework's ${source}`,
     '//',
     '//     Changes to this file may be lost if the code is regenerated.',
-    '//     Edit the source and run `npm run build:conditions` instead.',
+    '//     Edit the source and run `npm run build:conditions` in the framework repo instead.',
     '// &lt;/auto-generated&gt;',
     '//------------------------------------------------------------------------------',
     '/**',
@@ -563,6 +581,7 @@ export function buildIconsTable({ fallback, conditions }: ConditionVocabulary) {
   const fallbackResource = `RESOURCE_ID_ICON_${fallback.resource}`;
 &nbsp;
   const lines = bannerLines('icons_table.g.h', 'Condition token to weather icon resource lookup.');
+&nbsp;
   lines.push(
     '/**',
     ' * @brief Finds the icon resource for a condition token.',
@@ -629,6 +648,7 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
   // a negative value is wrapped, so a macro written as -WEATHER_NO_TEMP reads as a minus and not --
   const entry = (name: string, value: number | string, brief: string) =&gt; {
     const text = typeof value === 'number' &amp;&amp; value &lt; 0 ? `(${value})` : value;
+&nbsp;
     lines.push(`#define ${name} ${text} ///&lt; ${brief}`);
   };
 &nbsp;
@@ -672,13 +692,14 @@ export const GENERATED: GeneratedHeader[] = [
 /** Writes every generated header that changed from its source and logs which ones it wrote. */
 function <span class="fstat-no" title="function not covered" >main() {</span>
   const written = <span class="cstat-no" title="statement not covered" >GENERATED.<span class="fstat-no" title="function not covered" >filter((h</span>eader) =&gt; <span class="cstat-no" title="statement not covered" >writeIfChanged(header.out, header.build()))</span></span>
-    .<span class="fstat-no" title="function not covered" >map((h</span>eader) =&gt; <span class="cstat-no" title="statement not covered" >path.relative(WORKSPACE, header.out).split(path.sep).join('/'))</span>;
+    .<span class="fstat-no" title="function not covered" >map((h</span>eader) =&gt; <span class="cstat-no" title="statement not covered" >path.relative(ROOT, header.out).split(path.sep).join('/'))</span>;
 &nbsp;
   const count = <span class="cstat-no" title="statement not covered" >conditionVocabulary.conditions.length;</span>
+&nbsp;
 <span class="cstat-no" title="statement not covered" >  console.log(written.length ? `generated ${written.join(', ')} (${count} conditions)` : `every header already matches (${count} conditions)`);</span>
 }
 &nbsp;
-<span class="missing-if-branch" title="if path not taken" >I</span>if (import.meta.main) {
+<span class="missing-if-branch" title="if path not taken" >I</span>if (isMainScript(import.meta)) {
 <span class="cstat-no" title="statement not covered" >  main();</span>
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -688,7 +709,7 @@ function <span class="fstat-no" title="function not covered" >main() {</span>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-27T07:18:58.111Z
+                at 2026-10-03T02:55:51.943Z
             </div>
         <script src="../prettify.js"></script>
         <script>

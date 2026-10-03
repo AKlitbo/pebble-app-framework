@@ -16,5 +16,5 @@ var stock__store_8c =
     [ "s_fetch", "stock__store_8c.html#af962c600172c1bf7e33a007776cba2ab", null ],
     [ "s_persist_key", "stock__store_8c.html#afc1e32c72630b62007536cb95f77bb07", null ],
     [ "s_saved_sum", "stock__store_8c.html#afd6bfed4583dc043e4cb212594733f97", null ],
-    [ "s_state", "stock__store_8c.html#accbaec961a40c7b63a084fc29cfc2cce", null ]
+    [ "s_state", "stock__store_8c.html#ae885cb7823f20f0776a27f98b68935b2", null ]
 ];

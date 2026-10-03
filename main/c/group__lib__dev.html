@@ -198,9 +198,9 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__de
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
-<tr class="memitem:c_2Fdev_2Fdev_5Fwalk_2Ec" id="r_c_2Fdev_2Fdev_5Fwalk_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">c/dev/dev_walk.c</a></td></tr>
-<tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
-<tr class="memitem:c_2Fdev_2Fdev_5Fwalk_2Eh" id="r_c_2Fdev_2Fdev_5Fwalk_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">c/dev/dev_walk.h</a></td></tr>
+<tr class="memitem:src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Ec" id="r_src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">src/plugins/dev/c/dev/dev_walk.c</a></td></tr>
+<tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
+<tr class="memitem:src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Eh" id="r_src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">src/plugins/dev/c/dev/dev_walk.h</a></td></tr>
 <tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for the frame faces. It seeds every store with a fixed fixture, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk" for deterministic screenshots. Each tap steps to the next theme on the same fixed data and the same fixed clock. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -217,7 +217,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
-<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits every store from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Call in place of the live store inits.  <br /></td></tr>
+<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. Call in place of those stores' live inits.  <br /></td></tr>
 <tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
 <tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer tap. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
 <tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft"><a id="ga1ff4ca8046b48b20d4d60258901384c1" name="ga1ff4ca8046b48b20d4d60258901384c1"></a>
@@ -226,7 +226,7 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Fixed fixtures and a theme walk for repeatable screenshots. </p>
-<p>It lives in c/dev, apart from the runtime. The frame faces share it. It seeds every store with a fixed fixture and steps through the themes on a tap, so a face's screenshots come out the same every time.</p>
+<p>It comes with the dev plugin, in src/plugins/dev/c/dev, apart from the runtime. The frame faces share it. It fills the stores with fixed fixtures and steps through the themes on a tap, so a face's screenshots come out the same every time. The weather and location stores are filled only for a face that declares their message keys, and left empty otherwise.</p>
 </div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
 <a id="gabd7169bdf3c69ae6ffe751b975f1fadd" name="gabd7169bdf3c69ae6ffe751b975f1fadd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gabd7169bdf3c69ae6ffe751b975f1fadd">&#9670;&#160;</a></span>DevWalkMode</h2>
@@ -300,7 +300,7 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Inits every store from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Call in place of the live store inits. </p>
+<p>Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. Call in place of those stores' live inits. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hour</td><td>The pinned clock hour (0-23). </td></tr>

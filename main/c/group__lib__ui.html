@@ -198,32 +198,32 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__ui
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fengine_2Fengine_2Ec" id="r_c_2Fpebble_2Fui_2Fengine_2Fengine_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="engine_8c.html">c/pebble/ui/engine/engine.c</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fengine_2Fengine_2Ec" id="r_src_2Fc_2Fpebble_2Fui_2Fengine_2Fengine_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="engine_8c.html">src/c/pebble/ui/engine/engine.c</a></td></tr>
 <tr class="memdesc:engine_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The skin-neutral slot engine. Builds one layer per slot and repaints them all on a store change. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fengine_2Fengine_2Eh" id="r_c_2Fpebble_2Fui_2Fengine_2Fengine_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="engine_8h.html">c/pebble/ui/engine/engine.h</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fengine_2Fengine_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Fengine_2Fengine_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="engine_8h.html">src/c/pebble/ui/engine/engine.h</a></td></tr>
 <tr class="memdesc:engine_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The skin-neutral slot engine: builds one layer per slot from a face's slot list and repaints them all when a store changes. A slot is either a text-slot (a TextLayer built from a <a class="el" href="structZone.html" title="Everything needed to present one text slot. Where it sits, and which registered font,...">Zone</a>, so the font-fit tiers still apply) or a draw-slot (a custom layer whose update_proc paints a gauge, icon, or panel). A face supplies a build callback. A dynamic face (the grid) re-runs it on a layout change. This is the shared core a face's own engine sits on. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Ffonts_2Ec" id="r_c_2Fpebble_2Fui_2Ffonts_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="fonts_8c.html">c/pebble/ui/fonts.c</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Ffonts_2Ec" id="r_src_2Fc_2Fpebble_2Fui_2Ffonts_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="fonts_8c.html">src/c/pebble/ui/fonts.c</a></td></tr>
 <tr class="memdesc:fonts_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Font registry implementation. A flat id-indexed table of loaded handles. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Ffonts_2Eh" id="r_c_2Fpebble_2Fui_2Ffonts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="fonts_8h.html">c/pebble/ui/fonts.h</a></td></tr>
-<tr class="memdesc:fonts_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Font registry. A face loads its custom fonts once, each under a small integer slot id, and the rest of the ui looks them up by id so layout tables can stay static, carrying an id rather than a live GFont handle. The registry does not care which fonts they are. The face owns the slots and what they mean, see the face's own <span class="tt">draw/fonts.h</span>. This just maps an id to its handle. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Ficon_5Fcache_2Ec" id="r_c_2Fpebble_2Fui_2Ficon_5Fcache_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__cache_8c.html">c/pebble/ui/icon_cache.c</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Ffonts_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Ffonts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="fonts_8h.html">src/c/pebble/ui/fonts.h</a></td></tr>
+<tr class="memdesc:fonts_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Font registry. A face loads its custom fonts once, each under a small integer slot id, and the rest of the ui looks them up by id so layout tables can stay static, carrying an id rather than a live GFont handle. The registry does not care which fonts they are. The face owns the slots and what they mean. See the face's own <span class="tt">draw/fonts.h</span>. This just maps an id to its handle. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Ficon_5Fcache_2Ec" id="r_src_2Fc_2Fpebble_2Fui_2Ficon_5Fcache_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__cache_8c.html">src/c/pebble/ui/icon_cache.c</a></td></tr>
 <tr class="memdesc:icon__cache_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Icon store. A small cache that maps a resource id to its picture and is shared across a face, so each icon loads once and is freed in one place. Also carries the palette tint and the auto-trim margin scan. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Ficon_5Fcache_2Eh" id="r_c_2Fpebble_2Fui_2Ficon_5Fcache_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__cache_8h.html">c/pebble/ui/icon_cache.h</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Ficon_5Fcache_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Ficon_5Fcache_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icon__cache_8h.html">src/c/pebble/ui/icon_cache.h</a></td></tr>
 <tr class="memdesc:icon__cache_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">A small load-once icon store keyed by resource id, shared across a face so each icon picture loads a single time and frees in one place. Alongside it sits the palette tint and an optional auto-trim that measures each icon's transparent border so a caller can pin the visible art instead of the padded bitmap box. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Freadouts_2Ec" id="r_c_2Fpebble_2Fui_2Freadouts_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="readouts_8c.html">c/pebble/ui/readouts.c</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Freadouts_2Ec" id="r_src_2Fc_2Fpebble_2Fui_2Freadouts_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="readouts_8c.html">src/c/pebble/ui/readouts.c</a></td></tr>
 <tr class="memdesc:readouts_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text formatters shared by the faces, bound to the engine's text-slots. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Freadouts_2Eh" id="r_c_2Fpebble_2Fui_2Freadouts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="readouts_8h.html">c/pebble/ui/readouts.h</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Freadouts_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Freadouts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="readouts_8h.html">src/c/pebble/ui/readouts.h</a></td></tr>
 <tr class="memdesc:readouts_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text formatters shared by the faces: pull a value from a store, honour the relevant setting, and format it into a buffer. Each matches the engine's text-slot signature, so a slot binds straight to one (e.g. <span class="tt">{ .zone = &amp;s_zones[ZONE_TIME],
 .text = <a class="el" href="#ga5f1ce126b5f8ddfb48e78d1077355883" title="Format the clock per the Time Format setting: 24h, 12h, system, or .beats.">readout_time</a> }</span>). <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficons_2Ec" id="r_c_2Fpebble_2Fui_2Fweather_2Ficons_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons_8c.html">c/pebble/ui/weather/icons.c</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fweather_2Ficons_2Ec" id="r_src_2Fc_2Fpebble_2Fui_2Fweather_2Ficons_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons_8c.html">src/c/pebble/ui/weather/icons.c</a></td></tr>
 <tr class="memdesc:icons_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Weather-icon resource lookup implementation. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficons_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Ficons_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons_8h.html">c/pebble/ui/weather/icons.h</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fweather_2Ficons_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Fweather_2Ficons_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons_8h.html">src/c/pebble/ui/weather/icons.h</a></td></tr>
 <tr class="memdesc:icons_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition-string to weather-icon resource lookup. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fweather_2Ficons_5Ftable_2Eg_2Eh" id="r_c_2Fpebble_2Fui_2Fweather_2Ficons_5Ftable_2Eg_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons__table_8g_8h.html">c/pebble/ui/weather/icons_table.g.h</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fweather_2Ficons_5Ftable_2Eg_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Fweather_2Ficons_5Ftable_2Eg_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="icons__table_8g_8h.html">src/c/pebble/ui/weather/icons_table.g.h</a></td></tr>
 <tr class="memdesc:icons__table_8g_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Condition token to weather icon resource lookup. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fzone_2Ec" id="r_c_2Fpebble_2Fui_2Fzone_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone_8c.html">c/pebble/ui/zone.c</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fzone_2Ec" id="r_src_2Fc_2Fpebble_2Fui_2Fzone_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone_8c.html">src/c/pebble/ui/zone.c</a></td></tr>
 <tr class="memdesc:zone_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Layout primitives implementation. <br /></td></tr>
-<tr class="memitem:c_2Fpebble_2Fui_2Fzone_2Eh" id="r_c_2Fpebble_2Fui_2Fzone_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone_8h.html">c/pebble/ui/zone.h</a></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fui_2Fzone_2Eh" id="r_src_2Fc_2Fpebble_2Fui_2Fzone_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="zone_8h.html">src/c/pebble/ui/zone.h</a></td></tr>
 <tr class="memdesc:zone_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Layout primitives. Defines paintable areas and their text alignments. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
@@ -244,9 +244,8 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:gafb4e0c889ad43fc740ce8968464eead4" id="r_gafb4e0c889ad43fc740ce8968464eead4"><td class="memItemLeft"><a id="gafb4e0c889ad43fc740ce8968464eead4" name="gafb4e0c889ad43fc740ce8968464eead4"></a>
-typedef uint8_t(*)&#160;</td><td class="memItemRight"><b>EngineBuild</b>(<a class="el" href="structEngineSlot.html">EngineSlot</a> *out, uint8_t max, GRect bounds)</td></tr>
-<tr class="memdesc:gafb4e0c889ad43fc740ce8968464eead4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills <span class="tt">out</span> with the current slots and returns the count. A static face returns a fixed list. A dynamic face works it out from settings. <span class="tt">bounds</span> is the window's root bounds, handy for a full-window draw-slot (overlays that paint at absolute coords). <br /></td></tr>
+<tr class="memitem:gafb4e0c889ad43fc740ce8968464eead4" id="r_gafb4e0c889ad43fc740ce8968464eead4"><td class="memItemLeft">typedef uint8_t(*)&#160;</td><td class="memItemRight"><a class="el" href="#gafb4e0c889ad43fc740ce8968464eead4">EngineBuild</a>(<a class="el" href="structEngineSlot.html">EngineSlot</a> *out, uint8_t max, GRect bounds)</td></tr>
+<tr class="memdesc:gafb4e0c889ad43fc740ce8968464eead4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fills the caller's slots and returns the count. A static face returns a fixed list. A dynamic face works it out from settings.  <br /></td></tr>
 <tr class="memitem:ga8cad323339ccb30f88dae519c4e198f5" id="r_ga8cad323339ccb30f88dae519c4e198f5"><td class="memItemLeft"><a id="ga8cad323339ccb30f88dae519c4e198f5" name="ga8cad323339ccb30f88dae519c4e198f5"></a>
 typedef uint8_t&#160;</td><td class="memItemRight"><b>FontId</b></td></tr>
 <tr class="memdesc:ga8cad323339ccb30f88dae519c4e198f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">A font slot id. The face defines its slots as 0 to FONT_SLOTS_MAX-1 and the registry treats the id as a plain index. <br /></td></tr>
@@ -379,6 +378,32 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
       </table>
 </div><div class="memdoc">
 <p>Logs each icon's measured N/E/S/W on first load so you can check the numbers. Off by default in the shared lib so a normal build stays quiet. A face can switch it on </p>
+
+</div>
+</div>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="gafb4e0c889ad43fc740ce8968464eead4" name="gafb4e0c889ad43fc740ce8968464eead4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gafb4e0c889ad43fc740ce8968464eead4">&#9670;&#160;</a></span>EngineBuild</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint8_t(*) EngineBuild(<a class="el" href="structEngineSlot.html">EngineSlot</a> *out, uint8_t max, GRect bounds)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fills the caller's slots and returns the count. A static face returns a fixed list. A dynamic face works it out from settings. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">out</td><td>Where to write the slots. </td></tr>
+    <tr><td class="paramname">max</td><td>How many slots <span class="tt">out</span> holds. </td></tr>
+    <tr><td class="paramname">bounds</td><td>The window's root bounds, handy for a full-window draw-slot (overlays that paint at absolute coords). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>How many slots were written. </dd></dl>
 
 </div>
 </div>

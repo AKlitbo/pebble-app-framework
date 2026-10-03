@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['icon_5fcache_5fmax_0',['ICON_CACHE_MAX',['../icon__cache_8c.html#a25fec78ed8dc40aafa0ee6173a93e661',1,'icon_cache.c']]],
-  ['inbox_5fcomplete_5fmax_1',['INBOX_COMPLETE_MAX',['../appmessage_8c.html#ac83cbad686c149f4be2c8eeac589ca97',1,'appmessage.c']]]
+  ['hr_5fhistory_5fminutes_0',['HR_HISTORY_MINUTES',['../health__store_8c.html#a565e5d788d520b3a16db7c546e9ee7b3',1,'health_store.c']]]
 ];

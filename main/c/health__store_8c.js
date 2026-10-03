@@ -39,7 +39,7 @@ var health__store_8c =
     [ "s_persist_key", "health__store_8c.html#afc1e32c72630b62007536cb95f77bb07", null ],
     [ "s_settled_hours", "health__store_8c.html#a368b1a1c575f22bb1bcd8da8f13d0523", null ],
     [ "s_sleep", "health__store_8c.html#a60233dc911b0cddbb4943118bdcd6a49", null ],
-    [ "s_state", "health__store_8c.html#abf510f50a4ba9d557e025c283f158378", null ],
+    [ "s_state", "health__store_8c.html#a864af5e865991c4e111dc08d165206ea", null ],
     [ "s_step_history", "health__store_8c.html#a020edc6544e87babbf91c8698f05fe05", null ],
     [ "s_steps_pending", "health__store_8c.html#ae18e4c4a49e72e6e74a3ca38a0c4f0a6", null ]
 ];

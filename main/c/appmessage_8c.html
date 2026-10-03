@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: c/pebble/io/appmessage/appmessage.c File Reference</title>
+<title>Pebble App Framework: src/c/pebble/io/appmessage/appmessage.c File Reference</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -196,6 +196,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage_8c.
 <p>AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="appmessage__features_8h_source.html">io/appmessage/appmessage_features.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="callback__list_8h_source.html">io/callback_list.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="outbox__queue_8h_source.html">io/outbox_queue.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tuple__read_8h_source.html">io/tuple_read.h</a>&quot;</code><br />
@@ -279,7 +280,7 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 <tr class="memdesc:gac18380f0c5fdc613452b569ef4d88c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the calendar keys. <br /></td></tr>
 <tr class="memitem:a7537892c98316590da6b643bbbba37cc" id="r_a7537892c98316590da6b643bbbba37cc"><td class="memItemLeft"><a id="a7537892c98316590da6b643bbbba37cc" name="a7537892c98316590da6b643bbbba37cc"></a>
 static void&#160;</td><td class="memItemRight"><b>send_settings</b> (void)</td></tr>
-<tr class="memdesc:a7537892c98316590da6b643bbbba37cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the settings reply so it serialises with the data requests through the one outbox. <br /></td></tr>
+<tr class="memdesc:a7537892c98316590da6b643bbbba37cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the settings reply so it serializes with the data requests through the one outbox. <br /></td></tr>
 <tr class="memitem:a0d534305af0a10edbc3c427bae3e975c" id="r_a0d534305af0a10edbc3c427bae3e975c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d534305af0a10edbc3c427bae3e975c">inbox_received_callback</a> (DictionaryIterator *iterator, void *context)</td></tr>
 <tr class="memdesc:a0d534305af0a10edbc3c427bae3e975c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply an inbox message: weather, coords, and any changed settings.  <br /></td></tr>
 <tr class="memitem:a84466f8e93f6160cfe1de858608d07ce" id="r_a84466f8e93f6160cfe1de858608d07ce"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a84466f8e93f6160cfe1de858608d07ce">inbox_dropped_callback</a> (AppMessageResult reason, void *context)</td></tr>
@@ -293,9 +294,9 @@ static void&#160;</td><td class="memItemRight"><b>send_settings</b> (void)</td><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a3294e778e6cb9bcda9026e5a45b3dfa3" name="a3294e778e6cb9bcda9026e5a45b3dfa3"></a>
+<tr class="memitem:"><td class="memItemLeft"><a id="af3ad3bd6e692d8ce103607ad70171a46" name="af3ad3bd6e692d8ce103607ad70171a46"></a>
 <a class="el" href="struct_0fstruct_0e_8s__handlers.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_handlers</b></td></tr>
-<tr class="memdesc:a3294e778e6cb9bcda9026e5a45b3dfa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The registered channel handlers. Each one stays NULL until a consumer opts in. <br /></td></tr>
+<tr class="memdesc:af3ad3bd6e692d8ce103607ad70171a46"><td class="mdescLeft">&#160;</td><td class="mdescRight">The registered channel handlers. Each one stays NULL until a consumer opts in. <br /></td></tr>
 <tr class="memitem:a69c5d4c123fa7eb457ceaddd0a25358c" id="r_a69c5d4c123fa7eb457ceaddd0a25358c"><td class="memItemLeft"><a id="a69c5d4c123fa7eb457ceaddd0a25358c" name="a69c5d4c123fa7eb457ceaddd0a25358c"></a>
 static <a class="el" href="group__lib__core.html#gace9c32cbf32397ccc0a34a750ce3ea68">CallbackListFn</a>&#160;</td><td class="memItemRight"><b>s_inbox_complete_entries</b> [<a class="el" href="#ac83cbad686c149f4be2c8eeac589ca97">INBOX_COMPLETE_MAX</a>]</td></tr>
 <tr class="memdesc:a69c5d4c123fa7eb457ceaddd0a25358c"><td class="mdescLeft">&#160;</td><td class="mdescRight">That work, in the order it was added. <br /></td></tr>
@@ -689,7 +690,7 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>appmessage</b></li><li class="navelem"><a href="appmessage_8c.html">appmessage.c</a></li>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>appmessage</b></li><li class="navelem"><a href="appmessage_8c.html">appmessage.c</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

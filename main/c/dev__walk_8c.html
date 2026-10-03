@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: c/dev/dev_walk.c File Reference</title>
+<title>Pebble App Framework: src/plugins/dev/c/dev/dev_walk.c File Reference</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8c.h
 </div><!--header-->
 <div class="contents">
 
-<p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build.  
+<p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="dev__walk_8h_source.html">dev/dev_walk.h</a>&quot;</code><br />
 <code>#include &lt;time.h&gt;</code><br />
@@ -202,6 +202,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8c.h
 <code>#include &quot;<a class="el" href="health__store_8h_source.html">io/stores/health_store.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="location__store_8h_source.html">io/stores/location_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="appmessage__features_8h_source.html">io/appmessage/appmessage_features.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="engine_8h_source.html">ui/engine/engine.h</a>&quot;</code><br />
 </div><table class="memberdecls">
@@ -214,13 +215,13 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a0d50aab0fcb61728053f2ac0cb2aee53" id="r_a0d50aab0fcb61728053f2ac0cb2aee53"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d50aab0fcb61728053f2ac0cb2aee53">seed_shot</a> (const <a class="el" href="structDevShot.html">DevShot</a> *shot)</td></tr>
-<tr class="memdesc:a0d50aab0fcb61728053f2ac0cb2aee53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seed the clock, weather, health, and system stores from one shot.  <br /></td></tr>
+<tr class="memdesc:a0d50aab0fcb61728053f2ac0cb2aee53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seed the clock, weather, health, and system stores from one shot. A face without weather gets an empty weather store, so it never boots the harness with a reading it cannot show.  <br /></td></tr>
 <tr class="memitem:a626e6bc16739d5be4d8e8ff0e4233ecb" id="r_a626e6bc16739d5be4d8e8ff0e4233ecb"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a626e6bc16739d5be4d8e8ff0e4233ecb">apply_shot</a> (uint8_t index)</td></tr>
 <tr class="memdesc:a626e6bc16739d5be4d8e8ff0e4233ecb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the walk onto one shot, Quiet Time mark included.  <br /></td></tr>
 <tr class="memitem:a562c18803644a3ae69effdc57b5ccf91" id="r_a562c18803644a3ae69effdc57b5ccf91"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a562c18803644a3ae69effdc57b5ccf91">tap_handler</a> (AccelAxisType axis, int32_t direction)</td></tr>
 <tr class="memdesc:a562c18803644a3ae69effdc57b5ccf91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Accelerometer tap: advance the active walk by one.  <br /></td></tr>
 <tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
-<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits every store from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Call in place of the live store inits.  <br /></td></tr>
+<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. Call in place of those stores' live inits.  <br /></td></tr>
 <tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="group__lib__dev.html#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
 <tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer tap. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
 <tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft">
@@ -229,8 +230,8 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a class="el" href="struct_0fstruct_0e_8s__fixed.html">static const struct </a>&#160;</td><td class="memItemRight"><a class="el" href="#a9d123bd4629ba62780c6b63f2a4d4a50">s_fixed</a></td></tr>
-<tr class="memdesc:a9d123bd4629ba62780c6b63f2a4d4a50"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings no shot varies, and where the watch is.  <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a class="el" href="struct_0fstruct_0e_8s__fixed.html">static const struct </a>&#160;</td><td class="memItemRight"><a class="el" href="#aa91d6e818850cb441758cd44ac29ef88">s_fixed</a></td></tr>
+<tr class="memdesc:aa91d6e818850cb441758cd44ac29ef88"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings no shot varies, and where the watch is.  <br /></td></tr>
 <tr class="memitem:ac25bab8a664832452512cea49fba4bab" id="r_ac25bab8a664832452512cea49fba4bab"><td class="memItemLeft">static const <a class="el" href="structDevShot.html">DevShot</a>&#160;</td><td class="memItemRight"><a class="el" href="#ac25bab8a664832452512cea49fba4bab">s_shots</a> []</td></tr>
 <tr class="memdesc:ac25bab8a664832452512cea49fba4bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shots a theme walk steps through. The first is also what a face shows with no walk.  <br /></td></tr>
 <tr class="memitem:a0dfed1fc4a58a0b8d59b3c8cfc20b767" id="r_a0dfed1fc4a58a0b8d59b3c8cfc20b767"><td class="memItemLeft"><a id="a0dfed1fc4a58a0b8d59b3c8cfc20b767" name="a0dfed1fc4a58a0b8d59b3c8cfc20b767"></a>
@@ -250,7 +251,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 <tr class="memdesc:ab5090bdb6421b46ebdbb010b88a0dae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minute the face pinned the clock to. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Always compiled, but the linker drops it from any face that never calls it, which is every release build. </p>
+<div class="textblock"><p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="a626e6bc16739d5be4d8e8ff0e4233ecb" name="a626e6bc16739d5be4d8e8ff0e4233ecb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a626e6bc16739d5be4d8e8ff0e4233ecb">&#9670;&#160;</a></span>apply_shot()</h2>
@@ -308,7 +309,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Seed the clock, weather, health, and system stores from one shot. </p>
+<p>Seed the clock, weather, health, and system stores from one shot. A face without weather gets an empty weather store, so it never boots the harness with a reading it cannot show. </p>
 <p>The stores are only ever seeded here with live off, and neither takes a subscription on that path, so seeding again on a tap re-seeds rather than stacking handlers.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -358,8 +359,8 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 </div>
 </div>
 <a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Variable Documentation</h2>
-<a id="a9d123bd4629ba62780c6b63f2a4d4a50" name="a9d123bd4629ba62780c6b63f2a4d4a50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d123bd4629ba62780c6b63f2a4d4a50">&#9670;&#160;</a></span>s_fixed</h2>
+<a id="aa91d6e818850cb441758cd44ac29ef88" name="aa91d6e818850cb441758cd44ac29ef88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa91d6e818850cb441758cd44ac29ef88">&#9670;&#160;</a></span>s_fixed</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -426,7 +427,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>c</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__walk_8c.html">dev_walk.c</a></li>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>plugins</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>dev</b></li><li class="navelem"><a href="dev__walk_8c.html">dev_walk.c</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

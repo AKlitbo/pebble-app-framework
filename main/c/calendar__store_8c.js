@@ -18,5 +18,5 @@ var calendar__store_8c =
     [ "s_fetch", "calendar__store_8c.html#af962c600172c1bf7e33a007776cba2ab", null ],
     [ "s_persist_key", "calendar__store_8c.html#afc1e32c72630b62007536cb95f77bb07", null ],
     [ "s_saved_sum", "calendar__store_8c.html#afd6bfed4583dc043e4cb212594733f97", null ],
-    [ "s_state", "calendar__store_8c.html#ab23985ad11a6603fcf21648b82cb8a25", null ]
+    [ "s_state", "calendar__store_8c.html#a5cec17681bdc44c7f6b9742712dacf24", null ]
 ];

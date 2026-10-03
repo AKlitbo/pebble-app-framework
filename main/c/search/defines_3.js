@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hr_5fhistory_5fminutes_0',['HR_HISTORY_MINUTES',['../health__store_8c.html#a565e5d788d520b3a16db7c546e9ee7b3',1,'health_store.c']]]
+  ['day_5fminutes_0',['DAY_MINUTES',['../nightsched_8c.html#a27eb45d73274b31b564ec5e27236b745',1,'nightsched.c']]]
 ];

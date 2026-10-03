@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: c/pebble/io/stores/health_store.c File Reference</title>
+<title>Pebble App Framework: src/c/pebble/io/stores/health_store.c File Reference</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -241,7 +241,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a621aad019cd81f1ec9165baaf42524c5" id="r_a621aad019cd81f1ec9165baaf42524c5"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a621aad019cd81f1ec9165baaf42524c5">refresh_hr</a> (void)</td></tr>
 <tr class="memdesc:a621aad019cd81f1ec9165baaf42524c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Refresh the heart rate, and append the live reading to the rolling window when the face asked for one. A heart rate is never really 0, so 0 is kept as "no reading yet".  <br /></td></tr>
 <tr class="memitem:ad11a87cd6fe81b62297e02012fd47e6d" id="r_ad11a87cd6fe81b62297e02012fd47e6d"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ad11a87cd6fe81b62297e02012fd47e6d">refresh_activity</a> (bool force)</td></tr>
-<tr class="memdesc:ad11a87cd6fe81b62297e02012fd47e6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Refresh the daily activity scalars (steps, distance, calories, sleep, active).  <br /></td></tr>
+<tr class="memdesc:ad11a87cd6fe81b62297e02012fd47e6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Refresh the day's activity totals, steps, distance, calories, sleep, and active time, and the hourly step counts.  <br /></td></tr>
 <tr class="memitem:a005cb76793b70941963f6480b8a38e8c" id="r_a005cb76793b70941963f6480b8a38e8c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a005cb76793b70941963f6480b8a38e8c">steps_first_read</a> (void *data)</td></tr>
 <tr class="memdesc:a005cb76793b70941963f6480b8a38e8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first read of the hourly buckets, once the face is up.  <br /></td></tr>
 <tr class="memitem:a1cf17fd9b8be04e83da4326f31779975" id="r_a1cf17fd9b8be04e83da4326f31779975"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a1cf17fd9b8be04e83da4326f31779975">notify_if_moved</a> (uint32_t before)</td></tr>
@@ -285,9 +285,9 @@ int&#160;</td><td class="memItemRight"><b>health_store_distance_m</b> (void)</td
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="abf510f50a4ba9d557e025c283f158378" name="abf510f50a4ba9d557e025c283f158378"></a>
+<tr class="memitem:"><td class="memItemLeft"><a id="a864af5e865991c4e111dc08d165206ea" name="a864af5e865991c4e111dc08d165206ea"></a>
 <a class="el" href="struct_0fstruct_0e_8s__state.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
-<tr class="memdesc:abf510f50a4ba9d557e025c283f158378"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every health number the store holds. <br /></td></tr>
+<tr class="memdesc:a864af5e865991c4e111dc08d165206ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every health number the store holds. <br /></td></tr>
 <tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
 static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
 <tr class="memdesc:a0d75601f9ac1a6725c17065d338a664a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever a reading changes, so the face can redraw. <br /></td></tr>
@@ -774,7 +774,7 @@ static int&#160;</td><td class="memItemRight"><b>s_settled_hours</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Refresh the daily activity scalars (steps, distance, calories, sleep, active). </p>
+<p>Refresh the day's activity totals, steps, distance, calories, sleep, and active time, and the hourly step counts. </p>
 <p>These are whole-day sums that move once a minute at most, but movement events arrive every few seconds while walking, and every metric bar steps costs a blocking flash read. So the reads are held to one round a minute, and the four a face has to ask for are skipped unless it has.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -895,7 +895,7 @@ static int&#160;</td><td class="memItemRight"><b>s_settled_hours</b></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="health__store_8c.html">health_store.c</a></li>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="health__store_8c.html">health_store.c</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

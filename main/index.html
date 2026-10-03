@@ -57,14 +57,14 @@
           <p class="tagline">
             The shared framework behind my Pebble watchfaces and watchapps: the device C, the PebbleKit JS runtime and
             Clay config pieces, and the build tooling every face uses. Setup and usage are in the
-            <a href="https://github.com/AKlitbo/pebble-app-framework/blob/8fd82100b75f602f928a16bffd2373cdf4c837d2/README.md">README on GitHub</a>.
+            <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c24f7fe8caee07d08e9eba0666d75a5afb758631/README.md">README on GitHub</a>.
           </p>
         </div>
         <div class="head-side">
           <div class="build">
-            <b>v3.0.0</b><br />
-            main @ 8fd8210<br />
-            built 2026-09-27
+            <b>v4.0.0</b><br />
+            main @ c24f7fe<br />
+            built 2026-10-03
           </div>
         </div>
       </header>
@@ -79,7 +79,7 @@
               The half of the framework that runs on the watch. Panels, stores, the clock, and the message formats the
               phone sends.
             </p>
-            <div class="card-foot"><span>c/core · c/pebble</span><span class="go">c/ →</span></div>
+            <div class="card-foot"><span>src/c/core · src/c/pebble</span><span class="go">c/ →</span></div>
           </a>
         </div>
         <div class="card-slot">
@@ -100,7 +100,7 @@
             <h2>Host C Specs</h2>
             <p>Which lines of the framework's C the Unity specs reach, built with plain gcc and no Pebble SDK.</p>
             <div class="pixels" title="98.4% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><span class="visually-hidden">98.4% of lines</span></div>
-            <div class="card-foot"><span>make -C c/spec coverage</span><span class="go">coverage/c/ →</span></div>
+            <div class="card-foot"><span>make -C tests/c/spec coverage</span><span class="go">coverage/c/ →</span></div>
           </a>
         </div>
         <div class="card-slot">
@@ -108,7 +108,7 @@
             <div class="card-top"><span class="lang">TS</span><span class="kind">Vitest v8</span></div>
             <h2>TypeScript Specs</h2>
             <p>Which lines of the phone runtime and the build tools the Vitest suite reaches.</p>
-            <div class="pixels" title="85.0% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><span class="visually-hidden">85.0% of lines</span></div>
+            <div class="pixels" title="74.1% of lines"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="off"></i><i class="off"></i><i class="off"></i><span class="visually-hidden">74.1% of lines</span></div>
             <div class="card-foot"><span>npm run test:coverage</span><span class="go">coverage/ts/ →</span></div>
           </a>
         </div>

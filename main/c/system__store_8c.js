@@ -17,6 +17,6 @@ var system__store_8c =
     [ "s_live", "system__store_8c.html#a86591675781beec649ac9e8db3485c4f", null ],
     [ "s_reconnect", "system__store_8c.html#aa5f439ff5804491818cbb8d665f2b0f4", null ],
     [ "s_seed_alarm", "system__store_8c.html#a6c3d05d77814566ebfe0ec462c67324d", null ],
-    [ "s_state", "system__store_8c.html#acd337eadf05b132c8f14a9f9887137a0", null ],
+    [ "s_state", "system__store_8c.html#a6ecec114912b30fcb280cd55636369b6", null ],
     [ "s_vibe", "system__store_8c.html#a31b5ed7b8b45ba3b1d0ae0689ab31747", null ]
 ];

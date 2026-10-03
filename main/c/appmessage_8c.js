@@ -28,7 +28,7 @@ var appmessage_8c =
     [ "send_settings", "appmessage_8c.html#a7537892c98316590da6b643bbbba37cc", null ],
     [ "settings_reply_size", "appmessage_8c.html#abb7f7e97f2dd93df0449b3f9bdc9c96a", null ],
     [ "write_settings", "appmessage_8c.html#afd8b8f5d619f4689a2891358d52737cc", null ],
-    [ "s_handlers", "appmessage_8c.html#a3294e778e6cb9bcda9026e5a45b3dfa3", null ],
+    [ "s_handlers", "appmessage_8c.html#af3ad3bd6e692d8ce103607ad70171a46", null ],
     [ "s_inbox_complete", "appmessage_8c.html#a45764b077cf30a455153937be9f4684b", null ],
     [ "s_inbox_complete_entries", "appmessage_8c.html#a69c5d4c123fa7eb457ceaddd0a25358c", null ],
     [ "s_outbox", "appmessage_8c.html#a1a96284017193cf901d1b43de9d74204", null ],

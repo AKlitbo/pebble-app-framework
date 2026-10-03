@@ -2,6 +2,7 @@ var group__lib__io =
 [
     [ "appmessage.c", "appmessage_8c.html", null ],
     [ "appmessage.h", "appmessage_8h.html", null ],
+    [ "appmessage_features.h", "appmessage__features_8h.html", null ],
     [ "outbox_queue.h", "outbox__queue_8h.html", null ],
     [ "tuple_read.c", "tuple__read_8c.html", null ],
     [ "tuple_read.h", "tuple__read_8h.html", null ],
@@ -17,14 +18,14 @@ var group__lib__io =
       [ "queue_len", "structOutboxQueue.html#ab70b090f98cb6d8312839fab6df2e760", null ]
     ] ],
     [ "[struct].s_handlers", "struct_0fstruct_0e_8s__handlers.html", [
-      [ "custom_colors_provider", "struct_0fstruct_0e_8s__handlers.html#ac55457e38cb009d0c8a26d0701f321b6", null ],
-      [ "on_calendar_strip", "struct_0fstruct_0e_8s__handlers.html#a8ab4d7274df70e06b5c05fd751ff1d50", null ],
-      [ "on_coords", "struct_0fstruct_0e_8s__handlers.html#a13506a96423b501b5473c6a98b3737b9", null ],
-      [ "on_custom_colors", "struct_0fstruct_0e_8s__handlers.html#af7c10eb2540dfd275921145dc3d2ff84", null ],
-      [ "on_settings_changed", "struct_0fstruct_0e_8s__handlers.html#a0afb29ddc2a5198c679c6a24867826a3", null ],
-      [ "on_stock_strip", "struct_0fstruct_0e_8s__handlers.html#aa2d8bcb401fba2d3cf84f4547302c6b3", null ],
-      [ "on_unit_changed", "struct_0fstruct_0e_8s__handlers.html#a3b5a3feae6f6bc801afdde571b7f62e5", null ],
-      [ "on_weather", "struct_0fstruct_0e_8s__handlers.html#a0061624d023ab2782d958af5e43678b2", null ]
+      [ "custom_colors_provider", "struct_0fstruct_0e_8s__handlers.html#a03250f868919dfc3d4477ad54741f30e", null ],
+      [ "on_calendar_strip", "struct_0fstruct_0e_8s__handlers.html#ae620e28c9358d52d80d1c44736a01299", null ],
+      [ "on_coords", "struct_0fstruct_0e_8s__handlers.html#ac75dc0a5cf7ad1a997637c47e0f21b03", null ],
+      [ "on_custom_colors", "struct_0fstruct_0e_8s__handlers.html#a4af2fcbe1312196adbfee82a78b6c585", null ],
+      [ "on_settings_changed", "struct_0fstruct_0e_8s__handlers.html#aea93a03a20cd498ea7b38fd7878944b5", null ],
+      [ "on_stock_strip", "struct_0fstruct_0e_8s__handlers.html#a9956f39bd575f4584916564bd5703ef7", null ],
+      [ "on_unit_changed", "struct_0fstruct_0e_8s__handlers.html#a16abc213f8353b8189883a65cc18c656", null ],
+      [ "on_weather", "struct_0fstruct_0e_8s__handlers.html#a69f4025ef640e22fdbdfd1b8abda2563", null ]
     ] ],
     [ "APPMESSAGE_CUSTOM_COLORS_MAX", "group__lib__io.html#ga8bfcc8d396856901aeea684974fdb15c", null ],
     [ "OUTBOX_QUEUE_MAX", "group__lib__io.html#gacb075235dabec7bf871cfc5698a42526", null ],
