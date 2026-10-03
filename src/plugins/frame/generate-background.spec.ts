@@ -1,24 +1,24 @@
 /**
- * Specs for the pure parts of the frame generator.
+ * Specs for the pure parts of the background generator.
  *
  * facePlatforms picks which screens a background gets baked for, so a wrong read ships a build
- * with no frame for one of them, or one baked at another screen's size. parseArgs and outFor
- * decide which frame gets baked and which PNG it is written over, so a slip there quietly replaces
- * the wrong theme's or the wrong platform's background. capColors folds a bake down to the colour cap after the
+ * with no frame for one of them, or one baked at another screen's size. parseArgs, planBakes, and
+ * outFor decide which frames and themes get baked and which PNG each is written over, so a slip there
+ * quietly replaces the wrong theme's or the wrong platform's background. capColors folds a bake down to the colour cap after the
  * resize. A bitmap over 16 colours packs at eight bits per pixel instead of four, which doubles
  * the heap the watch needs to hold the frame and can keep a full-screen frame from loading at all,
  * so which pixels get folded and which are left alone is worth pinning. missingStylesheets stops a
  * bake whose colours sheet is gone, which Firefox renders without complaint. discoverFrames and
- * discoverThemes decide which frames and themes --theme all bakes, so one missed keeps an old
+ * discoverThemes decide which frames and themes all bakes, so one missed keeps an old
  * background and a stray one bakes over a real one. The render pipeline
- * itself drives Firefox and sharp and is left to integration use, `paf gen <face> frame`.
+ * itself drives Firefox and sharp and is left to integration use, `paf gen <face> background`.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { capColors, discoverFrames, discoverThemes, facePlatforms, missingStylesheets, outFor, parseArgs } from './generate-frame';
-import type { FaceConfig } from './generate-frame';
+import { capColors, discoverFrames, discoverThemes, facePlatforms, missingStylesheets, outFor, parseArgs, planBakes } from './generate-background';
+import type { FaceConfig } from './generate-background';
 import { WORKSPACE } from '../../tools/shared/paths';
 import { tempDir } from '../../ts/testing/temp-dir';
 
@@ -90,49 +90,49 @@ describe('facePlatforms', () => {
 });
 
 describe('parseArgs', () => {
-  /** A bare run bakes the face's default frame at its default scale, or it has nothing to render. */
-  test('falls back to the face defaults when no options are given', () => {
+  /** A bare run names no frame and no theme, so the plan can tell it from one that asked for something. */
+  test('names no frame and no theme when no options are given', () => {
     const result = parseArgs([], THEMED);
 
-    expect(result).toEqual({ frame: 'classic', scale: 4, theme: null, allFrames: false, outOverride: null });
+    expect(result).toEqual({ frame: null, scale: 4, theme: null, outOverride: null });
   });
 
-  /** Passing the file name as it sits on disk would otherwise look for voyager.html.html and stop. */
-  test('drops a trailing .html from the frame name', () => {
-    const result = parseArgs(['voyager.html'], THEMED);
+  /** Passing the file name as it sits on disk would otherwise look for voyager~emery.html~emery.html and stop. */
+  test.each(['voyager', 'voyager.html', 'voyager~emery', 'voyager~emery.html'])('reads --frame %s as the frame voyager', (value) => {
+    const result = parseArgs(['--frame', value], UNTHEMED);
 
     expect(result.frame).toBe('voyager');
   });
 
-  /** A face with no theme stylesheets would otherwise go looking for a theme_<name>.css that is not there and throw partway through. */
-  test('ignores --theme for a face without themes', () => {
-    const result = parseArgs(['--theme', 'mono'], UNTHEMED);
-
-    expect(result.theme).toBeNull();
-  });
-
   /**
-   * A face without themes has one page per look, and paf gen <face> all passes --theme all to every
-   * face. Read as one frame, it rebaked only the default and left every other background stale.
+   * A frame named with no flag, taken for nothing, would bake the default frame over its own
+   * background and leave the one that was asked for stale.
    */
-  test('reads --theme all as every frame for a face without themes', () => {
-    const result = parseArgs(['--theme', 'all'], UNTHEMED);
+  test('refuses a frame named without --frame', () => {
+    const result = () => parseArgs(['voyager'], UNTHEMED);
 
-    expect(result).toMatchObject({ theme: null, allFrames: true });
+    expect(result).toThrow(/voyager is not something the background generator takes/);
   });
 
-  /** A frame named beside --theme all re-baked every frame the face has, and overwrote every background. */
-  test('bakes only the named frame when one is named beside --theme all', () => {
-    const result = parseArgs(['voyager', '--theme', 'all'], UNTHEMED);
+  /** A page called all, picked by its file name, read as every frame and baked over every background the face has. */
+  test('refuses a file name that reads as all', () => {
+    const result = () => parseArgs(['--frame', 'all.html'], UNTHEMED);
 
-    expect(result).toMatchObject({ frame: 'voyager', allFrames: false });
+    expect(result).toThrow(/reads as all, which means every frame/);
   });
 
-  /** --theme all is how every colourway gets re-baked in one run, so it has to reach the bake. */
-  test('keeps --theme for a face with themes', () => {
-    const result = parseArgs(['--theme', 'all'], THEMED);
+  /** A name that is only an extension or a platform tag left an empty frame, and the run went looking for ~emery.html. */
+  test.each(['.html', '~emery', '~emery.html'])('refuses --frame %s, which has no name in it', (value) => {
+    const result = () => parseArgs(['--frame', value], UNTHEMED);
 
-    expect(result.theme).toBe('all');
+    expect(result).toThrow(/names no frame/);
+  });
+
+  /** A flag with its value left off would take the next flag as its value, and bake a theme called --out. */
+  test('refuses a flag with no value', () => {
+    const result = () => parseArgs(['--theme', '--out', 'preview.png'], THEMED);
+
+    expect(result).toThrow(/--theme needs a value/);
   });
 
   /** A typo in --scale still bakes, at the face's default scale, rather than handing the browser a scale of NaN. */
@@ -143,34 +143,135 @@ describe('parseArgs', () => {
   });
 });
 
+describe('planBakes', () => {
+  // a face without themes with a page per look, which also keeps a theme_ sheet for each page
+  const THREE_PAGES = { frames: ['classic', 'padd', 'voyager'], themes: ['classic', 'padd', 'voyager'] };
+  // a face with themes, with its one page and a sheet per colourway
+  const ONE_PAGE = { frames: ['classic'], themes: ['mono', 'stealth'] };
+
+  /** A bare run on a face without themes bakes its default frame, or it has nothing to render. */
+  test('bakes the default frame of a face without themes when none is named', () => {
+    const result = planBakes(parseArgs([], UNTHEMED), UNTHEMED, 'lcars', THREE_PAGES);
+
+    expect(result).toEqual({ frames: ['classic'], themes: [null] });
+  });
+
+  /**
+   * paf gen <face> all passes --frame all --theme all to every face. A face without themes keeps one
+   * sheet per page under css/, so reading those as themes would bake every page once per sheet.
+   */
+  test('bakes every frame once, with no theme, when a face without themes is asked for all of both', () => {
+    const result = planBakes(parseArgs(['--frame', 'all', '--theme', 'all'], UNTHEMED), UNTHEMED, 'lcars', THREE_PAGES);
+
+    expect(result).toEqual({ frames: ['classic', 'padd', 'voyager'], themes: [null] });
+  });
+
+  /** The same arguments on a face with themes have to reach every colourway, or one keeps its old background. */
+  test('bakes the one frame once per theme when a face with themes is asked for all of both', () => {
+    const result = planBakes(parseArgs(['--frame', 'all', '--theme', 'all'], THEMED), THEMED, 'radar', ONE_PAGE);
+
+    expect(result).toEqual({ frames: ['classic'], themes: ['mono', 'stealth'] });
+  });
+
+  /** A face whose only pages are for a platform it does not target opened Firefox, baked nothing, and passed. */
+  test('refuses a face with no frame it can bake', () => {
+    const result = () => planBakes(parseArgs(['--frame', 'all'], UNTHEMED), UNTHEMED, 'lcars', { frames: [], themes: [] });
+
+    expect(result).toThrow(/nothing to bake/);
+  });
+
+  /** A page called all as the default frame made a bare run bake every background rather than that page. */
+  test('refuses a face with a frame page called all', () => {
+    const face: FaceConfig = { ...UNTHEMED, defaultFrame: 'all' };
+
+    const result = () => planBakes(parseArgs([], face), face, 'lcars', { frames: ['all', 'classic'], themes: [] });
+
+    expect(result).toThrow(/has a frame page called all/);
+  });
+
+  /** A sheet called theme_all.css could only be baked with every other theme, so asking for it rewrote them all. */
+  test('refuses a face with a theme sheet called all', () => {
+    const result = () => planBakes(parseArgs(['--theme', 'all'], THEMED), THEMED, 'radar', { frames: ['classic'], themes: ['all', 'mono'] });
+
+    expect(result).toThrow(/has a theme sheet called all/);
+  });
+
+  /** A mistyped frame got a warning for each platform and no word on which frames the face has. */
+  test('refuses a frame the face has no page for, and names the ones it has', () => {
+    const result = () => planBakes(parseArgs(['--frame', 'voyger'], UNTHEMED), UNTHEMED, 'lcars', THREE_PAGES);
+
+    expect(result).toThrow(/no frame called voyger\. Its frames are classic, padd, voyager/);
+  });
+
+  /** A default frame whose page was renamed away has to say where the name came from, since nobody typed it. */
+  test('names the config when the default frame has no page', () => {
+    const face: FaceConfig = { ...UNTHEMED, defaultFrame: 'gone' };
+
+    const result = () => planBakes(parseArgs([], face), face, 'lcars', THREE_PAGES);
+
+    expect(result).toThrow(/no frame called gone, the defaultFrame in its frame\.config\.json/);
+  });
+
+  /** A named theme dropped without a word baked the default frame, which is not what the run asked for. */
+  test('refuses a named theme on a face without themes', () => {
+    const result = () => planBakes(parseArgs(['--theme', 'mono'], UNTHEMED), UNTHEMED, 'lcars', THREE_PAGES);
+
+    expect(result).toThrow(/lcars has no themes/);
+  });
+
+  /** A themed face baked with no theme wrote a background named after the frame, which no theme loads. */
+  test('refuses a face with themes when no theme is named', () => {
+    const result = () => planBakes(parseArgs([], THEMED), THEMED, 'radar', ONE_PAGE);
+
+    expect(result).toThrow(/say which with --theme/);
+  });
+
+  /** A themed background is named after its theme alone, so a second frame would be written over the first. */
+  test('refuses every frame of a face with themes that has more than one', () => {
+    const result = () => planBakes(parseArgs(['--frame', 'all', '--theme', 'all'], THEMED), THEMED, 'radar', THREE_PAGES);
+
+    expect(result).toThrow(/each frame would be written over the last/);
+  });
+
+  /** A mistyped theme stopped partway through on a missing file's path, with nothing saying which themes there are. */
+  test('refuses a theme the face has no sheet for, and names the ones it has', () => {
+    const result = () => planBakes(parseArgs(['--theme', 'nope'], THEMED), THEMED, 'radar', ONE_PAGE);
+
+    expect(result).toThrow(/no theme called nope\. Its themes are mono, stealth/);
+  });
+
+  /** A themed face with no theme sheet baked nothing and still passed, so a moved css folder went unnoticed. */
+  test('refuses every theme of a face with themes that has no theme sheet', () => {
+    const result = () => planBakes(parseArgs(['--theme', 'all'], THEMED), THEMED, 'radar', { frames: ['classic'], themes: [] });
+
+    expect(result).toThrow(/no frame\/css\/theme_<name>\.css sheet/);
+  });
+});
+
 describe('outFor', () => {
+  const ONE_OF_EACH = { frames: 1, themes: 1 };
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
   /** Two themes landing on one file name would leave only the last colourway's background in the build. */
   test('names a themed bake after its theme', () => {
-    const opts = parseArgs(['--theme', 'mono'], THEMED);
-
-    const result = outFor(opts, 'mono', 1, THEMED, IMAGES, 'emery');
+    const result = outFor({ frame: 'classic', theme: 'mono' }, ONE_OF_EACH, null, THEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(IMAGES, 'background-mono~emery.png'));
   });
 
   /** The face loads background.png as its plain frame, so the bare base has to land there and not under its own name. */
   test('writes the bare background base to background.png', () => {
-    const opts = parseArgs(['classic'], UNTHEMED);
-
-    const result = outFor(opts, null, 1, UNTHEMED, IMAGES, 'emery');
+    const result = outFor({ frame: 'classic', theme: null }, ONE_OF_EACH, null, UNTHEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(IMAGES, 'background~emery.png'));
   });
 
   /** Any other frame gets its own file, or baking it would overwrite the face's plain background. */
   test('names any other frame after its base', () => {
-    const opts = parseArgs(['padd'], UNTHEMED);
-
-    const result = outFor(opts, null, 1, UNTHEMED, IMAGES, 'emery');
+    const result = outFor({ frame: 'padd', theme: null }, ONE_OF_EACH, null, UNTHEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(IMAGES, 'background-padd~emery.png'));
   });
@@ -178,18 +279,15 @@ describe('outFor', () => {
   /** A face with no plain background names every frame after itself, so its default frame never lands on background.png. */
   test('names the default frame after its base when the face has no bare background base', () => {
     const face: FaceConfig = { ...UNTHEMED, bareBackgroundBase: null };
-    const opts = parseArgs([], face);
 
-    const result = outFor(opts, null, 1, face, IMAGES, 'emery');
+    const result = outFor({ frame: 'classic', theme: null }, ONE_OF_EACH, null, face, IMAGES, 'emery');
 
     expect(result).toBe(path.join(IMAGES, 'background-classic~emery.png'));
   });
 
   /** Two platforms landing on one file name would leave only the last screen's frame in the build. */
   test('tags the file with the platform it was baked for', () => {
-    const opts = parseArgs(['classic'], UNTHEMED);
-
-    const result = outFor(opts, null, 1, UNTHEMED, IMAGES, 'gabbro');
+    const result = outFor({ frame: 'classic', theme: null }, ONE_OF_EACH, null, UNTHEMED, IMAGES, 'gabbro');
 
     expect(result).toBe(path.join(IMAGES, 'background~gabbro.png'));
   });
@@ -200,19 +298,17 @@ describe('outFor', () => {
    */
   test('names each theme beside --out when more than one theme is baked', () => {
     vi.spyOn(process, 'cwd').mockReturnValue(WORKSPACE);
-    const opts = parseArgs(['--theme', 'all', '--out', 'preview/override.png'], THEMED);
 
-    const result = outFor(opts, 'mono', 2, THEMED, IMAGES, 'emery');
+    const result = outFor({ frame: 'classic', theme: 'mono' }, { frames: 1, themes: 2 }, 'preview/override.png', THEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(WORKSPACE, 'preview', 'override-mono~emery.png'));
   });
 
   /** Every frame of a face without themes baked to one --out name would leave only the last frame there. */
-  test('names each frame beside --out when every frame of a face without themes is baked', () => {
+  test('names each frame beside --out when more than one frame is baked', () => {
     vi.spyOn(process, 'cwd').mockReturnValue(WORKSPACE);
-    const opts = parseArgs(['--theme', 'all', '--out', 'preview/override.png'], UNTHEMED);
 
-    const result = outFor({ ...opts, frame: 'padd' }, null, 1, UNTHEMED, IMAGES, 'emery');
+    const result = outFor({ frame: 'padd', theme: null }, { frames: 3, themes: 1 }, 'preview/override.png', UNTHEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(WORKSPACE, 'preview', 'override-padd~emery.png'));
   });
@@ -225,9 +321,8 @@ describe('outFor', () => {
    */
   test('resolves a single-bake --out against the workspace root', () => {
     vi.spyOn(process, 'cwd').mockReturnValue(path.join(WORKSPACE, 'somewhere', 'else'));
-    const opts = parseArgs(['--out', 'resources/images/override.png'], THEMED);
 
-    const result = outFor(opts, null, 1, THEMED, IMAGES, 'emery');
+    const result = outFor({ frame: 'classic', theme: 'mono' }, ONE_OF_EACH, 'resources/images/override.png', THEMED, IMAGES, 'emery');
 
     expect(result).toBe(path.join(WORKSPACE, 'resources', 'images', 'override~emery.png'));
   });
@@ -332,9 +427,38 @@ describe('discoverFrames', () => {
       fs.writeFileSync(path.join(dir, file), '');
     }
 
-    const result = discoverFrames(dir);
+    const result = discoverFrames(dir, ['emery', 'gabbro']);
 
     expect(result).toEqual(['classic', 'padd']);
+  });
+
+  /**
+   * A draft page for a round screen, in a face with themes that builds only for emery, counted as a
+   * second frame. paf gen <face> all then refused the face for having more than one.
+   */
+  test('leaves out a frame whose only page is for a platform the face does not target', () => {
+    const dir = tempDir('frames-');
+
+    for (const file of ['radar~emery.html', 'round~gabbro.html']) {
+      fs.writeFileSync(path.join(dir, file), '');
+    }
+
+    const result = discoverFrames(dir, ['emery']);
+
+    expect(result).toEqual(['radar']);
+  });
+
+  /** A frame named lower~decks was listed, and --frame takes a trailing ~word for a platform tag, so it could not be picked. */
+  test('takes no page with a ~ in its name before the platform tag', () => {
+    const dir = tempDir('frames-');
+
+    for (const file of ['lower~decks~emery.html', 'classic~emery.html']) {
+      fs.writeFileSync(path.join(dir, file), '');
+    }
+
+    const result = discoverFrames(dir, ['emery']);
+
+    expect(result).toEqual(['classic']);
   });
 });
 
@@ -356,7 +480,7 @@ describe('discoverThemes', () => {
     expect(result).toEqual(['blue', 'red']);
   });
 
-  /** A face with no theme sheets bakes its base frame under --theme all, so a missing css folder has to read as no themes. */
+  /** A face that keeps no css folder has no themes, and reading the missing folder would stop the run on a raw error. */
   test('names no themes when the face has no css folder', () => {
     const dir = tempDir('themes-');
 

@@ -71,7 +71,7 @@ paf finds the framework's tools through a `paf` key in the framework's `package.
 ```sh
 paf sync                     # fill paf/ and install
 paf gen <face> all           # every generator the face has inputs for
-paf gen <face> <kind>        # one of clay, icons, frame, or thumbnails
+paf gen <face> <kind>        # one of clay, icons, background, or thumbnails
 paf check                    # that each face's generated output is current
 paf build <face>             # the .pbw, from WSL
 paf tool <face> clay-preview # a plugin's tool, here the dev plugin's Clay preview

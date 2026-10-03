@@ -40,7 +40,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `project/toolchain.json` is now `toolchain.json` at the top of the framework, and the `setup-pebble` action at this tag reads it there.
 - **Breaking:** `config/tsconfig.pkjs.json` is now `tsconfig.pkjs.json` at the top of the framework. Point a unit tsconfig that extends it at `paf/tsconfig.pkjs.json`.
 - **Breaking:** The house ESLint style now wants a blank line before and after every block, and after a run of `const` or `let` declarations. Run `paf lint --fix` to add them.
-- The frame generator's `--theme all` now bakes every frame a face without themes has, and just the base frame for a face with no theme sheets, rather than stopping. `paf gen <face> all` passes it to every face with a frame.
+- **Breaking:** The `frame` plugin's generator is now `background`, named after what it writes like the other generators, and its script is `generate-background.ts`. Run `paf gen <face> background` wherever a script or a README runs `paf gen <face> frame`. The plugin, a face's `frame/` folder, and `frame/frame.config.json` keep their names.
+- **Breaking:** The background generator takes its frame and theme as flags. Pass the frame as `--frame <name>`, since a frame named without the flag now stops the run. Pass `--theme <name>` or `--theme all` on a face with themes, which no longer bakes without one. Each flag takes a name or `all`, and `all` bakes every one the face has. `paf gen <face> all` passes `--frame all --theme all`.
+- The background generator now stops on a frame or a theme the face does not have and names the ones it has. It also stops on a named theme for a face without themes, and on a frame page or a theme sheet called `all`. A face with themes bakes one frame, since a themed background is named after its theme alone, so `--frame all` stops on one with more. Only a frame with a page for a platform the face targets counts.
 
 ### Removed
 

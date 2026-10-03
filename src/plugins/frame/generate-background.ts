@@ -1,7 +1,7 @@
 /**
  * Bakes a face's HTML frame into a background bitmap.
  *
- * Renders frame/<name>.html in Firefox at a supersampled deviceScaleFactor, strips the
+ * Renders frame/<name>~<platform>.html in Firefox at a supersampled deviceScaleFactor, strips the
  * live readouts (the app draws those at runtime), then resizes to the platform's native
  * screen size with a lanczos3 kernel and writes a PNG. Firefox rather than Chromium, because
  * Chromium clips pseudo-elements drawn at z-index:-1, which carve-outs such as the LCARS elbows
@@ -14,8 +14,17 @@
  *
  * The build does not bake frames. The PNGs under resources/images/ are committed. Run this
  * by hand to re-bake one during design:
- *   paf gen <face> frame [frame]
- *   paf gen <face> frame <frame> --scale 4 --out resources/images/background.png
+ *   paf gen <face> background                    the default frame of a face without themes
+ *   paf gen <face> background --frame voyager    one frame
+ *   paf gen <face> background --theme mono       one theme of a face with themes
+ *   paf gen <face> background --frame voyager --scale 4 --out resources/images/preview.png
+ *
+ * --frame and --theme each take a name or all. all bakes every one the face has, and where the face
+ * has only the one frame, or no themes, it bakes what there is. paf gen <face> all passes --frame all
+ * --theme all, which re-bakes every background of a face without themes and of a face with themes
+ * and one frame. A face with themes and more than one frame is refused, since a themed background is
+ * named after its theme alone and each frame would be written over the last. A face with themes and
+ * no theme sheet is refused too, since there is no theme to bake.
  */
 import path from 'node:path';
 import fs from 'node:fs';
@@ -48,8 +57,8 @@ const ROOT = WORKSPACE;
 /**
  * The per-face render knobs, loaded from the face's frame/frame.config.json.
  *
- * A face either bakes each theme from its own frame/<name>.html (supportsTheme: false, one
- * HTML per look) or swaps a palette over one HTML (supportsTheme: true, a theme_<name>.css
+ * A face either bakes each look from its own frame/<name>~<platform>.html (supportsTheme: false,
+ * one HTML per look) or swaps a palette over one HTML (supportsTheme: true, a theme_<name>.css
  * per look). clearTextSelectors have their text emptied and hideSelectors are hidden, so the
  * bake is pure chrome. The "bareBackgroundBase" frame bakes to background.png. Every other
  * base lands at background-<base>.png.
@@ -73,7 +82,7 @@ export interface FaceConfig {
   maxColors?: number;
 }
 
-/** The paths generate-frame reads and writes for one face, all inside the face's folder. */
+/** The paths the generator reads and writes for one face, all inside the face's folder. */
 interface FaceDirs {
   appinfo: string;
   frameDir: string;
@@ -268,101 +277,208 @@ export function discoverThemes(cssDir: string): string[] {
 }
 
 /**
- * Every frame a face has, by the name its <frame>~<platform>.html pages share.
+ * Every frame a face can bake, by the name its <frame>~<platform>.html pages share.
+ *
+ * A page for a platform the face does not target is never baked, so a frame with only such pages is
+ * left out. A draft page for a round screen would otherwise count as a second frame of a face that
+ * only builds for a rectangular one. A frame's name holds no ~, since that is what sets the platform
+ * tag apart, so a page with two of them is no frame.
  *
  * @param frameDir The face's frame folder.
- * @return Each frame's name once, however many platforms it has a page for, sorted.
+ * @param platforms The platforms the face targets.
+ * @return Each frame's name once, however many of those platforms it has a page for, sorted.
  */
-export function discoverFrames(frameDir: string): string[] {
+export function discoverFrames(frameDir: string, platforms: string[]): string[] {
   const names = fs
     .readdirSync(frameDir)
-    .map((file) => file.match(/^(.+)~[a-z]+\.html$/))
-    .filter((match): match is RegExpMatchArray => match !== null)
+    .map((file) => file.match(/^([^~]+)~([a-z]+)\.html$/))
+    .filter((match): match is RegExpMatchArray => match !== null && platforms.includes(match[2]))
     .map((match) => match[1]);
 
   return [...new Set(names)].sort();
 }
 
+/** The usage line, as paf runs the generator. */
+const USAGE = 'usage: paf gen <face> background [--frame name|all] [--theme name|all] [--scale N] [--out path]';
+
 /** Parsed command-line options. */
 interface Options {
-  frame: string;
+  /** The frame named, all, or null when the run names none. */
+  frame: string | null;
   scale: number;
+  /** The theme named, all, or null when the run names none. */
   theme: string | null;
-  /** Every frame the face has rather than one, which --theme all means for a face without themes when no frame is named. */
-  allFrames: boolean;
   outOverride: string | null;
 }
 
 /**
- * Parses the command-line arguments generate-frame is run with.
+ * Parses the command-line arguments the generator is run with.
  *
- * @param argv The arguments after the script name, in order.
- * @param face The face's config, used for its default frame and default scale.
+ * Anything that is not one of its flags is refused, so a frame named without --frame stops the run
+ * rather than baking the default frame over its background.
+ *
+ * --frame takes the page's file name as well as the frame's, so .html and a ~<platform> tag are taken
+ * off it. The tag picks no platform. Every platform the face targets is baked whichever page is named.
+ * A name with nothing left is refused, and so is a file name that comes out as all, since only the
+ * bare word means every frame.
+ *
+ * @param argv The arguments after the face, in order.
+ * @param face The face's config, used for its default scale.
  * @return The parsed frame, scale, theme, and out-path override.
  */
 export function parseArgs(argv: string[], face: FaceConfig): Options {
   let outOverride: string | null = null;
   let scale = face.defaultScale;
   let theme: string | null = null;
-  const positional: string[] = [];
+  let frame: string | null = null;
 
   for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === '--out') {
-      outOverride = argv[++i];
-    } else if (argv[i] === '--scale') {
-      scale = parseInt(argv[++i], 10) || face.defaultScale;
-    } else if (argv[i] === '--theme') {
-      theme = argv[++i];
+    const flag = argv[i];
+
+    if (!['--out', '--scale', '--theme', '--frame'].includes(flag)) {
+      throw new ToolError(`${flag} is not something the background generator takes. ${USAGE}`);
+    }
+
+    const value = argv[++i];
+
+    if (value === undefined || value.startsWith('--')) {
+      throw new ToolError(`${flag} needs a value. ${USAGE}`);
+    }
+
+    if (flag === '--out') {
+      outOverride = value;
+    } else if (flag === '--scale') {
+      scale = parseInt(value, 10) || face.defaultScale;
+    } else if (flag === '--theme') {
+      theme = value;
     } else {
-      positional.push(argv[i]);
+      // the page's file name works too, with or without its .html and its platform tag
+      frame = value.replace(/\.html$/i, '').replace(/~[a-z]+$/, '');
+
+      if (frame === '') {
+        throw new ToolError(`--frame ${value} names no frame. ${USAGE}`);
+      }
+
+      // only the bare word means every frame, so a page called all cannot be picked by its file name
+      if (frame === 'all' && value !== 'all') {
+        throw new ToolError(`--frame ${value} reads as all, which means every frame. Give the page another name to bake it on its own`);
+      }
     }
   }
 
-  // a face without themes has one page per look, so all there means every frame it has, unless one
-  // is named. paf gen <face> all passes --theme all to every face the same way, naming none
-  const allFrames = !face.supportsTheme && theme === 'all' && positional.length === 0;
+  return { frame, scale, theme, outOverride };
+}
 
-  if (!face.supportsTheme) {
-    theme = null;
-  }
-
-  const frame = (positional[0] || face.defaultFrame).replace(/\.html$/i, '');
-
-  return { frame, scale, theme, allFrames, outOverride };
+/** The frames and themes one run bakes. A null theme is a bake with the page's own stylesheets. */
+export interface Plan {
+  frames: string[];
+  themes: (string | null)[];
 }
 
 /**
- * Where a given theme's PNG lands.
+ * Works out which frames and themes a run bakes, from its flags and what the face has.
+ *
+ * all on either flag means every one the face has. A face without themes has none to pick from, so
+ * --theme all there bakes each frame as it stands, and a named theme is refused rather than dropped,
+ * since the run would bake something other than what was asked for.
+ *
+ * A face with themes has to be told which, since a bake with no theme writes a background named
+ * after the frame, which no theme loads. It also bakes one frame only, since a themed background is
+ * named after its theme alone and two frames would land on the same file.
+ *
+ * The frame is the one --frame names, or the config's defaultFrame when the run names none. A frame
+ * or a theme the face does not have is refused with the ones it has, and so is a face with no frame
+ * it can bake, since the run would otherwise open Firefox, write nothing, and pass. A frame or a
+ * theme called all is refused wherever it comes from, since the word means every one.
  *
  * @param opts The parsed command-line options.
- * @param themeName The theme being baked, or null for a face with no themes.
- * @param themeCount How many themes are being baked in this run.
+ * @param face The face's config.
+ * @param name The face's name, for a refusal.
+ * @param found The frames the face can bake on the platforms it targets, and the themes it has a sheet for.
+ * @return The frames and themes to bake.
+ */
+export function planBakes(opts: Options, face: FaceConfig, name: string, found: { frames: string[]; themes: string[] }): Plan {
+  if (found.frames.length === 0) {
+    throw new ToolError(`${name} has no frame/<name>~<platform>.html page for a platform it targets, so there is nothing to bake`);
+  }
+
+  // all means every one on both flags, so a page or a sheet by that name could never be baked on its own
+  if (found.frames.includes('all') || (face.supportsTheme && found.themes.includes('all'))) {
+    const what = found.frames.includes('all') ? 'frame page' : 'theme sheet';
+
+    throw new ToolError(`${name} has a ${what} called all, which is the word for every one. Give it another name`);
+  }
+
+  const picked = opts.frame ?? face.defaultFrame;
+
+  if (picked !== 'all' && !found.frames.includes(picked)) {
+    const from = opts.frame === null ? ', the defaultFrame in its frame.config.json' : '';
+
+    throw new ToolError(`${name} has no frame called ${picked}${from}. Its frames are ${found.frames.join(', ')}`);
+  }
+
+  const frames = picked === 'all' ? found.frames : [picked];
+
+  if (!face.supportsTheme) {
+    if (opts.theme !== null && opts.theme !== 'all') {
+      throw new ToolError(`${name} has no themes, since its frame.config.json sets supportsTheme to false, so --theme ${opts.theme} has nothing to pick. Name one of its frames with --frame`);
+    }
+
+    return { frames, themes: [null] };
+  }
+
+  if (opts.theme === null) {
+    throw new ToolError(`${name} bakes its background once for each theme, so say which with --theme <name> or --theme all`);
+  }
+
+  if (frames.length > 1) {
+    throw new ToolError(`${name} has themes and more than one frame, ${frames.join(', ')}. A themed background is named after its theme alone, so each frame would be written over the last. Name one with --frame`);
+  }
+
+  if (found.themes.length === 0) {
+    throw new ToolError(`${name} has no frame/css/theme_<name>.css sheet to bake a theme from`);
+  }
+
+  if (opts.theme !== 'all' && !found.themes.includes(opts.theme)) {
+    throw new ToolError(`${name} has no theme called ${opts.theme}. Its themes are ${found.themes.join(', ')}`);
+  }
+
+  return { frames, themes: opts.theme === 'all' ? found.themes : [opts.theme] };
+}
+
+/**
+ * Where one bake's PNG lands.
+ *
+ * @param bake The frame and theme being baked, the theme null for a face with no themes.
+ * @param counts How many frames and themes this run bakes.
+ * @param outOverride The path --out named, or null.
  * @param face The face's config, used for its bare background base name.
  * @param imagesDir The face's resources/images directory.
  * @param platform The platform being baked, which the file carries as its ~<platform> tag.
  * @return The absolute path the PNG should be written to.
  */
 export function outFor(
-  opts: Options,
-  themeName: string | null,
-  themeCount: number,
+  bake: { frame: string; theme: string | null },
+  counts: { frames: number; themes: number },
+  outOverride: string | null,
   face: FaceConfig,
   imagesDir: string,
   platform: string
 ): string {
   const tag = '~' + platform;
+  const themeName = bake.theme;
 
-  if (opts.outOverride) {
-    // several themes, or every frame of a face without themes, each get their own file beside the
-    // one --out names, rather than landing over each other or the committed backgrounds
-    const frameSuffix = opts.allFrames ? `-${opts.frame}` : '';
-    const themeSuffix = themeName && themeCount > 1 ? `-${themeName}` : '';
+  if (outOverride) {
+    // several frames or several themes each get their own file beside the one --out names, rather
+    // than landing over each other or the committed backgrounds
+    const frameSuffix = counts.frames > 1 ? `-${bake.frame}` : '';
+    const themeSuffix = themeName && counts.themes > 1 ? `-${themeName}` : '';
     const suffix = frameSuffix + themeSuffix;
 
-    return path.resolve(ROOT, opts.outOverride).replace(/(\.png)?$/i, suffix + tag + '.png');
+    return path.resolve(ROOT, outOverride).replace(/(\.png)?$/i, suffix + tag + '.png');
   }
 
-  const base = opts.frame;
+  const base = bake.frame;
   let name: string;
 
   if (themeName) {
@@ -417,22 +533,24 @@ export function missingStylesheets(urls: string[]): string[] {
   });
 }
 
-/** Bakes one or more theme PNGs for a face, from the command-line arguments. */
+/** Bakes one or more background PNGs for a face, from the command-line arguments. */
 async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const face = argv[0];
 
   if (!face || face.startsWith('-')) {
-    throw new ToolError('usage: node paf/plugins/frame/generate-frame.ts <face> [frame] [--scale N] [--theme name|all] [--out path], which paf gen <face> frame runs');
+    throw new ToolError(USAGE);
   }
 
   const dirs = faceDirs(face);
   const faceCfg = loadFaceConfig(face, dirs);
   const opts = parseArgs(argv.slice(1), faceCfg);
 
-  // each platform bakes from its own HTML, and one without it is skipped so the rest still bake
-  const frames = opts.allFrames ? discoverFrames(dirs.frameDir) : [opts.frame];
   const platforms = facePlatforms(dirs.appinfo);
+  const { frames, themes } = planBakes(opts, faceCfg, face, { frames: discoverFrames(dirs.frameDir, platforms), themes: discoverThemes(dirs.cssDir) });
+
+  // each platform bakes from its own HTML, and one without it is skipped so the rest still bake
+  // every frame here has a page for at least one platform, so there is always something to bake
   const bakes = frames
     .flatMap((frame) => platforms.map((platform) => ({ frame, platform, html: path.join(dirs.frameDir, `${frame}~${platform}.html`) })))
     .filter((bake) => {
@@ -443,26 +561,6 @@ async function main(): Promise<void> {
       console.warn(`warning: ${path.relative(ROOT, bake.html)} not found, so ${bake.platform} gets no ${bake.frame} frame`);
       return false;
     });
-
-  if (bakes.length === 0) {
-    throw new ToolError(`No frame HTML found for ${frames.join(', ')} on any platform the face targets`);
-  }
-
-  let themes: (string | null)[];
-
-  if (opts.theme === 'all') {
-    // a face with no theme sheets has just its base frame. paf gen <face> all asks every face for
-    // all its themes the same way, so that is what all means there
-    themes = discoverThemes(dirs.cssDir);
-
-    if (themes.length === 0) {
-      themes = [null];
-    }
-  } else if (opts.theme) {
-    themes = [opts.theme];
-  } else {
-    themes = [null];
-  }
 
   const browser = await firefox.launch();
   const page = await browser.newPage({
@@ -501,10 +599,6 @@ async function main(): Promise<void> {
       if (themeName) {
         const themeCss = path.join(dirs.cssDir, `theme_${themeName}.css`);
 
-        if (!fs.existsSync(themeCss)) {
-          throw new ToolError(`Theme stylesheet not found: ${themeCss}`);
-        }
-
         await page.evaluate(() => {
           document.querySelectorAll('link[href*="theme_"]').forEach((link) => link.remove());
         });
@@ -542,7 +636,7 @@ async function main(): Promise<void> {
       await page.waitForTimeout(200);
 
       const screenshot = await page.locator('.viewport').screenshot();
-      const out = outFor({ ...opts, frame: bake.frame }, themeName, themes.length, faceCfg, dirs.imagesDir, bake.platform);
+      const out = outFor({ frame: bake.frame, theme: themeName }, { frames: frames.length, themes: themes.length }, opts.outOverride, faceCfg, dirs.imagesDir, bake.platform);
 
       fs.mkdirSync(path.dirname(out), { recursive: true });
 
