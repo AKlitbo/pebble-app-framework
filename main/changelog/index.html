@@ -54,7 +54,7 @@
         <h1>Changelog</h1>
         <div class="readme"><p>All notable API changes to the Pebble App Framework are documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="unreleased"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...HEAD">Unreleased</a></h2>
+<h2 id="400---2026-10-02"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...v4.0.0">4.0.0</a> - 2026-10-02</h2>
 <h3 id="added">Added</h3>
 <ul>
 <li>Added a <code>paf</code> key to the framework&#39;s <code>package.json</code> and to each plugin&#39;s, naming the build, its generators, what a face has to hold for each to apply, the checks it adds to <code>paf check</code>, the tools <code>paf tool &lt;face&gt; &lt;name&gt;</code> runs, and the scripts <code>paf lint</code> and <code>paf format</code> run. For a path under <code>src/pkjs/</code>, a family face&#39;s core counts too, at the matching folder under <code>core/pkjs/</code>. <code>paf build</code>, <code>paf gen</code>, <code>paf check</code>, <code>paf tool</code>, <code>paf lint</code>, and <code>paf format</code> read them, so a face&#39;s <code>package.json</code> no longer needs scripts that point into the framework. A face&#39;s own generators go under <code>gen</code> in its <code>paf.config.json</code>, each naming its script and the generator it runs after.</li>
