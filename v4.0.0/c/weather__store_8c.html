@@ -1,0 +1,624 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/pebble/io/stores/weather_store.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('weather__store_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">weather_store.c File Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The active weather store: holds the readings, owns the appmessage weather channels, and asks the phone for more whenever its turn on the face's cadence finds a poll due.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="weather__store_8h_source.html">io/stores/weather_store.h</a>&quot;</code><br />
+<code>#include &lt;stddef.h&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
+<code>#include &lt;limits.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="appmessage_8h_source.html">io/appmessage/appmessage.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="forecast__age_8h_source.html">weather/forecast_age.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="weather__reading_8h_source.html">weather/weather_reading.h</a>&quot;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a095baca2ac96275e14cbde3495f43b73" id="r_a095baca2ac96275e14cbde3495f43b73"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#a095baca2ac96275e14cbde3495f43b73">WEATHER_FIRST_POLL_MS</a>&#160;&#160;&#160;500</td></tr>
+<tr class="memdesc:a095baca2ac96275e14cbde3495f43b73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay before the first fetch after launch, in ms.  <br /></td></tr>
+<tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Cold boot re-asks</div></td></tr>
+<tr><td colspan="2" class="ititle"><div class="groupText"><p>The phone JS can take several seconds to come up on a cold launch, so a first request that lands before it is ready would leave the face blank until the next full poll (30 min). Until the first reading arrives the store keeps asking on this short cadence, for a bounded number of tries, then settles. </p>
+</div></td></tr>
+<tr class="memitem:aff467cb3eccd97fac6e8e0eb3dfb4ba7" id="r_aff467cb3eccd97fac6e8e0eb3dfb4ba7"><td class="memItemLeft"><a id="aff467cb3eccd97fac6e8e0eb3dfb4ba7" name="aff467cb3eccd97fac6e8e0eb3dfb4ba7"></a>
+#define&#160;</td><td class="memItemRight"><b>WEATHER_BOOT_RETRY_MS</b>&#160;&#160;&#160;3000</td></tr>
+<tr class="memdesc:aff467cb3eccd97fac6e8e0eb3dfb4ba7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gap between the short re-asks, in ms. <br /></td></tr>
+<tr class="memitem:a3e000c92d82e89bbcb703377923e50fa" id="r_a3e000c92d82e89bbcb703377923e50fa"><td class="memItemLeft"><a id="a3e000c92d82e89bbcb703377923e50fa" name="a3e000c92d82e89bbcb703377923e50fa"></a>
+#define&#160;</td><td class="memItemRight"><b>WEATHER_BOOT_RETRIES</b>&#160;&#160;&#160;8</td></tr>
+<tr class="memdesc:a3e000c92d82e89bbcb703377923e50fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many short re-asks a cold launch gets before settling. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a9fbef29f6a0a976770a3055c37a35d95" id="r_a9fbef29f6a0a976770a3055c37a35d95"><td class="memItemLeft"><a id="a9fbef29f6a0a976770a3055c37a35d95" name="a9fbef29f6a0a976770a3055c37a35d95"></a>
+static void&#160;</td><td class="memItemRight"><b>reset_state</b> (void)</td></tr>
+<tr class="memdesc:a9fbef29f6a0a976770a3055c37a35d95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the reading back to no-data for every field. <br /></td></tr>
+<tr class="memitem:a38798b6392bd528fd20169e49b63ff36" id="r_a38798b6392bd528fd20169e49b63ff36"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a38798b6392bd528fd20169e49b63ff36">mark_dirty</a> (void)</td></tr>
+<tr class="memdesc:a38798b6392bd528fd20169e49b63ff36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mark the reading as needing a save.  <br /></td></tr>
+<tr class="memitem:a91a226520846cd505005169ca4f9d754" id="r_a91a226520846cd505005169ca4f9d754"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a91a226520846cd505005169ca4f9d754">persist_flush</a> (void)</td></tr>
+<tr class="memdesc:a91a226520846cd505005169ca4f9d754"><td class="mdescLeft">&#160;</td><td class="mdescRight">The coalesced write, run once per inbox via the transport's inbox-complete hook.  <br /></td></tr>
+<tr class="memitem:a9733ae28f8c21e9ec18ae4251141d96b" id="r_a9733ae28f8c21e9ec18ae4251141d96b"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a9733ae28f8c21e9ec18ae4251141d96b">inbox_done</a> (void)</td></tr>
+<tr class="memdesc:a9733ae28f8c21e9ec18ae4251141d96b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs once a whole inbound message is handled: one repaint for everything it brought, then the save.  <br /></td></tr>
+<tr class="memitem:aa5bb619dd308587c2ec6444250ee6ab1" id="r_aa5bb619dd308587c2ec6444250ee6ab1"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aa5bb619dd308587c2ec6444250ee6ab1">apply_seed</a> (const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *seed)</td></tr>
+<tr class="memdesc:aa5bb619dd308587c2ec6444250ee6ab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prefill the whole store from a seed, for dev builds and screenshots.  <br /></td></tr>
+<tr class="memitem:af5f33238881e8b25ccd2445b79ccb95a" id="r_af5f33238881e8b25ccd2445b79ccb95a"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#af5f33238881e8b25ccd2445b79ccb95a">on_weather</a> (const <a class="el" href="structWeatherMessage.html">WeatherMessage</a> *msg)</td></tr>
+<tr class="memdesc:af5f33238881e8b25ccd2445b79ccb95a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The weather channel. The message holds every group the phone sent, and weather_reading_apply keeps what it can. A failed fetch keeps the last good reading rather than blanking, and it refreshes on the next poll that lands.  <br /></td></tr>
+<tr class="memitem:ab270d4f87c98123387d5599b915429b3" id="r_ab270d4f87c98123387d5599b915429b3"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ab270d4f87c98123387d5599b915429b3">on_unit_changed</a> (bool fahrenheit)</td></tr>
+<tr class="memdesc:ab270d4f87c98123387d5599b915429b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wearer switched the temperature unit. The reading in hand converts to it so the face never shows a Celsius number with an F beside it while the new fetch is on its way.  <br /></td></tr>
+<tr class="memitem:a57f5cd13bc80a504451172b29ed6e7de" id="r_a57f5cd13bc80a504451172b29ed6e7de"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a57f5cd13bc80a504451172b29ed6e7de">boot_fire</a> (void *data)</td></tr>
+<tr class="memdesc:a57f5cd13bc80a504451172b29ed6e7de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short boot re-ask, and only that.  <br /></td></tr>
+<tr class="memitem:ac219f20bf18466869ec6ecc7820e97a6" id="r_ac219f20bf18466869ec6ecc7820e97a6"><td class="memItemLeft"><a id="ac219f20bf18466869ec6ecc7820e97a6" name="ac219f20bf18466869ec6ecc7820e97a6"></a>
+static void&#160;</td><td class="memItemRight"><b>cadence_poll</b> (void)</td></tr>
+<tr class="memdesc:ac219f20bf18466869ec6ecc7820e97a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence: poll when the deadline has come round. <br /></td></tr>
+<tr class="memitem:ga40fd78d1cab03532c37b131b1c2a9111" id="r_ga40fd78d1cab03532c37b131b1c2a9111"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>weather_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga40fd78d1cab03532c37b131b1c2a9111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the weather changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:ga49a92d34f22c2bb81f54084b02215709" id="r_ga49a92d34f22c2bb81f54084b02215709"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga49a92d34f22c2bb81f54084b02215709">weather_store_init</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg, const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *seed)</td></tr>
+<tr class="memdesc:ga49a92d34f22c2bb81f54084b02215709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga2af1e0b42fd91db04b7bf0e358f80a85" id="r_ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store_reconfigure</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg)</td></tr>
+<tr class="memdesc:ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memitem:ga2cd48126740a404ee6893890c5abf288" id="r_ga2cd48126740a404ee6893890c5abf288"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_temp</b> (void)</td></tr>
+<tr class="memdesc:ga2cd48126740a404ee6893890c5abf288"><td class="mdescLeft">&#160;</td><td class="mdescRight">The temperature reading in the user's unit, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:a6338097c3aa566509557080e498f23a1" id="r_a6338097c3aa566509557080e498f23a1"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#a6338097c3aa566509557080e498f23a1">forecast_today</a> (void)</td></tr>
+<tr class="memdesc:a6338097c3aa566509557080e498f23a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the high, low, UV, and rain chance are today's.  <br /></td></tr>
+<tr class="memitem:ga2b52199ca0e311c968b7f831305acd62" id="r_ga2b52199ca0e311c968b7f831305acd62"><td class="memItemLeft">
+const char *&#160;</td><td class="memItemRight"><b>weather_store_cond</b> (void)</td></tr>
+<tr class="memdesc:ga2b52199ca0e311c968b7f831305acd62"><td class="mdescLeft">&#160;</td><td class="mdescRight">The short word for the sky, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gad57eba8aa9a6f59644fedafcac7a3bab" id="r_gad57eba8aa9a6f59644fedafcac7a3bab"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gad57eba8aa9a6f59644fedafcac7a3bab">weather_store_cond_label</a> (void)</td></tr>
+<tr class="memdesc:gad57eba8aa9a6f59644fedafcac7a3bab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sky in words, such as "Partly Cloudy", for a face that declares WEATHER_CONDITION_LABEL.  <br /></td></tr>
+<tr class="memitem:gaec0de378ffe3adbadab18b877c3e214c" id="r_gaec0de378ffe3adbadab18b877c3e214c"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_humidity</b> (void)</td></tr>
+<tr class="memdesc:gaec0de378ffe3adbadab18b877c3e214c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The humidity in percent, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga06fe793fd4c59b655856f6f1454e66a1" id="r_ga06fe793fd4c59b655856f6f1454e66a1"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_wind_kmh</b> (void)</td></tr>
+<tr class="memdesc:ga06fe793fd4c59b655856f6f1454e66a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wind speed in km/h, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga21865e60abf090e923d95f74e4e5e3b2" id="r_ga21865e60abf090e923d95f74e4e5e3b2"><td class="memItemLeft">
+const char *&#160;</td><td class="memItemRight"><b>weather_store_wind_dir</b> (void)</td></tr>
+<tr class="memdesc:ga21865e60abf090e923d95f74e4e5e3b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The wind direction like "NW", or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gadcce3fc2dbdf6a3ccd751a70ef171adf" id="r_gadcce3fc2dbdf6a3ccd751a70ef171adf"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_sunrise</b> (void)</td></tr>
+<tr class="memdesc:gadcce3fc2dbdf6a3ccd751a70ef171adf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunrise as minutes past midnight, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga613a6718a67c620b3c4623cbbfc3d84e" id="r_ga613a6718a67c620b3c4623cbbfc3d84e"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_sunset</b> (void)</td></tr>
+<tr class="memdesc:ga613a6718a67c620b3c4623cbbfc3d84e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sunset as minutes past midnight, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga839bf5c5187f067697de69f79f025b3f" id="r_ga839bf5c5187f067697de69f79f025b3f"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_uv</b> (void)</td></tr>
+<tr class="memdesc:ga839bf5c5187f067697de69f79f025b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's UV index, or -1 if we have not got one yet or the day it came is over. <br /></td></tr>
+<tr class="memitem:ga9521fad2bb38f644e02c9c3ac8547d4b" id="r_ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_temp_max</b> (void)</td></tr>
+<tr class="memdesc:ga9521fad2bb38f644e02c9c3ac8547d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's high, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. <br /></td></tr>
+<tr class="memitem:ga3ad694d30ad387bd9a9c1db451cc9c2d" id="r_ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_temp_min</b> (void)</td></tr>
+<tr class="memdesc:ga3ad694d30ad387bd9a9c1db451cc9c2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's low, or WEATHER_NO_TEMP if we have not got one yet or the day it came is over. <br /></td></tr>
+<tr class="memitem:ga04d4ed2abc57cd51459c6913b2d77e1d" id="r_ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_precip_chance</b> (void)</td></tr>
+<tr class="memdesc:ga04d4ed2abc57cd51459c6913b2d77e1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's chance of rain in percent, or -1 if we have not got one yet or the day it came is over. <br /></td></tr>
+<tr class="memitem:ga06cf30734c71d28b90e5b660ee75bc9d" id="r_ga06cf30734c71d28b90e5b660ee75bc9d"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_feels_like</b> (void)</td></tr>
+<tr class="memdesc:ga06cf30734c71d28b90e5b660ee75bc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How warm it feels, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gac167df267d9204941ae5ef9541074edc" id="r_gac167df267d9204941ae5ef9541074edc"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_pressure</b> (void)</td></tr>
+<tr class="memdesc:gac167df267d9204941ae5ef9541074edc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The sea level pressure in hPa, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga4780ec893b0d2cb94e17ab85c78e377d" id="r_ga4780ec893b0d2cb94e17ab85c78e377d"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_dew_point</b> (void)</td></tr>
+<tr class="memdesc:ga4780ec893b0d2cb94e17ab85c78e377d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The dew point temperature, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gaba5bc2a406811b7f6d4b6df181f620d7" id="r_gaba5bc2a406811b7f6d4b6df181f620d7"><td class="memItemLeft">const <a class="el" href="structWeatherHourly.html">WeatherHourly</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaba5bc2a406811b7f6d4b6df181f620d7">weather_store_forecast_hourly</a> (void)</td></tr>
+<tr class="memdesc:gaba5bc2a406811b7f6d4b6df181f620d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The hourly forecast strip, starting at the hour now.  <br /></td></tr>
+<tr class="memitem:ga0610dff5f72df6fa9f4312a73e6d96de" id="r_ga0610dff5f72df6fa9f4312a73e6d96de"><td class="memItemLeft">const <a class="el" href="structWeatherDaily.html">WeatherDaily</a> *&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga0610dff5f72df6fa9f4312a73e6d96de">weather_store_forecast_daily</a> (void)</td></tr>
+<tr class="memdesc:ga0610dff5f72df6fa9f4312a73e6d96de"><td class="mdescLeft">&#160;</td><td class="mdescRight">The daily forecast strip, starting today.  <br /></td></tr>
+<tr class="memitem:ga7856768b2bde2cf55422b2c3b5ea3b4e" id="r_ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>weather_store_age_s</b> (void)</td></tr>
+<tr class="memdesc:ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a2a3db4bc36fd168193b20a09c608c773" id="r_a2a3db4bc36fd168193b20a09c608c773"><td class="memItemLeft"><a id="a2a3db4bc36fd168193b20a09c608c773" name="a2a3db4bc36fd168193b20a09c608c773"></a>
+static <a class="el" href="structWeatherState.html">WeatherState</a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
+<tr class="memdesc:a2a3db4bc36fd168193b20a09c608c773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Every reading the store holds, laid out as the blob that gets persisted. <br /></td></tr>
+<tr class="memitem:a0d75601f9ac1a6725c17065d338a664a" id="r_a0d75601f9ac1a6725c17065d338a664a"><td class="memItemLeft"><a id="a0d75601f9ac1a6725c17065d338a664a" name="a0d75601f9ac1a6725c17065d338a664a"></a>
+static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
+<tr class="memdesc:a0d75601f9ac1a6725c17065d338a664a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever a reading changes, so the face can redraw. <br /></td></tr>
+<tr class="memitem:a3e8ceb6edd19c82d11e2d15c671924f4" id="r_a3e8ceb6edd19c82d11e2d15c671924f4"><td class="memItemLeft"><a id="a3e8ceb6edd19c82d11e2d15c671924f4" name="a3e8ceb6edd19c82d11e2d15c671924f4"></a>
+static int&#160;</td><td class="memItemRight"><b>s_boot_retries</b></td></tr>
+<tr class="memdesc:a3e8ceb6edd19c82d11e2d15c671924f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Short cold-boot re-asks used so far, until the first reading lands. <br /></td></tr>
+<tr class="memitem:af962c600172c1bf7e33a007776cba2ab" id="r_af962c600172c1bf7e33a007776cba2ab"><td class="memItemLeft"><a id="af962c600172c1bf7e33a007776cba2ab" name="af962c600172c1bf7e33a007776cba2ab"></a>
+static <a class="el" href="structStoreFetch.html">StoreFetch</a>&#160;</td><td class="memItemRight"><b>s_fetch</b></td></tr>
+<tr class="memdesc:af962c600172c1bf7e33a007776cba2ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">The interval, the boot re-ask timer, and when the next poll is due. Live gates the cache too. <br /></td></tr>
+<tr class="memitem:afc1e32c72630b62007536cb95f77bb07" id="r_afc1e32c72630b62007536cb95f77bb07"><td class="memItemLeft"><a id="afc1e32c72630b62007536cb95f77bb07" name="afc1e32c72630b62007536cb95f77bb07"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_persist_key</b></td></tr>
+<tr class="memdesc:afc1e32c72630b62007536cb95f77bb07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist slot the face handed us for the saved reading. <br /></td></tr>
+<tr class="memitem:ae8a3c3beea14ff8ceadf605953c6ee61" id="r_ae8a3c3beea14ff8ceadf605953c6ee61"><td class="memItemLeft"><a id="ae8a3c3beea14ff8ceadf605953c6ee61" name="ae8a3c3beea14ff8ceadf605953c6ee61"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_dirty</b></td></tr>
+<tr class="memdesc:ae8a3c3beea14ff8ceadf605953c6ee61"><td class="mdescLeft">&#160;</td><td class="mdescRight">A channel touched the state this inbox, so persist_flush writes it once. <br /></td></tr>
+<tr class="memitem:a2e6dcdd2124edeff7e300cf6de89bcda" id="r_a2e6dcdd2124edeff7e300cf6de89bcda"><td class="memItemLeft"><a id="a2e6dcdd2124edeff7e300cf6de89bcda" name="a2e6dcdd2124edeff7e300cf6de89bcda"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_changed</b></td></tr>
+<tr class="memdesc:a2e6dcdd2124edeff7e300cf6de89bcda"><td class="mdescLeft">&#160;</td><td class="mdescRight">A channel touched the state this inbox, so the face repaints once at the end. <br /></td></tr>
+<tr class="memitem:a4cf02b128b4097de9a6c85cd0ded8adc" id="r_a4cf02b128b4097de9a6c85cd0ded8adc"><td class="memItemLeft"><a id="a4cf02b128b4097de9a6c85cd0ded8adc" name="a4cf02b128b4097de9a6c85cd0ded8adc"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_heard</b></td></tr>
+<tr class="memdesc:a4cf02b128b4097de9a6c85cd0ded8adc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone answered a weather request this launch, a failed fetch included. <br /></td></tr>
+<tr class="memitem:afd6bfed4583dc043e4cb212594733f97" id="r_afd6bfed4583dc043e4cb212594733f97"><td class="memItemLeft"><a id="afd6bfed4583dc043e4cb212594733f97" name="afd6bfed4583dc043e4cb212594733f97"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_saved_sum</b></td></tr>
+<tr class="memdesc:afd6bfed4583dc043e4cb212594733f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sum of the reading last written, so a reply that changes nothing is not written again. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The active weather store: holds the readings, owns the appmessage weather channels, and asks the phone for more whenever its turn on the face's cadence finds a poll due. </p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="a095baca2ac96275e14cbde3495f43b73" name="a095baca2ac96275e14cbde3495f43b73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a095baca2ac96275e14cbde3495f43b73">&#9670;&#160;</a></span>WEATHER_FIRST_POLL_MS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define WEATHER_FIRST_POLL_MS&#160;&#160;&#160;500</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Delay before the first fetch after launch, in ms. </p>
+<p>It fires from the event loop so appmessage is open by then. The recurring poll then runs at the configured interval. </p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="aa5bb619dd308587c2ec6444250ee6ab1" name="aa5bb619dd308587c2ec6444250ee6ab1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5bb619dd308587c2ec6444250ee6ab1">&#9670;&#160;</a></span>apply_seed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void apply_seed </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Prefill the whole store from a seed, for dev builds and screenshots. </p>
+<p>Copies the extra readings too, so a seeded face shows full weather rather than just the temperature and condition. <span class="tt"><a class="el" href="#a0d75601f9ac1a6725c17065d338a664a" title="Called whenever a reading changes, so the face can redraw.">s_cb</a></span> is still NULL at the point init calls this, so no redraw fires here.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">seed</td><td>The prefill to apply. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a57f5cd13bc80a504451172b29ed6e7de" name="a57f5cd13bc80a504451172b29ed6e7de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57f5cd13bc80a504451172b29ed6e7de">&#9670;&#160;</a></span>boot_fire()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void boot_fire </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The short boot re-ask, and only that. </p>
+<p>A cold launch can send its first request before the phone JS is up, and the reconnect refresh only fires on a real disconnect to connect transition rather than on the initial connect, so without this the face would sit blank until the next deadline came round. It re-asks on a short cadence for a bounded number of tries, then stops and leaves the recurring poll to the cadence.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>The timer context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6338097c3aa566509557080e498f23a1" name="a6338097c3aa566509557080e498f23a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6338097c3aa566509557080e498f23a1">&#9670;&#160;</a></span>forecast_today()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool forecast_today </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether the high, low, UV, and rain chance are today's. </p>
+<p>They are only good for the day they came. For some providers they ride on a second request, and when only that one fails the rest of the reading keeps landing, so without this yesterday's high and low would show as today's. </p>
+
+</div>
+</div>
+<a id="a9733ae28f8c21e9ec18ae4251141d96b" name="a9733ae28f8c21e9ec18ae4251141d96b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9733ae28f8c21e9ec18ae4251141d96b">&#9670;&#160;</a></span>inbox_done()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void inbox_done </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Runs once a whole inbound message is handled: one repaint for everything it brought, then the save. </p>
+<p>The phone sends every weather channel in one message, and each one repainting on its own reran every weather panel up to six times. A face working something out from several readings at once, such as a layout that follows the sunset, also saw the new temperature beside the old sun times until the next channel landed. </p>
+
+</div>
+</div>
+<a id="a38798b6392bd528fd20169e49b63ff36" name="a38798b6392bd528fd20169e49b63ff36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38798b6392bd528fd20169e49b63ff36">&#9670;&#160;</a></span>mark_dirty()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mark_dirty </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Mark the reading as needing a save. </p>
+<p>A combined weather push fires several channel handlers in one inbox, so rather than each writing the whole struct to flash, each just flags it dirty and <span class="tt"><a class="el" href="#a91a226520846cd505005169ca4f9d754" title="The coalesced write, run once per inbox via the transport&#39;s inbox-complete hook.">persist_flush</a></span> does one write when the inbox is fully dispatched, which is one write per poll instead of one per channel. </p>
+
+</div>
+</div>
+<a id="ab270d4f87c98123387d5599b915429b3" name="ab270d4f87c98123387d5599b915429b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab270d4f87c98123387d5599b915429b3">&#9670;&#160;</a></span>on_unit_changed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void on_unit_changed </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>fahrenheit</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The wearer switched the temperature unit. The reading in hand converts to it so the face never shows a Celsius number with an F beside it while the new fetch is on its way. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fahrenheit</td><td>True when the new unit is Fahrenheit. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af5f33238881e8b25ccd2445b79ccb95a" name="af5f33238881e8b25ccd2445b79ccb95a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5f33238881e8b25ccd2445b79ccb95a">&#9670;&#160;</a></span>on_weather()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void on_weather </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structWeatherMessage.html">WeatherMessage</a> *</td>          <td class="paramname"><span class="paramname"><em>msg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The weather channel. The message holds every group the phone sent, and weather_reading_apply keeps what it can. A failed fetch keeps the last good reading rather than blanking, and it refreshes on the next poll that lands. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">msg</td><td>The message, read straight off the inbox. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a91a226520846cd505005169ca4f9d754" name="a91a226520846cd505005169ca4f9d754"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91a226520846cd505005169ca4f9d754">&#9670;&#160;</a></span>persist_flush()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void persist_flush </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The coalesced write, run once per inbox via the transport's inbox-complete hook. </p>
+<p>Only a live face writes, and this never runs from <span class="tt"><a class="el" href="#a9fbef29f6a0a976770a3055c37a35d95" title="Clear the reading back to no-data for every field.">reset_state</a></span>, so a failed fetch can't stomp the last good reading. </p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="weather__store_8c.html">weather_store.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['on_5fbattery_0',['on_battery',['../system__store_8c.html#acd10b3aaddfe22573b8e9d242eff655b',1,'system_store.c']]],
+  ['on_5fcalendar_5fstrip_1',['on_calendar_strip',['../calendar__store_8c.html#a1ad7346f70a3c6902ddca4acf2a83838',1,'calendar_store.c']]],
+  ['on_5fconnection_2',['on_connection',['../system__store_8c.html#af2f59572470146f43e36b0480130d05b',1,'system_store.c']]],
+  ['on_5fhealth_5fevent_3',['on_health_event',['../health__store_8c.html#a9db8db45c6d49c4ea12cd407be92143c',1,'health_store.c']]],
+  ['on_5fstock_5fstrip_4',['on_stock_strip',['../stock__store_8c.html#a611ee6200dc6d16566d4f9039f03ded9',1,'stock_store.c']]],
+  ['on_5funit_5fchanged_5',['on_unit_changed',['../weather__store_8c.html#ab270d4f87c98123387d5599b915429b3',1,'weather_store.c']]],
+  ['on_5fweather_6',['on_weather',['../weather__store_8c.html#af5f33238881e8b25ccd2445b79ccb95a',1,'weather_store.c']]],
+  ['or_5fnone_7',['or_none',['../weather__reading_8c.html#aefa5e1e7ffa9129d5821b0d9f1fd1528',1,'weather_reading.c']]],
+  ['outbox_5fbusy_8',['outbox_busy',['../group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d',1,'outbox_queue.h']]],
+  ['outbox_5fclear_9',['outbox_clear',['../group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9',1,'outbox_queue.h']]],
+  ['outbox_5ffailed_5fcallback_10',['outbox_failed_callback',['../appmessage_8c.html#a6b185c8da29188c8cae40cdca98e100b',1,'appmessage.c']]],
+  ['outbox_5fhold_5ffailed_11',['outbox_hold_failed',['../group__lib__io.html#ga1a93146eec16ce495449829a38274d31',1,'outbox_queue.h']]],
+  ['outbox_5fpending_12',['outbox_pending',['../group__lib__io.html#ga6f6fa750435ac4704bb55298be9b7e27',1,'outbox_queue.h']]],
+  ['outbox_5fpop_5ffront_13',['outbox_pop_front',['../group__lib__io.html#gaa5025f0a1f281cb9b6b3f74c2a7f7481',1,'outbox_queue.h']]],
+  ['outbox_5fpush_14',['outbox_push',['../group__lib__io.html#ga219aad77cbe9215d9c3cd1aacd33a457',1,'outbox_queue.h']]],
+  ['outbox_5frelease_15',['outbox_release',['../group__lib__io.html#gabf4958a2b2c2b9310e9c3dde7d76e18d',1,'outbox_queue.h']]],
+  ['outbox_5fretry_5fpass_16',['outbox_retry_pass',['../group__lib__io.html#ga66fb285ede9868f85fbaa10fe36ebbba',1,'outbox_queue.h']]],
+  ['outbox_5fsent_5fcallback_17',['outbox_sent_callback',['../appmessage_8c.html#a0369d40d54958ca96f392694cf507399',1,'appmessage.c']]],
+  ['outbox_5ftake_5fhead_18',['outbox_take_head',['../group__lib__io.html#ga821df0e180a04bb345ca338f3d6829e4',1,'outbox_queue.h']]]
+];
