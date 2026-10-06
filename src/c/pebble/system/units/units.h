@@ -1,6 +1,6 @@
 /**
  * @file units.h
- * @brief Unit conversion and distance formatting helpers.
+ * @brief Swatch internet time in .beats, and distance formatting in miles or kilometres.
  *
  * @ingroup lib_system
  */

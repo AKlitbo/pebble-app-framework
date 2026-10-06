@@ -20,10 +20,10 @@
  * Every store stamps the first byte of its blob with a tag. The high nibble names the store and the
  * low nibble is that store's layout revision.
  *
- * The size on its own cannot tell two blobs apart. The calendar snapshot and the weather state
- * happen to be the same size, and reordering two fields keeps the size too, so the tag is what makes
- * the guard mean anything. Bump a store's low nibble whenever its persisted struct changes shape,
- * and an older blob is dropped rather than read as the wrong thing.
+ * The size on its own cannot tell two blobs apart. Reordering two fields keeps the size, and so
+ * can two different structs, so the tag is what makes the guard mean anything. Bump a store's low
+ * nibble whenever its persisted struct changes shape, and an older blob is dropped rather than read
+ * as the wrong thing.
  * @{
  */
 #define STORE_TAG_WEATHER  0x13 ///< The weather store's blob

@@ -22,9 +22,9 @@
  */
 typedef uint8_t FontId;
 
-/// Registry capacity. Sized to the face's slot count so the table wastes no memory. The face's
-/// `draw/fonts.h` checks `FONT_COUNT` against this at build time, so adding a slot past it fails
-/// the build with a clear message. Raise it by the same amount you grow the face.
+/// Registry capacity, shared by every face. The face's `draw/fonts.h` checks `FONT_COUNT` against
+/// this at build time, so adding a slot past it fails the build with a clear message. A face cannot
+/// raise it from its own build, so more slots means raising it here.
 #define FONT_SLOTS_MAX 24
 
 /**

@@ -479,7 +479,8 @@ function startPebbleApp(options: StartOptions): void {
 
     queueSend({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
 
-    // a watch that just rebooted holds no timezones, so every one goes out again
+    // every start sends each zone again, whatever went out before. the phone can suspend this code
+    // for a while, and sending them all on each ready is how the watch catches up after that
     lastTimezoneValues = {};
 
     pushTimezones();

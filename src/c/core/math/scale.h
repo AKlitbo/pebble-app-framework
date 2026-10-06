@@ -66,8 +66,8 @@ int segments_filled(int level, int segments);
  * @brief Map a reading to its pixel row in a plot, with the low end at the bottom.
  *
  * The window runs from lo at the bottom row to hi at the top, so a bigger reading sits higher up
- * the panel. The reading is expected to be inside the window already. A caller that cannot promise
- * that clamps it with clamp_int first.
+ * the panel. A reading outside the window is pinned to the nearer edge first, so it never lands
+ * on a row outside the plot area.
  *
  * @param y0 The top row of the plot area.
  * @param height The plot area's height in rows.

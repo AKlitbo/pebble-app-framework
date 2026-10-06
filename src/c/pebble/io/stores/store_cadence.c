@@ -14,7 +14,8 @@ static CallbackList s_list = {s_entries, STORE_CADENCE_MAX, 0}; ///< The list ov
 void store_cadence_register(void (*cb)(void))
 {
     // a full list means a store quietly stops getting its cadence, so the size is set by how many
-    // stores there are rather than by guesswork. this fails loudly in a debug build instead
+    // stores there are rather than by guesswork. a registration that does not fit is logged as an
+    // error and dropped
     if (!callback_list_add(&s_list, cb))
     {
         APP_LOG(APP_LOG_LEVEL_ERROR, "store cadence full, dropping a registration");

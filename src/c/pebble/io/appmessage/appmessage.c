@@ -13,7 +13,6 @@
 #include "io/outbox_queue.h"
 #include "io/tuple_read.h"
 #include "math/scale.h"
-#include "text/cstring_fit.h"
 #include "system/settings/settings.h"
 #include "wire/wire_caps.g.h"
 #include <limits.h>
@@ -563,9 +562,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     dispatch_bytes(iterator, MESSAGE_KEY_CALENDAR_STRIP, s_handlers.on_calendar_strip);
 #endif
 
-    // coordinates arrive pre-formatted as dash strings like "33-44" and "-112-07". a fix is the
-    // pair, so both have to be there and both have to be strings. one missing, or one a face's
-    // formatter sent as a number, would hand the store an empty half and blank a good coordinate
+    // coordinates arrive as strings already laid out by the face's own formatter, so their shape is
+    // the face's choice and nothing here reads it. a fix is the pair, so both have to be there and
+    // both have to be strings. one missing, or one a face's formatter sent as a number, would hand
+    // the store an empty half and blank a good coordinate
 #if defined(APPMESSAGE_HAS_LOCATION)
     const char *lat = tuple_str_or(dict_find(iterator, MESSAGE_KEY_LOCATION_LATITUDE), NULL);
     const char *lon = tuple_str_or(dict_find(iterator, MESSAGE_KEY_LOCATION_LONGITUDE), NULL);

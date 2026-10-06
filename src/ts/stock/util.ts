@@ -1,9 +1,9 @@
 /**
  * Shared helpers for the stock provider modules.
  *
- * Provides the HTTP wrapper and the result builders so finnhub and alphavantage
- * both return the same normalized shape. Kept separate from the weather util on
- * purpose so the two data layers stay decoupled.
+ * Provides the HTTP wrapper and the result builders so every stock provider returns
+ * the same normalized shape. Kept separate from the weather util so the two data
+ * layers stay decoupled.
  */
 
 import { zoneParts } from '../pkjs/timezone';

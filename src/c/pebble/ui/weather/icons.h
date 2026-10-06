@@ -14,7 +14,7 @@
 
 // WX_FORECAST_NIGHT_BIT is generated from the same vocabulary the phone sets it from. Real
 // condition numbers run 0 to 11 so the high bit is free, and the unknown value (255) still lands
-// on WI_NA with the bit set
+// on the `WEATHER_NOW_NA` icon with the bit set
 #include "wire/wire_caps.g.h"
 
 /**

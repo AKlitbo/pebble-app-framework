@@ -76,7 +76,7 @@ static bool s_step_history; ///< Whether the face graphs steps by the hour
 /**
  * @name Costly readings
  *
- * These three cost a flash read every time they are asked for, so only a face that shows one pays.
+ * These four cost a flash read every time they are asked for, so only a face that shows one pays.
  * @{
  */
 static bool s_sleep;    ///< Whether the face shows sleep
@@ -400,10 +400,11 @@ static void read_step_hourly(void)
  * second and a flash write blocks, so the saves are held to one a minute, which is all the graph
  * gains anyway.
  *
- * One a minute is on purpose, not a rate to trim. The save runs inside the minute tick, so the
- * CPU is already awake for it and no extra wake is spent. The face is closed whenever the wearer
- * opens a watchapp, even for a moment, and a graph saved less often comes back missing its last
- * minutes every time.
+ * One a minute is the rate to keep, not one to trim. The save runs from whichever comes first in a
+ * new minute, the face's cadence turn or a health event that refreshes the heart rate. Either way
+ * the CPU is already awake for it, so no extra wake is spent. The face is closed whenever the
+ * wearer opens a watchapp, even for a moment, and a graph saved less often comes back missing its
+ * last minutes every time.
  */
 static void persist_save(void)
 {

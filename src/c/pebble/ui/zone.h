@@ -16,7 +16,7 @@
 
 /**
  * @brief Everything needed to present one text slot. Where it sits, and which registered font,
- * alignment, and colour to use, plus up to two smaller font and rect tiers to step down to when
+ * alignment, and colour to use, plus up to three smaller font and rect tiers to step down to when
  * the text would overflow.
  *
  * A face declares a static const table of these, and the engine loops it to build the text

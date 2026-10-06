@@ -78,8 +78,9 @@ const conditions: ConditionEntry[] = [
  *
  * The forecast columns can't each carry a token string, so a condition rides as
  * a single byte: its index in the conditions array. The night marker is dropped
- * first (the forecast shows day glyphs) and anything unrecognized becomes
- * UNKNOWN_CODE so the watch draws WEATHER_NOW_NA.
+ * first, and anything unrecognized becomes UNKNOWN_CODE so the watch draws
+ * WEATHER_NOW_NA. The daily strip sends the code as it is and shows day glyphs.
+ * The hourly strip ORs FORECAST_NIGHT_BIT onto it for a column after dark.
  *
  * @param token The condition token to look up, with or without its night marker.
  * @return The token's index in the conditions array, or UNKNOWN_CODE when it isn't recognized.

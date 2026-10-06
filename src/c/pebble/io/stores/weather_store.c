@@ -135,10 +135,9 @@ static void persist_flush(void)
  * @brief Runs once a whole inbound message is handled: one repaint for everything it brought,
  * then the save.
  *
- * The phone sends every weather channel in one message, and each one repainting on its own reran
- * every weather panel up to six times. A face working something out from several readings at
- * once, such as a layout that follows the sunset, also saw the new temperature beside the old sun
- * times until the next channel landed.
+ * A temperature unit change can land in the same message as a weather reading, and each comes in
+ * through its own handler. Waiting for the end of the message means the face redraws once and sees
+ * everything the message brought together, and flash is written at most once per message.
  */
 static void inbox_done(void)
 {
@@ -309,7 +308,7 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
         // live = false and stays unsubscribed, so a real push cannot overwrite it
         appmessage_on_weather(on_weather);
         appmessage_on_unit_changed(on_unit_changed);
-        // one repaint and one save per inbox rather than one per channel handler
+        // one repaint and one save per inbox, once every handler has run
         appmessage_add_inbox_complete(inbox_done);
     }
 

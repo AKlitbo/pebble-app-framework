@@ -51,9 +51,11 @@ bool night_schedule_active(int mode, int now, int rise, int set,
         return clock_window_contains(set, rise, now);
     }
 
-    // the fixed pair covers its own mode and stands in for the sun when there is no reading. a
-    // stale sunset is not treated as missing on purpose: last month's is within half an hour of
-    // tonight's, which beats falling back for a reason the user cannot see
+    // the fixed pair covers its own mode and stands in for the sun when there is no reading
+    // nothing here knows how old a sun time is, so an old one still counts as a reading
+    // near the solstices last month's sunset is within minutes of tonight's, but near the equinoxes
+    // it moves about an hour a month, so night can switch on up to an hour off
+    // that costs less than dropping to the fixed hours for a reason the user cannot see
     if (mode == NIGHT_SCHED_SOLAR || mode == NIGHT_SCHED_FIXED)
     {
         return clock_window_contains(fixed_start, fixed_end, now);

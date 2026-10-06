@@ -101,8 +101,9 @@ function isModifier(code: number): boolean {
  * The walk goes by code point, so an emoji is one character rather than the two halves JS stores
  * it as. The pieces that only shape the character before them are dropped, and so is whatever a
  * joiner glues on, so a family emoji built from several people is still one question mark. A flag
- * is a pair of letters that reads as one, and goes over as one too. The field on the watch only holds
- * 24, so each extra mark would cost the title a real letter.
+ * is a pair of letters that reads as one, and goes over as one too. The fields on the watch are short,
+ * from 11 characters for a stock label to 24 for an event title, so each extra mark would cost the
+ * text a real letter.
  *
  * @param text The text to flatten.
  * @param max How many characters the field on the watch holds. Left out, the result runs on.

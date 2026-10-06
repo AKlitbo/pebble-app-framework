@@ -106,9 +106,11 @@ typedef struct
 } SettingsInbound;
 
 /**
- * @brief Load a face's settings from a trusted blob, applying defaults first.
+ * @brief Load a face's settings from their saved blobs, applying defaults first.
  *
- * Walks the companion chain so every schema in it is loaded.
+ * Walks the companion chain so every schema in it is loaded. A saved blob is read only when its
+ * size and version fit the schema, or when the schema's migrate hook takes it, and every field read
+ * back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults.
  *
  * @param schema The head schema defining the face's settings.
  */

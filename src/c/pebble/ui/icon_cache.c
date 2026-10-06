@@ -101,7 +101,7 @@ void icon_tint(GBitmap *bmp, GColor color)
 }
 
 /**
- * @brief Alpha of a single pixel, 0 to 3, across the bitmap formats Emery actually produces.
+ * @brief Alpha of a single pixel, 0 to 3, across the bitmap formats the colour platforms produce.
  *
  * A `GColor8` keeps alpha in its top 2 bits, and colour-table pixels index a `GColor8`
  * palette. Colour-table pixels pack MSB first, so the leftmost pixel sits in the high-order
@@ -182,9 +182,8 @@ IconMargins icon_margins_of(GBitmap *bmp)
 /**
  * @brief Finds or loads the cache entry for a resource id.
  *
- * One scan feeds `icon_get`, `icon_margins`, and `icon_size`, so callers don't each re-scan the
- * same icon on every panel repaint. Without it, `icon_margins` would scan twice and a face's own
- * `icon_visible_width` three times.
+ * One scan feeds `icon_get`, `icon_margins`, and `icon_size`, so a caller that reads more than one
+ * of them on every panel repaint does not re-scan the same icon for each.
  *
  * @param res The resource id.
  * @return The cache entry, or NULL when the icon can't be cached.

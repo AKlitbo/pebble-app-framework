@@ -17,11 +17,12 @@
 /// Head of the schema chain registered by settings_init, the primary plus any companions
 static const SettingsSchema *s_primary;
 /**
- * @brief True when the primary key had no saved blob at init, and no settings page message has landed since.
+ * @brief True when any schema in the chain had no saved blob at init, or one was reset for a blob it
+ * could not read, and no settings page message has landed since.
  *
- * That means storage was wiped by a fresh install or an update. It tells the phone to push its own
- * config back rather than the watch seeding from defaults. It clears once the settings page's
- * save or restore has landed and been saved.
+ * Either way some settings are on their defaults, after a fresh install, an update, or a blob this
+ * build cannot read. It tells the phone to push its own config back rather than the watch seeding
+ * from defaults. It clears once the settings page's save or restore has landed and been saved.
  */
 static bool s_was_fresh;
 /// Known fields indexed by id for typed reads, drawn from every schema in the chain

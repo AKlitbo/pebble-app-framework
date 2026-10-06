@@ -10,7 +10,7 @@
  *
  * What the seam still owns, because they are ours and not the RFC's:
  *
- * - the six day window and the sort, which are what the agenda draws
+ * - the window of today plus the next six days, and the sort, which are what the agenda draws
  * - a timed event with no stated end, which we give an hour so free/busy has a cell to shade
  * - the cap, so a feed with a busy rule cannot build a list nothing will read
  *

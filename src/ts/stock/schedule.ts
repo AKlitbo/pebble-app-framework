@@ -14,9 +14,10 @@ import { zoneParts } from '../pkjs/timezone';
 const ET_ZONE = 'America/New_York';
 
 const MINUTE_MS = 60 * 1000;
-// Twelve Data honours the watch's interval while the market is open floored so 4 symbols
-// stay under its 800/day cap (~384/day at 15 min). when the market is shut its price is
-// frozen so it drops to an occasional refresh that still catches the next open
+// Twelve Data honours the watch's interval while the market is open, floored at 15 minutes. when
+// the market is shut its price is frozen, so it drops to one poll every three hours, which still
+// catches the next open. a weekday tops out around 32 polls, 26 across the open session
+// and about 6 while shut, so 4 symbols spend about 128 of its 800 calls a day
 const TD_OPEN_FLOOR_MS = 15 * MINUTE_MS;
 const TD_CLOSED_FLOOR_MS = 3 * 60 * MINUTE_MS;
 // Alpha Vantage publishes the day's close at no fixed time after the 16:00 ET bell so once the

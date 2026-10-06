@@ -20,7 +20,8 @@
  */
 
 /// Most slots a single face can declare. Ten is the ceiling of the largest layout a face builds
-/// here, so the slot arrays hold no dead entries. A face wanting more zones bumps this
+/// here, so the slot arrays hold no dead entries. A face cannot raise it from its own build, so
+/// more slots means raising it here
 #define ENGINE_MAX_SLOTS 10
 
 /**

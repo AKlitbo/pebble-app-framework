@@ -66,14 +66,14 @@ void fmt_hundredths(char *buffer, size_t size, int value);
 void fmt_pct_signed(char *buffer, size_t size, int value);
 
 /**
- * @brief Copy bytes into a fixed buffer, taking what fits and always terminating.
+ * @brief Copy bytes into a fixed buffer, taking what fits and terminating it.
  *
  * For the length-prefixed text the phone sends, where the length is the phone's word and the room
  * is ours. What does not fit is dropped rather than written past the end.
  *
- * @param[out] dst Where to write. Always ends terminated.
- * @param cap How much room dst has, terminator included. Must be at least 1: a buffer with no room
- *   for even a terminator has nothing this can do with it.
+ * @param[out] dst Where to write. Ends terminated whenever cap is at least 1.
+ * @param cap How much room dst has, terminator included. A cap of 0 has no room even for the
+ *   terminator, so dst is left untouched and not terminated.
  * @param src The bytes to copy.
  * @param len How many bytes there are.
  */
