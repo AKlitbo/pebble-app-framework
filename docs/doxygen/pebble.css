@@ -387,6 +387,31 @@ table.memberdecls .mdescRight {
   color: var(--pb-ink-muted);
 }
 
+/* a named group of members, from @name in the source. Doxygen's own look gives it a fixed blue, a white
+   shadow either side that shows as a bar on the dark theme, and a light blue box round its text, so it
+   reads here as a small heading over its members with its text in the muted colour */
+div.groupHeader {
+  margin: 1.4rem 0 0.2rem;
+  box-shadow: none;
+  color: var(--pb-ink);
+  font-family: var(--pb-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+table.memberdecls td.ititle,
+table.memberdecls tr:not(:first-child) > td.ititle {
+  border: 0;
+  border-radius: 0;
+  padding-left: 0;
+}
+
+div.groupText {
+  margin-left: 0;
+  font-style: normal;
+  color: var(--pb-ink-muted);
+}
+
 dl.section > dt,
 dl.params > dt {
   font-family: var(--pb-mono);
