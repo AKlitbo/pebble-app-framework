@@ -2,7 +2,7 @@
 
 Everything that builds the framework's docs site, with a package of its own so a repo of faces never installs those tools.
 
-The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test suite, a home page that links into each of them, and pages for the changelog, the notices, and the licences. The README is not on the site, and the home page links it on GitHub. Main and each release tag publish it to [GitHub Pages](https://aklitbo.github.io/pebble-app-framework/), and a picker in the shared bar moves between the versions.
+The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test suite, a home page that links into each of them, pages on the `paf` command, and pages for the changelog, the notices, and the licences. The README is not on the site, and the home page links it on GitHub. Main and each release tag publish it to [GitHub Pages](https://aklitbo.github.io/pebble-app-framework/), and a picker in the shared bar moves between the versions.
 
 ## Layout
 
@@ -11,6 +11,7 @@ The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverag
 * **`doxygen/`**: the Doxygen theme in `pebble.css`, the header template, the main page, the logo and favicon, and the copied-in doxygen-awesome files under `awesome/`.
 * **`typedoc/`**: the look laid over TypeDoc's default theme.
 * **`site/`**: the site's own parts. `templates/` holds the home page, the shell every other page uses, the footer, the shared bar, and the theme toggle. `site.css`, `site-bar.css` and `coverage.css` are the stylesheets. `theme.js` is the light and dark switch every page loads, and `versions.js` fills the version picker.
+* **`paf/`**: the markdown for the pages on the `paf` command, one file per page.
 * **`tools/`**: `render.ts` turns the repo's markdown into html and `build-site.ts` writes the pages, then puts the shared bar on every page the other tools wrote.
 * **`site/dist/`**: the built site, which git ignores.
 

@@ -1,6 +1,6 @@
 # Pebble App Framework
 
-The shared framework for Pebble watchfaces and watchapps. It holds the watch C, the PebbleKit JS runtime and Clay pieces, the waf build helpers, the build tools, and opt-in plugins. Watchfaces and watchapps get it through [paf](https://github.com/AKlitbo/pebble-app-framework-cli).
+The shared framework for Pebble watchfaces and watchapps. It holds the watch C, the PebbleKit JS runtime and Clay pieces, the waf build helpers, the build tools, and opt-in plugins. Watchfaces and watchapps get it through [paf](https://github.com/AKlitbo/pebble-app-framework-cli), which the [paf pages](https://aklitbo.github.io/pebble-app-framework/main/paf/) on the docs site cover.
 
 > [!NOTE]
 > Built and tested with Pebble SDK 4.33.1 and pebble-tool 5.0.40, for emery and gabbro. A PebbleOS feature the SDK lacks, such as the newer vibe patterns, is not available to a face. A face built with another SDK may behave differently.
@@ -115,7 +115,7 @@ A face's generated output is checked in its own unit, by `paf check`.
 
 ### Docs
 
-Doxygen 1.18.0 or later builds the C docs from the doc comments in `src/c/` and the plugins. TypeDoc builds the TypeScript docs from the exported code in `src/ts/`, and both test suites write a coverage report. A small script then builds the home page, which links this README on GitHub, and a page each for the changelog, the notices, and the licences.
+Doxygen 1.18.0 or later builds the C docs from the doc comments in `src/c/` and the plugins. TypeDoc builds the TypeScript docs from the exported code in `src/ts/`, and both test suites write a coverage report. A small script then builds the home page, which links this README on GitHub, a page each for the changelog, the notices, and the licences, and the pages on `paf` from `docs/paf/`.
 
 To build it locally, run these from the repo root in this order. Doxygen, `make`, and gcovr need WSL or Linux.
 

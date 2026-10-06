@@ -3,8 +3,8 @@
  * Builds the docs site's own pages into docs/site/dist and puts the shared bar on every page.
  *
  * Doxygen, TypeDoc, and both coverage runs have already written their parts into dist by the time this
- * runs. This adds the home page, the changelog, the notices, and the licence pages around them, plus the
- * stylesheets, theme script, and logo they share. The README is not rendered. The home page links it on
+ * runs. This adds the home page, the changelog, the notices, the licence pages, and the paf pages around
+ * them, plus the stylesheets, theme script, and logo they share. The README is not rendered. The home page links it on
  * GitHub instead. Then it goes back through every page those tools wrote
  * and adds the shared bar, so each one has a way home and the same theme toggle. It never clears dist.
  *
@@ -17,6 +17,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
+  PAF_PAGES,
   PAGES,
   REPO_URL,
   addSiteBar,
@@ -27,6 +28,7 @@ import {
   readVitestSummary,
   renderLicenceText,
   renderMarkdown,
+  renderSectionNav,
   renderSiteBar,
   rootFor,
   SITE_NOTICES,
@@ -196,10 +198,23 @@ function footer(root: string): string {
   });
 }
 
-function page(relative: string, title: string, body: string): void {
+/** Where a page sits in the site: the section the bar marks, and the strip of links to the rest of it. */
+interface PagePlace {
+  section?: SiteSection;
+  nav?: string;
+}
+
+function page(relative: string, title: string, body: string, place: PagePlace = {}): void {
   const root = rootFor(relative);
 
-  write(relative, fillTemplate(template('page.html'), { root, title: escapeHtml(title), body, siteBar: siteBar(root, null), footer: footer(root) }));
+  write(relative, fillTemplate(template('page.html'), {
+    root,
+    title: escapeHtml(title),
+    sectionNav: place.nav ?? '',
+    body,
+    siteBar: siteBar(root, place.section ?? null),
+    footer: footer(root),
+  }));
 }
 
 // the home page, the cards into each part of the site with the README a link away on GitHub
@@ -244,6 +259,18 @@ page(`${PAGES.licence.folder}index.html`, PAGES.licence.title, `${renderLicenceT
 
 for (const licence of LICENCES) {
   page(`${licence.folder}index.html`, licence.title, renderLicenceText(read(licence.file)));
+}
+
+// the paf pages, each with the strip of links to the others and the CLI tab marked in the bar
+for (const pafPage of PAF_PAGES) {
+  const relative = `${pafPage.folder}index.html`;
+  const root = rootFor(relative);
+  const markdown = splitTitle(read(pafPage.file));
+
+  page(relative, markdown.title || pafPage.title, renderMarkdown(markdown.body, { root, commit, folder: path.posix.dirname(pafPage.file) }), {
+    section: 'paf',
+    nav: renderSectionNav(PAF_PAGES, pafPage, root),
+  });
 }
 
 for (const file of SHARED_FILES) {

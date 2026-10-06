@@ -2,7 +2,7 @@ name: Docs Site Publish
 
 # builds the docs site and publishes it to GitHub Pages
 # the site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverage report for each test
-# suite, and a home page that ties them together
+# suite, the pages on paf, and a home page that ties them together
 # every PR builds it too, so a change that breaks the docs or adds a Doxygen or TypeDoc warning fails
 # before it merges
 # main and each pushed release tag publish into a folder of their own on the gh-pages branch, main/ or one

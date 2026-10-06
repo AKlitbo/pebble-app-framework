@@ -4,7 +4,8 @@
  * Nobody reads the html this writes before it goes up, so a mistake here shows as a broken page on GitHub
  * Pages. The parts worth pinning are the ones that still produce a page that loads: a title printed twice,
  * a link or an image that 404s, an anchor that misses its heading, a coverage strip drawn from a bad
- * summary, a placeholder left in the page, and a rebuild that changes a page it should leave alone.
+ * summary, a placeholder left in the page, a section strip marking the wrong page, and a rebuild that
+ * changes a page it should leave alone.
  */
 import { describe, expect, test } from 'vitest';
 import {
@@ -14,6 +15,7 @@ import {
   readGcovrSummary,
   readVitestSummary,
   renderMarkdown,
+  renderSectionNav,
   renderSiteBar,
   rewriteImage,
   rewriteLink,
@@ -156,6 +158,13 @@ describe('rewriteLink', () => {
     const result = rewriteLink('LICENSE', { ...HOME, folder: 'src' });
 
     expect(result).toBe('licences/');
+  });
+
+  /** The paf pages link each other by file name so they read on GitHub, and on Pages that file name is a 404. */
+  test('sends a link between paf pages to the other page and its heading', () => {
+    const result = rewriteLink('workflows.md#generators', { root: '../../', commit: 'abc1234', folder: 'docs/paf' });
+
+    expect(result).toBe('../../paf/workflows/#generators');
   });
 
   /** A link that climbs out of the repo has no file on GitHub, and a blob URL with ../ in it is a dead link. */
@@ -381,6 +390,29 @@ describe('renderSiteBar', () => {
 
     expect(result).toContain('<a class="site-bar-home" href="../../index.html">Pebble App Framework</a>');
     expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-app-framework">GitHub</a>');
+  });
+});
+
+describe('renderSectionNav', () => {
+  const PAGES = [
+    { file: 'docs/paf/index.md', folder: 'paf/', title: 'paf' },
+    { file: 'docs/paf/units.md', folder: 'paf/units/', title: 'Units' },
+  ];
+
+  /** The strip is how a reader tells which of the section's pages they are on, so exactly one link may be marked. */
+  test('marks only the page it sits on', () => {
+    const result = renderSectionNav(PAGES, PAGES[1], '../../');
+
+    expect(result).toContain('<a href="../../paf/units/" aria-current="page">Units</a>');
+    expect(result.match(/aria-current/g)).toHaveLength(1);
+  });
+
+  /** The pages sit at different depths, so a link not climbing back to the root lands inside the page's own folder. */
+  test('links each page from the site root', () => {
+    const result = renderSectionNav(PAGES, PAGES[0], '../');
+
+    expect(result).toContain('<a href="../paf/" aria-current="page">paf</a>');
+    expect(result).toContain('<a href="../paf/units/">Units</a>');
   });
 });
 

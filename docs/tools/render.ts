@@ -1,9 +1,9 @@
 /**
  * Renders the pages of the docs site that come from files in the repo.
  *
- * The changelog, the notices, and the licences each get a page of their own. The README is left to
- * GitHub, so a link to it goes there. Everything here takes what it needs as arguments and hands back a
- * string, so build-site.ts is the only part that reads the disk, git, or the clock.
+ * The changelog, the notices, the licences, and the paf pages each get a page of their own. The README
+ * is left to GitHub, so a link to it goes there. Everything here takes what it needs as arguments and
+ * hands back a string, so build-site.ts is the only part that reads the disk, git, or the clock.
  */
 import path from 'node:path';
 import { Marked, type Token } from 'marked';
@@ -36,6 +36,18 @@ export const PAGES = {
 } satisfies Record<string, SitePage>;
 
 /**
+ * The pages on paf, the command a face repo builds with, in the order the strip at the top of each one
+ * lists them. The markdown sits in docs/paf/, where the pages link each other by file name.
+ */
+export const PAF_PAGES: readonly SitePage[] = [
+  { file: 'docs/paf/index.md', folder: 'paf/', title: 'paf' },
+  { file: 'docs/paf/units.md', folder: 'paf/units/', title: 'Units' },
+  { file: 'docs/paf/commands.md', folder: 'paf/commands/', title: 'Commands' },
+  { file: 'docs/paf/workflows.md', folder: 'paf/workflows/', title: 'Workflows' },
+  { file: 'docs/paf/troubleshooting.md', folder: 'paf/troubleshooting/', title: 'Troubleshooting' },
+];
+
+/**
  * The notices for what only the docs site uses. The notices page shows them after the ones that ship
  * with the framework, which src/NOTICES.md holds.
  */
@@ -45,7 +57,7 @@ export const SITE_NOTICES = 'NOTICES.md';
 // src/LICENSE is the copy that ships with the framework, and the root one covers the whole repo, so
 // its page stands in for both. the root NOTICES.md is the second half of the notices page
 const SITE_PAGES = new Map<string, string>([
-  ...Object.values(PAGES).map((page): [string, string] => [page.file, page.folder]),
+  ...[...Object.values(PAGES), ...PAF_PAGES].map((page): [string, string] => [page.file, page.folder]),
   ['src/LICENSE', PAGES.licence.folder],
   [SITE_NOTICES, PAGES.notices.folder],
 ]);
@@ -368,7 +380,26 @@ export function fillTemplate(template: string, values: Record<string, string>): 
 }
 
 /** A part of the site the shared bar links to, or null for a page that is none of them. */
-export type SiteSection = 'c' | 'ts' | 'coverage-c' | 'coverage-ts' | null;
+export type SiteSection = 'c' | 'ts' | 'paf' | 'coverage-c' | 'coverage-ts' | null;
+
+/**
+ * The strip of links across the top of a page in a section of several pages, such as the paf pages, with
+ * the page being shown marked so it stands out and reads as the current one.
+ *
+ * @param pages The section's pages, in the order the strip lists them.
+ * @param current The page the strip sits on.
+ * @param root The way back up to the site root from that page.
+ * @return The strip's html.
+ */
+export function renderSectionNav(pages: readonly SitePage[], current: SitePage, root: string): string {
+  const links = pages.map((page) => {
+    const mark = page.folder === current.folder ? ' aria-current="page"' : '';
+
+    return `<li><a href="${root}${page.folder}"${mark}>${escapeHtml(page.title)}</a></li>`;
+  });
+
+  return `<nav class="section-nav" aria-label="Pages in this section">\n<ul>\n${links.join('\n')}\n</ul>\n</nav>`;
+}
 
 /**
  * Works out the way back up to the site root from a page.

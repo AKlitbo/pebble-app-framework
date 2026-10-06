@@ -1,4 +1,4 @@
-/* The docs site. The home page, the changelog, the notices, and the licence pages.
+/* The docs site. The home page, the changelog, the notices, the licence pages, and the paf pages.
  *
  * The palette and fonts are the ones in docs/doxygen/pebble.css and docs/typedoc/pebble.css, so the three
  * parts of the site read as one. A palette change lands in all three.
@@ -161,6 +161,11 @@ body {
   gap: 26px 28px;
 }
 
+/* a row holding one card that runs the full width, such as paf at the top of the home page */
+.cards.cards-wide {
+  grid-template-columns: 1fr;
+}
+
 @media (max-width: 640px) {
   .cards {
     grid-template-columns: 1fr;
@@ -292,7 +297,7 @@ body {
 
 /* ---------------------------------------------------------------- rendered markdown */
 
-/* the changelog, the notices, and the licences, which run the full width of the page like the footer under them */
+/* the changelog, the notices, the licences, and the paf pages, which run the full width of the page like the footer under them */
 .readme > :first-child {
   margin-top: 0;
 }
@@ -313,7 +318,8 @@ body {
   margin: 0 0 14px;
 }
 
-.readme ul {
+.readme ul,
+.readme ol {
   margin: 0 0 14px;
   padding-left: 20px;
 }
@@ -364,6 +370,29 @@ body {
   font-size: 13px;
 }
 
+/* tables stay narrow, since a page has no way to scroll one sideways */
+.readme table {
+  border-collapse: collapse;
+  margin: 0 0 16px;
+  width: 100%;
+}
+
+.readme th,
+.readme td {
+  border: 1px solid var(--rule);
+  padding: 6px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.readme th {
+  font: 600 12px/1.4 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background: var(--paper-raised);
+}
+
 /* ---------------------------------------------------------------- other pages */
 
 .page h1 {
@@ -371,6 +400,39 @@ body {
   font: 600 clamp(24px, 4vw, 32px)/1.15 var(--mono);
   letter-spacing: -0.02em;
   text-wrap: balance;
+}
+
+/* the strip of links to the other pages in a section, such as the paf pages. it wraps on a phone */
+.section-nav {
+  margin: -8px 0 32px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section-nav a {
+  font: 500 13px/1.6 var(--mono);
+  color: var(--ink-muted);
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+.section-nav a:hover {
+  color: var(--signal-hover);
+}
+
+.section-nav a[aria-current='page'] {
+  color: var(--signal);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 /* ---------------------------------------------------------------- footer */
