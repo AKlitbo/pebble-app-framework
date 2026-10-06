@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fonts · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li class="current"><a href="../../how/fonts/" aria-current="page">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Fonts</h1>
+          
+          <div class="readme"><p>The font registry gives every font a face uses a small number, its slot, and hands back the loaded font for that number anywhere in the face. A face loads its fonts once at startup, and from then on its layout tables, its drawing code, and the framework&#39;s own text fitting all ask for a font by slot. It also keeps track of which fonts the face loaded and which belong to the watch, frees each loaded one exactly once on the way out, and falls back to a built-in font rather than crashing when a slot is empty.</p>
+<p>It lives in <a href="../../c/fonts_8h.html"><code>fonts.h</code></a> and <a href="../../c/fonts_8c.html"><code>fonts.c</code></a> under <code>src/c/pebble/ui/</code>.</p>
+<h2 id="why-a-number-rather-than-the-font">Why a Number Rather than the Font</h2>
+<p>A loaded font is a <code>GFont</code>, a pointer the watch only hands over once the font is loaded at runtime. A table written in the source cannot hold one, so a face that kept <code>GFont</code>s in its layout would have to build that layout in code at startup.</p>
+<p>A slot number is known when the face is compiled. So the zones that describe where each piece of text goes can be a <code>static const</code> table, with the fonts named by slot, and the registry turns the slot into the real font when the text is drawn:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">enum</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    FONT_CLOCK</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    FONT_CLOCK_SMALL</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    FONT_LABEL</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    FONT_COUNT</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-foreground)"> Zone s_zones</span><span style="color:var(--code-token-keyword)">[]</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    [ZONE_TIME] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {.rect </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> TIME_RECT</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .font_id </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FONT_CLOCK</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .align </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> GTextAlignmentCenter</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">                   .color </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> GColorWhite</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">                   .font_id_fallback </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FONT_CLOCK_SMALL</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .rect_fallback </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> TIME_RECT_SMALL}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p><code>font_id_fallback</code> names the smaller font the engine steps down to when the time does not fit, as <a href="../../how/engine/#text-that-fits-its-slot">The Engine</a> covers.</p>
+<p>The face owns the numbering and what each slot means. The registry treats a slot as a plain index into a fixed table of 24, and a face with more fonts than that needs <code>FONT_SLOTS_MAX</code> raised in the framework. A face can check its own count against that cap with a <code>_Static_assert</code>, so going over fails the build. Without one, the registry turns the extra slots away with a log line at runtime, and their text draws in the fallback font.</p>
+<h2 id="loading-at-startup">Loading at Startup</h2>
+<p>A face registers each font once, before the engine builds its screen:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> load_fonts</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fonts_register(FONT_CLOCK</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">        fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CLOCK_48)))</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fonts_register(FONT_CLOCK_SMALL</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">        fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CLOCK_36)))</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fonts_register_system(FONT_LABEL</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> fonts_get_system_font(FONT_KEY_GOTHIC_14))</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>On the way out, one call to <code>fonts_unload_all</code> frees every font the face loaded.</p>
+<p><strong>Custom Fonts and System Fonts.</strong> The two register calls differ in who owns the font. <code>fonts_register</code> is for a font the face loaded itself, which the face has to free. <code>fonts_register_system</code> is for one of the watch&#39;s built-in fonts, which the firmware owns. Freeing one of those is a fault when the app closes. So the registry remembers which is which, and <code>fonts_unload_all</code> skips the built-in ones.</p>
+<p><strong>One Font in Several Slots.</strong> A face can register the same loaded font under more than one slot, such as a fallback tier that reuses the main font at the same size. <code>fonts_unload_all</code> frees it once and clears every slot holding it, so the second slot never frees it again.</p>
+<p><strong>A Missing Font.</strong> <code>fonts_get</code> hands back Gothic 24, one of the watch&#39;s built-in fonts, for a slot with nothing in it. That covers a slot the face forgot to register and a font that failed to load, since <code>fonts_load_custom_font</code> gives back NULL then and the slot reads as empty. The text still draws, only in the wrong typeface, and the registry logs the miss once per slot rather than on every redraw. A face that loads many fonts can check each load and log its own message too, because the wrong typeface on one line is easy to miss on the screen.</p>
+<h2 id="swapping-a-font-while-running">Swapping a Font While Running</h2>
+<p>A face that lets the wearer pick a font loads the new one when the setting changes. Registering into a slot that already holds a font overwrites it without freeing the old one, so the face keeps its own handle and frees the old font first:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-foreground)"> GFont s_header_font;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> apply_header_font</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">uint32_t</span><span style="color:var(--code-foreground)"> resource)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (s_header_font)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-function)">        fonts_unload_custom_font(s_header_font)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">    s_header_font </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> fonts_load_custom_font(resource_get_handle(resource))</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fonts_register(FONT_HEADER</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> s_header_font)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The registry never frees on an overwrite. The same font can sit in another slot too, and only the face knows whether the old one is still in use.</p>
+<p>The new font is in the slot straight away, and anything that looks the slot up while drawing gets it. A <code>TextLayer</code> is different. It keeps the font it was last fitted with, which is now the freed one, so the face calls <code>engine_rebuild</code> after the swap to make its text layers again. It does that anyway after any settings save (see <a href="../../how/engine/">The Engine</a>).</p>
+<h2 id="what-a-font-costs">What a Font Costs</h2>
+<p><strong>Built-in Fonts.</strong> The watch&#39;s own fonts, Gothic, Bitham, Roboto, and the rest, are part of the firmware. Using one adds nothing to the app and takes nothing from its heap. They come in a fixed set of sizes, though, and none of them is any particular face&#39;s look.</p>
+<p><strong>Custom Fonts.</strong> A custom font starts as a TrueType file listed in the face&#39;s resources at one pixel size. The SDK turns it into a bitmap font at build time, so every size a face uses is its own resource, and a face that shows a clock at four sizes ships four fonts. Each one takes room in the app&#39;s resources, and loading it takes room on the heap the face shares with its pictures and layers.</p>
+<p><strong>Only the Characters It Names.</strong> A font resource can carry a <code>characterRegex</code> that lists the characters to build, and only those are put in the font:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "type"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "font"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "name"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "FONT_CLOCK_48"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "file"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "fonts/Clock.ttf"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "characterRegex"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "[0-9:@]"</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>A large clock font that only ever shows digits, a colon, and the <code>@</code> of a .beats reading is a small fraction of the whole alphabet, which is what makes big sizes affordable. The cost is that any character outside the list draws as a box. The date readout upper-cases its text, so a font cut down to capitals still holds every letter of <code>THU 18 JUN</code>. A smaller fallback font in a zone has to carry the same characters as the main one, or the text that only fits in the fallback draws as boxes. The SDK does not always notice a changed <code>characterRegex</code> on an ordinary build, so a face that changes one builds again from clean.</p>
+<p>The engine cuts an over-long string by bytes rather than characters, and the cut-down fonts are why that is safe. A character past plain ASCII takes more than one byte, and a font that carries only what a face shows does not have it, so it draws as a box whether the cut went through the middle of it or not.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/readouts/"><span>Previous</span>Readouts</a>
+<a class="page-step page-step-next" rel="next" href="../../how/icons/"><span>Next</span>Icons</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

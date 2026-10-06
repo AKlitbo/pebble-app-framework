@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fitting Text · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li class="current"><a href="../../how/fitting-text/" aria-current="page">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Fitting Text</h1>
+          
+          <div class="readme"><p>Every string a face shows sits in a fixed <code>char</code> array, and much of that text comes from somewhere the watch does not control: the settings page, a weather provider, a calendar. A string one byte too long for its array writes over whatever sits next to it, and on the watch that shows up as a crash or as garbage on screen with nothing in the log. The text helpers make every copy fit and stay terminated, tell whether a copy would change anything, print the numbers the watch&#39;s own <code>snprintf</code> cannot, and put a date into capitals for fonts that only carry capitals. Fitting text to a slot&#39;s width in pixels is the engine&#39;s job, covered in <a href="../../how/engine/#text-that-fits-its-slot">The Engine</a>.</p>
+<p>They live under <code>src/c/core/text/</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>), in <a href="../../c/cstring__fit_8h.html"><code>cstring_fit.h</code></a>, <a href="../../c/number__format_8h.html"><code>number_format.h</code></a> and <a href="../../c/number__format_8c.html"><code>number_format.c</code></a>, and <a href="../../c/text__case_8h.html"><code>text_case.h</code></a> and <a href="../../c/text__case_8c.html"><code>text_case.c</code></a>.</p>
+<h2 id="copying-into-a-fixed-buffer">Copying into a Fixed Buffer</h2>
+<p><code>cstring_fit</code> is the copy the framework uses for text it keeps, from settings to the weather&#39;s condition text:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> inline</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> cstring_fit</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">dst</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">src</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> size_t</span><span style="color:var(--code-foreground)"> size)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (size </span><span style="color:var(--code-token-keyword)">==</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">!</span><span style="color:var(--code-foreground)">src)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">        dst[</span><span style="color:var(--code-token-constant)">0</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> '\0'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">    strncpy(dst</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> src</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> size </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    dst[size </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> '\0'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>strncpy</code> on its own leaves a string that fills the buffer with no terminator, and the next <code>strlen</code> walks off the end looking for one. Copying one byte less than the room and writing the terminator into the last byte means the result is always a string, whatever came in. A <code>NULL</code> source empties the buffer rather than crashing, so a text setting with no default starts out empty.</p>
+<p><strong>Cut by Bytes.</strong> The cut counts bytes, not characters, so a character past ASCII that takes two or three bytes can be split at the end. The framework leaves that alone. A face&#39;s fonts carry only the characters it shows (see <a href="../../how/fonts/">Fonts</a>), so a character past ASCII draws as a box whether it arrives whole or split, and walking back to the start of the character would cost code for nothing.</p>
+<p><strong>Text with Its Length in Front.</strong> Calendar titles and places, and stock symbols, arrive in packed messages where the phone writes a length byte before each string (see <a href="../../how/message-formats/">Message Formats</a>). <code>copy_bounded</code> takes that length as the phone&#39;s word and the room as the watch&#39;s, copies whichever is smaller, and terminates. A buffer with no room at all is left alone, since one less than no room wraps round to 255 in an 8-bit count and would copy a quarter of a kilobyte over whatever follows.</p>
+<h2 id="telling-whether-a-copy-changes-anything">Telling Whether a Copy Changes Anything</h2>
+<p>The settings page sends every setting on every save, so the watch has to tell a real change from the same value sent again. For text, <code>cstring_fit_same</code> answers that by measuring the incoming string the way <code>cstring_fit</code> would cut it:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">size_t</span><span style="color:var(--code-foreground)"> room </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> size </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">size_t</span><span style="color:var(--code-foreground)"> incoming </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> strlen</span><span style="color:var(--code-foreground)">(value);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (incoming </span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-foreground)"> room)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    incoming </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> room;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-token-function)"> strlen</span><span style="color:var(--code-foreground)">(current) </span><span style="color:var(--code-token-keyword)">==</span><span style="color:var(--code-foreground)"> incoming </span><span style="color:var(--code-token-keyword)">&#x26;&#x26;</span><span style="color:var(--code-token-function)"> strncmp</span><span style="color:var(--code-foreground)">(current</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> value</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> incoming) </span><span style="color:var(--code-token-keyword)">==</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
+<p>Comparing the whole incoming string would count an over-long value as a change on every save, as <a href="../../how/settings-on-the-watch/#taking-values-from-the-phone">Settings on the Watch</a> shows with a long date format.</p>
+<p><strong>On the Screen.</strong> The engine keeps the last text each slot drew, and compares the new text with it on every repaint before copying it in. Most slots show the same string from one minute to the next, such as the date all day, so the fit to the slot&#39;s width and the relayout only run when the text really changed (see <a href="../../how/engine/">The Engine</a>).</p>
+<h2 id="printing-numbers">Printing Numbers</h2>
+<p>The watch has its own <code>snprintf</code>, built without floating point support, so a face cannot print a decimal with <code>%f</code>. A number with a decimal point rides as a whole number instead, and these helpers put the point in. They go through <code>snprintf</code> or <code>cstring_fit</code> at the end, so a buffer too small for the number gets a cut, terminated string rather than an overrun.</p>
+<p><strong>Thousands.</strong> <code>number_group</code> puts an apostrophe between each group of three digits, Swiss style, so 20358 steps reads <code>20&#39;358</code>. A negative number keeps its minus.</p>
+<p><strong>No Reading Yet.</strong> The readouts share one marker for &quot;nothing yet&quot;, a negative number. <code>fmt_int_or_dash</code> turns it into <code>--</code> and prints anything else through the format it is given:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> humidity_text</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> size_t</span><span style="color:var(--code-foreground)"> n)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fmt_int_or_dash(out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> n</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> weather_store_humidity()</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "</span><span style="color:var(--code-token-constant)">%d%%</span><span style="color:var(--code-token-string-expression)">"</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span><span style="color:var(--code-token-comment)">  // "64%", or "--"</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The marker prints as <code>--</code> alone, not <code>--%</code>, since the format is never used for it.</p>
+<p><strong>Prices in Hundredths.</strong> The phone sends a price as whole hundredths, so 261.74 arrives as 26174 and never passes through a float. <code>fmt_hundredths</code> writes the sign out front on its own, then the whole part and the hundredths from the size of the number:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">sign </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> value </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-token-keyword)"> ?</span><span style="color:var(--code-token-string-expression)"> "-"</span><span style="color:var(--code-token-keyword)"> :</span><span style="color:var(--code-token-string-expression)"> ""</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">unsigned</span><span style="color:var(--code-token-keyword)"> int</span><span style="color:var(--code-foreground)"> magnitude </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> magnitude_of</span><span style="color:var(--code-foreground)">(value);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">snprintf</span><span style="color:var(--code-foreground)">(buffer</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> size</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "</span><span style="color:var(--code-token-constant)">%s%u</span><span style="color:var(--code-token-string-expression)">.</span><span style="color:var(--code-token-constant)">%02u</span><span style="color:var(--code-token-string-expression)">"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> sign</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> magnitude </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> magnitude </span><span style="color:var(--code-token-keyword)">%</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p>The obvious <code>&quot;%d.%02d&quot;</code> with <code>value / 100</code> and <code>value % 100</code> breaks on anything between -1 and 0. For -50 the whole part is 0, which carries no sign, and the remainder is -50, so it prints <code>0.-50</code>. Taking the sign out first gives <code>-0.50</code>. The size is worked out in unsigned maths, so even the most negative number an <code>int</code> holds prints correctly, which matters for a value that comes straight off the phone.</p>
+<p><code>fmt_pct_signed</code> does the same for a percent change and adds a plus for a gain, so 125 reads <code>+1.25%</code>, -7 reads <code>-0.07%</code>, and 0 reads <code>0.00%</code> with no sign at all. The plus lets the direction read even where the face does not colour it.</p>
+<h2 id="capital-letters">Capital Letters</h2>
+<p><code>text_to_upper</code> capitalizes a string in place, <code>a</code> to <code>z</code> only. Every date the framework&#39;s date readout builds goes through it after <code>strftime</code>, which writes month and day names such as <code>Thu</code> and <code>Jun</code> in mixed case. Face fonts are often cut down to capitals, digits, and a little punctuation, and a lowercase letter the font does not carry draws as a box. Anything past ASCII is left as it is.</p>
+<h2 id="checking-saved-text">Checking Saved Text</h2>
+<p><code>cstring_is_clean</code> and <code>cstring_setting_is_clean</code> check a saved string before the face sees it: it has to end inside its room, hold no control bytes, and say something unless its default is empty. <a href="../../how/settings-on-the-watch/#cleaning-each-value">Settings on the Watch</a> covers the rules and what happens to a string that fails.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/layout-strings/"><span>Previous</span>Layout Strings</a>
+<a class="page-step page-step-next" rel="next" href="../../how/numbers-and-units/"><span>Next</span>Numbers and Units</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

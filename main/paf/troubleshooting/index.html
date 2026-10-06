@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Troubleshooting · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" aria-current="location" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Troubleshooting</h1>
+          <nav class="section-nav" aria-label="Pages in this section">
+<ul>
+<li><a href="../../paf/">paf</a></li>
+<li><a href="../../paf/units/">Units</a></li>
+<li><a href="../../paf/commands/">Commands</a></li>
+<li><a href="../../paf/workflows/">Workflows</a></li>
+<li><a href="../../paf/troubleshooting/" aria-current="page">Troubleshooting</a></li>
+</ul>
+</nav>
+          <div class="readme"><p>Start with <code>paf doctor</code>. It checks git, Node, the pins, every unit&#39;s layout, the SDK, and the workflows in one go, and names what to fix. <code>paf status</code> then shows where each unit stands.</p>
+<p>Every message below is quoted as <code>paf</code> prints it, with the unit and face names from an example repo. A command that stops prints its message after <code>paf:</code>. One that runs over several units prints each unit&#39;s problem after the unit&#39;s name, then a closing line such as <code>sync failed in watchfaces/mosaic</code>.</p>
+<h2 id="the-tag-moved">The Tag Moved</h2>
+<pre><code>watchfaces/mosaic: v4.0.0 now points at &lt;new commit&gt;, but mosaic/paf.config.json recorded &lt;old commit&gt;. If the move is expected, run paf pin mosaic v4.0.0 to take it</code></pre>
+<p>The framework tag the unit pins was moved to another commit after the unit recorded it. <code>paf</code> stops rather than quietly build against a framework nobody chose. If the move is expected, run the <code>paf pin</code> it names, which records the new commit. Then commit <code>paf.config.json</code>.</p>
+<h2 id="a-framework-3-pin">A Framework 3 Pin</h2>
+<pre><code>watchfaces/mosaic: mosaic/paf.config.json pins v3.0.0, which is framework 3 and needs paf 1.0.0. This paf fills framework 4, so move the unit to a framework 4 tag with paf pin</code></pre>
+<p><code>paf</code> 2.0.0 only fills framework 4. Move the unit with <code>paf pin mosaic latest</code> once its faces are ready for framework 4, or keep <code>paf</code> 1.0.0 for it until then.</p>
+<p><code>paf pin</code> refuses a framework 3 tag the same way, and lists the framework 4 tags it would take.</p>
+<h2 id="node_modules-from-the-other-system">node_modules from the Other System</h2>
+<pre><code>paf: watchfaces/mosaic/node_modules was installed from linux, and its native packages only run there. Run paf sync --force to reinstall it for win32, which breaks it for the other one</code></pre>
+<p>The unit was installed from WSL and this command ran on Windows, or the other way round. Run <code>paf sync --force</code> on the system you want to use. See <a href="../../paf/workflows/#switching-between-wsl-and-windows">Switching between WSL and Windows</a>.</p>
+<h2 id="the-workspaces-are-missing">The Workspaces Are Missing</h2>
+<pre><code>paf: watchfaces/mosaic/package.json does not list paf/plugins/* in its workspaces, so npm never installs the plugins&#39; packages. Make it &quot;workspaces&quot;: [&quot;paf&quot;, &quot;paf/plugins/*&quot;]</code></pre>
+<pre><code>paf: watchfaces/mosaic has no package.json, so npm would install into the folder above it. Give it one with &quot;workspaces&quot;: [&quot;paf&quot;, &quot;paf/plugins/*&quot;]</code></pre>
+<p>Every unit needs its own <code>package.json</code> listing both workspaces. See <a href="../../paf/units/#packagejson">package.json</a>.</p>
+<h2 id="a-paf-that-paf-did-not-fill">A paf/ That paf Did Not Fill</h2>
+<pre><code>paf: /work/pebble-watchfaces/watchfaces/mosaic/paf holds a framework paf did not put there. Remove it first, with git rm paf for a submodule</code></pre>
+<p><code>paf/</code> already holds files <code>paf</code> has no record of filling, such as a framework mounted there by hand as a git submodule. It could hold uncommitted work, so <code>paf</code> leaves it for you to remove. Run <code>git rm paf</code> in the unit for a submodule, or move the folder away, then sync.</p>
+<h2 id="paf-sync---locked-refuses">paf sync --locked Refuses</h2>
+<p><code>--locked</code> never writes <code>paf.config.json</code> or the lock, so anything it would have to write stops it instead.</p>
+<pre><code>watchfaces/mosaic: watchfaces/mosaic has no package-lock.json, and --locked writes none</code></pre>
+<p>Run <code>paf sync</code> once without <code>--locked</code> and commit the lock it writes.</p>
+<pre><code>watchfaces/mosaic: mosaic/paf.config.json records no commit for v4.0.0, and --locked writes none. Run paf pin mosaic v4.0.0</code></pre>
+<p>Run the <code>paf pin</code> it names and commit <code>paf.config.json</code>.</p>
+<pre><code>pebble-watchface-lcars: ./paf is on the local framework at /home/me/src/pebble-app-framework, not its pinned tag. Run paf use pebble-watchface-lcars pinned first</code></pre>
+<p>The unit is on a local framework from <code>paf use</code>. Put it back with <code>paf use &lt;unit&gt; pinned</code>.</p>
+<p>When <code>npm ci</code> itself fails, the lock is out of step with a <code>package.json</code>. Run <code>paf sync</code> without <code>--locked</code>, then commit the updated <code>package-lock.json</code>.</p>
+<h2 id="a-plugin-is-missing">A Plugin Is Missing</h2>
+<pre><code>paf: the unit lists the plugin frames, which v4.0.0 does not have. It has code-style, dev, frame, icons, and thumbnails</code></pre>
+<p>The unit lists a plugin the tag does not have, or misspells one. Fix the name under <code>plugins</code>, or move to a tag that has it.</p>
+<pre><code>paf: no generator called background. The frame plugin offers it, so list it under plugins in paf.config.json and run paf sync</code></pre>
+<p>The generator or tool comes from a plugin the unit does not list. Add it under <code>plugins</code> and run <code>paf sync</code>. See <a href="../../paf/workflows/#adding-a-plugin">Adding a Plugin</a>.</p>
+<h2 id="the-wrong-node">The Wrong Node</h2>
+<pre><code>watchfaces/mosaic: paf/package.json asks for Node ^22.18.0 || &gt;=24.2.0, and this is 23.1.0. Outside it a tool can stop partway, or stop before it starts, so run paf from a Node inside it</code></pre>
+<p>The framework&#39;s tools only run inside the Node range its <code>package.json</code> names. Switch to a Node inside it, such as the newest 24. <code>paf</code> itself runs on Node 23, so <code>sync</code>, <code>status</code>, and <code>pin</code> still work there.</p>
+<h2 id="an-appinfo-left-in-config">An Appinfo Left in config/</h2>
+<pre><code>paf: watchfaces/mosaic/gridlock/config/pebble.appinfo.json is where framework 3 keeps an appinfo. Move each up a folder, beside the face&#39;s src/, since framework 4 finds a face by the pebble.appinfo.json at its own root</code></pre>
+<p>Framework 4 finds a face by the <code>pebble.appinfo.json</code> at its own root. Move each one named up a folder.</p>
+<h2 id="files-left-from-paf-100">Files Left from paf 1.0.0</h2>
+<pre><code>paf: watchfaces/mosaic still has a paf.json, which paf 1.0.0 reads. This paf reads paf.config.json. Move each unit by hand, then delete its paf.json</code></pre>
+<p><code>paf</code> 2.0.0 reads <code>paf.config.json</code> instead. Move the settings across by hand, then delete <code>paf.json</code>. Every command stops until each one is gone, so a repo half moved never syncs some units and not others.</p>
+<p><code>paf doctor</code> also finds a <code>lib/</code> that <code>paf</code> 1.0.0 filled:</p>
+<pre><code>problem  watchfaces/mosaic/lib is left from paf 1.0.0, which filled it. Delete it, since paf 2.0.0 fills paf/</code></pre>
+<h2 id="workflows-on-an-older-framework">Workflows on an Older Framework</h2>
+<pre><code>problem  .github/workflows/ci.yml loads the framework&#39;s actions at v3.0.0, older than v4.0.0. Move them to @v4.0.0</code></pre>
+<p>A workflow loads the framework&#39;s actions, such as <code>setup-pebble</code>, at a tag older than the newest one a unit pins. Move each <code>@</code> to the tag <code>paf doctor</code> names.</p>
+<h2 id="an-older-sdk">An Older SDK</h2>
+<pre><code>behind   SDK 4.32.0 is older than 4.33.1, which v4.0.0 was built with (mosaic)</code></pre>
+<p>The SDK <code>pebble</code> reports is older than the one the framework tag was built and tested with. Install the SDK it names with <code>pebble sdk install</code>. A newer SDK is only a <code>note</code>.</p>
+<h2 id="names-that-clash">Names That Clash</h2>
+<pre><code>paf: two units are named mosaic, at watchfaces/mosaic and watchapps/mosaic. Rename one of the folders</code></pre>
+<pre><code>paf: two faces are named gridlock, in watchfaces/mosaic and watchfaces/gridlock. A face&#39;s name has to be unique in the repo</code></pre>
+<p>Commands take a unit or a face by name alone, so every name has to point at one place. Rename one of the folders, or the <code>name</code> in a face&#39;s appinfo.</p>
+<h2 id="nothing-found">Nothing Found</h2>
+<pre><code>paf: this is not inside a git repo. Run paf from a face repo</code></pre>
+<p><code>paf</code> works on the git repo it runs inside. Change into the face repo first.</p>
+<pre><code>paf: no units here. A unit is a folder with a paf.config.json holding { &quot;framework&quot;: &quot;&lt;tag&gt;&quot; }, at the repo root or under watchfaces/ or watchapps/</code></pre>
+<p>The repo has no <code>paf.config.json</code> where <code>paf</code> looks. See <a href="../../paf/units/#where-units-sit">Where Units Sit</a>.</p>
+<pre><code>paf: no unit or face called gridlok. Run paf status for the units here</code></pre>
+<p>The name is misspelled, or the face is in a unit whose appinfo could not be read, which the message then names. <code>paf status</code> lists every unit and face.</p>
+<h2 id="typescript-not-found">TypeScript Not Found</h2>
+<pre><code>watchfaces/mosaic has no typescript installed. Delete its node_modules and run paf sync mosaic</code></pre>
+<p><code>paf typecheck</code> runs the TypeScript the unit installed, and found none inside the unit. Do what the message says.</p>
+<h2 id="a-paf-too-old-for-the-framework">A paf Too Old for the Framework</h2>
+<pre><code>paf: toolchain.json is format 2, which this paf does not read. Update paf</code></pre>
+<p>The framework tag is newer than this <code>paf</code> understands. Install the latest <code>paf</code> release, as under <a href="../../paf/#install">Install</a>.</p>
+</div>
+          
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

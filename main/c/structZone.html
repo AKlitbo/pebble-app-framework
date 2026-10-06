@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -193,7 +195,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('structZone.htm
 </div><!--header-->
 <div class="contents">
 
-<p>Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to two smaller font and rect tiers to step down to when the text would overflow.  
+<p>Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to three smaller font and rect tiers to step down to when the text would overflow.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="zone_8h_source.html">zone.h</a>&gt;</code></p>
@@ -232,7 +234,7 @@ GRect&#160;</td><td class="memItemRight"><b>rect_fallback3</b></td></tr>
 <tr class="memdesc:a9991f1fe88fcf46da0b4e4e1fbdc8aab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Area for the third smaller font. Leave it zero-sized to skip this step. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to two smaller font and rect tiers to step down to when the text would overflow. </p>
+<div class="textblock"><p>Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to three smaller font and rect tiers to step down to when the text would overflow. </p>
 <p>A face declares a static const table of these, and the engine loops it to build the text layers. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/c/pebble/ui/<a class="el" href="zone_8h_source.html">zone.h</a></li>

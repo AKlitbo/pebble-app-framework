@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Weather Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li class="current"><a href="../../how/weather-store/" aria-current="page">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Weather Store</h1>
+          
+          <div class="readme"><p>The weather store keeps the latest weather on the watch, asks the phone for more on the face&#39;s schedule, and saves the last good reading to flash. A face starts it once, subscribes its redraw, and reads the readings back. The polling, the saved copy, and the skipped writes are shared with the other stores and covered in <a href="../../how/stores/">How the Stores Work</a>, and the rules for turning a message into a reading are on <a href="../../how/weather-readings/">Weather Readings</a>. This page covers what is the weather store&#39;s own.</p>
+<p>It lives in <a href="../../c/weather__store_8h.html"><code>weather_store.h</code></a> and <a href="../../c/weather__store_8c.html"><code>weather_store.c</code></a> under <code>src/c/pebble/io/stores/</code>.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">weather_store_init</span><span style="color:var(--code-foreground)">((WeatherConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .poll_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> WEATHER_POLL_MIN</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">                                   .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> WEATHER_STORE_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span></code></pre>
+<p><code>WEATHER_SEED_EMPTY</code> starts every field at its no-data value, so a seed for screenshots sets only what it shows:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">WeatherSeed seed </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> WEATHER_SEED_EMPTY;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">seed.temp </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 23</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">seed.cond </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "CLEAR"</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_init</span><span style="color:var(--code-foreground)">((WeatherConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">seed);</span></span></code></pre>
+<h2 id="from-launch-to-the-first-reading">From Launch to the First Reading</h2>
+<pre class="mermaid">sequenceDiagram
+  participant Face
+  participant Store as Weather Store
+  participant Flash
+  participant Phone as Phone Code
+  Face-&gt;&gt;Store: weather_store_init
+  Store-&gt;&gt;Flash: read the last reading
+  Flash--&gt;&gt;Store: the reading, if its size and tag match
+  Note over Store: 500 ms later
+  Store-&gt;&gt;Phone: ask for the weather
+  loop every 3 s, up to 8 times, until the phone answers
+    Store-&gt;&gt;Phone: ask again
+  end
+  Phone--&gt;&gt;Store: one weather message
+  Store-&gt;&gt;Store: weather_reading_apply
+  Store-&gt;&gt;Face: redraw, once for the whole message
+  Store-&gt;&gt;Flash: save, if the reading changed</pre>
+<p><strong>Asking While the Phone Starts.</strong> On a cold launch the phone&#39;s PebbleKit JS can take several seconds to come up, and a request that arrives before it is ready is lost. So until the phone answers, the store asks again every 3 seconds, up to 8 times. It stops as soon as any answer arrives, a failed fetch included, since asking again would only start the same failing fetch on the phone. A store that restored a reading from flash stops after the first ask, since it already has something to show and the phone fetches weather on its own once its code starts.</p>
+<h2 id="one-redraw-and-one-save-per-message">One Redraw and One Save per Message</h2>
+<p>A unit change can arrive in the same message as the weather. The store&#39;s handlers never redraw or save themselves. They only mark the store as changed, and once the whole message is handled the AppMessage layer runs the store&#39;s <code>inbox_done</code>, which redraws once and saves once. A panel built from several readings, such as one that follows the sunset, never shows the new temperature beside the old sun times, and flash gets at most one write per message.</p>
+<p><strong>A Failed Write Tries Again.</strong> If the write does not land, the store stays marked as changed, so the next message tries again whatever it brings rather than leaving flash out of date until the weather moves. Clearing the reading never saves, so a failed fetch cannot overwrite the last good reading on flash.</p>
+<h2 id="reading-it-back">Reading It Back</h2>
+<p>Each reading has its own getter, such as <code>weather_store_temp</code> or <code>weather_store_humidity</code>, and each returns its no-data value when there is nothing to show. A change of temperature unit converts the reading in hand, and the forecast strips drop the columns already gone each time they are read, both covered on <a href="../../how/weather-readings/">Weather Readings</a>. <code>weather_store_age_s</code> gives the seconds since the last reading, or -1 for none.</p>
+<p><strong>Today&#39;s Readings Expire.</strong> The high, the low, the UV index, and the chance of rain are only good for the day they came. For some providers they come from a second request, and when only that one fails the rest of the reading keeps arriving. So the store remembers the day they came, and their getters return no-data once that day is over rather than showing yesterday&#39;s high as today&#39;s.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/location-store/"><span>Previous</span>The Location Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/weather-readings/"><span>Next</span>Weather Readings</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

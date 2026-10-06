@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Health Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li class="current"><a href="../../how/health-store/" aria-current="page">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Health Store</h1>
+          
+          <div class="readme"><p>The health store gives a face the wearer&#39;s numbers from Pebble Health: heart rate, steps, distance, active calories, sleep, and active minutes. For a face that draws charts it also keeps the last hour of heart rate, a reading a minute, and today&#39;s steps hour by hour. Nothing goes through the phone. What the store handles is cost. Some of these reads block on the watch&#39;s flash, the charts need scans of the watch&#39;s minute log, and Pebble Health sends events every few seconds while the wearer walks. The store holds the costly reads to once a minute, reads only what the face asked for, and keeps what it has already worked out, so a face can show health readings without a health read on every redraw.</p>
+<p>It lives in <a href="../../c/health__store_8h.html"><code>health_store.h</code></a> and <a href="../../c/health__store_8c.html"><code>health_store.c</code></a>. The arithmetic behind the two charts, which hour is finished and where a minute record lands in the heart rate window, is in <a href="../../c/step__hours_8c.html"><code>step_hours.c</code></a> and <a href="../../c/minute__window_8c.html"><code>minute_window.c</code></a> under <code>src/c/core/health/</code>. Those are the parts that can be wrong without anyone noticing, such as a bar that quietly loses the last minute of every hour, so they sit in <code>c/core</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>). The store takes its turn on the face&#39;s cadence like the others, as <a href="../../how/stores/#riding-the-faces-cadence">How the Stores Work</a> covers, but it asks the watch rather than the phone.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<p>The face starts the store with the readings it shows turned on, then subscribes its redraw:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">health_store_init</span><span style="color:var(--code-foreground)">((HealthConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .hr_history </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .distance </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">                                 .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> HEALTH_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">health_store_subscribe</span><span style="color:var(--code-foreground)">(redraw);</span></span></code></pre>
+<p>The face also lists <code>health</code> under <code>capabilities</code> in its <code>pebble.appinfo.json</code>, as the SDK asks of any app that reads Pebble Health.</p>
+<p>The heart rate and the step count are always read. Each of the others has its own flag:</p>
+<ul>
+<li><strong><code>sleep</code>, <code>active</code>, <code>calories</code>, and <code>distance</code></strong> read the day&#39;s sleep, active minutes, active calories, and walked distance. A total left off is never read, and its getter keeps returning its no-data value.</li>
+<li><strong><code>hr_history</code></strong> keeps the hour of heart rate for a graph, and saves it to flash under <code>persist_key</code>.</li>
+<li><strong><code>step_history</code></strong> keeps today&#39;s steps by the hour for a bar chart.</li>
+</ul>
+<p>A <code>HealthSeed</code> pins fixed numbers and curves for screenshots, as <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers.</p>
+<h2 id="what-each-read-costs">What Each Read Costs</h2>
+<p><strong>Heart Rate.</strong> A peek at the watch&#39;s current reading, which is cheap. A watch with no heart rate sensor, or no reading yet, gives -1, and the framework&#39;s <code>readout_hr</code> draws dashes for it.</p>
+<p><strong>Steps.</strong> Today&#39;s total. The watch keeps it to hand, so it is cheap too. No reading, such as with Health turned off, gives -1.</p>
+<p><strong>Sleep, Active Minutes, Calories, and Distance.</strong> Each of these costs a blocking flash read every time it is asked for, which is why a face pays only for the ones it shows. Sleep and active minutes arrive in seconds and are turned into minutes. Sleep is the watch&#39;s total for today.</p>
+<p><strong>Distance Reads 0 for No Data.</strong> Distance gives 0 rather than -1 when there is no reading, so it cannot tell a quiet morning from Health being off. A panel tells the two apart by the step count, which is -1 with no data. The settings page&#39;s Stats Readout control can switch the steps readout to distance in miles or kilometres, and a face that offers it turns <code>distance</code> on.</p>
+<p>Every read first asks the watch whether the reading exists for the span, and takes the no-data value when it does not. A platform built without Pebble Health reads nothing at all, and every getter stays at its no-data value.</p>
+<h2 id="when-it-reads">When It Reads</h2>
+<p>Pebble Health sends an event when something moves, and the store reads only what that event touched:</p>
+<ul>
+<li><strong>A heart rate update</strong> reads the heart rate.</li>
+<li><strong>A movement update</strong> reads the day&#39;s totals. These arrive every few seconds while walking, and the totals move once a minute at most, so the reads are held to one round a minute and most movement events read nothing at all.</li>
+<li><strong>A significant update</strong>, such as the day changing, marks every number stale, so it reads everything at once past the minute limit.</li>
+</ul>
+<p>Events alone are not enough. Heart rate events are sparse, so a graph built only from them would be dots rather than a line, and movement events stop the moment the wearer sits still, which would leave the step count where it was. So the store also reads on each turn of the face&#39;s cadence, normally the minute tick. A turn that lands in a minute an event already covered reads nothing new.</p>
+<p><strong>A Redraw Only When Something Moved.</strong> The store sums its readings before and after each round and asks the face to redraw only when the sum changed. Most minute ticks bring back the same numbers, and a redraw for nothing would rerun every health panel. A face graphing the heart rate still gets a redraw a minute, since its window slides.</p>
+<h2 id="the-heart-rate-window">The Heart Rate Window</h2>
+<p>The window is 60 one-byte slots, oldest on the left and the current minute in the last slot, with 0 meaning no reading. Each time the store reads the heart rate it writes the watch&#39;s current reading into the current minute&#39;s slot. When the minute moves on, the window slides left and the minutes that passed with no reading are left at 0. A clock that jumps back would put the window&#39;s minutes in the future, so it starts over from the new time.</p>
+<p><strong>Why Not the Watch&#39;s Own Log.</strong> The watch keeps a minute by minute log, but it only records a heart rate in it now and then. A graph drawn from the log alone would be mostly empty. Peeking the live reading every minute fills it.</p>
+<p><strong>Saved Once a Minute.</strong> The window lives in memory, and a face is closed whenever the wearer opens an app. So on a real reading the store saves the window to flash, at most once a minute. A burst of heart rate events can bring a reading a second, and a flash write blocks, so the limit keeps a burst to one write. The save runs while the store is already awake for a reading, so it costs no extra wake. Saving less often would bring the graph back missing its last few minutes every time the wearer opened an app.</p>
+<p><strong>Back from an App.</strong> On a relaunch the store reads the saved window back, slides it forward over the time the face was away, and clears it if that was an hour or more. Then it fills the empty minutes from the watch&#39;s log, so time spent in a watchapp shows whatever the watch recorded. A minute that already holds a reading keeps it, since the live readings come more often than the log&#39;s. The log runs behind the clock and its first record can be any minute in the hour, so each record goes in the slot for its own minute rather than in order from the left. With the window ending on the current minute, a first record 50 minutes old lands in slot 9. The read takes room for 60 records, about 720 bytes, from the heap and gives it back straight after.</p>
+<pre class="mermaid">sequenceDiagram
+  participant Face
+  participant Store as Health Store
+  participant Flash
+  participant Health as Pebble Health
+  Face-&gt;&gt;Store: health_store_init
+  opt hr_history on
+    Store-&gt;&gt;Flash: read the saved window
+    Store-&gt;&gt;Store: slide it over the time away
+    Store-&gt;&gt;Health: the minute log for the last hour
+    Health--&gt;&gt;Store: readings for the empty minutes
+  end
+  Store-&gt;&gt;Health: heart rate, steps, and the totals asked for
+  Face-&gt;&gt;Face: first paint, with real numbers
+  opt step_history on
+    Note over Store: a 0 ms timer, after the paint
+    Store-&gt;&gt;Health: the minute log since midnight, six hours at a time
+    Store-&gt;&gt;Face: redraw with the step bars
+  end</pre>
+<h2 id="steps-by-the-hour">Steps by the Hour</h2>
+<p>The chart has 24 buckets, one per hour from midnight. A quiet hour is a real 0, so the store also says how many buckets are real with <code>health_store_step_hours</code>, and a chart draws that many rather than looking for a marker:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> uint16_t</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">hourly </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> health_store_step_hourly</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> hours </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> health_store_step_hours</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">for</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> hour </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">; hour </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-foreground)"> hours; hour</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // one bar of hourly[hour] steps</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><strong>The Hour in Progress Is Free.</strong> Its bar is today&#39;s total less the finished hours, so it needs no read of its own. The total and the log come from different places in the watch, so a step or two of disagreement can land on this bar.</p>
+<p><strong>A Finished Hour Is Read Twice, Then Kept.</strong> Reading an hour means scanning the watch&#39;s minute log, which blocks. The watch writes each minute&#39;s record at the top of the next minute, and at a lower priority than the face. So on the turn the hour rolls over, its last minute is usually not in the log yet. The store reads the hour just gone at the rollover and once more a minute later, then never again for the rest of the day.</p>
+<p><strong>Catching Up at Launch.</strong> A face started partway through the day has every hour since midnight to read. The store reads them six hours at a time, since a scan costs the same whatever span it covers. A launch at 15:30 has fifteen finished hours, which is three scans of six, six, and three. Even batched that is several blocking scans, so the first catch-up waits for a timer that runs after the face&#39;s first paint. The face appears straight away and the bars fill in a moment later.</p>
+<p><strong>Room from the Heap.</strong> The scans share room for seven hours of minute records, 420 records of 12 bytes or about 5 KB, from the heap, and give it back when they are done. What a face runs out of first is its app image, and the heap does not count towards it. When the heap is too full to lend it, the scans wait for the next turn.</p>
+<p><strong>Days the Clocks Change.</strong> Each bucket is an hour on the wall clock, so on a 23 or 25 hour day the bars still line up with the hours the chart labels. The batch that holds the repeated hour in autumn runs an hour longer in real time, which is why each scan has room for seven hours rather than six. A new day, or a clock that jumps back, drops the buckets and reads them again.</p>
+<h2 id="what-the-histories-cost">What the Histories Cost</h2>
+<p>The two buffers are part of the store on every face, 60 bytes for the heart rate and 48 for the steps. What the flags turn off is the work. Without <code>hr_history</code> there is no read of the log at launch, no window sliding each minute, and no flash write. Without <code>step_history</code> there are no log scans and no 5 KB borrowed from the heap. A face that shows only a heart rate and a step count pays for two cheap reads a minute.</p>
+<h2 id="reading-it-back">Reading It Back</h2>
+<p>Each reading has its own getter, such as <code>health_store_hr</code> or <code>health_store_steps</code>, and each returns its no-data value until there is something to show. The framework&#39;s <code>readout_hr</code> and <code>readout_steps</code> already turn those into text with dashes for no data, as covered in <a href="../../how/readouts/">Readouts</a>. The store reads every number it was asked for once during init, before the face first paints, so a face shows real numbers from its first frame rather than dashes until the first event.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/calendar-store/"><span>Previous</span>The Calendar Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/moon/"><span>Next</span>The Moon</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

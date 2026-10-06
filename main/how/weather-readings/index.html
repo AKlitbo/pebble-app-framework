@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weather Readings · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li class="current"><a href="../../how/weather-readings/" aria-current="page">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Weather Readings</h1>
+          
+          <div class="readme"><p>This is the code that turns one weather message from the phone into the reading the <a href="../../how/weather-store/">weather store</a> keeps, along with the small conversions a weather panel needs: a wind direction as a bearing, a short label for the condition, and forecast strips that drop the hours already gone. Most of what can go wrong on a weather panel happens here, such as a reading the phone left out, a fetch that failed, or a forecast that arrived late, so these rules decide whether the face shows dashes, the last good number, or something wrong.</p>
+<p>It lives under <code>src/c/core/weather/</code>, in <a href="../../c/weather__reading_8h.html"><code>weather_reading.h</code></a>, <a href="../../c/forecast__age_8h.html"><code>forecast_age.h</code></a>, <a href="../../c/wind__dir_8h.html"><code>wind_dir.h</code></a>, and <a href="../../c/wx__label_8h.html"><code>wx_label.h</code></a>. It is in <code>c/core</code>, so the store breaks the clock apart and hands it in (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>). The store takes the day&#39;s midnight from the SDK&#39;s <code>time_start_of_today</code> rather than working it back from the hour and minute, which would be an hour out on the day the clocks change.</p>
+<h2 id="the-message-group-by-group">The Message, Group by Group</h2>
+<p>The phone sends the weather as one message, and its keys come in groups:</p>
+<ul>
+<li><strong>Current.</strong> The temperature, the condition, and a flag saying the fetch worked. The condition&#39;s long label rides along for a face that declares a key for it.</li>
+<li><strong>Extras.</strong> Humidity, wind speed, wind direction, sunrise, and sunset.</li>
+<li><strong>Today&#39;s Forecast.</strong> The UV index, the high, the low, and the chance of rain.</li>
+<li><strong>Air.</strong> The feels-like temperature, the pressure, and the dew point.</li>
+<li><strong>The Strips.</strong> An hourly forecast and a daily one, each packed into a byte array.</li>
+</ul>
+<p>A face declares the keys for the groups it shows, and a group is only read when the face declares all of its keys. The current group counts as sent when the message has both a temperature and a condition. Each of the others counts as sent when any one of its keys is in the message. A value the phone had none of is left out of the message, and the AppMessage layer marks it as missing before <code>weather_reading_apply</code> sees it.</p>
+<p><code>weather_reading_apply</code> then puts the message into the kept reading:</p>
+<table>
+<thead>
+<tr>
+<th align="left">The Message</th>
+<th align="left">The Kept Reading</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">leaves a group out</td>
+<td align="left">keeps that group&#39;s readings as they were</td>
+</tr>
+<tr>
+<td align="left">carries a group</td>
+<td align="left">replaces every reading in it, and one the group left out becomes no-data</td>
+</tr>
+<tr>
+<td align="left">carries the current group from a failed fetch</td>
+<td align="left">keeps the last good temperature and condition</td>
+</tr>
+<tr>
+<td align="left">carries a strip that reads clean</td>
+<td align="left">replaces that strip</td>
+</tr>
+<tr>
+<td align="left">carries a strip that does not read clean</td>
+<td align="left">keeps the last good strip</td>
+</tr>
+</tbody></table>
+<p>A reading left out of a group that did arrive means the provider had none this time, so the panel shows dashes rather than an older number that would look current.</p>
+<p><strong>No-Data Values.</strong> A missing reading is -1 for anything that is never negative, such as humidity, wind speed, UV, the chance of rain, pressure, and the sun times. A temperature can be negative and 0 is a real one, so the temperatures use <code>WEATHER_NO_TEMP</code>, which is -1000, well outside any real reading. Missing text is an empty string, and a missing strip has a count of 0. The <a href="../../how/weather-store/#reading-it-back">weather store</a> hands these straight to the face.</p>
+<p><strong>A Failed Fetch.</strong> The flag has to read exactly 1 for the current group to count, and a missing or malformed flag counts as a failure. On a failure the phone sends a status in place of the condition, which the watch only logs. The face keeps the last good temperature and condition rather than going blank. Any other group in the same message still applies.</p>
+<p><strong>Values That Cannot Be Right.</strong> The current temperature is held to -99 to 199, so a corrupt value cannot overflow the 16-bit field it is kept in or draw as a five-digit number. Sunrise and sunset arrive as minutes past local midnight, and anything outside 0 to 1439 becomes -1, since no clock can show it. Text is cut to fit its field rather than run past it.</p>
+<p><strong>What the Return Value Means.</strong> <code>weather_reading_apply</code> returns whether it kept anything, and stamps the time as the last sync only then. That return is what the store uses to decide on a redraw and a save, so a message that brought nothing usable costs neither.</p>
+<h2 id="placing-the-forecast-strips">Placing the Forecast Strips</h2>
+<p>A strip carries no date. The hourly strip says which hour its first column is and how many hours apart the columns are, and the daily strip says which weekday it starts on. The watch places the strip on its own clock when the message lands, by finding the nearest time that matches:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> ahead </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (state</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">hourly.base_hour </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> clock</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">hour </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-token-constant)"> 36</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">%</span><span style="color:var(--code-token-constant)"> 24</span><span style="color:var(--code-token-keyword)"> -</span><span style="color:var(--code-token-constant)"> 12</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
+<p>That gives a first hour from 12 hours behind the current hour to 11 ahead. A strip starting at 14 that lands at 13:40 is one hour ahead, so its first column starts at 14:00:</p>
+<pre><code>ahead = (14 − 13 + 36) % 24 − 12 = 37 % 24 − 12 = 1
+first = 13:40 − 40 minutes + 1 hour = 14:00</code></pre>
+<p>A strip built at 13:58 that lands at 14:05 still starts at 13, and comes out one hour behind:</p>
+<pre><code>ahead = (13 − 14 + 36) % 24 − 12 = 35 % 24 − 12 = −1
+first = 14:05 − 5 minutes − 1 hour = 13:00</code></pre>
+<p>Reading it as 23 hours ahead instead would put its first column tomorrow, and it would never age. The daily strip does the same with weekdays, up to three days either way, so a strip sent late in the evening that starts tomorrow is placed at tomorrow&#39;s midnight and stays whole until then.</p>
+<h2 id="how-the-strips-age">How the Strips Age</h2>
+<p>The phone can stay out of reach for hours, and the strip on the watch stays with it. Each time the face reads a strip, the store works out how much of it has gone by and drops those columns from the front. <a href="../../c/forecast__age_8c.html"><code>forecast_age.c</code></a> does the counting.</p>
+<p><strong>Hourly.</strong> A column is over once its whole step has gone by, so the column holding the current hour stays. With three hour columns starting at 15:00:</p>
+<pre><code>at 17:59   2 h 59 min in, 10740 / 10800 = 0 columns over
+at 18:10   3 h 10 min in, 11400 / 10800 = 1 column over, the strip now starts at 18:00</code></pre>
+<p>The store moves the strip&#39;s first hour and start time along with the columns it drops, so the labels stay right.</p>
+<p><strong>Daily.</strong> A column is over once its day is before today. The days between the strip&#39;s first day and today are counted from midnight to midnight and rounded, so the 23 or 25 hour day when the clocks change still counts as one.</p>
+<p>Both counts are capped at the number of columns, so a strip from days ago empties rather than going below zero, and a strip that starts in the future drops nothing. Trimming never writes to flash. Whatever copy is saved carries its own start time, so a relaunch trims it the same way.</p>
+<h2 id="switching-units">Switching Units</h2>
+<p>When the wearer switches between Celsius and Fahrenheit, <code>weather_reading_convert</code> converts every temperature in the kept reading, including each column of both strips. The face shows the reading in hand in the new unit while the fetch in the new unit is on its way. Each value rounds to the nearest degree, and no-data stays no-data:</p>
+<pre><code>23 °C → 23 × 9 / 5 + 32 = 73.4 → 73 °F
+73 °F → (73 − 32) × 5 / 9 = 22.8 → 23 °C</code></pre>
+<p>A fifth or a ninth never lands on exactly a half, so no value ties and the rounding needs no rule for one. A Celsius reading always comes back to itself after a round trip, since a Fahrenheit degree is the smaller step. A Fahrenheit one can move a degree, so 71 °F becomes 22 °C and then 72 °F. That drift only lasts until the fetch in the new unit lands.</p>
+<h2 id="wind-direction">Wind Direction</h2>
+<p>The phone sends the direction the wind comes from as one of the sixteen compass points, such as <code>NW</code> or <code>SSE</code>. The wind speed and its units are on <a href="../../how/numbers-and-units/#wind-speed">Numbers and Units</a>. That prints fine but cannot be used for drawing, so <code>wind_bearing</code> turns it into degrees, 22.5 a point, kept in whole degrees. <code>NNE</code> is 22 and <code>NW</code> is 315. It ignores case, and anything that is not one of the sixteen points reads -1 rather than north.</p>
+<p><code>wind_lean</code> turns a bearing into the part of the wind blowing across a scene drawn from the side, such as trees bending or smoke drifting, from -100 blowing west to 100 blowing east:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> lean </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> wind_lean</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">wind_bearing</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">weather_store_wind_dir</span><span style="color:var(--code-foreground)">()));</span></span></code></pre>
+<p>A wind from the west blows east, so <code>W</code> leans 100 and <code>SW</code> leans 70. A wind from due north or south blows straight into or out of the scene, so it leans 0, and so does a missing direction. The sine behind it comes from a table every 15 degrees with straight lines between the stops, which lands within a percent of the real sine. <code>NNE</code> leans -37 against a true -37.5, and the table costs less than pulling floating point into the face.</p>
+<h2 id="condition-labels">Condition Labels</h2>
+<p>The phone sends the condition as a short label, such as <code>CLEAR</code> or <code>PCLDY</code>, so a small slot can print it as it is. After dark it adds <code>_NIGHT</code>, as in <code>PCLDY_NIGHT</code>, so the watch can pick a night icon. <code>wx_label_short</code> drops that ending for the text, since a small slot reads the same by day and by night, and writes <code>UNKNOWN</code> for an empty condition. The framework&#39;s condition readout shows dashes before any reading arrives and the short label after. <a href="../../how/icons/#weather-icons">Icons</a> covers how the condition picks a picture.</p>
+<p>The long label, such as <code>Partly Cloudy</code>, arrives as its own value for a face that declares a key for it, and the store keeps it beside the short one.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/weather-store/"><span>Previous</span>The Weather Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/fetching-the-weather/"><span>Next</span>Fetching the Weather</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

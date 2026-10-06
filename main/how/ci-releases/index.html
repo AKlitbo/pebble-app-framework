@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Releases · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li class="current"><a href="../../how/ci-releases/" aria-current="page">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Releases</h1>
+          
+          <div class="readme"><p>A face repo releases one face at a time by pushing a tag named for the face and its version, such as <code>ridgeline-v1.4.2</code>. The release workflow reads the face out of the tag, checks the tag against the face&#39;s appinfo and changelog before anything is installed, builds the face on the toolchain CI uses, and publishes a GitHub release with the face&#39;s <code>.pbw</code> files attached and its changelog entry as the notes. Pushing the tag is the whole release process. Each face in a repo of several keeps its own version and its own releases.</p>
+<p>The checks are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/.github/actions/prepare-release/action.yml"><code>prepare-release</code></a>, with the tag and changelog reading in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/.github/actions/prepare-release/scripts/lib.js"><code>lib.js</code></a> and the checks themselves in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/.github/actions/prepare-release/scripts/prepare-release.js"><code>prepare-release.js</code></a>. Publishing is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/.github/actions/publish-release/action.yml"><code>publish-release</code></a>, with <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/.github/actions/publish-release/scripts/publish-release.js"><code>publish-release.js</code></a>. The face lookup they share is in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/.github/shared/lib.js"><code>lib.js</code></a>. The sync and <code>setup-pebble</code> steps are on <a href="../../how/ci-builds/">Building in CI</a>.</p>
+<h2 id="the-release-workflow">The Release Workflow</h2>
+<p>This is a face repo&#39;s whole release workflow, with its comments taken out:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Release</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">run-name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ github.event.head_commit.message }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-constant)">on</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  push</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    tags</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">'*-v*'</span><span style="color:var(--code-foreground)">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">jobs</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  release</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    runs-on</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ubuntu-latest</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    permissions</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">      contents</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> write</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    steps</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> actions/checkout@v7</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Prepare Release</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        id</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> release</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/prepare-release@v4.0.0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v4.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ steps.release.outputs.face }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Build Watchface</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        run</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> paf build ${{ steps.release.outputs.face }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Publish Release</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/publish-release@v4.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ steps.release.outputs.face }}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          version</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ steps.release.outputs.version }}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          title</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ steps.release.outputs.title }}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          notes-file</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ steps.release.outputs.notes-file }}</span></span></code></pre>
+<p><strong>The Trigger.</strong> Any tag matching <code>*-v*</code> starts it. Branch pushes never do. A tag that matches the pattern but is not a face release, such as <code>docs-v2</code>, reaches <code>prepare-release</code> and stops there.</p>
+<p><strong>The Sync Has No Face.</strong> The face is only known once <code>prepare-release</code> has read the tag, and <code>prepare-release</code> needs the face&#39;s <code>paf/</code> filled to read it. So the sync runs with no <code>face</code> and fills every unit in the repo, with <code>--locked</code> as always.</p>
+<p><strong>Permissions.</strong> <code>contents: write</code> lets the job&#39;s own token create the release and upload the files. Both release actions take that token by default, and nothing else needs to be set up.</p>
+<p><strong>The Run&#39;s Name.</strong> <code>run-name</code> names the run after the commit being released. Left unset, GitHub shows the workflow&#39;s name for a tag on any commit but the branch tip, which says nothing about what shipped.</p>
+<p>From the tag to the published release, with every point that can stop it:</p>
+<pre class="mermaid">flowchart TD
+  tag[&quot;a tag such as ridgeline-v1.4.2 is pushed&quot;] --&gt; sync[&quot;paf sync --locked fills every unit&quot;]
+  sync --&gt; prepare[&quot;prepare-release checks the tag, the appinfo, and the changelog&quot;]
+  prepare --&gt; setup[&quot;setup-pebble installs the face&#39;s toolchain&quot;]
+  setup --&gt; build[&quot;paf build builds every target&quot;]
+  build --&gt; publish[&quot;publish-release names the pbws and creates the release&quot;]
+  publish --&gt; done[&quot;the release is out with its notes and pbws&quot;]
+  sync -. &quot;a lock or pin out of step&quot; .-&gt; stop[&quot;the run fails and nothing is published&quot;]
+  prepare -. &quot;a check fails&quot; .-&gt; stop
+  setup -. &quot;the toolchain does not answer&quot; .-&gt; stop
+  build -. &quot;a target fails to build&quot; .-&gt; stop
+  publish -. &quot;a pbw is missing or gh refuses&quot; .-&gt; stop</pre>
+<p>Nothing is published before the last step, so a run that stops earlier leaves no release behind.</p>
+<h2 id="finding-the-face-from-the-tag">Finding the Face from the Tag</h2>
+<p>A release tag is shaped <code>&lt;face&gt;-v&lt;version&gt;</code>. <code>prepare-release</code> splits it at the last <code>-v</code> with a digit straight after it. A face name can hold <code>-v</code> itself, as in <code>retro-vapor</code>, and so can a pre-release label, as in <code>-very.1</code>, and neither is followed by a digit, so <code>retro-vapor-v2.0.0-very.1</code> still splits into <code>retro-vapor</code> and <code>2.0.0-very.1</code>. A tag with no such <code>-v</code> stops the release with the shape it should have.</p>
+<p><strong>The Face&#39;s Name.</strong> A face goes by the name the tools give it where it builds. A face that is its own unit, at the repo root or in a folder under <code>watchfaces/</code> or <code>watchapps/</code>, goes by the <code>name</code> in its appinfo, since its folder is named after wherever it was cloned. A face in a family goes by its folder&#39;s name beside the family&#39;s <code>core/</code>. So the LCARS face at its repo&#39;s root releases as <code>lcars-stardate-v1.13.0</code>, and Ridgeline in the Sketchbook family as <code>ridgeline-v1.4.2</code>.</p>
+<p><strong>Finding Its Unit.</strong> The action looks at the repo root and every folder under <code>watchfaces/</code> and <code>watchapps/</code> for a face of that name, which also tells it the unit the face builds from. Then it lists the faces with <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/tools/shared/faces.ts"><code>faces.ts</code></a> from that unit&#39;s own <code>paf/</code>, the same lookup the face&#39;s build uses, even when the action comes from a newer tag. A name that matches no face stops the release there.</p>
+<p><strong>One Name, One Face.</strong> A face&#39;s name is its release tag, so two faces with the same name anywhere in the repo stop the lookup with both paths, rather than one being picked. Picking one would publish the wrong face&#39;s build and notes under the tag.</p>
+<h2 id="what-prepare-release-checks">What prepare-release Checks</h2>
+<p>Every check that can stop a release runs here, before the SDK install and the build, so a mistyped tag or an undated changelog costs seconds rather than a build.</p>
+<p><strong>The Framework.</strong> The unit&#39;s <code>paf/</code> has to hold a framework, and its <code>package.json</code> has to carry a version shaped like a release. That version is the framework tag the release builds on, and it goes on the summary. A <code>paf/</code> copied from a release candidate or a local clone carries the release&#39;s version too, so this check cannot tell them apart. The <code>--locked</code> sync in the same workflow already refused a local clone, and candidate tags are not released from.</p>
+<p><strong>The Version.</strong> The face&#39;s version is read from the same place the build reads it, which is the appinfo&#39;s <code>version</code>, or the unit&#39;s <code>package.json</code> version when the appinfo has none. It has to match the version in the tag, since a tag that disagrees with the face is a typo, and a published release cannot be cleanly taken back. It also has to be shaped <code>X.Y.Z</code> or <code>X.Y.Z-label</code>, such as <code>1.11.0</code> or <code>1.11.0-rc.1</code>. A version with build metadata, such as <code>1.11.0+2</code>, is refused, since <code>publish-release</code> could not read a label from it and would publish it as the latest release.</p>
+<p><strong>Target Platforms.</strong> The appinfo has to list <code>targetPlatforms</code>, since each <code>.pbw</code> on the release is named after the platforms it installs on. Finding that out after the SDK install and the whole build would waste both.</p>
+<p><strong>The Changelog.</strong> The face&#39;s <code>CHANGELOG.md</code> beside its appinfo has to hold a Keep a Changelog heading for the version, such as <code>## [1.4.2] - 2026-09-27</code>. A version with no heading of its own stops the release, which includes one still written up under <code>Unreleased</code>. So does a heading with no date, or with a date that does not exist, such as <code>2026-19-07</code> or <code>2026-02-30</code>. The entry under the heading has to hold some text.</p>
+<p><strong>Not Already Released.</strong> The action asks <code>gh</code> for a release under the tag. One that exists stops the run with a message to delete it first, since republishing over a shipped release is not something to do without noticing. A <code>gh</code> failure for any other reason stops it too, since the same problem would only show again once the build was done.</p>
+<p><strong>What It Hands On.</strong> Once every check passes, it writes the release notes to a file and gives the next steps the face, the version, the title, and the notes file. The title is the appinfo&#39;s <code>displayName</code> and the version, such as <code>Ridgeline 1.4.2</code>, and falls back to the face&#39;s name when the appinfo has no display name. A short table on the job summary names the face, the version, the framework tag, and the changelog entry it used.</p>
+<h3 id="the-notes-are-the-changelog-entry">The Notes Are the Changelog Entry</h3>
+<p>The notes are the changelog entry as written, so there is no second copy to keep in step. The entry runs from its heading to the next <code>## [...]</code> heading, or to the link references a changelog closes with, whichever comes first, and the blank lines either side are trimmed. A line with the date goes above it. For Gridlock&#39;s 1.5.0, the notes open like this:</p>
+<pre><code>Released 2026-09-27.
+
+### Added
+
+- Added support for stock symbols outside the US, indexes, and currency pairs, such as 7203.T, ^GSPC, EURUSD=X, and BTC/USD. The watch shows the first 11 characters.</code></pre>
+<h2 id="building-the-face">Building the Face</h2>
+<p><code>setup-pebble</code> runs with the face <code>prepare-release</code> found, so the release installs the same SDK and pebble-tool the face&#39;s framework records and its CI builds with. A release built on a different toolchain from CI would be a release nobody tested.</p>
+<p><code>paf build</code> then builds every target the face declares. The release workflow runs no memory report.</p>
+<h2 id="what-publish-release-attaches">What publish-release Attaches</h2>
+<p><code>publish-release</code> builds nothing. It takes what the build left in the unit&#39;s <code>targets/</code> and publishes it.</p>
+<p><strong>Every Target.</strong> It asks the face&#39;s own <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/tools/manifest/build-manifests.ts"><code>build-manifests.ts</code></a> for the face&#39;s targets, the same list the build worked from. A face can build more than one target from one source, such as a watchface and a watchapp, and each target&#39;s <code>.pbw</code> is attached.</p>
+<p><strong>Named for What It Installs On.</strong> The build names each <code>.pbw</code> after its target with no version, which is fine in a build folder and no help on a release page where several versions sit side by side. So each one is copied under a release name read from its target&#39;s manifest:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Target Builds For</th>
+<th align="left">Asset Name</th>
+<th align="left">Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">one platform</td>
+<td align="left"><code>&lt;target&gt;-&lt;platform&gt;-&lt;version&gt;.pbw</code></td>
+<td align="left"><code>gridlock-face-emery-1.5.0.pbw</code></td>
+</tr>
+<tr>
+<td align="left">several platforms</td>
+<td align="left"><code>&lt;target&gt;-&lt;version&gt;.pbw</code></td>
+<td align="left"><code>ridgeline-1.4.2.pbw</code></td>
+</tr>
+</tbody></table>
+<p>A <code>.pbw</code> built for several platforms carries a binary for each, so naming it after any one of them would mislead.</p>
+<p><strong>Nothing Goes Out Short.</strong> A target with no <code>.pbw</code>, or whose manifest lists no platforms, stops the step before <code>gh</code> runs, so a release never goes out missing a file. <code>gh release create</code> then creates the release with the title, the notes, and every file in one call.</p>
+<p><strong>The Tag Has to Exist.</strong> The call passes <code>--verify-tag</code>. Without it, <code>gh</code> creates a tag that was never pushed at the default branch&#39;s tip, and the release would carry <code>.pbw</code> files built from another commit.</p>
+<p><strong>Pre-Releases.</strong> A version with a label, such as <code>2.0.0-rc.1</code>, is published as a pre-release. GitHub never shows a pre-release as the repo&#39;s latest, so a wearer following the latest release keeps the last real one.</p>
+<p>The release&#39;s address goes on the job summary with a table of the files attached, the target each came from, and the platforms it installs on.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/ci-memory/"><span>Previous</span>Memory Reports</a>
+<span class="page-step"></span>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

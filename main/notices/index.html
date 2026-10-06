@@ -7,6 +7,8 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <script src="../theme.js"></script>
     <script src="../versions.js"></script>
+    <script src="../diagrams.js" defer></script>
+    <script src="../side-nav.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,6 +28,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -50,9 +54,12 @@
 </nav>
 
     <div class="wrap">
-      <main class="page">
-        <h1>Third-Party Notices</h1>
-        <div class="readme"><p>The framework is dual-licensed under the AGPL-3.0-or-later or the PolyForm Noncommercial License 1.0.0, see <a href="../licences/">LICENSE</a>. It bundles the third-party work below, which keeps its own licence.</p>
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Third-Party Notices</h1>
+          
+          <div class="readme"><p>The framework is dual-licensed under the AGPL-3.0-or-later or the PolyForm Noncommercial License 1.0.0, see <a href="../licences/">LICENSE</a>. It bundles the third-party work below, which keeps its own licence.</p>
 <h2 id="icaljs">ical.js</h2>
 <p>The phone-side calendar reader. The pkjs build copies it into the <code>.pbw</code> of a face that uses the calendar, and a face that does not ships none of it.</p>
 <ul>
@@ -67,19 +74,35 @@
 <p>The theme the framework&#39;s Doxygen HTML is built with. It only reaches the generated docs, never a <code>.pbw</code>.</p>
 <ul>
 <li><strong>Source:</strong> <a href="https://github.com/jothepro/doxygen-awesome-css">https://github.com/jothepro/doxygen-awesome-css</a>, release <code>v2.5.0</code></li>
-<li><strong>Licence:</strong> MIT. The full text sits beside the files at <a href="https://github.com/AKlitbo/pebble-app-framework/blob/8b45d9ec75ed11e8123d769a85d90bfb728c19d7/docs/doxygen/awesome/LICENSE">docs/doxygen/awesome/LICENSE</a></li>
+<li><strong>Licence:</strong> MIT. The full text sits beside the files at <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/docs/doxygen/awesome/LICENSE">docs/doxygen/awesome/LICENSE</a></li>
 <li><strong>What Ships:</strong> <code>doxygen-awesome.css</code>, copied in unchanged. The framework&#39;s own look sits on top of it in <code>docs/doxygen/pebble.css</code>, so moving to a newer release means copying that one file over again</li>
+</ul>
+<h2 id="mermaid">Mermaid</h2>
+<p>The library that draws the diagrams on the docs site&#39;s pages. It only reaches the generated docs, never a <code>.pbw</code>.</p>
+<ul>
+<li><strong>Source:</strong> <a href="https://github.com/mermaid-js/mermaid">https://github.com/mermaid-js/mermaid</a>, release <code>v12.1.0</code></li>
+<li><strong>Licence:</strong> MIT</li>
+<li><strong>What Ships:</strong> nothing is copied in. <code>docs/site/diagrams.js</code> loads it in the reader&#39;s browser from jsDelivr, pinned to that release</li>
+</ul>
+<h2 id="shiki">Shiki</h2>
+<p>The highlighter that colours the code blocks on the docs site&#39;s markdown pages. It only reaches the generated docs, never a <code>.pbw</code>.</p>
+<ul>
+<li><strong>Source:</strong> <a href="https://github.com/shikijs/shiki">https://github.com/shikijs/shiki</a>, release <code>v4.5.0</code>, with the grammars it bundles for each language the site loads</li>
+<li><strong>Licence:</strong> MIT</li>
+<li><strong>What Ships:</strong> nothing is copied in. The site build runs it, and the coloured html it writes is plain spans with no script</li>
 </ul>
 <h2 id="octicons">Octicons</h2>
 <p>The GitHub mark on the docs site&#39;s shared bar, beside the link to this repository. It only reaches the generated docs, never a <code>.pbw</code>.</p>
 <ul>
 <li><strong>Source:</strong> <a href="https://github.com/primer/octicons">https://github.com/primer/octicons</a>, the <code>mark-github-16</code> icon from release <code>v19.36.0</code></li>
-<li><strong>Licence:</strong> MIT. The full text sits at <a href="https://github.com/AKlitbo/pebble-app-framework/blob/8b45d9ec75ed11e8123d769a85d90bfb728c19d7/docs/site/octicons/LICENSE">docs/site/octicons/LICENSE</a></li>
+<li><strong>Licence:</strong> MIT. The full text sits at <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/docs/site/octicons/LICENSE">docs/site/octicons/LICENSE</a></li>
 <li><strong>What Ships:</strong> the icon&#39;s single SVG path, copied in unchanged to <code>docs/site/templates/site-bar.html</code></li>
 </ul>
 <p>The mark itself is a GitHub trademark. The site uses it only to link to this repository on GitHub.</p>
 </div>
-      </main>
+          
+        </main>
+      </div>
 
       <footer class="site-foot">
   <div class="foot-cols">

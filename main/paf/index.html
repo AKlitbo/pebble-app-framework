@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>paf · Pebble App Framework</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <script src="../theme.js"></script>
+    <script src="../versions.js"></script>
+    <script src="../diagrams.js" defer></script>
+    <script src="../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../site.css" />
+    <link rel="stylesheet" href="../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" aria-current="location" href="../paf/index.html">CLI</a>
+    <a data-section="c" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>paf</h1>
+          <nav class="section-nav" aria-label="Pages in this section">
+<ul>
+<li><a href="../paf/" aria-current="page">paf</a></li>
+<li><a href="../paf/units/">Units</a></li>
+<li><a href="../paf/commands/">Commands</a></li>
+<li><a href="../paf/workflows/">Workflows</a></li>
+<li><a href="../paf/troubleshooting/">Troubleshooting</a></li>
+</ul>
+</nav>
+          <div class="readme"><p><code>paf</code> is the command a face repo builds with. It pins each family or face in the repo to its own framework tag, copies that framework into the unit at <code>paf/</code>, and runs the framework&#39;s build, generators, checks, and tools against it. Moving one family to a new framework leaves every other unit on the tag it already has.</p>
+<p><code>paf build</code> runs <code>pebble build</code> for you, once the framework&#39;s build script has staged the face into <code>targets/</code>. Every other <code>pebble</code> command is yours to run the usual way, such as installing an app, the emulator, logs, screenshots, and SDK installs.</p>
+<p>These pages cover <code>paf</code> 2.0.0, which fills framework 4 tags. The source and the release downloads are in the <a href="https://github.com/AKlitbo/pebble-app-framework-cli">pebble-app-framework-cli</a> repo.</p>
+<h2 id="install">Install</h2>
+<p>Each release on GitHub carries the built package. Install it with npm, in WSL and on Windows alike:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">npm</span><span style="color:var(--code-token-string)"> i</span><span style="color:var(--code-token-string)"> -g</span><span style="color:var(--code-token-string)"> https://github.com/AKlitbo/pebble-app-framework-cli/releases/download/v2.0.0/pebble-app-framework-cli-2.0.0.tgz</span></span></code></pre>
+<p><code>paf</code> needs <code>git</code> and Node 22.18 or later, with the npm that ships with it. It has no other dependencies.</p>
+<p>The framework&#39;s own tools ask for a narrower Node. Framework 4 takes <code>^22.18.0 || &gt;=24.2.0</code>, so Node 22.18 and later on 22, or 24.2 and later. On Node 23 <code>paf</code> itself runs, but <code>paf build</code>, <code>gen</code>, <code>check</code>, <code>tool</code>, <code>lint</code>, and <code>format</code> stop with a message naming the range.</p>
+<p>Check the install from inside a face repo:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> help</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> doctor</span></span></code></pre>
+<p>A unit on framework 3 needs <code>paf</code> 1.0.0. <code>paf</code> 2.0.0 refuses a framework 3 pin and says so.</p>
+<h2 id="where-it-runs">Where It Runs</h2>
+<p><code>paf build</code> runs where the Pebble SDK does, which is WSL, Linux, or macOS. On Windows itself it stops with <code>paf build runs where the Pebble SDK does, which on Windows means WSL</code>.</p>
+<p>Every other command works on Windows too. A unit&#39;s <code>node_modules</code> holds native packages for one system, though, so pick one system per clone or see <a href="../paf/workflows/#switching-between-wsl-and-windows">Switching between WSL and Windows</a>.</p>
+<h2 id="a-first-run">A First Run</h2>
+<p>From the root of a face repo that is already laid out as units:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> sync</span><span style="color:var(--code-token-comment)">          # fill each unit's paf/ and install its node_modules</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> status</span><span style="color:var(--code-token-comment)">        # each unit, its faces, its tag, and whether it is ready</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> build</span><span style="color:var(--code-token-string)"> my-face</span><span style="color:var(--code-token-comment)"> # build one face, from WSL, Linux, or macOS</span></span></code></pre>
+<p>The <code>.pbw</code> lands in <code>targets/&lt;face&gt;/build/</code> inside the unit.</p>
+<h2 id="the-pages">The Pages</h2>
+<ul>
+<li><a href="../paf/units/">Units</a>: what a unit is, the layouts <code>paf</code> reads, and <code>paf.config.json</code>.</li>
+<li><a href="../paf/commands/">Commands</a>: every command with its flags and an example of what it prints.</li>
+<li><a href="../paf/workflows/">Workflows</a>: setting up a clone, moving to a new framework, working on the framework itself, and CI.</li>
+<li><a href="../paf/troubleshooting/">Troubleshooting</a>: what each common error means and what to run.</li>
+</ul>
+</div>
+          
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

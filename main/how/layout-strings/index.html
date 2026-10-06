@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Layout Strings · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li class="current"><a href="../../how/layout-strings/" aria-current="page">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Layout Strings</h1>
+          
+          <div class="readme"><p>Some faces let the wearer build their own screen on the settings page, placing panels on a grid, and can hold more than one grid: one for the day, one for after dark, and one for while Quiet Time is on. The layout code is the part of that every such face needs the same way. It reads the numbers out of a grid sent as text without ever overflowing on a damaged one, tells a grid with real panels in it from an empty or broken one, and picks which of the three grids belongs on the screen right now. A face that adds a night or Quiet Time grid gets the fallbacks for free, so a trigger with no grid behind it never leaves the wearer looking at a blank screen.</p>
+<p>It lives in <a href="../../c/layout__string_8h.html"><code>layout_string.h</code></a>, <a href="../../c/layout__string_8c.html"><code>layout_string.c</code></a>, <a href="../../c/layout__role_8h.html"><code>layout_role.h</code></a>, and <a href="../../c/layout__role_8c.html"><code>layout_role.c</code></a> under <code>src/c/core/layout/</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>). The face reads Quiet Time, the clock, and its own settings, and passes in plain answers and strings.</p>
+<h2 id="a-grid-as-text">A Grid as Text</h2>
+<p>A grid reaches the watch as one text setting, a run of records separated by semicolons. The Mosaic faces, for example, write each record as five numbers, the panel and then its row, column, width, and height:</p>
+<pre><code>3,0,0,2,1;7,1,0,4,2;12,3,2,2,1</code></pre>
+<p>Each family of faces has its own catalogue of panels, so the panel number means something different on each, and each face parses the rest of a record its own way. The framework only fixes what they all share: records end at a semicolon, every record starts with its panel number, and panel 0 is an empty spot rather than a panel.</p>
+<p>Text takes more bytes than packed numbers would, but it rides in a settings message like any other text setting, with no message format of its own between the page and the watch.</p>
+<p><strong>What an Empty Grid Looks Like.</strong> A grid the wearer cleared is sent as <code>0</code>, a single empty spot, rather than as an empty string. The watch keeps a text setting&#39;s old value when an empty one arrives for a field whose default is not empty (see <a href="../../how/settings-on-the-watch/">Settings on the Watch</a>), so an empty string would leave the old grid in place.</p>
+<h2 id="reading-a-number">Reading a Number</h2>
+<p><code>layout_parse_int</code> reads a run of digits at a cursor and moves the cursor past them. Every face&#39;s parser is built on it:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">cursor </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> layout;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> panel </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> layout_parse_int</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">&#x26;</span><span style="color:var(--code-foreground)">cursor);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">cursor </span><span style="color:var(--code-token-keyword)">==</span><span style="color:var(--code-token-string-expression)"> ','</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    cursor</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> row </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> layout_parse_int</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">&#x26;</span><span style="color:var(--code-foreground)">cursor);</span></span></code></pre>
+<p><strong>No Digits Reads as 0.</strong> A field with no number in it reads as 0, which makes a record with a missing or mangled panel number an empty spot.</p>
+<p><strong>Too Big Reads as -1.</strong> The grid is saved to flash and read back at launch, and a damaged copy can hold a run of digits far longer than any real field. Reading that into an <code>int</code> one digit at a time would overflow it, which C leaves undefined. So the number stops growing past 9999, far above anything the settings page writes, and comes back as -1. A panel number of -1 drops the record, and a face&#39;s parser pulls a -1 row or size back to the nearest one that fits, so a damaged number never places a panel off the grid.</p>
+<p><strong>The Cursor Always Moves On.</strong> Even a number that is too big has all its digits skipped. The cursor lands on the next field either way, so one bad field never pushes every field after it out of step.</p>
+<h2 id="is-there-anything-in-it">Is There Anything in It</h2>
+<p><code>layout_has_any_block(layout, type_count)</code> answers whether a grid holds at least one real panel. It reads only the first number of each record, and stops at the first one that names a panel between 1 and the end of the face&#39;s catalogue.</p>
+<p>One test covers every way a grid can be nothing: the <code>0</code> of a cleared grid, an empty string, a NULL, and whatever a damaged copy left behind. A panel number past the end of the catalogue does not count either. The settings page&#39;s grid builder is shared by a family of faces, and a grid made for a face with more panels can name ones this face does not have.</p>
+<p>The answer is what decides whether a night or Quiet Time grid counts as set. A night schedule over an empty night grid, or Quiet Time with an empty Quiet Time grid, leaves the day grid up.</p>
+<h2 id="which-grid-is-showing">Which Grid Is Showing</h2>
+<p><code>layout_role_pick</code> takes four answers and returns the grid that wins:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">LayoutRole </span><span style="color:var(--code-token-function)">layout_role_pick</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> quiet_on</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> quiet_set</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> night_on</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> night_set)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (quiet_on </span><span style="color:var(--code-token-keyword)">&#x26;&#x26;</span><span style="color:var(--code-foreground)"> quiet_set)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)"> LAYOUT_ROLE_QUIET;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (night_on </span><span style="color:var(--code-token-keyword)">&#x26;&#x26;</span><span style="color:var(--code-foreground)"> night_set)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)"> LAYOUT_ROLE_NIGHT;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)"> LAYOUT_ROLE_DAY;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><strong>Quiet Time Comes First.</strong> Someone who set both a Quiet Time grid and a night grid is asking for a quieter screen while the watch is quiet, and that holds whether it is dark out or not.</p>
+<p><strong>A Trigger with No Grid Is Skipped.</strong> Each trigger arrives as a pair, whether it is on and whether it has a grid. One that is on with nothing behind it passes to the next, and the day grid catches everything else. So a wearer can set up only a night grid and Quiet Time changes nothing, or only a Quiet Time grid and the night schedule changes nothing.</p>
+<p>Whether it is night comes from the night schedule, which asks whether now falls inside the night window, as <a href="../../how/time-bands/#is-it-night">Time Bands and Night Hours</a> covers.</p>
+<h2 id="putting-it-together-in-a-face">Putting It Together in a Face</h2>
+<p>A face with more than one grid checks again on every minute tick, after a settings save, and when a weather reply lands, since a newly arrived sunset can mean the night grid should already be up. A new grid moves every panel, which a repaint cannot do, so a change of grid rebuilds the screen:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Time as Time Store
+  participant Face
+  participant Layout as Layout Code
+  participant Engine
+  Time-&gt;&gt;Face: the minute tick
+  Face-&gt;&gt;Face: read Quiet Time and the night schedule
+  Face-&gt;&gt;Layout: layout_has_any_block, for the night and Quiet Time grids
+  Face-&gt;&gt;Layout: layout_role_pick
+  Layout--&gt;&gt;Face: day, night, or quiet
+  alt the grid changed
+    Face-&gt;&gt;Engine: engine_rebuild
+    Engine-&gt;&gt;Face: build, which parses the new grid
+  else the same grid
+    Face-&gt;&gt;Engine: repaint only
+  end</pre>
+<p>Most minutes the answer is the same, and the face only repaints. The rebuild happens a few times a day at most, when the night window opens or closes or Quiet Time starts or ends. On launch the face picks the grid before the engine builds its first screen, so a face started at midnight comes straight up on the night grid rather than flashing the day one first.</p>
+<p><strong>Checked Again When Parsing.</strong> The face&#39;s parser checks the chosen grid with <code>layout_has_any_block</code> once more before reading it, and falls back to the day grid if it comes up empty. The pick and the parse happen at different moments, and a grid that went bad in between still never leaves the screen blank.</p>
+<p><strong>Parsed Once per Change.</strong> A face can keep the last string it parsed and the panels it read from it, so a repaint compares the string and only reads the text again when the grid really changed.</p>
+<p><a href="../../how/engine/">The Engine</a> covers the rebuild itself.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/icons/"><span>Previous</span>Icons</a>
+<a class="page-step page-step-next" rel="next" href="../../how/fitting-text/"><span>Next</span>Fitting Text</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

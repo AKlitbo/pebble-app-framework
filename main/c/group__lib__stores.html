@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -501,7 +503,7 @@ int&#160;</td><td class="memItemRight"><b>weather_store_age_s</b> (void)</td></t
 <tr class="heading"><td colspan="2"><h2 id="header-member-group" class="groupheader"><a id="member-group" name="member-group"></a>
 Store tags</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>Every store stamps the first byte of its blob with a tag. The high nibble names the store and the low nibble is that store's layout revision.</p>
-<p>The size on its own cannot tell two blobs apart. The calendar snapshot and the weather state happen to be the same size, and reordering two fields keeps the size too, so the tag is what makes the guard mean anything. Bump a store's low nibble whenever its persisted struct changes shape, and an older blob is dropped rather than read as the wrong thing. </p>
+<p>The size on its own cannot tell two blobs apart. Reordering two fields keeps the size, and so can two different structs, so the tag is what makes the guard mean anything. Bump a store's low nibble whenever its persisted struct changes shape, and an older blob is dropped rather than read as the wrong thing. </p>
 </td></tr>
 <tr class="memitem:gaf7f92da5799b3fc95c172f84287e6867" id="r_gaf7f92da5799b3fc95c172f84287e6867"><td class="memItemLeft"><a id="gaf7f92da5799b3fc95c172f84287e6867" name="gaf7f92da5799b3fc95c172f84287e6867"></a>
 #define&#160;</td><td class="memItemRight"><b>STORE_TAG_WEATHER</b>&#160;&#160;&#160;0x13</td></tr>

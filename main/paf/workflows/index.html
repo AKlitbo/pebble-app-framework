@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workflows · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" aria-current="location" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Workflows</h1>
+          <nav class="section-nav" aria-label="Pages in this section">
+<ul>
+<li><a href="../../paf/">paf</a></li>
+<li><a href="../../paf/units/">Units</a></li>
+<li><a href="../../paf/commands/">Commands</a></li>
+<li><a href="../../paf/workflows/" aria-current="page">Workflows</a></li>
+<li><a href="../../paf/troubleshooting/">Troubleshooting</a></li>
+</ul>
+</nav>
+          <div class="readme"><h2 id="setting-up-a-fresh-clone">Setting Up a Fresh Clone</h2>
+<p>A clone has no <code>paf/</code> and no <code>node_modules</code> yet, since both are gitignored. One sync fills every unit:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">git</span><span style="color:var(--code-token-string)"> clone</span><span style="color:var(--code-token-string)"> https://github.com/</span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-string)">yo</span><span style="color:var(--code-foreground)">u</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-string)">/</span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-string)">face-rep</span><span style="color:var(--code-foreground)">o</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-string)">.git</span></span>
+<span class="line"><span style="color:var(--code-token-function)">cd</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">face-rep</span><span style="color:var(--code-foreground)">o</span><span style="color:var(--code-token-keyword)">></span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> sync</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> status</span></span></code></pre>
+<p>Every unit should read <code>ready</code>. Then build a face from WSL, Linux, or macOS:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> build</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">fac</span><span style="color:var(--code-foreground)">e</span><span style="color:var(--code-token-keyword)">></span></span></code></pre>
+<p>The first build of each face is always clean, and says so. <code>paf doctor</code> checks the rest of the setup, the SDK included.</p>
+<h2 id="moving-a-unit-to-a-new-framework">Moving a Unit to a New Framework</h2>
+<p>Each unit moves on its own, so one family can take a new framework while the others stay where they are.</p>
+<ol>
+<li>Run <code>paf status</code>. A unit whose <code>TAG</code> is behind <code>LATEST</code> has a newer framework to move to. <code>LATEST</code> is as of the last fetch, and <code>paf pin</code> fetches again anyway.</li>
+<li>Run <code>paf pin &lt;unit&gt; latest</code>, or name a tag. It prints every breaking entry in the framework changelog between the two tags. Read them before going on, since each one says what to change in the unit.</li>
+<li>Make those changes. The full changelog is in <code>paf/CHANGELOG.md</code> once the pin has moved.</li>
+<li>Run <code>paf gen &lt;face&gt; all</code> for each face it names, since a new framework can change what the generators write.</li>
+<li>Run <code>paf check</code>, <code>paf test</code>, <code>paf typecheck</code>, and <code>paf build &lt;face&gt;</code>. The build starts clean on its own, since <code>paf/</code> changed.</li>
+<li>Commit <code>paf.config.json</code> and <code>package-lock.json</code> along with the changes. A teammate&#39;s next command picks up the new pin by itself.</li>
+</ol>
+<h2 id="working-on-the-framework-itself">Working on the Framework Itself</h2>
+<p>To try a framework change in a face before it is tagged, point the face&#39;s unit at a framework clone:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> use</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">uni</span><span style="color:var(--code-foreground)">t</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-string)"> local</span><span style="color:var(--code-token-string)"> ../pebble-app-framework</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> build</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">fac</span><span style="color:var(--code-foreground)">e</span><span style="color:var(--code-token-keyword)">></span></span></code></pre>
+<p>The path defaults to <code>../pebble-app-framework</code> beside the repo, so it can be left out when the clone sits there. Edit the framework, then build again. Every command that readies the unit copies the clone&#39;s working tree in first, uncommitted edits included. <code>paf status</code> shows the unit as <code>local</code>, and <code>paf doctor</code> notes it.</p>
+<p>When the change is tagged, move back:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> use</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">uni</span><span style="color:var(--code-foreground)">t</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-string)"> pinned</span><span style="color:var(--code-token-comment)">       # back to the tag it pins</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> pin</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">uni</span><span style="color:var(--code-foreground)">t</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">new</span><span style="color:var(--code-token-string)"> ta</span><span style="color:var(--code-foreground)">g</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-comment)">    # or straight onto the new tag</span></span></code></pre>
+<p><code>paf sync --locked</code> refuses a unit on a local framework, so a workflow can never build one by mistake.</p>
+<h2 id="switching-between-wsl-and-windows">Switching between WSL and Windows</h2>
+<p><code>paf build</code> only runs where the Pebble SDK does, but the other commands run on Windows too. A unit&#39;s <code>node_modules</code> holds native packages for the system that installed it, so a clone shared between WSL and Windows can only be installed for one at a time. <code>paf</code> stops rather than use the other system&#39;s install:</p>
+<pre><code>paf: watchfaces/my-family/node_modules was installed from linux, and its native packages only run there. Run paf sync --force to reinstall it for win32, which breaks it for the other one</code></pre>
+<p><code>paf sync --force</code> reinstalls for the system you are on. Running it again from the other side switches back. Keeping all the work on one side of the clone avoids the switch.</p>
+<p>A local framework path recorded from one system may not be there on the other, such as a <code>/mnt/e/...</code> path on Windows. Run <code>paf use &lt;unit&gt; local &lt;path&gt;</code> again with the path as the current system sees it.</p>
+<h2 id="adding-a-plugin">Adding a Plugin</h2>
+<ol>
+<li>List it under <code>plugins</code> in the unit&#39;s <code>paf.config.json</code>, with <code>{}</code> when it takes no settings.</li>
+<li>Run <code>paf sync</code>. It refills <code>paf/</code> with the plugin and installs its packages.</li>
+<li>Run <code>paf gen &lt;face&gt; all</code> if the plugin brings a generator.</li>
+</ol>
+<p>Dropping a plugin is the same in reverse. Its folder leaves <code>paf/plugins/</code> on the next sync.</p>
+<h2 id="generators">Generators</h2>
+<p><code>paf gen &lt;face&gt; all</code> runs the framework&#39;s generators first, then each listed plugin&#39;s in the order <code>paf.config.json</code> lists them, then the unit&#39;s own.</p>
+<p>A unit&#39;s own generator with an <code>after</code> runs straight after the generator it names. One without <code>after</code> runs last. A generator naming one nobody offers, or a ring of <code>after</code>s, is refused with the names involved.</p>
+<p>A generator only runs under <code>all</code> on a face that holds the file or folder its <code>when</code> names, such as <code>frame/frame.config.json</code> for <code>background</code>. For a <code>when</code> under <code>src/pkjs/</code>, a face in a family also counts its core&#39;s matching folder under <code>core/pkjs/</code>, where a family keeps its shared Clay builder. A unit generator placed after <code>clay</code> still runs on a face with no Clay page, unless it has a <code>when</code> of its own.</p>
+<p><code>paf gen &lt;face&gt; &lt;kind&gt;</code> runs one generator whatever its <code>when</code> says, and passes on the arguments typed after it. Under <code>all</code> each generator gets the arguments its plugin set for it, such as every frame and every theme for <code>background</code>.</p>
+<h2 id="ci">CI</h2>
+<p>The CLI repo has an action that installs <code>paf</code> and runs <code>paf sync --locked</code>. Load it at the release tag, then build:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">steps</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> actions/checkout@v7</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">  - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">      face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> my-face</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">  - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v4.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">      face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> my-face</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">  - </span><span style="color:var(--code-token-keyword)">run</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> paf build my-face</span></span></code></pre>
+<p><strong><code>face</code></strong> fills only the unit that face builds from. Leave it empty to fill every unit, such as for a job that runs <code>paf check</code> or <code>paf test</code> across the repo.</p>
+<p><strong><code>node-version</code></strong> defaults to <code>24</code>. It has to fall inside the framework&#39;s <code>engines.node</code>, which on framework 4 is 22.18 or later on Node 22, or 24.2 or later.</p>
+<p><code>--locked</code> installs from the committed lock with <code>npm ci</code> and never writes <code>paf.config.json</code> or the lock. A lock or a pin that is out of step fails the job rather than being fixed in CI. <code>paf doctor</code> reports a workflow that loads the framework&#39;s actions at a tag older than the newest pin as a problem, and exits <code>1</code>.</p>
+<h2 id="the-cache">The Cache</h2>
+<p><code>paf</code> keeps one bare clone of the framework, the mirror, and fills every unit on the machine from it:</p>
+<ul>
+<li><code>~/.cache/paf/</code> on Linux, WSL, and macOS, or <code>$XDG_CACHE_HOME/paf/</code> when that is set</li>
+<li><code>%LOCALAPPDATA%\paf\</code> on Windows</li>
+</ul>
+<p><code>PAF_HOME</code> moves it. The mirror is safe to delete, and the next command that needs it clones it again.</p>
+<p><code>PAF_REPO</code> fetches the framework from another URL or a local path, such as a fork or a clone holding tags that are not pushed yet. A relative path is read from the folder <code>paf</code> runs in. Each source gets a mirror of its own.</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">PAF_REPO</span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string)">../pebble-app-framework</span><span style="color:var(--code-token-function)"> paf</span><span style="color:var(--code-token-string)"> sync</span></span></code></pre>
+</div>
+          
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

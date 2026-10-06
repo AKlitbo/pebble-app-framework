@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Readouts · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li class="current"><a href="../../how/readouts/" aria-current="page">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Readouts</h1>
+          
+          <div class="readme"><p>A readout is a ready-made line of text: the time, the date, the heart rate, the steps, the temperature, and so on. Each one reads its store, follows the setting the wearer picked for it, and writes the text into a buffer, with <code>--</code> or nothing at all when there is no reading yet. A face drops one into a slot and gets the formatting, the settings, and the no-data case without writing any of it, and every face that uses the same readout shows the same reading the same way.</p>
+<p>They live in <a href="../../c/readouts_8h.html"><code>readouts.h</code></a> and <a href="../../c/readouts_8c.html"><code>readouts.c</code></a> under <code>src/c/pebble/ui/</code>.</p>
+<h2 id="using-one">Using One</h2>
+<p>Every readout has the shape <code>void readout_x(char *out, size_t n)</code>, the same as a text slot&#39;s function in <a href="../../how/engine/">The Engine</a>, so a slot binds straight to one:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">s_zones[ZONE_TIME]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .text </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> readout_time};</span></span>
+<span class="line"><span style="color:var(--code-foreground)">out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">s_zones[ZONE_DATE]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .text </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> readout_date};</span></span>
+<span class="line"><span style="color:var(--code-foreground)">out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">s_zones[ZONE_HR]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)">   .text </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> readout_hr};</span></span></code></pre>
+<p>They are plain functions, so a face can call one from its own drawing code too. A face that draws a heart beside the heart rate calls <code>readout_hr</code> into its own buffer and measures that string to place the icon, so the icon sits against exactly the text the slot shows.</p>
+<p>A readout holds no state and keeps no copy. It reads the store each time it is called, so it is always as fresh as the store, and the engine&#39;s check for an unchanged string keeps that cheap.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Readout</th>
+<th align="left">Reads</th>
+<th align="left">Follows</th>
+<th align="left">With No Reading</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>readout_time</code></td>
+<td align="left">the time store</td>
+<td align="left">Time Format</td>
+<td align="left">always has a time</td>
+</tr>
+<tr>
+<td align="left"><code>readout_meridiem</code></td>
+<td align="left">the time store</td>
+<td align="left">Time Format</td>
+<td align="left">empty on a 24 hour or .beats clock</td>
+</tr>
+<tr>
+<td align="left"><code>readout_date</code></td>
+<td align="left">the time store</td>
+<td align="left">Date Format</td>
+<td align="left">always has a date</td>
+</tr>
+<tr>
+<td align="left"><code>readout_hr</code></td>
+<td align="left">the health store</td>
+<td align="left">nothing</td>
+<td align="left"><code>--</code></td>
+</tr>
+<tr>
+<td align="left"><code>readout_steps</code></td>
+<td align="left">the health store</td>
+<td align="left">Steps Mode</td>
+<td align="left"><code>--</code></td>
+</tr>
+<tr>
+<td align="left"><code>readout_weather_temp</code></td>
+<td align="left">the weather store</td>
+<td align="left">Temperature Unit</td>
+<td align="left"><code>--</code></td>
+</tr>
+<tr>
+<td align="left"><code>readout_weather_cond</code></td>
+<td align="left">the weather store</td>
+<td align="left">nothing</td>
+<td align="left"><code>--</code></td>
+</tr>
+<tr>
+<td align="left"><code>readout_lat</code>, <code>readout_lon</code></td>
+<td align="left">the location store</td>
+<td align="left">nothing</td>
+<td align="left"><code>--</code></td>
+</tr>
+</tbody></table>
+<h2 id="the-clock">The Clock</h2>
+<p><code>readout_time</code> follows the Time Format setting.</p>
+<p><strong>System.</strong> The watch&#39;s own 12 or 24 hour setting decides. The readout asks the watch each time it runs, so changing it in the watch&#39;s menu shows on the next repaint without a settings save.</p>
+<p><strong>12 Hour and 24 Hour.</strong> Both go through <code>strftime</code>, as <code>%I:%M</code> or <code>%H:%M</code>, so the 12 hour clock reads <code>06:30</code> with its leading zero.</p>
+<p><strong>12 Hour without the Leading Zero.</strong> This reads <code>6:30</code>. The C library&#39;s <code>%l</code> would give that directly, but it is an extension to the standard that the SDK&#39;s library is not guaranteed to carry, so the readout formats with <code>%I</code> and drops a leading <code>0</code> itself.</p>
+<p><strong>.beats.</strong> The clock becomes a Swatch Internet Time reading such as <code>@672</code>, always three digits after the <code>@</code>. <a href="../../how/beats/">.beats</a> covers the maths and the timer that redraws on each beat.</p>
+<p><code>readout_meridiem</code> writes <code>AM</code> or <code>PM</code> on either 12 hour choice, and on System when the watch is in 12 hour mode. On a 24 hour or .beats clock it writes an empty string, so a face can leave its AM/PM slot in place on every layout and it shows nothing when there is nothing to show.</p>
+<h2 id="the-date">The Date</h2>
+<p><code>readout_date</code> runs the Date Format setting through <code>strftime</code>, which turns a pattern such as <code>%a %d %b</code> into <code>Thu 18 Jun</code>, then upper-cases the result to <code>THU 18 JUN</code>. <a href="../../how/fonts/">Fonts</a> covers why capitals matter.</p>
+<p><strong>A .beats Reading in the Date.</strong> A format can carry the <code>{B}</code> token, which the readout fills with the current beat, as <a href="../../how/beats/#the-b-token">.beats</a> covers.</p>
+<p><strong>Too Long for the Buffer.</strong> When the date does not fit the buffer, <code>strftime</code> leaves whatever it managed with no ending, and the readout returns an empty string rather than reading past the end looking for one. In an engine slot that means a date longer than 23 characters shows as blank rather than cut short. The date formats on the framework&#39;s settings page are all well inside that.</p>
+<h2 id="health">Health</h2>
+<p><strong>Heart Rate.</strong> <code>readout_hr</code> writes the beats per minute, or <code>--</code>. Only a rate above 0 is printed, so a reading of 0 shows <code>--</code> as well.</p>
+<p><strong>Steps.</strong> <code>readout_steps</code> follows the Steps Mode setting. In steps mode it writes the count. In miles or kilometres mode it writes the distance walked to one decimal place with its unit, such as <code>2.4 KM</code> or <code>1.5 MI</code>. The conversion stays in whole numbers by counting tenths of a unit, so no floating point code is linked into the face.</p>
+<p>A step count of -1 means there is no reading, and the readout writes <code>--</code> in every mode, since the distance alone reads 0 with no data (see <a href="../../how/health-store/#what-each-read-costs">The Health Store</a>).</p>
+<h2 id="weather">Weather</h2>
+<p><strong>Temperature.</strong> <code>readout_weather_temp</code> writes the temperature with its unit letter, such as <code>23C</code> or <code>73F</code>. The weather store already holds it in the wearer&#39;s unit, so the readout only adds the letter. When the store has no temperature yet it writes <code>--</code>.</p>
+<p><strong>Condition.</strong> <code>readout_weather_cond</code> writes the condition&#39;s short label, such as <code>RAIN</code> or <code>PCLDY</code>. After dark the phone sends a night form such as <code>CLEAR_NIGHT</code>, which picks the night icon (see <a href="../../how/icons/">Icons</a>). The readout trims the <code>_NIGHT</code> off, so the text reads <code>CLEAR</code> by day or night. With no condition yet it writes <code>--</code>.</p>
+<h2 id="location">Location</h2>
+<p><code>readout_lat</code> and <code>readout_lon</code> write the latitude and longitude as the phone formatted them, or <code>--</code> when the watch has no location yet. The location store keeps them as text, so the readout copies them as they are.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/engine/"><span>Previous</span>The Engine</a>
+<a class="page-step page-step-next" rel="next" href="../../how/fonts/"><span>Next</span>Fonts</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

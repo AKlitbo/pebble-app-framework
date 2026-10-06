@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Time Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li class="current"><a href="../../how/time-store/" aria-current="page">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Time Store</h1>
+          
+          <div class="readme"><p>The time store holds the current time and runs the ticker that moves it on: the minute tick, the .beats timer, or both. A face picks the ticker from its settings and reads the time back, and the store swaps tickers when the wearer changes the time format. Every other store&#39;s regular work rides on the same ticker, so the time store also decides when the weather is polled and when the step count is read.</p>
+<p>It lives in <a href="../../c/time__store_8h.html"><code>time_store.h</code></a> and <a href="../../c/time__store_8c.html"><code>time_store.c</code></a>.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<p>A face builds the store&#39;s rules from its own settings, so the store never reads a setting itself:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-foreground)"> TimeConfig </span><span style="color:var(--code-token-function)">time_config</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    bool</span><span style="color:var(--code-foreground)"> beats </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> settings_u8(SETTING_TIME_FORMAT)</span><span style="color:var(--code-token-keyword)"> ==</span><span style="color:var(--code-foreground)"> TIME_FORMAT_BEATS;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)"> (TimeConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .minute_tick </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> !</span><span style="color:var(--code-foreground)">beats</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .beats </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> beats};</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">time_store_init</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">time_config</span><span style="color:var(--code-foreground)">()</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">time_store_subscribe</span><span style="color:var(--code-foreground)">(on_time_changed);</span></span></code></pre>
+<p><strong><code>minute_tick</code></strong> runs the SDK&#39;s minute tick, which is what a clock and most readouts need.</p>
+<p><strong><code>beats</code></strong> runs a timer that fires on each .beats boundary, every 86.4 seconds. <a href="../../how/beats/">.beats</a> covers how it finds the boundary.</p>
+<p><strong><code>live</code></strong> runs whichever tickers are on. With <code>live</code> false the store runs none and the clock stays at the time it was seeded with.</p>
+<p>Init takes the current time straight away, so the face&#39;s first paint has a time to draw before any tick arrives. It redraws nothing, since the face subscribes afterwards.</p>
+<p><code>time_store_tm()</code> returns the store&#39;s own copy of the time. The SDK&#39;s <code>localtime</code> hands back one shared buffer that the next call overwrites, so a face reading the store&#39;s copy never sees it change under it because some other code broke a time apart.</p>
+<h2 id="picking-the-tickers">Picking the Tickers</h2>
+<p>The two tickers are independent, so a face can run either one or both.</p>
+<p><strong>The Minute Tick Alone.</strong> The usual clock. The store wakes once a minute, on the minute.</p>
+<p><strong>The .beats Timer Alone.</strong> For a face whose clock shows .beats instead of hours and minutes, as in the snippet above. The minute tick would be wasted work, since nothing on screen changes on the minute.</p>
+<p><strong>Both.</strong> For a clock face that also shows a beat somewhere, such as in the date line. Each ticker moves the time and runs the stores on its own. The stores&#39; polls go by deadline, so the extra turns never ask the phone for more.</p>
+<p><strong>Neither.</strong> The time never moves and the other stores never get their turn, so nothing polls. Only a seeded face runs this way.</p>
+<p>The face&#39;s callback runs on every tick from either ticker. A face that does something on the hour, such as an hourly buzz, checks <code>tm_min == 0</code> and needs the minute tick running. On the .beats timer alone it can miss the hour, as <a href="../../how/vibrations/#on-the-hour">Vibrations</a> explains.</p>
+<h2 id="each-tick-in-order">Each Tick, in Order</h2>
+<p>Both tickers end in the same few lines:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> set</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> struct</span><span style="color:var(--code-foreground)"> tm </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">t)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    s_tm </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">t;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    store_cadence_fire()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (s_cb) </span><span style="color:var(--code-token-function)">s_cb()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The store keeps the new time first, then gives every other store its turn on the cadence, then tells the face, so the face redraws once from fresh numbers. <a href="../../how/stores/#riding-the-faces-cadence">How the Stores Work</a> covers what the other stores do with their turn.</p>
+<p>The minute tick hands the store the time the SDK broke apart for it. The .beats timer reads the clock itself, then sets itself again for the next boundary each time it fires, so a beat that wakes late never pushes the ones after it later:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Timer as App Timer
+  participant Time as Time Store
+  participant Face
+  Time-&gt;&gt;Timer: wait ms_until_next_beat
+  Timer-&gt;&gt;Time: fires on the boundary
+  Time-&gt;&gt;Time: read the clock and keep the new time
+  Time-&gt;&gt;Time: store_cadence_fire, the other stores&#39; turn
+  Time-&gt;&gt;Face: the time moved
+  Face-&gt;&gt;Face: redraw
+  Time-&gt;&gt;Timer: wait for the next boundary</pre>
+<p><a href="../../how/beats/#redrawing-on-each-beat">.beats</a> covers how the wait to the next boundary is worked out.</p>
+<h2 id="seeding-a-fixed-time">Seeding a Fixed Time</h2>
+<p>A face taking screenshots pins the clock:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)"> now </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> time</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">struct</span><span style="color:var(--code-foreground)"> tm pinned </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-token-function)">localtime</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">&#x26;</span><span style="color:var(--code-foreground)">now);</span></span>
+<span class="line"><span style="color:var(--code-foreground)">pinned.tm_hour </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 10</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">pinned.tm_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 8</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">pinned.tm_sec </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">time_store_init</span><span style="color:var(--code-foreground)">((TimeConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">pinned);</span></span></code></pre>
+<p>With <code>live</code> false no ticker runs, whatever <code>minute_tick</code> and <code>beats</code> say, so the face shows 10:08 for as long as it runs. Starting from today&#39;s date and changing only the hour and the minute keeps the date line real. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
+<h2 id="changing-the-time-format">Changing the Time Format</h2>
+<p><code>time_store_reconfigure</code> takes new rules, and a face runs it from its settings handler, so switching between a clock and .beats swaps the ticker on the spot:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_settings_changed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> time_or_date_changed)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // rebuild the screen from the new settings first</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    time_store_reconfigure(time_config())</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The minute tick is turned on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With <code>live</code> false both tickers stop and the time stays at the last tick.</p>
+<p>Reconfigure never touches the time the store holds and never redraws. The settings handler rebuilds the screen anyway, and the next tick brings the time up to date.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/stores/"><span>Previous</span>How the Stores Work</a>
+<a class="page-step page-step-next" rel="next" href="../../how/system-store/"><span>Next</span>The System Store</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

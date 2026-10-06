@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -554,7 +556,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gad8460f42bd55675f97ac3b2feae4fde0" id="r_gad8460f42bd55675f97ac3b2feae4fde0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad8460f42bd55675f97ac3b2feae4fde0">fmt_pct_signed</a> (char *buffer, size_t size, int value)</td></tr>
 <tr class="memdesc:gad8460f42bd55675f97ac3b2feae4fde0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format hundredths as a signed two-decimal percent, e.g. 125 -&gt; "+1.25%".  <br /></td></tr>
 <tr class="memitem:ga2d2900400e9b136d9d176de8838c52a4" id="r_ga2d2900400e9b136d9d176de8838c52a4"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga2d2900400e9b136d9d176de8838c52a4">copy_bounded</a> (char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</td></tr>
-<tr class="memdesc:ga2d2900400e9b136d9d176de8838c52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy bytes into a fixed buffer, taking what fits and always terminating.  <br /></td></tr>
+<tr class="memdesc:ga2d2900400e9b136d9d176de8838c52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy bytes into a fixed buffer, taking what fits and terminating it.  <br /></td></tr>
 <tr class="memitem:ga6334eca7eb0a33cdf25b1bb9060afa35" id="r_ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga6334eca7eb0a33cdf25b1bb9060afa35">cstring_is_clean</a> (const char *s, uint16_t size)</td></tr>
 <tr class="memdesc:ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a byte range holds a string worth keeping.  <br /></td></tr>
 <tr class="memitem:ga58af7628a1a740a9fb7a220b3a472c22" id="r_ga58af7628a1a740a9fb7a220b3a472c22"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga58af7628a1a740a9fb7a220b3a472c22">cstring_setting_is_clean</a> (const char *s, uint16_t size, const char *default_str)</td></tr>
@@ -1085,12 +1087,12 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Copy bytes into a fixed buffer, taking what fits and always terminating. </p>
+<p>Copy bytes into a fixed buffer, taking what fits and terminating it. </p>
 <p>For the length-prefixed text the phone sends, where the length is the phone's word and the room is ours. What does not fit is dropped rather than written past the end.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">dst</td><td>Where to write. Always ends terminated. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">cap</td><td>How much room dst has, terminator included. Must be at least 1: a buffer with no room for even a terminator has nothing this can do with it. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">dst</td><td>Where to write. Ends terminated whenever cap is at least 1. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">cap</td><td>How much room dst has, terminator included. A cap of 0 has no room even for the terminator, so dst is left untouched and not terminated. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">src</td><td>The bytes to copy. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">len</td><td>How many bytes there are. </td></tr>
   </table>
@@ -2366,7 +2368,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Map a reading to its pixel row in a plot, with the low end at the bottom. </p>
-<p>The window runs from lo at the bottom row to hi at the top, so a bigger reading sits higher up the panel. The reading is expected to be inside the window already. A caller that cannot promise that clamps it with clamp_int first.</p>
+<p>The window runs from lo at the bottom row to hi at the top, so a bigger reading sits higher up the panel. A reading outside the window is pinned to the nearer edge first, so it never lands on a row outside the plot area.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">y0</td><td>The top row of the plot area. </td></tr>

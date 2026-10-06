@@ -8,12 +8,13 @@ var searchData=
   ['persist_5fsave_5',['persist_save',['../calendar__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;calendar_store.c'],['../health__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;health_store.c'],['../location__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;location_store.c'],['../stock__store_8c.html#a7929b94f95a6b9dba4c3af1f4ee2acd2',1,'persist_save(void):&#160;stock_store.c']]],
   ['phase_6',['phase',['../tide_8c.html#a08bf10e5ba17a2c669e2cc0a45d7bfaa',1,'tide.c']]],
   ['plot_5fy_7',['plot_y',['../group__lib__core.html#gadc6c8c4764edd2d25babbc4689eaa73b',1,'plot_y(int y0, int height, int lo, int hi, int value):&#160;scale.c'],['../group__lib__core.html#gadc6c8c4764edd2d25babbc4689eaa73b',1,'plot_y(int y0, int height, int lo, int hi, int value):&#160;scale.c']]],
-  ['point_5fcount_8',['POINT_COUNT',['../wind__dir_8c.html#ae4c22bd55836cfbafd815744656a35d6',1,'wind_dir.c']]],
-  ['poll_9',['poll',['../structStoreFetch.html#a5b02e91cae8fecfcff25a25c162bd923',1,'StoreFetch']]],
-  ['poll_5fmin_10',['poll_min',['../structCalendarConfig.html#acb8009a48a79bd45de23069a2a9160f8',1,'CalendarConfig::poll_min'],['../structStockConfig.html#a26c88d84596dd4347fe66f69a84fc698',1,'StockConfig::poll_min'],['../structStorePoll.html#a8ddb0db53f8ee2769ef42460bbd94303',1,'StorePoll::poll_min'],['../structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4',1,'WeatherConfig::poll_min']]],
-  ['precip_5fchance_11',['precip_chance',['../structWeatherMessage.html#a196b4cbc8502c9c6e24d1040d4ff8ce2',1,'WeatherMessage::precip_chance'],['../structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709',1,'WeatherState::precip_chance'],['../structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437',1,'WeatherSeed::precip_chance']]],
-  ['pressure_12',['pressure',['../structWeatherMessage.html#ae9d770ab1a1756f491395ca35cf2014e',1,'WeatherMessage::pressure'],['../structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e',1,'WeatherState::pressure'],['../structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902',1,'WeatherSeed::pressure']]],
-  ['price_5fcents_13',['price_cents',['../structStockSlot.html#a5256275b025aa00f48cc430f0fb775be',1,'StockSlot']]],
-  ['pump_14',['pump',['../appmessage_8c.html#a5f7778c42828f5ddb907706658b382e8',1,'appmessage.c']]],
-  ['px_5falpha_15',['px_alpha',['../icon__cache_8c.html#aa9b17bd6491a4fb807f99fb1b0a66a40',1,'icon_cache.c']]]
+  ['plugins_8',['Plugins',['../group__lib__plugins.html',1,'']]],
+  ['point_5fcount_9',['POINT_COUNT',['../wind__dir_8c.html#ae4c22bd55836cfbafd815744656a35d6',1,'wind_dir.c']]],
+  ['poll_10',['poll',['../structStoreFetch.html#a5b02e91cae8fecfcff25a25c162bd923',1,'StoreFetch']]],
+  ['poll_5fmin_11',['poll_min',['../structCalendarConfig.html#acb8009a48a79bd45de23069a2a9160f8',1,'CalendarConfig::poll_min'],['../structStockConfig.html#a26c88d84596dd4347fe66f69a84fc698',1,'StockConfig::poll_min'],['../structStorePoll.html#a8ddb0db53f8ee2769ef42460bbd94303',1,'StorePoll::poll_min'],['../structWeatherConfig.html#ae74aa3985257e1cabb55468fb482cba4',1,'WeatherConfig::poll_min']]],
+  ['precip_5fchance_12',['precip_chance',['../structWeatherMessage.html#a196b4cbc8502c9c6e24d1040d4ff8ce2',1,'WeatherMessage::precip_chance'],['../structWeatherState.html#a27ceeb5c3bd3ae1d840b53f10f8ad709',1,'WeatherState::precip_chance'],['../structWeatherSeed.html#a87dffebd1350edddd8bff9f6488f6437',1,'WeatherSeed::precip_chance']]],
+  ['pressure_13',['pressure',['../structWeatherMessage.html#ae9d770ab1a1756f491395ca35cf2014e',1,'WeatherMessage::pressure'],['../structWeatherState.html#a10a0c1b94135d6c9d6ed2e49102e6e0e',1,'WeatherState::pressure'],['../structWeatherSeed.html#a90ff9b074f7922ebde4f03d1acb34902',1,'WeatherSeed::pressure']]],
+  ['price_5fcents_14',['price_cents',['../structStockSlot.html#a5256275b025aa00f48cc430f0fb775be',1,'StockSlot']]],
+  ['pump_15',['pump',['../appmessage_8c.html#a5f7778c42828f5ddb907706658b382e8',1,'appmessage.c']]],
+  ['px_5falpha_16',['px_alpha',['../icon__cache_8c.html#aa9b17bd6491a4fb807f99fb1b0a66a40',1,'icon_cache.c']]]
 ];

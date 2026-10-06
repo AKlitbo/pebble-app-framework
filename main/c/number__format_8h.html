@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -212,7 +214,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gad8460f42bd55675f97ac3b2feae4fde0" id="r_gad8460f42bd55675f97ac3b2feae4fde0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gad8460f42bd55675f97ac3b2feae4fde0">fmt_pct_signed</a> (char *buffer, size_t size, int value)</td></tr>
 <tr class="memdesc:gad8460f42bd55675f97ac3b2feae4fde0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format hundredths as a signed two-decimal percent, e.g. 125 -&gt; "+1.25%".  <br /></td></tr>
 <tr class="memitem:ga2d2900400e9b136d9d176de8838c52a4" id="r_ga2d2900400e9b136d9d176de8838c52a4"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga2d2900400e9b136d9d176de8838c52a4">copy_bounded</a> (char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</td></tr>
-<tr class="memdesc:ga2d2900400e9b136d9d176de8838c52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy bytes into a fixed buffer, taking what fits and always terminating.  <br /></td></tr>
+<tr class="memdesc:ga2d2900400e9b136d9d176de8838c52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy bytes into a fixed buffer, taking what fits and terminating it.  <br /></td></tr>
 <tr class="memitem:ga6334eca7eb0a33cdf25b1bb9060afa35" id="r_ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35">cstring_is_clean</a> (const char *s, uint16_t size)</td></tr>
 <tr class="memdesc:ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a byte range holds a string worth keeping.  <br /></td></tr>
 <tr class="memitem:ga58af7628a1a740a9fb7a220b3a472c22" id="r_ga58af7628a1a740a9fb7a220b3a472c22"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22">cstring_setting_is_clean</a> (const char *s, uint16_t size, const char *default_str)</td></tr>

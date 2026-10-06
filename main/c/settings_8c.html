@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -230,7 +232,7 @@ Functions</h2></td></tr>
 <tr class="memitem:ade6ab9e36147a4fcf04acd1f5264a98b" id="r_ade6ab9e36147a4fcf04acd1f5264a98b"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ade6ab9e36147a4fcf04acd1f5264a98b">load_schema</a> (const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *schema)</td></tr>
 <tr class="memdesc:ade6ab9e36147a4fcf04acd1f5264a98b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load one schema from its key, applying defaults first and re-saving when needed.  <br /></td></tr>
 <tr class="memitem:gabf78fb93dcb30f9c8f17cc2eaa9a934e" id="r_gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings_init</a> (const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *head)</td></tr>
-<tr class="memdesc:gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a face's settings from a trusted blob, applying defaults first.  <br /></td></tr>
+<tr class="memdesc:gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a face's settings from their saved blobs, applying defaults first.  <br /></td></tr>
 <tr class="memitem:ga40b5dc5d02dfa2e8a630782dc5be7263" id="r_ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga40b5dc5d02dfa2e8a630782dc5be7263">settings_was_fresh</a> (void)</td></tr>
 <tr class="memdesc:ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults.  <br /></td></tr>
 <tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft">
@@ -263,7 +265,7 @@ Variables</h2></td></tr>
 static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *&#160;</td><td class="memItemRight"><b>s_primary</b></td></tr>
 <tr class="memdesc:a103a9efc5cd332137f9d11dca75ae011"><td class="mdescLeft">&#160;</td><td class="mdescRight">Head of the schema chain registered by settings_init, the primary plus any companions. <br /></td></tr>
 <tr class="memitem:aa467d3462915f91a8ef7e224cba65b46" id="r_aa467d3462915f91a8ef7e224cba65b46"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#aa467d3462915f91a8ef7e224cba65b46">s_was_fresh</a></td></tr>
-<tr class="memdesc:aa467d3462915f91a8ef7e224cba65b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the primary key had no saved blob at init, and no settings page message has landed since.  <br /></td></tr>
+<tr class="memdesc:aa467d3462915f91a8ef7e224cba65b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when any schema in the chain had no saved blob at init, or one was reset for a blob it could not read, and no settings page message has landed since.  <br /></td></tr>
 <tr class="memitem:adcdaae53b13f19b99ab529c1fcf20f70" id="r_adcdaae53b13f19b99ab529c1fcf20f70"><td class="memItemLeft"><a id="adcdaae53b13f19b99ab529c1fcf20f70" name="adcdaae53b13f19b99ab529c1fcf20f70"></a>
 static const <a class="el" href="structSettingField.html">SettingField</a> *&#160;</td><td class="memItemRight"><b>s_by_id</b> [<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">SETTING_COUNT</a>]</td></tr>
 <tr class="memdesc:adcdaae53b13f19b99ab529c1fcf20f70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Known fields indexed by id for typed reads, drawn from every schema in the chain. <br /></td></tr>
@@ -791,8 +793,8 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 </table>
 </div><div class="memdoc">
 
-<p>True when the primary key had no saved blob at init, and no settings page message has landed since. </p>
-<p>That means storage was wiped by a fresh install or an update. It tells the phone to push its own config back rather than the watch seeding from defaults. It clears once the settings page's save or restore has landed and been saved. </p>
+<p>True when any schema in the chain had no saved blob at init, or one was reset for a blob it could not read, and no settings page message has landed since. </p>
+<p>Either way some settings are on their defaults, after a fresh install, an update, or a blob this build cannot read. It tells the phone to push its own config back rather than the watch seeding from defaults. It clears once the settings page's save or restore has landed and been saved. </p>
 
 </div>
 </div>

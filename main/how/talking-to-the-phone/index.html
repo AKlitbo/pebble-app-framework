@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Talking to the Phone · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li class="current"><a href="../../how/talking-to-the-phone/" aria-current="page">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Talking to the Phone</h1>
+          
+          <div class="readme"><p>The AppMessage layer is the watch&#39;s side of every conversation with the phone. It opens the connection with buffers sized for the face, reads each message the phone sends and hands each part to the store or setting that owns it, and sends the watch&#39;s own requests one at a time with retries. A store asks for weather with one call and never touches the SDK&#39;s message API, and a face does no more than pick its inbox size and open the connection.</p>
+<p>It lives in <a href="../../c/appmessage_8h.html"><code>appmessage.h</code></a> and <a href="../../c/appmessage_8c.html"><code>appmessage.c</code></a>, with the feature switches in <a href="../../c/appmessage__features_8h.html"><code>appmessage_features.h</code></a>, the send queue in <a href="../../c/outbox__queue_8h.html"><code>outbox_queue.h</code></a>, the safe readers in <a href="../../c/tuple__read_8h.html"><code>tuple_read.h</code></a>, and the list of after-message work in <a href="../../c/callback__list_8h.html"><code>callback_list.h</code></a>. The phone&#39;s half of the conversation, its own send queue included, is on <a href="../../how/phone-side/">The Phone Side</a>.</p>
+<h2 id="opening-the-connection">Opening the Connection</h2>
+<p>A face opens the connection once at startup, after its settings and stores are set up:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">settings_init</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">face_settings_schema</span><span style="color:var(--code-foreground)">());</span></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_init</span><span style="color:var(--code-foreground)">((WeatherConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .poll_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 30</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">                                   .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> WEATHER_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">appmessage_on_settings_changed</span><span style="color:var(--code-foreground)">(on_settings_changed);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">appmessage_open</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">4096</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p><code>settings_init</code> has to come first, because the outbox is sized from the settings table.</p>
+<p><strong>The Outbox Sizes Itself.</strong> The biggest message the watch ever sends is its copy of the settings: a marker saying it is a settings reply, every setting, the fresh flag, and the custom colours on a face that has them. <code>appmessage_open</code> adds those up with every text setting counted at its full buffer and every choice at four bytes, the three digits of 255 and a terminator, so no later change to a setting can outgrow the outbox. Each value costs 7 bytes of header on top of itself, so a face with fifteen settings, two of them text fields of 16 and 32 bytes, needs a little over 200 bytes. A table too big for the platform&#39;s largest outbox is logged at open, and a reply that would not fit goes out empty, as <a href="#sending-one-at-a-time">Sending, One at a Time</a> explains.</p>
+<p><strong>The Inbox Is the Face&#39;s to Size.</strong> The biggest message in is a save from the settings page, and Clay puts every key on the page in it, including keys the watch never reads. Only the face knows what its page holds, so it passes the number. Both buffers come off the app&#39;s heap, which is why the inbox is not simply opened at the platform&#39;s largest: every byte of inbox the face does not need is heap it cannot use for anything else. The number is pinned between the SDK&#39;s smallest and largest inbox. Each key on the page costs 7 bytes of header plus its longest value, and the sum is the number to pass. A save bigger than the inbox is dropped whole, and the watch only logs <code>Message dropped</code>, so a face adding settings keeps the number in step.</p>
+<h2 id="what-happens-to-a-message">What Happens to a Message</h2>
+<p>Each message from the phone goes through the same steps in the same order:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Phone
+  participant AM as AppMessage Layer
+  participant Stores
+  participant Settings
+  participant Face
+  Phone-&gt;&gt;AM: one message
+  alt the phone asks for the watch&#39;s settings
+    AM-&gt;&gt;Phone: queue the settings reply, and read nothing else
+  else anything else
+    AM-&gt;&gt;Stores: weather, stock strip, calendar strip, coordinates
+    AM-&gt;&gt;Settings: settings_apply_inbox
+    Settings--&gt;&gt;AM: what moved
+    AM-&gt;&gt;Settings: settings_save, when it is allowed
+    AM-&gt;&gt;Face: on_settings_changed, when anything moved
+    AM-&gt;&gt;Stores: unit changed, when the wearer switched it
+    AM-&gt;&gt;Phone: a weather request, when the unit moved
+    AM-&gt;&gt;Stores: inbox complete, once
+  end</pre>
+<p><strong>A Settings Request Stands Alone.</strong> The phone asks for the watch&#39;s settings once per launch, in a message of its own. The watch queues its reply and stops there. A phone that already holds settings only needs to know whether the watch booted empty, so it can ask for just that, and the answer is one flag rather than the whole table.</p>
+<p><strong>The Readings Go First.</strong> Weather, the stock and calendar strips, and the coordinates each go to the store that registered for them. A part nobody registered for is skipped.</p>
+<p><strong>Settings Are Looked For in Every Message.</strong> <code>settings_apply_inbox</code> runs on every message, a weather reply included. Most carry no settings keys, and it finds nothing. When something did move, the settings are saved, except while the watch is waiting to be restored after a wipe, which <a href="../../how/settings-on-the-watch/#the-fresh-state">Settings on the Watch</a> explains.</p>
+<p><strong>Then the Reactions.</strong> The face&#39;s <code>on_settings_changed</code> runs when any setting moved. A change of temperature unit made by the wearer tells the weather store, which converts the reading it holds. A restore does not, since the reading on the watch was already fetched in the restored unit. A change that affects the weather also queues a weather request.</p>
+<p><strong>Inbox Complete Comes Last.</strong> Once every part of the message is handled, the layer runs each function on its inbox complete list, described below.</p>
+<h2 id="who-gets-what">Who Gets What</h2>
+<p>Each part of a message has one handler slot, set with an <code>appmessage_on_*</code> call, and setting it again replaces the one before. The stores register their own when they start live, so a face that starts a store gets that store&#39;s messages with no code of its own.</p>
+<p><strong>Only for the Length of the Call.</strong> Everything a handler is given points into the inbox, which the SDK reuses for the next message. A handler copies whatever it keeps. The stock and calendar strips go over raw because each store owns its format and decodes it itself, which <a href="../../how/message-formats/">The Message Formats</a> covers.</p>
+<p><strong>Work for the End of a Message.</strong> One message can reach a store through more than one handler, such as a unit change landing beside the weather. A store adds a function with <code>appmessage_add_inbox_complete</code>, and the layer runs it once after the whole message, so the store can redraw and save once. <a href="../../how/weather-store/#one-redraw-and-one-save-per-message">The Weather Store</a> shows it in use. Unlike the handler slots, this is a list, so several stores can each add one. It holds four, runs them in the order they were added, ignores a function added twice, and logs an error if a fifth is turned away. The list itself is a small fixed array its owner provides, so nothing is allocated.</p>
+<h2 id="sending-one-at-a-time">Sending, One at a Time</h2>
+<p>AppMessage lets the watch have one message on its way at a time, and a second send started before the first is answered fails. The watch sends a weather, stock, or calendar request, its settings reply, and the short reply that only says whether it booted empty, and all of them go through one queue:</p>
+<pre class="mermaid">flowchart TD
+  ask[&quot;a store asks&quot;] --&gt; pending{&quot;same kind already in the outbox?&quot;}
+  pending -- yes --&gt; keep[&quot;keep the one already there&quot;]
+  pending -- no --&gt; queued[&quot;queued&quot;]
+  queued --&gt; connected{&quot;is the phone connected?&quot;}
+  connected -- no --&gt; cleared[&quot;queue emptied&quot;]
+  connected -- yes --&gt; flight[&quot;sent, waiting for an answer&quot;]
+  flight -- &quot;acked&quot; --&gt; next[&quot;send the next one&quot;]
+  flight -- &quot;nacked&quot; --&gt; retries{&quot;any retries left?&quot;}
+  retries -- no --&gt; dropped[&quot;dropped&quot;]
+  retries -- yes --&gt; held[&quot;held with the failed ones&quot;]
+  held -- &quot;5 s after the queue empties&quot; --&gt; queued</pre>
+<p><strong>One of Each Kind.</strong> A request is only added when the same kind is not already in flight, queued, or held after a failure. A store whose poll comes round again while its last request is still waiting keeps the one already there, so a fast cadence or a flapping connection can never stack up copies. The queue has room for one more job than there are kinds, so it never fills.</p>
+<p><strong>Retries Wait for the Phone to Wake.</strong> A nack usually means the phone&#39;s PebbleKit JS was asleep or busy, and the send it turned away is often what woke it. A retry a moment later would hit the same sleeping code. So a failed job waits with the others that failed until the queue has drained, then the whole set goes back in after 5 seconds. Each job gets its first send and three retries, so a request turned away by a phone that is starting up keeps trying for at least fifteen seconds before it is given up. The phone&#39;s own queue retries after 250 ms instead, for the reason on <a href="../../how/phone-side/#the-send-queue">The Phone Side</a>.</p>
+<p><strong>A Refused Send Is a Failed Send.</strong> If the SDK will not even start a send while the phone is there, the job is held for a retry the same way and the queue moves on, so one stuck job can never block the rest.</p>
+<p><strong>The Settings Reply Is Built as It Goes Out.</strong> The reply is written when it is sent, not when it is queued, so a retry carries the settings as they are at that moment rather than as they were at the first try.</p>
+<p><strong>A Reply That Does Not Fit Goes Out Empty.</strong> When the settings run out of room partway, the message is emptied and still sent. An outbox that was started and never sent leaves every later send failing, so it has to go. The phone only reads a reply that carries the settings marker, so it ignores the empty one rather than filling its page from half the settings.</p>
+<p><strong>A Lost Connection Empties the Queue.</strong> Each time the queue goes to send and finds no phone, it forgets everything waiting and cancels the retry timer. What is already in flight still waits for its answer. A request saved up while the phone was away would only fetch old news, and each store asks again on its next poll or when the phone comes back.</p>
+<h2 id="reading-values-safely">Reading Values Safely</h2>
+<p>Every value in an incoming message is read through two helpers, <code>tuple_int_or</code> and <code>tuple_str_or</code>. Each takes the value and a fallback, and returns the fallback whenever the value is missing or is not what it should be:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> humidity </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> tuple_int_or</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">dict_find</span><span style="color:var(--code-foreground)">(iter</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> MESSAGE_KEY_WEATHER_HUMIDITY)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> INT_MIN);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">condition </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> tuple_str_or</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">dict_find</span><span style="color:var(--code-foreground)">(iter</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> MESSAGE_KEY_WEATHER_CONDITIONS)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p>The SDK packs each value as a small header followed by the value, all back to back:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Bytes</th>
+<th align="left">Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">4</td>
+<td align="left">the message key</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">the type: text, bytes, signed, or unsigned</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">the length of the value</td>
+</tr>
+<tr>
+<td align="left">the length</td>
+<td align="left">the value</td>
+</tr>
+</tbody></table>
+<p><strong>The Length Is the Width.</strong> The phone can send a number one, two, or four bytes wide, and the type only says whether it is signed. Reading a four-byte number off a one-byte value takes three bytes of the next value&#39;s key along with it, and the result is a nonsense number with no error. <code>tuple_int_or</code> reads exactly as many bytes as the length says. A width other than 1, 2, or 4, or a type that is not a number, gives the fallback.</p>
+<p><strong>Text Has to End inside Itself.</strong> The phone is meant to include each string&#39;s terminator, and nothing in the SDK checks that it did. A string without one runs on into whatever follows it. <code>tuple_str_or</code> only returns a string whose last byte is its terminator, and gives the fallback otherwise.</p>
+<p><strong>The Fallback Carries Meaning.</strong> Each caller picks a fallback the phone never sends, so missing and wrong look the same and are handled once. The weather uses <code>INT_MIN</code> as its mark for a reading the phone left out. A toggle uses -1, so a value of the wrong type leaves the setting as it was. The helpers only unwrap the SDK&#39;s packing, and the reading itself lives in <a href="../../c/wire__read_8h.html"><code>wire_read.h</code></a> with the rest of <a href="../../how/message-formats/">The Message Formats</a>.</p>
+<h2 id="switches-from-the-message-keys">Switches from the Message Keys</h2>
+<p>A face lists its message keys in its appinfo, and the build defines a <code>HAS_MESSAGE_KEY_</code> switch for each one. <code>appmessage_features.h</code> turns those into one switch per feature, so every file asking whether the face has weather gets the same answer.</p>
+<p><strong>A Face Only Pays for What It Declares.</strong> The code that reads, requests, and hands on each feature is left out of the build when its keys are missing. A face with no calendar carries no calendar code in its message handling, and a face with no weather sends no weather requests. A face that starts the weather store live without declaring the weather keys logs a warning the first time it asks, rather than polling a phone that never answers.</p>
+<p><strong>Groups of Keys Come Together or Not at All.</strong> Some keys only make sense as a set. Weather needs <code>WEATHER_REQUEST</code>, <code>WEATHER_TEMPERATURE</code>, <code>WEATHER_CONDITIONS</code>, and <code>WEATHER_OK</code>, and the last one is what tells a failed fetch from a reading. Without it a failed fetch&#39;s status text would show as a live 0 degrees. A face that declares part of a set fails to build, with each missing key named in the error. A typo in a key name would otherwise build cleanly and leave those panels on dashes with nothing to say why.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/settings-on-the-watch/"><span>Previous</span>Settings on the Watch</a>
+<a class="page-step page-step-next" rel="next" href="../../how/message-formats/"><span>Next</span>The Message Formats</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -233,7 +235,7 @@ Data Structures</h2></td></tr>
 <tr class="memitem:IconMargins" id="r_IconMargins"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structIconMargins.html">IconMargins</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transparent border around an icon's opaque art, in pixels per side.  <a href="structIconMargins.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Zone" id="r_Zone"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structZone.html">Zone</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to two smaller font and rect tiers to step down to when the text would overflow.  <a href="structZone.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Everything needed to present one text slot. Where it sits, and which registered font, alignment, and colour to use, plus up to three smaller font and rect tiers to step down to when the text would overflow.  <a href="structZone.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
@@ -332,7 +334,7 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Most slots a single face can declare. Ten is the ceiling of the largest layout a face builds here, so the slot arrays hold no dead entries. A face wanting more zones bumps this </p>
+<p>Most slots a single face can declare. Ten is the ceiling of the largest layout a face builds here, so the slot arrays hold no dead entries. A face cannot raise it from its own build, so more slots means raising it here </p>
 
 </div>
 </div>
@@ -347,7 +349,7 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Registry capacity. Sized to the face's slot count so the table wastes no memory. The face's <span class="tt">draw/fonts.h</span> checks <span class="tt">FONT_COUNT</span> against this at build time, so adding a slot past it fails the build with a clear message. Raise it by the same amount you grow the face. </p>
+<p>Registry capacity, shared by every face. The face's <span class="tt">draw/fonts.h</span> checks <span class="tt">FONT_COUNT</span> against this at build time, so adding a slot past it fails the build with a clear message. A face cannot raise it from its own build, so more slots means raising it here. </p>
 
 </div>
 </div>

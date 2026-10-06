@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Thumbnails Plugin · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li class="current"><a href="../../how/thumbnails-plugin/" aria-current="page">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Thumbnails Plugin</h1>
+          
+          <div class="readme"><p>The <code>thumbnails</code> plugin puts real pictures of a face&#39;s panels on its settings page. A face whose page has a layout editor, such as a drag and drop grid or a slot editor, can show each panel the way it looks on the watch rather than as an emoji on a coloured tile. The plugin takes the PNGs the face keeps in <code>resources/thumbnails</code>, writes them into one generated JavaScript file as base64 data URLs, and checks that the file and the pictures still agree with the face&#39;s list of panels. It does not draw the pictures. They are made outside the framework and committed with the face.</p>
+<p>The generator is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/plugins/thumbnails/embed-thumbnails.ts"><code>embed-thumbnails.ts</code></a> and the check is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/plugins/thumbnails/check-thumbnails.ts"><code>check-thumbnails.ts</code></a>, both registered in the plugin&#39;s <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/plugins/thumbnails/package.json"><code>package.json</code></a>. The lookup an editor runs on the page is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/clay/builder/ts/shared/thumbs.ts"><code>thumbs.ts</code></a>. How the editors themselves are written and bundled is on <a href="../../how/settings-page/#a-faces-own-builder">The Settings Page</a>.</p>
+<h2 id="turning-it-on">Turning It On</h2>
+<p>A unit lists the plugin under <code>plugins</code> in its <code>paf.config.json</code>. It takes no options:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "plugins"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "thumbnails"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {}</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The plugin&#39;s <code>paf</code> key offers a <code>thumbnails</code> generator, with <code>resources/thumbnails</code> as its <code>when</code>, and adds its check to <code>paf check</code>. So <code>paf gen &lt;face&gt; all</code> runs the generator only for a face that has the folder, and <code>paf gen &lt;face&gt; thumbnails</code> runs it on its own. A family lists the plugin once, and each face in it that keeps a folder gets its own generated file. <a href="../../paf/commands/#paf-gen"><code>paf gen</code></a> and <a href="../../paf/workflows/#generators">Generators</a> cover how the generators are found and ordered.</p>
+<h2 id="what-a-face-provides">What a Face Provides</h2>
+<p><strong>The Pictures.</strong> Each PNG is named <code>&lt;slug&gt;-&lt;size&gt;.png</code>. The name is split on its last dash, so a slug can hold dashes of its own and <code>weekday-dots-1x2.png</code> is the <code>weekday-dots</code> panel at <code>1x2</code>. A size cannot hold a dash. A panel that fits several sizes has one picture for each, so a Battery panel at two sizes comes as <code>battery-1x2.png</code> and <code>battery-2x2.png</code>. The pictures are drawn at the size the editor shows them, so they stay small.</p>
+<p><strong>The Module List.</strong> The face&#39;s <code>src/pkjs/clay/module-meta.ts</code> is the label-keyed list its editors already read for each panel&#39;s emoji and tint. Each row&#39;s <code>slug</code> is the file name stem its pictures use, so the list of panels lives in one place. The same file exports <code>thumbnailSizes</code>, the sizes a picture may come in:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-constant)"> moduleMeta</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-function)"> Record</span><span style="color:var(--code-foreground)">&#x3C;</span><span style="color:var(--code-token-constant)">string</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> ModuleMeta</span><span style="color:var(--code-foreground)">> </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'Battery'</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { icon</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '🔋'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> blockColor</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '#f0a500'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> slug</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'battery'</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'Weather'</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { icon</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '🌤'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> blockColor</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '#1e88e5'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> slug</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'weather'</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">export</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-token-constant)"> thumbnailSizes</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">'1x2'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> '2x2'</span><span style="color:var(--code-foreground)">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">export</span><span style="color:var(--code-token-keyword)"> default</span><span style="color:var(--code-foreground)"> moduleMeta;</span></span></code></pre>
+<p><strong>Sizes Belong to the Face.</strong> Each face draws its own panel shapes, so the framework keeps no list of sizes. A grid face might offer <code>1x2</code> and <code>2x2</code> blocks, and a face with fixed slots a <code>slot</code> and a <code>tall</code> size. A face with a <code>resources/thumbnails</code> folder but no <code>module-meta.ts</code>, or one that does not export <code>thumbnailSizes</code>, stops the generator with a message naming what is missing.</p>
+<h2 id="what-paf-gen-writes">What <code>paf gen</code> Writes</h2>
+<p>The generator reads every PNG in the folder, matches it to a row of the module list, and writes <code>src/pkjs/clay/module-thumbnails.g.js</code> in the face:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-comment)">// generated by the thumbnails plugin</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">// do not edit by hand: run `paf gen &#x3C;face> thumbnails` after changing the pictures</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">module</span><span style="color:var(--code-foreground)">.</span><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  "Battery"</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-string-expression)">"1x2"</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> "data:image/png;base64,iVBORw0KGgo…"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "2x2"</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> "data:image/png;base64,iVBORw0KGgo…"</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  "Weather"</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-string-expression)">"1x2"</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> "data:image/png;base64,iVBORw0KGgo…"</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p><strong>Keyed by Label.</strong> Each entry is filed under the panel&#39;s label, then its size. The editors match a panel&#39;s icon and tint by label too, so a picture stays with its panel even when the numbers behind the panels are renumbered. The slug only exists to name the files.</p>
+<p><strong>The Same File Every Run.</strong> Rows follow the order of the module list, and each row&#39;s sizes are sorted, so an unchanged folder writes the same file byte for byte. A diff of the committed file shows only the pictures that really changed.</p>
+<p><strong>Nothing Is Written on a Problem.</strong> Every PNG is matched before anything is written. A PNG whose slug no panel claims, or whose size the face does not list, stops the run. So does a panel with no picture at all, and so do two panels sharing one slug, which would hand both the same pictures and leave one of them blank. The run names each file or slug at fault and leaves the committed file as it was, rather than replacing a good file with a broken one.</p>
+<p><strong>One Picture Is Enough.</strong> A panel counts as covered once it has a picture at any size. Most panels fit only one or two of the sizes a face offers, so asking for every size would fail every face. The cost is that a panel offered at a size it has no picture for is not caught here. The editor shows its emoji tile at that size instead.</p>
+<h2 id="how-the-settings-page-reads-them">How the Settings Page Reads Them</h2>
+<p>A Clay component cannot import anything, since Clay copies only its function bodies into the page as text (<a href="../../how/settings-page/#the-serialization-trap">The Serialization Trap</a>). So the face&#39;s <code>config.ts</code> imports the generated file and hands it to the editor on its page item as <code>moduleThumbnails</code>, beside the <code>moduleOptions</code> that carry the panel list:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">import</span><span style="color:var(--code-foreground)"> moduleThumbnails </span><span style="color:var(--code-token-keyword)">from</span><span style="color:var(--code-token-string-expression)"> './clay/module-thumbnails.g'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  type</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'gridEditor'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  messageKey</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'GRID'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  defaultValue</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> '1,0,0,2,2'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  moduleOptions</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> PANEL_OPTIONS</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  moduleThumbnails</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> moduleThumbnails</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span></span></code></pre>
+<p>The editor reads <code>this.config.moduleThumbnails</code> when it starts and looks a panel up by its label and the size it is being shown at. The framework&#39;s <code>thumbByLabel</code> builder piece does that lookup and returns <code>null</code> when there is no picture, and the editor then draws the panel&#39;s emoji on its tint from the module list. A face can file a picture under any label in the list.</p>
+<p><strong>Why Data URLs.</strong> The page is one data URL, as <a href="../../how/settings-page/#the-serialization-trap">The Serialization Trap</a> covers, so it has no way to reach a file in the face. A picture written into the page as a data URL needs nothing else to load.</p>
+<h2 id="what-it-costs">What It Costs</h2>
+<p>Base64 writes every three bytes as four characters, so the generated file is about a third larger than the PNGs it holds. On Gridlock, 73 pictures come to about 51 KB and the file to about 72 KB.</p>
+<p><strong>In the Phone Code.</strong> The generated file is part of the face&#39;s phone code. It ships in every download of the face and loads every time the phone code starts, whether or not the wearer opens the settings page. None of it reaches the watch, since the PNGs are not listed as watch resources and the watch never runs the phone code.</p>
+<p><strong>In the Page.</strong> Clay writes the whole page description into the page each time the settings page opens, and an object handed to two items is written out twice. A face that gives the pictures to two editors carries them twice.</p>
+<h2 id="what-paf-check-catches">What <code>paf check</code> Catches</h2>
+<p>The check runs the generator in memory for every face in the unit and compares the result with the committed file, without writing anything. It reports, one line per face and problem:</p>
+<ul>
+<li>a committed file that differs from what the generator would write now, such as after a new picture, a new panel, a renamed label, or a changed order, with the <code>paf gen &lt;face&gt; thumbnails</code> line that fixes it</li>
+<li>a PNG that names no panel, or a size the face does not list</li>
+<li>a panel with no picture at any size</li>
+<li>a committed <code>module-thumbnails.g.js</code> in a face with no <code>resources/thumbnails</code> folder to build it from, since the face would still ship it</li>
+<li>a face that cannot be checked at all, such as one missing its <code>module-meta.ts</code> or its <code>thumbnailSizes</code>, with the reason</li>
+</ul>
+<p>The build never runs the generator, so the committed file is all the page ever sees. A re-shot picture without a fresh <code>paf gen</code> ships the old one, and this check is what catches it.</p>
+<pre><code>$ paf check
+== check: pebble-watchface-lcars ==
+Clay components: every face is current
+icon media: every face is current
+thumbnails: every face is current</code></pre>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/frame-plugin/"><span>Previous</span>The Frame Plugin</a>
+<a class="page-step page-step-next" rel="next" href="../../how/dev-plugin/"><span>Next</span>The Dev Plugin</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How the Stores Work · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li class="current"><a href="../../how/stores/" aria-current="page">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>How the Stores Work</h1>
+          
+          <div class="readme"><p>A store is the part of the framework that holds one kind of reading on the watch, such as the time, the battery, or the weather. It listens to the watch&#39;s own services or to the phone, keeps the latest reading, and tells the face when to redraw. A face starts each store it needs and then only reads from it, so it never handles a tick, a battery event, or a message from the phone itself. Every store follows the same shape, and the timing, polling, and saving code they share is written once, so a fix to any of it reaches every store.</p>
+<p>The stores live under <code>src/c/pebble/io/stores/</code>:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Store</th>
+<th align="left">Holds</th>
+<th align="left">Fed By</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><a href="../../how/time-store/">Time</a></td>
+<td align="left">the current time</td>
+<td align="left">the minute tick or the .beats timer</td>
+</tr>
+<tr>
+<td align="left"><a href="../../how/system-store/">System</a></td>
+<td align="left">the battery, the phone connection, and the next alarm</td>
+<td align="left">the watch&#39;s battery and connection services</td>
+</tr>
+<tr>
+<td align="left"><a href="../../how/location-store/">Location</a></td>
+<td align="left">the phone&#39;s last location fix</td>
+<td align="left">the phone, alongside the weather</td>
+</tr>
+<tr>
+<td align="left"><a href="../../how/weather-store/">Weather</a></td>
+<td align="left">the latest weather and the forecast strips</td>
+<td align="left">the phone</td>
+</tr>
+<tr>
+<td align="left"><a href="../../how/stock-store/">Stocks</a></td>
+<td align="left">a watchlist</td>
+<td align="left">the phone</td>
+</tr>
+<tr>
+<td align="left"><a href="../../how/calendar-store/">Calendar</a></td>
+<td align="left">the next few events</td>
+<td align="left">the phone</td>
+</tr>
+<tr>
+<td align="left"><a href="../../how/health-store/">Health</a></td>
+<td align="left">heart rate, steps, sleep, and activity</td>
+<td align="left">the watch&#39;s health service</td>
+</tr>
+</tbody></table>
+<h2 id="the-shape-every-store-takes">The Shape Every Store Takes</h2>
+<p>A face sets up its stores once, at launch, and hands each one the function that redraws the screen:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">system_store_init</span><span style="color:var(--code-foreground)">((SystemConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .vibe </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> vibe_bt_transition}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">time_store_init</span><span style="color:var(--code-foreground)">((TimeConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .minute_tick </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_init</span><span style="color:var(--code-foreground)">((WeatherConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .poll_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 30</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> WEATHER_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">system_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">time_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span></code></pre>
+<p><strong>The Config.</strong> Every store takes a small struct of rules, and every one of them has <code>live</code>. A live store claims its messages or its services, polls, and saves to flash. The stores that ask the phone for data take <code>poll_min</code>, the minutes between asks, and the ones that save take <code>persist_key</code>, the flash slot to save into. The face picks the key, so a store never takes one the face already uses. The config is built from the face&#39;s own settings, so a store never reads a setting itself.</p>
+<p><strong>The Seed.</strong> The second argument is an optional reading to start from. With <code>live</code> true it shows until a real reading lands. With <code>live</code> false it is all the store ever shows, which is how a face takes screenshots (see <a href="#seeded-for-screenshots">Seeded for Screenshots</a>).</p>
+<p><strong>Subscribe.</strong> Each store holds one function to call when its reading changes, and a second subscribe replaces the first. The store calls it after the new reading is in place, so the redraw always reads the new values. A face subscribes after init, so the seed and the restore redraw nothing, and the face&#39;s first paint reads every store anyway.</p>
+<p><strong>Getters with No-Data Values.</strong> Each reading has its own getter, and a reading that can be missing has a value that says so: -1 for a count or a percent, <code>WEATHER_NO_TEMP</code> for a temperature, since a temperature can be negative and 0 is a real one, and an empty string for text. A panel checks for it and draws dashes, so a watch that has not heard from the phone yet never shows a 0 that looks real.</p>
+<p><strong>Reconfigure.</strong> The time, weather, stock, and calendar stores take new rules after launch through their <code>_reconfigure</code> call, which a face runs from its settings handler. It swaps the time store&#39;s ticker, or changes how often a store polls, without losing the reading it holds. The other stores take nothing from settings once they start. The system store&#39;s buzz on a connection change reads its settings at the moment it buzzes, so it needs no reconfigure either.</p>
+<h2 id="seeded-for-screenshots">Seeded for Screenshots</h2>
+<p>A store started with <code>live</code> false and a seed shows the seed and nothing else. It claims no messages and subscribes to no services, so a real reading arriving from the phone has nowhere to land and cannot overwrite it. It never polls and never saves, so a screenshot build never writes its fixtures into the flash of a watch that later runs the real face. The time store runs no ticker, so the clock stays where it was pinned.</p>
+<p>That makes every run of a screenshot build draw the same picture, down to the battery level and the minute. The dev plugin seeds the stores from one fixture this way, as <a href="../../how/dev-plugin/#fixed-readings-for-screenshots">Fixed Readings for Screenshots</a> covers.</p>
+<p>Starting a store again is safe. The cadence registration and the message hooks each keep one copy of a function however many times it is added, so a store seeded once per tap never runs its work twice per tick.</p>
+<h2 id="riding-the-faces-cadence">Riding the Face&#39;s Cadence</h2>
+<p>No store runs a timer of its own for its regular work. Each one registers a function with <code>store_cadence_register</code> during its init, and the time store runs every registered function on each tick, in the order they registered, before it tells the face the time moved. The list has room for eight, more than the stores that use it. Adding a function already on the list does nothing, and a list that is somehow full logs an error rather than overwriting an entry.</p>
+<pre class="mermaid">sequenceDiagram
+  participant Ticker as Minute Tick
+  participant Time as Time Store
+  participant Weather as Weather Store
+  participant Health as Health Store
+  participant Face
+  Ticker-&gt;&gt;Time: the new time
+  Time-&gt;&gt;Time: keep it
+  Time-&gt;&gt;Weather: its turn
+  Weather-&gt;&gt;Weather: is the next poll due?
+  Time-&gt;&gt;Health: its turn
+  Health-&gt;&gt;Health: read the heart rate and steps
+  Time-&gt;&gt;Face: the time moved
+  Face-&gt;&gt;Face: redraw</pre>
+<p>The polling stores use their turn to check whether a poll is due. The health store uses it to read the step count and heart rate, since the health service sends events too rarely to draw a heart rate graph and stops sending steps the moment the wearer sits still. Running the stores before the face is told means the redraw that follows already shows this minute&#39;s steps.</p>
+<p><strong>One Wake for Everything.</strong> A timer per store would wake the watch once for each store. Riding one ticker wakes it once a minute however many stores a face runs, and the watch&#39;s battery pays for every wake.</p>
+<p><strong>The Cost.</strong> The cadence is whichever ticker the face runs. On the minute tick a poll goes out on the minute it falls due. A face that runs only the .beats timer turns the stores every 86.4 seconds, so a poll can go out up to that long after its deadline. A face that runs neither ticker never turns the stores at all, so nothing polls. Only a seeded face runs that way, and it does not poll anyway.</p>
+<h2 id="polling-on-wall-clock-deadlines">Polling on Wall-Clock Deadlines</h2>
+<p>The weather, stock, and calendar stores ask the phone for data on an interval. The deciding code is in <a href="../../c/store__poll_8h.html"><code>store_poll.h</code></a>, and <a href="../../c/store__fetch_8h.html"><code>store_fetch.h</code></a> wraps it in the timer and the request each store points it at.</p>
+<p><strong>Deadlines on the Clock.</strong> The next deadline is the next multiple of the interval counted from the epoch, not from launch:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)"> interval </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)">)poll_min </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)"> SECONDS_PER_MINUTE;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> ((now </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-foreground)"> interval) </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)"> interval;</span></span></code></pre>
+<p>With a 30 minute interval, polls go out on the hour and the half hour. Two watches started minutes apart ask at the same moments, and a relaunch never shifts the timing:</p>
+<pre class="mermaid">flowchart LR
+  launch[&quot;launched at 10:07&quot;] --&gt; first[&quot;first deadline 10:30&quot;]
+  first -- &quot;tick at 10:30, ask the phone&quot; --&gt; second[&quot;next deadline 11:00&quot;]
+  second -- &quot;tick at 11:00, ask the phone&quot; --&gt; third[&quot;next deadline 11:30&quot;]</pre>
+<p>The epoch is counted in UTC, so the deadlines fall on UTC&#39;s hours. In a time zone half an hour off UTC, such as India or Newfoundland, an hourly poll goes out at half past the local hour.</p>
+<p><strong>Clock Changes.</strong> A clock that jumps forward finds its deadline already passed, polls once, and sets the next deadline from the new time. One that jumps back would leave the deadline hours away, so a deadline more than one interval ahead is pulled back in. A watch at 10:40 waiting for 11:00 that is set back to 08:15 waits for 08:30, not for 11:00.</p>
+<p><strong>The First Fetch.</strong> A store that polls also asks once shortly after launch, so it is not blank until the first deadline comes round. The weather store asks after 500 ms, the stocks after 700 ms, and the calendar after 1.1 seconds. The first wait lets the face open its AppMessage connection, and the stagger keeps the three requests from leaving at the same moment. The weather store also asks again while the phone&#39;s side is starting up, which <a href="../../how/weather-store/#from-launch-to-the-first-reading">The Weather Store</a> covers.</p>
+<p><strong>Changing the Interval.</strong> A reconfigure takes the new interval and moves the deadline to its next boundary. A store with nothing to show asks right away. One that already holds a reading waits for the deadline, so a save that only changed a colour never spends a request, which matters on a provider with a daily limit. A save can bring a poll nearer, but polls never come faster than the interval. A fetch still waiting from launch is kept, so a settings push in the first second does not cancel it. Turning <code>live</code> off, or setting the interval to 0, stops the store asking and cancels any fetch still waiting.</p>
+<p><strong>After a Lost Connection.</strong> The phone&#39;s PebbleKit JS may be closed the whole time the phone is away, so a reading can go stale while the watch waits. A face can catch up when the phone comes back, using the reconnect callback from the <a href="../../how/system-store/">system store</a>. <code>store_poll_reconnect_due</code> says yes only when there is no reading, or the reading is at least one interval old, so bluetooth dropping in and out never fetches faster than the normal polling:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_phone_reconnected</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-function)">store_poll_reconnect_due(weather_store_age_s()</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> WEATHER_POLL_MIN)</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-function)">        appmessage_request_weather()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">system_store_on_reconnect</span><span style="color:var(--code-foreground)">(on_phone_reconnected);</span></span></code></pre>
+<p>A clock set back can make a saved reading&#39;s age negative. That counts as no reading, so the reconnect asks once and the answer puts the age right.</p>
+<h2 id="saving-to-flash">Saving to Flash</h2>
+<p>A store that saves keeps its whole reading as one struct and writes it to one persist key with <a href="../../c/store__persist_8h.html"><code>store_persist.h</code></a>. A persist key holds at most 256 bytes, and each store checks at build time that its struct fits. On a relaunch the store reads the struct back, so the face shows the last reading straight away rather than dashes while it waits for the phone. Only a live store saves or restores.</p>
+<p><strong>The Tag Byte.</strong> The struct is the saved format, so an update that changes its layout would read an older blob as the wrong fields. The first byte of every saved blob is a tag. The high half names the store and the low half is the layout&#39;s revision, so the weather store&#39;s <code>0x13</code> is store 1, revision 3. A change to a store&#39;s struct bumps its revision.</p>
+<p><strong>The Restore Checks before It Copies.</strong> It refuses a blob whose size does not match, then reads the tag byte on its own and refuses a blob whose tag does not match. Only then does it read the whole blob over the store&#39;s state. Reading the whole blob first would overwrite the defaults before the store found out the blob was the wrong shape. Size alone is not enough, since two stores&#39; structs can happen to be the same size, and reordering two fields keeps the size too.</p>
+<p><strong>After a Layout Change.</strong> The old blob is refused once. The store starts empty, its readings show dashes until the phone next answers, and the next save writes the new layout. A face whose store changes layout says so in its own changelog, since the wearer sees the dashes.</p>
+<p><strong>Repaired after the Restore.</strong> A blob that passes both checks can still hold damaged bytes, so each store fixes anything it would otherwise use as it came off flash. A count bigger than its array is cut back or thrown out, and every string gets a closing zero, so a bad blob cannot send the drawing code past the end of an array.</p>
+<h2 id="skipping-unchanged-writes">Skipping Unchanged Writes</h2>
+<p>Flash wears out with writes, and most polls bring back the reading the watch already has. <code>store_save_changed</code> keeps a sum of the reading it last wrote and skips the write when the new reading sums the same. The sum is four bytes in memory, where a second copy of the reading to compare against would be hundreds.</p>
+<p><strong>Only the Reading Counts.</strong> Each reply stamps a new sync time, so the whole blob differs every time. The reading sits before the sync time in each struct, and only that part is summed:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">uint32_t</span><span style="color:var(--code-foreground)"> sum </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> store_sum</span><span style="color:var(--code-foreground)">(state</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> reading_size);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (sum </span><span style="color:var(--code-token-keyword)">==</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">saved_sum)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The cost is that the saved sync time stays at the last real change. A relaunch reads the reading as older than it is, and the reconnect catch-up can ask once more than it needed to. One extra request costs less than a flash write on every reply.</p>
+<p><strong>The Order Counts Too.</strong> <a href="../../c/store__sum_8c.html"><code>store_sum.c</code></a> is FNV-1a, which mixes in each byte in turn. A plain total of the bytes would miss two values trading places, and a forecast whose days only swapped would never be saved.</p>
+<p><strong>Seeded from the Restore.</strong> A restore records the sum of what it read, so the first reply after a relaunch that brings the same reading writes nothing.</p>
+<p><strong>A Failed Write.</strong> The sum only moves when a write lands, so a failed write leaves flash and the sum out of step, and the next reply that reaches a save writes again. The weather store also keeps itself marked as changed, so its very next message tries again whatever it brings. The stock and calendar stores leave that out. A failed write there almost always means the watch&#39;s storage is full, which an early retry would not change, and the mark would cost bytes on every face.</p>
+<p><strong>Two Readings Can Share a Sum.</strong> The chance is about one in four billion, and the cost would be one skipped save that the next different reading puts right.</p>
+<p>The location store sums its whole blob, since it has no sync time. The health store uses the same sum another way, comparing its readings before and after a refresh and only telling the face to redraw when they moved.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/message-formats/"><span>Previous</span>The Message Formats</a>
+<a class="page-step page-step-next" rel="next" href="../../how/time-store/"><span>Next</span>The Time Store</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

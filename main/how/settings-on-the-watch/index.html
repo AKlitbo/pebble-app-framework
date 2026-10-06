@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Settings on the Watch · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li class="current"><a href="../../how/settings-on-the-watch/" aria-current="page">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Settings on the Watch</h1>
+          
+          <div class="readme"><p>The settings code keeps every setting a face offers in flash on the watch, and takes care of everything around that: the defaults on a first launch, reading an older version&#39;s saved settings after an update, repairing a damaged value before the face draws it, taking new values from the phone, and sending the watch&#39;s copy back so the settings page opens filled in. A face describes its settings once, as a table, and never writes load, save, or message code for a single setting.</p>
+<p>It lives in <a href="../../c/settings_8h.html"><code>settings.h</code></a> and <a href="../../c/settings_8c.html"><code>settings.c</code></a> under <code>src/c/pebble/system/settings/</code>, with the shared settings in <a href="../../c/settings__catalog_8h.html"><code>settings_catalog.h</code></a> and their named values in <a href="../../c/setting__values_8h.html"><code>setting_values.h</code></a>. <a href="../../how/life-of-a-setting/">The Life of a Setting</a> follows one setting from the page to the screen. This page stays on the watch and goes into the machinery underneath.</p>
+<h2 id="describing-the-settings">Describing the Settings</h2>
+<p>A face keeps its settings in a plain struct whose first byte is a version number. A table of fields says where each setting sits in that struct, and a schema hands the struct, the table, the version, and a persist key to <code>settings_init</code>. A common setting takes one line, and a face&#39;s own takes one entry:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-foreground)"> SettingField s_fields</span><span style="color:var(--code-token-keyword)">[]</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    KNOWN_THEME(offsetof(FaceSettings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> theme)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 4</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // this face's own setting, a choice of three layouts</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    { .id </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> SETTING_COUNT</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .message_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">MESSAGE_KEY_APPEARANCE_LAYOUT</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      .type </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> SETTING_ENUM_U8</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .offset </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> offsetof(FaceSettings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> layout)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      .enum_count </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 3</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .default_num </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p><strong>A Field.</strong> Each entry names its message key, its type, and its offset in the struct. The type is a toggle, a choice from a list, text in a fixed buffer, or a colour, and it decides both how the value travels and how it is checked. A choice carries how many options it has and which one is the default. Text carries its buffer size and its default string. Flags mark the side effects: a change to the date or time format re-renders the clock, and a change to the temperature unit asks for fresh weather.</p>
+<p><strong>The Shared Entries.</strong> The <code>KNOWN_*</code> macros fill in a common setting whole, with its message key, type, limits, default, and side effects. A face gives the offset, and a list also takes how many choices the face offers. The lists in <code>setting_values.h</code> each end in a count, such as <code>TIME_FORMAT_COUNT</code>, so a face that passes it stays in step if the list grows. A theme count is the face&#39;s own number, since only the face knows how many themes it ships.</p>
+<p>The payoff for using a shared entry is that the framework&#39;s own code can find the setting. The date and time readouts read the formats, the steps readout reads its mode, and the Bluetooth vibration reads the pattern the wearer picked, all with no plumbing from the face:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">uint8_t</span><span style="color:var(--code-foreground)"> time_format </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> settings_u8</span><span style="color:var(--code-foreground)">(SETTING_TIME_FORMAT);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">format </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> settings_str</span><span style="color:var(--code-foreground)">(SETTING_DATE_FORMAT);</span></span></code></pre>
+<p><code>settings_init</code> builds a lookup from each shared id to its field once, so a read is an array index and a pointer offset. A read of a setting the face never declared gives 0 or an empty string. A shared entry names its message key directly, so a face that uses <code>KNOWN_THEME</code> without declaring <code>APPEARANCE_THEME</code> in its message keys fails to build at that line rather than on the watch.</p>
+<p><strong>A Face&#39;s Own Settings.</strong> A setting only one face has goes in the same table with an id of <code>SETTING_COUNT</code> or more. The framework still fills in its default, cleans it, saves it, and carries it to and from the phone. It just has no typed read, so the face reads it straight off its own struct.</p>
+<h2 id="loading-at-launch">Loading at Launch</h2>
+<p><code>settings_init</code> loads every schema the face hands it. Each one starts from its defaults, and only then is the saved copy read over the top:</p>
+<pre class="mermaid">flowchart TD
+  start[&quot;settings_init, for each schema&quot;] --&gt; defaults[&quot;fill in every default&quot;]
+  defaults --&gt; exists{&quot;is a blob saved under the key?&quot;}
+  exists -- no --&gt; fresh[&quot;keep the defaults, and count as fresh&quot;]
+  exists -- yes --&gt; size{&quot;no smaller than version 1 and no bigger than today?&quot;}
+  size -- no --&gt; reset[&quot;back to defaults, delete the key, and count as fresh&quot;]
+  size -- yes --&gt; version{&quot;version byte from 1 to today&#39;s?&quot;}
+  version -- no --&gt; reset
+  version -- yes --&gt; clean[&quot;clean every field&quot;]
+  clean --&gt; resave{&quot;an older version, or anything repaired?&quot;}
+  resave -- yes --&gt; save[&quot;save it back with today&#39;s version&quot;]
+  resave -- no --&gt; done[&quot;use it as it is&quot;]</pre>
+<p><strong>Growing at the End.</strong> A saved blob from an older version is shorter than today&#39;s struct. The read fills in what was saved, and the fields added since keep the defaults that were filled in a moment before. So a new version adds its fields to the end of the struct and bumps the version number, and nothing else has to happen. The cost is that a field can never be moved, removed, or given a new type, since the loader has no step that rewrites one version&#39;s layout into another.</p>
+<p><strong>The Smallest Blob.</strong> <code>min_versioned_size</code> is the size of the struct when it first shipped, and it never changes after that. A blob smaller than it cannot be a saved copy of this face&#39;s settings, because every field past its end would be read from the wrong place.</p>
+<p><strong>Going Back to an Older Build.</strong> A blob bigger than today&#39;s struct was written by a newer build, and this one cannot read it. The same goes for a version byte of 0 or one from the future. The settings fall back to defaults and the key is deleted rather than written, so the watch counts as fresh and the phone puts its settings back (see <a href="#the-fresh-state">The Fresh State</a>). Deleting the key rather than saving the defaults means a relaunch before the phone answers still boots fresh and asks again.</p>
+<h2 id="cleaning-each-value">Cleaning Each Value</h2>
+<p>Flash can come back damaged, and a damaged byte in a theme number would otherwise send the face looking for a theme that does not exist. So every field is checked after a load:</p>
+<ul>
+<li><strong>A toggle</strong> holding anything other than 0 or 1 goes back to its default.</li>
+<li><strong>A choice</strong> at or past the number of options goes back to its default.</li>
+<li><strong>Text</strong> has to end inside its buffer, hold no control bytes, and say something, unless its default is itself empty. Every byte from 0x20 up counts as text, so a city spelled with an accent keeps its UTF-8 bytes across a reboot rather than reading as damage.</li>
+<li><strong>A colour</strong> has to be opaque. Every colour the watch paints has both alpha bits set, so a byte without them came from damage rather than from the colour picker.</li>
+</ul>
+<p>Anything repaired is saved back once, so the same repair does not run on every launch. The text check is <code>cstring_setting_is_clean</code>, in <a href="../../c/number__format_8h.html"><code>number_format.h</code></a>.</p>
+<h2 id="settings-across-several-keys">Settings across Several Keys</h2>
+<p>A persist key holds at most 256 bytes, so a face with more settings than that chains a second schema on through <code>companion</code>, with its own key, version, and smallest size. Loading, saving, taking values from the phone, and sending them back all walk the whole chain, and a shared setting can live in any link. <code>settings_save</code> writes every link whenever it saves. Saves only follow a message that changed a setting, so a few extra writes then cost less than a checksum per link. A link that a new build adds has nothing saved on its first launch, so the watch counts as fresh and the phone restores everything once, filling the new link with the wearer&#39;s values rather than defaults.</p>
+<h2 id="taking-values-from-the-phone">Taking Values from the Phone</h2>
+<p><code>settings_apply_inbox</code> walks the face&#39;s table and looks each key up in the incoming message. It only decodes. It hands back what moved and leaves saving and redrawing to the AppMessage layer, which <a href="../../how/talking-to-the-phone/#what-happens-to-a-message">Talking to the Phone</a> covers. A key in the message that is not in the table is ignored. Each type has its own checks on the way in.</p>
+<p><strong>A Choice.</strong> Clay sends a select as text, so a choice is normally read with <code>atoi</code>. Text that does not start with a digit leaves the setting as it was. A number past the end of the list, or below 0, becomes the default, so a theme of <code>&quot;12&quot;</code> on a face with 9 themes reads as theme 0. A choice that arrives as a number, such as from a custom component, is taken as it is.</p>
+<p><strong>A Toggle or a Colour.</strong> A value of the wrong type leaves the setting as it was.</p>
+<p><strong>Empty Text Keeps the Old Value.</strong> An empty string only counts as a value for a field whose default is empty, such as a picker whose None is <code>&quot;&quot;</code>. For any other field it leaves the setting alone, so a page that sends a blank date format cannot wipe the one the watch holds.</p>
+<p><strong>Text Is Compared at the Size It Will Be Stored.</strong> A string longer than its buffer is cut to fit, and the check for &quot;already holds this value&quot; compares only the part that fits. The date format has 16 bytes, room for 15 characters. A 20 character pattern is cut to 15 when it lands, and the next save sends the same 20 again. Compared whole, that would count as a change on every save, the settings would go to flash again, and the face would be told its date layout changed when nothing did. <code>cstring_fit_same</code> measures the incoming text the way the copy cuts it, so the second save reads as unchanged.</p>
+<p><strong>Colours Round to the Watch&#39;s Palette.</strong> The phone sends a colour as <code>0xRRGGBB</code>. Each channel rounds to the nearest of the four levels the watch can show, and the result is stored as one <code>GColor</code> byte. A grey of <code>0x808080</code> sits nearest 170 on each channel, so it is stored as <code>GColorLightGray</code> and goes back to the phone as <code>0xAAAAAA</code>.</p>
+<p><strong>What Moved, Not What Arrived.</strong> The page sends every setting on every save. A field that already holds the incoming value is skipped and flags nothing, so the three flags that come back say what really changed: anything at all, a date or time format, or the temperature unit.</p>
+<h2 id="sending-the-watchs-copy-back">Sending the Watch&#39;s Copy Back</h2>
+<p>On launch the phone can ask for the watch&#39;s whole copy, and does when it holds no settings of its own, so the page opens filled in. <code>settings_serialize</code> writes every field in the form the page reads it: a toggle as 0 or 1, a choice as text such as <code>&quot;3&quot;</code> since Clay reads a select back as text, text as it is, and a colour as <code>0xRRGGBB</code>. <code>settings_serialized_size_max</code> gives the worst case the outbox is sized from, and serializing stops at the first field that does not fit. <a href="../../how/talking-to-the-phone/#opening-the-connection">Talking to the Phone</a> covers the sizing and why a reply that does not fit goes out empty.</p>
+<h2 id="the-fresh-state">The Fresh State</h2>
+<p><code>settings_was_fresh</code> is true when any schema in the chain had nothing saved at launch, or had a blob it could not read and reset. Either way some settings are on their defaults because flash was wiped, by a reinstall, a reset, or a step back to an older build. The phone holds the wearer&#39;s real settings, so the watch tells it, and the phone sends them back. <a href="../../how/life-of-a-setting/#after-a-reinstall">The Life of a Setting</a> shows that exchange.</p>
+<p>While the watch is fresh, it only saves a message that came from the settings page, either the wearer&#39;s own save or the phone&#39;s restore. Anything else it takes stays in memory. The phone sends the current time zone on every launch, and that carries a setting too. Saving it would create the key, the watch would stop counting as fresh, and the phone would never restore the rest. Once a message from the page lands, <code>settings_mark_restored</code> ends the fresh state and saving goes back to normal.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/settings-page/"><span>Previous</span>The Settings Page</a>
+<a class="page-step page-step-next" rel="next" href="../../how/talking-to-the-phone/"><span>Next</span>Talking to the Phone</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

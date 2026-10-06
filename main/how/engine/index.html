@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Engine · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li class="current"><a href="../../how/engine/" aria-current="page">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Engine</h1>
+          
+          <div class="readme"><p>The engine turns a face&#39;s list of what goes where into the layers Pebble draws, and keeps them up to date. A face writes one build function that describes its screen as slots, each one a piece of text or a custom painted area. The engine makes a layer for every slot, refreshes the text when a store changes, skips the work when nothing did, and throws the whole screen away and builds it again when the settings change. A face never creates, tracks, or frees a layer of its own for anything the engine draws.</p>
+<p>It lives in <a href="../../c/engine_8h.html"><code>engine.h</code></a> and <a href="../../c/engine_8c.html"><code>engine.c</code></a> under <code>src/c/pebble/ui/engine/</code>.</p>
+<h2 id="describing-the-screen-as-slots">Describing the Screen as Slots</h2>
+<p>A slot is one of two kinds, and an <code>EngineSlot</code> sets the fields for one or the other, never both.</p>
+<p><strong>A Text Slot.</strong> It names a <code>Zone</code>, which is where the text sits plus the font, alignment, colour, and up to three smaller fonts to step down to when the text is too wide (see <a href="#text-that-fits-its-slot">Text That Fits Its Slot</a>), and a function that writes the text. The function has the same shape as every one of the framework&#39;s <a href="../../how/readouts/">Readouts</a>, so a slot can show the clock or the temperature with no code of the face&#39;s own.</p>
+<p><strong>A Draw Slot.</strong> It names a frame and a paint function, plus an optional pointer handed back to that function. This is for anything that is not a line of text: a gauge, an icon, a chart, or a backdrop that covers the whole window.</p>
+<p>The build function fills the engine&#39;s array and returns how many slots it wrote:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> draw_backdrop</span><span style="color:var(--code-foreground)">(GContext </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> GRect bounds</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">data)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // paints the whole window, under everything else</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> uint8_t</span><span style="color:var(--code-token-function)"> build</span><span style="color:var(--code-foreground)">(EngineSlot </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> uint8_t</span><span style="color:var(--code-foreground)"> max</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> GRect bounds)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    uint8_t</span><span style="color:var(--code-foreground)"> i </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">    out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.frame </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> bounds</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .draw </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> draw_backdrop};</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">s_zones[ZONE_TIME]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .text </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> readout_time};</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">s_zones[ZONE_DATE]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .text </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> readout_date};</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-function)">show_weather()</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">        out[i</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">] </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (EngineSlot){.zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">s_zones[ZONE_TEMP]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .text </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> readout_weather_temp};</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)"> i;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>bounds</code> is the window&#39;s full area, which is what a backdrop or an overlay takes as its frame. The function runs again on every rebuild, so it can read the settings and return a different screen each time. A grid face works out its cells here, and a fixed face can swap one tall block for two smaller slots.</p>
+<p><strong>Ten Slots at Most.</strong> The engine keeps its slots in fixed arrays of ten, so it never allocates for them. The build writes straight into that array and has to stop at <code>max</code>. A count past ten is cut back to ten, which keeps the engine&#39;s own loops inside the arrays, but a build that wrote past the end has already done its damage by then.</p>
+<p><strong>The Text Function Takes No Context.</strong> It gets only a buffer and its size, so it cannot be told which slot it is filling. A face that shows the same kind of reading in four places writes four one-line wrappers, each with its slot baked in. That keeps a slot down to a single function pointer and keeps every readout callable on its own, outside the engine.</p>
+<h2 id="text-that-fits-its-slot">Text That Fits Its Slot</h2>
+<p>A city name or a long date can be wider than the space a face drew for it. A zone, in <a href="../../c/zone_8h.html"><code>zone.h</code></a> and <a href="../../c/zone_8c.html"><code>zone.c</code></a>, holds the main font and up to three smaller fonts, each with an area of its own. <code>zone_set_text_fit</code> measures the text in each font from the largest down and uses the first one it fits in:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-foreground)"> Zone s_city </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .rect </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> GRect(</span><span style="color:var(--code-token-constant)">0</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 144</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 30</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .font_id </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FONT_LARGE</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .align </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> GTextAlignmentCenter</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .color </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> GColorWhite</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .font_id_fallback </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FONT_MEDIUM</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .rect_fallback </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> GRect(</span><span style="color:var(--code-token-constant)">0</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 104</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 144</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 24</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    .font_id_fallback2 </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> FONT_SMALL</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .rect_fallback2 </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> GRect(</span><span style="color:var(--code-token-constant)">0</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 108</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 144</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 18</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p><strong>Its Own Area for Each Size.</strong> Each smaller font gets its own rectangle, so a face can move a smaller line down to stay on the same baseline as the larger one, rather than having it float to the top of the space.</p>
+<p><strong>A Little Room Spare.</strong> The text has to fit 2 pixels inside the area&#39;s width, so a string that just touches the edge steps down rather than sitting against it.</p>
+<p><strong>Leaving a Size Out.</strong> A zone uses fewer sizes by leaving an area zero-sized, which is how an unset field in a C struct reads anyway, so a face only fills in the sizes it has. The search stops at the first zero-sized area.</p>
+<p><strong>When Nothing Fits.</strong> Text too wide even for the smallest size uses that size anyway, and the text layer cuts it short with an ellipsis. The text is still shown rather than dropped.</p>
+<p>The fonts are named by slot rather than held as loaded fonts, which is what lets a zone be a <code>static const</code> table, as <a href="../../how/fonts/">Fonts</a> covers.</p>
+<h2 id="from-a-slot-list-to-layers">From a Slot List to Layers</h2>
+<p><code>engine_init</code> takes the window and the build function, runs the build, and makes the layers in the order the slots came back.</p>
+<p><strong>Making a Text Slot.</strong> It becomes a <code>TextLayer</code> with a clear background, set up with the zone&#39;s main font, alignment, and colour.</p>
+<p><strong>Making a Draw Slot.</strong> It becomes a plain <code>Layer</code> at the slot&#39;s frame, carrying its slot number. When Pebble draws it, the engine calls the face&#39;s paint function with the layer&#39;s own bounds and the slot&#39;s data pointer. The bounds start at 0,0, so the paint function draws in the slot&#39;s own space, and anything it draws past the frame is clipped.</p>
+<p><strong>Stacking.</strong> Each layer is added on top of the window&#39;s root layer as it is made, so the first slot sits at the bottom and the last on top. A backdrop goes first and the text after it. A layer the face adds before <code>engine_init</code>, such as a background picture, sits under every slot.</p>
+<p><strong>Running out of Memory.</strong> A layer that cannot be created leaves its slot empty rather than crashing. The rest of the screen still draws, and a repaint skips the empty slot. This matters most on a rebuild, which runs on every settings save while the heap is at its fullest.</p>
+<p>Once every layer exists, the engine repaints all of them so the first frame has real text in it.</p>
+<h2 id="repainting">Repainting</h2>
+<p>A face hands <code>engine_mark_dirty</code> to each store it reads from, and the store calls it whenever its reading changes. The time store calls it on every tick.</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">engine_init</span><span style="color:var(--code-foreground)">(window</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> build);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">time_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">health_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span></code></pre>
+<p><strong>Marking a Draw Slot.</strong> Its layer is marked dirty, and Pebble calls its paint function on the next frame.</p>
+<p><strong>Refreshing a Text Slot.</strong> The engine runs its text function into a scratch buffer and compares the result with what the slot showed last. Most of the time it is the same, since the date reads the same all day and a new weather reading leaves the clock alone. An unchanged string stops there. Only a changed one is copied into the slot&#39;s own buffer and fitted to the zone, which measures the text in up to four fonts to find the largest that fits (see <a href="#text-that-fits-its-slot">Text That Fits Its Slot</a>). A <code>TextLayer</code> keeps a pointer to its text rather than a copy, which is why each slot holds its string in a buffer that outlives the repaint.</p>
+<p><strong>24 Characters, Terminator Included.</strong> Each slot&#39;s buffer holds 23 characters of text. A longer string is cut to fit before it reaches the layer.</p>
+<p><strong>Repainting Only What Changed.</strong> A face with many slots can give each one a set of tags, a bit for each store it reads, and call <code>engine_mark_dirty_tags</code> with the bits that changed. A slot repaints when its tags share a bit with the change. A slot with no tags repaints on every change, which is why the plain <code>engine_mark_dirty</code> passes every bit at once. A store&#39;s subscriber takes no arguments, so the face writes a small function per store:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">enum</span><span style="color:var(--code-foreground)"> { TAG_TIME </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-keyword)"> &#x3C;&#x3C;</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> TAG_WEATHER </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-keyword)"> &#x3C;&#x3C;</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)"> };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_weather_changed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    engine_mark_dirty_tags(TAG_WEATHER)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">weather_store_subscribe</span><span style="color:var(--code-foreground)">(on_weather_changed);</span></span></code></pre>
+<p>A grid face sets each cell&#39;s tags from the stores its panel reads, so a weather reply repaints the weather panels and leaves the stock chart alone.</p>
+<h2 id="rebuilding">Rebuilding</h2>
+<p><code>engine_rebuild</code> destroys every slot layer and runs the build again. A face calls it from its settings handler:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_settings_changed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> time_or_date_changed)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // load whatever the new settings need first, such as a different background picture</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    engine_rebuild()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>A repaint only refreshes what a slot shows. A rebuild is needed whenever the settings change the slots themselves: which slots exist, where they sit, or a zone&#39;s colour, which a <code>TextLayer</code> only takes when it is made. The settings page sends every setting on every save, so the face rebuilds on any save rather than working out which ones touch the layout.</p>
+<p><strong>Old Layers Go First.</strong> Every layer is freed before any new one is made, so a rebuild never holds two copies of the screen at once.</p>
+<p><strong>Every Slot Fits Again.</strong> The rebuild clears each slot&#39;s last string, so the first repaint fits every text slot afresh against its new zone. A rebuild ends with a full repaint, so nothing else needs calling after it.</p>
+<p><strong>New Layers Land on Top.</strong> The rebuilt slot layers are added above whatever is already on the root layer. A layer the face adds after <code>engine_init</code> ends up underneath the slots after the first rebuild, so anything that has to sit above them belongs in a draw slot.</p>
+<p>A face can also rebuild for reasons of its own. The Mosaic faces rebuild when the night or Quiet Time layout takes over, as <a href="../../how/layout-strings/">Layout Strings</a> covers.</p>
+<h2 id="the-whole-lifecycle">The Whole Lifecycle</h2>
+<pre class="mermaid">sequenceDiagram
+  participant Face
+  participant Engine
+  participant Stores
+  participant Pebble as Pebble UI
+  Face-&gt;&gt;Engine: engine_init(window, build)
+  Engine-&gt;&gt;Face: build(out, 10, bounds)
+  Face--&gt;&gt;Engine: the slot list
+  Engine-&gt;&gt;Pebble: one layer per slot
+  Engine-&gt;&gt;Engine: repaint every slot
+  Stores-&gt;&gt;Engine: engine_mark_dirty, on a tick or a new reading
+  Engine-&gt;&gt;Face: each text function, into a scratch buffer
+  Engine-&gt;&gt;Pebble: set the text only where it changed, mark draw slots dirty
+  Pebble-&gt;&gt;Face: draw slot paint functions
+  Face-&gt;&gt;Engine: engine_rebuild, after a settings save
+  Engine-&gt;&gt;Pebble: destroy every slot layer
+  Engine-&gt;&gt;Face: build again
+  Face-&gt;&gt;Engine: engine_deinit, on the way out
+  Engine-&gt;&gt;Pebble: destroy every slot layer</pre>
+<p><code>engine_deinit</code> frees the slot layers and nothing else. The window, the fonts, and any picture the face loaded are still the face&#39;s to free, and the window has to outlive the engine&#39;s layers.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/dates-and-durations/"><span>Previous</span>Dates and Durations</a>
+<a class="page-step page-step-next" rel="next" href="../../how/readouts/"><span>Next</span>Readouts</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

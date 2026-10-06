@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -310,7 +312,7 @@ static bool&#160;</td><td class="memItemRight"><b>s_hr_history</b></td></tr>
 static bool&#160;</td><td class="memItemRight"><b>s_step_history</b></td></tr>
 <tr class="memdesc:a020edc6544e87babbf91c8698f05fe05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the face graphs steps by the hour. <br /></td></tr>
 <tr id="var-members-1" class="groupHeader"><td colspan="2"><div class="groupHeader">Costly readings</div></td></tr>
-<tr><td colspan="2" class="ititle"><div class="groupText"><p>These three cost a flash read every time they are asked for, so only a face that shows one pays. </p>
+<tr><td colspan="2" class="ititle"><div class="groupText"><p>These four cost a flash read every time they are asked for, so only a face that shows one pays. </p>
 </div></td></tr>
 <tr class="memitem:a60233dc911b0cddbb4943118bdcd6a49" id="r_a60233dc911b0cddbb4943118bdcd6a49"><td class="memItemLeft"><a id="a60233dc911b0cddbb4943118bdcd6a49" name="a60233dc911b0cddbb4943118bdcd6a49"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_sleep</b></td></tr>
@@ -616,7 +618,7 @@ static int&#160;</td><td class="memItemRight"><b>s_settled_hours</b></td></tr>
 
 <p>Stash the heart rate graph so a relaunch can restore it. </p>
 <p>Only a live face writes, so seed mode never touches storage. A burst can land a reading a second and a flash write blocks, so the saves are held to one a minute, which is all the graph gains anyway.</p>
-<p>One a minute is on purpose, not a rate to trim. The save runs inside the minute tick, so the CPU is already awake for it and no extra wake is spent. The face is closed whenever the wearer opens a watchapp, even for a moment, and a graph saved less often comes back missing its last minutes every time. </p>
+<p>One a minute is the rate to keep, not one to trim. The save runs from whichever comes first in a new minute, the face's cadence turn or a health event that refreshes the heart rate. Either way the CPU is already awake for it, so no extra wake is spent. The face is closed whenever the wearer opens a watchapp, even for a moment, and a graph saved less often comes back missing its last minutes every time. </p>
 
 </div>
 </div>

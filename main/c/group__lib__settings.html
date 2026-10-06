@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -319,7 +321,7 @@ Enumerations</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:gabf78fb93dcb30f9c8f17cc2eaa9a934e" id="r_gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e">settings_init</a> (const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *schema)</td></tr>
-<tr class="memdesc:gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a face's settings from a trusted blob, applying defaults first.  <br /></td></tr>
+<tr class="memdesc:gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a face's settings from their saved blobs, applying defaults first.  <br /></td></tr>
 <tr class="memitem:ga40b5dc5d02dfa2e8a630782dc5be7263" id="r_ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga40b5dc5d02dfa2e8a630782dc5be7263">settings_was_fresh</a> (void)</td></tr>
 <tr class="memdesc:ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults.  <br /></td></tr>
 <tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft"><a id="gab9d20e3758e874e18f045827a5cd29b3" name="gab9d20e3758e874e18f045827a5cd29b3"></a>
@@ -1032,8 +1034,8 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Load a face's settings from a trusted blob, applying defaults first. </p>
-<p>Walks the companion chain so every schema in it is loaded.</p>
+<p>Load a face's settings from their saved blobs, applying defaults first. </p>
+<p>Walks the companion chain so every schema in it is loaded. A saved blob is read only when its size and version fit the schema, or when the schema's migrate hook takes it, and every field read back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">schema</td><td>The head schema defining the face's settings. </td></tr>
@@ -1210,7 +1212,7 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults. </p>
-<dl class="section return"><dt>Returns</dt><dd>true when any schema in the chain had no blob at <span class="tt"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from a trusted blob, applying defaults first.">settings_init</a></span>, or one was reset for a blob it could not read, and no settings page message has landed since. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true when any schema in the chain had no blob at <span class="tt"><a class="el" href="#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from their saved blobs, applying defaults first.">settings_init</a></span>, or one was reset for a blob it could not read, and no settings page message has landed since. </dd></dl>
 
 </div>
 </div>

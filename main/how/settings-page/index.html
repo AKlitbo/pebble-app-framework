@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Settings Page · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li class="current"><a href="../../how/settings-page/" aria-current="page">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Settings Page</h1>
+          
+          <div class="readme"><p>The framework builds a face&#39;s settings page from a short description of what the face shows. <code>buildConfig</code> lays out the standard sections in a fixed order, from the theme picker to the stock tickers, and a face with a layout of its own builds the page from the same sections and a few row helpers. Beside the plain controls it gives every face a location search for weather and second clocks, a hidden store for a component&#39;s scratch state, and a generator that bundles a face&#39;s own editor, such as a drag and drop grid, into one Clay component file. The page is built with Clay and runs in the phone app&#39;s web view.</p>
+<p>The sections are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/config-builder.ts"><code>config-builder.ts</code></a> and the row helpers in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/config-rows.ts"><code>config-rows.ts</code></a>. The components are under <code>src/ts/clay/</code>, in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/clay/location-component.ts"><code>location-component.ts</code></a> and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/clay/hidden-store-component.ts"><code>hidden-store-component.ts</code></a>, with the shared types in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/clay/types.ts"><code>types.ts</code></a>. The generator is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/tools/clay-components/generate-components.ts"><code>generate-components.ts</code></a> and its check is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/tools/clay-components/check-components.ts"><code>check-components.ts</code></a>. What happens once the wearer presses Save is on <a href="../../how/life-of-a-setting/">The Life of a Setting</a>, <a href="../../how/phone-side/">The Phone Side</a>, and <a href="../../how/settings-on-the-watch/">Settings on the Watch</a>.</p>
+<h2 id="building-the-page-from-sections">Building the Page from Sections</h2>
+<p>A face describes its page and <code>buildConfig</code> returns the Clay config array, which the face hands to <code>startPebbleApp</code> as <code>clayConfig</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">import</span><span style="color:var(--code-foreground)"> buildConfig </span><span style="color:var(--code-token-keyword)">from</span><span style="color:var(--code-token-string-expression)"> '../../paf/ts/pkjs/config-builder'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">export</span><span style="color:var(--code-token-keyword)"> default</span><span style="color:var(--code-token-function)"> buildConfig</span><span style="color:var(--code-foreground)">({</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  theme</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    options</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      { label</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'Night'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> value</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      { label</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'Day'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> value</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    ]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  date</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { beats</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  clock</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { timeZone</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  location</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> {}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  weather</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> {}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  temperature</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> {}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  battery</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> {}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">});</span></span></code></pre>
+<p><strong>Present Means Included.</strong> Each field turns on a section or a control inside one, and its own fields tune it. A marker such as <code>weather: {}</code> needs nothing more. A field left out leaves its controls off the page.</p>
+<p><strong>The Order.</strong> A heading and an intro line open the page, and a <strong>Save &amp; Apply to Watch</strong> button closes it. In between, the sections always come in this order:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Section</th>
+<th align="left">Shown When</th>
+<th align="left">What It Offers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Appearance</td>
+<td align="left">always</td>
+<td align="left">the theme picker when <code>theme</code> is passed, the face&#39;s <code>appearanceItems</code>, and a Quiet Time icon toggle with <code>quietTime</code></td>
+</tr>
+<tr>
+<td align="left">the face&#39;s own</td>
+<td align="left"><code>layoutSections</code> is passed</td>
+<td align="left">whatever the face builds, such as a layout editor</td>
+</tr>
+<tr>
+<td align="left">Bluetooth</td>
+<td align="left">always</td>
+<td align="left">the connection icon, and a buzz on connect and on disconnect</td>
+</tr>
+<tr>
+<td align="left">Clock</td>
+<td align="left">always</td>
+<td align="left">the date and time formats, the face&#39;s <code>clockItems</code>, a second clock&#39;s time zone with <code>clock.timeZone</code>, and the hourly buzz with <code>hourlyVibe</code></td>
+</tr>
+<tr>
+<td align="left">Health</td>
+<td align="left"><code>steps</code> or <code>battery</code></td>
+<td align="left">what the steps readout counts, and how the battery reads</td>
+</tr>
+<tr>
+<td align="left">Location Settings</td>
+<td align="left"><code>location</code></td>
+<td align="left">phone GPS, a fallback, and a manual place</td>
+</tr>
+<tr>
+<td align="left">Weather</td>
+<td align="left"><code>weather</code> or <code>temperature</code></td>
+<td align="left">the unit, and the provider with its key</td>
+</tr>
+<tr>
+<td align="left">Calendar Preferences</td>
+<td align="left"><code>calendar</code></td>
+<td align="left">the iCal link, then the face&#39;s own <code>items</code></td>
+</tr>
+<tr>
+<td align="left">Stock Preferences</td>
+<td align="left"><code>stocks</code></td>
+<td align="left">the provider, its key, and the tickers, then the face&#39;s own <code>items</code></td>
+</tr>
+</tbody></table>
+<p><strong>Each Section Brings Its Keys.</strong> Every message key a section uses has to be declared in the face&#39;s <code>pebble.appinfo.json</code>, and each one adds to the inbox the face sizes, as <a href="../../how/talking-to-the-phone/#opening-the-connection">Opening the Connection</a> covers. Bluetooth and Clock are always on the page, so their keys are always needed. An optional section that is left out brings no keys, which is why Health returns nothing at all for a face that shows neither steps nor battery, rather than a heading over nothing.</p>
+<p><strong>The .beat Formats.</strong> <code>date.beats</code> adds the .beat formats to the end of the date list. Their <code>{B}</code> marker is not a <code>strftime</code> token, and only <code>readout_date</code> swaps it for the time in .beats, so a face asks for them only when its date line runs through <code>readout_date</code>. <a href="../../how/beats/">.beats</a> covers the reading.</p>
+<p><strong>Controls Clay Filters by Watch.</strong> <code>steps.capabilities</code> is Clay&#39;s own filter, checked against the watch the page was opened from, so <code>[&#39;NOT_PLATFORM_GABBRO&#39;]</code> drops the steps control on a round watch and keeps it everywhere else. When steps is alone in the Health section, its heading takes the same filter, so a round watch never shows a section title with nothing under it.</p>
+<p><strong>Selects Send Text.</strong> A select&#39;s value comes from an HTML option, and an option&#39;s value is always text. So an option written as <code>{ label: &#39;Day&#39;, value: 1 }</code> comes back from the page as <code>&quot;1&quot;</code>, and Clay sends it to the watch that way. The framework&#39;s sections leave Clay&#39;s <code>serializeValueAs</code> alone, so every select travels the same way, including the ones whose values really are text, such as the date format <code>%Y.%m%d</code> or the weather provider <code>openmeteo</code>. <a href="../../how/settings-on-the-watch/#taking-values-from-the-phone">Settings on the Watch</a> covers how the watch reads a choice.</p>
+<p><strong>The Stock Providers Are Written Out.</strong> The Stock section lists its data sources by hand rather than reading them from the stock feature. The section builder is in every face&#39;s phone bundle, and importing the feature would carry the stock providers into faces that show no stocks.</p>
+<h2 id="laying-out-a-page-by-hand">Laying Out a Page by Hand</h2>
+<p><code>buildConfig</code> is the section builders in their usual order. Each one is exported on its own and takes the same description: <code>appearanceSection</code>, <code>bluetoothSection</code>, <code>clockSection</code>, <code>healthSection</code>, <code>locationSection</code>, <code>weatherSection</code>, <code>calendarSection</code>, and <code>stocksSection</code>. The optional ones return <code>null</code> when the description leaves them out. A face whose page needs its own sections between the standard ones calls the builders it needs and puts them in its own order.</p>
+<p>For the rows inside its own sections, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/config-rows.ts"><code>config-rows.ts</code></a> has <code>select</code>, <code>heading</code>, and <code>toggle</code>, plus <code>VIBE_OPTIONS</code>, the plain buzz picker whose values line up with the watch&#39;s own vibration choices:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">import</span><span style="color:var(--code-foreground)"> { bluetoothSection</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> clockSection } </span><span style="color:var(--code-token-keyword)">from</span><span style="color:var(--code-token-string-expression)"> '../../paf/ts/pkjs/config-builder'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">import</span><span style="color:var(--code-foreground)"> { heading</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> select</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> toggle</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> VIBE_OPTIONS } </span><span style="color:var(--code-token-keyword)">from</span><span style="color:var(--code-token-string-expression)"> '../../paf/ts/pkjs/config-rows'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-constant)"> options</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> { hourlyVibe</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> {} };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">export</span><span style="color:var(--code-token-keyword)"> default</span><span style="color:var(--code-foreground)"> [</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    type</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'section'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    items</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [</span></span>
+<span class="line"><span style="color:var(--code-token-function)">      heading</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-string-expression)">'Goals'</span><span style="color:var(--code-foreground)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">      select</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-string-expression)">'GOAL_STEPS'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> 'Step Goal'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> [{ label</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '5,000'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> value</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> { label</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '10,000'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> value</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)"> }]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">      toggle</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-string-expression)">'GOAL_BUZZ'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> 'Buzz at Goal'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> 'Buzz once when the goal is met.'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">      select</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-string-expression)">'GOAL_BUZZ_KIND'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> 'Goal Buzz'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> VIBE_OPTIONS</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)">)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    ]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">  bluetoothSection</span><span style="color:var(--code-foreground)">(options)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">  clockSection</span><span style="color:var(--code-foreground)">(options)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  { type</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'submit'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> defaultValue</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'Save &#x26; Apply to Watch'</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">];</span></span></code></pre>
+<p>A hand-built page ends with its own submit button, since nothing adds one for it.</p>
+<p><strong>The Page Is Read Whole.</strong> The phone code walks every item on the page, nested sections included, for each setting&#39;s default and for every second clock, so a hand-built page gets the same treatment as one from <code>buildConfig</code>. <a href="../../how/phone-side/">The Phone Side</a> covers what it does with them.</p>
+<h2 id="custom-components">Custom Components</h2>
+<p>A Clay component is an object that Clay turns into one kind of row, with the parts <a href="https://github.com/pebble-dev/clay#custom-components">Clay&#39;s own guide</a> describes. A face passes its own in <code>components</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-constant)">app</span><span style="color:var(--code-token-function)">.startPebbleApp</span><span style="color:var(--code-foreground)">({</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  clayConfig</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  components</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [gridEditor</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> hiddenStoreComponent]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [weather]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">});</span></span></code></pre>
+<p><code>startPebbleApp</code> registers them before the page is built. The location search is registered for every face, so a page can use <code>locationsearch</code> without listing it.</p>
+<p><strong>How Clay Builds a Row.</strong> For each item in page order, Clay calls <code>initialize</code> with the row as <code>this</code>, so <code>this.$element</code> is the row&#39;s HTML and <code>this.config</code> is the page item, then sets the saved value and adds the row to the page. A row higher on the page is already there while a component initializes, and a row below it is not.</p>
+<p><strong>One Key per Component.</strong> Clay saves a component through its manipulator, as one value under the item&#39;s <code>messageKey</code>. A component that edits several settings keeps one of them as its own value and writes the rest into hidden stores, below.</p>
+<h3 id="the-serialization-trap">The Serialization Trap</h3>
+<p>Clay builds the page on the phone and opens it in the web view as one self-contained data URL. A registered component reaches that page as text: Clay writes each key, a colon, and the function&#39;s own <code>toString</code>.</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-constant)"> HINT</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-token-string-expression)"> 'Pick a colour'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">export</span><span style="color:var(--code-token-keyword)"> default</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'swatchPicker'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  template</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '&#x3C;div class="component swatch">&#x3C;input type="hidden" class="swatch-value" data-manipulator-target>&#x3C;/div>'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  manipulator</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'val'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-comment)">  // a function expression, which Clay copies as initialize:function () {</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">  // the shorthand initialize() { would be copied as initialize:initialize() { and stop the page parsing</span></span>
+<span class="line"><span style="color:var(--code-token-function)">  initialize</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-keyword)"> function</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-constant)">this</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { $element</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-function)"> HTMLElement</span><span style="color:var(--code-foreground)">[]; config</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { label</span><span style="color:var(--code-token-keyword)">?:</span><span style="color:var(--code-token-constant)"> string</span><span style="color:var(--code-foreground)"> } }) {</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // HINT is undefined on the page, since only this body is copied</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // anything the component needs rides on its page item and is read from this.config</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">};</span></span></code></pre>
+<p><strong>Shorthand Methods Break Every Row.</strong> A method written as <code>initialize() {</code> stringifies with its name, and the copy comes out as <code>initialize:initialize() {</code>, which is not valid JavaScript. The page&#39;s script fails to parse, so every component on the page goes down with it and the settings screen never opens.</p>
+<p><strong>Arrow Functions Lose the Row.</strong> An arrow function parses, but it has no <code>this</code> of its own, so <code>this.$element</code> is undefined when Clay calls it.</p>
+<p><strong>Nothing from the Module Comes Along.</strong> Only the function bodies are copied, so an import or a module-level constant is undefined on the page and throws. Values go inline, and data the component needs rides on its page item, such as a list of panels with their icons and colours passed as <code>moduleOptions</code> and read from <code>this.config</code>. A type is fine, since TypeScript erases it before anything is copied.</p>
+<p><strong>The Custom Function Too.</strong> A face can pass Clay&#39;s custom function as <code>customClay</code>, which runs once on the page with the whole page as <code>this</code>, before any row is built. It is copied the same way and follows the same rules.</p>
+<h3 id="scratch-state-in-a-hidden-store">Scratch State in a Hidden Store</h3>
+<p>The web view gives the page no <code>localStorage</code> of its own, so a component cannot remember anything there between visits. The <code>hiddenStore</code> component is a hidden input on Clay&#39;s <code>val</code> manipulator. It shows nothing, and its value is saved with the other settings and handed back the next time the page opens.</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{ type</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'hiddenStore'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> messageKey</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'GRID_LIBRARY'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> storeClass</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'grid-library'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> defaultValue</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> ''</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{ type</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'gridEditor'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> messageKey</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> 'GRID'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> defaultValue</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> '1,0,0,2,2'</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span></code></pre>
+<p><strong>What a Store Holds.</strong> A store holds scratch state the watch never reads, such as a library of saved layouts the editor lets the wearer switch between. It also carries the extra settings of a component that edits more than one, which the watch reads as ordinary settings.</p>
+<p><strong>Finding a Store.</strong> Every store carries the <code>gl-store</code> class, so a page with more than one gives each a <code>storeClass</code> as well, and the component finds its store by that class. A plain lookup on <code>gl-store</code> would keep finding the first one.</p>
+<p><strong>Stores Go above the Component.</strong> A row below a component is not on the page yet when the component initializes, so a store declared after its editor is not there to be read. Declare the stores first. An editor can also read its stores again once the page has finished building.</p>
+<p><strong>A Store Costs Message Room.</strong> A store is a message key like any other. It has to be declared, and Clay sends it to the watch on every save even when the watch never reads it, so a large library adds to the size the watch&#39;s inbox needs. <a href="../../how/talking-to-the-phone/#opening-the-connection">Opening the Connection</a> covers sizing the inbox for the whole page.</p>
+<h2 id="the-location-search">The Location Search</h2>
+<p><code>locationsearch</code> is a search box that finds places as the wearer types. After two characters and a short pause it asks Open-Meteo&#39;s free geocoder for five matches. Picking one saves the place as JSON, with its coordinates, its label, and its time zone:</p>
+<pre><code>{&quot;lat&quot;:51.5,&quot;lon&quot;:-0.13,&quot;label&quot;:&quot;London, England, United Kingdom&quot;,&quot;offset&quot;:60,&quot;tz&quot;:&quot;Europe/London&quot;}</code></pre>
+<p>Typing clears the saved place, so a name typed but never picked from the list saves as nothing, and a note under the box says so. A geocoder answer that lands after a newer query is dropped, so a slow reply cannot replace the list for what the wearer has typed since.</p>
+<p><strong>GPS and the Manual Place.</strong> The Location Settings section puts <strong>Enable Phone GPS</strong> and <strong>Fallback to Manual Location</strong> beside the search. GPS starts off unless the face passes <code>location: { gpsDefault: true }</code>, and the fallback starts on. <a href="../../how/fetching-the-weather/#where-the-location-comes-from">Where the Location Comes From</a> covers how a fetch picks between them.</p>
+<p><strong>A Second Clock.</strong> An item marked <code>timeZone: true</code> becomes a time zone picker, which <code>clock: { timeZone: true }</code> adds to the Clock section. A hand-built page can mark any <code>locationsearch</code> item the same way, and the phone keeps each marked item&#39;s offset current. <a href="../../how/time-zones/#picking-a-place">Picking a Place</a> covers what the picker offers and how the saved zone becomes the offset the watch is sent.</p>
+<h2 id="a-faces-own-builder">A Face&#39;s Own Builder</h2>
+<p>An editor too big for one hand-written component, such as a drag and drop grid with presets and an import panel, is written as small TypeScript pieces and bundled into a component. The pieces are plain modules, so Vitest tests them like any other code, and the generator turns them into the one self-contained file Clay can copy.</p>
+<p>A face keeps its pieces under <code>src/pkjs/clay/builder/</code>, and a family keeps the ones its faces share under <code>core/pkjs/clay/builder/</code>. A manifest beside them names the component, its template and stylesheets, the pieces to bundle, and where the finished <code>*.g.js</code> lands in the face. One piece, <code>init</code>, hangs the hooks on the row that the generated manipulator calls. <code>paf gen &lt;face&gt; clay</code> bundles the pieces with esbuild into one function that becomes the component&#39;s <code>initialize</code>, and parses the finished file once before it writes it, so a file that does not parse never lands.</p>
+<p><strong>Where a Piece Comes From.</strong> A piece is looked up in the face first, then in its family&#39;s core, then in the framework&#39;s <code>src/ts/clay/builder/</code>, by the same path under each. A face&#39;s copy wins even when a shared piece is the one importing it. So one manifest in a family&#39;s core can build a different editor for each face: the drag handling and the popup panels come from the framework, and each face supplies its own grid geometry, the code that reads and writes its layout string, its starter layouts, and its template. Manifests shadow each other the same way, by file name.</p>
+<p><strong>Committed, and Checked.</strong> The build never runs the generator. It compiles the face&#39;s phone code, leaves the builder pieces out of the compile so they do not ship a second time as loose modules, and copies every committed <code>*.g.js</code> beside the result. The committed file is therefore all the page ever sees, and a piece edited without a fresh <code>paf gen</code> ships the old editor. <code>paf check</code> builds every component again in memory and compares it with the committed file, and a stale one is reported with the <code>paf gen</code> line that fixes it. It also reports a committed component no manifest writes any more, since the build would still copy it into the face.</p>
+<h2 id="previewing-the-page">Previewing the Page</h2>
+<p>The <code>dev</code> plugin&#39;s <code>clay-preview</code> tool builds a face&#39;s real page into an HTML file a browser opens, as <a href="../../how/dev-plugin/#previewing-the-settings-page">Previewing the Settings Page</a> covers.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/phone-side/"><span>Previous</span>The Phone Side</a>
+<a class="page-step page-step-next" rel="next" href="../../how/settings-on-the-watch/"><span>Next</span>Settings on the Watch</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

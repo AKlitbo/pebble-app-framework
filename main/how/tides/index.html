@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tides · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li class="current"><a href="../../how/tides/" aria-current="page">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Tides</h1>
+          
+          <div class="readme"><p>The tide code gives a face water that rises and falls like a real sea. It comes in for a little over six hours and goes out for a little over six, stands nearly still at the turns, runs fastest in between, and arrives about 50 minutes later each day. The Shoreline face uses it to float a boat up and down the sand.</p>
+<p>It is a rhythm, not a tide table. It knows nothing about any port, so it cannot tell a wearer when high water is on their beach. What it gives is water that moves at the right speed and in the right shape, with no phone, no location, and no network.</p>
+<p>It lives in <a href="../../c/tide_8h.html"><code>tide.h</code></a> and <a href="../../c/tide_8c.html"><code>tide.c</code></a> under <code>src/c/core/clock/</code>.</p>
+<h2 id="a-running-count-of-minutes">A Running Count of Minutes</h2>
+<p><code>tide_level(minutes)</code> and <code>tide_rising(minutes)</code> both take a count of minutes that keeps going up, such as the minutes since the epoch. A time of day would not do, since it goes back to 0 at midnight and the water would snap back with it every night. Low water is wherever the count is 0 or a whole number of cycles on.</p>
+<p><strong>The Cycle.</strong> One cycle is 745 minutes, 12 hours 25 minutes. That is the moon&#39;s main tide, which comes round twice in the 24 hours 50 minutes it takes the moon to come back overhead. Two cycles run 50 minutes past a day, so each low water comes 50 minutes later than the day before, and the times of low and high water come round to where they started in about a fortnight.</p>
+<p><strong>Counts before 0.</strong> A count before the epoch gives a negative remainder in C, and one cycle is added to it, the same as for <a href="../../how/moon/">the moon</a>.</p>
+<h2 id="the-shape-of-the-water">The Shape of the Water</h2>
+<p>The level starts as a triangle, rising in a straight line from 0 to 100 over the first half of the cycle and falling back over the second:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> pos </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-function)">phase</span><span style="color:var(--code-foreground)">(minutes) </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 200</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-foreground)"> TIDE_PERIOD_MIN;</span><span style="color:var(--code-token-comment)">  // 0 to 199</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> tri </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> pos </span><span style="color:var(--code-token-keyword)">&#x3C;=</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-token-keyword)"> ?</span><span style="color:var(--code-foreground)"> pos </span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> 200</span><span style="color:var(--code-token-keyword)"> -</span><span style="color:var(--code-foreground)"> pos;</span><span style="color:var(--code-token-comment)">              // 0 to 100</span></span></code></pre>
+<p>Then the triangle is eased so the water slows into each turn:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)">)((tri </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)"> tri </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-constant)">300</span><span style="color:var(--code-token-keyword)"> -</span><span style="color:var(--code-token-constant)"> 2</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)"> tri)) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 10000</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p>That is the smoothstep curve, 3t² − 2t³, scaled to run from 0 to 100. It is exact at 0, 50, and 100, so low and high water really do reach the ends. In between it flattens both turns and steepens the middle. The chart shows a cycle hour by hour. The pointed line is the triangle, and the rounder one is the level the code returns:</p>
+<pre class="mermaid">xychart-beta
+  title &quot;Water Level across One Cycle&quot;
+  x-axis &quot;Hours after Low Water&quot; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  y-axis &quot;Level&quot; 0 --&gt; 100
+  line [0, 16, 32, 48, 64, 80, 96, 88, 72, 56, 39, 23, 7]
+  line [0, 6, 24, 47, 70, 89, 99, 96, 80, 58, 33, 13, 1]</pre>
+<p>The triangle crawls up the beach at one steady rate, which is the giveaway that nothing real is behind it. A real tide is close to a cosine wave, and the smoothstep curve stays within about one point of a cosine. With the rounding down to whole numbers, the level the code returns is never more than about three points off it.</p>
+<p>Sailors have a rule of thumb for the same shape, the rule of twelfths. It says the tide rises a twelfth of its range in the first hour, two in the second, three in each of the third and fourth, two in the fifth, and one in the sixth. Added up that is 8, 25, 50, 75, 92, and 100. The code reads 6, 24, 47, 70, 89, and 99 at the same hours.</p>
+<p><strong>Rising or Falling.</strong> <code>tide_rising</code> is true over the first half of the cycle and false over the second, so a face can point an arrow or tilt a boat the right way. The flood and the ebb are the same length here.</p>
+<h2 id="what-it-leaves-out">What It Leaves Out</h2>
+<p><strong>The Real Sea.</strong> Nothing ties the count to the moon or to any port. Even lined up by hand with a tide table, the 745-minute cycle is about a quarter of a minute shorter than the real 12 hours 25.2 minutes, so it drifts nearly three hours a year.</p>
+<p><strong>Spring and Neap Tides.</strong> Every tide here has the same range. Real tides grow and shrink over a fortnight as the sun and the moon line up and pull apart.</p>
+<p><strong>Other Kinds of Coast.</strong> This is two equal tides a day, which is what much of the Atlantic gets. Some coasts, such as parts of the Gulf of Mexico, get one tide a day, and others, such as the Pacific coast of North America, get two of different heights. Up a river the flood is often shorter than the ebb.</p>
+<p>None of that shows on a picture of a boat, and leaving it out keeps the whole thing to two short functions in whole-number maths.</p>
+<h2 id="using-it-in-a-face">Using It in a Face</h2>
+<p>Any count that only goes up will do. The minutes since the epoch are the simplest:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> minutes </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)">)(</span><span style="color:var(--code-token-function)">time</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">NULL</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 60</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> level </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> tide_level</span><span style="color:var(--code-foreground)">(minutes);</span><span style="color:var(--code-token-comment)">      // 0 at low water to 100 at high</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> rising </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> tide_rising</span><span style="color:var(--code-foreground)">(minutes);</span><span style="color:var(--code-token-comment)">   // which way the water is going</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> water_y </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> low_y </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-foreground)"> ((high_y </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> low_y) </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)"> level) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
+<p>Even at mid tide the level moves less than half a point a minute, so reading it on the face&#39;s minute redraw is plenty.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/sunrise-and-sunset/"><span>Previous</span>Sunrise and Sunset</a>
+<a class="page-step page-step-next" rel="next" href="../../how/time-zones/"><span>Next</span>Time Zones</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

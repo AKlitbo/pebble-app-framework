@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sunrise and Sunset · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li class="current"><a href="../../how/sunrise-and-sunset/" aria-current="page">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Sunrise and Sunset</h1>
+          
+          <div class="readme"><p>The sun code tells a face where the day&#39;s light has got to: how far through the daylight it is, how far through the night, and how long until the next sunrise or sunset. A face uses it to move a sun along an arc, swap the sun for a moon after dark, or count down to dusk. It works the same on an ordinary day and on a summer night in the far north, where the sun sets after midnight and a simpler check reads the whole afternoon as night.</p>
+<p>It lives in <a href="../../c/solar_8h.html"><code>solar.h</code></a> and <a href="../../c/solar_8c.html"><code>solar.c</code></a> under <code>src/c/core/clock/</code>.</p>
+<h2 id="where-the-times-come-from">Where the Times Come From</h2>
+<p>The watch does not work sunrise and sunset out for itself. The weather provider sends them with each reading, and the weather store keeps them as minutes past midnight beside the temperature. <a href="../../how/weather-store/">The Weather Store</a> and <a href="../../how/weather-readings/">Weather Readings</a> follow them from the phone to the watch.</p>
+<p><strong>The Trade-Off.</strong> Working the sun out on the watch needs the latitude, the longitude, and the date, plus sines, cosines, and an arccosine to find where the sun crosses the horizon. That means a trig table or floating point in every face that shows the sun. Taking the provider&#39;s times costs none of that, and they come to the minute. The cost is that a face only has sun times once a weather reading has arrived, so it needs the weather feature and a location. A face with neither gets no data, and shows whatever it shows for no weather.</p>
+<p><strong>On the Watch&#39;s Own Clock.</strong> Each provider gives its times a different way. OpenWeatherMap sends UTC seconds, WeatherAPI sends the location&#39;s own time as text such as <code>06:42 AM</code>, and Open-Meteo sends the location&#39;s own time in ISO form. The phone moves each one onto the phone&#39;s clock before sending, which is the clock the watch keeps. A weather location in another zone shows its sunrise as the moment it happens on your watch, not as the time on the clocks there.</p>
+<p><strong>Today&#39;s Times, All Day.</strong> The phone sends the sunrise and sunset for the phone&#39;s own date, and the watch uses them until the next reading replaces them. Once the sun has set, today&#39;s sunrise also stands in for tomorrow&#39;s. Sunrise moves by a minute or two a day at middle latitudes and more in the far north, so a countdown to tomorrow&#39;s sunrise is off by about that much.</p>
+<p><strong>No Data.</strong> Every function takes -1 for a missing reading and answers -1 back, so a face never draws a sun at midnight because a reading was absent. A value outside 0 to 1439 counts as missing too, rather than being wrapped onto another day.</p>
+<h2 id="measuring-forward-from-sunrise">Measuring Forward from Sunrise</h2>
+<p>Every sum here measures forward round the clock from sunrise. Going from one time to another, a negative answer gets a day added:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> int</span><span style="color:var(--code-token-function)"> forward</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> from</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> int</span><span style="color:var(--code-foreground)"> to)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    int</span><span style="color:var(--code-foreground)"> minutes </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> to </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> from;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (minutes </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">        minutes </span><span style="color:var(--code-token-keyword)">+=</span><span style="color:var(--code-foreground)"> MINUTES_PER_DAY;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)"> minutes;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The daylight is <code>forward(rise, set)</code>, and how far into it now sits is <code>forward(rise, now)</code>. When the second is bigger than the first, the sun has set and it is night.</p>
+<p>That covers a sunset after midnight without a special case. Take a far northern summer day with sunrise at 03:00 and sunset at half past midnight. Sunset is the smaller number, so a check that expects sunset to come later in the day reads the whole afternoon as night. Measured forward from sunrise, noon is plainly daylight:</p>
+<pre><code>daylight = forward(180, 30)  = 1290 minutes, 21.5 hours
+at noon  = forward(180, 720) =  540 minutes in
+progress = 540 × 100 / 1290  =   41</code></pre>
+<p>At 01:00 it is <code>forward(180, 60)</code>, 1320 minutes in, which is past the end of the daylight, so it is night.</p>
+<h2 id="the-readings">The Readings</h2>
+<p><strong>Day Progress.</strong> <code>solar_day_progress</code> runs from 0 at sunrise to 100 at sunset, and gives -1 at night so a face hides the sun rather than parking it at one end of its arc. It rounds down. With sunrise at 06:30 and sunset at 19:00, 15:00 is 510 of 750 minutes in, which reads 68.</p>
+<p><strong>Night Progress.</strong> <code>solar_night_progress</code> runs from 0 at sunset to 100 at the next sunrise, and gives -1 by day. The night is whatever the daylight leaves of the 24 hours. On the same day, 23:00 is 240 of the night&#39;s 690 minutes, which reads 34. In the far northern example the night is only 150 minutes, so 01:00 reads 20.</p>
+<p>On the minute of sunset the day reads 100 and the night -1, and the night starts at 0 a minute later. With data, exactly one of the two is ever a number, so a face that draws the sun from one and the moon from the other never draws both or neither.</p>
+<p><strong>The Next Event.</strong> <code>solar_next_event</code> gives the minutes until the next sunrise or sunset, and sets a flag to say which. While the sun is up it counts to sunset. Before sunrise it counts to sunrise, and once the sun has set it counts across midnight to tomorrow&#39;s. At 15:00 on the ordinary day that is a sunset in 240 minutes, and at 23:00 a sunrise in 450. With no data it gives -1 and leaves the flag as it was.</p>
+<h2 id="polar-day-and-night">Polar Day and Night</h2>
+<p>When the sun stays up all day or never comes up, there is no sunrise or sunset to send. Depending on the provider, the times are left out, which reaches the watch as -1, or both arrive as the same minute. A sun that never sets and one that never rises can arrive looking exactly alike, so the sums read a sunrise and sunset on the same minute as no data rather than guess which it is. The face shows what it shows with no weather.</p>
+<p><a href="../../how/time-bands/#spans-that-repeat-every-day">Time Bands and Night Hours</a> reads the same pair its own way, since a span and a night window each need an answer.</p>
+<h2 id="using-it-in-a-face">Using It in a Face</h2>
+<p>Each function takes the three times as minutes past midnight. The face reads the clock and the weather store and hands them over:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> struct</span><span style="color:var(--code-foreground)"> tm </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">t </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> time_store_tm</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> now </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_hour </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 60</span><span style="color:var(--code-token-keyword)"> +</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_min;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> rise </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> weather_store_sunrise</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> set </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> weather_store_sunset</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> is_sunrise;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> minutes </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> solar_next_event</span><span style="color:var(--code-foreground)">(rise</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> set</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> now</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">is_sunrise);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (minutes </span><span style="color:var(--code-token-keyword)">>=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    char</span><span style="color:var(--code-foreground)"> text[</span><span style="color:var(--code-token-constant)">12</span><span style="color:var(--code-foreground)">];</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    duration_hm_compact(text</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> sizeof</span><span style="color:var(--code-token-function)">(text)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> minutes)</span><span style="color:var(--code-foreground)">;</span><span style="color:var(--code-token-comment)">  // such as "4h 0m"</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // and a sunrise or a sunset icon beside it, from is_sunrise</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>duration_hm_compact</code> is covered in <a href="../../how/dates-and-durations/">Dates and Durations</a>.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/julian-date/"><span>Previous</span>The Julian Date</a>
+<a class="page-step page-step-next" rel="next" href="../../how/tides/"><span>Next</span>Tides</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

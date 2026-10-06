@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -199,7 +201,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('icons_8h_sourc
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// WX_FORECAST_NIGHT_BIT is generated from the same vocabulary the phone sets it from. Real</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// condition numbers run 0 to 11 so the high bit is free, and the unknown value (255) still lands</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// on WI_NA with the bit set</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// on the `WEATHER_NOW_NA` icon with the bit set</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="wire__caps_8g_8h.html">wire/wire_caps.g.h</a>&quot;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="group__lib__ui.html#ga9a50b66845b71a795a1739d45b510875">   26</a></span>uint32_t <a class="code hl_function" href="group__lib__ui.html#ga9a50b66845b71a795a1739d45b510875">wx_resource_for</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *condition);</div>

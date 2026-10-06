@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -213,7 +215,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gafa86e8ce9e0e424a0bb3b08e7dd3c04e" id="r_gafa86e8ce9e0e424a0bb3b08e7dd3c04e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__ui.html#gafa86e8ce9e0e424a0bb3b08e7dd3c04e">icon_tint</a> (GBitmap *bmp, GColor color)</td></tr>
 <tr class="memdesc:gafa86e8ce9e0e424a0bb3b08e7dd3c04e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Paints an icon a different colour. It only works on icons saved as little colour-table pictures. Other kinds it just leaves alone. The see-through pixels stay see-through so the edges keep looking clean.  <br /></td></tr>
 <tr class="memitem:aa9b17bd6491a4fb807f99fb1b0a66a40" id="r_aa9b17bd6491a4fb807f99fb1b0a66a40"><td class="memItemLeft">static uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#aa9b17bd6491a4fb807f99fb1b0a66a40">px_alpha</a> (GBitmapFormat fmt, const uint8_t *data, const GColor *palette, int x)</td></tr>
-<tr class="memdesc:aa9b17bd6491a4fb807f99fb1b0a66a40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alpha of a single pixel, 0 to 3, across the bitmap formats Emery actually produces.  <br /></td></tr>
+<tr class="memdesc:aa9b17bd6491a4fb807f99fb1b0a66a40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alpha of a single pixel, 0 to 3, across the bitmap formats the colour platforms produce.  <br /></td></tr>
 <tr class="memitem:gabad4c43378e5bd3628da4131b2343ad5" id="r_gabad4c43378e5bd3628da4131b2343ad5"><td class="memItemLeft"><a class="el" href="structIconMargins.html">IconMargins</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__ui.html#gabad4c43378e5bd3628da4131b2343ad5">icon_margins_of</a> (GBitmap *bmp)</td></tr>
 <tr class="memdesc:gabad4c43378e5bd3628da4131b2343ad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Measures the transparent margins of any bitmap, for icons that live outside the shared cache such as a weather picture that reloads as the weather changes. All zero when auto-trim is off or the bitmap is NULL.  <br /></td></tr>
 <tr class="memitem:aaa420ba9eb1f45c44be31a81a75e521c" id="r_aaa420ba9eb1f45c44be31a81a75e521c"><td class="memItemLeft">static <a class="el" href="structIconEntry.html">IconEntry</a> *&#160;</td><td class="memItemRight"><a class="el" href="#aaa420ba9eb1f45c44be31a81a75e521c">icon_entry</a> (uint32_t res)</td></tr>
@@ -287,7 +289,7 @@ static uint8_t&#160;</td><td class="memItemRight"><b>s_cache_count</b></td></tr>
 </div><div class="memdoc">
 
 <p>Finds or loads the cache entry for a resource id. </p>
-<p>One scan feeds <span class="tt"><a class="el" href="group__lib__ui.html#ga7968af6a0c5eadec10e501121ec97760" title="Hands back an icon picture from the cache, loading it the first time it is asked for.">icon_get</a></span>, <span class="tt"><a class="el" href="group__lib__ui.html#ga2040f8e16081e8b48289641c6914c73f" title="The measured transparent margins of a cached icon. Loads and measures it the first time,...">icon_margins</a></span>, and <span class="tt"><a class="el" href="group__lib__ui.html#gaa15abf7931b6be2b608974a6c263c56e" title="The size of an icon in pixels. Gives back GSize(0,0) if it could not load.">icon_size</a></span>, so callers don't each re-scan the same icon on every panel repaint. Without it, <span class="tt"><a class="el" href="group__lib__ui.html#ga2040f8e16081e8b48289641c6914c73f" title="The measured transparent margins of a cached icon. Loads and measures it the first time,...">icon_margins</a></span> would scan twice and a face's own <span class="tt">icon_visible_width</span> three times.</p>
+<p>One scan feeds <span class="tt"><a class="el" href="group__lib__ui.html#ga7968af6a0c5eadec10e501121ec97760" title="Hands back an icon picture from the cache, loading it the first time it is asked for.">icon_get</a></span>, <span class="tt"><a class="el" href="group__lib__ui.html#ga2040f8e16081e8b48289641c6914c73f" title="The measured transparent margins of a cached icon. Loads and measures it the first time,...">icon_margins</a></span>, and <span class="tt"><a class="el" href="group__lib__ui.html#gaa15abf7931b6be2b608974a6c263c56e" title="The size of an icon in pixels. Gives back GSize(0,0) if it could not load.">icon_size</a></span>, so a caller that reads more than one of them on every panel repaint does not re-scan the same icon for each.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">res</td><td>The resource id. </td></tr>
@@ -335,7 +337,7 @@ static uint8_t&#160;</td><td class="memItemRight"><b>s_cache_count</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Alpha of a single pixel, 0 to 3, across the bitmap formats Emery actually produces. </p>
+<p>Alpha of a single pixel, 0 to 3, across the bitmap formats the colour platforms produce. </p>
 <p>A <span class="tt">GColor8</span> keeps alpha in its top 2 bits, and colour-table pixels index a <span class="tt">GColor8</span> palette. Colour-table pixels pack MSB first, so the leftmost pixel sits in the high-order bits.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

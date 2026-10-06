@@ -88,6 +88,8 @@
     <option value="main" selected>main</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -201,7 +203,7 @@ Files</h2></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Funits_2Funits_2Ec" id="r_src_2Fc_2Fpebble_2Fsystem_2Funits_2Funits_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="units_8c.html">src/c/pebble/system/units/units.c</a></td></tr>
 <tr class="memdesc:units_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The SDK-facing units facade. Reads the clock for .beats and forwards the rest to the pure lib cores, <span class="tt">clock/beats</span> and <span class="tt">units/distance</span>. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Funits_2Funits_2Eh" id="r_src_2Fc_2Fpebble_2Fsystem_2Funits_2Funits_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="units_8h.html">src/c/pebble/system/units/units.h</a></td></tr>
-<tr class="memdesc:units_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unit conversion and distance formatting helpers. <br /></td></tr>
+<tr class="memdesc:units_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swatch internet time in .beats, and distance formatting in miles or kilometres. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Fvibe_2Fvibe_2Ec" id="r_src_2Fc_2Fpebble_2Fsystem_2Fvibe_2Fvibe_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="vibe_8c.html">src/c/pebble/system/vibe/vibe.c</a></td></tr>
 <tr class="memdesc:vibe_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The haptic feedback wrapper implementation. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Fvibe_2Fvibe_2Eh" id="r_src_2Fc_2Fpebble_2Fsystem_2Fvibe_2Fvibe_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="vibe_8h.html">src/c/pebble/system/vibe/vibe.h</a></td></tr>
@@ -486,7 +488,7 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Buzz a custom on and off rhythm unless in quiet time. The durations are milliseconds that alternate buzz then pause then buzz and so on, starting on a buzz. Lets a caller play a little tune that the three canned pulses cannot. </p>
-<p>The array is not copied. The vibe controller keeps reading it while the pattern plays, so it has to outlive the call: pass a static or otherwise long-lived array, never a stack one.</p>
+<p>The firmware copies each duration into its own vibe queue when the pattern is queued, so the array only has to last for the call. A stack array is fine.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">durations</td><td>The on and off times in milliseconds. The first entry is a buzz. </td></tr>

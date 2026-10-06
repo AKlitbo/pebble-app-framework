@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Phone Side · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li class="current"><a href="../../how/phone-side/" aria-current="page">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Phone Side</h1>
+          
+          <div class="readme"><p>A face&#39;s phone code is its PebbleKit JS, running inside the Pebble app on the phone. The framework runs all of it from one call. <code>startPebbleApp</code> builds the settings page, puts the settings back after a reinstall, keeps second clocks right across daylight saving, sends every message to the watch through one queue, and runs the features the face opted into, such as weather, stocks, and the calendar. A face&#39;s own phone code is usually that one call and whatever formatting is its own.</p>
+<p>It lives under <code>src/ts/pkjs/</code>, in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/app.ts"><code>app.ts</code></a>, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/feature.ts"><code>feature.ts</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/send-queue.ts"><code>send-queue.ts</code></a>, with the rules every fetching feature shares in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/asks.ts"><code>asks.ts</code></a> and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/round.ts"><code>round.ts</code></a>.</p>
+<h2 id="starting-the-app">Starting the App</h2>
+<p>A face&#39;s entry point hands <code>startPebbleApp</code> its settings page and the features it uses:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-constant)">app</span><span style="color:var(--code-token-function)">.startPebbleApp</span><span style="color:var(--code-foreground)">({</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  clayConfig</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  components</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [slotEditor]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [weather</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> stocks]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">});</span></span></code></pre>
+<p><strong><code>clayConfig</code>.</strong> The settings page, normally built with <code>buildConfig</code>. Besides building the page from it, the app reads each setting&#39;s default, which fields are second clocks, and each slider&#39;s precision.</p>
+<p><strong><code>components</code>.</strong> Any Clay components of the face&#39;s own, such as a layout editor. They are registered before the page is built. The location search that the weather location and second clocks use is registered for every face.</p>
+<p><strong><code>features</code>.</strong> The parts of the phone code only some faces need. Each one fetches its own data and sends it to the watch, and the app tells it when anything happens.</p>
+<h2 id="features">Features</h2>
+<p>A feature is a function the app calls once, at start, with what every feature shares: the face&#39;s message keys, the defaults from its settings page, the send queue, and how long to wait before fetching again after a save. It hands back the hooks the app calls on it:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Hook</th>
+<th align="left">When It Runs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>ready</code></td>
+<td align="left">the phone code has started, after the settings request has gone out</td>
+</tr>
+<tr>
+<td align="left"><code>message</code></td>
+<td align="left">a message has arrived from the watch</td>
+</tr>
+<tr>
+<td align="left"><code>refresh</code></td>
+<td align="left">the background refresh ticked, with a flag for the slower ticks</td>
+</tr>
+<tr>
+<td align="left"><code>configOpened</code></td>
+<td align="left">the settings page is about to open, while the old settings are still saved</td>
+</tr>
+<tr>
+<td align="left"><code>configSaved</code></td>
+<td align="left">the settings page closed and its new settings are saved</td>
+</tr>
+</tbody></table>
+<p>Every hook is optional. A feature also lists the watch&#39;s request keys it answers, such as <code>WEATHER_REQUEST</code>. When the watch sends a request no listed feature answers, the app logs one warning naming the key, which is how a face that declares a feature&#39;s keys but forgot to list the feature finds out.</p>
+<p><strong>One Feature Cannot Break the Others.</strong> The app runs each hook on its own. A hook that throws is logged and the rest still run, so a feature that breaks on one phone cannot stop the refresh timer, the other features, or a settings restore.</p>
+<p><strong>Only What a Face Lists Is Bundled.</strong> <code>app.ts</code> never imports a feature. The face&#39;s entry point imports each one it passes, such as <code>weather</code> from <code>ts/weather/feature</code>, so the bundler leaves every other feature out of the face&#39;s phone code, along with the providers behind it. The calendar&#39;s iCal library is only copied into the build for a face whose code reaches the calendar reader. The cost is that a face has to name each feature it uses, and one it forgets fetches nothing.</p>
+<p><strong>A Feature Checks Its Own Keys.</strong> Weather that is listed but missing one of its four core message keys fetches nothing and logs which keys are missing, since a fetch would spend provider quota on a reading the watch cannot show. Stocks without <code>STOCK_STRIP</code> and a calendar without <code>CALENDAR_STRIP</code> skip every fetch, with no log line.</p>
+<h2 id="when-the-phone-code-starts">When the Phone Code Starts</h2>
+<p>The Pebble app starts the phone code when the face opens, and fires <code>ready</code> once it is up. The app then does the same things in the same order every time:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Pebble as Pebble App
+  participant App as Phone Code
+  participant Features
+  participant Watch
+  Pebble-&gt;&gt;App: ready
+  App-&gt;&gt;Watch: the settings request
+  App-&gt;&gt;Watch: every second clock, afresh
+  App-&gt;&gt;Features: ready
+  Features-&gt;&gt;Watch: weather, stocks, the agenda
+  App-&gt;&gt;App: start the refresh timer</pre>
+<p><strong>The Settings Request.</strong> It goes out first. A face that declares <code>SETTINGS_FRESH</code> and already has settings on the phone only asks whether the watch booted empty. Any other face asks for the watch&#39;s whole copy. The watch turns away anything that arrives before the face has opened its connection, which can be a few seconds into a launch, so the app asks again every 3 seconds, up to 8 more times, until the watch answers. It never queues a new ask while the last one is still waiting to go out. What happens with the answer is on <a href="../../how/life-of-a-setting/#after-a-reinstall">The Life of a Setting</a>.</p>
+<p><strong>Every Second Clock Again.</strong> A watch that has just been reset holds no zones, so the app forgets what it last sent and sends every second clock again. <a href="../../how/time-zones/#following-daylight-saving">Time Zones</a> covers what it sends.</p>
+<p><strong>Each Feature Fetches.</strong> A feature&#39;s <code>ready</code> forgets what the watch last took from it and fetches, so a watch that rebooted with empty stores always gets an answer. The stock feature may hand over the strip it kept on the phone instead, when its quota rules hold the fetch, as <a href="../../how/stock-store/#surviving-a-restart">The Stock Store</a> covers.</p>
+<p><strong>The Timer Starts Fresh.</strong> The phone suspends PebbleKit JS whenever it likes, and the timer goes with it, so every <code>ready</code> stops any old timer and starts a new one.</p>
+<h2 id="messages-from-the-watch">Messages from the Watch</h2>
+<p>The Pebble phone app hands over each message from the watch keyed by message key name rather than by number. The app fills in the number for every key the face declares before anything reads the message, so the settings reply and every feature see it however the phone keyed it. Every message from the watch then goes to every feature&#39;s <code>message</code> hook, and each one looks for its own request key. A request starts a fetch, unless one is already out, and forgets the copy the watch last took so the answer goes out even when nothing changed.</p>
+<p>The watch&#39;s reply to the settings request is handled by the app itself. Depending on which side has settings, it restores the watch from the phone or fills the phone&#39;s saved settings from the watch. When it fills an empty phone, each feature gets <code>configOpened</code> and <code>configSaved</code> around the fill, the same as for a save on the page. A feature whose settings moved then fetches again, so a watch set to Fahrenheit does not keep a Celsius reading fetched on the defaults.</p>
+<h2 id="the-background-refresh">The Background Refresh</h2>
+<p>While the phone code runs, a timer ticks every 5 minutes. Each tick sends any second clock whose offset moved, then runs every feature&#39;s <code>refresh</code>. Every sixth tick, about every 30 minutes, is a slow one.</p>
+<p>Weather, stocks, and the calendar act only on the slow ticks. The watch asks for each on the interval the wearer picked, so the watch leads. The slow tick only fetches when nothing has asked since the last one. A watch ask, or the phone code starting, marks the feature as asked, so a feature the watch is polling never fetches on the tick as well.</p>
+<p><strong>The Same Answer Is Not Sent Twice.</strong> Each feature keeps the last message the watch took from it, and a refresh that brings back exactly the same one sends nothing. Every send wakes the watch&#39;s radio whether or not the reading moved. A send that fails every retry forgets what it kept, so the next one goes out. A watch ask and the phone code starting both forget it too, so the watch always gets an answer when it asks.</p>
+<h2 id="after-a-save">After a Save</h2>
+<p>Each feature keeps its own list of the settings it cares about. Weather watches the provider, the key, the unit, and the location settings. Stocks watch the provider, the key, and the tickers. The calendar watches its link.</p>
+<p><strong>A Snapshot When the Page Opens.</strong> The page&#39;s new values are saved as it closes, so <code>configOpened</code> is the last moment the old ones can be read. Each feature takes a snapshot of its own settings then, and the app opens the page.</p>
+<p><strong>A Fetch Only When Its Settings Moved.</strong> When the page closes, the app sends the save to the watch first, since that is the step that saves the new values. Then each feature compares its settings with its snapshot. One whose settings changed fetches again 250 ms later, forced past any quota rule. A save that only touches a colour fetches nothing. The watch may also ask for weather after the same save, and an ask that lands in those 250 ms is folded into the forced fetch rather than starting a second one.</p>
+<p><strong>One Fetch at a Time.</strong> A feature keeps one fetch out at a time. An ask that arrives while one is running is dropped, so the watch asking again does not spend a provider call twice. The forced fetch after a save takes over from one still running, and the older one&#39;s answer is thrown away when it lands, so a reading for the old city or the old unit never reaches the watch after the new one. A watchdog closes a fetch that never answers, so it cannot hold off every later one. Weather also tries a failed fetch again after 5 and then 15 seconds, unless the failure waits on the wearer, such as a bad key or a used-up quota.</p>
+<h2 id="the-send-queue">The Send Queue</h2>
+<p>PebbleKit JS allows one message to the watch in flight at a time, and a second one sent meanwhile is dropped with no error. At launch the settings request, the second clocks, the weather, the stocks, and the agenda all go out at the same moment. So every send goes through one queue:</p>
+<pre class="mermaid">flowchart TD
+  queued[&quot;queued&quot;] --&gt; send[&quot;sent, waiting for an answer&quot;]
+  send -- acked --&gt; next[&quot;send the next one&quot;]
+  send -- &quot;nacked, or 8 s with no answer&quot; --&gt; tries{&quot;three tries used?&quot;}
+  tries -- no --&gt; wait[&quot;wait 250 ms&quot;]
+  wait --&gt; send
+  tries -- yes --&gt; dropped[&quot;dropped, and the next one goes&quot;]</pre>
+<p>Messages go out in order, one at a time. A nack from the watch usually means it was busy for a moment, so the same message goes again after 250 ms, up to three tries in all. A message that fails every try is dropped so the queue keeps moving, and whoever sent it hears that it failed. The watch&#39;s own queue waits far longer between tries, for a different reason, which <a href="../../how/talking-to-the-phone/#sending-one-at-a-time">Talking to the Phone</a> covers.</p>
+<p><strong>Clay&#39;s Own Sending Is Off.</strong> Clay can send the settings to the watch by itself when the page closes, but it would call <code>Pebble.sendAppMessage</code> directly, collide with whatever else was in flight, and lose one of them. The app starts Clay with <code>autoHandleEvents: false</code> and sends the save through the queue like everything else.</p>
+<p><strong>A Lost Answer Counts as a Failure.</strong> The Pebble app can lose an ack, and a send that waited for it forever would hold up every send behind it. After 8 seconds with no answer the send counts as failed and is tried again. An ack that turns up after that is ignored, so a send that was only slow can reach the watch twice. The watch writes nothing for a value it already holds, so the repeat costs one extra message.</p>
+<p><strong>A Message That Will Not Encode.</strong> A message the Pebble app cannot encode makes the send throw rather than fail. The queue counts it as a failed try, so the throw never reaches whoever queued something else.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/life-of-a-setting/"><span>Previous</span>The Life of a Setting</a>
+<a class="page-step page-step-next" rel="next" href="../../how/settings-page/"><span>Next</span>The Settings Page</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

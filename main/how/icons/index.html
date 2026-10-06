@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Icons · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li class="current"><a href="../../how/icons/" aria-current="page">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Icons</h1>
+          
+          <div class="readme"><p>The icon code loads each picture once and shares it across the whole face, paints a white icon any colour the theme calls for, measures the empty border around each icon so it can be lined up by what is actually drawn, and turns a weather condition into the right icon for day or night. A face asks for an icon by its resource id each time it draws, and never loads or tracks a picture itself. One call to <code>icons_cleanup</code> on the way out frees them all.</p>
+<p>The cache and the tint live in <a href="../../c/icon__cache_8h.html"><code>icon_cache.h</code></a> and <a href="../../c/icon__cache_8c.html"><code>icon_cache.c</code></a>, and the weather lookup in <a href="../../c/icons_8h.html"><code>icons.h</code></a>, <a href="../../c/icons_8c.html"><code>icons.c</code></a>, and the generated <a href="../../c/icons__table_8g_8h.html"><code>icons_table.g.h</code></a>, all under <code>src/c/pebble/ui/</code>.</p>
+<h2 id="where-the-pictures-come-from">Where the Pictures Come From</h2>
+<p>A face lists its icons in <code>resources/icons.json</code>, each with the SVG it comes from and the size it shows at. The <a href="../../how/icons-plugin/">icons plugin</a> draws each SVG into a PNG at exactly that size, since Pebble draws a bitmap at its own size and never scales it. Every icon comes out white, with soft edges made of partly see-through pixels, so it packs on the watch as a small colour table of white at a few levels of see-through, as <a href="../../how/icons-plugin/#why-the-icons-are-white">Why the Icons Are White</a> covers.</p>
+<h2 id="the-cache">The Cache</h2>
+<p><code>icon_get</code> takes a resource id and hands back the picture, loading it the first time it is asked for and handing back the same one after that. A face draws straight from it:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">GBitmap </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">icon </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> icon_get</span><span style="color:var(--code-foreground)">(RESOURCE_ID_ICON_HEART);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (icon)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    graphics_context_set_compositing_mode(ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> GCompOpSet)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    graphics_draw_bitmap_in_rect(ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> icon</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> HEART_RECT)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>GCompOpSet</code> draws the see-through pixels as see-through, so the soft edges blend into whatever is underneath. NULL means the picture could not be loaded, usually because the heap was full, and a later call tries again.</p>
+<p><strong>24 Icons at Once.</strong> The cache holds up to 24 pictures, enough for two forecast strips of eight columns with a few panels under them. When it is full, the icon nothing has asked for in the longest time is freed to make room. That is how icons nothing draws any more, such as last week&#39;s moon phase, drop out without the face having to free them. The new picture is loaded before anything is freed, so a load that fails costs the cache nothing.</p>
+<p><strong>Too Many for the Cache.</strong> A screen that draws more than 24 icons still works, but slowly. A redraw asks for its icons in the same order every time, so the icon freed to make room is always the next one wanted, and every icon is loaded from flash again on every redraw. Once the heap is crowded, one of those loads can fail and leave a blank. A face that draws more than 24 can define <code>ICON_CACHE_MAX</code> higher for its build.</p>
+<p><strong>Draw It Straight Away.</strong> A picture from the cache is only safe until the next lookup of a different icon, which might free it. So a face looks it up, draws it, and lets go of it in the same paint. Setting one on a <code>BitmapLayer</code>, which keeps the pointer and draws later, can leave that layer pointing at a freed picture.</p>
+<h2 id="painting-an-icon-a-colour">Painting an Icon a Colour</h2>
+<p><code>icon_tint</code> repaints an icon by rewriting its colour table. Every entry that is not fully see-through gets the new red, green, and blue, and keeps its own level of see-through, so the soft edges stay soft in any colour:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">GBitmap </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">icon </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> icon_get</span><span style="color:var(--code-foreground)">(RESOURCE_ID_ICON_BLUETOOTH);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">icon_tint</span><span style="color:var(--code-foreground)">(icon</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> theme_text_colour</span><span style="color:var(--code-foreground)">());</span></span>
+<span class="line"><span style="color:var(--code-token-function)">graphics_context_set_compositing_mode</span><span style="color:var(--code-foreground)">(ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> GCompOpSet);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">graphics_draw_bitmap_in_rect</span><span style="color:var(--code-foreground)">(ctx</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> icon</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> BT_RECT);</span></span></code></pre>
+<p>One white master serves every theme. The alternative is a separate copy of each icon for each colour, which multiplies the app&#39;s resources by the number of themes and still could not follow a colour the wearer picks freely.</p>
+<p><strong>Only Pictures with a Colour Table.</strong> A picture stored at eight bits a pixel has no table to rewrite, and <code>icon_tint</code> leaves it alone with its own colours, so the same drawing code can take either kind. The flip side is that a tinted picture with several real colours in its table comes out as one flat colour, since every visible entry gets the same one. Tinting is for single colour art.</p>
+<p><strong>The Tint Stays on the Picture.</strong> The rewrite changes the cached picture itself, so it holds until the next tint. The cache remembers the last colour each icon was given and skips the rewrite when it is asked for the same one, which is every redraw on a face that does not change theme. The same icon can still show in two colours on one screen, because each place tints it right before drawing it. A picture that came from somewhere other than the cache is rewritten every time.</p>
+<h2 id="lining-up-by-the-visible-art">Lining Up by the Visible Art</h2>
+<p>Icons from different sources leave different amounts of empty space around the glyph. A sun from one set might touch the top of its box while a cloud sits three pixels down, so lining up the boxes leaves the glyphs uneven.</p>
+<p>The first time the cache loads an icon, it scans the picture once for its outermost visible pixels and keeps the empty margin on each side. <code>icon_margins</code> hands those back for free on every later call. A face uses them to place the glyph rather than the box, such as pushing an icon down when its art reaches too close to a bar above it:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">GRect at </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> WX_ICON_RECT;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> top </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> icon_margins</span><span style="color:var(--code-foreground)">(resource).n;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (top </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-foreground)"> MIN_TOP_GAP)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">    at</span><span style="color:var(--code-token-punctuation)">.</span><span style="color:var(--code-token-constant)">origin</span><span style="color:var(--code-token-punctuation)">.</span><span style="color:var(--code-foreground)">y </span><span style="color:var(--code-token-keyword)">+=</span><span style="color:var(--code-foreground)"> MIN_TOP_GAP </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> top;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>icon_align_trim</code> does the general case. Given where the icon is pinned, such as its top right corner or its centre, it works out the shift that pins the visible art there instead. A right edge removes the empty space on the right, and a centred axis splits the difference so the art itself is centred. <code>icon_margins_of</code> runs the same scan on a picture that did not come from the cache, for a face that keeps one of its own.</p>
+<h2 id="weather-icons">Weather Icons</h2>
+<p><code>wx_resource_for</code> turns the condition the phone sent into the icon to draw:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">GBitmap </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">icon </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> icon_get</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">wx_resource_for</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">weather_store_cond</span><span style="color:var(--code-foreground)">()));</span></span></code></pre>
+<p>The phone sends the condition as a short label, such as <code>RAIN</code>, and after dark it sends a night form such as <code>RAIN_NIGHT</code> when the condition has a night icon. Every condition in the list has one, so after dark a clear sky shows a moon rather than a sun. Freezing drizzle and freezing rain share the sleet icons, since there is no separate glyph for freezing drizzle. A condition the watch does not know, or none at all, gets the not-available icon rather than nothing.</p>
+<p><strong>Day or Night Comes from the Phone.</strong> The watch does not work out whether it is dark. Each weather provider says in its reply whether the reading is for day or night, and the phone adds <code>_NIGHT</code> from that, so the icon follows the provider&#39;s idea of sunset at the reading&#39;s location. The text readout trims the <code>_NIGHT</code> back off (see <a href="../../how/readouts/">Readouts</a>).</p>
+<p><strong>One List on Both Sides.</strong> The table of conditions and icons is generated from the same list of conditions the phone uses, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/weather/conditions.ts"><code>conditions.ts</code></a>, so a condition added there reaches the phone and the watch together, and the two can never spell a condition differently. <a href="../../how/weather-readings/#condition-labels">Weather Readings</a> covers the labels.</p>
+<p><strong>Forecast Strips.</strong> A forecast column has no room for a label, so the phone sends each column&#39;s condition as a single number, its place in that same list. An hourly column after dark also has its top bit set, which tells the face to use the night icon for that hour. The phone sets it from the provider&#39;s own day or night flag for that hour. A daily column is a whole day, so it always gets the day icon. The framework&#39;s lookup covers the icons for the current conditions, and forecast columns usually draw smaller ones, so a face maps the number to its own small icons, and <code>WX_FORECAST_NIGHT_BIT</code> from the generated wire header gives it the bit to test.</p>
+<p><strong>Only for a Face That Ships Them.</strong> The lookup names every weather icon&#39;s resource id, which only exists when the face ships those icons. So the build only compiles it for a face whose resources include the not-available weather icon, which always ships with the rest of the set. A face without weather icons builds without the lookup, rather than failing on resource ids it does not have.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/fonts/"><span>Previous</span>Fonts</a>
+<a class="page-step page-step-next" rel="next" href="../../how/layout-strings/"><span>Next</span>Layout Strings</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

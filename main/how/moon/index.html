@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Moon · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li class="current"><a href="../../how/moon/" aria-current="page">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Moon</h1>
+          
+          <div class="readme"><p>The moon code works out everything a moon panel shows from nothing but the time: which phase picture to show, the phase&#39;s name, how much of the moon is lit, and how many days until the next full or new moon. It needs no phone, no location, and no network, so a moon panel works the moment the face starts.</p>
+<p>It lives in <a href="../../c/moon_8h.html"><code>moon.h</code></a> and <a href="../../c/moon_8c.html"><code>moon.c</code></a> under <code>src/c/core/clock/</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>).</p>
+<h2 id="counting-from-one-known-new-moon">Counting from One Known New Moon</h2>
+<p>Everything starts from <code>moon_age_sec</code>, the number of seconds since the last new moon. It counts from one new moon whose time is known, and divides the time since then by the average length of a moon cycle:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> MOON_SYNODIC_SEC</span><span style="color:var(--code-token-constant)"> 2551443</span><span style="color:var(--code-token-comment)">   // the average cycle, about 29.53 days</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> MOON_EPOCH_UTC</span><span style="color:var(--code-token-constant)">   947182440</span><span style="color:var(--code-token-comment)"> // a known new moon, 2000-01-06 18:14 UTC</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> age </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)">)(utc </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> MOON_EPOCH_UTC) </span><span style="color:var(--code-token-keyword)">%</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (age </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    age </span><span style="color:var(--code-token-keyword)">+=</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The remainder after dividing is how far into the current cycle the time falls. For any time after the epoch that is all it takes.</p>
+<p><strong>Before the Epoch.</strong> C&#39;s <code>%</code> keeps the sign of the number it divides, so a time before 2000 gives a negative remainder. Adding one cycle turns it into the same point counted forward. Only a watch whose clock is set wrong ever reads a time that early, and the step keeps every reading in range there too, rather than a picture number or a percent below 0.</p>
+<p><strong>Staying in 32 Bits.</strong> The time since the epoch is cut down to a 32-bit number before the division. A 32-bit count of seconds lasts about 68 years, so it holds until 2068, well past the life of the watch. Dividing a 64-bit number on the watch&#39;s processor needs extra helper code that the compiler adds to the app, and keeping the maths in 32 bits leaves that code out of every face that shows the moon.</p>
+<p><strong>How Close It Gets.</strong> Real moon cycles are not all the same length, so the real new moon can land more than half a day either side of the one this counts, though it is usually closer. A face that changes its moon picture every few days barely shows the difference.</p>
+<h2 id="picking-a-phase-picture">Picking a Phase Picture</h2>
+<p><code>moon_glyph_index(utc, count)</code> turns the age into one of <code>count</code> evenly spaced pictures, with 0 for the new moon:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> idx </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)">)(((age </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)"> count) </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 2</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> idx </span><span style="color:var(--code-token-keyword)">%</span><span style="color:var(--code-foreground)"> count;</span></span></code></pre>
+<p>Multiplying by <code>count</code> before dividing keeps it in whole numbers. Adding half a cycle before the divide rounds to the nearest picture rather than always down, so each picture is centred on its phase. With eight pictures each one covers about 3.7 days, and the full moon picture shows for nearly two days either side of the full moon rather than starting at it.</p>
+<p>The last stretch of a cycle rounds up to <code>count</code> itself, one past the last picture. The <code>% count</code> wraps that back to 0, since the end of one cycle is the new moon that starts the next.</p>
+<p>As an example, ten days into a cycle with eight pictures:</p>
+<pre><code>age      = 10 × 86400               =   864000 seconds
+rounded  = 864000 × 8 + 2551443 / 2 =  8187721
+index    = 8187721 / 2551443        =        3   (waxing gibbous)</code></pre>
+<p><code>age * count</code> stays inside a 32-bit number even for a ring of 28 pictures, where it tops out around 71 million.</p>
+<p><code>moon_phase_name</code> is the same call with eight pictures, looked up in a table of short names: <code>NEW</code>, <code>WAX CRES</code>, <code>1ST QTR</code>, <code>WAX GIB</code>, <code>FULL</code>, <code>WAN GIB</code>, <code>3RD QTR</code>, and <code>WAN CRES</code>.</p>
+<h2 id="how-much-is-lit">How Much Is Lit</h2>
+<p><code>moon_illumination_pct</code> reads 0 at the new moon and 100 at the full moon, in a straight line up and then back down:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> half </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 2</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> lit </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> age </span><span style="color:var(--code-token-keyword)">&#x3C;=</span><span style="color:var(--code-foreground)"> half </span><span style="color:var(--code-token-keyword)">?</span><span style="color:var(--code-foreground)"> (age </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-foreground)"> half</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">                          :</span><span style="color:var(--code-foreground)"> ((MOON_SYNODIC_SEC </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> age) </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-foreground)"> half;</span></span></code></pre>
+<p>The real lit fraction follows a cosine curve rather than a straight line. In the chart, the straight-sided triangle is what the code uses and the rounder curve is the real moon:</p>
+<pre class="mermaid">xychart-beta
+  title &quot;Percent Lit across One Cycle&quot;
+  x-axis &quot;Days into the Cycle&quot; [0, 3.7, 7.4, 11.1, 14.8, 18.5, 22.1, 25.8, 29.5]
+  y-axis &quot;Percent Lit&quot; 0 --&gt; 100
+  line [0, 25, 50, 75, 100, 75, 50, 25, 0]
+  line [0, 15, 50, 85, 100, 85, 50, 15, 0]</pre>
+<p>Both agree at new, at the quarters, and at full. In between, the straight line reads up to about 10 points high in the crescents and 10 points low in the gibbous phases. That is close enough for a percent beside a picture, and it keeps the code to whole-number maths with no cosine table or floating point.</p>
+<h2 id="counting-down-to-the-next-full-or-new-moon">Counting Down to the Next Full or New Moon</h2>
+<p><code>moon_days_to_phase(utc, to_full)</code> counts the days until the next full moon, or the next new moon when <code>to_full</code> is false. The full moon sits half a cycle in, and the new moon at the end of the cycle:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> target </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> to_full </span><span style="color:var(--code-token-keyword)">?</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 2</span><span style="color:var(--code-token-keyword)"> :</span><span style="color:var(--code-foreground)"> MOON_SYNODIC_SEC;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int32_t</span><span style="color:var(--code-foreground)"> until </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> target </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-token-function)"> moon_age_sec</span><span style="color:var(--code-foreground)">(utc);</span></span></code></pre>
+<p>The countdown reads 0 for the whole night of the full moon, from half a day before it to half a day after, and it never reads 30. A full moon six hours ago is still tonight&#39;s full moon to anyone looking up.</p>
+<p><strong>Rounded to Whole Days.</strong> Half a day is added before dividing by a day, so the count rounds to the nearest day rather than down. At the new moon the full moon is 14.77 days away, which reads 15, and half a day before the full moon the rounding already gives 0.</p>
+<p><strong>Just after the Moon.</strong> A full moon that has passed leaves <code>until</code> negative, so a whole cycle is added to point at the next one. For the first half day that leaves it nearly a whole cycle away, which would read 29 or round up to 30, so anything that close to a whole cycle reads 0 instead. Right on the new moon the age is 0, which puts a new moon target a whole cycle out, so that case takes the cycle back off and reads 0 as well.</p>
+<h2 id="using-it-in-a-face">Using It in a Face</h2>
+<p>Each call takes the time as a UTC timestamp, so a face passes <code>time(NULL)</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)"> now </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> time</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> phase </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> moon_glyph_index</span><span style="color:var(--code-foreground)">(now</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 8</span><span style="color:var(--code-foreground)">);</span><span style="color:var(--code-token-comment)">      // 0 new to 7, with 4 the full moon</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">name </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> moon_phase_name</span><span style="color:var(--code-foreground)">(now);</span><span style="color:var(--code-token-comment)">   // such as "WAX GIB"</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> lit </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> moon_illumination_pct</span><span style="color:var(--code-foreground)">(now);</span><span style="color:var(--code-token-comment)">      // 0 to 100</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> days </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> moon_days_to_phase</span><span style="color:var(--code-foreground)">(now</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">);</span><span style="color:var(--code-token-comment)">  // days to the next full moon</span></span></code></pre>
+<p>The LCARS face&#39;s moon slots work this way. Its table of eight moon images is indexed straight by <code>moon_glyph_index(now, 8)</code>, so the picture and the <code>moon_phase_name</code> text always agree.</p>
+<p>Nothing here repaints on its own. A moon panel reads these when the face redraws, and the minute tick is far more often than the moon changes.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/health-store/"><span>Previous</span>The Health Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/beats/"><span>Next</span>.beats</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

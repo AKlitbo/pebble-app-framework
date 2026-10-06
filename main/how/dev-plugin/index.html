@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Dev Plugin · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li class="current"><a href="../../how/dev-plugin/" aria-current="page">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Dev Plugin</h1>
+          
+          <div class="readme"><p>The <code>dev</code> plugin is for working on a face rather than wearing it. On the watch it has a harness that fills the stores with fixed readings and steps the face through its themes on a tap, so the same build draws the same screen every time it runs. On the computer, <code>clay-preview</code> builds the face&#39;s settings page into a file a browser opens, and <code>tap-walk</code> drives the emulator through the harness and saves a screenshot of every screen it reaches. A face lists the plugin once and turns the harness on only in a dev build, so none of it reaches a release.</p>
+<p>The harness is <a href="../../c/dev__walk_8h.html"><code>dev_walk.h</code></a> and <a href="../../c/dev__walk_8c.html"><code>dev_walk.c</code></a> under <code>src/plugins/dev/c/dev/</code>. The tools are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/plugins/dev/clay-preview.ts"><code>clay-preview.ts</code></a> and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/plugins/dev/tap-walk.ts"><code>tap-walk.ts</code></a> beside it. A face runs them with <code>paf tool &lt;face&gt; clay-preview</code> and <code>paf tool &lt;face&gt; tap-walk</code>, which <a href="../../paf/commands/#paf-tool">the paf commands</a> cover.</p>
+<h2 id="listing-the-plugin">Listing the Plugin</h2>
+<p>A unit lists the plugin under <code>plugins</code> in its <code>paf.config.json</code>, as <code>&quot;dev&quot;: {}</code>. It takes no settings. <code>paf</code> then copies it into the unit&#39;s <code>paf/plugins/dev/</code>, and both tools become available to every face in the unit.</p>
+<p><strong>The Harness Joins the Build.</strong> The build stages each folder under a listed plugin&#39;s <code>c/</code> beside the framework&#39;s own C, so the plugin&#39;s <code>c/dev/</code> lands as <code>dev/</code> and a face includes <code>dev/dev_walk.h</code>. A face can keep its own <code>src/c/dev/</code> folder, since only whole paths clash. A face with its own <code>dev/dev_walk.h</code> stops the build, which names both files rather than compile against whichever one the include path finds first.</p>
+<h2 id="fixed-readings-for-screenshots">Fixed Readings for Screenshots</h2>
+<p><code>dev_walk_seed_stores(hour, minute)</code> starts the time, weather, health, system, and location stores from one fixture, with <code>live</code> false and the clock pinned. A face calls it in place of those stores&#39; live inits. The stock and calendar stores are not part of the fixture, so a face that shows either seeds it itself. A seeded store shows its seed and nothing else, and <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers why nothing from the phone or the watch&#39;s services can replace it.</p>
+<p><strong>The Fixture.</strong> The readings come from a table of shots, one per step of the theme walk below, and the first shot is what a face shows with no walk running: 21 degrees and partly cloudy, a heart rate of 72, 8,431 steps, the battery at 64 percent, the phone connected, and the Quiet Time mark down. Every shot also carries the same 420 calories, 7 hours 11 minutes of sleep, 52 active minutes, and 5.3 km walked. The battery never reads as charging, and the system store has no next alarm.</p>
+<p><strong>The Pinned Clock.</strong> The time store gets the face&#39;s hour and minute with the seconds at 0, and no ticker runs. The date is not pinned. It comes from the watch&#39;s clock when the stores are seeded, so a face that shows the date draws the day it runs, and a screenshot taken tomorrow differs in the date alone.</p>
+<p><strong>Everything Else Reads as Missing.</strong> The weather seed starts from <code>WEATHER_SEED_EMPTY</code> and sets only the temperature and the condition. Humidity, wind, UV, sunrise, sunset, the high and low, and the forecast all keep their no-data values, so a panel showing one draws dashes rather than a 0 that looks real. A face whose screenshots need those readings writes its own walk with a fuller fixture, as below.</p>
+<p><strong>Only What the Face Declares.</strong> The weather and location stores are only filled for a face that declares their message keys. <a href="../../c/appmessage__features_8h.html"><code>appmessage_features.h</code></a> defines <code>APPMESSAGE_HAS_WEATHER</code> when the face declares all four weather keys and <code>APPMESSAGE_HAS_LOCATION</code> when it declares both coordinate keys, which <a href="../../how/talking-to-the-phone/">Talking to the Phone</a> explains. Without them the store is still started, empty and not live. A face without weather can still link a readout that reads the weather store, and an untouched store would hold zeros where a started one holds its no-data values.</p>
+<p><strong>The Coordinates Are Text.</strong> The location store keeps whatever text the face&#39;s phone code formats, as <a href="../../how/location-store/#how-a-fix-arrives">The Location Store</a> covers. The fixture&#39;s coordinates are the text <code>33-44</code> and <code>-112-07</code>, so a face that formats its coordinates as decimals or with hemisphere letters shows the fixture in a style its real readings never take.</p>
+<h2 id="the-theme-walk">The Theme Walk</h2>
+<p><code>dev_walk_init(mode, apply_theme)</code> starts the harness once the engine is up. <code>apply_theme</code> is the face&#39;s own hook for a theme change, such as recolouring its zones or swapping a frame picture. The harness runs it, then calls <code>engine_rebuild</code> so the whole face repaints.</p>
+<p>With <code>DEV_WALK_NONE</code> that is all it does, and the face shows the fixture in whichever theme its settings hold. With <code>DEV_WALK_THEMES</code> it forces the first theme and subscribes to the accelerometer&#39;s tap service. Each tap moves to the next theme, seeds the stores again from the shot with the same number, sets that shot&#39;s Quiet Time mark, runs the face&#39;s hook, and rebuilds. After the last theme a tap comes back to the first:</p>
+<pre class="mermaid">flowchart LR
+  first[&quot;first theme, first shot&quot;] -- tap --&gt; second[&quot;second theme, second shot&quot;]
+  second -- tap --&gt; third[&quot;third theme, third shot&quot;]
+  third -- &quot;more taps&quot; --&gt; last[&quot;last theme, its shot&quot;]
+  last -- tap --&gt; first</pre>
+<p><strong>A Range of Readings.</strong> The table holds eight shots, spread across temperatures from -8 to 35 degrees, six different conditions, a battery from 8 to 100 percent, the phone dropped in two shots, and the Quiet Time mark up in four. A sheet of every theme is also a sheet of how the face draws a flat battery, a lost phone, or snow. A face with fewer than eight themes uses the first shots, and a ninth theme starts the table again.</p>
+<p><strong>The Number of Themes.</strong> The walk asks the settings layer how many values the theme setting allows, which is the same count that caps a theme sent from the phone. Every theme the watch accepts is in the walk, without the walk being told how many there are. A face with no theme setting gets a count of 0, so every tap redraws the first theme and the walk never moves.</p>
+<p><strong>Nothing Is Saved.</strong> The theme and the Quiet Time mark are written with <code>settings_set_u8</code>, which changes the value in memory and never touches flash. A walk on the emulator leaves the theme the face had saved there as it was. On a face that has no Quiet Time setting, the write does nothing.</p>
+<p><strong>A Face&#39;s Own Walks.</strong> A walk is a tap handler that changes one thing and rebuilds, so a face can write its own beside the plugin&#39;s. The LCARS face steps its readout slots through every readout it offers, with a fuller weather fixture so no slot shows dashes and a different clock on each step, and has a second walk that steps the weather condition through every icon, day and night. Both live in the face&#39;s own <code>src/c/dev/</code> and seed the stores the same way, and <code>tap-walk</code> drives them like the theme walk.</p>
+<h2 id="turning-it-on-for-a-dev-build">Turning It On for a Dev Build</h2>
+<p>A face keeps its switches in one header of its own, such as <code>src/c/dev/dev.h</code>, with a master switch that stays at 0 in every build it ships. The hooks are <code>static inline</code> and turn into nothing when the switch is off, so the face&#39;s <code>main.c</code> calls them without any <code>#if</code> of its own:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-comment)">// src/c/dev/dev.h</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#pragma</span><span style="color:var(--code-token-function)"> once</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#include</span><span style="color:var(--code-token-string-expression)"> &#x3C;pebble.h></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> DEV_MODE</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-token-comment)">             // 1 boots the face on the fixture. 0 in anything shipped</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#define</span><span style="color:var(--code-token-function)"> DEV_TAP_WALK_THEMES</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-token-comment)">  // 1 makes a tap step to the next theme</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#if</span><span style="color:var(--code-token-function)"> DEV_MODE</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#include</span><span style="color:var(--code-token-string-expression)"> "dev/dev_walk.h"</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#endif</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> inline</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-token-function)"> dev_seed_stores</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#if</span><span style="color:var(--code-token-function)"> DEV_MODE</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    dev_walk_seed_stores(</span><span style="color:var(--code-token-constant)">10</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 42</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#else</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#endif</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> inline</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> dev_start</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">apply_theme)(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">))</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#if</span><span style="color:var(--code-token-function)"> DEV_MODE</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    dev_walk_init(DEV_TAP_WALK_THEMES </span><span style="color:var(--code-token-keyword)">?</span><span style="color:var(--code-token-function)"> DEV_WALK_THEMES </span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-function)"> DEV_WALK_NONE</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> apply_theme)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#else</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    (</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)apply_theme;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#endif</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> inline</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> dev_stop</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#if</span><span style="color:var(--code-token-function)"> DEV_MODE</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    dev_walk_deinit()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">#endif</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>main.c</code> skips the live inits when the stores were seeded, starts the walk once the engine is built, and stops it on the way out, which drops the tap subscription:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">!</span><span style="color:var(--code-token-function)">dev_seed_stores</span><span style="color:var(--code-foreground)">())</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    time_store_init((TimeConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> .minute_tick </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-function)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    weather_store_init((WeatherConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> .poll_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 30</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> WEATHER_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // and the rest of the face's live inits</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">engine_init</span><span style="color:var(--code-foreground)">(window</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> build_face);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">window_stack_push</span><span style="color:var(--code-foreground)">(window</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">dev_start</span><span style="color:var(--code-foreground)">(apply_theme);</span></span></code></pre>
+<p><code>tap-walk</code>&#39;s hints name <code>DEV_MODE</code> and <code>DEV_TAP_WALK_THEMES</code> in <code>src/c/dev/dev.h</code>, so a face that keeps the same names and the same file gets hints that name its own switches.</p>
+<p><strong>Out of a Release.</strong> With the switch at 0, <code>dev_seed_stores</code> returns false, the live inits run, and the face never includes the harness&#39;s header. <code>dev_walk.c</code> is still compiled for every face in a unit that lists the plugin. The Pebble SDK puts each function in its own section and has the linker drop any section nothing calls, so a face that never calls the harness ships none of it. Nothing checks the switch at build time, so it is up to the face to commit it at 0.</p>
+<p><strong>A Settings Save Unpins the Clock.</strong> A store stays seeded until something starts it live. A face whose settings handler calls <code>time_store_reconfigure</code> with <code>live</code> true starts the ticker again, so a save from the settings page on the emulator&#39;s phone puts the real time back on the face at the next minute. Seeding the time store again on a tap puts the pinned time back but leaves the ticker running, so the next minute moves the clock on again until the face restarts.</p>
+<h2 id="previewing-the-settings-page">Previewing the Settings Page</h2>
+<p><code>clay-preview</code> builds a face&#39;s real settings page into <code>paf/plugins/dev/clay-preview.html</code>, a plain HTML file a desktop browser opens. It compiles the face&#39;s phone code into its build sandbox the way the build does, copies the committed <code>*.g.js</code> components beside it, and hands the default export of the face&#39;s <code>src/pkjs/config.ts</code> to the same Clay the face bundles. A face with no <code>config.ts</code> of its own stops with a line saying so. It needs Node and nothing from the Pebble SDK.</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> tool</span><span style="color:var(--code-token-keyword)"> &#x3C;</span><span style="color:var(--code-token-string)">fac</span><span style="color:var(--code-foreground)">e</span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-token-string)"> clay-preview</span><span style="color:var(--code-token-string)"> --watch</span></span></code></pre>
+<p>The value it adds over the phone is the console. A page whose script fails to parse, such as one with a component method written in shorthand, shows its error in the browser&#39;s console, where on the phone the settings screen just never opens. <a href="../../how/settings-page/#the-serialization-trap">The Settings Page</a> covers the mistakes that cause it.</p>
+<p><strong>Stand-Ins for the Phone.</strong> Clay expects to run inside PebbleKit JS, so the preview gives it a <code>Pebble</code> object that reports the chosen platform on firmware 4.3, a <code>localStorage</code>, and a map of the face&#39;s message keys built from its <code>pebble.appinfo.json</code>. The ids in the map are made up, since rendering only needs the names. With <code>Pebble</code> defined, Clay&#39;s <code>generateUrl</code> returns the page as one data URL, which <a href="../../how/settings-page/#the-serialization-trap">The Serialization Trap</a> covers, and the preview decodes it into the file. Clay notes which watch opened the page when PebbleKit JS reports it is ready, which never happens under Node, so the preview fills that in itself. Without it, Clay&#39;s filters would see no watch and every item would show.</p>
+<p><strong>Watching for Changes.</strong> <code>--watch</code> rebuilds the page after every save until stopped. It follows the face&#39;s <code>src/pkjs/</code>, its family core&#39;s <code>pkjs/</code> when it has one, and the framework&#39;s <code>ts/</code>. A burst of saves inside 150 ms rolls into one rebuild. Each rebuild drops Node&#39;s module cache and compiles again without emptying the earlier output, so it is an incremental compile rather than a cold one. Nothing reloads the browser, so refresh it after each rebuild. A failed rebuild prints its error and keeps watching. An edit to builder pieces triggers a rebuild too, but the page reads the committed component, so run <code>paf gen &lt;face&gt; clay</code> first, as <a href="../../how/settings-page/#a-faces-own-builder">A Face&#39;s Own Builder</a> explains.</p>
+<p><strong>A Returning Wearer.</strong> <code>--settings=&lt;file&gt;</code> opens the page filled from a file of saved values. Without it every preview is a fresh install on the page&#39;s defaults, and a bug that only shows once something is saved never shows. The file holds what Clay saves on the phone, each message key&#39;s name with its value, which <a href="../../how/life-of-a-setting/">The Life of a Setting</a> shows arriving there:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{ </span><span style="color:var(--code-token-keyword)">"APPEARANCE_THEME"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "2"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "APPEARANCE_QUIET_TIME_ICON"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> }</span></span></code></pre>
+<p>A select&#39;s value is text, as it is on the phone. A path that names no file stops the tool. A file that is not valid JSON does not, since Clay catches it, prints the parse error in the terminal, and opens the page on its defaults.</p>
+<p><strong>A Round Watch.</strong> <code>--platform=&lt;name&gt;</code> opens the page as if from that watch, <code>emery</code> by default. With <code>--platform=gabbro</code> the items a face filters by capability drop out the way they would there, as <a href="../../how/settings-page/#building-the-page-from-sections">The Settings Page</a> covers. The name goes to Clay as typed and is not checked against the watches that exist.</p>
+<h3 id="what-the-preview-leaves-out">What the Preview Leaves Out</h3>
+<p><strong>Save.</strong> The Save button sends the page to <code>pebblejs://close</code>, which only the phone app answers, so nothing happens. None of the face&#39;s phone code runs beyond building the page, so nothing is fetched or sent to a watch.</p>
+<p><strong>The Watch&#39;s Copy.</strong> On the phone, the page opens on what Clay saved there, and the phone fills that from the watch&#39;s own settings when it holds none, as <a href="../../how/life-of-a-setting/#after-a-reinstall">The Life of a Setting</a> shows. The preview has no watch and keeps nothing between runs, so it opens on the defaults or on the <code>--settings</code> file.</p>
+<p><strong>Which Components Are Registered.</strong> The phone registers the location search and the components the face passes to <code>startPebbleApp</code>. The preview registers every component it finds instead: each <code>*.g.js</code> in the face&#39;s <code>src/pkjs/clay/</code> that has the shape of a component, plus the framework&#39;s location search and hidden store. A page that uses a component the face forgot to pass renders in the preview and breaks on the phone.</p>
+<p><strong>The Custom Function.</strong> The preview finds Clay&#39;s custom function as a <code>customClay</code> export of the face&#39;s <code>config.ts</code>, beside the default export. A face that defines it somewhere else and passes it to <code>startPebbleApp</code> gets a preview without it, so a face keeps it in <code>config.ts</code> and imports it from there.</p>
+<p><strong>The Web View.</strong> A desktop browser is not the phone app&#39;s web view. Spacing at phone width and anything the web view handles differently only show on the phone.</p>
+<h2 id="walking-the-emulator-with-tap-walk">Walking the Emulator with <code>tap-walk</code></h2>
+<p><code>tap-walk</code> takes a screenshot of every screen a face&#39;s walk reaches. It needs a face built with <code>DEV_MODE</code> on and a walk switched on, the emulator, and the Pebble SDK&#39;s <code>pebble</code> command, so it runs where the build does, which on Windows means WSL. It takes the start, then taps, waits, and takes another, until a screenshot matches the start:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Walk as Tap Walk
+  participant Emulator
+  participant Face
+  Walk-&gt;&gt;Emulator: pebble screenshot
+  Emulator--&gt;&gt;Walk: the start, saved as shot_000
+  loop until a screenshot matches the start
+    Walk-&gt;&gt;Emulator: pebble emu-tap
+    Emulator-&gt;&gt;Face: an accelerometer tap
+    Face-&gt;&gt;Face: next step of the walk, then redraw
+    Walk-&gt;&gt;Walk: wait 900 ms
+    Walk-&gt;&gt;Emulator: pebble screenshot
+    Emulator--&gt;&gt;Walk: the new screen
+    Walk-&gt;&gt;Walk: save it if no earlier screenshot matches
+  end</pre>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> build</span><span style="color:var(--code-token-string)"> my-face</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> tool</span><span style="color:var(--code-token-string)"> my-face</span><span style="color:var(--code-token-string)"> tap-walk</span><span style="color:var(--code-token-string)"> --install</span></span></code></pre>
+<p><strong>Telling Screens Apart.</strong> Each screenshot&#39;s PNG bytes are hashed with SHA-256. The clock is pinned, so the same step of a walk always draws the same bytes, and a match with the start means the walk has come round. A screenshot that matches an earlier one is skipped without using up a number, so the saved files run <code>shot_000.png</code>, <code>shot_001.png</code>, and on with no gaps. Two themes that happen to draw the same screen save once.</p>
+<p><strong>When the Taps Change Nothing.</strong> A walk has at least two screens, so a first tap that draws the start again stops the tool with a hint to check the switches. That catches a face built with <code>DEV_MODE</code> off, with no walk switched on, or with no theme setting to walk. Anything that changes the screen outside the walk, such as a clock left live after a settings save, keeps the start from ever coming back. The tool gives up after 200 taps and names the folder holding what it saved so far.</p>
+<p><strong>Installing, Not Building.</strong> <code>--install</code> puts the <code>.pbw</code> from <code>targets/&lt;target&gt;/build/</code> on the emulator and gives it two seconds to start. It stops when there is no build there yet. It never builds, since <code>paf build</code> is what knows when a new message key or a framework change needs a clean build. Without <code>--install</code> the walk runs on whatever face is already on the emulator. <code>--emulator=&lt;name&gt;</code> picks the emulator to walk, <code>emery</code> by default. <code>--target=&lt;target&gt;</code> picks which build <code>--install</code> installs, so it stops without <code>--install</code>, and a face with more than one target stops until one is picked.</p>
+<p><strong>A Stuck Emulator.</strong> Each screenshot or tap gets 30 seconds before the tool stops, since both normally finish in well under one. The install and the first screenshot can boot the emulator, which on WSL can take a minute or more, so they get three minutes. <code>pebble</code> prints its own progress on stderr, and the tool holds that back and shows it only when a step fails, where it says why.</p>
+<p><strong>The Out Folder.</strong> <code>--out=&lt;folder&gt;</code> names where the screenshots go, <code>.tmp/tap-walk-shots</code> in the unit by default. The folder is emptied at the start of each walk, once the install has worked, so it only ever holds one walk&#39;s screenshots. Because it is emptied, the tool refuses a folder outside the unit, the unit itself, or one holding anything other than earlier screenshots and the files an operating system leaves when someone opens a folder, such as <code>Thumbs.db</code>. The default sits under <code>.tmp/</code>, so a repo that gitignores <code>.tmp/</code> keeps the screenshots out of its commits. Each screenshot lands in a temporary file first and only moves into the folder once it is kept, so a step that fails partway never leaves a half-written screenshot among the others.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/thumbnails-plugin/"><span>Previous</span>The Thumbnails Plugin</a>
+<a class="page-step page-step-next" rel="next" href="../../how/ci-builds/"><span>Next</span>Building in CI</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from main</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>
