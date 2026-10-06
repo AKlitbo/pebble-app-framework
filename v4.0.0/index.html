@@ -26,6 +26,8 @@
     <option value="v4.0.0" selected>v4.0.0</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="how/index.html">How It Works</a>
+    <a data-section="paf" href="paf/index.html">CLI</a>
     <a data-section="c" href="c/index.html">Device API</a>
     <a data-section="ts" href="ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="coverage/c/index.html">C Coverage</a>
@@ -64,10 +66,48 @@
           <div class="build">
             <b>v4.0.0</b><br />
             v4.0.0 @ 4002539<br />
-            built 2026-10-03
+            built 2026-10-06
           </div>
         </div>
       </header>
+
+      <div class="section-label">Start Here</div>
+      <div class="cards cards-wide">
+        <div class="card-slot card-slot-featured">
+          <div class="card card-featured">
+            <div class="card-top"><span class="lang">C</span><span class="kind">Guides</span></div>
+            <h2><a href="how/">How It Works →</a></h2>
+            <p>
+              Each page follows one piece of the framework from end to end: what it does for a face, how it does it, and
+              the trade-offs behind it.
+            </p>
+            <ul class="card-groups">
+<li><a href="how/life-of-a-setting/">Settings and Messages</a></li>
+<li><a href="how/stores/">Stores</a></li>
+<li><a href="how/moon/">Clock and Sky</a></li>
+<li><a href="how/engine/">Drawing</a></li>
+<li><a href="how/fitting-text/">Text, Numbers, and Feedback</a></li>
+<li><a href="how/icons-plugin/">Plugins</a></li>
+<li><a href="how/ci-builds/">CI</a></li>
+</ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Tools</div>
+      <div class="cards cards-wide">
+        <div class="card-slot">
+          <a class="card" href="paf/">
+            <div class="card-top"><span class="lang">CLI</span><span class="kind">paf</span></div>
+            <h2>The paf Command</h2>
+            <p>
+              Pins each family or face to its own framework tag, then builds, generates, and checks it in place.
+              Install, commands, and workflows.
+            </p>
+            <div class="card-foot"><span>pebble-app-framework-cli</span><span class="go">paf/ →</span></div>
+          </a>
+        </div>
+      </div>
 
       <div class="section-label">Reference</div>
       <div class="cards">

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Calendar Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li class="current"><a href="../../how/calendar-store/" aria-current="page">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Calendar Store</h1>
+          
+          <div class="readme"><p>The calendar store puts the wearer&#39;s next six events on the watch, each with its start, its end, whether it runs all day, a title, and a place. It reads any calendar that hands out a private iCal link, which covers Google, iCloud, and Outlook, with no account to sign into. The phone downloads the feed and does the hard part: repeating events, moved and cancelled meetings, and time zones. The watch keeps the result, saves it to flash, and asks for a fresh one on a schedule. A face starts the store, hands it a redraw function, and reads the events back.</p>
+<p>The watch side lives in <a href="../../c/calendar__store_8h.html"><code>calendar_store.h</code></a> and <a href="../../c/calendar__store_8c.html"><code>calendar_store.c</code></a>, and the strip is unpacked by <a href="../../c/calendar__wire_8c.html"><code>calendar_wire.c</code></a>. The phone side is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/calendar/ical.ts"><code>ical.ts</code></a> and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/calendar/feature.ts"><code>feature.ts</code></a> under <code>src/ts/calendar/</code>. The polling deadlines, the tag byte on the saved copy, and the save that skips an unchanged agenda are shared with the other stores and covered in <a href="../../how/stores/">How the Stores Work</a>.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<p>On the watch, the face starts the store and subscribes its redraw:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">calendar_store_init</span><span style="color:var(--code-foreground)">((CalendarConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .poll_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 30</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> CALENDAR_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">calendar_store_subscribe</span><span style="color:var(--code-foreground)">(redraw);</span></span></code></pre>
+<p><code>live</code>, <code>poll_min</code>, and <code>persist_key</code> mean the same as for every store, as <a href="../../how/stores/#the-shape-every-store-takes">How the Stores Work</a> covers, and a <code>CalendarSeed</code> pins a fixed agenda for screenshots.</p>
+<p>On the phone, the face lists <code>calendar</code> in the <code>features</code> it passes to <code>startPebbleApp</code> (see <a href="../../how/phone-side/#features">The Phone Side</a>), and declares the <code>CALENDAR_STRIP</code>, <code>CALENDAR_REQUEST</code>, and <code>CALENDAR_ICS_URL</code> message keys. The settings page&#39;s calendar section has one field for the link, with directions for finding it in Google, iCloud, and Outlook. Anyone holding that link can read the calendar, and the page tells the wearer to treat it like a password.</p>
+<h2 id="downloading-the-feed">Downloading the Feed</h2>
+<p><strong>Links as the Wearer Pastes Them.</strong> A Subscribe link from iCloud starts <code>webcal://</code>, which every calendar app reads as <code>https://</code> and the phone&#39;s request does not know at all. The phone rewrites it before fetching.</p>
+<p><strong>Past Any Cache.</strong> Each download adds a query parameter that changes every time, so no cache between the phone and the calendar can hand back a copy from before the wearer&#39;s last edit. The cost is a feed served from a signed link, such as an S3 presigned URL, which refuses a changed query. The links calendars hand out are not signed.</p>
+<p><strong>A Bad Download Changes Nothing.</strong> What comes back decides what the watch hears:</p>
+<pre class="mermaid">flowchart TD
+  fetch[&quot;download the feed&quot;] --&gt; failed{&quot;did the download fail?&quot;}
+  failed -- yes --&gt; keep[&quot;send nothing, so the watch keeps its agenda&quot;]
+  failed -- no --&gt; ical{&quot;does it read as iCal?&quot;}
+  ical -- no --&gt; keep
+  ical -- yes --&gt; any{&quot;anything coming up?&quot;}
+  any -- yes --&gt; send[&quot;send the soonest six&quot;]
+  any -- no --&gt; clear[&quot;send an empty agenda, which clears the watch&quot;]</pre>
+<p>An error page or a body cut off partway is not a calendar, and says nothing about what is on. Treating it as an empty one would wipe the wearer&#39;s agenda every time the network had a bad moment. A feed that reads clean with nothing in it is a real answer, and an empty agenda is how the watch hears that every event was deleted. With no link set at all, the phone sends an empty agenda too, so one left from a removed feed does not stay behind.</p>
+<p>A download gives up after 15 seconds. When the wearer changes the link, the phone fetches the new feed straight after the save, and an answer still out for the old link is dropped when it lands, so an old feed can never overwrite a new one. <a href="../../how/phone-side/#after-a-save">The Phone Side</a> covers that rule for every feature.</p>
+<h2 id="which-events-make-the-strip">Which Events Make the Strip</h2>
+<p>The feed is read by <a href="https://github.com/kewisch/ical.js">ical.js</a>, which handles the iCal rules. The framework&#39;s part is choosing what the watch shows.</p>
+<p><strong>The Window.</strong> An event makes the list when it has not finished yet and it starts before the end of the sixth day after today, on the phone&#39;s clock. That is today and the next six days, so a two-letter weekday code never appears twice in the list. The last day runs to its midnight rather than to six days from the moment of the fetch, so an evening event on it is not dropped while a morning one is kept. A meeting already under way still counts, since it is judged by its end.</p>
+<p><strong>Soonest First.</strong> The events are sorted by start, and the first six go to the watch. An all-day event starts at midnight, so it leads its day.</p>
+<p><strong>Lengths the Feed Leaves Out.</strong> A timed event with no end and no duration is given an hour, so a free and busy panel has a block to shade. An all-day event ends at the midnight after its last day, counted in calendar days rather than 24 hour steps, so it still ends at midnight on a day the clocks change.</p>
+<p><strong>Cancelled Events.</strong> Outlook keeps a cancelled meeting in the feed and marks it cancelled rather than taking it out. Those are left off, and a single cancelled occurrence of a series leaves a gap on that day.</p>
+<p><strong>Repeating Events.</strong> The phone walks each repeating event from its first occurrence and keeps the ones inside the window. Days the feed excludes are skipped. An occurrence the feed moved or renamed is read from its own entry, with its own time and title, and it is judged by where it landed, so a meeting moved into this week from next month still shows. Moved occurrences are matched to their series by its ID. Left to itself, ical.js applies every moved occurrence in the calendar to every series, so one moved meeting would replace an occurrence in every other series that met at the same time. A moved occurrence whose series is not in the feed shows as a plain event.</p>
+<p><strong>A Cap on the Walk.</strong> Starting the walk near the window would be quicker, but ical.js loses the occurrence count on the way, so a rule that ran its three times last January would come back with three more this week. So the walk starts where the rule does and stops after 10,000 steps. A daily rule set up as long as 27 years ago still reaches this week. An hourly one set up more than about 14 months ago does not, and it is left off with a line in the phone&#39;s log rather than vanishing without a word.</p>
+<p><strong>One Bad Event Costs Only Itself.</strong> ical.js throws on a rule it cannot walk and on an event with no start. That event is skipped, and the rest of the calendar still shows.</p>
+<p><strong>Time Zones.</strong> A feed states a timed event in a named zone and defines that name in the feed itself, and ical.js matches the two. So Outlook&#39;s <code>Eastern Standard Time</code>, which is not a name the phone knows, needs no table. A zone the feed names but never defines has no answer, and its times are read on the phone&#39;s own clock.</p>
+<h2 id="what-reaches-the-watch">What Reaches the Watch</h2>
+<p><strong>Absolute Times.</strong> Each event&#39;s start and end go as seconds since the epoch, so the watch works out &quot;in 20 minutes&quot; against its own clock between polls rather than showing a countdown frozen at the moment of the fetch. An end past 2038 is pinned to the largest the field holds, as <a href="../../how/message-formats/#the-agenda">The Message Formats</a> covers.</p>
+<p><strong>Plain ASCII Text.</strong> The phone flattens each title and place to the characters the watch fonts carry, as <a href="../../how/message-formats/#text-on-the-way-over">The Message Formats</a> covers. The title is cut to 24 characters and the place to 16. An event with no title goes over as <code>(no title)</code>.</p>
+<p><strong>A Bad Strip Changes Nothing.</strong> A count above six is pinned to six, and a message that runs short is refused whole, so the store keeps the agenda it had rather than half of a new one.</p>
+<p><strong>When the Phone Sends.</strong> The phone sends an agenda when its code starts, whenever the watch asks, and when the link changes. Its slow refresh fills in when the watch has not asked, as <a href="../../how/phone-side/#the-background-refresh">The Phone Side</a> covers.</p>
+<h2 id="on-the-watch">On the Watch</h2>
+<p><strong>Reading It Back.</strong> <code>calendar_store_strip</code> gives the whole agenda, and <code>calendar_store_event</code> gives one event or <code>NULL</code> past the filled count. The store keeps the agenda exactly as the phone sent it. An event that finishes between polls stays in the list until the next one arrives, so a panel that shows what is next skips anything already over:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-foreground)"> CalendarEvent </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-function)">next_event</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)"> now)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    const</span><span style="color:var(--code-foreground)"> CalendarStrip </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">strip </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> calendar_store_strip()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    for</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">uint8_t</span><span style="color:var(--code-foreground)"> index </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">; index </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-constant)"> strip</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-foreground)">count; index</span><span style="color:var(--code-token-keyword)">++</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-constant)">strip</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-foreground)">event[index]</span><span style="color:var(--code-token-punctuation)">.</span><span style="color:var(--code-foreground)">end </span><span style="color:var(--code-token-keyword)">></span><span style="color:var(--code-foreground)"> now)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">        {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">            return</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-token-constant)">strip</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-foreground)">event[index];</span></span>
+<span class="line"><span style="color:var(--code-foreground)">        }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><strong>Saved to Flash.</strong> Six events do not fit in a single persist key, which holds 256 bytes, so the store saves the first four and the time they arrived. A relaunch shows those four straight away, and the first ask brings the full six back. A change that only touches the fifth or sixth event leaves the saved four the same, so it writes nothing. The restore gives every title and place a closing zero, so a damaged copy cannot send a panel past the end of the text. A failed write waits for the next agenda that differs, for the reason in <a href="../../how/stores/#skipping-unchanged-writes">How the Stores Work</a>.</p>
+<p><strong>How Old It Is.</strong> <code>calendar_store_age_s</code> gives the seconds since the last agenda arrived, or -1 for none. A face can pass it to <code>store_poll_reconnect_due</code> to catch up after the phone reconnects, as <a href="../../how/stores/#polling-on-wall-clock-deadlines">How the Stores Work</a> shows.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/stock-store/"><span>Previous</span>The Stock Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/health-store/"><span>Next</span>The Health Store</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

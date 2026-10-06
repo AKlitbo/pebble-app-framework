@@ -6,5 +6,5 @@ var topics =
     [ "Settings", "group__lib__settings.html", "group__lib__settings" ],
     [ "System Bits", "group__lib__system.html", "group__lib__system" ],
     [ "UI", "group__lib__ui.html", "group__lib__ui" ],
-    [ "Dev Harness", "group__lib__dev.html", "group__lib__dev" ]
+    [ "Plugins", "group__lib__plugins.html", "group__lib__plugins" ]
 ];

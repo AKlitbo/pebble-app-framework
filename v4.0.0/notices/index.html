@@ -7,6 +7,8 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <script src="../theme.js"></script>
     <script src="../versions.js"></script>
+    <script src="../diagrams.js" defer></script>
+    <script src="../side-nav.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,6 +28,8 @@
     <option value="v4.0.0" selected>v4.0.0</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -50,9 +54,12 @@
 </nav>
 
     <div class="wrap">
-      <main class="page">
-        <h1>Third-Party Notices</h1>
-        <div class="readme"><p>The framework is dual-licensed under the AGPL-3.0-or-later or the PolyForm Noncommercial License 1.0.0, see <a href="../licences/">LICENSE</a>. It bundles the third-party work below, which keeps its own licence.</p>
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Third-Party Notices</h1>
+          
+          <div class="readme"><p>The framework is dual-licensed under the AGPL-3.0-or-later or the PolyForm Noncommercial License 1.0.0, see <a href="../licences/">LICENSE</a>. It bundles the third-party work below, which keeps its own licence.</p>
 <h2 id="icaljs">ical.js</h2>
 <p>The phone-side calendar reader. The pkjs build copies it into the <code>.pbw</code> of a face that uses the calendar, and a face that does not ships none of it.</p>
 <ul>
@@ -79,7 +86,9 @@
 </ul>
 <p>The mark itself is a GitHub trademark. The site uses it only to link to this repository on GitHub.</p>
 </div>
-      </main>
+          
+        </main>
+      </div>
 
       <footer class="site-foot">
   <div class="foot-cols">

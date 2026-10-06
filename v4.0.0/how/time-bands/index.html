@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Time Bands and Night Hours · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li class="current"><a href="../../how/time-bands/" aria-current="page">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Time Bands and Night Hours</h1>
+          
+          <div class="readme"><p>A face that draws the day as a line or a ring has to place times along it: the hour hand on a 24 hour dial, the daylight shaded behind it, the meetings on a strip of the next few hours. The line can start at any hour and run past midnight, and that is the normal case, not the odd one. A window that opens in the evening and runs into the next afternoon puts 01:00 near the middle, not before the start. The time band code does that wrapping once, so nothing that draws on the line ever sees a midnight.</p>
+<p>The night schedule answers the other question such a face asks every minute: is it night, so the night look should be showing?</p>
+<p>The band lives in <a href="../../c/timeband_8h.html"><code>timeband.h</code></a> and <a href="../../c/timeband_8c.html"><code>timeband.c</code></a>, and the night schedule in <a href="../../c/nightsched_8h.html"><code>nightsched.h</code></a> and <a href="../../c/nightsched_8c.html"><code>nightsched.c</code></a>, both under <code>src/c/core/clock/</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>).</p>
+<h2 id="a-window-on-the-day">A Window on the Day</h2>
+<p>A <code>TimeBand</code> is two numbers, the minute of the day it opens on and how many minutes it runs, up to a whole day.</p>
+<p><strong><code>timeband_full_day</code>.</strong> Midnight to midnight, for a 24 hour dial.</p>
+<p><strong><code>timeband_rolling</code>.</strong> A window that keeps the moment it is built around a set distance in, such as a strip that always shows the last two hours and the next ten.</p>
+<p><strong><code>timeband_from_hour</code>.</strong> A window that opens on the top of an hour. The hourly forecast carries the hour it starts on, so a strip built from that hour lands each forecast column on an even share of the axis.</p>
+<h2 id="placing-a-moment">Placing a Moment</h2>
+<p><code>timeband_offset</code> measures a minute of the day from the window&#39;s start, wrapping round midnight:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> offset </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> wrap_day</span><span style="color:var(--code-foreground)">(minute_of_day </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-foreground)"> band.start_min);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> offset </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-foreground)"> band.span_min </span><span style="color:var(--code-token-keyword)">?</span><span style="color:var(--code-foreground)"> offset </span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-keyword)"> -</span><span style="color:var(--code-token-constant)">1</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
+<p>For a 12 hour window opening at 20:00, 01:00 is 300 minutes in. 19:59 is one minute before the start, which wraps to 1439 minutes in. That is past the end of the window, so it reads -1, outside, rather than nearly a whole day in.</p>
+<p><strong>Half Open.</strong> The window holds its first minute but not the minute it ends on, which belongs to whatever comes next. Two windows laid end to end never both claim the same minute.</p>
+<p><strong>Onto an Axis.</strong> <code>timeband_pos</code> turns the offset into a position along an axis of any length, rounding down, so the last minute of the window lands on the last unit rather than past it. The unit is the face&#39;s: pixels along a strip, or <code>TRIG_MAX_ANGLE</code> for the SDK&#39;s full turn round a ring. <code>timeband_pos_offset</code> does the same for a value already measured from the start, and it takes the far end too, so a block that ends with the window reaches the end of the axis rather than stopping a unit short.</p>
+<p>Every answer is an offset counting up from the window&#39;s start, so a span never runs backwards and a ring and a strip use the same sums.</p>
+<h2 id="clipping-events-onto-the-window">Clipping Events onto the Window</h2>
+<p><code>timeband_clip</code> takes an event as two epochs, the way a calendar carries it, and gives back the minutes of the window it covers, with a flag for each end that was cut off.</p>
+<p>The window&#39;s own start is an epoch too, so an event from yesterday or from next week falls outside rather than being wrapped onto today&#39;s strip. One that ends exactly as the window opens is outside as well. A start partway through a minute rounds down and an end rounds up, so a meeting always covers the minutes it touches. An event with no length still gets one minute, so a reminder pinned to a moment still draws. An end before the start is read as no length.</p>
+<p><strong>Finding the Window&#39;s Start.</strong> <code>timeband_window_epoch</code> gives the epoch of the window&#39;s first minute. It counts back from now rather than forward from midnight. On the morning the clocks go forward, the day is an hour short. Midnight plus 600 minutes is 11:00 on the wall that day, while a window from 10:00 seen at 11:30 opened 90 real minutes ago, which is 10:00. Counting back also finds a rolling window that opened yesterday evening without being told. A window that has not opened yet, such as a forecast strip that starts at the next hour, is the one coming up later today.</p>
+<h2 id="spans-that-repeat-every-day">Spans That Repeat Every Day</h2>
+<p>The daylight is a span that comes round every day. <code>timeband_clip_daily</code> takes one as two minutes of the day and clips it onto the window. A window that runs past midnight can see the end of one day&#39;s span and the start of the next, so it hands back up to two pieces, earliest first. A window opening at noon for 24 hours, with sunrise at 06:00 and sunset at 18:00:</p>
+<pre class="mermaid">gantt
+  title Daylight on a Window Opening at Noon
+  dateFormat YYYY-MM-DD HH:mm
+  axisFormat %H:%M
+  section Window
+  the band : 2026-10-05 12:00, 2026-10-06 12:00
+  section Daylight
+  first piece at minutes 0 to 360 : 2026-10-05 12:00, 2026-10-05 18:00
+  second piece at minutes 1080 to 1440 : 2026-10-06 06:00, 2026-10-06 12:00</pre>
+<p>The first piece says it was cut at the start and the second says it was cut at the end, so a face can tell a real sunrise or sunset from the edge of the window.</p>
+<p><strong>A Span That Wraps by Itself.</strong> An end at or before the start is read as running past midnight. A night from sunset to sunrise works that way, and so does a far northern summer&#39;s daylight that ends after midnight, without the caller knowing which it has.</p>
+<p><strong>No Reading.</strong> A -1 on either side gives no pieces. A sunrise and sunset on the same minute is read as a sun that never sets and covers the whole day. <a href="../../how/sunrise-and-sunset/#polar-day-and-night">Sunrise and Sunset</a> reads the same pair its own way.</p>
+<h2 id="is-it-night">Is It Night?</h2>
+<p>A face that swaps its look after dark asks every minute whether it is night. <code>clock_window_contains</code> answers it by asking whether now is inside the night window, not by watching for the moment it crosses into it.</p>
+<p>That choice matters more than it looks. A check that waits for the crossing misses it when the clocks jump an hour over the start, when the face was not running at the moment, or when a tick is dropped, and then stays wrong until the next crossing comes round the next day. Asking whether now is inside is right again on the very next minute, whatever happened before.</p>
+<p>The window works like a band&#39;s. It holds its start and not its end, and one with its start later in the day than its end runs past midnight. A window that starts and ends on the same minute is empty rather than all day, which is what someone who set both times the same by accident expects. A missing reading gives false.</p>
+<h2 id="following-the-sun-or-the-clock">Following the Sun or the Clock</h2>
+<p><code>night_schedule_active</code> picks the window. The face hands it the mode, the clock, the sun times from the weather store, the two times the wearer set, and whether the face has a night look at all:</p>
+<pre class="mermaid">flowchart TD
+  ask[&quot;night_schedule_active&quot;] --&gt; look{&quot;is there a night look?&quot;}
+  look -- no --&gt; day[&quot;not night&quot;]
+  look -- yes --&gt; mode{&quot;which mode?&quot;}
+  mode -- &quot;off, or an unknown mode&quot; --&gt; day
+  mode -- solar --&gt; sun{&quot;are both sun times there?&quot;}
+  sun -- yes --&gt; solar[&quot;night from sunset to sunrise&quot;]
+  sun -- no --&gt; fixed[&quot;night between the wearer&#39;s two times&quot;]
+  mode -- fixed --&gt; fixed</pre>
+<p><strong>The Fallback.</strong> Following the sun needs a sunrise and a sunset. A watch that has never had weather still switches at the wearer&#39;s own times rather than never, so those two times do a job in both modes.</p>
+<p><strong>Old Sun Times Count.</strong> A sunset from an old reading is used, not treated as missing. Near the solstices it barely moves from day to day. Near the equinoxes it moves up to a couple of minutes a day at middle latitudes, so a reading a few weeks old can switch the look noticeably early or late. The weather store replaces the times with each poll, so this only shows when the weather has stopped arriving.</p>
+<p><strong>Sunrise and Sunset on the Same Minute.</strong> Both times are there, so the solar mode uses them, and the window they make is empty. The night look stays off all day, and the wearer&#39;s times are not used. That suits a midnight sun. Under a polar night it is off too.</p>
+<p>The framework gives the sums. The settings that feed them, the mode and the two times, are the face&#39;s own:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> struct</span><span style="color:var(--code-foreground)"> tm </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">t </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> time_store_tm</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> now </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_hour </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 60</span><span style="color:var(--code-token-keyword)"> +</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_min;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> night </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> night_schedule_active</span><span style="color:var(--code-foreground)">(night_mode</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> now</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-function)">                                   weather_store_sunrise</span><span style="color:var(--code-foreground)">()</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> weather_store_sunset</span><span style="color:var(--code-foreground)">()</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">                                   night_start_min</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> night_end_min</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> has_night_look);</span></span></code></pre>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/time-zones/"><span>Previous</span>Time Zones</a>
+<a class="page-step page-step-next" rel="next" href="../../how/dates-and-durations/"><span>Next</span>Dates and Durations</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

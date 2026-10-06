@@ -7,6 +7,8 @@
     <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
     <script src="../theme.js"></script>
     <script src="../versions.js"></script>
+    <script src="../diagrams.js" defer></script>
+    <script src="../side-nav.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,6 +28,8 @@
     <option value="v4.0.0" selected>v4.0.0</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -50,9 +54,12 @@
 </nav>
 
     <div class="wrap">
-      <main class="page">
-        <h1>Changelog</h1>
-        <div class="readme"><p>All notable API changes to the Pebble App Framework are documented in this file.</p>
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Changelog</h1>
+          
+          <div class="readme"><p>All notable API changes to the Pebble App Framework are documented in this file.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
 <h2 id="400---2026-10-02"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...v4.0.0">4.0.0</a> - 2026-10-02</h2>
 <h3 id="added">Added</h3>
@@ -347,7 +354,9 @@
 <li>First release of the engine as its own repo, split out of the shared <code>lib/</code> in pebble-watchfaces.</li>
 </ul>
 </div>
-      </main>
+          
+        </main>
+      </div>
 
       <footer class="site-foot">
   <div class="foot-cols">

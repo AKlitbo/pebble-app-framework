@@ -88,6 +88,8 @@
     <option value="v4.0.0" selected>v4.0.0</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
     <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
     <a data-section="ts" href="../ts/index.html">Phone API</a>
     <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
@@ -195,6 +197,24 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_0fstruc
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="aa3436b4f53e574810565c9b29d0042d5" name="aa3436b4f53e574810565c9b29d0042d5"></a>
+uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
+<tr class="memdesc:aa3436b4f53e574810565c9b29d0042d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_STOCK, so a restore can tell this blob from another shape. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a67444768cf8bf88bd0e079bfc6f9378a" name="a67444768cf8bf88bd0e079bfc6f9378a"></a>
+<a class="el" href="structStockStrip.html">StockStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
+<tr class="memdesc:a67444768cf8bf88bd0e079bfc6f9378a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The quotes as the phone last sent them. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a71acacf736c0662ae8a364a757778e46" name="a71acacf736c0662ae8a364a757778e46"></a>
+time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
+<tr class="memdesc:a71acacf736c0662ae8a364a757778e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">When those quotes arrived. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a5342d9c4d055ae70b79f91132fa02d4b" name="a5342d9c4d055ae70b79f91132fa02d4b"></a>
+int&#160;</td><td class="memItemRight"><b>battery_level</b></td></tr>
+<tr class="memdesc:a5342d9c4d055ae70b79f91132fa02d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Battery charge, in percent. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="addc8e821b664e115fe20565aa835a42d" name="addc8e821b664e115fe20565aa835a42d"></a>
+bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
+<tr class="memdesc:addc8e821b664e115fe20565aa835a42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch is charging. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a94f35b808bfbb716cfd01ef016aae882" name="a94f35b808bfbb716cfd01ef016aae882"></a>
+bool&#160;</td><td class="memItemRight"><b>bluetooth_connected</b></td></tr>
+<tr class="memdesc:a94f35b808bfbb716cfd01ef016aae882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone is connected. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a69dfa550f32ab21f5c6c5d378d8acd7f" name="a69dfa550f32ab21f5c6c5d378d8acd7f"></a>
 int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
 <tr class="memdesc:a69dfa550f32ab21f5c6c5d378d8acd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
@@ -234,30 +254,12 @@ char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="ab9a6be89c66daedb8c2c8cf463e543e9" name="ab9a6be89c66daedb8c2c8cf463e543e9"></a>
 char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
 <tr class="memdesc:ab9a6be89c66daedb8c2c8cf463e543e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a5342d9c4d055ae70b79f91132fa02d4b" name="a5342d9c4d055ae70b79f91132fa02d4b"></a>
-int&#160;</td><td class="memItemRight"><b>battery_level</b></td></tr>
-<tr class="memdesc:a5342d9c4d055ae70b79f91132fa02d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Battery charge, in percent. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="addc8e821b664e115fe20565aa835a42d" name="addc8e821b664e115fe20565aa835a42d"></a>
-bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
-<tr class="memdesc:addc8e821b664e115fe20565aa835a42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch is charging. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a94f35b808bfbb716cfd01ef016aae882" name="a94f35b808bfbb716cfd01ef016aae882"></a>
-bool&#160;</td><td class="memItemRight"><b>bluetooth_connected</b></td></tr>
-<tr class="memdesc:a94f35b808bfbb716cfd01ef016aae882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone is connected. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a159cde20b06213ce3c284be791802f9d" name="a159cde20b06213ce3c284be791802f9d"></a>
 <a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
 <tr class="memdesc:a159cde20b06213ce3c284be791802f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a76fab064443fccad957cca54b5bf2c27" name="a76fab064443fccad957cca54b5bf2c27"></a>
 time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
 <tr class="memdesc:a76fab064443fccad957cca54b5bf2c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">When that agenda arrived. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="aa3436b4f53e574810565c9b29d0042d5" name="aa3436b4f53e574810565c9b29d0042d5"></a>
-uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
-<tr class="memdesc:aa3436b4f53e574810565c9b29d0042d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_STOCK, so a restore can tell this blob from another shape. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a67444768cf8bf88bd0e079bfc6f9378a" name="a67444768cf8bf88bd0e079bfc6f9378a"></a>
-<a class="el" href="structStockStrip.html">StockStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
-<tr class="memdesc:a67444768cf8bf88bd0e079bfc6f9378a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The quotes as the phone last sent them. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a71acacf736c0662ae8a364a757778e46" name="a71acacf736c0662ae8a364a757778e46"></a>
-time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
-<tr class="memdesc:a71acacf736c0662ae8a364a757778e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">When those quotes arrived. <br /></td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following files:</div><!-- contents -->
 </div><!-- doc-content -->

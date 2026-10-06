@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Stock Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li class="current"><a href="../../how/stock-store/" aria-current="page">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Stock Store</h1>
+          
+          <div class="readme"><p>The stock store puts a watchlist of up to four quotes on the watch: each ticker, its last price, and the day&#39;s change in percent. The face never talks to a stock provider. The phone fetches the quotes, keeps each provider&#39;s daily quota in check, and sends one small packed strip. The watch keeps that strip, saves it to flash, and asks for a new one on a schedule. A face starts the store, hands it a redraw function, and reads the slots back.</p>
+<p>The watch side lives in <a href="../../c/stock__store_8h.html"><code>stock_store.h</code></a> and <a href="../../c/stock__store_8c.html"><code>stock_store.c</code></a>, and the strip is unpacked by <a href="../../c/stock__wire_8c.html"><code>stock_wire.c</code></a>. The phone side is under <code>src/ts/stock/</code>. The polling deadlines, the tag byte on the saved copy, and the save that skips an unchanged strip are shared with the other stores and covered in <a href="../../how/stores/">How the Stores Work</a>.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<p>On the watch, the face starts the store and subscribes its redraw:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">stock_store_init</span><span style="color:var(--code-foreground)">((StockConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .poll_min </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 15</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> STOCK_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">stock_store_subscribe</span><span style="color:var(--code-foreground)">(redraw);</span></span></code></pre>
+<p><code>live</code>, <code>poll_min</code>, and <code>persist_key</code> mean the same as for every store, as <a href="../../how/stores/#the-shape-every-store-takes">How the Stores Work</a> covers, and a <code>StockSeed</code> pins a fixed strip for screenshots.</p>
+<p>On the phone, the face lists the feature when it starts:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-constant)">app</span><span style="color:var(--code-token-function)">.startPebbleApp</span><span style="color:var(--code-foreground)">({</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  clayConfig</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [stocks]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">});</span></span></code></pre>
+<p>A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as <a href="../../how/phone-side/#features">The Phone Side</a> covers. The face also declares the <code>STOCK_STRIP</code> and <code>STOCK_REQUEST</code> message keys, plus <code>STOCK_PROVIDER</code>, <code>STOCK_API_KEY</code>, and <code>STOCK_SYMBOLS</code> for the settings. The settings page&#39;s stock section has a data source, an API key, and a comma list of tickers. A face that lists the feature but not <code>STOCK_STRIP</code> gets nothing from it, since there is nowhere on the watch for a strip to land.</p>
+<h2 id="what-the-watch-holds">What the Watch Holds</h2>
+<p>The strip is a count and up to four slots. Each slot carries a label of up to 11 characters, the price in cents, the change in hundredths of a percent, and an <code>ok</code> flag. Whole numbers keep floats off the watch, and the framework&#39;s formatters turn them back into text:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-foreground)"> StockSlot </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">slot </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> stock_store_slot</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">0</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">char</span><span style="color:var(--code-foreground)"> price[</span><span style="color:var(--code-token-constant)">16</span><span style="color:var(--code-foreground)">];</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">char</span><span style="color:var(--code-foreground)"> change[</span><span style="color:var(--code-token-constant)">16</span><span style="color:var(--code-foreground)">];</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">!</span><span style="color:var(--code-foreground)">slot)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // nothing has arrived yet, or the wearer cleared the list</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">else</span><span style="color:var(--code-token-keyword)"> if</span><span style="color:var(--code-foreground)"> (slot</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">ok)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fmt_hundredths(price</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> sizeof</span><span style="color:var(--code-token-function)">(price)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> slot</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-token-function)">price_cents)</span><span style="color:var(--code-foreground)">;</span><span style="color:var(--code-token-comment)">  // 26174 reads "261.74"</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    fmt_pct_signed(change</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> sizeof</span><span style="color:var(--code-token-function)">(change)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> slot</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-token-function)">change_pct)</span><span style="color:var(--code-foreground)">;</span><span style="color:var(--code-token-comment)"> // 125 reads "+1.25%"</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">else</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // slot->symbol holds a status word, such as "RATE LIMIT"</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><code>stock_store_slot</code> returns <code>NULL</code> past the filled count, so a panel never reads a slot that holds nothing.</p>
+<p><strong>Status Words in Place of a Ticker.</strong> When a quote fails, the slot is sent with <code>ok</code> false and a short status in the label: <code>INVALID KEY</code>, <code>RATE LIMIT</code>, <code>NO ACCESS</code>, <code>NO SYMBOL</code>, <code>NO DATA</code>, <code>NO API KEY</code>, <code>NET ERROR</code>, or <code>ERR</code>. A panel that prints the label shows the wearer what went wrong, and the label width of 11 characters is set by the longest of these.</p>
+<p><strong>The Limits of the Numbers.</strong> The change rides in 16 bits, so a move past 327.67 percent either way reads as exactly that rather than wrapping, as <a href="../../how/message-formats/#the-watchlist">The Message Formats</a> covers. Only the percent change is sent, not the change in dollars.</p>
+<h2 id="from-the-phone-to-the-strip">From the Phone to the Strip</h2>
+<p>The phone packs the strip as a count byte and then each slot end to end, a layout covered with the others in <a href="../../how/message-formats/#the-watchlist">The Message Formats</a>.</p>
+<p><strong>Labels Go over as Plain ASCII.</strong> The phone flattens each label to the characters the watch fonts carry, as <a href="../../how/message-formats/#text-on-the-way-over">The Message Formats</a> covers, and cuts it to 11 characters. The settings page takes tickers up to 15 characters long, such as <code>BINANCE:BTCUSDT</code>, and the watch shows the first 11.</p>
+<p><strong>A Bad Strip Changes Nothing.</strong> A message cut short is refused whole, and the store keeps the strip it had, so it never shows half a watchlist.</p>
+<p><strong>One Redraw per Strip.</strong> A strip that reads clean replaces the whole watchlist at once, and the face redraws once for it.</p>
+<h2 id="choosing-a-provider">Choosing a Provider</h2>
+<p>The wearer picks the source on the settings page. Each answers one request per ticker.</p>
+<ul>
+<li><strong>Finnhub</strong> is the default. It gives real-time US quotes on a free key. Its free plan refuses tickers outside the US, which shows as <code>NO ACCESS</code>.</li>
+<li><strong>Yahoo</strong> is real-time, needs no key, and covers the most markets, including indices and crypto. It is an unofficial feed and can change without notice. It sends no change field, so the phone works the change out from the previous close.</li>
+<li><strong>Twelve Data</strong> covers global markets on a free key that allows 800 calls a day.</li>
+<li><strong>Alpha Vantage</strong> has end of day prices only, on a free key that allows 25 calls a day.</li>
+</ul>
+<p>Every provider&#39;s reply is turned into the same quote shape, so the rest of the feature never knows which one answered. A provider that reports trouble in its body with a 200 status, as Alpha Vantage and Twelve Data do, is read for it, so a hit cap shows as <code>RATE LIMIT</code> rather than an empty quote.</p>
+<h2 id="keeping-under-the-quota">Keeping Under the Quota</h2>
+<p>The watch asks on the interval the face set. On a free plan that interval can spend a day&#39;s quota by lunchtime, so the phone decides per provider whether an ask is worth a call. It reads the market&#39;s state on New York&#39;s clock: open from 09:30 to 16:00 on weekdays, the evening from 16:00 to 22:00, and shut the rest of the time.</p>
+<pre class="mermaid">flowchart TD
+  ask[&quot;a fetch is due&quot;] --&gt; forced{&quot;forced by a settings save?&quot;}
+  forced -- yes --&gt; fetch[&quot;fetch every ticker&quot;]
+  forced -- no --&gt; provider{&quot;which provider?&quot;}
+  provider -- &quot;Finnhub or Yahoo&quot; --&gt; fetch
+  provider -- &quot;Twelve Data&quot; --&gt; floor{&quot;15 minutes since the last fetch while open, or 3 hours while shut?&quot;}
+  floor -- yes --&gt; fetch
+  floor -- no --&gt; hold[&quot;hold the fetch&quot;]
+  provider -- &quot;Alpha Vantage&quot; --&gt; today{&quot;already holding today&#39;s close?&quot;}
+  today -- yes --&gt; hold
+  today -- no --&gt; never{&quot;never fetched on this phone?&quot;}
+  never -- yes --&gt; fetch
+  never -- no --&gt; evening{&quot;a weekday evening?&quot;}
+  evening -- no --&gt; hold
+  evening -- yes --&gt; gap{&quot;2 hours since the last fetch?&quot;}
+  gap -- yes --&gt; fetch
+  gap -- no --&gt; hold</pre>
+<p><strong>Twelve Data.</strong> With four tickers and a watch asking every 15 minutes or faster, a weekday comes to at most 26 fetches while the market is open and 6 while it is shut. That is 128 calls against the 800 the free key allows.</p>
+<p><strong>Alpha Vantage.</strong> It publishes the day&#39;s close at no fixed time after the bell, so the phone tries in the evening, two hours apart, and stops as soon as the quote&#39;s trading day is today. That is at most three tries, 12 calls of the 25, and nothing at all once the close is in. A phone that has never fetched gets one call at any hour, so a new install does not sit blank until the evening.</p>
+<p><strong>No Holiday Table.</strong> The schedule knows weekdays, not market holidays. On a US holiday Alpha Vantage spends its evening tries finding no new close, and Twelve Data polls at the open rate. Both stay inside their quotas.</p>
+<p><strong>Clock Trouble.</strong> A last fetch stamped in the future means the phone&#39;s clock went back, and the gate lets the next fetch through rather than shutting until the clock catches up. A phone that cannot read New York&#39;s time zone at all treats every moment as a Sunday, so a metered provider is never polled through a weekend by mistake.</p>
+<p><strong>Settings That Change the Answer.</strong> When the wearer changes the provider, the key, or the tickers, the phone forgets the old strip and its stamps, drops any fetch still out for the old list, and fetches again past the gate, as <a href="../../how/phone-side/#after-a-save">The Phone Side</a> covers. A save that touches nothing stock related fetches nothing.</p>
+<h2 id="surviving-a-restart">Surviving a Restart</h2>
+<p>The phone kills its PebbleKit JS whenever it likes, and the gate above is only worth anything if it remembers when it last fetched. So the phone keeps a small cache in <code>localStorage</code>, under a key of its own: the time of the last fetch, the trading day of the last good quote, and the last strip with a real quote in it. Clay rewrites its own settings blob on every save, which is why the cache sits beside it rather than inside it. Each field is checked on its own when it is read back, so one damaged field costs only itself.</p>
+<p><strong>Which Fetches Count.</strong> A round with a good quote records the time and the trading day. A round where the provider answered with nothing good, such as <code>RATE LIMIT</code> or <code>NO SYMBOL</code>, still records the time, since that answer spent a call on a metered plan. A round the provider never answered, a network blip, records nothing, so the next ask tries again.</p>
+<p><strong>What the Watch Is Sent.</strong> A strip with a good quote goes to the watch and becomes the kept strip. A provider&#39;s error, such as <code>INVALID KEY</code>, goes too, since the wearer has to act on it. A round lost to the network sends the kept strip instead when there is one, so the watch never swaps good quotes for a row of <code>NET ERROR</code>.</p>
+<p><strong>A Held Fetch Still Answers.</strong> When the watch asks and the gate holds, the phone sends the kept strip. That matters most for Alpha Vantage after the close: a watch that was just reset would otherwise sit blank until tomorrow&#39;s evening window. The same happens when the phone&#39;s code starts and the gate holds.</p>
+<p><strong>One Round at a Time.</strong> Each ticker is a separate request, and the strip goes once the last one answers, in the order the wearer typed them. A second ask while a round is out is dropped, so the quota is never spent twice for one answer. A request gives up after 15 seconds and a whole round after 30, so a request that never answers cannot block every fetch after it.</p>
+<p><strong>When the Phone Asks on Its Own.</strong> The watch&#39;s asks lead, and the phone&#39;s slow refresh only fetches when the watch has not asked since the last one, as <a href="../../how/phone-side/#the-background-refresh">The Phone Side</a> covers.</p>
+<p><strong>Clearing the List.</strong> An empty ticker list sends a strip with a count of zero, which is how the watch hears that its list was cleared.</p>
+<h2 id="on-the-watch">On the Watch</h2>
+<p><strong>The First Ask.</strong> A live store asks once shortly after launch, as <a href="../../how/stores/#polling-on-wall-clock-deadlines">How the Stores Work</a> covers. It needs no retry loop like the weather store&#39;s, since the phone sends a strip on its own as soon as its code starts.</p>
+<p><strong>Saved to Flash.</strong> The whole strip and the time it arrived are saved to the face&#39;s persist key, and a relaunch shows the last strip straight away. The restore pins a count above four to an empty list and gives every label a closing zero, so a damaged copy cannot send a panel past the end of the slots. A failed write waits for the next strip that differs, for the reason in <a href="../../how/stores/#skipping-unchanged-writes">How the Stores Work</a>.</p>
+<p><strong>How Old It Is.</strong> <code>stock_store_age_s</code> gives the seconds since the last strip arrived, or -1 for none. A face can pass it to <code>store_poll_reconnect_due</code> to catch up after the phone reconnects, as <a href="../../how/stores/#polling-on-wall-clock-deadlines">How the Stores Work</a> shows.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/fetching-the-weather/"><span>Previous</span>Fetching the Weather</a>
+<a class="page-step page-step-next" rel="next" href="../../how/calendar-store/"><span>Next</span>The Calendar Store</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

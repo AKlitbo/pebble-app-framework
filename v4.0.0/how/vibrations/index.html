@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vibrations · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li class="current"><a href="../../how/vibrations/" aria-current="page">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Vibrations</h1>
+          
+          <div class="readme"><p>A face built on the framework can buzz the wrist at the top of each hour, when the phone connects, and when it drops. The wearer picks the buzz for each on the settings page from the same choices, None, Short, Long, or Double. Every buzz the framework plays stays silent during Quiet Time, so a phone dropping in and out overnight never buzzes through it.</p>
+<p>It lives in <a href="../../c/vibe_8h.html"><code>vibe.h</code></a> and <a href="../../c/vibe_8c.html"><code>vibe.c</code></a> under <code>src/c/pebble/system/vibe/</code>.</p>
+<h2 id="the-choices">The Choices</h2>
+<p>The settings page offers each vibration as a select with the values 0 to 3, and the watch reads the same numbers:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Choice</th>
+<th align="left">Value</th>
+<th align="left">What It Plays</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">None</td>
+<td align="left">0</td>
+<td align="left">nothing</td>
+</tr>
+<tr>
+<td align="left">Short</td>
+<td align="left">1</td>
+<td align="left">the watch&#39;s short pulse, about 250 ms</td>
+</tr>
+<tr>
+<td align="left">Long</td>
+<td align="left">2</td>
+<td align="left">the watch&#39;s long pulse, about 500 ms</td>
+</tr>
+<tr>
+<td align="left">Double</td>
+<td align="left">3</td>
+<td align="left">the watch&#39;s double pulse, two buzzes of about 100 ms</td>
+</tr>
+</tbody></table>
+<p>Each one is the watch&#39;s own pulse rather than a pattern of the framework&#39;s, so it matches the buzzes the rest of the watch makes.</p>
+<p><code>vibe_choice</code> plays the pattern for a value, and anything other than 1 to 3 is silent. Every vibration setting starts at None on a fresh install, so a face only buzzes once the wearer asks it to. A value out of range from the phone goes back to the default when it lands (see <a href="../../how/settings-on-the-watch/#taking-values-from-the-phone">Settings on the Watch</a>), which is None again. A face whose settings leave a vibration setting out reads it as None too.</p>
+<h2 id="quiet-time">Quiet Time</h2>
+<p>The watch&#39;s firmware does not silence an app&#39;s buzz during Quiet Time. It plays whatever the app asks for. So <code>vibe_pulse</code> and <code>vibe_custom</code> check <code>quiet_time_is_active</code> first and return without a sound while it is on. Every buzz the framework plays goes through one of them.</p>
+<p>The cost is that a face cannot use these calls for a buzz that has to get through, such as an alarm. A face that needs one calls the SDK&#39;s <code>vibes_</code> functions directly.</p>
+<p><strong>A Buzz While Another Plays.</strong> The firmware drops a pattern asked for while another is still playing rather than queueing it behind. An hourly buzz landing in the same moment as a disconnect gives one buzz, not two.</p>
+<h2 id="phone-connect-and-disconnect">Phone Connect and Disconnect</h2>
+<p>The system store watches the link to the Pebble app on the phone and calls the face&#39;s buzz policy on a real change, never on its first reading at launch (see <a href="../../how/system-store/#the-phone-connection">The System Store</a>). <code>vibe_bt_transition</code> is the framework&#39;s own policy:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">system_store_init</span><span style="color:var(--code-foreground)">((SystemConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .vibe </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> vibe_bt_transition}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p>It reads Vibrate on Connect or Vibrate on Disconnect, whichever fits, and plays it through <code>vibe_choice</code>. Both rows sit in the Bluetooth section that every settings page built with <code>buildConfig</code> carries. It reads the setting at the moment it buzzes, so a change on the settings page takes effect without telling the store. Like every buzz here, it stays silent in Quiet Time, so a phone drifting in and out of range at night never buzzes the wearer awake.</p>
+<h2 id="on-the-hour">On the Hour</h2>
+<p>The framework provides the hourly setting but not a timer for it, since the face already has one. The time store calls the face on every tick (see <a href="../../how/time-store/">The Time Store</a>). The settings page shows an Hourly Vibration row in the Clock section when the face passes <code>hourlyVibe</code> to <code>buildConfig</code>, and the watch side is the <code>KNOWN_HOURLY_VIBE</code> entry in <code>settings_catalog.h</code>. The face plays it from its time callback when the minute is 0:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_time_changed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">void</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    static</span><span style="color:var(--code-token-keyword)"> int</span><span style="color:var(--code-foreground)"> s_buzzed_hour </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> -</span><span style="color:var(--code-token-constant)">1</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    const</span><span style="color:var(--code-token-keyword)"> struct</span><span style="color:var(--code-foreground)"> tm </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">now </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> time_store_tm()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-constant)">now</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-foreground)">tm_min </span><span style="color:var(--code-token-keyword)">==</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-token-keyword)"> &#x26;&#x26;</span><span style="color:var(--code-token-constant)"> now</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-foreground)">tm_hour </span><span style="color:var(--code-token-keyword)">!=</span><span style="color:var(--code-foreground)"> s_buzzed_hour)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-foreground)">        s_buzzed_hour </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> now</span><span style="color:var(--code-token-punctuation)">-></span><span style="color:var(--code-foreground)">tm_hour;</span></span>
+<span class="line"><span style="color:var(--code-token-function)">        vibe_choice(settings_u8(SETTING_HOURLY_VIBE))</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">    engine_mark_dirty()</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><strong>Once per Hour.</strong> The time callback runs on the minute tick, and on each beat as well when the face shows .beats (see <a href="../../how/beats/">.beats</a>), so the check for minute 0 can pass twice in the same minute. Remembering the hour that buzzed keeps it to one buzz.</p>
+<p><strong>Keep the Minute Tick On.</strong> A face that turns the minute tick off and runs only the beat timer is called every 86.4 seconds, so it only gets a call during minute 0 when a beat happens to turn over in it. In a time zone a whole number of hours from UTC that happens every hour. In one that sits half an hour or 45 minutes off, such as India or Nepal, one hour in three has no beat in its first minute and passes without a buzz.</p>
+<h2 id="playing-your-own-rhythm">Playing Your Own Rhythm</h2>
+<p><code>vibe_custom</code> plays a face&#39;s own pattern, a list of milliseconds that starts with a buzz and then switches between pause and buzz. It stays silent in Quiet Time like the rest. A face can use it for something the choices do not cover, such as a little celebration when a step goal is met. The firmware caps each step at 10 seconds.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/numbers-and-units/"><span>Previous</span>Numbers and Units</a>
+<a class="page-step page-step-next" rel="next" href="../../how/icons-plugin/"><span>Next</span>The Icons Plugin</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

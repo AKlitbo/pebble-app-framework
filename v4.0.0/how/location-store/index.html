@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Location Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li class="current"><a href="../../how/location-store/" aria-current="page">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Location Store</h1>
+          
+          <div class="readme"><p>The location store holds the phone&#39;s last location fix as two pieces of text, a latitude and a longitude, for a face that shows where the wearer is. It saves the last real fix to flash so a relaunch shows it straight away, and it never saves the phone&#39;s way of saying it has no fix, so a lost GPS signal cannot wipe the last real place. It has no polling of its own. The coordinates ride along with every weather reply.</p>
+<p>It lives in <a href="../../c/location__store_8h.html"><code>location_store.h</code></a> and <a href="../../c/location__store_8c.html"><code>location_store.c</code></a>, with the check for a real fix in <a href="../../c/coords_8h.html"><code>coords.h</code></a> under <code>src/c/core/wire/</code>.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">location_store_init</span><span style="color:var(--code-foreground)">((LocationConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .persist_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> LOCATION_KEY}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">location_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span></code></pre>
+<p>A live store claims the coordinates from incoming messages and restores the last fix from the face&#39;s persist key. <code>location_store_lat</code> and <code>location_store_lon</code> read the text back, empty when there is none, and the framework&#39;s latitude and longitude readouts show dashes for empty.</p>
+<h2 id="how-a-fix-arrives">How a Fix Arrives</h2>
+<p>The phone sends the coordinates as text the face formats for itself. A face opts in on the phone side with <code>weather.withCoords</code>, handing it a function that turns each weather result into its two coordinate keys:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-constant)">weather</span><span style="color:var(--code-token-function)">.withCoords</span><span style="color:var(--code-foreground)">((messageKeys</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> result) </span><span style="color:var(--code-token-keyword)">=></span><span style="color:var(--code-foreground)"> ({</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  [</span><span style="color:var(--code-token-constant)">messageKeys</span><span style="color:var(--code-foreground)">.</span><span style="color:var(--code-token-constant)">LOCATION_LATITUDE</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-keyword)"> typeof</span><span style="color:var(--code-token-constant)"> result</span><span style="color:var(--code-foreground)">.lat </span><span style="color:var(--code-token-keyword)">===</span><span style="color:var(--code-token-string-expression)"> 'number'</span><span style="color:var(--code-token-keyword)"> ?</span><span style="color:var(--code-token-constant)"> result</span><span style="color:var(--code-token-function)">.</span><span style="color:var(--code-token-constant)">lat</span><span style="color:var(--code-token-function)">.toFixed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">3</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'NO FIX'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  [</span><span style="color:var(--code-token-constant)">messageKeys</span><span style="color:var(--code-foreground)">.</span><span style="color:var(--code-token-constant)">LOCATION_LONGITUDE</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-keyword)"> typeof</span><span style="color:var(--code-token-constant)"> result</span><span style="color:var(--code-foreground)">.lon </span><span style="color:var(--code-token-keyword)">===</span><span style="color:var(--code-token-string-expression)"> 'number'</span><span style="color:var(--code-token-keyword)"> ?</span><span style="color:var(--code-token-constant)"> result</span><span style="color:var(--code-token-function)">.</span><span style="color:var(--code-token-constant)">lon</span><span style="color:var(--code-token-function)">.toFixed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">3</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> 'NO FIX'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}))</span><span style="color:var(--code-token-punctuation)">,</span></span></code></pre>
+<p>The function runs on every result, a failed fetch included, so the face picks its own text for no fix. Since the store keeps text rather than numbers, the face picks the style too: decimals, hemisphere letters, or anything else that fits the design.</p>
+<p>On the watch, the AppMessage layer hands the store the pair only when both keys are in the message and both are text. One missing, or one sent as a number, would give the store an empty half and blank a good coordinate, so a message like that leaves the store alone.</p>
+<pre class="mermaid">sequenceDiagram
+  participant Phone as Phone Code
+  participant Inbox as AppMessage Layer
+  participant Store as Location Store
+  participant Flash
+  participant Face
+  Phone-&gt;&gt;Inbox: a weather reply with both coordinate keys
+  Inbox-&gt;&gt;Store: the pair, when both are text
+  Store-&gt;&gt;Store: cut each to fit and compare with the pair it holds
+  alt the same pair
+    Note over Store: nothing to do
+  else a different pair
+    Store-&gt;&gt;Flash: save it, when it looks like a real fix
+    Store-&gt;&gt;Face: redraw
+  end</pre>
+<p><strong>The Same Pair Does Nothing.</strong> A wearer who stays put gets the same two strings with every weather reply, so the store compares first and returns before saving or redrawing anything. The comparison happens after each string is cut to fit its field, so text too long to keep whole does not look new every time.</p>
+<p><strong>Each Half Holds 19 Characters.</strong> Longer text is cut to fit, so a face choosing a format keeps each coordinate within that.</p>
+<h2 id="telling-a-fix-from-no-fix">Telling a Fix from No Fix</h2>
+<p><code>coords_look_real</code> decides whether a pair is a place. Both halves need at least one digit:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-token-function)"> coords_look_real</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">lat</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">lon)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-token-function)"> has_digit(lat)</span><span style="color:var(--code-token-keyword)"> &#x26;&#x26;</span><span style="color:var(--code-token-function)"> has_digit(lon)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>A real coordinate in any format carries digits, and the ways a phone says it has nothing, an empty string or a word like <code>NO FIX</code>, never do. The store cannot parse the coordinates, since their format belongs to the face, so this is the whole test.</p>
+<p><strong>Half a Fix Is No Fix.</strong> A pair with one good half and one empty half fails the check. Saving it would leave the saved copy with a coordinate missing, and it would stay missing after every relaunch until a full fix arrived.</p>
+<p><strong>Shown but Not Saved.</strong> A no-fix pair still replaces what the face shows, so the face can show its own no-fix text rather than a place it is no longer sure of. It is never saved, so a relaunch comes back to the last real place. A face that packs both coordinates into the latitude key and leaves the longitude empty never passes the check, so its fix is never saved and a relaunch shows dashes until the next weather reply.</p>
+<h2 id="saved-and-restored">Saved and Restored</h2>
+<p>The store saves both strings as one blob to the face&#39;s persist key, with the location store&#39;s tag in front. A restore checks the blob&#39;s size and tag before reading it, then gives each string a closing zero, so damaged bytes cannot run on past the end of a field when it is printed. Only a live store saves, and only a real fix. The save skips a pair already on flash, and with no sync time in the blob the whole of it counts as the reading. <a href="../../how/stores/#saving-to-flash">How the Stores Work</a> covers the tag, the check, and the skipped write.</p>
+<h2 id="seeding">Seeding</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">LocationSeed seed </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {.lat </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "43.653"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .lon </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "-79.383"</span><span style="color:var(--code-foreground)">};</span></span>
+<span class="line"><span style="color:var(--code-token-function)">location_store_init</span><span style="color:var(--code-foreground)">((LocationConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">seed);</span></span></code></pre>
+<p>The framework&#39;s dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/system-store/"><span>Previous</span>The System Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/weather-store/"><span>Next</span>The Weather Store</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

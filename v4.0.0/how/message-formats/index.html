@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Message Formats · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li class="current"><a href="../../how/message-formats/" aria-current="page">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Message Formats</h1>
+          
+          <div class="readme"><p>Most values reach the watch as a single number or a piece of text in an AppMessage. The weather forecast, the stock watchlist, and the calendar agenda are lists, and AppMessage has no list type, so the phone packs each one into a run of bytes and the watch unpacks it. The framework owns both ends of each format, and the watch checks every message against its own length before it uses any of it, so a short or garbled message is turned away whole and the last good list stays on screen.</p>
+<p>The watch&#39;s readers live under <code>src/c/core/wire/</code>, in <a href="../../c/weather__wire_8c.html"><code>weather_wire.c</code></a>, <a href="../../c/stock__wire_8c.html"><code>stock_wire.c</code></a>, and <a href="../../c/calendar__wire_8c.html"><code>calendar_wire.c</code></a>, with the byte readers in <a href="../../c/bytes__le_8h.html"><code>bytes_le.h</code></a>. The phone&#39;s packers are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/pkjs/wire.ts"><code>wire.ts</code></a>. The readers are in <code>c/core</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>), so they take a pointer and a length rather than anything from the SDK. A store gets the raw bytes from <a href="../../how/talking-to-the-phone/">the AppMessage layer</a>, hands them to its reader, and only keeps the result when the reader says the whole message was good.</p>
+<h2 id="what-every-format-shares">What Every Format Shares</h2>
+<p><strong>A Count Comes First.</strong> Each list opens with one byte saying how many entries follow. The watch pins it to the room it has, 8 forecast columns, 4 quotes, or 6 events, so a count of 200 can never walk the reader off the end of an array. The phone cuts its lists to the same sizes, so only a damaged message ever needs the pin.</p>
+<p><strong>Numbers Are Little-Endian.</strong> The low byte comes first. The reader builds each number a byte at a time with shifts rather than casting the pointer to a wider type, so it reads the same whatever the alignment of the bytes, and a list that starts at an odd address inside a message is no problem. Temperatures, price changes, and times are signed, and the readers keep the sign, so a temperature of -3 never reads as 65533.</p>
+<p><strong>Text Is a Length and Then the Letters.</strong> A string goes over as one byte for its length and then that many bytes, with no terminator. The watch copies what fits in its buffer and adds the terminator itself.</p>
+<p><strong>Both Sides Read One Table.</strong> The list sizes, the text lengths, and the marker values are written once, in <code>WIRE_CAPS</code> at the top of <code>wire.ts</code>. <code>npm run build:conditions</code> writes them into <a href="../../c/wire__caps_8g_8h.html"><code>wire_caps.g.h</code></a> for the watch. The phone counts text lengths in characters, and the watch&#39;s buffers are one byte bigger for the terminator.</p>
+<h2 id="the-forecast-strips">The Forecast Strips</h2>
+<p>The hourly strip is a header and then up to 8 columns, all fixed width:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Bytes</th>
+<th align="left">Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">how many columns</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">the hour of the first column, 0 to 23</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">the hours between columns</td>
+</tr>
+<tr>
+<td align="left">1 per column</td>
+<td align="left">the condition</td>
+</tr>
+<tr>
+<td align="left">2 per column</td>
+<td align="left">the temperature, signed</td>
+</tr>
+</tbody></table>
+<p>The daily strip is the same idea with a weekday in place of the hour, and two temperatures per column:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Bytes</th>
+<th align="left">Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">how many columns</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">the weekday of the first column, 0 for Sunday</td>
+</tr>
+<tr>
+<td align="left">1 per column</td>
+<td align="left">the condition</td>
+</tr>
+<tr>
+<td align="left">2 per column</td>
+<td align="left">the day&#39;s high, signed</td>
+</tr>
+<tr>
+<td align="left">2 per column</td>
+<td align="left">the day&#39;s low, signed</td>
+</tr>
+</tbody></table>
+<p>Each column&#39;s condition goes over as one byte, the sky code, which is the condition&#39;s place in the shared list of conditions, so 0 is clear and 6 is rain. 255 means the phone did not recognize the condition, and the watch draws its fallback icon. On the hourly strip the top bit marks a column after dark, so the watch picks the night icon. The daily strip never sets it, since a whole day has no night of its own.</p>
+<p>A temperature the phone does not have goes over as -1000, well outside any real reading. 0 could not do the job, since 0 degrees is a real reading.</p>
+<p>Two hourly columns starting at 21:00, three hours apart, with a clear night at 12 degrees and then rain with no temperature:</p>
+<pre><code>02         two columns
+15         first column at hour 21
+03         three hours apart
+80         clear, after dark
+0C 00      12 degrees
+86         rain, after dark
+18 FC      -1000, no reading</code></pre>
+<p><strong>One Check Settles the Whole Strip.</strong> Every column is the same width, so the length the message needs is known from the count before anything is read: three header bytes and three per column for the hourly strip, two and five for the daily. A message shorter than that is refused, and the strip already on the watch stays. Bytes left over after the last column are ignored.</p>
+<p>Since nothing can fail after that check, the reader writes straight into the strip the caller holds. The watchlist and the agenda work differently, below, and keeping a second copy of each forecast strip to guard against a failure that cannot happen would cost memory for nothing. What the watch does with the first column&#39;s hour, such as dropping the columns that have gone by, is on <a href="../../how/weather-readings/">Weather Readings</a>.</p>
+<h2 id="the-watchlist">The Watchlist</h2>
+<p>The watchlist is a count and then up to 4 quotes laid end to end. A quote&#39;s length depends on its label:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Bytes</th>
+<th align="left">Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">how many quotes</td>
+</tr>
+<tr>
+<td align="left">1 per quote</td>
+<td align="left">1 for a live quote, 0 for a status message</td>
+</tr>
+<tr>
+<td align="left">4 per quote</td>
+<td align="left">the price in cents, signed</td>
+</tr>
+<tr>
+<td align="left">2 per quote</td>
+<td align="left">the change in hundredths of a percent, signed</td>
+</tr>
+<tr>
+<td align="left">1 per quote</td>
+<td align="left">the label&#39;s length</td>
+</tr>
+<tr>
+<td align="left">the length</td>
+<td align="left">the label</td>
+</tr>
+</tbody></table>
+<p>A live quote&#39;s label is its ticker. A quote the phone could not fetch carries a short status word in the same place, such as <code>RATE LIMIT</code> or <code>INVALID KEY</code>, so the slot on the watch shows why it is empty.</p>
+<p>Apple at $150.12, down 1.25 percent, is 13 bytes:</p>
+<pre><code>01             one quote
+01             live
+A4 3A 00 00    15012 cents
+83 FF          -125, down 1.25 percent
+04             four letters follow
+41 41 50 4C    AAPL</code></pre>
+<p><strong>The Ranges.</strong> Cents in four bytes reach about 21 million dollars. Hundredths of a percent in two bytes reach about 327 percent either way. The phone rounds each number and then pins it to its range before packing, so a stock up 400 percent shows 327.67 rather than wrapping round to a large fall.</p>
+<p><strong>Checked at Every Step.</strong> Nothing about a quote is fixed width, so the reader cannot know the whole length up front. It checks before each quote that its fixed 8 bytes are there, and before each label that the label fits inside the message. A message that says four quotes but stops after two is refused at the third.</p>
+<p><strong>Built Aside, Kept Only When Whole.</strong> The reader fills a fresh watchlist of its own, and copies it to the caller only once the whole message has read cleanly. So a message that fails at the third quote leaves the caller&#39;s watchlist exactly as it was, rather than two new quotes beside two old ones. The store then keeps showing its last good watchlist and does not save anything.</p>
+<p><strong>A Long Label Is Stepped Over Whole.</strong> A label longer than the 11 characters the watch holds is cut to fit, and the reader still steps past every byte of it. Stopping at the cut would leave the next quote being read from the middle of this one&#39;s label.</p>
+<p><strong>Empty Is Different from Missing.</strong> An empty watchlist packs as a count of 0, which clears the watchlist on the watch. When the phone has no list at all, it sends nothing, and the watch keeps what it has. A gap in the phone&#39;s list packs as a failed quote rather than being skipped, since a skipped one would leave the count promising more quotes than follow, and the watch would refuse the lot.</p>
+<h2 id="the-agenda">The Agenda</h2>
+<p>The agenda is a count and then up to 6 events laid end to end, each with two strings of its own:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Bytes</th>
+<th align="left">Holds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">how many events</td>
+</tr>
+<tr>
+<td align="left">4 per event</td>
+<td align="left">the start, in seconds since 1970, signed</td>
+</tr>
+<tr>
+<td align="left">4 per event</td>
+<td align="left">the end, the same way</td>
+</tr>
+<tr>
+<td align="left">1 per event</td>
+<td align="left">flags, with the lowest bit set for an all-day event</td>
+</tr>
+<tr>
+<td align="left">1 per event</td>
+<td align="left">the title&#39;s length</td>
+</tr>
+<tr>
+<td align="left">the length</td>
+<td align="left">the title, up to 24 characters</td>
+</tr>
+<tr>
+<td align="left">1 per event</td>
+<td align="left">the location&#39;s length</td>
+</tr>
+<tr>
+<td align="left">the length</td>
+<td align="left">the location, up to 16 characters</td>
+</tr>
+</tbody></table>
+<p>It is read the same way as the watchlist: a check before each event&#39;s fixed 10 bytes, before the title, before the location&#39;s length, and before the location, all into a copy that the caller only gets when every event read cleanly.</p>
+<p><strong>Times on the Watch&#39;s Own Clock.</strong> The start and end are absolute times rather than &quot;in 20 minutes&quot;, so a countdown on the watch stays right between fetches by reading the watch&#39;s clock against them.</p>
+<p><strong>Pinned to 2038.</strong> The watch reads both times as signed 32-bit numbers, which run out in January 2038. A feed can carry an event whose end is far beyond that, and its low four bytes alone would land somewhere in 1969, putting the end before the start and every duration negative. The phone pins both times to the 32-bit range before packing, so such an event reads as running until 2038 instead.</p>
+<h2 id="text-on-the-way-over">Text on the Way Over</h2>
+<p>The watch&#39;s fonts only carry the printable ASCII characters, so the phone flattens every title, location, and label before packing it. An accented letter loses its accent, so Réunion goes over as Reunion. Anything else outside ASCII becomes one question mark.</p>
+<p><strong>An Emoji Costs One Character.</strong> The flattening walks the text by Unicode code point rather than by JavaScript&#39;s two-byte units, and drops the pieces that only change the character before them, such as skin tones and the joiners between people. An emoji is one question mark rather than two, and so is a family emoji built from several people, or a flag. A title only has 24 characters on the watch, and each extra mark would cost it a real letter.</p>
+<p><strong>Cut before Packing.</strong> The text is cut to the watch&#39;s length on the phone, so the length byte never promises more than the watch keeps. The watch still copies only what fits, so a phone that sent more would lose the end of the text and nothing else.</p>
+<h2 id="single-values-and-coordinates">Single Values and Coordinates</h2>
+<p>Everything that is not a list goes over as an ordinary AppMessage value: the temperature, the humidity, the sunrise time, each setting. Those are read through the checked readers on <a href="../../how/talking-to-the-phone/#reading-values-safely">Talking to the Phone</a>, which read a number at the width the phone sent it and refuse text with no terminator. The reading itself is in <a href="../../c/wire__read_8h.html"><code>wire_read.h</code></a>, next to the list readers here.</p>
+<p>Coordinates arrive as two pieces of text, in whatever form the face&#39;s formatter on the phone writes them, such as <code>33-44</code> and <code>-112-07</code>. When the phone has no fix, it sends something that is not a coordinate, an empty string or a word. <a href="../../c/coords_8h.html"><code>coords.h</code></a> tells the two apart with one test: a real coordinate always holds a digit, and the phone&#39;s ways of saying &quot;no fix&quot; never do. Both halves have to pass. The location store shows whatever arrived, but it only saves a pair that passes, so losing the fix for a while never overwrites the last good one in flash. <a href="../../how/location-store/">The Location Store</a> covers the rest.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/talking-to-the-phone/"><span>Previous</span>Talking to the Phone</a>
+<a class="page-step page-step-next" rel="next" href="../../how/stores/"><span>Next</span>How the Stores Work</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

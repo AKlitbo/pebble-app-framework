@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Life of a Setting · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li class="current"><a href="../../how/life-of-a-setting/" aria-current="page">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Life of a Setting</h1>
+          
+          <div class="readme"><p>This page follows one setting from the settings page to the watch redrawing. Along the way the framework handles the parts a face would otherwise write for itself: one queue for every message to the watch, a check on every value as it lands, a single flash write per save, and the settings put back after a reinstall. The example is the LCARS face&#39;s frame theme, a choice of nine frames, but every setting takes the same road.</p>
+<p>It starts on the settings page, which is built with Clay and shown in the phone app&#39;s web view. From there it goes to the phone code, the face&#39;s PebbleKit JS running inside the Pebble app, and then to the watch, which keeps every setting in one block of flash and redraws from it.</p>
+<pre class="mermaid">sequenceDiagram
+  actor Wearer
+  participant Page as Settings Page
+  participant Phone as Phone Code
+  participant Watch
+  participant Face
+  Wearer-&gt;&gt;Page: picks a frame, presses Save
+  Page-&gt;&gt;Phone: webviewclosed, with the page&#39;s values
+  Phone-&gt;&gt;Phone: saves them as clay-settings
+  Phone-&gt;&gt;Watch: one AppMessage, through the send queue
+  Watch-&gt;&gt;Watch: settings_apply_inbox, then settings_save
+  Watch-&gt;&gt;Face: on_settings_changed
+  Face-&gt;&gt;Face: loads the new frame and rebuilds the screen</pre>
+<h2 id="on-the-settings-page">On the Settings Page</h2>
+<p>The face builds its page with <code>buildConfig</code> from <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/pkjs/config-builder.ts"><code>config-builder.ts</code></a>. It hands over what it needs, such as the list of themes, and <code>buildConfig</code> lays out the standard sections in a fixed order, ending with a <strong>Save &amp; Apply to Watch</strong> button. The theme becomes a select:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'type'</span><span style="color:var(--code-foreground)">: </span><span style="color:var(--code-token-string-expression)">'select'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'messageKey'</span><span style="color:var(--code-foreground)">: </span><span style="color:var(--code-token-string-expression)">'APPEARANCE_THEME'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'label'</span><span style="color:var(--code-foreground)">: </span><span style="color:var(--code-token-constant)">theme</span><span style="color:var(--code-foreground)">.label </span><span style="color:var(--code-token-keyword)">||</span><span style="color:var(--code-token-string-expression)"> 'Frame Theme'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'description'</span><span style="color:var(--code-foreground)">: </span><span style="color:var(--code-token-constant)">theme</span><span style="color:var(--code-foreground)">.description </span><span style="color:var(--code-token-keyword)">||</span><span style="color:var(--code-token-string-expression)"> 'Colour scheme for the watch frame.'</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'defaultValue'</span><span style="color:var(--code-foreground)">: </span><span style="color:var(--code-token-constant)">0</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">  'options'</span><span style="color:var(--code-foreground)">: </span><span style="color:var(--code-token-constant)">theme</span><span style="color:var(--code-foreground)">.options</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The <code>messageKey</code> is the name the watch knows the setting by. Every key the page uses has to be listed under <code>messageKeys</code> in the face&#39;s <code>pebble.appinfo.json</code>.</p>
+<p><strong>Opening the Page.</strong> Clay opens the page filled in from the values saved on the phone. Just before it does, each feature on the phone takes a snapshot of its own settings, which <a href="../../how/phone-side/#after-a-save">The Phone Side</a> covers.</p>
+<p><strong>Scratch Space for a Component.</strong> A component that needs to remember something between visits keeps it in a hidden store, as <a href="../../how/settings-page/#scratch-state-in-a-hidden-store">Scratch State in a Hidden Store</a> covers.</p>
+<h2 id="on-the-phone">On the Phone</h2>
+<p>Pressing Save closes the page, and the phone app fires <code>webviewclosed</code> with the page&#39;s values as JSON. A page closed without saving sends no values, so nothing goes to the watch.</p>
+<p><strong>Clay Hands Back a Message.</strong> <code>clay.getSettings</code> saves the plain values to the phone&#39;s <code>localStorage</code> under <code>clay-settings</code>, then returns them ready to send, keyed by each message key&#39;s number. Each kind of control arrives in its own form:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Control</th>
+<th align="left">Sent As</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">select</td>
+<td align="left">text, such as <code>&quot;3&quot;</code>, since a select&#39;s value is always text</td>
+</tr>
+<tr>
+<td align="left">toggle</td>
+<td align="left"><code>1</code> or <code>0</code></td>
+</tr>
+<tr>
+<td align="left">colour</td>
+<td align="left">a number, <code>0xRRGGBB</code></td>
+</tr>
+<tr>
+<td align="left">slider</td>
+<td align="left">a whole number, scaled up by its precision</td>
+</tr>
+<tr>
+<td align="left">text input</td>
+<td align="left">text</td>
+</tr>
+</tbody></table>
+<p>So the theme reaches the watch as the text <code>&quot;3&quot;</code>, not the number 3.</p>
+<p><strong>A Second Clock.</strong> A city chosen for a second clock is rewritten as <code>&quot;offset,label&quot;</code>, with the offset worked out for the current date, as <a href="../../how/time-zones/#from-the-saved-place-to-the-setting">Time Zones</a> covers.</p>
+<p><strong>The Fresh Flag.</strong> When the face declares <code>SETTINGS_FRESH</code>, the message carries it as <code>0</code>, which tells the watch this came from a save on the page. That flag matters after a reinstall, below.</p>
+<p><strong>Through the Send Queue.</strong> The framework sends the save itself rather than letting Clay do it, so it waits its turn in the one queue every message to the watch goes through. <a href="../../how/phone-side/#the-send-queue">The Phone Side</a> covers the queue and its retries.</p>
+<p><strong>Fetching Again.</strong> Once the save is on its way, each feature compares its settings with its snapshot and fetches again only when one of them changed. A theme change touches none of them, so it fetches nothing. <a href="../../how/phone-side/#after-a-save">The Phone Side</a> covers the rules.</p>
+<h2 id="on-the-watch">On the Watch</h2>
+<p><strong>Only the Keys It Knows.</strong> <code>settings_apply_inbox</code> walks the face&#39;s own list of settings and looks each one up in the message. The list is the table of fields the face hands <code>settings_init</code>, which uses the framework&#39;s shared entries for the common settings. The LCARS face&#39;s theme takes one line:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">KNOWN_THEME</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">offsetof</span><span style="color:var(--code-foreground)">(LcarsSettings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> theme)</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 9</span><span style="color:var(--code-foreground)">)</span><span style="color:var(--code-token-punctuation)">,</span></span></code></pre>
+<p>A key in the message that is not on the list is ignored. It still takes up room in the message, though.</p>
+<p><strong>Checked on the Way In.</strong> Each value is checked for its type and range, and one that already matches what the watch holds is skipped, so an unchanged save does not count as a change. <a href="../../how/settings-on-the-watch/#taking-values-from-the-phone">Settings on the Watch</a> has the rules. A theme past the end of the list reads as the default, so a face adding a theme raises the count in its <code>KNOWN_THEME</code> line too.</p>
+<p><strong>Saved to Flash.</strong> When anything changed, <code>settings_save</code> writes the whole block of settings to the face&#39;s persist key in one write, and the block is read back and checked again at every launch, as <a href="../../how/settings-on-the-watch/#loading-at-launch">Settings on the Watch</a> covers.</p>
+<p><strong>The Face Is Told.</strong> The watch calls the face&#39;s <code>on_settings_changed</code>, and the face redraws from the new values. Its flag says whether the time or date layout changed, for a face that can skip work when it did not:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_settings_changed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> time_or_date_changed)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // load whatever the theme changes, such as the frame picture</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // then rebuild the screen, which reads every setting afresh</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>Some settings start more work on the watch:</p>
+<ul>
+<li><strong>The Temperature Unit.</strong> The weather store converts the reading it already holds, as <a href="../../how/weather-readings/#switching-units">Weather Readings</a> covers.</li>
+<li><strong>Anything Weather Depends On.</strong> The watch asks the phone for fresh weather.</li>
+</ul>
+<p><strong>One Message Holds the Whole Page.</strong> Clay sends every message key on every save, including ones the watch never reads, so the face sizes its inbox for the whole page. LCARS asks for 4096 bytes. <a href="../../how/talking-to-the-phone/#opening-the-connection">Talking to the Phone</a> shows how to work the number out.</p>
+<h2 id="after-a-reinstall">After a Reinstall</h2>
+<p>A reinstalled face, or a watch that was reset, starts with no settings on the watch. The phone usually still has them, so the two sort it out each time the phone code starts:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Phone as Phone Code
+  participant Watch
+  Phone-&gt;&gt;Watch: asks whether the watch has settings
+  alt the phone has settings
+    Watch--&gt;&gt;Phone: SETTINGS_FRESH, 1 when the watch has none saved
+    Phone-&gt;&gt;Watch: the saved settings, marked as a restore
+    Watch-&gt;&gt;Watch: applies and saves them
+  else the phone has none
+    Watch--&gt;&gt;Phone: every setting the watch holds
+    Phone-&gt;&gt;Phone: saves them as clay-settings
+  end</pre>
+<p>The phone is the one that keeps settings for good. Until the restore lands, the watch saves nothing to flash, which <a href="../../how/settings-on-the-watch/#the-fresh-state">Settings on the Watch</a> explains. A restore also skips the unit conversion, since the reading on the watch was fetched in the restored unit already.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<span class="page-step"></span>
+<a class="page-step page-step-next" rel="next" href="../../how/phone-side/"><span>Next</span>The Phone Side</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

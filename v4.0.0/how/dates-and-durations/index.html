@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dates and Durations · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li class="current"><a href="../../how/dates-and-durations/" aria-current="page">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Dates and Durations</h1>
+          
+          <div class="readme"><p>On the 1st of January 2027, a week readout totalled against the calendar year says <code>53/52</code>. The day is in ISO week 53 of 2026, and 2027 itself has only 52 weeks. Small calendar readouts are full of edges like that, which only show on a few days a year, and the framework gets them right once so a face does not find them on someone&#39;s wrist in January. It covers the week number, the day of the year, the days left in it, a month grid, two-letter weekday labels, and a length of time such as a night&#39;s sleep or the wait until sunset.</p>
+<p>The code lives in <a href="../../c/date_8h.html"><code>date.h</code></a> and <a href="../../c/date_8c.html"><code>date.c</code></a>, <a href="../../c/duration_8h.html"><code>duration.h</code></a> and <a href="../../c/duration_8c.html"><code>duration.c</code></a>, and <a href="../../c/weekday_8h.html"><code>weekday.h</code></a> and <a href="../../c/weekday_8c.html"><code>weekday.c</code></a>, all under <code>src/c/core/clock/</code>. The date functions take the fields of a <code>struct tm</code> one at a time, with the year written out in full, so a face passes <code>tm_year + 1900</code>, <code>tm_yday</code>, and <code>tm_wday</code> straight from its clock.</p>
+<h2 id="week-numbers">Week Numbers</h2>
+<p>The week number is the ISO 8601 one. Weeks start on Monday, and week 1 is the week that holds the year&#39;s first Thursday. So the last few days of December can be in next year&#39;s week 1, and the first few days of January in last year&#39;s final week:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Date</th>
+<th align="left">Weekday</th>
+<th align="left">ISO Week</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">28 December 2026</td>
+<td align="left">Monday</td>
+<td align="left">53 of 2026</td>
+</tr>
+<tr>
+<td align="left">31 December 2026</td>
+<td align="left">Thursday</td>
+<td align="left">53 of 2026</td>
+</tr>
+<tr>
+<td align="left">1 January 2027</td>
+<td align="left">Friday</td>
+<td align="left">53 of 2026</td>
+</tr>
+<tr>
+<td align="left">4 January 2027</td>
+<td align="left">Monday</td>
+<td align="left">1 of 2027</td>
+</tr>
+</tbody></table>
+<p><strong>The Week and Its Total.</strong> A readout such as <code>41/53</code> has to take its total from the year the week belongs to, which is not always the calendar year. <code>date_iso_week_year</code> gives that year, so the number and its total always agree:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> year </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_year </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-token-constant)"> 1900</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> week </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> date_iso_week</span><span style="color:var(--code-foreground)">(year</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_yday</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_wday);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> total </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> date_iso_weeks_in_year</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-function)">date_iso_week_year</span><span style="color:var(--code-foreground)">(year</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_yday</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_wday));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">snprintf</span><span style="color:var(--code-foreground)">(out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> n</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "</span><span style="color:var(--code-token-constant)">%d</span><span style="color:var(--code-token-string-expression)">/</span><span style="color:var(--code-token-constant)">%d</span><span style="color:var(--code-token-string-expression)">"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> week</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> total);</span><span style="color:var(--code-token-comment)">   // "53/53" on the 1st of January 2027</span></span></code></pre>
+<p><strong>Finding the Week.</strong> The sum moves to the Thursday of the same week, since that day decides which year the week belongs to, and counts sevens. An answer below 1 means the day belongs to last year&#39;s final week, and one past this year&#39;s total means it is already next year&#39;s week 1.</p>
+<p><strong>52 or 53 Weeks.</strong> A year has 53 ISO weeks when it ends on a Thursday or starts on one. The weekday of the 31st of December is one sum, counting the years and the leap days from a year 0 that ended on a Sunday:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> (year </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-foreground)"> year </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 4</span><span style="color:var(--code-token-keyword)"> -</span><span style="color:var(--code-foreground)"> year </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 100</span><span style="color:var(--code-token-keyword)"> +</span><span style="color:var(--code-foreground)"> year </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 400</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">%</span><span style="color:var(--code-token-constant)"> 7</span><span style="color:var(--code-foreground)">;</span><span style="color:var(--code-token-comment)">   // 0 Sunday to 6 Saturday</span></span></code></pre>
+<p>2020, 2026, and 2032 have 53 weeks.</p>
+<h2 id="counting-days">Counting Days</h2>
+<p><code>date_day_of_year</code> counts the 1st of January as day 1, one more than <code>tm_yday</code>, and <code>date_days_left_in_year</code> counts what is left after today, so the 31st of December reads 0. Leap years follow the full rule, so 1900 was not one and 2000 was.</p>
+<p><strong>A Month Grid.</strong> <code>date_days_in_month</code> gives a month&#39;s length, with February&#39;s leap day, and 0 for a month number that does not exist rather than reading past the end of its table. <code>date_first_wday</code> gives the weekday of the 1st by walking back from today&#39;s weekday, so a face needs nothing more than its clock to lay out the month:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> days </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> date_days_in_month</span><span style="color:var(--code-foreground)">(t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_year </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-token-constant)"> 1900</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_mon);</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> first </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> date_first_wday</span><span style="color:var(--code-foreground)">(t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_wday</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> t</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_mday);</span><span style="color:var(--code-token-comment)">   // 0 Sunday to 6 Saturday</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-comment)">// a grid with Monday in its first column leaves this many empty cells before the 1st</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> lead </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> (first </span><span style="color:var(--code-token-keyword)">-</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-keyword)"> +</span><span style="color:var(--code-token-constant)"> 7</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">%</span><span style="color:var(--code-token-constant)"> 7</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
+<h2 id="durations">Durations</h2>
+<p>Both formats take a count of minutes. A negative count reads as zero, so a countdown that has just passed never shows a stray minus sign. Both write with <code>snprintf</code>, so a buffer too small for the text gets it cut short rather than overrun.</p>
+<p><strong><code>duration_hm</code>.</strong> A clock-style <code>H:MM</code>, for a total such as a night&#39;s sleep. The minutes always have two digits, so 425 minutes reads <code>7:05</code> rather than <code>7:5</code>. The hours are not capped, so 1500 minutes reads <code>25:00</code>.</p>
+<p><strong><code>duration_hm_compact</code>.</strong> <code>Xh Ym</code>, for a countdown, and just the minutes once it is under an hour. 65 minutes reads <code>1h 5m</code> and 45 reads <code>45m</code>.</p>
+<h2 id="weekday-names">Weekday Names</h2>
+<p><code>weekday_short</code> gives the two-letter name for a weekday, <code>SU</code> through <code>SA</code>, numbered from 0 for Sunday like <code>tm_wday</code>. The daily forecast from the phone numbers its days the same way, so a forecast strip and a calendar share one table. A number outside 0 to 6 gives an empty string rather than reading past the table. The names are English only.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/time-bands/"><span>Previous</span>Time Bands and Night Hours</a>
+<a class="page-step page-step-next" rel="next" href="../../how/engine/"><span>Next</span>The Engine</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

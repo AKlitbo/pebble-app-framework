@@ -27,6 +27,8 @@
     <option value="v4.0.0" selected>v4.0.0</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
     <a data-section="c" href="../../c/index.html">Device API</a>
     <a data-section="ts" href="../../ts/index.html">Phone API</a>
     <a data-section="coverage-c" aria-current="location" href="../../coverage/c/index.html">C Coverage</a>
@@ -229,7 +231,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">"weather/weather_reading.h"</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;weather/weather_reading.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l8" href="#l8">8</a></td>
@@ -257,14 +259,14 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">"math/scale.h"</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math/scale.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l12" href="#l12">12</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">"text/cstring_fit.h"</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;text/cstring_fit.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l13" href="#l13">13</a></td>
@@ -278,14 +280,14 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#define SECONDS_PER_READING_HOUR 3600  </span><span class="c1">///&lt; Seconds in an hour, for placing a strip's first column</span></td>
+        <td class="src "><span class="cp">#define SECONDS_PER_READING_HOUR 3600  </span><span class="c1">///&lt; Seconds in an hour, for placing a strip&#39;s first column</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l15" href="#l15">15</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#define SECONDS_PER_READING_DAY  86400 </span><span class="c1">///&lt; Seconds in a day, for placing a strip's first day</span></td>
+        <td class="src "><span class="cp">#define SECONDS_PER_READING_DAY  86400 </span><span class="c1">///&lt; Seconds in a day, for placing a strip&#39;s first day</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l16" href="#l16">16</a></td>
@@ -306,7 +308,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm">/** A number the message left out, as the store's own no-data value. */</span></td>
+        <td class="src "><span class="cm">/** A number the message left out, as the store&#39;s own no-data value. */</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l19" href="#l19">19</a></td>
@@ -485,7 +487,7 @@
           </details>
         </td>
         <td class="linecount partialCoveredLine show_partialCoveredLine">2</td>
-        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="n">cstring_fit</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">"--"</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond</span><span class="p">));</span></td>
+        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="n">cstring_fit</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;--&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond</span><span class="p">));</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l40" href="#l40">40</a></td>
@@ -499,7 +501,7 @@
           </details>
         </td>
         <td class="linecount partialCoveredLine show_partialCoveredLine">2</td>
-        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="n">cstring_fit</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="p">));</span></td>
+        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="n">cstring_fit</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">cond_label</span><span class="p">));</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l41" href="#l41">41</a></td>
@@ -569,7 +571,7 @@
           </details>
         </td>
         <td class="linecount partialCoveredLine show_partialCoveredLine">2</td>
-        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="n">cstring_fit</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">""</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="p">));</span></td>
+        <td class="src  partialCoveredLine show_partialCoveredLine"><span class="w">        </span><span class="n">cstring_fit</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">state</span><span class="o">-&gt;</span><span class="n">wind_dir</span><span class="p">));</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l49" href="#l49">49</a></td>
@@ -1293,7 +1295,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-10-03 03:03:27
+          at 2026-10-05 20:22:35
         </footer>
       </div>
     </div>

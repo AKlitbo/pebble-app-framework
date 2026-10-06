@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Time Zones · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li class="current"><a href="../../how/time-zones/" aria-current="page">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Time Zones</h1>
+          
+          <div class="readme"><p>A second clock shows the time somewhere else, such as a head office or family abroad. The framework handles the whole road for it: a picker on the settings page that finds a city, a zone name, or a plain UTC offset, a phone side that works out how far ahead of UTC the place is today and sends it again when the clocks change there, and small functions on the watch that read the setting. A face only has to draw the time.</p>
+<p>The picker is the location search in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/clay/location-component.ts"><code>location-component.ts</code></a>, turned on for the clock by <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/pkjs/config-builder.ts"><code>config-builder.ts</code></a>. The phone side is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/pkjs/timezone.ts"><code>timezone.ts</code></a> and the push in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/ts/pkjs/app.ts"><code>app.ts</code></a>. The watch side is <a href="../../c/zone__setting_8h.html"><code>zone_setting.h</code></a> and <a href="../../c/zone__setting_8c.html"><code>zone_setting.c</code></a> under <code>src/c/core/clock/</code>.</p>
+<h2 id="what-the-watch-is-sent">What the Watch Is Sent</h2>
+<p>The watch gets one text setting: the minutes ahead of UTC, a comma, and the place&#39;s name. On the 5th of October 2026 these read:</p>
+<pre><code>60,London, England, United Kingdom      a city from the search
+-240,New York                           the America/New_York zone
+330,UTC+05:30                           an offset typed in
+0,UTC</code></pre>
+<p>The minutes come first, so when a long name is cut to fit the space the face gave the setting, only the name gets shorter. The name keeps any commas of its own, and a face showing only the city cuts it at the next comma.</p>
+<p>The watch never sees the zone itself, only the minutes for now. It has no database of zone rules, and the Pebble SDK has no way to ask for another zone&#39;s time. The phone already has that database in its JavaScript runtime, kept current by the phone&#39;s own updates, so the zone stays on the phone and the phone keeps the minutes right.</p>
+<h2 id="picking-a-place">Picking a Place</h2>
+<p>A face asks for the picker with <code>clock: { timeZone: true }</code> in its <code>buildConfig</code> options, which adds an <strong>Alternate Time Zone</strong> search to the Clock section under the <code>CLOCK_TIMEZONE_1</code> message key. As the wearer types, it offers matching rows.</p>
+<p><strong>Zones by Name.</strong> The page&#39;s runtime lists the zones it knows, about four hundred, and the search matches the city on the end first, so <code>london</code> finds Europe/London. A query such as <code>pacific</code> matches anywhere in the name. UTC is offered for <code>utc</code>, <code>gmt</code>, <code>zulu</code>, and <code>greenwich</code>. Each row shows its offset now as a hint.</p>
+<p><strong>Typed Offsets.</strong> <code>utc+5</code>, <code>+05:30</code>, <code>gmt-8</code>, and <code>-0330</code> all turn into a row. A whole hour is saved as its real zone, so UTC+5 becomes <code>Etc/GMT-5</code>, a name whose sign runs the other way round. Anything finer, such as UTC+05:30, has no zone behind it and is saved as the minutes alone, marked as a fixed offset. A fixed offset has no daylight saving to follow, so nothing is lost.</p>
+<p><strong>Cities.</strong> The same Open-Meteo geocoder as the weather location finds cities, and it names each city&#39;s zone. A second request to Open-Meteo fills in the minutes ahead of UTC for today, or the zone for a city the geocoder gave none.</p>
+<p>Whichever row is picked, the page saves it as JSON, such as <code>{&quot;lat&quot;:51.5,&quot;lon&quot;:-0.13,&quot;label&quot;:&quot;London, England, United Kingdom&quot;,&quot;offset&quot;:60,&quot;tz&quot;:&quot;Europe/London&quot;}</code>. The <code>tz</code> is the part that matters. The <code>offset</code> is only the answer on the day it was picked, kept for a phone that cannot look the zone up.</p>
+<h2 id="from-the-saved-place-to-the-setting">From the Saved Place to the Setting</h2>
+<p><code>timezone.toWire</code> turns the saved place into the string for the watch. It reads the minutes off the zone at the moment of sending, never from what was saved:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-constant)"> live</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-token-constant)"> place</span><span style="color:var(--code-foreground)">.tz </span><span style="color:var(--code-token-keyword)">?</span><span style="color:var(--code-token-function)"> offsetMinutes</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">place</span><span style="color:var(--code-foreground)">.tz</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> nowMs) </span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-constant)"> offset</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> live </span><span style="color:var(--code-token-keyword)">===</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-token-keyword)"> ?</span><span style="color:var(--code-token-constant)"> place</span><span style="color:var(--code-foreground)">.offset </span><span style="color:var(--code-token-keyword)">||</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-token-keyword)"> :</span><span style="color:var(--code-foreground)"> live;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> offset </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-token-string-expression)"> ','</span><span style="color:var(--code-token-keyword)"> +</span><span style="color:var(--code-token-constant)"> wire</span><span style="color:var(--code-token-function)">.toAscii</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">place</span><span style="color:var(--code-foreground)">.label);</span></span></code></pre>
+<p><strong>Reading a Zone&#39;s Offset.</strong> <code>offsetMinutes</code> asks <code>Intl.DateTimeFormat</code> what the zone&#39;s wall clock reads now, builds that wall clock as if it were UTC, and subtracts the real UTC time. What is left is the offset, which comes out right for the half hour and three quarter hour zones too: 330 for Kolkata, 345 for Kathmandu, and -150 for St. John&#39;s in summer. Building a formatter is the slow part, so each zone keeps the one it built.</p>
+<p><strong>Plain Letters.</strong> The name is flattened to ASCII on the way out, the same as every text the phone sends, as <a href="../../how/message-formats/#text-on-the-way-over">The Message Formats</a> covers. São Paulo goes over as Sao Paulo.</p>
+<p><strong>When There Is No Zone.</strong> A runtime that cannot read the zone falls back to the offset saved at the pick, and so does a place with no zone saved. Either one stays on the offset it was picked with and goes an hour out when the clocks change. The picker shows a note under a place saved with no zone, asking the wearer to pick it again, which is the whole fix.</p>
+<h2 id="following-daylight-saving">Following Daylight Saving</h2>
+<p>Nothing about the saved settings changes when the clocks go forward, only what the zone reads. So the phone checks every timezone field when its code starts and then every 5 minutes, and sends any whose string has changed since the last one the watch took. Take a London picked in January, which first goes out as <code>0,London</code>:</p>
+<pre class="mermaid">sequenceDiagram
+  participant Timer as Refresh Timer
+  participant Phone as Phone Code
+  participant Watch
+  participant Face
+  Timer-&gt;&gt;Phone: a tick, every 5 minutes
+  Phone-&gt;&gt;Phone: reads London&#39;s offset, still 0
+  Note over Phone: the same as the last one sent, so nothing goes
+  Note over Timer,Phone: 01:00 UTC on the 29th of March, British Summer Time starts
+  Timer-&gt;&gt;Phone: the next tick
+  Phone-&gt;&gt;Phone: reads London&#39;s offset, now 60
+  Phone-&gt;&gt;Watch: &quot;60,London&quot;, through the send queue
+  Watch-&gt;&gt;Watch: applies and saves the setting
+  Watch-&gt;&gt;Face: on_settings_changed
+  Watch--&gt;&gt;Phone: ack
+  Phone-&gt;&gt;Phone: records &quot;60,London&quot; as sent</pre>
+<p><strong>Only Once the Watch Has It.</strong> A string counts as sent only when the watch acks it. A send that fails every retry is picked up again on the next tick rather than counted as delivered. The send goes through the same queue as everything else, which <a href="../../how/phone-side/#the-send-queue">The Phone Side</a> covers.</p>
+<p><strong>Up to 5 Minutes Late.</strong> For the first few minutes after the change the second clock can still show the old hour. The check is a few lookups and sends nothing when nothing moved, so it costs the watch nothing between changes.</p>
+<p><strong>Only While the Phone Code Runs.</strong> The timer is the phone code&#39;s background refresh, covered on <a href="../../how/phone-side/#the-background-refresh">The Phone Side</a>. A phone that suspends the code sends nothing until it starts again, and every start sends every zone afresh, so the watch catches up then.</p>
+<h2 id="reading-it-on-the-watch">Reading It on the Watch</h2>
+<p>The setting is an ordinary text setting in the face&#39;s own schema, saved to flash with the rest:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{ .id </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> SETTING_COUNT</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .message_key </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">MESSAGE_KEY_CLOCK_TIMEZONE_1</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  .type </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> SETTING_CSTRING</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .offset </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> offsetof(MySettings</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> zone_1)</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  .size </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 32</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .default_str </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> ""</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span></code></pre>
+<p>The face also lists <code>CLOCK_TIMEZONE_1</code> under <code>messageKeys</code>. The string holds the minutes ahead of UTC and then the place&#39;s name, and <code>zone_setting_offset</code> and <code>zone_setting_label</code> read the two halves. An empty string means no place is picked, which is what the phone sends when the wearer clears the picker, so <code>zone_setting_is_set</code> reads it as no zone and a face shows dashes rather than a clock for a place nobody chose. <code>0,UTC</code> is a real zone and counts as set.</p>
+<h2 id="showing-a-second-clock">Showing a Second Clock</h2>
+<p>The watch&#39;s clock counts seconds in UTC, so adding the zone&#39;s minutes and breaking the result apart with <code>gmtime</code> gives that place&#39;s wall clock:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-keyword)"> char</span><span style="color:var(--code-token-keyword)"> *</span><span style="color:var(--code-foreground)">zone </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> s_settings.zone_1;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">!</span><span style="color:var(--code-token-function)">zone_setting_is_set</span><span style="color:var(--code-foreground)">(zone))</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    snprintf(out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> n</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "--:--"</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)"> there </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> time</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">NULL</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">+</span><span style="color:var(--code-token-function)"> zone_setting_offset</span><span style="color:var(--code-foreground)">(zone) </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 60</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">struct</span><span style="color:var(--code-foreground)"> tm </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">wall </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> gmtime</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">&#x26;</span><span style="color:var(--code-foreground)">there);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">snprintf</span><span style="color:var(--code-foreground)">(out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> n</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "</span><span style="color:var(--code-token-constant)">%02d</span><span style="color:var(--code-token-string-expression)">:</span><span style="color:var(--code-token-constant)">%02d</span><span style="color:var(--code-token-string-expression)">"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> wall</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_hour</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> wall</span><span style="color:var(--code-token-keyword)">-></span><span style="color:var(--code-foreground)">tm_min);</span></span></code></pre>
+<p>For a short label, a face copies <code>zone_setting_label</code> up to the next comma, so <code>London, England, United Kingdom</code> shows as <code>London</code>.</p>
+<p>The second clock changes on the same minute tick as the main one. Only the offset waits on the phone.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/tides/"><span>Previous</span>Tides</a>
+<a class="page-step page-step-next" rel="next" href="../../how/time-bands/"><span>Next</span>Time Bands and Night Hours</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

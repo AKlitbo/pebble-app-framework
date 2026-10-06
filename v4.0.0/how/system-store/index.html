@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The System Store · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li class="current"><a href="../../how/system-store/" aria-current="page">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The System Store</h1>
+          
+          <div class="readme"><p>The system store holds the watch&#39;s own state: how full the battery is, whether it is charging, whether the phone is connected, and when the next alarm goes off. It subscribes to the watch&#39;s battery and connection services itself, buzzes when the phone connects or drops in whatever way the face chooses, and tells the face when the phone comes back so the readings that come from the phone can catch up. A face starts it once and reads the values back.</p>
+<p>It lives in <a href="../../c/system__store_8h.html"><code>system_store.h</code></a> and <a href="../../c/system__store_8c.html"><code>system_store.c</code></a>.</p>
+<h2 id="setting-it-up">Setting It Up</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">system_store_init</span><span style="color:var(--code-foreground)">((SystemConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .vibe </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> vibe_bt_transition}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">system_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
+<span class="line"><span style="color:var(--code-token-function)">system_store_on_reconnect</span><span style="color:var(--code-foreground)">(on_phone_reconnected);</span></span></code></pre>
+<p>A live store subscribes to both services and then asks each one for its current reading, so it holds the real battery level and connection state straight away rather than waiting for the first change. The face reads them with <code>system_store_battery</code>, <code>system_store_charging</code>, and <code>system_store_bluetooth</code>.</p>
+<p>The store has no reconfigure, since nothing in it comes from settings. <code>system_store_deinit</code> drops both service subscriptions.</p>
+<h2 id="the-battery">The Battery</h2>
+<p>Each battery event stores the level, from 0 to 100, and whether the watch is plugged in, then tells the face to redraw. The battery service sends an event when either one changes, so a battery panel stays current without polling.</p>
+<h2 id="the-phone-connection">The Phone Connection</h2>
+<p>The connection the store tracks is the link to the Pebble app on the phone, rather than the bluetooth radio on its own. That is the link the phone-fed stores need, since their data comes through the app.</p>
+<p><strong>The First Reading Only Seeds.</strong> The reading taken at init sets the state and nothing else. A face that launched with the phone away never buzzes at launch, and a face that launched with the phone there never runs its reconnect work at launch, where the stores&#39; own first fetch already covers it.</p>
+<p><strong>A Real Change.</strong> After that, every report from the connection service runs through the same steps:</p>
+<pre class="mermaid">flowchart TD
+  report[&quot;the connection service reports&quot;] --&gt; keep[&quot;store the new state&quot;]
+  keep --&gt; changed{&quot;a real change, not the first reading?&quot;}
+  changed -- no --&gt; redraw[&quot;tell the face to redraw&quot;]
+  changed -- yes --&gt; buzz[&quot;run the face&#39;s buzz policy, if it has one&quot;]
+  buzz --&gt; back{&quot;did the phone just connect?&quot;}
+  back -- no --&gt; redraw
+  back -- yes --&gt; catchup[&quot;run the face&#39;s reconnect callback&quot;]
+  catchup --&gt; redraw</pre>
+<p>The new state goes in first, so a buzz policy or a reconnect callback that reads the store sees the phone as connected.</p>
+<p><strong>Buzzing.</strong> The store never buzzes on its own. It calls the policy the face handed it, with true when the phone connected and false when it dropped, and a NULL policy keeps every change silent. The store knows nothing about settings or vibration patterns, so a face can swap in a rule of its own without touching the store, such as always buzzing twice on a drop and never on a connect:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_link_change</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> connected)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-keyword)">!</span><span style="color:var(--code-foreground)">connected)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    {</span></span>
+<span class="line"><span style="color:var(--code-token-function)">        vibe_pulse(VibePulseDouble)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">    }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">system_store_init</span><span style="color:var(--code-foreground)">((SystemConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .vibe </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> on_link_change}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> NULL</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p>The framework&#39;s own policy, <code>vibe_bt_transition</code>, plays the buzz the wearer picked on the settings page, as <a href="../../how/vibrations/#phone-connect-and-disconnect">Vibrations</a> covers.</p>
+<p><strong>Catching Up after a Reconnect.</strong> The phone&#39;s PebbleKit JS may have been closed the whole time the phone was away, so the weather, stocks, or calendar can be stale when it comes back. The store runs the face&#39;s reconnect callback only on a change from disconnected to connected. The face decides which readings to ask for again, and <a href="../../how/stores/#polling-on-wall-clock-deadlines">How the Stores Work</a> shows the check that keeps a flapping connection from fetching faster than the normal polling. The store holds one callback, so a face with several phone-fed stores catches them all up from the same function.</p>
+<h2 id="the-next-alarm">The Next Alarm</h2>
+<p>The alarm service has nothing to subscribe to, so the store does not hold the alarm. <code>system_store_next_alarm</code> asks the service on every call:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">time_t</span><span style="color:var(--code-foreground)"> when;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (</span><span style="color:var(--code-token-function)">system_store_next_alarm</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">&#x26;</span><span style="color:var(--code-foreground)">when))</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    struct</span><span style="color:var(--code-foreground)"> tm </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-foreground)">at </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> localtime(</span><span style="color:var(--code-token-keyword)">&#x26;</span><span style="color:var(--code-token-function)">when)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    // draw at->tm_hour and at->tm_min</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>It returns false and sets the time to 0 when no alarm is on, and the time it gives is UTC. On a platform without the alarm service the SDK defines the call away to false, so the same face code reads as no alarm there.</p>
+<p>Nothing tells the face when the wearer sets or clears an alarm. An alarm panel picks up the change on the next redraw, which on the minute tick is within a minute. The store spends no memory on it and the reading can never go stale.</p>
+<h2 id="seeding">Seeding</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">SystemSeed seed </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {.battery </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 64</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .charging </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .bluetooth </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .next_alarm </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">};</span></span>
+<span class="line"><span style="color:var(--code-token-function)">system_store_init</span><span style="color:var(--code-foreground)">((SystemConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">seed);</span></span></code></pre>
+<p>The next alarm reads back the seeded time, with 0 for none. The seed is written straight into the store, so seeding a disconnected phone never runs the buzz policy. A store that is not live and has no seed reads 0 percent and disconnected, so a screenshot build sets the battery and the connection it shows. A seed with <code>live</code> true lasts no time at all, since init reads both services straight after it. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/time-store/"><span>Previous</span>The Time Store</a>
+<a class="page-step page-step-next" rel="next" href="../../how/location-store/"><span>Next</span>The Location Store</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

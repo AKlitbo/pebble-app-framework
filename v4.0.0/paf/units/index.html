@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Units · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" aria-current="location" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Units</h1>
+          <nav class="section-nav" aria-label="Pages in this section">
+<ul>
+<li><a href="../../paf/">paf</a></li>
+<li><a href="../../paf/units/" aria-current="page">Units</a></li>
+<li><a href="../../paf/commands/">Commands</a></li>
+<li><a href="../../paf/workflows/">Workflows</a></li>
+<li><a href="../../paf/troubleshooting/">Troubleshooting</a></li>
+</ul>
+</nav>
+          <div class="readme"><p>A unit is a folder with a <code>paf.config.json</code>. Each unit pins its own framework tag, keeps its own copy of the framework in <code>paf/</code>, and has its own <code>package.json</code>, lock, and <code>node_modules</code>. It works like a small repo of its own inside the face repo.</p>
+<p><code>paf</code> finds the repo from the nearest folder above it holding <code>.git</code>, so it runs from anywhere inside the repo, a family&#39;s folder included. Outside a repo it stops with <code>this is not inside a git repo. Run paf from a face repo</code>.</p>
+<h2 id="where-units-sit">Where Units Sit</h2>
+<p><code>paf</code> looks in two places:</p>
+<ul>
+<li>the repo root, for a repo that is one face or one family</li>
+<li>each folder straight under <code>watchfaces/</code> or <code>watchapps/</code>, for a family or a face of its own</li>
+</ul>
+<p>The two folders only sort faces from apps, and a unit in either is laid out the same. A unit at the root is named after the repo&#39;s folder. A unit under <code>watchfaces/</code> or <code>watchapps/</code> is named after its own folder, and two units with the same name are refused.</p>
+<h2 id="finding-the-faces">Finding the Faces</h2>
+<p>A face is a folder holding a <code>pebble.appinfo.json</code> at its own root.</p>
+<ul>
+<li><strong>A face of its own:</strong> the appinfo sits at the unit&#39;s root, and the face is named by the <code>name</code> in it.</li>
+<li><strong>A family:</strong> the unit has a <code>core/</code> folder for the code its faces share, and each folder beside <code>core/</code> holding an appinfo is a face, named by its folder.</li>
+</ul>
+<p>A face&#39;s name has to be unique across the whole repo, since commands like <code>paf build</code> take a face by name alone.</p>
+<h2 id="one-face-at-the-root">One Face at the Root</h2>
+<p>A repo that is a single face, such as the LCARS face:</p>
+<pre><code>my-face/
+  paf.config.json
+  package.json          workspaces: [&quot;paf&quot;, &quot;paf/plugins/*&quot;]
+  package-lock.json
+  pebble.appinfo.json   this makes the root a face
+  src/
+  resources/
+  tsconfig.json
+  paf/                  filled by paf sync
+  node_modules/
+  targets/              build output</code></pre>
+<h2 id="one-family-at-the-root">One Family at the Root</h2>
+<p>A repo that is a single family keeps <code>core/</code> and its faces at the root:</p>
+<pre><code>my-family/
+  paf.config.json
+  package.json
+  package-lock.json
+  core/                 the code every face in the family shares
+  first-face/           pebble.appinfo.json, src/, resources/
+  second-face/
+  paf/
+  node_modules/
+  targets/</code></pre>
+<h2 id="units-under-watchfaces">Units under watchfaces/</h2>
+<p>A repo with several units keeps each under <code>watchfaces/</code> or <code>watchapps/</code>. Each one is a family or a face of its own, laid out as above:</p>
+<pre><code>my-faces/
+  watchfaces/
+    my-family/          a family
+      paf.config.json
+      package.json
+      core/
+      first-face/
+      second-face/
+      paf/
+    my-face/            a face of its own
+      paf.config.json
+      package.json
+      pebble.appinfo.json
+      src/
+      paf/</code></pre>
+<h2 id="pafconfigjson">paf.config.json</h2>
+<p>The unit&#39;s settings. <code>paf pin</code> writes <code>framework</code> and <code>commit</code> and leaves every other key as it was.</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "framework"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "v4.0.0"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "commit"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "400253928ca9a73316ebb33082258be9ca9df5a2"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "plugins"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "icons"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"sources"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "../../icons"</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "thumbnails"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "dev"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {}</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "code-style"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"prettier"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "gen"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "palettes"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"script"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "tools/generate-palettes.ts"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "after"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "clay"</span><span style="color:var(--code-foreground)"> }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p><strong><code>framework</code>:</strong> the framework tag the unit builds against. It has to be a framework 4 version tag, such as <code>v4.0.0</code>.</p>
+<p><strong><code>commit</code>:</strong> the commit the tag pointed at when it was pinned. If the tag later points somewhere else, <code>paf sync</code> stops rather than build against a framework nobody chose. <code>paf pin</code> records it, and so does the first <code>paf sync</code> when it is missing.</p>
+<p><strong><code>plugins</code>:</strong> the framework plugins the unit uses, each with its settings, or <code>{}</code> for none. Only listed plugins are copied into <code>paf/plugins/</code>, and only their generators, checks, and tools run. The order matters, since <code>paf gen &lt;face&gt; all</code> runs the plugins&#39; generators in the order they are listed.</p>
+<p><strong><code>gen</code>:</strong> the unit&#39;s own generators. Each one has a <code>script</code>, a <code>.ts</code> file with its path from the unit, and can take an <code>after</code> naming the generator it runs straight after, and a <code>when</code> naming the file or folder a face needs for it to run. See <a href="../../paf/workflows/#generators">Generators</a>.</p>
+<p>A name made only of digits, a generator called <code>all</code>, and the name <code>__proto__</code> are refused.</p>
+<h2 id="the-frameworks-plugins">The Framework&#39;s Plugins</h2>
+<p>Framework 4 ships these. List one under <code>plugins</code> to use it.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Plugin</th>
+<th align="left">What <code>paf</code> runs from it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>icons</code></td>
+<td align="left">the <code>icons</code> generator and its check. <code>sources</code> is the folder of icon SVGs, from the unit</td>
+</tr>
+<tr>
+<td align="left"><code>thumbnails</code></td>
+<td align="left">the <code>thumbnails</code> generator and its check</td>
+</tr>
+<tr>
+<td align="left"><code>frame</code></td>
+<td align="left">the <code>background</code> generator, for faces with a <code>frame/frame.config.json</code></td>
+</tr>
+<tr>
+<td align="left"><code>dev</code></td>
+<td align="left">the <code>clay-preview</code> and <code>tap-walk</code> tools</td>
+</tr>
+<tr>
+<td align="left"><code>code-style</code></td>
+<td align="left"><code>paf lint</code> and <code>paf format</code>. <code>&quot;prettier&quot;: true</code> turns on Prettier for <code>paf format</code></td>
+</tr>
+</tbody></table>
+<p>The framework itself, with no plugin listed, offers the <code>clay</code> generator, the check that its output is current, and the build.</p>
+<h2 id="packagejson">package.json</h2>
+<p><code>npm</code> installs the unit from its own <code>package.json</code>, so every unit needs one, along with a <code>package-lock.json</code>. It has to list the framework and its plugins as workspaces:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "private"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "workspaces"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">"paf"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "paf/plugins/*"</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "engines"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"node"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "^22.18.0 || >=24.2.0"</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "scripts"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "test"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "vitest run"</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>Without the workspaces npm never installs the framework&#39;s packages or the plugins&#39;, and every command that readies the unit stops and says what to add. <code>paf test</code> runs the unit&#39;s own <code>test</code> script, so a unit with specs keeps its own <code>vitest.config.ts</code>.</p>
+<h2 id="gitignore">.gitignore</h2>
+<p>Everything <code>paf</code> fills or writes is ignored:</p>
+<pre><code>/paf/
+/paf.paf-*/
+/node_modules/
+/targets/</code></pre>
+<p><code>paf.paf-new/</code> and <code>paf.paf-old/</code> only exist for a moment while <code>paf/</code> is swapped for a new copy. <code>paf doctor</code> reports any of these folders that git would pick up.</p>
+<h2 id="what-paf-holds">What paf/ Holds</h2>
+<p><code>paf/</code> is a copy of the framework&#39;s <code>src/</code> folder at the pinned commit. It leaves out the framework&#39;s specs, their fixtures, and any plugin the unit does not list. It has no <code>.git</code>, and an edit made there is lost the next time it is filled. To work on the framework itself, point the unit at a clone with <a href="../../paf/commands/#paf-use">paf use</a>.</p>
+<p>A face imports the framework by relative path from <code>paf/</code>, and the build stages the framework&#39;s C from there too. The editor, the specs, and the build all read the same <code>paf/</code>, so each unit checks and builds against its own framework.</p>
+</div>
+          
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

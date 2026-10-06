@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Icons Plugin · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li class="current"><a href="../../how/icons-plugin/" aria-current="page">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>The Icons Plugin</h1>
+          
+          <div class="readme"><p>The <code>icons</code> plugin turns a face&#39;s SVG icons into the PNGs the watch draws. A face lists each icon in <code>resources/icons.json</code> with the SVG it comes from and the size it shows at, and <code>paf gen &lt;face&gt; icons</code> draws every one as a white PNG at exactly that size, then writes a matching entry into the face&#39;s media list so the C code gets a resource id for each. <code>paf check</code> reports a face whose media list has fallen behind its <code>icons.json</code>. What happens to the icons on the watch, from the cache to the tint, is on <a href="../../how/icons/">Icons</a>.</p>
+<p>The generator is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/plugins/icons/generate-icons.ts"><code>generate-icons.ts</code></a>, the media list code is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/plugins/icons/media.ts"><code>media.ts</code></a>, and the check is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/plugins/icons/check-icons.ts"><code>check-icons.ts</code></a>. The plugin&#39;s <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/plugins/icons/package.json"><code>package.json</code></a> names the generator and the check for <code>paf</code> under its <code>paf</code> key, and brings in sharp, which does the drawing. A unit that does not list the plugin never installs sharp.</p>
+<h2 id="turning-it-on">Turning It On</h2>
+<p>A unit lists the plugin under <code>plugins</code> in its <code>paf.config.json</code>, with <code>sources</code> naming the folder that holds the SVGs:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "plugins"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    "icons"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"sources"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "icons"</span><span style="color:var(--code-foreground)"> }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">  }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The folder can have any name, and its path is from the unit&#39;s own folder, so a unit under <code>watchfaces/</code> reaching a folder at the root of its repo writes <code>&quot;../../icons&quot;</code>. Without the setting, the generator reads the folder from the <code>ICON_SOURCES</code> environment variable, and with neither it stops and names the setting to add. It also stops when the folder is not there, or holds none of the icon sets, since a wrong folder would otherwise leave every icon on its old PNG with a warning each and pass.</p>
+<p><strong>Sets by Key.</strong> <code>icons.json</code> names an SVG by a short key and a file name, and each key reads from one subfolder of the sources folder. Both the keys and the subfolder names are fixed in the plugin:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Key</th>
+<th align="left">Subfolder</th>
+<th align="left">Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>wi</code></td>
+<td align="left"><code>weather-icons/svg/</code></td>
+<td align="left"><code>wi/wi-day-sunny</code> reads <code>weather-icons/svg/wi-day-sunny.svg</code></td>
+</tr>
+<tr>
+<td align="left"><code>ux</code></td>
+<td align="left"><code>uxwing/</code></td>
+<td align="left"><code>ux/thermometer-icon</code> reads <code>uxwing/thermometer-icon.svg</code></td>
+</tr>
+<tr>
+<td align="left"><code>sr</code></td>
+<td align="left"><code>svgrepo/</code></td>
+<td align="left"><code>sr/bluetooth-on</code> reads <code>svgrepo/bluetooth-on.svg</code></td>
+</tr>
+</tbody></table>
+<p>The subfolders are named after the Weather Icons, UXWing, and SVG Repo collections the keys were made for, though an SVG from anywhere works once it sits in one of the three. An SVG outside them is never found. A key the plugin does not know stops the run, and a subfolder of another name needs a new key in the plugin.</p>
+<p><strong>One Face at a Time.</strong> <code>paf gen &lt;face&gt; icons</code> renders one face, and a face with no <code>resources/icons.json</code> gets an error saying so. <code>paf gen &lt;face&gt; all</code> only runs it on a face that has one.</p>
+<p><strong>Only Regenerating Needs the SVGs.</strong> A face commits its rendered PNGs and its media list, and nothing else reads the SVGs. A fresh clone or a CI job builds from the committed PNGs with no sources folder at all, so a repo can keep third-party artwork it is not free to share in a folder git ignores.</p>
+<h2 id="listing-the-icons">Listing the Icons</h2>
+<p><code>resources/icons.json</code> maps each icon&#39;s name to its SVG and its size in pixels, width first:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "bluetooth"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)">         { </span><span style="color:var(--code-token-keyword)">"svg"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "sr/bluetooth-on"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)">     "size"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-constant)">14</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 14</span><span style="color:var(--code-foreground)">] }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "thermometer"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)">       { </span><span style="color:var(--code-token-keyword)">"svg"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "ux/thermometer-icon"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "size"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-constant)">13</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 17</span><span style="color:var(--code-foreground)">] }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "thermometer-sm"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)">    { </span><span style="color:var(--code-token-keyword)">"svg"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "ux/thermometer-icon"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "size"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-constant)">10</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 13</span><span style="color:var(--code-foreground)">] }</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "weather-now-clear"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"svg"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "wi/wi-day-sunny"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)">     "size"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-constant)">24</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 24</span><span style="color:var(--code-foreground)">] }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The name becomes both the file, <code>resources/icons/thermometer-sm.png</code>, and the resource id, <code>ICON_THERMOMETER_SM</code>, in capitals with each dash an underscore. The C code reaches it as <code>RESOURCE_ID_ICON_THERMOMETER_SM</code>.</p>
+<p><strong>One Size per Icon.</strong> Pebble draws a bitmap at its own size and never scales it, so each icon is drawn at exactly the size it shows at. A face that shows one glyph at two sizes lists it twice under two names, as the thermometer above does. Each face picks its own sizes, so the same condition can be 24 pixels on one face and 12 on another. The same PNG goes to every watch the face builds for.</p>
+<p><strong>Names the Framework Looks For.</strong> A face whose list holds <code>weather-now-na</code> gets the framework&#39;s weather lookup compiled in, and the lookup then expects the rest of the <code>weather-now-</code> set by name. <a href="../../how/icons/#weather-icons">Icons</a> covers the lookup.</p>
+<h2 id="drawing-an-svg-into-a-png">Drawing an SVG into a PNG</h2>
+<p>Before sharp draws an SVG, the generator makes its glyph white. Every <code>fill</code> or <code>stroke</code> written as black becomes white, and an SVG whose root sets no fill gets a white fill and stroke on the root, which is the colour any shape without its own colour takes. A root that already sets a fill, such as <code>fill=&quot;none&quot;</code> on an outline icon, is left alone so the outline stays open rather than filling in solid. The change is a text replace on the SVG rather than a parsed document, so a colour set any other way, such as in a stylesheet or as a grey, comes through as drawn.</p>
+<p>sharp then scales the drawing to fit the box <code>icons.json</code> gives, keeping its shape, and fills the rest of the box with clear pixels. A tall glyph in a square box sits centred, with clear space either side.</p>
+<p><strong>Trimming to the Glyph.</strong> Some SVGs draw a small glyph in the middle of a large empty canvas, so it comes out smaller than its neighbours at the same size. An icon marked <code>trim</code> is first drawn into a 240 pixel square and cropped to the pixels more than about six percent visible, and only then fitted to its box, so the glyph itself fills it:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"weather-hilo-up"</span><span style="color:var(--code-foreground)">: { </span><span style="color:var(--code-token-keyword)">"svg"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "wi/wi-direction-up"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "size"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-constant)">14</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-constant)"> 14</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "trim"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> }</span></span></code></pre>
+<p>Trimming removes the empty space in the SVG once, when the PNG is made. Fitting the trimmed glyph to a box of another shape still leaves clear space on one side, and the watch measures that border for lining icons up by their visible art, as <a href="../../how/icons/#lining-up-by-the-visible-art">Lining Up by the Visible Art</a> covers.</p>
+<h2 id="why-the-icons-are-white">Why the Icons Are White</h2>
+<pre class="mermaid">flowchart LR
+  svg[&quot;svg in the sources folder&quot;] --&gt; white[&quot;made white&quot;]
+  white --&gt; fit[&quot;trimmed and fitted to its size&quot;]
+  fit --&gt; png[&quot;committed png in resources/icons&quot;]
+  json[&quot;icons.json&quot;] --&gt; media[&quot;media list in pebble.appinfo.json&quot;]
+  png --&gt; sdk[&quot;the Pebble SDK packs it as a colour table&quot;]
+  media --&gt; sdk
+  sdk --&gt; get[&quot;icon_get loads it on the watch&quot;]
+  get --&gt; tint[&quot;icon_tint repaints the table&quot;]</pre>
+<p>The PNG sharp writes is full colour, but that is not what reaches the watch. The Pebble SDK packs a picture with 16 or fewer colours as a colour table, as <a href="../../how/frame-plugin/#what-a-background-costs">What a Background Costs</a> covers. A white glyph with soft edges comes out with four entries, clear and white at three levels of see-through, and packs at two bits a pixel.</p>
+<p>That table is what <code>icon_tint</code> repaints on the watch, so one white PNG serves every theme and any colour the wearer picks, as <a href="../../how/icons/#painting-an-icon-a-colour">Painting an Icon a Colour</a> covers. Forcing every glyph to one colour is what keeps its table down to those few shades of white. An SVG that kept a second colour would pack more entries and still tint to one flat colour, and past 16 colours it would have no table to tint at all. White is also what the icon shows on a face that draws it without a tint.</p>
+<h2 id="when-a-source-is-missing">When a Source Is Missing</h2>
+<p>An icon whose SVG is not in the sources folder keeps the PNG it already has, with a warning, so a machine missing one set still regenerates the rest. That only holds when the PNG is the size <code>icons.json</code> asks for. A PNG of another size was drawn before the size changed, and keeping it would draw the old size in the new spot, so the run stops. It also stops when there is no PNG to keep, since the build would fail on the missing resource.</p>
+<p>The cost is that a mistyped SVG name on an icon that already has a PNG only warns, and the old PNG ships. The folder checks before any icon is drawn catch the common mistake, a <code>sources</code> setting that points at the wrong folder, so the warning is worth keeping a partial set working.</p>
+<h2 id="the-media-list">The Media List</h2>
+<p>Once the PNGs are drawn, the generator writes one bitmap entry per icon into the <code>resources.media</code> list in the face&#39;s <code>pebble.appinfo.json</code>, which <code>paf build</code> turns into the face&#39;s <code>package.json</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{ </span><span style="color:var(--code-token-keyword)">"type"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "bitmap"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "name"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "ICON_BLUETOOTH"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "file"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "icons/bluetooth.png"</span><span style="color:var(--code-foreground)"> },</span></span></code></pre>
+<p><strong>The Icon Block Is Rebuilt Whole.</strong> Any bitmap whose file sits under an <code>icons/</code> folder counts as one of the plugin&#39;s, and the whole set is replaced from <code>icons.json</code>, in its order. An icon taken out of <code>icons.json</code> leaves the list, and so does a bitmap added there by hand under <code>icons/</code>. Its PNG stays on disk until it is deleted by hand, but nothing packs it.</p>
+<p><strong>Hand Edits That Survive.</strong> An icon the list already had keeps any extra field written on it, such as <code>targetPlatforms</code> to ship it on one watch only, or a <code>memoryFormat</code>. Running the generator again on a face that has not changed writes the same bytes.</p>
+<h2 id="what-paf-check-catches">What <code>paf check</code> Catches</h2>
+<p><code>paf check</code> builds each face&#39;s media list again from its <code>icons.json</code>, in memory, and compares it with the committed appinfo. An icon added to <code>icons.json</code> without a fresh <code>paf gen</code> would leave the C code with no resource id for it and the face would not build, so the check names the face and the <code>paf gen &lt;face&gt; icons</code> line that fixes it. It also reports a face that has an <code>icons.json</code> but no media list to write into. The check reads only JSON, so it needs no sources folder and runs anywhere the unit does, CI included.</p>
+<p>It does not look at the PNGs. A new size in <code>icons.json</code>, or an icon pointed at a different SVG, leaves the media list as it was, so the check passes while the committed PNG still shows the old one. Running <code>paf gen &lt;face&gt; icons</code> after any edit to <code>icons.json</code> is what keeps the two in step. <a href="../../paf/commands/#paf-check">Commands</a> covers <code>paf check</code> itself.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/vibrations/"><span>Previous</span>Vibrations</a>
+<a class="page-step page-step-next" rel="next" href="../../how/frame-plugin/"><span>Next</span>The Frame Plugin</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

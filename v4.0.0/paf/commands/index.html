@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commands · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" aria-current="location" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>Commands</h1>
+          <nav class="section-nav" aria-label="Pages in this section">
+<ul>
+<li><a href="../../paf/">paf</a></li>
+<li><a href="../../paf/units/">Units</a></li>
+<li><a href="../../paf/commands/" aria-current="page">Commands</a></li>
+<li><a href="../../paf/workflows/">Workflows</a></li>
+<li><a href="../../paf/troubleshooting/">Troubleshooting</a></li>
+</ul>
+</nav>
+          <div class="readme"><p><code>paf help</code>, <code>paf --help</code>, <code>paf -h</code>, or <code>paf</code> on its own prints the list:</p>
+<pre><code>paf: gives each family or face its own pebble-app-framework, and builds and checks it in place
+
+usage: paf &lt;command&gt; [args]
+
+  sync [unit] [--locked] [--force]
+                               fill each unit&#39;s paf/ from its pinned tag and install its node_modules
+  status                       each unit&#39;s faces, tag, the newest framework 4 tag, and whether it is ready
+  pin &lt;unit&gt; &lt;tag|latest&gt;
+                               move a unit to another tag, showing the changelog between them first
+  use &lt;unit&gt; local [path]      point a unit&#39;s paf/ at a local framework clone, builds included
+  use &lt;unit&gt; pinned            put it back on its tag
+  build &lt;face|all&gt; [--clean]   build a face in its unit (not on Windows itself), clean when message keys, dependencies, or the framework changed
+  gen &lt;face&gt; &lt;kind|all&gt; [args]
+                               run one generator the framework, a listed plugin, or the unit offers for a face,
+                               or all it has inputs for
+  check [unit]                 run every check the framework and the listed plugins ship, in every unit or one
+  tool &lt;face&gt; &lt;name&gt; [args]    run a tool a listed plugin offers, such as clay-preview or tap-walk
+  run &lt;unit|face&gt; &lt;script&gt; [args]
+                               run any npm script in a unit
+  test | typecheck [unit]      run the unit&#39;s own test script, or tsc on its own tsconfigs, in every unit or one
+  lint [unit] [--fix]          lint a unit with what a listed plugin offers, or its own lint script, in every unit or one
+  format [unit] [--check]      format a unit&#39;s files the same way, or with --check say which would change
+  doctor                       check git, node, the pins, the unit layout, the SDK, and the workflows
+
+A unit is a folder with a paf.config.json: a family or a face of its own under watchfaces/ or watchapps/,
+or the repo root for a repo that is one face or one family. PAF_HOME moves the cache. PAF_REPO fetches the framework from
+another URL or path.</code></pre>
+<p>The examples on this page come from two face repos. <code>pebble-watchface-lcars</code> is a single face, <code>lcars-stardate</code>, at its root. The other keeps several units under <code>watchfaces/</code>, among them the <code>mosaic</code> family with its <code>gridlock</code> and <code>sidereel</code> faces.</p>
+<h2 id="what-every-command-shares">What Every Command Shares</h2>
+<p><strong>Naming a Unit.</strong> Wherever a command takes <code>[unit]</code>, a face name works too and picks the unit that holds it. So <code>paf sync gridlock</code> syncs the whole <code>mosaic</code> family. Leaving the unit out runs every unit in the repo.</p>
+<p><strong>One Unit at a Time.</strong> <code>sync</code>, <code>check</code>, <code>test</code>, <code>typecheck</code>, <code>lint</code>, and <code>format</code> take at most one unit, and stop when given two:</p>
+<pre><code>$ paf sync a b
+paf: paf sync takes one unit and was given 2: a, b. Run it once for each, or with none for every unit</code></pre>
+<p><strong>Flags.</strong> <code>sync</code>, <code>status</code>, <code>pin</code>, <code>use</code>, <code>check</code>, <code>test</code>, <code>typecheck</code>, <code>lint</code>, <code>format</code>, and <code>doctor</code> refuse a flag they do not take, so a mistyped <code>--locked</code> in CI stops rather than running a sync that writes:</p>
+<pre><code>$ paf status --verbose
+paf: paf status has no flag --verbose</code></pre>
+<p><code>build</code>, <code>gen</code>, <code>run</code>, and <code>tool</code> pass every argument on to what they run.</p>
+<p><strong>Readying a Unit.</strong> <code>build</code>, <code>gen</code>, <code>check</code>, <code>tool</code>, <code>run</code>, <code>test</code>, <code>typecheck</code>, <code>lint</code>, and <code>format</code> sync the unit before they run anything, so a fresh clone or a pin a teammate moved is taken care of. They only fetch the framework when the cache lacks the pinned commit, so they work offline once a unit has synced. <code>sync</code>, <code>pin</code>, and <code>use &lt;unit&gt; pinned</code> always fetch. <code>status</code> and <code>doctor</code> never do.</p>
+<p><strong>Node.</strong> <code>build</code>, <code>gen</code>, <code>check</code>, <code>tool</code>, <code>lint</code>, and <code>format</code> run the framework&#39;s own scripts, and refuse a Node outside the range in <code>paf/package.json</code>.</p>
+<p><strong>Exit Codes.</strong> <code>0</code> when everything passed, <code>1</code> when anything failed. <code>gen</code> and <code>tool</code> exit with the code of the script they ran. A command that runs over every unit carries on past a failing one, then names each that failed, such as <code>sync failed in watchfaces/mosaic</code>. An error <code>paf</code> stops on is printed to stderr, starting <code>paf:</code>.</p>
+<h2 id="paf-sync">paf sync</h2>
+<pre><code>paf sync [unit] [--locked] [--force]</code></pre>
+<p>Fills each unit&#39;s <code>paf/</code> from its pinned tag and installs its <code>node_modules</code>. It fetches the framework once, then for each unit records the tag&#39;s commit if <code>paf.config.json</code> has none, refills <code>paf/</code> when the commit or the listed plugins changed, and installs when the lock, the system, or a <code>package.json</code> in <code>paf/</code> changed. A unit already in step is left alone, so a sync with nothing to do prints nothing.</p>
+<p>A first sync in a fresh clone:</p>
+<pre><code>$ paf sync
+pebble-watchface-lcars: paf/ is on v4.0.0 (4002539), 214 files
+pebble-watchface-lcars: installing node_modules, which brings the lock up to date if the framework moved
+
+added 216 packages in 2s</code></pre>
+<p><strong><code>--locked</code></strong> is for CI. It installs with <code>npm ci</code> from the lock and never writes <code>paf.config.json</code> or the lock. It stops when a unit has no <code>package-lock.json</code>, when <code>paf.config.json</code> records no commit, or when a unit is on a local framework.</p>
+<p><strong><code>--force</code></strong> reinstalls a <code>node_modules</code> installed from the other system, such as from WSL when running on Windows. Without it <code>paf</code> stops rather than replace it.</p>
+<p>Every unit is checked before the fetch, so a pin <code>paf</code> cannot fill or a unit it would refuse is reported even offline.</p>
+<h2 id="paf-status">paf status</h2>
+<pre><code>paf status</code></pre>
+<p>Shows each unit, its faces, the tag it pins, the newest framework 4 tag, and whether it is ready to build. It changes nothing and never fetches, so <code>LATEST</code> is as of the last fetch.</p>
+<pre><code>$ paf status
+UNIT                    FACES                           TAG     LATEST  STATE
+watchfaces/ide-vscode   ide-vscode                      v4.0.0  v4.0.0  ready
+watchfaces/mosaic       gridlock, sidereel              v4.0.0  v4.0.0  ready
+watchfaces/radar-array  radar-array                     v4.0.0  v4.0.0  ready
+watchfaces/sketchbook   ridgeline, shoreline, treeline  v4.0.0  v4.0.0  ready
+LATEST is the newest framework 4 tag as of the last fetch, a release when there is one, and paf sync fetches again.
+
+toolchain: SDK 4.33.1 active. v4.0.0 was built with 4.33.1</code></pre>
+<p><strong><code>STATE</code></strong> is one of:</p>
+<ul>
+<li><code>ready</code>: <code>paf/</code> and <code>node_modules</code> match the pin.</li>
+<li><code>needs paf sync</code>: <code>paf/</code> is missing or on another commit, a listed plugin is missing, or the install is behind.</li>
+<li><code>node_modules from linux</code> or <code>from win32</code>: installed from the other system. See <a href="#paf-sync">paf sync</a> and <code>--force</code>.</li>
+<li><code>local, &lt;path&gt;</code>: on a local framework clone through <code>paf use</code>.</li>
+<li><code>problem: &lt;message&gt;</code>: the unit could not be read, with the reason.</li>
+</ul>
+<p>A face shows as <code>?</code> when its appinfo cannot be read.</p>
+<p>The <code>toolchain</code> line compares the SDK <code>pebble --version</code> reports with the SDK each framework tag was built with.</p>
+<h2 id="paf-pin">paf pin</h2>
+<pre><code>paf pin &lt;unit&gt; &lt;tag|latest&gt;</code></pre>
+<p>Moves one unit to another framework tag, fills its <code>paf/</code>, and installs. Naming a face moves the whole family it belongs to. <code>latest</code> is the newest framework 4 release, or the newest release candidate when there is no release yet.</p>
+<p>Before it writes anything it checks that the tag is a framework 4 version tag, that the framework has it, and that it has every plugin the unit lists. Then it prints what changed between the two tags in the framework changelog: every breaking entry in full, and a count of the rest. It ends with the generators to run, since a new framework can change what they write.</p>
+<p>Moving <code>mosaic</code> to a newer tag prints this, with the parts in angle brackets filled in:</p>
+<pre><code>$ paf pin mosaic latest
+mosaic: v4.0.0 to &lt;new tag&gt;
+Breaking
+  - **Breaking:** &lt;each breaking entry between the two tags&gt;
+&lt;n&gt; other changelog entries. The full list is in paf/CHANGELOG.md once the pin moves
+then run paf gen &lt;face&gt; all for gridlock, sidereel
+watchfaces/mosaic: paf/ is on &lt;new tag&gt; (&lt;commit&gt;), &lt;n&gt; files
+watchfaces/mosaic: installing node_modules, which brings the lock up to date if the framework moved</code></pre>
+<p>Moving back to an older tag lists what is being left behind instead. A unit that pins nothing yet prints <code>first pin</code> in place of the old tag.</p>
+<p>Pinning the tag a unit is already on syncs it, and takes the new commit if the tag moved since it was recorded:</p>
+<pre><code>$ paf pin lcars-stardate latest
+pebble-watchface-lcars is already on v4.0.0</code></pre>
+<p>A unit already on a tag newer than <code>latest</code>, such as a release candidate, stays where it is with <code>paf pin &lt;unit&gt; latest</code>. A unit on a local framework moves off it onto the tag.</p>
+<h2 id="paf-use">paf use</h2>
+<pre><code>paf use &lt;unit&gt; local [path]
+paf use &lt;unit&gt; pinned</code></pre>
+<p><strong><code>local</code></strong> fills a unit&#39;s <code>paf/</code> from a framework clone on disk, working tree included, so uncommitted edits reach the build. The path defaults to a <code>pebble-app-framework</code> folder beside the repo. From then on every command that readies the unit copies the clone again first, and skips the copy when nothing changed.</p>
+<pre><code>$ paf use lcars-stardate local /home/me/src/pebble-app-framework
+pebble-watchface-lcars: paf/ is on 8b45d9e from /home/me/src/pebble-app-framework, working tree included, 214 files
+paf sync --locked refuses until paf use pebble-watchface-lcars pinned</code></pre>
+<p>The clone has to be framework 4, with a <code>src/package.json</code> named <code>pebble-app-framework</code>. Its specs, fixtures, and the plugins the unit does not list are left out, the same as from a tag.</p>
+<p><strong><code>pinned</code></strong> puts the unit back on its tag. If the sync refuses, the local copy stays in place.</p>
+<pre><code>$ paf use lcars-stardate pinned
+pebble-watchface-lcars: paf/ is on v4.0.0 (4002539), 214 files</code></pre>
+<h2 id="paf-build">paf build</h2>
+<pre><code>paf build &lt;face|all&gt; [--clean] [args]</code></pre>
+<p>Builds a face into a <code>.pbw</code> with the framework&#39;s build script. It runs on WSL, Linux, or macOS with the Pebble SDK, and refuses on Windows itself. <code>all</code> builds every face in the repo and carries on past a failing one.</p>
+<p><code>paf</code> keeps a record of what each face&#39;s last passing build was made from, in <code>targets/.paf-build.json</code>. The next build starts clean on its own when the face&#39;s message keys, the unit&#39;s lock, or the framework in <code>paf/</code> changed since then, or when there is no passing build to go on from, and it names the reason:</p>
+<pre><code>$ paf build lcars-stardate
+== lcars-stardate: no passing build here to go on from, so this one is clean ==
+Sandbox targets/lcars-stardate is ready (source face lcars-stardate 1.13.0, watchface=true).
+built emit/ for lcars-stardate and copied 2 generated components into targets/lcars-stardate/emit/src/pkjs/
+== building lcars-stardate (face lcars-stardate) ==
+…
+[177/177] Creating app_bundle:  -&gt; build/lcars-stardate.pbw
+&#39;build&#39; finished successfully (1.742s)</code></pre>
+<p>On a local framework, an edit to the framework only makes the build clean when it touches the <code>waf/</code> helpers, since waf tracks the rest itself.</p>
+<p><strong><code>--clean</code></strong> forces a clean build. Every other argument goes on to <code>pebble build</code>. The <code>.pbw</code> lands in <code>targets/&lt;face&gt;/build/</code>.</p>
+<h2 id="paf-gen">paf gen</h2>
+<pre><code>paf gen &lt;face&gt; &lt;kind|all&gt; [args]</code></pre>
+<p>Runs a generator for a face. The framework, each listed plugin, and the unit itself can offer generators. <code>paf gen &lt;face&gt; &lt;kind&gt;</code> runs one, whatever the face holds, with any arguments typed after it.</p>
+<p><strong><code>all</code></strong> runs every generator the face has inputs for, in order, and stops at the first that fails with its exit code. It takes no arguments, since each generator gets its own. Each prints a heading as it starts:</p>
+<pre><code>$ paf gen lcars-stardate all
+== gen clay: lcars-stardate ==
+wrote src/pkjs/clay/slot-component.g.js (50201 bytes)
+== gen icons: lcars-stardate ==
+…</code></pre>
+<p>A face with nothing to generate prints <code>&lt;face&gt; has nothing to generate</code>. An unknown kind names what the unit does offer:</p>
+<pre><code>$ paf gen lcars-stardate nope
+paf: no generator called nope. What the unit lists offers clay, icons, thumbnails, and background, and no plugin the unit leaves out offers it either</code></pre>
+<p>When a plugin the unit leaves out offers it, the message names that plugin to list instead. The order <code>all</code> runs in is under <a href="../../paf/workflows/#generators">Generators</a>.</p>
+<h2 id="paf-check">paf check</h2>
+<pre><code>paf check [unit]</code></pre>
+<p>Runs every check the framework and the listed plugins ship, such as whether each face&#39;s generated output is current. Every check runs to the end, so one failure never hides another.</p>
+<pre><code>$ paf check
+== check: pebble-watchface-lcars ==
+Clay components: every face is current
+icon media: every face is current
+thumbnails: every face is current</code></pre>
+<p>A stale face means its generator has to run again with <code>paf gen &lt;face&gt; all</code>.</p>
+<h2 id="paf-tool">paf tool</h2>
+<pre><code>paf tool &lt;face&gt; &lt;name&gt; [args]</code></pre>
+<p>Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, <code>-h</code> and <code>--</code> included. The <code>dev</code> plugin offers <code>clay-preview</code> and <code>tap-walk</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> tool</span><span style="color:var(--code-token-string)"> gridlock</span><span style="color:var(--code-token-string)"> clay-preview</span></span></code></pre>
+<p>An unknown name lists the tools the unit has:</p>
+<pre><code>$ paf tool lcars-stardate nope
+paf: no tool called nope. What the unit lists offers clay-preview and tap-walk, and no plugin the unit leaves out offers it either</code></pre>
+<h2 id="paf-run">paf run</h2>
+<pre><code>paf run &lt;unit|face&gt; &lt;script&gt; [args]</code></pre>
+<p>Runs one of the unit&#39;s own npm scripts, after readying the unit. Any arguments go after a <code>--</code>, and a <code>--</code> typed first is dropped, so these are the same:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> run</span><span style="color:var(--code-token-string)"> mosaic</span><span style="color:var(--code-token-string)"> test:coverage</span><span style="color:var(--code-token-string)"> --reporter=dot</span></span>
+<span class="line"><span style="color:var(--code-token-function)">paf</span><span style="color:var(--code-token-string)"> run</span><span style="color:var(--code-token-string)"> mosaic</span><span style="color:var(--code-token-string)"> test:coverage</span><span style="color:var(--code-token-string)"> --</span><span style="color:var(--code-token-string)"> --reporter=dot</span></span></code></pre>
+<p>It exits <code>0</code> or <code>1</code>, whatever code npm returned.</p>
+<h2 id="paf-test">paf test</h2>
+<pre><code>paf test [unit]</code></pre>
+<p>Runs the unit&#39;s own <code>test</code> script, in every unit or one:</p>
+<pre><code>$ paf test
+== test: pebble-watchface-lcars ==
+
+&gt; test
+&gt; vitest run --config config/vitest.config.ts
+…</code></pre>
+<h2 id="paf-typecheck">paf typecheck</h2>
+<pre><code>paf typecheck [unit]</code></pre>
+<p>Runs <code>tsc --noEmit</code> on every <code>tsconfig.json</code> and <code>tsconfig.*.json</code> the unit holds, with the TypeScript the unit installed. It skips <code>paf/</code> and its swap folders, <code>targets/</code>, <code>node_modules/</code>, <code>vendor/</code>, <code>coverage/</code>, and dot folders other than <code>.github/</code>.</p>
+<pre><code>$ paf typecheck
+== typecheck: pebble-watchface-lcars config/tsconfig.builder.json ==
+== typecheck: pebble-watchface-lcars config/tsconfig.json ==
+== typecheck: pebble-watchface-lcars config/tsconfig.spec.json ==
+== typecheck: pebble-watchface-lcars config/tsconfig.tools.json ==
+== typecheck: pebble-watchface-lcars tsconfig.json ==</code></pre>
+<p>A unit with no tsconfig fails rather than passing with nothing checked.</p>
+<h2 id="paf-lint">paf lint</h2>
+<pre><code>paf lint [unit] [--fix]</code></pre>
+<p>Lints a unit with the listed plugin that offers it, normally the framework&#39;s <code>code-style</code>. A unit listing none runs its own <code>lint</code> script. One with neither fails, and names the plugin to list when the framework has one that offers it.</p>
+<pre><code>$ paf lint
+== lint: pebble-watchface-lcars ==
+linted with paf/plugins/code-style/eslint.config.ts</code></pre>
+<p><strong><code>--fix</code></strong> fixes what it can.</p>
+<h2 id="paf-format">paf format</h2>
+<pre><code>paf format [unit] [--check]</code></pre>
+<p>Formats a unit the same way. <code>code-style</code> runs Prettier over its CSS, JSON, and YAML once the unit sets <code>&quot;code-style&quot;: { &quot;prettier&quot;: true }</code> under <code>plugins</code>.</p>
+<p><strong><code>--check</code></strong> writes nothing and lists the files that would change.</p>
+<pre><code>$ paf format --check
+== format: pebble-watchface-lcars ==
+all 22 files are formatted</code></pre>
+<h2 id="paf-doctor">paf doctor</h2>
+<pre><code>paf doctor</code></pre>
+<p>Checks the whole setup without changing anything:</p>
+<ul>
+<li><code>git</code> on the PATH, and Node against each unit&#39;s framework range</li>
+<li><code>paf/</code>, its swap folders, and <code>targets/</code> are gitignored in every unit</li>
+<li>no <code>lib/</code> left from <code>paf</code> 1.0.0, no appinfo left in <code>config/</code>, and the workspaces set</li>
+<li>every listed plugin is in <code>paf/</code>, and no swap folder is left over</li>
+<li>every unit is on its pin, the same as <code>paf status</code></li>
+<li>the active SDK against the SDK each tag was built with</li>
+<li>the repo&#39;s workflows load the framework&#39;s actions at the newest pinned tag or later</li>
+</ul>
+<pre><code>$ paf doctor
+ok       git version 2.43.0
+ok       node 24.18.0
+ok       every unit on a tag matches its pin
+ok       pebble-tool 5.0.40
+ok       SDK 4.33.1 is what v4.0.0 was built with (ide-vscode, mosaic, radar-array, sketchbook)</code></pre>
+<p>Each line starts with <code>ok</code>, <code>problem</code>, <code>behind</code>, <code>note</code>, or <code>skipped</code>. An SDK older than a tag was built with is <code>behind</code>, and a newer one is only a <code>note</code>. Without <code>pebble</code>, as on Windows outside WSL, the SDK line is <code>skipped</code>. It exits <code>1</code> when there is any <code>problem</code> or <code>behind</code>.</p>
+</div>
+          
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

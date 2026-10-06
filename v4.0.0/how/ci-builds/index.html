@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Building in CI · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li class="current"><a href="../../how/ci-builds/" aria-current="page">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Building in CI</h1>
+          
+          <div class="readme"><p>A face repo&#39;s build workflow turns every push and pull request into a built <code>.pbw</code> for each face, made with the framework, plugins, packages, SDK, and pebble-tool the face&#39;s unit committed to. It runs the CLI&#39;s sync action to fill the unit&#39;s <code>paf/</code> from its pinned tag, the framework&#39;s <code>setup-pebble</code> action to install the SDK and pebble-tool that framework records, and then <code>paf build</code>, once per face in a matrix. The workflow names no version of anything but the actions&#39; own tags, so moving a unit to a new framework is a change to its <code>paf.config.json</code> and lock, and the next run builds with whatever that framework records.</p>
+<p>The sync action is the CLI&#39;s <a href="https://github.com/AKlitbo/pebble-app-framework-cli/blob/v2.0.0/.github/actions/sync/action.yml"><code>action.yml</code></a>, and what it runs is <a href="https://github.com/AKlitbo/pebble-app-framework-cli/blob/v2.0.0/src/commands/sync.ts"><code>sync.ts</code></a>. <code>setup-pebble</code> is the framework&#39;s <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/setup-pebble/action.yml"><code>action.yml</code></a>, with its scripts beside it in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/setup-pebble/scripts/toolchain.js"><code>toolchain.js</code></a> and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/setup-pebble/scripts/verify-pebble.js"><code>verify-pebble.js</code></a>. <a href="../../paf/workflows/#ci">Workflows</a> has the short version for setting a repo up. The memory steps in the same job are on <a href="../../how/ci-memory/">Memory Reports</a>.</p>
+<h2 id="the-build-job">The Build Job</h2>
+<p>This is a face repo&#39;s build job, with its matrix cut down to three faces and its memory step left out:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">jobs</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  pebble</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    runs-on</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ubuntu-latest</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    strategy</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">      fail-fast</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> false</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">      matrix</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        include</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-foreground)">          - { </span><span style="color:var(--code-token-keyword)">face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string)"> radar-array</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> unit</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string)"> watchfaces/radar-array</span><span style="color:var(--code-foreground)"> }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">          - { </span><span style="color:var(--code-token-keyword)">face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string)"> gridlock</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> unit</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string)"> watchfaces/mosaic</span><span style="color:var(--code-foreground)"> }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">          - { </span><span style="color:var(--code-token-keyword)">face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string)"> ridgeline</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> unit</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string)"> watchfaces/sketchbook</span><span style="color:var(--code-foreground)"> }</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    steps</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> actions/checkout@v7</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ matrix.face }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v4.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ matrix.face }}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Build Watchface</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        shell</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> bash</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        run</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> paf build ${{ matrix.face }} | tee build-${{ matrix.face }}.log</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> actions/upload-artifact@v7</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> pbw-${{ matrix.face }}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          path</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-keyword)"> |</span></span>
+<span class="line"><span style="color:var(--code-token-string)">            ${{ matrix.unit }}/targets/${{ matrix.face }}*/build/*.pbw</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          if-no-files-found</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> error</span></span></code></pre>
+<p>The steps run in this order because each reads what the one before it left. The sync fills the unit&#39;s <code>paf/</code> and <code>node_modules</code>. <code>setup-pebble</code> reads the toolchain out of that <code>paf/</code>. <code>paf build</code> needs both, and the upload needs the build&#39;s output.</p>
+<p><strong>One Job per Face.</strong> <code>fail-fast: false</code> keeps a face that breaks from cancelling the rest, so every other face still builds and uploads its <code>.pbw</code>. Each face is a matrix entry of its own, even when several share a unit, such as Gridlock and Sidereel in Mosaic. Faces sharing a unit each fill it again in their own job, and in return a failure shows on the job named for the face that broke.</p>
+<p><strong>The Unit Column.</strong> The build writes into the <code>targets/</code> folder of the unit the face builds from, so the upload path needs the unit&#39;s folder. Nothing else reads it. A repo that is one face or one family builds into <code>targets/</code> at its root and can leave the column out.</p>
+<p><strong>Every Target the Face Builds.</strong> The <code>face*</code> in the path picks up each target&#39;s sandbox, so a face that builds a watchface and a watchapp from one source, such as Gridlock&#39;s <code>gridlock-face</code> and <code>gridlock-app</code>, uploads both. <code>if-no-files-found: error</code> fails the job when the build left nothing to upload.</p>
+<p><strong>Piped through <code>tee</code>.</strong> The log is kept for <code>report-memory</code>, as <a href="../../how/ci-memory/#what-report-memory-reads">What report-memory Reads</a> covers. <code>shell: bash</code> runs the step with <code>pipefail</code>, so a build that fails still fails the step rather than passing on <code>tee</code>&#39;s exit code.</p>
+<p>The other jobs in the same workflow, such as <code>paf test</code>, <code>paf lint</code>, <code>paf typecheck</code>, and <code>paf check</code>, run the sync action with no <code>face</code>. That fills every unit in the repo, and each command then runs across all of them.</p>
+<h2 id="filling-the-unit">Filling the Unit</h2>
+<p>The sync action sets up Node, installs <code>paf</code>, and runs <code>paf sync --locked</code>, passing the face when the workflow gave one.</p>
+<p><strong>paf Comes from the Action&#39;s Tag.</strong> The runner checks out the CLI repo at the tag the workflow names to run the action, and the action installs <code>paf</code> from that checkout with <code>npm ci</code> and a global install. Nothing is fetched from npm for it, so the <code>@v2.0.0</code> on the <code>uses:</code> line is the <code>paf</code> version the job runs.</p>
+<p><strong>Node.</strong> <code>node-version</code> defaults to 24. The install and any <code>paf</code> command in the same job run under it, so it has to fall inside the framework&#39;s <code>engines.node</code>, which on framework 4 is 22.18 or later on Node 22, or 24.2 or later. A <code>paf</code> command that runs the framework&#39;s tools refuses a Node outside that range before it starts. In a build job, <code>setup-pebble</code> then installs the Node major the framework records, and the build runs under that one, so keeping <code>node-version</code> at the same major keeps the install and the build on one Node.</p>
+<p><strong>What the Sync Does.</strong> It fetches the framework into a bare clone, checks the pinned tag still points at the commit <code>paf.config.json</code> recorded, copies the tag&#39;s files and the listed plugins into <code>paf/</code>, and installs <code>node_modules</code>. A tag that moved since it was pinned stops the sync with or without <code>--locked</code>, since a framework changing under a face that nobody re-pinned is what a pin exists to stop. The clone lives in <code>paf</code>&#39;s cache on the runner, and nothing carries it between runs, so every job fetches it fresh.</p>
+<p><strong>Given a Face.</strong> The sync fills only the unit that face builds from, so a build job for one face leaves every other unit in the repo alone. With no face it fills every unit, tries each one even after one fails, and reports every problem before the job stops.</p>
+<h3 id="why---locked-matters">Why <code>--locked</code> Matters</h3>
+<p>A plain <code>paf sync</code> is made for a developer&#39;s clone. It runs <code>npm install</code>, which brings the lock up to date when the framework moved, and it writes the tag&#39;s commit into <code>paf.config.json</code> when none is recorded yet. In CI either write would build from files nobody committed, and the job would pass on them. <code>--locked</code> writes neither file, and <a href="../../paf/commands/#paf-sync">paf sync</a> covers what it refuses.</p>
+<p>A lock or pin out of step therefore fails the job, and the fix is made in a clone and committed. The commands that run after the sync, <code>paf build</code> among them, ready the unit again without <code>--locked</code>, but they find the install and <code>paf/</code> already matching the lock and the pin, so they install and write nothing.</p>
+<h2 id="installing-the-toolchain">Installing the Toolchain</h2>
+<p><code>setup-pebble</code> puts Node, pebble-tool, and the Pebble SDK on the runner, checks that they answer, and records which versions the build used.</p>
+<p><strong>The Versions Come from the Framework.</strong> Given a <code>face</code>, it finds the unit the face builds from and reads <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/src/toolchain.json"><code>toolchain.json</code></a> out of the unit&#39;s <code>paf/</code>. The file records the SDK, the pebble-tool, and the Node major the framework was tested with, so a face builds on the same toolchain whichever action tag loads it, and moving the face&#39;s pin is what moves its toolchain. The step stops when the file is missing, when its format is one this action cannot read, or when it names no SDK or no pebble-tool. It also stops when the unit has no <code>node_modules</code>, since a build without them would fail far from the cause, and the message says to run <code>paf sync</code> first.</p>
+<p><strong>The Inputs Give Way.</strong> With a <code>face</code>, the recorded versions win over the action&#39;s <code>sdk-version</code>, <code>pebble-tool-version</code>, and <code>node-version</code> inputs. A run that passes a different SDK or pebble-tool gets a warning naming both, so a job meant to try another version says why it did not. Without a <code>face</code>, the inputs decide and the SDK defaults to whatever is newest on the day. The action then runs <code>npm ci</code> at the repo root itself. A face repo always passes the face.</p>
+<p><strong>The Install.</strong> The action installs the SDK&#39;s system libraries with <code>apt-get</code>, then installs pebble-tool through <code>uv</code> at the recorded version, then runs <code>pebble sdk install</code> for the recorded SDK. The action runs on Linux runners only, and the <code>apt-get</code> step needs one built on Debian or Ubuntu, such as <code>ubuntu-latest</code>.</p>
+<p><strong>The Cache.</strong> pebble-tool and the SDK come to about 1.6 GB once installed, so a pinned SDK is fetched once and restored after that. The cache key holds the SDK, the pebble-tool, the runner&#39;s architecture, its image and image version, and its Python version. <code>uv</code> runs pebble-tool on the runner&#39;s own Python, so a new runner image has to miss the cache, or the restored pebble would point at a Python that is no longer there. <code>uv</code>&#39;s own downloaded Python is cached too, for the runners where it fetched one. The cache is saved straight after the install rather than at the end of the job, since GitHub keeps an end-of-job cache only when the job passes, and a face that fails to build would download the SDK again on every run. An SDK left at <code>latest</code> is never cached, since a cached latest would stop being the latest.</p>
+<p><strong>The Check.</strong> The last step runs <code>pebble --version</code> and <code>pebble sdk list</code> and puts a table on the job summary with the pebble-tool version, the active SDK, the installed SDKs, and the SDK asked for. When pebble-tool prints that a newer SDK or pebble-tool is out, that goes on the summary and the run as a notice, never a failure, since a pinned build stays put. The step fails when <code>pebble</code> cannot run, when no SDK is active, or when the active SDK is not the pinned one, so a toolchain problem stops here rather than as a confusing build error further on.</p>
+<p>The release workflow runs the same action with the same face, so a release is built on the toolchain CI built and tested it with. <a href="../../how/ci-releases/">Releases</a> covers the rest of that workflow.</p>
+<h2 id="the-build">The Build</h2>
+<p><code>paf build &lt;face&gt;</code> builds each of the face&#39;s targets in a sandbox of its own, as <a href="../../paf/commands/#paf-build">paf build</a> covers. The first sandbox to fail stops the build with pebble&#39;s own exit code, which fails the step.</p>
+<p>A fresh checkout has no record of a passing build, so in CI the first build of each face is always clean. That is what makes the memory report work, since an incremental build with nothing to relink prints no memory figures.</p>
+<h2 id="loading-the-actions-at-a-tag">Loading the Actions at a Tag</h2>
+<p>A workflow loads the framework&#39;s actions from <code>AKlitbo/pebble-app-framework</code> at a tag. A unit&#39;s <code>paf/</code> holds only what the framework ships from its <code>src/</code>, which leaves out <code>.github/</code>, so there is no copy of the actions inside the face repo to load.</p>
+<p>The tag on the <code>uses:</code> line decides the actions&#39; own code, and the face&#39;s <code>paf/</code> decides everything they read about the face. <code>setup-pebble</code> reads the toolchain from the face&#39;s framework, and the release actions find the face and its targets with the tools in that same <code>paf/</code>. An action tag newer than a unit&#39;s pin therefore still builds the face the way its own framework does. An action tag older than the newest pin may not read what that framework writes, such as a <code>toolchain.json</code> format it does not know, and <code>paf doctor</code> flags any workflow that loads the framework&#39;s actions at a tag older than the newest one a unit pins.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/dev-plugin/"><span>Previous</span>The Dev Plugin</a>
+<a class="page-step page-step-next" rel="next" href="../../how/ci-memory/"><span>Next</span>Memory Reports</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How It Works · Pebble App Framework</title>
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <script src="../theme.js"></script>
+    <script src="../versions.js"></script>
+    <script src="../diagrams.js" defer></script>
+    <script src="../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../site.css" />
+    <link rel="stylesheet" href="../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        
+        <main class="page">
+          <h1>How It Works</h1>
+          
+          <div class="readme"><p>Each page follows one piece of the framework from end to end: what it does for a face, how it does it, and the trade-offs behind it. The Device API and Phone API references list every function, and these pages explain why they behave the way they do.</p>
+<h2 id="where-the-code-lives">Where the Code Lives</h2>
+<ul>
+<li><strong><code>src/c/core/</code>:</strong> plain C with no Pebble SDK, so its specs run on a PC. Anything that decides what a face shows goes here, and the caller hands it the clock already broken apart.</li>
+<li><strong><code>src/c/pebble/</code>:</strong> the thin layer that talks to the SDK, such as the stores, the engine, and AppMessage. It gathers what <code>c/core</code> needs and passes it down.</li>
+<li><strong><code>src/ts/</code>:</strong> the phone side, with the settings page, the PebbleKit JS runtime, and the weather, stock, and calendar features.</li>
+<li><strong><code>src/plugins/</code>:</strong> what a face opts into by listing it in <code>paf.config.json</code>, such as the icon and background generators and the dev harness. The <code>code-style</code> plugin is lint and format only, so it has no page here.</li>
+</ul>
+<h2 id="where-to-start">Where to Start</h2>
+<p><a href="../how/stores/">How the Stores Work</a>, <a href="../how/engine/">The Engine</a>, and <a href="../how/life-of-a-setting/">The Life of a Setting</a> cover what every face does: read data, draw it, and take settings.</p>
+<div class="section-index">
+<h2>Settings and Messages</h2>
+<ul>
+<li><a href="../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../how/phone-side/">The Phone Side</a></li>
+<li><a href="../how/settings-page/">The Settings Page</a></li>
+<li><a href="../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h2>Stores</h2>
+<ul>
+<li><a href="../how/stores/">How the Stores Work</a></li>
+<li><a href="../how/time-store/">The Time Store</a></li>
+<li><a href="../how/system-store/">The System Store</a></li>
+<li><a href="../how/location-store/">The Location Store</a></li>
+<li><a href="../how/weather-store/">The Weather Store</a></li>
+<li><a href="../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../how/stock-store/">The Stock Store</a></li>
+<li><a href="../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../how/health-store/">The Health Store</a></li>
+</ul>
+<h2>Clock and Sky</h2>
+<ul>
+<li><a href="../how/moon/">The Moon</a></li>
+<li><a href="../how/beats/">.beats</a></li>
+<li><a href="../how/julian-date/">The Julian Date</a></li>
+<li><a href="../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../how/tides/">Tides</a></li>
+<li><a href="../how/time-zones/">Time Zones</a></li>
+<li><a href="../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h2>Drawing</h2>
+<ul>
+<li><a href="../how/engine/">The Engine</a></li>
+<li><a href="../how/readouts/">Readouts</a></li>
+<li><a href="../how/fonts/">Fonts</a></li>
+<li><a href="../how/icons/">Icons</a></li>
+<li><a href="../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h2>Text, Numbers, and Feedback</h2>
+<ul>
+<li><a href="../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../how/vibrations/">Vibrations</a></li>
+</ul>
+<h2>Plugins</h2>
+<ul>
+<li><a href="../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h2>CI</h2>
+<ul>
+<li><a href="../how/ci-builds/">Building in CI</a></li>
+<li><a href="../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../how/ci-releases/">Releases</a></li>
+</ul>
+</div></div>
+          
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

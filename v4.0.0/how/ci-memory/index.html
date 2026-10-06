@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Memory Reports · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v4.0.0" selected>v4.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li class="current"><a href="../../how/ci-memory/" aria-current="page">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Memory Reports</h1>
+          
+          <div class="readme"><p>Every CI run of a face repo ends with one table of every face&#39;s size, set against the limits that stop a Pebble app building and ranked so the face closest to one sits at the top. <code>report-memory</code> measures each face in its own build job, and <code>render-memory</code> gathers every face&#39;s figures in one job after the builds and puts the table on the run&#39;s summary. A face that grows toward a limit shows it there, and on the run page as a warning, long before the SDK refuses to build it. Neither action ever fails a build for size.</p>
+<p>The actions are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/report-memory/action.yml"><code>report-memory</code></a>, which reads the figures in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/report-memory/scripts/lib.js"><code>lib.js</code></a> and writes them in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/report-memory/scripts/report-memory.js"><code>report-memory.js</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/render-memory/action.yml"><code>render-memory</code></a>, which ranks them in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/render-memory/scripts/lib.js"><code>lib.js</code></a> and writes the table in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/400253928ca9a73316ebb33082258be9ca9df5a2/.github/actions/render-memory/scripts/render-memory.js"><code>render-memory.js</code></a>. The build job they sit in is on <a href="../../how/ci-builds/">Building in CI</a>.</p>
+<h2 id="in-the-workflow">In the Workflow</h2>
+<p><code>report-memory</code> runs in each face&#39;s build job, straight after the build. <code>render-memory</code> runs in a job of its own that waits for every build:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">jobs</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  pebble</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-comment)">    # the matrix, the sync, and setup-pebble, as on Building in CI</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    steps</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Build Watchface</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        shell</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> bash</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        run</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> paf build ${{ matrix.face }} | tee build-${{ matrix.face }}.log</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Report Memory</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        if</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> always()</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/report-memory@v4.0.0</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        with</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          face</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ${{ matrix.face }}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">          log</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> build-${{ matrix.face }}.log</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  memory</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    runs-on</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> ubuntu-latest</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    needs</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> pebble</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> always()</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    steps</span><span style="color:var(--code-token-keyword)">:</span></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> actions/checkout@v7</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-foreground)">      - </span><span style="color:var(--code-token-keyword)">name</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> Render Memory</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        uses</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> AKlitbo/pebble-app-framework/.github/actions/render-memory@v4.0.0</span></span></code></pre>
+<p>The split follows from the matrix. Each face builds in a job of its own, and a job&#39;s summary belongs to that job alone, but the question worth answering is which face is closest to the edge, and that needs every face in one place. So each build job uploads its figures as an artifact, and one later job collects them.</p>
+<p><strong>Both Run after a Failure.</strong> <code>if: always()</code> on the step lets <code>report-memory</code> run after a build that failed. A build that linked some targets before it failed still reports those, and one that never linked has no figures, so its step fails with a message saying so and the face is missing from the table. <code>if: always()</code> on the memory job lets <code>render-memory</code> run when some build jobs failed, so the faces that did build still get their table.</p>
+<h2 id="what-report-memory-reads">What report-memory Reads</h2>
+<p><strong>The Build Log.</strong> The SDK prints a block like this for each platform while it links:</p>
+<pre><code>EMERY APP MEMORY USAGE
+Total size of resources:        52974 bytes / 256.0KB
+Total footprint in RAM:         27635 bytes / 128.0KB
+Free RAM available (heap):      103437 bytes</code></pre>
+<p>It prints it only while linking, so the log of a build that linked is the only place the free heap figure exists, which is why the build step pipes its output through <code>tee</code>. A build with nothing to relink prints no block, and CI&#39;s first build of a face is always clean, so it always links.</p>
+<p><strong>Which Target a Block Belongs To.</strong> The block names its platform but not its target. The target only shows on the <code>Waf: Leaving directory</code> line that closes each sandbox&#39;s build, as <code>.../targets/&lt;target&gt;/build</code>. A target built for two platforms prints both blocks before that one line, so the action holds each block until the line arrives and then files them all under that target. A block missing any of its figures is dropped with a warning naming the target and the platform, rather than leaving a hole in the table without a word. A block that no sandbox line ever closes is left out.</p>
+<p><strong>The Binaries.</strong> For each target and platform, the action opens the build&#39;s <code>pebble-app.bin</code> under <code>targets/&lt;target&gt;/build/&lt;platform&gt;/</code> in the face&#39;s unit. The app image is the file&#39;s size, which is the load size plus the relocation table. The static size is the <code>virtual_size</code> field in the app&#39;s header, which the SDK fills with <code>.text</code> plus <code>.data</code> plus <code>.bss</code>. A missing binary reads as 0 with a warning, and its row is kept, so the gap shows in the table rather than the row quietly going.</p>
+<p><strong>What Stops It.</strong> The step fails when no <code>log</code> was passed, when there is no file at that path, when the log holds no memory report at all, or when it holds one and none of the figures can be read. The last message says the SDK may have changed how it prints them, since the figures are only ever read from the SDK&#39;s own wording.</p>
+<p><strong>What It Writes.</strong> One row per target and platform, with the face, the target, the platform, the app image, the static size, and the resources, footprint, and free heap from the log. The rows go into a JSON file, uploaded as the artifact <code>memory-&lt;face&gt;</code>. A re-run of a job that already uploaded its rows replaces them, since a second upload under the same name is otherwise refused.</p>
+<h2 id="the-limits">The Limits</h2>
+<p><code>render-memory</code> ranks each row against the app image and static size limits of the current public Pebble SDK:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Size</th>
+<th align="left">Limit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">App Image</td>
+<td align="left">64 KB, 65536 bytes</td>
+</tr>
+<tr>
+<td align="left">Static</td>
+<td align="left">65535 bytes</td>
+</tr>
+</tbody></table>
+<p><strong>The App Image.</strong> The SDK&#39;s <code>inject_metadata.py</code> hard codes <code>MAX_APP_BINARY_SIZE</code> as <code>0x10000</code> and ignores the platform config, so emery and gabbro get 64 KB too, even though they declare 128 KB.</p>
+<p><strong>The Static Size.</strong> The cap is 65535 because <code>virtual_size</code> is a 16-bit field in the app header, and a larger size cannot be written into it. A face carries little relocation table, so this is normally the tighter of the two.</p>
+<p><strong>The Heap Is Shown, Not Ranked.</strong> The free heap is what is left of the 128 KB after the app, the system&#39;s own allocations, and the resources. The table shows it, and the resources, but neither plays any part in the ranking or the warnings, since no face is near the heap.</p>
+<p><strong>Reports Only.</strong> Neither action fails a build for size, since the SDK already fails a build at the limit that counts. A face at 95% still builds and still ships, and the table is there to show how much room is left before a change, not to stop one.</p>
+<h2 id="the-table">The Table</h2>
+<p><code>render-memory</code> downloads every <code>memory-*</code> artifact the run uploaded, works out each row&#39;s percentage of both limits, and writes the table to the run&#39;s summary under the heading <strong>Watchface Memory</strong>. It writes nothing to a pull request itself. The summary sits on the run&#39;s page, which a pull request&#39;s checks lead to.</p>
+<p><strong>Ranked by the Tighter Limit.</strong> Each row&#39;s rank is the larger of its two percentages, and rows are sorted from the highest down, so the target and platform closest to either limit come first whichever limit it is. A face with several targets or platforms has a row for each, and they can land apart in the table.</p>
+<p><strong>Marks and Warnings.</strong> A row at 80% or more of a limit gets a warning mark, and one at 90% or more an alarm mark. The mark goes on whichever column is closer to its limit, so it points at the size to cut. Every row at 80% or more also raises a GitHub warning naming the target, the platform, the percentage, and the limit, as in <code>&lt;target&gt; on emery is at 82% of its static size limit.</code>, so it shows on the run page and in a pull request&#39;s checks, not only in the summary.</p>
+<p><strong>Rows Not Measured.</strong> A row whose binary was missing reads an app image of 0, which no real app has, and one whose binary was too short to hold a header reads a static size of 0. Ranked as they are, either would sit at the bottom as the safest face when it may be the closest to a limit. So both are marked <strong>not measured</strong> in the size columns and listed first, above every measured row.</p>
+<p><strong>No Rows at All.</strong> When every build job failed before it reported, there is nothing to rank. <code>render-memory</code> puts a short note on the summary and raises a warning, and passes. The build jobs already failed and carry the reason, and failing here too would add a red job that points away from it.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/ci-builds/"><span>Previous</span>Building in CI</a>
+<a class="page-step page-step-next" rel="next" href="../../how/ci-releases/"><span>Next</span>Releases</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v4.0.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

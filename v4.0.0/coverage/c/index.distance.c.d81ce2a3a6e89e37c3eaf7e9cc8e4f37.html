@@ -27,6 +27,8 @@
     <option value="v4.0.0" selected>v4.0.0</option>
   </select>
   <div class="site-bar-links">
+    <a data-section="how" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
     <a data-section="c" href="../../c/index.html">Device API</a>
     <a data-section="ts" href="../../ts/index.html">Phone API</a>
     <a data-section="coverage-c" aria-current="location" href="../../coverage/c/index.html">C Coverage</a>
@@ -208,7 +210,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">"units/distance.h"</span></td>
+        <td class="src "><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;units/distance.h&quot;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l8" href="#l8">8</a></td>
@@ -257,7 +259,7 @@
           </details>
         </td>
         <td class="linecount coveredLine show_coveredLine">4</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">miles</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">"MI"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">"KM"</span><span class="p">;</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">miles</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">&quot;MI&quot;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">&quot;KM&quot;</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l14" href="#l14">14</a></td>
@@ -376,7 +378,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">6</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">snprintf</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="s">"%d.%d"</span><span class="p">,</span><span class="w"> </span><span class="n">tenths</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">tenths</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">snprintf</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%d.%d&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">tenths</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">tenths</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l29" href="#l29">29</a></td>
@@ -425,7 +427,7 @@
         <td class="linebranch">
         </td>
         <td class="linecount coveredLine show_coveredLine">2</td>
-        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">snprintf</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="s">"%s %s"</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">distance_unit</span><span class="p">(</span><span class="n">miles</span><span class="p">));</span></td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="n">snprintf</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;%s %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">distance_unit</span><span class="p">(</span><span class="n">miles</span><span class="p">));</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l36" href="#l36">36</a></td>
@@ -448,7 +450,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-10-03 03:03:27
+          at 2026-10-05 20:22:35
         </footer>
       </div>
     </div>
