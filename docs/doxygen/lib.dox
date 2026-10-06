@@ -43,7 +43,16 @@
  */
 
 /**
+ * @defgroup lib_plugins Plugins
+ * @brief The watch code that comes with the plugins a face opts into, apart from the runtime.
+ *
+ * A plugin's C is staged into a face's build only when the face lists the plugin, and the linker
+ * drops anything the face never calls.
+ */
+
+/**
  * @defgroup lib_dev Dev Harness
+ * @ingroup lib_plugins
  * @brief Fixed fixtures and a theme walk for repeatable screenshots.
  *
  * It comes with the dev plugin, in src/plugins/dev/c/dev, apart from the runtime. The frame faces
