@@ -38,9 +38,9 @@ Every other command works on Windows too. A unit's `node_modules` holds native p
 From the root of a face repo that is already laid out as units:
 
 ```sh
-paf sync                 # fill each unit's paf/ and install its node_modules
-paf status               # each unit, its faces, its tag, and whether it is ready
-paf build lcars-stardate # build one face, from WSL, Linux, or macOS
+paf sync          # fill each unit's paf/ and install its node_modules
+paf status        # each unit, its faces, its tag, and whether it is ready
+paf build my-face # build one face, from WSL, Linux, or macOS
 ```
 
 The `.pbw` lands in `targets/<face>/build/` inside the unit.

@@ -67,7 +67,7 @@ watchfaces/mosaic: mosaic/paf.config.json records no commit for v4.0.0, and --lo
 Run the `paf pin` it names and commit `paf.config.json`.
 
 ```
-pebble-watchface-lcars: ./paf is on the local framework at /mnt/e/_DEV_/pebble-watchfaces/pebble-app-framework, not its pinned tag. Run paf use pebble-watchface-lcars pinned first
+pebble-watchface-lcars: ./paf is on the local framework at /home/me/src/pebble-app-framework, not its pinned tag. Run paf use pebble-watchface-lcars pinned first
 ```
 
 The unit is on a local framework from `paf use`. Put it back with `paf use <unit> pinned`.

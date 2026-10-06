@@ -32,6 +32,8 @@ or the repo root for a repo that is one face or one family. PAF_HOME moves the c
 another URL or path.
 ```
 
+The examples on this page come from two face repos. `pebble-watchface-lcars` is a single face, `lcars-stardate`, at its root. The other keeps several units under `watchfaces/`, among them the `mosaic` family with its `gridlock` and `sidereel` faces.
+
 ## What Every Command Shares
 
 **Naming a Unit.** Wherever a command takes `[unit]`, a face name works too and picks the unit that holds it. So `paf sync gridlock` syncs the whole `mosaic` family. Leaving the unit out runs every unit in the repo.
@@ -158,8 +160,8 @@ paf use <unit> pinned
 **`local`** fills a unit's `paf/` from a framework clone on disk, working tree included, so uncommitted edits reach the build. The path defaults to a `pebble-app-framework` folder beside the repo. From then on every command that readies the unit copies the clone again first, and skips the copy when nothing changed.
 
 ```
-$ paf use lcars-stardate local /mnt/e/_DEV_/pebble-watchfaces/pebble-app-framework
-pebble-watchface-lcars: paf/ is on 8b45d9e from /mnt/e/_DEV_/pebble-watchfaces/pebble-app-framework, working tree included, 214 files
+$ paf use lcars-stardate local /home/me/src/pebble-app-framework
+pebble-watchface-lcars: paf/ is on 8b45d9e from /home/me/src/pebble-app-framework, working tree included, 214 files
 paf sync --locked refuses until paf use pebble-watchface-lcars pinned
 ```
 

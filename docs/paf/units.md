@@ -27,14 +27,13 @@ A face's name has to be unique across the whole repo, since commands like `paf b
 A repo that is a single face, such as the LCARS face:
 
 ```
-pebble-watchface-lcars/
+my-face/
   paf.config.json
   package.json          workspaces: ["paf", "paf/plugins/*"]
   package-lock.json
   pebble.appinfo.json   this makes the root a face
   src/
   resources/
-  config/               the unit's own tsconfigs and vitest.config.ts
   tsconfig.json
   paf/                  filled by paf sync
   node_modules/
@@ -63,16 +62,16 @@ my-family/
 A repo with several units keeps each under `watchfaces/` or `watchapps/`. Each one is a family or a face of its own, laid out as above:
 
 ```
-pebble-watchfaces/
+my-faces/
   watchfaces/
-    mosaic/             a family
+    my-family/          a family
       paf.config.json
       package.json
       core/
-      gridlock/
-      sidereel/
+      first-face/
+      second-face/
       paf/
-    ide-vscode/         a face of its own
+    my-face/            a face of its own
       paf.config.json
       package.json
       pebble.appinfo.json
@@ -89,13 +88,13 @@ The unit's settings. `paf pin` writes `framework` and `commit` and leaves every 
   "framework": "v4.0.0",
   "commit": "400253928ca9a73316ebb33082258be9ca9df5a2",
   "plugins": {
-    "icons": { "sources": "../../vendor" },
+    "icons": { "sources": "../../icons" },
     "thumbnails": {},
     "dev": {},
     "code-style": { "prettier": true }
   },
   "gen": {
-    "vibrant": { "script": "core/tools/vibrant/generate-vibrant.ts", "after": "clay" }
+    "palettes": { "script": "tools/generate-palettes.ts", "after": "clay" }
   }
 }
 ```
@@ -134,7 +133,7 @@ The framework itself, with no plugin listed, offers the `clay` generator, the ch
   "workspaces": ["paf", "paf/plugins/*"],
   "engines": { "node": "^22.18.0 || >=24.2.0" },
   "scripts": {
-    "test": "vitest run --config config/vitest.config.ts"
+    "test": "vitest run"
   }
 }
 ```

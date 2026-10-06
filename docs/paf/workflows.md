@@ -55,7 +55,7 @@ paf pin <unit> <new tag>    # or straight onto the new tag
 `paf build` only runs where the Pebble SDK does, but the other commands run on Windows too. A unit's `node_modules` holds native packages for the system that installed it, so a clone shared between WSL and Windows can only be installed for one at a time. `paf` stops rather than use the other system's install:
 
 ```
-paf: watchfaces/mosaic/node_modules was installed from linux, and its native packages only run there. Run paf sync --force to reinstall it for win32, which breaks it for the other one
+paf: watchfaces/my-family/node_modules was installed from linux, and its native packages only run there. Run paf sync --force to reinstall it for win32, which breaks it for the other one
 ```
 
 `paf sync --force` reinstalls for the system you are on. Running it again from the other side switches back. Keeping all the work on one side of the clone avoids the switch.
@@ -90,20 +90,20 @@ steps:
 
   - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0
     with:
-      face: gridlock
+      face: my-face
 
   - uses: AKlitbo/pebble-app-framework/.github/actions/setup-pebble@v4.0.0
     with:
-      face: gridlock
+      face: my-face
 
-  - run: paf build gridlock
+  - run: paf build my-face
 ```
 
 **`face`** fills only the unit that face builds from. Leave it empty to fill every unit, such as for a job that runs `paf check` or `paf test` across the repo.
 
 **`node-version`** defaults to `24`. It has to fall inside the framework's `engines.node`, which on framework 4 is 22.18 or later on Node 22, or 24.2 or later.
 
-`--locked` installs from the committed lock with `npm ci` and never writes `paf.config.json` or the lock. A lock or a pin that is out of step fails the job rather than being fixed in CI. `paf doctor` warns when a workflow loads the framework's actions at a tag older than the newest pin.
+`--locked` installs from the committed lock with `npm ci` and never writes `paf.config.json` or the lock. A lock or a pin that is out of step fails the job rather than being fixed in CI. `paf doctor` reports a workflow that loads the framework's actions at a tag older than the newest pin as a problem, and exits `1`.
 
 ## The Cache
 
