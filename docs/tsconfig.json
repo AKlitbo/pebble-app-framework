@@ -5,6 +5,10 @@
   "extends": "../src/tsconfig.json",
   "compilerOptions": {
     "moduleDetection": "force",
+    // node runs the tools as ES modules, so build-site.ts can wait for the code highlighter at the top level
+    "target": "es2022",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "types": ["node"]
   },

@@ -12,10 +12,15 @@ import {
   addSiteBar,
   fillTemplate,
   pixelStrip,
+  readDoxygenFiles,
   readGcovrSummary,
   readVitestSummary,
+  renderGroupLinks,
   renderMarkdown,
+  renderPageSteps,
+  renderSectionIndex,
   renderSectionNav,
+  renderSideNav,
   renderSiteBar,
   rewriteImage,
   rewriteLink,
@@ -167,6 +172,24 @@ describe('rewriteLink', () => {
     expect(result).toBe('../../paf/workflows/#generators');
   });
 
+  /** A how it works page names the C file it explains, and the reference for that file is on the site. */
+  test('sends a C file Doxygen has a page for to that page', () => {
+    const apiPages = new Map([['src/c/core/clock/moon.c', 'c/moon_8c.html']]);
+
+    const result = rewriteLink('../../src/c/core/clock/moon.c', { root: '../../', commit: 'abc1234', folder: 'docs/how', apiPages });
+
+    expect(result).toBe('../../c/moon_8c.html');
+  });
+
+  /** Doxygen leaves the specs out, so a spec still has to open on GitHub rather than a missing page. */
+  test('sends a C file Doxygen has no page for to GitHub', () => {
+    const apiPages = new Map([['src/c/core/clock/moon.c', 'c/moon_8c.html']]);
+
+    const result = rewriteLink('../../src/c/core/clock/moon.spec.c', { root: '../../', commit: 'abc1234', folder: 'docs/how', apiPages });
+
+    expect(result).toBe('https://github.com/AKlitbo/pebble-app-framework/blob/abc1234/src/c/core/clock/moon.spec.c');
+  });
+
   /** A link that climbs out of the repo has no file on GitHub, and a blob URL with ../ in it is a dead link. */
   test('leaves a link that climbs out of the repo as written', () => {
     const result = rewriteLink('../../elsewhere/LICENSE', { ...HOME, folder: 'src' });
@@ -241,6 +264,38 @@ describe('renderMarkdown', () => {
     const result = renderMarkdown(markdown, HOME);
 
     expect(result).toContain('<code class="language-sh">npm test</code>');
+  });
+
+  /** The highlighter writes the whole coloured block, so wrapping it again would nest a pre in a pre. */
+  test('uses the coloured block the highlighter hands back as it is', () => {
+    const markdown = '```c\nint x;\n```\n';
+    const highlight = (code: string, language: string) => `<pre class="shiki">${language}:${code}</pre>`;
+
+    const result = renderMarkdown(markdown, { ...HOME, highlight });
+
+    expect(result).toBe('<pre class="shiki">c:int x;</pre>\n');
+  });
+
+  /** A language the highlighter does not know still has to show, escaped, rather than vanish. */
+  test('falls back to a plain escaped block when the highlighter knows no such language', () => {
+    const markdown = '```brainfuck\n<+>\n```\n';
+    const highlight = () => null;
+
+    const result = renderMarkdown(markdown, { ...HOME, highlight });
+
+    expect(result).toBe('<pre><code class="language-brainfuck">&lt;+&gt;</code></pre>\n');
+  });
+
+  /**
+   * diagrams.js only looks for pre.mermaid, so a diagram left as a code block would show its source
+   * instead of the drawing. Its arrows still have to be escaped, or the browser reads them as tags.
+   */
+  test('turns a mermaid fence into a block for diagrams.js to draw', () => {
+    const markdown = '```mermaid\nflowchart LR\n  A --> B\n```\n';
+
+    const result = renderMarkdown(markdown, HOME);
+
+    expect(result).toBe('<pre class="mermaid">flowchart LR\n  A --&gt; B</pre>\n');
   });
 
   /** A heading with inline code got an id from its raw markdown, so a link to it missed. */
@@ -390,6 +445,142 @@ describe('renderSiteBar', () => {
 
     expect(result).toContain('<a class="site-bar-home" href="../../index.html">Pebble App Framework</a>');
     expect(result).toContain('<a href="https://github.com/AKlitbo/pebble-app-framework">GitHub</a>');
+  });
+});
+
+describe('renderSideNav', () => {
+  const INDEX = { file: 'docs/how/index.md', folder: 'how/', title: 'How It Works' };
+  const GROUPS = [
+    { name: 'Stores', pages: [{ file: 'docs/how/weather-store.md', folder: 'how/weather-store/', title: 'The Weather Store' }] },
+    {
+      name: 'Clock and Sky',
+      pages: [
+        { file: 'docs/how/moon.md', folder: 'how/moon/', title: 'The Moon' },
+        { file: 'docs/how/beats.md', folder: 'how/beats/', title: '.beats' },
+      ],
+    },
+  ];
+
+  /** The sidebar is how a reader tells where they are among the pages, so exactly one may be marked. */
+  test('marks only the page it sits beside', () => {
+    const result = renderSideNav(INDEX, GROUPS, GROUPS[1].pages[0], '../../');
+
+    expect(result).toContain('<li class="current"><a href="../../how/moon/" aria-current="page">The Moon</a></li>');
+    expect(result.match(/aria-current/g)).toHaveLength(1);
+  });
+
+  /** A page out of its group would sit under the wrong heading, or under none. */
+  test('lists each page under its own group heading', () => {
+    const result = renderSideNav(INDEX, GROUPS, GROUPS[0].pages[0], '../../');
+
+    expect(result.indexOf('<h3>Stores</h3>')).toBeLessThan(result.indexOf('The Weather Store'));
+    expect(result.indexOf('<h3>Clock and Sky</h3>')).toBeLessThan(result.indexOf('The Moon'));
+    expect(result.indexOf('The Weather Store')).toBeLessThan(result.indexOf('<h3>Clock and Sky</h3>'));
+  });
+
+  /** It goes in open, so a reader without scripts still sees every page, and only side-nav.js folds it on a phone. */
+  test('starts open with a way back to the index', () => {
+    const result = renderSideNav(INDEX, GROUPS, GROUPS[0].pages[0], '../../');
+
+    expect(result).toMatch(/^<details class="side-nav" open>/);
+    expect(result).toContain('<a class="side-nav-index" href="../../how/">How It Works</a>');
+  });
+});
+
+describe('renderPageSteps', () => {
+  const PAGES = [
+    { file: 'docs/how/moon.md', folder: 'how/moon/', title: 'The Moon' },
+    { file: 'docs/how/beats.md', folder: 'how/beats/', title: '.beats' },
+    { file: 'docs/how/tides.md', folder: 'how/tides/', title: 'Tides' },
+  ];
+
+  /** A step to the wrong neighbour sends the reader backwards or skips a page. */
+  test('links the page before and the page after in the sidebar order', () => {
+    const result = renderPageSteps(PAGES, PAGES[1], '../../');
+
+    expect(result).toContain('<a class="page-step page-step-prev" rel="prev" href="../../how/moon/"><span>Previous</span>The Moon</a>');
+    expect(result).toContain('<a class="page-step page-step-next" rel="next" href="../../how/tides/"><span>Next</span>Tides</a>');
+  });
+
+  /** The first page has nothing before it, and a dead Previous link would go nowhere. */
+  test('leaves out the step past either end', () => {
+    const result = renderPageSteps(PAGES, PAGES[0], '../../');
+
+    expect(result).not.toContain('page-step-prev');
+    expect(result).toContain('page-step-next');
+  });
+});
+
+describe('renderGroupLinks', () => {
+  /** The home page card links each group by its first page, so a link has to land on a page that exists. */
+  test('links each group to its first page from the root', () => {
+    const groups = [
+      { name: 'Clock and Sky', pages: [{ file: 'docs/how/moon.md', folder: 'how/moon/', title: 'The Moon' }] },
+      { name: 'Drawing', pages: [{ file: 'docs/how/engine.md', folder: 'how/engine/', title: 'The Engine' }] },
+    ];
+
+    const result = renderGroupLinks(groups, '');
+
+    expect(result).toBe('<ul class="card-groups">\n<li><a href="how/moon/">Clock and Sky</a></li>\n<li><a href="how/engine/">Drawing</a></li>\n</ul>');
+  });
+
+  /** A group with no pages yet has nowhere to link, and an empty link would show as a dead button. */
+  test('leaves out a group with no pages', () => {
+    const groups = [{ name: 'Drawing', pages: [] }];
+
+    const result = renderGroupLinks(groups, '');
+
+    expect(result).toBe('');
+  });
+});
+
+describe('renderSectionIndex', () => {
+  /** The index page is the only way into a page from the section's tab, so every page has to be on it. */
+  test('lists every page under its group, with nothing marked', () => {
+    const groups = [{ name: 'Clock and Sky', pages: [{ file: 'docs/how/moon.md', folder: 'how/moon/', title: 'The Moon' }] }];
+
+    const result = renderSectionIndex(groups, '../');
+
+    expect(result).toContain('<h2>Clock and Sky</h2>');
+    expect(result).toContain('<li><a href="../how/moon/">The Moon</a></li>');
+    expect(result).not.toContain('aria-current');
+  });
+});
+
+describe('readDoxygenFiles', () => {
+  const TAG = [
+    '<tagfile>',
+    '  <compound kind="file">',
+    '    <name>moon.h</name>',
+    '    <path>src/c/core/clock/</path>',
+    '    <filename>moon_8h.html</filename>',
+    '    <member kind="function"><name>moon_age_sec</name><anchorfile>moon_8h.html</anchorfile></member>',
+    '  </compound>',
+    '  <compound kind="file">',
+    '    <name>util.h</name>',
+    '    <path>src\\c\\pebble\\ui\\</path>',
+    '    <filename>ui_2util_8h</filename>',
+    '  </compound>',
+    '  <compound kind="group">',
+    '    <name>lib_core</name>',
+    '    <filename>group__lib__core.html</filename>',
+    '  </compound>',
+    '</tagfile>',
+  ].join('\n');
+
+  /** Doxygen renames a page when two files share a name, so the path has to come from the tag file, not a guess. */
+  test('maps each file by its path to the page Doxygen gave it', () => {
+    const result = readDoxygenFiles(TAG, 'c/');
+
+    expect(result.get('src/c/core/clock/moon.h')).toBe('c/moon_8h.html');
+    expect(result.get('src/c/pebble/ui/util.h')).toBe('c/ui_2util_8h.html');
+  });
+
+  /** A group or a struct is not a file, and taking one would send a file link to the wrong page. */
+  test('reads only the file entries', () => {
+    const result = readDoxygenFiles(TAG, 'c/');
+
+    expect([...result.keys()]).toEqual(['src/c/core/clock/moon.h', 'src/c/pebble/ui/util.h']);
   });
 });
 

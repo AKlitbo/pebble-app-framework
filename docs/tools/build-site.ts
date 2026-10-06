@@ -16,7 +16,11 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createCssVariablesTheme, createHighlighter } from 'shiki';
 import {
+  HOW_GROUPS,
+  HOW_INDEX,
+  HOW_PAGES,
   PAF_PAGES,
   PAGES,
   REPO_URL,
@@ -24,11 +28,16 @@ import {
   escapeHtml,
   fillTemplate,
   pixelStrip,
+  readDoxygenFiles,
   readGcovrSummary,
   readVitestSummary,
+  renderGroupLinks,
   renderLicenceText,
   renderMarkdown,
+  renderPageSteps,
+  renderSectionIndex,
   renderSectionNav,
+  renderSideNav,
   renderSiteBar,
   rootFor,
   SITE_NOTICES,
@@ -51,6 +60,8 @@ const SHARED_FILES = [
   'docs/site/coverage.css',
   'docs/site/theme.js',
   'docs/site/versions.js',
+  'docs/site/diagrams.js',
+  'docs/site/side-nav.js',
   'docs/doxygen/logo.svg',
   'docs/doxygen/favicon.svg',
 ];
@@ -119,6 +130,15 @@ function readSummary(relative: string): unknown {
     return JSON.parse(fs.readFileSync(path.join(DIST, relative), 'utf8'));
   } catch {
     return null;
+  }
+}
+
+/** The C file pages from the tag file Doxygen writes beside the C docs, or none when it did not run. */
+function readApiPages(): Map<string, string> {
+  try {
+    return readDoxygenFiles(fs.readFileSync(path.join(DIST, 'c', 'framework.tag'), 'utf8'), 'c/');
+  } catch {
+    return new Map();
   }
 }
 
@@ -198,10 +218,15 @@ function footer(root: string): string {
   });
 }
 
-/** Where a page sits in the site: the section the bar marks, and the strip of links to the rest of it. */
+/**
+ * Where a page sits in the site: the section the bar marks, either the strip of links to the rest of
+ * its section or the sidebar of a grouped section, and the previous and next links under its text.
+ */
 interface PagePlace {
   section?: SiteSection;
   nav?: string;
+  side?: string;
+  steps?: string;
 }
 
 function page(relative: string, title: string, body: string, place: PagePlace = {}): void {
@@ -210,7 +235,9 @@ function page(relative: string, title: string, body: string, place: PagePlace = 
   write(relative, fillTemplate(template('page.html'), {
     root,
     title: escapeHtml(title),
+    sideNav: place.side ?? '',
     sectionNav: place.nav ?? '',
+    pageSteps: place.steps ?? '',
     body,
     siteBar: siteBar(root, place.section ?? null),
     footer: footer(root),
@@ -229,13 +256,32 @@ write('index.html', fillTemplate(template('landing.html'), {
   built,
   coverageC: pixelStrip(readGcovrSummary(readSummary('coverage/c/summary.json'))),
   coverageTs: pixelStrip(readVitestSummary(readSummary('coverage/ts/coverage-summary.json'))),
+  howGroups: renderGroupLinks(HOW_GROUPS, ''),
   footer: footer(''),
 }));
+
+// the page Doxygen wrote for each C file, so a link to one from the markdown opens its reference on the
+// site. a build that skipped Doxygen has no tag file, and those links go to GitHub like any other file
+const apiPages = readApiPages();
+
+// colours the code blocks on the markdown pages. the colours are css variables, so site.css picks them
+// from the site's own palette and they follow the light and dark switch with everything else. a
+// language not loaded here stays a plain block
+const CODE_THEME = createCssVariablesTheme({ name: 'site', variablePrefix: '--code-' });
+const highlighter = await createHighlighter({
+  themes: [CODE_THEME],
+  langs: ['c', 'typescript', 'javascript', 'json', 'shellscript', 'yaml', 'python', 'html', 'css'],
+});
+const loadedLanguages = new Set<string>(highlighter.getLoadedLanguages());
+
+function highlight(code: string, language: string): string | null {
+  return loadedLanguages.has(language) ? highlighter.codeToHtml(code, { lang: language, theme: 'site' }) : null;
+}
 
 const changelog = splitTitle(read(PAGES.changelog.file));
 const changelogPage = `${PAGES.changelog.folder}index.html`;
 
-page(changelogPage, changelog.title || PAGES.changelog.title, renderMarkdown(changelog.body, { root: rootFor(changelogPage), commit, folder: path.posix.dirname(PAGES.changelog.file) }));
+page(changelogPage, changelog.title || PAGES.changelog.title, renderMarkdown(changelog.body, { root: rootFor(changelogPage), commit, apiPages, highlight, folder: path.posix.dirname(PAGES.changelog.file) }));
 
 // the notices page is the notices that ship with the framework, then the docs site's own from the root
 // file. each half's links are read from its own file's folder
@@ -243,7 +289,7 @@ page(changelogPage, changelog.title || PAGES.changelog.title, renderMarkdown(cha
 const shippedNotices = splitTitle(read(PAGES.notices.file));
 const siteNotices = splitTitle(read(SITE_NOTICES));
 const noticesPage = `${PAGES.notices.folder}index.html`;
-const noticesLinks = { root: rootFor(noticesPage), commit };
+const noticesLinks = { root: rootFor(noticesPage), commit, apiPages, highlight };
 
 page(
   noticesPage,
@@ -267,9 +313,34 @@ for (const pafPage of PAF_PAGES) {
   const root = rootFor(relative);
   const markdown = splitTitle(read(pafPage.file));
 
-  page(relative, markdown.title || pafPage.title, renderMarkdown(markdown.body, { root, commit, folder: path.posix.dirname(pafPage.file) }), {
+  page(relative, markdown.title || pafPage.title, renderMarkdown(markdown.body, { root, commit, apiPages, highlight, folder: path.posix.dirname(pafPage.file) }), {
     section: 'paf',
     nav: renderSectionNav(PAF_PAGES, pafPage, root),
+  });
+}
+
+// the how it works index, its opening from the markdown with the grouped list of pages under it
+const howIndexPage = `${HOW_INDEX.folder}index.html`;
+const howIndexRoot = rootFor(howIndexPage);
+const howIndex = splitTitle(read(HOW_INDEX.file));
+
+page(
+  howIndexPage,
+  howIndex.title || HOW_INDEX.title,
+  renderMarkdown(howIndex.body, { root: howIndexRoot, commit, apiPages, highlight, folder: path.posix.dirname(HOW_INDEX.file) }) + renderSectionIndex(HOW_GROUPS, howIndexRoot),
+  { section: 'how' }
+);
+
+// each how it works page, with the sidebar of every page in the section beside it
+for (const howPage of HOW_PAGES) {
+  const relative = `${howPage.folder}index.html`;
+  const root = rootFor(relative);
+  const markdown = splitTitle(read(howPage.file));
+
+  page(relative, markdown.title || howPage.title, renderMarkdown(markdown.body, { root, commit, apiPages, highlight, folder: path.posix.dirname(howPage.file) }), {
+    section: 'how',
+    side: renderSideNav(HOW_INDEX, HOW_GROUPS, howPage, root),
+    steps: renderPageSteps(HOW_PAGES, howPage, root),
   });
 }
 

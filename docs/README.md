@@ -10,12 +10,12 @@ The site is the C docs from Doxygen, the TypeScript docs from TypeDoc, a coverag
 * **`typedoc.json`**: the TypeDoc settings, with its paths from this folder.
 * **`doxygen/`**: the Doxygen theme in `pebble.css`, the header template, the main page, the logo and favicon, and the copied-in doxygen-awesome files under `awesome/`.
 * **`typedoc/`**: the look laid over TypeDoc's default theme.
-* **`site/`**: the site's own parts. `templates/` holds the home page, the shell every other page uses, the footer, the shared bar, and the theme toggle. `site.css`, `site-bar.css` and `coverage.css` are the stylesheets. `theme.js` is the light and dark switch every page loads, and `versions.js` fills the version picker.
+* **`site/`**: the site's own parts. `templates/` holds the home page, the shell every other page uses, the footer, the shared bar, and the theme toggle. `site.css`, `site-bar.css` and `coverage.css` are the stylesheets. `theme.js` is the light and dark switch every page loads, `versions.js` fills the version picker, and `diagrams.js` draws the Mermaid diagrams.
 * **`paf/`**: the markdown for the pages on the `paf` command, one file per page.
 * **`tools/`**: `render.ts` turns the repo's markdown into html and `build-site.ts` writes the pages, then puts the shared bar on every page the other tools wrote.
 * **`site/dist/`**: the built site, which git ignores.
 
-The package here holds TypeDoc, marked and Prettier, alongside `tsconfig.json`, `vitest.config.ts`, `eslint.config.ts` and the two Prettier files. The framework's own `package.json` carries none of them, so a repo of faces mounting the framework installs nothing from this folder.
+The package here holds TypeDoc, marked, Shiki and Prettier, alongside `tsconfig.json`, `vitest.config.ts`, `eslint.config.ts` and the two Prettier files. The framework's own `package.json` carries none of them, so a repo of faces mounting the framework installs nothing from this folder.
 
 ## Building It
 

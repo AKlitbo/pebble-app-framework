@@ -47,6 +47,101 @@ export const PAF_PAGES: readonly SitePage[] = [
   { file: 'docs/paf/troubleshooting.md', folder: 'paf/troubleshooting/', title: 'Troubleshooting' },
 ];
 
+/** A heading in a section's sidebar and on its index page, with the pages listed under it. */
+export interface PageGroup {
+  /** The heading, in Title Case. */
+  name: string;
+  /** The pages under it, in the order they are listed. */
+  pages: readonly SitePage[];
+}
+
+/**
+ * The index page of the pages on how the framework's code works inside. Its markdown holds the title
+ * and the opening, and the build adds the grouped list of pages under them.
+ */
+export const HOW_INDEX: SitePage = { file: 'docs/how/index.md', folder: 'how/', title: 'How It Works' };
+
+/** The pages on how the framework's code works inside, under the headings the sidebar and the index list them by. */
+export const HOW_GROUPS: readonly PageGroup[] = [
+  {
+    name: 'Settings and Messages',
+    pages: [
+      { file: 'docs/how/life-of-a-setting.md', folder: 'how/life-of-a-setting/', title: 'The Life of a Setting' },
+      { file: 'docs/how/phone-side.md', folder: 'how/phone-side/', title: 'The Phone Side' },
+      { file: 'docs/how/settings-page.md', folder: 'how/settings-page/', title: 'The Settings Page' },
+      { file: 'docs/how/settings-on-the-watch.md', folder: 'how/settings-on-the-watch/', title: 'Settings on the Watch' },
+      { file: 'docs/how/talking-to-the-phone.md', folder: 'how/talking-to-the-phone/', title: 'Talking to the Phone' },
+      { file: 'docs/how/message-formats.md', folder: 'how/message-formats/', title: 'The Message Formats' },
+    ],
+  },
+  {
+    name: 'Stores',
+    pages: [
+      { file: 'docs/how/stores.md', folder: 'how/stores/', title: 'How the Stores Work' },
+      { file: 'docs/how/time-store.md', folder: 'how/time-store/', title: 'The Time Store' },
+      { file: 'docs/how/system-store.md', folder: 'how/system-store/', title: 'The System Store' },
+      { file: 'docs/how/location-store.md', folder: 'how/location-store/', title: 'The Location Store' },
+      { file: 'docs/how/weather-store.md', folder: 'how/weather-store/', title: 'The Weather Store' },
+      { file: 'docs/how/weather-readings.md', folder: 'how/weather-readings/', title: 'Weather Readings' },
+      { file: 'docs/how/fetching-the-weather.md', folder: 'how/fetching-the-weather/', title: 'Fetching the Weather' },
+      { file: 'docs/how/stock-store.md', folder: 'how/stock-store/', title: 'The Stock Store' },
+      { file: 'docs/how/calendar-store.md', folder: 'how/calendar-store/', title: 'The Calendar Store' },
+      { file: 'docs/how/health-store.md', folder: 'how/health-store/', title: 'The Health Store' },
+    ],
+  },
+  {
+    name: 'Clock and Sky',
+    pages: [
+      { file: 'docs/how/moon.md', folder: 'how/moon/', title: 'The Moon' },
+      { file: 'docs/how/beats.md', folder: 'how/beats/', title: '.beats' },
+      { file: 'docs/how/julian-date.md', folder: 'how/julian-date/', title: 'The Julian Date' },
+      { file: 'docs/how/sunrise-and-sunset.md', folder: 'how/sunrise-and-sunset/', title: 'Sunrise and Sunset' },
+      { file: 'docs/how/tides.md', folder: 'how/tides/', title: 'Tides' },
+      { file: 'docs/how/time-zones.md', folder: 'how/time-zones/', title: 'Time Zones' },
+      { file: 'docs/how/time-bands.md', folder: 'how/time-bands/', title: 'Time Bands and Night Hours' },
+      { file: 'docs/how/dates-and-durations.md', folder: 'how/dates-and-durations/', title: 'Dates and Durations' },
+    ],
+  },
+  {
+    name: 'Drawing',
+    pages: [
+      { file: 'docs/how/engine.md', folder: 'how/engine/', title: 'The Engine' },
+      { file: 'docs/how/readouts.md', folder: 'how/readouts/', title: 'Readouts' },
+      { file: 'docs/how/fonts.md', folder: 'how/fonts/', title: 'Fonts' },
+      { file: 'docs/how/icons.md', folder: 'how/icons/', title: 'Icons' },
+      { file: 'docs/how/layout-strings.md', folder: 'how/layout-strings/', title: 'Layout Strings' },
+    ],
+  },
+  {
+    name: 'Text, Numbers, and Feedback',
+    pages: [
+      { file: 'docs/how/fitting-text.md', folder: 'how/fitting-text/', title: 'Fitting Text' },
+      { file: 'docs/how/numbers-and-units.md', folder: 'how/numbers-and-units/', title: 'Numbers and Units' },
+      { file: 'docs/how/vibrations.md', folder: 'how/vibrations/', title: 'Vibrations' },
+    ],
+  },
+  {
+    name: 'Plugins',
+    pages: [
+      { file: 'docs/how/icons-plugin.md', folder: 'how/icons-plugin/', title: 'The Icons Plugin' },
+      { file: 'docs/how/frame-plugin.md', folder: 'how/frame-plugin/', title: 'The Frame Plugin' },
+      { file: 'docs/how/thumbnails-plugin.md', folder: 'how/thumbnails-plugin/', title: 'The Thumbnails Plugin' },
+      { file: 'docs/how/dev-plugin.md', folder: 'how/dev-plugin/', title: 'The Dev Plugin' },
+    ],
+  },
+  {
+    name: 'CI',
+    pages: [
+      { file: 'docs/how/ci-builds.md', folder: 'how/ci-builds/', title: 'Building in CI' },
+      { file: 'docs/how/ci-memory.md', folder: 'how/ci-memory/', title: 'Memory Reports' },
+      { file: 'docs/how/ci-releases.md', folder: 'how/ci-releases/', title: 'Releases' },
+    ],
+  },
+];
+
+/** Every page under HOW_GROUPS, in the order the sidebar lists them. */
+export const HOW_PAGES: readonly SitePage[] = HOW_GROUPS.flatMap((group) => group.pages);
+
 /**
  * The notices for what only the docs site uses. The notices page shows them after the ones that ship
  * with the framework, which src/NOTICES.md holds.
@@ -57,7 +152,7 @@ export const SITE_NOTICES = 'NOTICES.md';
 // src/LICENSE is the copy that ships with the framework, and the root one covers the whole repo, so
 // its page stands in for both. the root NOTICES.md is the second half of the notices page
 const SITE_PAGES = new Map<string, string>([
-  ...[...Object.values(PAGES), ...PAF_PAGES].map((page): [string, string] => [page.file, page.folder]),
+  ...[...Object.values(PAGES), ...PAF_PAGES, HOW_INDEX, ...HOW_PAGES].map((page): [string, string] => [page.file, page.folder]),
   ['src/LICENSE', PAGES.licence.folder],
   [SITE_NOTICES, PAGES.notices.folder],
 ]);
@@ -89,6 +184,17 @@ export interface LinkOptions {
    * relative link from there, so the site does too. Left out, it is the repo root.
    */
   folder?: string;
+  /**
+   * The page the reference docs wrote for each repo file that has one, by the file's path from the repo
+   * root, such as `c/moon_8h.html` for `src/c/core/clock/moon.h`. Left out, every file goes to GitHub.
+   */
+  apiPages?: ReadonlyMap<string, string>;
+  /**
+   * Colours a code block, given its text and the first word of its fence. It hands back the whole
+   * block's html, or null for a language it does not know, which leaves the block plain. Left out,
+   * every block is plain.
+   */
+  highlight?: (code: string, language: string) => string | null;
 }
 
 /**
@@ -124,9 +230,9 @@ export function slug(text: string): string {
  * Points a link from one of the repo's markdown files at the right place on the site.
  *
  * The markdown links files by their path in the repo, which is a 404 once it is a page on GitHub Pages. A
- * file with a page of its own goes to that page. Any other repo file goes to GitHub at the commit the site
- * was built from, including one written from the repo root with a leading slash. Full URLs and anchors
- * already work, so they are left alone.
+ * file with a page of its own goes to that page, and a C file goes to the page Doxygen wrote for it. Any
+ * other repo file goes to GitHub at the commit the site was built from, including one written from the
+ * repo root with a leading slash. Full URLs and anchors already work, so they are left alone.
  *
  * @param href The link as written in the markdown.
  * @param options Where the page sits and which commit it was built from.
@@ -152,7 +258,46 @@ export function rewriteLink(href: string, options: LinkOptions): string {
     return `${options.root}${page}${fragment}`;
   }
 
+  const apiPage = options.apiPages?.get(target);
+
+  if (apiPage !== undefined) {
+    return `${options.root}${apiPage}${fragment}`;
+  }
+
   return `${REPO_URL}/blob/${options.commit}/${target}${fragment}`;
+}
+
+/**
+ * Reads the page Doxygen wrote for each file from the tag file it writes beside the C docs.
+ *
+ * Doxygen names a file's page from the file name alone, such as `moon_8h.html`, and gives one a
+ * different name when two files share a name. The tag file records each file's real path with the
+ * page it got, so a link never has to guess. A file Doxygen leaves out, such as a spec, has no entry.
+ *
+ * @param tag The tag file's xml.
+ * @param folder The folder the pages sit in from the site root, with a trailing slash, such as `c/`.
+ * @return Each file's page from the site root, by the file's path from the repo root.
+ */
+export function readDoxygenFiles(tag: string, folder: string): Map<string, string> {
+  const pages = new Map<string, string>();
+
+  for (const [, body] of tag.matchAll(/<compound kind="file">([\s\S]*?)<\/compound>/g)) {
+    const name = /<name>([^<]+)<\/name>/.exec(body)?.[1];
+    const where = /<path>([^<]*)<\/path>/.exec(body)?.[1] ?? '';
+    const filename = /<filename>([^<]+)<\/filename>/.exec(body)?.[1];
+
+    if (name === undefined || filename === undefined) {
+      continue;
+    }
+
+    // a tag file written on Windows separates the folders with backslashes
+    const file = path.posix.join(where.replace(/\\/g, '/'), name);
+    const page = filename.endsWith('.html') ? filename : `${filename}.html`;
+
+    pages.set(file, `${folder}${page}`);
+  }
+
+  return pages;
 }
 
 /**
@@ -263,6 +408,18 @@ function createMarked(options: LinkOptions): Marked {
         // a fence's info string can carry more than the language, such as `sh title`, and only the first
         // word names the language
         const language = (lang || '').split(/\s+/)[0];
+
+        // a diagram goes in as its source, which site/diagrams.js draws once the page loads
+        if (language === 'mermaid') {
+          return `<pre class="mermaid">${escapeHtml(text)}</pre>\n`;
+        }
+
+        const coloured = language && options.highlight ? options.highlight(text, language) : null;
+
+        if (coloured !== null) {
+          return `${coloured}\n`;
+        }
+
         const className = language ? ` class="language-${escapeHtml(language)}"` : '';
 
         return `<pre><code${className}>${escapeHtml(text)}</code></pre>\n`;
@@ -380,7 +537,7 @@ export function fillTemplate(template: string, values: Record<string, string>): 
 }
 
 /** A part of the site the shared bar links to, or null for a page that is none of them. */
-export type SiteSection = 'c' | 'ts' | 'paf' | 'coverage-c' | 'coverage-ts' | null;
+export type SiteSection = 'c' | 'ts' | 'paf' | 'how' | 'coverage-c' | 'coverage-ts' | null;
 
 /**
  * The strip of links across the top of a page in a section of several pages, such as the paf pages, with
@@ -399,6 +556,91 @@ export function renderSectionNav(pages: readonly SitePage[], current: SitePage, 
   });
 
   return `<nav class="section-nav" aria-label="Pages in this section">\n<ul>\n${links.join('\n')}\n</ul>\n</nav>`;
+}
+
+/** Each group's heading and its list of pages, with the page being shown marked when there is one. */
+function groupLists(groups: readonly PageGroup[], current: SitePage | null, root: string, heading: 'h2' | 'h3'): string {
+  return groups.map((group) => {
+    const links = group.pages.map((page) => {
+      const here = current !== null && page.folder === current.folder;
+
+      return `<li${here ? ' class="current"' : ''}><a href="${root}${page.folder}"${here ? ' aria-current="page"' : ''}>${escapeHtml(page.title)}</a></li>`;
+    });
+
+    return `<${heading}>${escapeHtml(group.name)}</${heading}>\n<ul>\n${links.join('\n')}\n</ul>`;
+  }).join('\n');
+}
+
+/**
+ * The sidebar beside a page in a grouped section, listing every page in the section under its group's
+ * heading with the page being shown marked. It sits open beside the text on a wide screen, and
+ * site/side-nav.js folds it into a Pages button above the text on a phone.
+ *
+ * @param index The section's index page, linked from the top of the sidebar.
+ * @param groups The section's groups, in the order the sidebar lists them.
+ * @param current The page the sidebar sits beside.
+ * @param root The way back up to the site root from that page.
+ * @return The sidebar's html.
+ */
+export function renderSideNav(index: SitePage, groups: readonly PageGroup[], current: SitePage, root: string): string {
+  return [
+    '<details class="side-nav" open>',
+    '<summary>Pages</summary>',
+    `<nav aria-label="${escapeHtml(index.title)} pages">`,
+    `<a class="side-nav-index" href="${root}${index.folder}">${escapeHtml(index.title)}</a>`,
+    groupLists(groups, current, root, 'h3'),
+    '</nav>',
+    '</details>',
+  ].join('\n');
+}
+
+/**
+ * A link for each group in a section, to the first page in it, for the section's card on the home page.
+ *
+ * @param groups The section's groups, in the order the card lists them.
+ * @param root The way back up to the site root from the page the card sits on.
+ * @return The list's html, or an empty string when there are no groups.
+ */
+export function renderGroupLinks(groups: readonly PageGroup[], root: string): string {
+  const links = groups
+    .filter((group) => group.pages.length > 0)
+    .map((group) => `<li><a href="${root}${group.pages[0].folder}">${escapeHtml(group.name)}</a></li>`);
+
+  return links.length === 0 ? '' : `<ul class="card-groups">\n${links.join('\n')}\n</ul>`;
+}
+
+/**
+ * The links to the page before and the page after, which sit under a page's text so a reader can go on
+ * without the sidebar.
+ *
+ * @param pages Every page in the section, in the order the sidebar lists them.
+ * @param current The page the links sit on.
+ * @param root The way back up to the site root from that page.
+ * @return The links' html, or an empty string for a page outside the list.
+ */
+export function renderPageSteps(pages: readonly SitePage[], current: SitePage, root: string): string {
+  const at = pages.findIndex((page) => page.folder === current.folder);
+
+  if (at === -1) {
+    return '';
+  }
+
+  const step = (page: SitePage | undefined, rel: 'prev' | 'next', label: string) => (page
+    ? `<a class="page-step page-step-${rel}" rel="${rel}" href="${root}${page.folder}"><span>${label}</span>${escapeHtml(page.title)}</a>`
+    : '<span class="page-step"></span>');
+
+  return `<nav class="page-steps" aria-label="Previous and next pages">\n${step(pages[at - 1], 'prev', 'Previous')}\n${step(pages[at + 1], 'next', 'Next')}\n</nav>`;
+}
+
+/**
+ * The grouped list of a section's pages that sits under the opening on its index page.
+ *
+ * @param groups The section's groups, in the order the list shows them.
+ * @param root The way back up to the site root from the index page.
+ * @return The list's html.
+ */
+export function renderSectionIndex(groups: readonly PageGroup[], root: string): string {
+  return `<div class="section-index">\n${groupLists(groups, null, root, 'h2')}\n</div>`;
 }
 
 /**
