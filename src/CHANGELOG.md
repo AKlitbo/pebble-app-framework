@@ -1,20 +1,24 @@
 # Changelog
 
-All notable API changes to the Pebble App Framework are documented in this file.
+All notable changes to the Pebble App Framework are documented in this file. Each version lists the framework changes a face developer has to know about first, then the wearer-visible changes, the ones someone wearing any face built on it would see without the face changing its code.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Fixed
+### Wearer-Visible Changes
 
-- Fixed `startPebbleApp` missing every message from the watch on a real phone. The Pebble phone app keys a watch message by name, and the framework read it by number. A watch that was factory reset or reinstalled stayed on the face's defaults until the wearer pressed Save, and the watch's own weather, stock, and calendar requests went unanswered. Each message now gets the number for every key the face declares before the restore or any feature's `message` hook reads it.
-- Fixed the settings request sent on `ready` being lost when the face had not opened AppMessage yet. PebbleOS turns away a message that lands before the face's `init` opens AppMessage. The send queue's three tries ran out before a face that opens it late was listening, and that was the only request of the session. A request the watch turns away now goes again a second later, up to 8 more times, and stops as soon as the watch takes one. A repeat of the watch's reply is ignored, so a reply that arrives twice restores or seeds once.
-- Fixed the second clocks pushed on `ready` being lost when the face had not opened AppMessage yet. A second clock whose zone had changed its clocks since the last launch stayed on the old hour until the next background tick. The zones now go again when the watch's settings reply lands, since the reply proves the face is listening. A push still waiting in the queue is not queued twice.
+#### Fixed
+
+- Fixed a watch that was factory reset or reinstalled staying on the face's defaults until the wearer pressed Save, and the watch's own weather, stock, and calendar requests going unanswered, on a real phone. The Pebble phone app keys a watch message by name, and `startPebbleApp` read it by number, so it missed every message from the watch. Each message now gets the number for every key the face declares before the restore or any feature's `message` hook reads it.
+- Fixed a reset watch's settings not coming back when the face had not opened AppMessage yet as the phone's code started. The settings request sent on `ready` was lost. PebbleOS turns away a message that lands before the face's `init` opens AppMessage. The send queue's three tries ran out before a face that opens it late was listening, and that was the only request of the session. A request the watch turns away now goes again a second later, up to 8 more times, and stops as soon as the watch takes one. A repeat of the watch's reply is ignored, so a reply that arrives twice restores or seeds once.
+- Fixed a second clock whose zone had changed its clocks since the last launch staying on the old hour until the next background tick, when the face had not opened AppMessage yet. The second clocks pushed on `ready` were lost. The zones now go again when the watch's settings reply lands, since the reply proves the face is listening. A push still waiting in the queue is not queued twice.
 
 ## [4.0.0] - 2026-10-02
 
-### Added
+### Framework Changes
+
+#### Added
 
 - Added a `paf` key to the framework's `package.json` and to each plugin's, naming the build, its generators, what a face has to hold for each to apply, the checks it adds to `paf check`, the tools `paf tool <face> <name>` runs, and the scripts `paf lint` and `paf format` run. For a path under `src/pkjs/`, a family face's core counts too, at the matching folder under `core/pkjs/`. `paf build`, `paf gen`, `paf check`, `paf tool`, `paf lint`, and `paf format` read them, so a face's `package.json` no longer needs scripts that point into the framework. A face's own generators go under `gen` in its `paf.config.json`, each naming its script and the generator it runs after.
 - Added `tools/build.ts`, which builds a face's `.pbw` with the same arguments and steps as `build.sh`, under Node like the framework's other tools.
@@ -25,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `tsconfig.spec.json` and `tsconfig.tools.json`, which hold the compiler options for a face's specs and for its tools and configs that run under Node. A face's own spec and tools tsconfigs extend them from `paf/` and set their own `include` and `exclude`. The spec one brings in `ts/pkjs/pebble.d.ts` through its `files`, so a face's spec tsconfig no longer lists it and sets no `files` of its own.
 - **Breaking:** Added `ts/generated.d.ts`, which types every `*.g` module, whether a framework generator or the unit's own wrote it. The pkjs build takes it in from `paf/ts/`, and so does a face tsconfig that includes `paf/ts/**/*.d.ts`. Delete the face's own `declare module '*.g'`, since two copies clash and stop the build.
 
-### Changed
+#### Changed
 
 - The framework now runs under Node 22.18 or newer on Node 22, as well as 24.2 or newer. Its `engines` reads `^22.18.0 || >=24.2.0`, which is every Node with `import.meta.main`. A face's CI still installs Node 24, which `setup-pebble` reads from `toolchain.json`.
 - **Breaking:** This version needs `paf 2.0.0`, which renames a unit's `paf.json` to `paf.config.json` and adds the unit's plugin list to it. Everything a face gets now lives under `src/` in the framework repo, and `paf 2.0.0` copies that folder into a unit, leaving out the specs, their fixtures, and any plugin the unit does not list.
@@ -52,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** The background generator takes its frame and theme as flags. Pass the frame as `--frame <name>`, since a frame named without the flag now stops the run. Pass `--theme <name>` or `--theme all` on a face with themes, which no longer bakes without one. Each flag takes a name or `all`, and `all` bakes every one the face has. `paf gen <face> all` passes `--frame all --theme all`.
 - The background generator now stops on a frame or a theme the face does not have and names the ones it has. It also stops on a named theme for a face without themes, and on a frame page or a theme sheet called `all`. A face with themes bakes one frame, since a themed background is named after its theme alone, so `--frame all` stops on one with more. Only a frame with a page for a platform the face targets counts.
 
-### Removed
+#### Removed
 
 - **Breaking:** Removed the `files` list from `package.json`. `paf 1.0.0` reads that list to decide what ships, and without it copies the whole repo into `lib/`, with the framework one folder further down at `lib/src/`, where a unit does not build. Fill the unit with `paf 2.0.0`.
 - **Breaking:** Removed the test and lint packages from what the framework installs. Its `package.json` now lists only what its tools need to run, as `dependencies`: `@rebble/clay`, `esbuild`, `ical.js`, and `typescript`. Playwright and `sharp` come with the plugins that use them. ESLint and Prettier come with the `code-style` plugin. List `vitest`, `jsdom`, `@types/node`, and anything else a face's own checks use in the face's own `devDependencies`. `ts/testing/` and `ts/clay/builder/ts/testing/` import `vitest`, so a face using those helpers needs it installed.
@@ -64,13 +68,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed `listFaces` from `tools/shared/faces.ts` and the `--faces` option of `tools/manifest/build-manifests.ts`. Use `listFaceNames` for either. Also removed the `builderDir`, `resolveIn`, `overlayPlugin`, `bundleInitialize`, `generateAll`, `indentBlock`, `buildTemplate`, and `buildStyle` exports of `tools/clay-components/generate-components.ts`, which only the generator itself uses.
 - **Breaking:** Removed the framework's specs from a face's test run, including the ones that checked a face's committed Clay components, icon media, and thumbnails. Those checks are now scripts, so add `paf check` to a face repo's CI beside `paf test`, `paf lint`, and `paf typecheck`.
 
-### Fixed
+#### Fixed
 
 - Fixed every framework tool exiting 0 having done nothing under a Node with no `import.meta.main`, which is 22 before 22.18, any 23, and 24 before 24.2. A generator reported success with nothing written, and `build.sh` stopped saying the unit had no faces. Each tool now stops with exit code 1 and names the Nodes that have it.
 
 ## [3.0.0] - 2026-09-27
 
-### Added
+### Framework Changes
+
+#### Added
 
 - Added `weather_reading_apply` and the `WeatherMessage` and `WeatherState` types in `core/weather/weather_reading.h`. They turn one weather message off the phone into the kept reading, and every missing value is converted there once.
 - Added `StorePoll` with `store_poll_set` and `store_poll_turn` to `io/stores/store_poll.h`, the polling decisions the weather, stock, and calendar stores share. Each store keeps its own interval and its own first fetch.
@@ -97,13 +103,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `store_poll_reconnect_due` in `c/pebble/io/stores/store_poll.h`, which says whether a reading is worth asking for again when the phone reconnects: one that never arrived, or one at least its own poll interval old. A face that keeps its own copy of the check can call this instead.
 - Added a `files` list to the framework's `package.json`, naming what a face project needs from the framework. The C host specs, the docs site, the hooks, and all of `.github/` are left out, the face actions included. The TypeScript specs stay in, since the ones that check a face's generated files only run beside faces.
 
-### Changed
+#### Changed
 
 - The icon cache holds 24 icons rather than 64, which covers every icon the busiest layout draws at once and saves 800 bytes of watch memory. Icons nothing draws any more, such as past days' moon glyphs, are dropped rather than kept. The cap is the `ICON_CACHE_MAX` compile-time define. A face has no hook to raise it yet, since its sandbox wscript is generated, so one drawing more than 24 distinct icons in one redraw sees the oldest reloaded.
 - `timeband_clip` now works out its minutes in 32-bit maths, so a face that clips spans onto a window no longer links libgcc's 64-bit division, about 750 bytes of watch binary.
 - **Breaking:** A cleared time zone field now reaches the watch as an empty string, rather than being left out of the save, so clearing the picker no longer leaves the old zone on the watch while the phone shows none. Read the setting with `zone_setting_is_set` and show no zone when it is not set, or a cleared picker shows UTC with no name. Give the watch field an empty or no `default_str`, since the watch skips an empty save for a field with a real default, and the clear would never reach it.
 - **Breaking:** A time zone picker is now a `locationsearch` item marked `timeZone: true`, rather than any key whose name contains `TIMEZONE` or `TIME_ZONE`. `buildConfig`'s `clock: { timeZone: true }` picker is marked already. A face that builds its own picker adds `timeZone: true` to the item, or the picker offers no zones and the watch gets the saved place rather than `offset,label`. `retimeSettings` now takes the settings page after the message keys.
-- A time zone field saved before the zone was kept now reaches the watch with its label flattened to ASCII, the same as every other time zone field.
 - The iCal parse now logs when a repeating event runs out of steps before it reaches this week and is left off the agenda. An hourly event set up more than about fourteen months ago does, since the walk starts at its first occurrence.
 - The iCal parse now groups moved occurrences by UID once, rather than walking every one of them for each recurring event. A feed full of recurring meetings with moved instances parses in time proportional to its size.
 - OpenWeatherMap now skips its Open-Meteo call when the face shows none of the readings it lends, which are UV, dew point, the daily high and low, rain chance, and the forecast. A face that shows the forecast gets only the 16 hourly rows the strip reads rather than every hour of all eight days, and the daily strip still gets eight days. The feature passes the readings a face has keys for as `fields` in `WeatherOpts`, and a caller that leaves `fields` out still gets every reading.
@@ -132,7 +137,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** `buildConfig` now leaves the Health section out unless the face passes `steps` or `battery`, and `healthSection` returns null then, the same as the location and weather sections. A face with no steps readout no longer has to declare `HEALTH_STEPS_MODE` or the `health` capability. Pass `steps: {}` to keep the steps control. A face that passes only `battery` gets a section headed Battery holding that control alone.
 - **Breaking:** `gen:icons` no longer reads its SVG sources from `vendor/`. Name the folder as `"framework": { "iconSources": "vendor" }` in the repo's `package.json`, relative to that file. Without the setting it reads the folder from `ICON_SOURCES`, and with neither it stops and names the setting. An icon whose source is missing now keeps the PNG it has, with a warning, as long as that PNG is the size `icons.json` asks for, so a face drawing from a set the machine does not have still regenerates the rest. A named folder that is not there stops the run, and so does one holding none of the icon sets.
 
-### Removed
+#### Removed
 
 - **Breaking:** Removed support for a repo mounting one framework at its root with its faces under `watchfaces/`. The tools, typecheck, lint, and Vitest now take a face or a family as the folder mounting the framework, and the face actions read each face's framework from its own project's `lib/`. Give each face and each family under `watchfaces/` its own `lib/` with paf, and run `paf sync` before `setup-pebble`, which no longer installs a face's packages. `prepare-release` no longer asks a `lib/` checkout for its tag.
 - **Breaking:** Removed `clockstr_parse` and `clockstr_minutes`. `weather_store_sunrise` and `weather_store_sunset` now return minutes past midnight, -1 for none, and the phone sends `WEATHER_SUNRISE` and `WEATHER_SUNSET` as numbers. `WeatherSeed.sunrise` and `.sunset` are minutes too. Read the getter where a face parsed the string, and format it with the minutes and hours it already holds.
@@ -151,57 +156,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed `settings_serialized_size`. Use `settings_serialized_size_max`, the most bytes a face's settings reply can take. The outbox is opened at that size, so the settings reply always fits and is no longer measured before each send. `appmessage_open` logs once when a settings table could outgrow the platform's largest outbox.
 - **Breaking:** Removed `seedKeys`, `seedColorKeys`, and `seedBoolKeys` from `startPebbleApp`'s options. The phone now seeds every setting the watch sends that the settings page has an item for, converted by the item's type: a toggle as a boolean, a colour or slider as a number, and anything else as a string. Place fields are skipped, and time zone fields seed as before. Drop the three options from the face's `startPebbleApp` call. `seedConfigFromWatch` takes the settings page in their place.
 
-### Fixed
+#### Fixed
 
-- Fixed the text fields `buildConfig` writes, such as the API keys, the tickers, and the iCal link, taking any length. Clay copies an input's attributes onto the field as they are, and `limit` is not one a browser reads, so the builder now writes `maxlength`.
-- Fixed a place typed into a location picker and saved without tapping a suggestion saving as nothing, while the box still showed the name. The picker now shows "Pick a place from the list to save it." while the box holds text that is not a pick.
-- Fixed a stock symbol, provider, or key change whose forced fetch failed bringing the old watchlist back the next time the quota gate held a fetch. The strip kept for a shut gate and the throttle stamps are now forgotten when a stock setting changes, and a round still out for the old list is shut out so a late answer cannot put them back. A changed iCal URL now does the same for a download of the old feed still out, which pushed the old agenda to the watch in the moment before the refetch and kept it there when the new feed's download failed.
-- Fixed the restore of a wiped watch dropping a checkboxgroup's setting from the phone for good, sending a slider with decimal steps unscaled so 1.5 reached the watch as 1, and sending a setting the face no longer has under a key called `undefined0`, which can stop the whole restore reaching the watch. The saved settings now go to Clay wrapped the way the settings page returns them, only the ones with a message key go, and a slider's precision comes from its `step`, which is now on `ClayConfigItem`. A slider seeded from the watch is scaled back down too, where it came back ten times too big and reset to its default. A setting on an array message key, such as SLOT[1], now goes with a restore and seeds from the watch, where it was left out as having no key, and a time zone picker on one is retimed like any other.
-- Fixed a restored weather, stock, calendar, or location reading with a damaged string printing past the end of its field. Each string field now gets its terminator back after a restore.
 - Fixed a layout build that returned more slots than it was given room for writing past the engine's slot arrays. The count is now held to `ENGINE_MAX_SLOTS`.
-- Fixed one calendar event ical.js cannot read, such as a weekly rule with `BYMONTHDAY` or an event with no start, stopping the whole agenda from updating while it stayed in the feed. That event is now skipped and logged.
-- Fixed a cancelled calendar event still showing on the watch. A feed marks one `STATUS:CANCELLED` rather than taking it out, for a whole event or series or for one occurrence of a series. The reader now leaves them off, and a cancelled occurrence leaves a gap in its series.
-- Fixed an emoji in a calendar title or place reaching the watch as two or more question marks, which used up the field's 24 characters. An emoji, a flag, or an emoji built from several now goes over as one `?`, and so does a Hangul syllable. A keycap keeps its digit.
 - Fixed a settings save that changed a time zone field sending the same zone to the watch again on the next background push.
-- Fixed an enum setting from the phone being ignored when sent as an integer, as a select using Clay's `serializeValueAs: 'integer'` sends it, and overwritten with its first choice when sent empty or as a word. An integer is now read, and a value that is not a number is left alone.
-- Fixed the step chart shifting every bar by an hour on the days the clocks change, with the current hour's bar near empty or doubled. Each hour now starts on the wall clock, and the catch-up after a relaunch reads the batch holding the hour the clocks go back through for its whole length, where its last hour came up empty and its steps landed in the current hour's bar.
-- Fixed a busy repeating event, one with more occurrences this week than the agenda keeps, leaving off an occurrence moved into the week from further out. An occurrence whose own slot the walk never reached is now looked up wherever that slot sits, so one moved from past where a full walk stopped, or from a slot the rule no longer makes after it was edited, shows too.
-- Fixed a throw on the phone stopping everything after it. A message the phone could not encode threw out of the send queue, and a feature hook that threw stopped every feature after it. On a settings save that skipped every feature's refetch, on `ready` it stopped the refresh timer for the rest of the session, and in a watch message it skipped the settings restore. A send callback that threw stalled every send queued behind it, and a settings page closed with a response that is not the settings, such as `CANCELLED`, threw out of `webviewclosed`. A send that throws now counts as a failed one, a callback that throws is logged and the next send still goes, each hook runs on its own with a throw logged, and a page closed without settings is logged and skipped.
-- Fixed the stock quota gate on Twelve Data and Alpha Vantage. A round the provider answered with nothing good, such as NO SYMBOL for a mistyped ticker, left it open, so every watch poll spent another call on a metered plan. A fetch stamped while the phone's clock ran ahead held it shut until the clock caught up. A phone with no stamp at all, such as after its storage was cleared, held Alpha Vantage shut outside the evening window, so the watchlist sat blank until the next weekday close. Such a round now records its time and keeps it through a restart of the phone's JS. Only a round the provider never answered retries on the next poll, a stamp in the future counts as due, and Alpha Vantage with no stamp fetches once at any hour. A provider name saved with capitals, such as `TwelveData`, now gets the same gate as one in lowercase.
-- Fixed an all-day event on a day the clocks change ending an hour into the next day, or an hour short of its own. It now ends at the next midnight on the wall clock.
-- Fixed the steps readout showing -1 before the first reading, and 0 or 0.0 on a watch with Health off. It now shows `--` for no reading in either mode, steps or distance, and `health_store_steps` returns -1 when there is none, as its doc says.
-- Fixed a stock round that never reached the provider replacing the watch's last good quotes with NET ERROR in every slot, until the next good round and through a relaunch. The watch keeps the last good strip. An answer the wearer has to act on, such as INVALID KEY, still shows.
 - Fixed a face that lists the stocks feature without `STOCK_STRIP` sending its saved strip under an undefined key at every start.
-- Fixed a failed weather fetch retrying when the failure waits on the settings, such as a bad key or no location, which spent up to six calls a round on the provider's quota for an answer that could not change. Only a failure that can clear, such as a network error, retries. A provider's rate limit, OpenWeatherMap's 429 or WeatherAPI's used-up monthly quota, now reads RATE LIMIT and is not retried either, where it read API ERROR.
-- Fixed a forecast strip that outlived its fetch labelling its columns with hours already over, and keeping yesterday as its first day, when only the forecast half of later fetches failed. `weather_store_forecast_hourly` and `weather_store_forecast_daily` now drop the columns already over and move `base_hour` and `base_weekday` with them. A strip that lands after its first hour or day, such as one held while the watch was out of range, is anchored behind the clock rather than most of a cycle ahead, so it ages too.
-- Fixed a watch that reset its settings on a saved blob it could not read, such as after going back to an older build, never asking the phone to restore them. It now counts as fresh, and the reset removes the saved blob rather than writing the defaults, so a relaunch before the restore lands still counts as fresh and asks again. Every schema in the chain is checked, so a companion reset the same way is restored too.
-- Fixed the calendar window ending six days on from the fetch rather than at the end of the sixth day, so an evening event on that last day was dropped or kept by the time of day the feed was fetched.
-- Fixed sunrise, sunset, and the forecast strips' first hour and day being sent in the weather location's own zone, which put the night schedule and the forecast hours off for a manual location in another zone. They now come on the phone's clock. Open-Meteo is asked in the phone's zone. When the phone cannot name its zone, or Open-Meteo refuses the name, it is asked in the location's, and its times are moved onto the phone's clock by the response's `utc_offset_seconds`. The daily strip drops the days the phone has finished with, and today's high, low, and rain chance come from the phone's today, or are left out when the response does not hold it. The Open-Meteo calls OWM and WeatherAPI make ask again in the location's zone too, where a refused zone left them without UV, the high and low, and the forecast. OpenWeatherMap's times are read on the phone's clock, and WeatherAPI's are moved onto it. WeatherAPI's high, low, and rain chance come from the phone's today too, and it is asked for `days=2` so that day is there when the location is behind the phone.
-- Fixed today's high, low, UV, and rain chance still showing the day after they came, when only the forecast half of later fetches failed. `weather_store_temp_max`, `weather_store_temp_min`, `weather_store_uv`, and `weather_store_precip_chance` now report no data once the day they came is over.
 - Fixed `tap-walk.sh` reporting one screenshot state fewer than it captured.
-- Fixed the temperature showing in the old unit with the new letter, such as 23F for 23 degrees Celsius, after the wearer switched units while the phone was offline or the fetch failed, or when a fetch from before the switch answered just after it. The weather already on the watch now converts to the new unit when the wearer switches, through `weather_reading_convert`, a restore from the phone is left alone, and a save shuts out a fetch still out for the old settings. Faces are told through the new `appmessage_on_unit_changed`, which the weather store registers.
-- Fixed the heart rate graph falling out of step with the clock. The backfill after a first launch placed its records as if the last one were the current minute, which shifted the graph when the watch's minute log ran behind the clock. A watch clock set back froze it, with only its last bar moving until the clock caught up. Each record now lands in the slot for its own minute, through `minute_window_first_slot` in `core/health/minute_window.h`, and the graph starts over when the clock goes back. A relaunch after time in a watchapp now fills the minutes it was away from the watch's log, where the graph came back with a hole in it, or blank after an hour, and a minute holding a live reading keeps it.
-- Fixed a settings reply the phone nacked being dropped, which at cold boot could leave a wiped watch on its defaults for the whole session, since the phone asks for settings once per launch. The full and fresh replies now get the same retries as a request, and each retry is rebuilt with the settings as they are then.
-- Fixed a `webcal://` calendar link, such as an iCloud Subscribe link, never loading. It is now fetched over https. A link with a `#` part now gets its cache stamp before the `#`, where the stamp never reached the server and a cached copy of the feed could come back. Also fixed the calendar stopping its refreshes for the rest of the session when the feed was cleared while a download was out.
-- Fixed a weather provider's missing reading reaching the watch as a real one. Open-Meteo's null rain chance or UV read as 0, OpenWeatherMap's null wind speed as 0 km/h, and a missing Open-Meteo weather code as the fog glyph on the forecast strips or CLEAR for the current reading. Each now reads as no data. A high, low, feels-like, or dew point out of range, or a forecast column's temperature, is now held to -99 to 199 the way the current temperature is.
-- Fixed a store's first fetch going missing. A settings push in the first second after launch cancelled it, which left a restored watchlist or agenda stale until the next poll and stopped the weather store's boot re-asks. `weather_store_reconfigure` never fetched when it turned polling on for a store with no reading, which left the weather panels on placeholders for up to a whole poll interval. A reconfigure now only cancels a waiting fetch when polling turns off, and every store catches up right away when it turns polling on with nothing to show.
-- Fixed a text setting whose default is empty, such as a picker whose None is `""`, being impossible to clear once set, and being rewritten to flash on every launch. Such a field now keeps an empty value, through `cstring_setting_is_clean` in `core/text/number_format.h`. A field with a real default still ignores an empty save.
 - Fixed a theme walk ignoring the face's `DEV_TIME_MIN`. Each shot moved the pinned clock to a minute of its own, so a panel that builds its own time through `dev_force_time` disagreed with the clock. Every shot now keeps the hour and minute the face pinned.
-- Fixed weather, stocks, and the calendar each fetching for both the watch's poll and the phone's own refresh. Weather was fetched twice per 30 minute poll, stocks spent their quota twice, and the calendar downloaded and parsed the whole feed every 5 minutes whatever interval the watch asked on. The phone's slow refresh now skips when the watch asked since the last one, and only fetches on its own once the watch stops asking, such as when it is out of range. A watch ask or a slow tick while a fetch is already out, or just after a settings save that refetches, no longer starts a second one.
-- Fixed a text setting with a `defaultValue`, such as the tickers, the iCal link, or an API key, coming back as its default on the phone when the wearer emptied it. The features now read them with `readText` from `ts/pkjs/settings-store`, which keeps an empty value and takes the default only for a field never saved.
-- Fixed a typed offset such as `utc+5` on the time zone picker showing only its `Etc/GMT-5` name, whose sign runs the other way. It now reads `UTC+05:00`.
 - Fixed a saved weather or stock provider of `constructor` or `__proto__` crashing the fetch. The provider lookup read any property of its table, so these picked up a built-in and called `.fetch` on it. They now fall back to the default provider like any other unknown name. A face with no weather provider setting now uses Open-Meteo without logging an unknown provider called `undefined` on every fetch.
-- Fixed Open-Meteo pressure reading far too low at altitude, about 840 hPa in Denver rather than about 1013. It sent ground level pressure where OpenWeatherMap and WeatherAPI send sea level. `WEATHER_PRESSURE` now carries Open-Meteo's `pressure_msl`, so the reading no longer jumps when the provider changes.
-- Fixed settings being rewritten to flash on every weather, stock, or calendar message after a fresh install, until the face relaunched. On a face that declares `SETTINGS_FRESH`, the phone now sends the key with every save and restore from the settings page. While fresh, the watch only writes to flash on that message, and saving it ends fresh. Anything else, such as the time zone push on every `ready`, stays in memory until the restore lands. The phone also stops pushing the whole config back on every `ready`. A face without the key saves only when a setting changes. The key carries 1 on a restore and 0 on a save, so a unit switch on the first save of a fresh watch converts the reading in hand, where it read as a restore and showed 21 degrees C as 21F.
-- Fixed `solar_day_progress`, `solar_night_progress`, and `solar_next_event` when sunset falls after midnight, as in a high latitude summer. Daytime read as night and the next event read as a sunrise hours away. Equal sunrise and sunset times, and readings outside the day, now return no data.
-- Fixed the time zone picker on the settings page reopening its list after a zone was tapped, while a search was still waiting or the geocoder had not answered, where a stray tap could overwrite the pick. Also fixed a zone's UTC offset hint coming out a minute short when the page opened as the minute rolled over.
 - Fixed `build.sh all` exiting 0 having built nothing when the face lookup failed or the repo had no faces, and a broken sandbox `package.json` building the face with every optional feature off. Both now stop and say what is wrong.
 - Fixed `gen:clay` resolving a core or lib piece's import to its own folder when the face has its own copy, writing output that changed with the folder it was run from, and dropping the space before a colon in builder CSS, which turned a descendant selector such as `.grid :first-child` into a different one. The face's copy now wins, the same way manifests shadow each other, the path comments always read from the repo root, and the space stays. A quoted string in builder CSS, such as a `content` value or an attribute selector, now keeps its spaces and commas as written. Rerun `gen:clay` if a face's builder CSS has such a selector.
 - Fixed the build only looking for ical.js in the mounting repo's `node_modules`. It now finds the package the way node and the specs do.
 - Fixed `fmt_hundredths` and `fmt_pct_signed` printing garbage for `INT_MIN`. A stock price comes off the wire as an int32, so a corrupt saved strip can hold it.
 - Fixed `layout_has_any_block` overflowing on a corrupt module number of ten or more digits, which could wrap onto a real module and count an empty layout as placed.
-- Fixed `moon_days_to_phase` returning 30 right on the new moon. It now returns 0 to 29, and the half day after the moon counts as now as well as the half day before.
-- Fixed Finnhub's 403 showing NET ERROR. Its free plan answers 403 for a symbol outside the US, such as `SHOP.TO`, and that now shows NO ACCESS. Twelve Data's 403 for a symbol outside the plan now shows NO ACCESS too, and its server errors show NET ERROR. Both read as INVALID KEY, which shut the quota gate for a problem the key did not cause.
 - Fixed `gen:icons` dropping every field but `type`, `name`, and `file` from a bitmap that is not an icon, such as a background's `memoryFormat` or `targetPlatforms`, and from an icon it kept, and taking a `"media"` string earlier in the appinfo for the media array. Each field now stays on the bitmap's line, and an icon keeps its own through a re-gen.
 - Fixed `WEATHER_NO_TEMP` in `wire_caps.g.h` expanding without parentheses, so face code writing `-WEATHER_NO_TEMP` read it as a decrement and failed to build. It is now `(-1000)`.
 - Fixed an appinfo with an empty `targets` map, or a target with no `name`, failing the build with a TypeError or building into `targets/undefined`. Both now stop the build with an error naming the problem. Two faces declaring the same target name, or one face declaring it twice, now stop the build too, where the second built over the first's .pbw.
@@ -212,39 +179,97 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed the weather, stock, calendar, and location stores writing to flash on every reply, even when the reading had not changed. Each keeps a checksum of the reading it last saved and skips a write that would only store a new sync time. A relaunch then reads the saved reading as older than it is, so the catch-up poll after a reconnect can fire a little sooner.
 - Fixed the stores repainting the face when nothing new had arrived. The health store asked for a repaint every minute, and the weather store once for every weather channel in a message, up to six times. The health store now asks only when a reading moved, which on a face that graphs the heart rate window is still once a minute. The weather store repaints once after the whole message, so a face reading several values together, such as sunset beside the temperature, never sees half an update.
 - Fixed the weather store re-asking for weather every 3 seconds at launch after the phone had already answered, up to 9 requests when the fetch failed. Any weather reply now ends the launch re-asks, a failed one included, and the recurring poll takes over.
-- Fixed every settings save counting as a change, which rebuilt the face and made the calendar store refetch the whole feed. The custom colours are now compared with what the face holds, up to as much as it can hold, before they count as changed. The stock and calendar stores only catch up after a save when they have never had an answer, so a cleared watchlist or an empty agenda no longer asks again on every save.
 - Fixed a `dispatch_bytes` defined but not used warning when building a face with none of the forecast, stock, or calendar strip keys.
-- Fixed a setting only seeding from the watch when the face listed it by hand, so a select such as the temperature unit opened the settings page on its default rather than what the watch was set to. A phone with nothing saved now refetches weather, stocks, and the calendar once the watch's settings are seeded, where the first fetch ran on the defaults and a watch on Fahrenheit showed a Celsius reading as 22F. A face without `SETTINGS_FRESH` gets the same refetch on its first seed, and a setting with nothing saved now compares as its default, with a single value compared as text so a number default matches the string Clay saves, so a seed or first save that writes the default back no longer spends a second call.
 - Fixed `publish-release` publishing a face tag with a pre-release version, such as `gridlock-v3.0.0-rc.1`, as a full release that GitHub marked Latest. It now goes out as a pre-release. A tag that was never pushed now stops the release, where `gh` made it at the default branch and attached pbws built from another commit. A face whose appinfo lists no `targetPlatforms` now stops with a message naming the field, where the step crashed after the build had finished.
 - Fixed `prepare-release` stopping every release of a face with no version in its appinfo. It is now held to the repo's `package.json` version, the one it builds as, and a tag whose pre-release label holds `-v` now splits at the version. It now stops before the build when the appinfo lists no `targetPlatforms`, when the version is not shaped `X.Y.Z` or `X.Y.Z-label`, or when the changelog heading's date does not exist, such as `2026-19-07`. An appinfo or `package.json` that is not valid JSON now fails with the file's name rather than a stack trace.
 - Fixed a re-run of a face's build job failing at `report-memory`'s upload when the first run had already uploaded the memory rows. Its `log` input is now refused when it points outside the repo, the same as every other action's path input. `render-memory` now warns rather than failing when no build left any rows, since the builds that broke already fail the run. Its table now puts the warning mark on whichever limit a row is closest to, and lists a row whose binary was missing or too short to read first as not measured rather than last at 0%. `report-memory` now warns when a platform's memory block is missing figures, where the platform dropped out of the table without a word.
 - Fixed `setup-pebble` only caching a pinned SDK from a job that passed, so a face build that failed downloaded pebble-tool and the SDK again on every run. The cache now saves straight after the install.
 - Fixed `gen:frame` baking a frame whose page linked a local stylesheet that was not there, leaving every colour and font the sheet declared out of the background with no error. It now stops and names the page and the link, before any platform's frames are baked.
 
+### Wearer-Visible Changes
+
+#### Changed
+
+- A time zone picked before the zone was kept now shows its label on the watch flattened to ASCII, the same as every other time zone field.
+
+#### Fixed
+
+- Fixed the text fields on the settings page, such as the API keys, the tickers, and the iCal link, taking any length. `buildConfig` wrote `limit`, which Clay copies onto the field as it is and a browser does not read, so the builder now writes `maxlength`.
+- Fixed a place typed into a location picker and saved without tapping a suggestion saving as nothing, while the box still showed the name. The picker now shows "Pick a place from the list to save it." while the box holds text that is not a pick.
+- Fixed a stock symbol, provider, or key change whose forced fetch failed bringing the old watchlist back the next time the quota gate held a fetch. The strip kept for a shut gate and the throttle stamps are now forgotten when a stock setting changes, and a round still out for the old list is shut out so a late answer cannot put them back. A changed iCal URL now does the same for a download of the old feed still out, which pushed the old agenda to the watch in the moment before the refetch and kept it there when the new feed's download failed.
+- Fixed the restore of a wiped watch dropping a checkboxgroup's setting from the phone for good, sending a slider with decimal steps unscaled so 1.5 reached the watch as 1, and sending a setting the face no longer has under a key called `undefined0`, which can stop the whole restore reaching the watch. The saved settings now go to Clay wrapped the way the settings page returns them, only the ones with a message key go, and a slider's precision comes from its `step`, which is now on `ClayConfigItem`. A slider seeded from the watch is scaled back down too, where it came back ten times too big and reset to its default. A setting on an array message key, such as SLOT[1], now goes with a restore and seeds from the watch, where it was left out as having no key, and a time zone picker on one is retimed like any other.
+- Fixed a restored weather, stock, calendar, or location reading with a damaged string printing past the end of its field. Each string field now gets its terminator back after a restore.
+- Fixed one calendar event ical.js cannot read, such as a weekly rule with `BYMONTHDAY` or an event with no start, stopping the whole agenda from updating while it stayed in the feed. That event is now skipped and logged.
+- Fixed a cancelled calendar event still showing on the watch. A feed marks one `STATUS:CANCELLED` rather than taking it out, for a whole event or series or for one occurrence of a series. The reader now leaves them off, and a cancelled occurrence leaves a gap in its series.
+- Fixed an emoji in a calendar title or place reaching the watch as two or more question marks, which used up the field's 24 characters. An emoji, a flag, or an emoji built from several now goes over as one `?`, and so does a Hangul syllable. A keycap keeps its digit.
+- Fixed a choice on the settings page being ignored by the watch when its select sends it as an integer, as one using Clay's `serializeValueAs: 'integer'` does, and being overwritten with its first choice when sent empty or as a word. An integer is now read, and a value that is not a number is left alone.
+- Fixed the step chart shifting every bar by an hour on the days the clocks change, with the current hour's bar near empty or doubled. Each hour now starts on the wall clock, and the catch-up after a relaunch reads the batch holding the hour the clocks go back through for its whole length, where its last hour came up empty and its steps landed in the current hour's bar.
+- Fixed a busy repeating event, one with more occurrences this week than the agenda keeps, leaving off an occurrence moved into the week from further out. An occurrence whose own slot the walk never reached is now looked up wherever that slot sits, so one moved from past where a full walk stopped, or from a slot the rule no longer makes after it was edited, shows too.
+- Fixed one error on the phone stopping everything after it, which could skip every feature's refetch after a settings save, stop the background refresh for the rest of the session, or skip the settings restore. A message the phone could not encode threw out of the send queue, and a feature hook that threw stopped every feature after it. On a settings save that skipped every feature's refetch, on `ready` it stopped the refresh timer for the rest of the session, and in a watch message it skipped the settings restore. A send callback that threw stalled every send queued behind it, and a settings page closed with a response that is not the settings, such as `CANCELLED`, threw out of `webviewclosed`. A send that throws now counts as a failed one, a callback that throws is logged and the next send still goes, each hook runs on its own with a throw logged, and a page closed without settings is logged and skipped.
+- Fixed the watchlist spending a call on every watch poll on a metered Twelve Data or Alpha Vantage plan, or sitting blank until the next weekday close, because of the stock quota gate. A round the provider answered with nothing good, such as NO SYMBOL for a mistyped ticker, left it open, so every watch poll spent another call on a metered plan. A fetch stamped while the phone's clock ran ahead held it shut until the clock caught up. A phone with no stamp at all, such as after its storage was cleared, held Alpha Vantage shut outside the evening window, so the watchlist sat blank until the next weekday close. Such a round now records its time and keeps it through a restart of the phone's JS. Only a round the provider never answered retries on the next poll, a stamp in the future counts as due, and Alpha Vantage with no stamp fetches once at any hour. A provider name saved with capitals, such as `TwelveData`, now gets the same gate as one in lowercase.
+- Fixed an all-day event on a day the clocks change ending an hour into the next day, or an hour short of its own. It now ends at the next midnight on the wall clock.
+- Fixed the steps readout showing -1 before the first reading, and 0 or 0.0 on a watch with Health off. It now shows `--` for no reading in either mode, steps or distance, and `health_store_steps` returns -1 when there is none, as its doc says.
+- Fixed a stock round that never reached the provider replacing the watch's last good quotes with NET ERROR in every slot, until the next good round and through a relaunch. The watch keeps the last good strip. An answer the wearer has to act on, such as INVALID KEY, still shows.
+- Fixed the weather spending up to six calls a round on the provider's quota retrying a failure that waits on the settings, such as a bad key or no location, for an answer that could not change. Only a failure that can clear, such as a network error, retries. A provider's rate limit, OpenWeatherMap's 429 or WeatherAPI's used-up monthly quota, now reads RATE LIMIT and is not retried either, where it read API ERROR.
+- Fixed a forecast strip that outlived its fetch labelling its columns with hours already over, and keeping yesterday as its first day, when only the forecast half of later fetches failed. `weather_store_forecast_hourly` and `weather_store_forecast_daily` now drop the columns already over and move `base_hour` and `base_weekday` with them. A strip that lands after its first hour or day, such as one held while the watch was out of range, is anchored behind the clock rather than most of a cycle ahead, so it ages too.
+- Fixed a watch that reset its settings on a saved blob it could not read, such as after going back to an older build, never asking the phone to restore them. It now counts as fresh, and the reset removes the saved blob rather than writing the defaults, so a relaunch before the restore lands still counts as fresh and asks again. Every schema in the chain is checked, so a companion reset the same way is restored too.
+- Fixed the calendar window ending six days on from the fetch rather than at the end of the sixth day, so an evening event on that last day was dropped or kept by the time of day the feed was fetched.
+- Fixed the night schedule and the forecast hours being off for a manual location in another time zone. Sunrise, sunset, and the forecast strips' first hour and day were sent in the weather location's own zone. They now come on the phone's clock. Open-Meteo is asked in the phone's zone. When the phone cannot name its zone, or Open-Meteo refuses the name, it is asked in the location's, and its times are moved onto the phone's clock by the response's `utc_offset_seconds`. The daily strip drops the days the phone has finished with, and today's high, low, and rain chance come from the phone's today, or are left out when the response does not hold it. The Open-Meteo calls OWM and WeatherAPI make ask again in the location's zone too, where a refused zone left them without UV, the high and low, and the forecast. OpenWeatherMap's times are read on the phone's clock, and WeatherAPI's are moved onto it. WeatherAPI's high, low, and rain chance come from the phone's today too, and it is asked for `days=2` so that day is there when the location is behind the phone.
+- Fixed today's high, low, UV, and rain chance still showing the day after they came, when only the forecast half of later fetches failed. `weather_store_temp_max`, `weather_store_temp_min`, `weather_store_uv`, and `weather_store_precip_chance` now report no data once the day they came is over.
+- Fixed the temperature showing in the old unit with the new letter, such as 23F for 23 degrees Celsius, after the wearer switched units while the phone was offline or the fetch failed, or when a fetch from before the switch answered just after it. The weather already on the watch now converts to the new unit when the wearer switches, through `weather_reading_convert`, a restore from the phone is left alone, and a save shuts out a fetch still out for the old settings. Faces are told through the new `appmessage_on_unit_changed`, which the weather store registers.
+- Fixed the heart rate graph falling out of step with the clock. The backfill after a first launch placed its records as if the last one were the current minute, which shifted the graph when the watch's minute log ran behind the clock. A watch clock set back froze it, with only its last bar moving until the clock caught up. Each record now lands in the slot for its own minute, through `minute_window_first_slot` in `core/health/minute_window.h`, and the graph starts over when the clock goes back. A relaunch after time in a watchapp now fills the minutes it was away from the watch's log, where the graph came back with a hole in it, or blank after an hour, and a minute holding a live reading keeps it.
+- Fixed a wiped watch staying on its defaults for the whole session when the phone nacked the watch's settings reply at cold boot, since the phone asks for settings once per launch. The reply was dropped. The full and fresh replies now get the same retries as a request, and each retry is rebuilt with the settings as they are then.
+- Fixed a `webcal://` calendar link, such as an iCloud Subscribe link, never loading. It is now fetched over https. A link with a `#` part now gets its cache stamp before the `#`, where the stamp never reached the server and a cached copy of the feed could come back. Also fixed the calendar stopping its refreshes for the rest of the session when the feed was cleared while a download was out.
+- Fixed a weather provider's missing reading reaching the watch as a real one. Open-Meteo's null rain chance or UV read as 0, OpenWeatherMap's null wind speed as 0 km/h, and a missing Open-Meteo weather code as the fog glyph on the forecast strips or CLEAR for the current reading. Each now reads as no data. A high, low, feels-like, or dew point out of range, or a forecast column's temperature, is now held to -99 to 199 the way the current temperature is.
+- Fixed a restored watchlist or agenda staying stale until the next poll, and the weather panels sitting on placeholders for up to a whole poll interval, when a store's first fetch went missing. A settings push in the first second after launch cancelled it, which also stopped the weather store's boot re-asks. `weather_store_reconfigure` never fetched when it turned polling on for a store with no reading. A reconfigure now only cancels a waiting fetch when polling turns off, and every store catches up right away when it turns polling on with nothing to show.
+- Fixed a text setting whose default is empty, such as a picker whose None is `""`, being impossible to clear once set, and being rewritten to flash on every launch. Such a field now keeps an empty value, through `cstring_setting_is_clean` in `core/text/number_format.h`. A field with a real default still ignores an empty save.
+- Fixed weather, stocks, and the calendar each fetching for both the watch's poll and the phone's own refresh. Weather was fetched twice per 30 minute poll, stocks spent their quota twice, and the calendar downloaded and parsed the whole feed every 5 minutes whatever interval the watch asked on. The phone's slow refresh now skips when the watch asked since the last one, and only fetches on its own once the watch stops asking, such as when it is out of range. A watch ask or a slow tick while a fetch is already out, or just after a settings save that refetches, no longer starts a second one.
+- Fixed a text setting with a `defaultValue`, such as the tickers, the iCal link, or an API key, coming back as its default on the phone when the wearer emptied it. The features now read them with `readText` from `ts/pkjs/settings-store`, which keeps an empty value and takes the default only for a field never saved.
+- Fixed a typed offset such as `utc+5` on the time zone picker showing only its `Etc/GMT-5` name, whose sign runs the other way. It now reads `UTC+05:00`.
+- Fixed Open-Meteo pressure reading far too low at altitude, about 840 hPa in Denver rather than about 1013. It sent ground level pressure where OpenWeatherMap and WeatherAPI send sea level. `WEATHER_PRESSURE` now carries Open-Meteo's `pressure_msl`, so the reading no longer jumps when the provider changes.
+- Fixed settings being rewritten to flash on every weather, stock, or calendar message after a fresh install, until the face relaunched. On a face that declares `SETTINGS_FRESH`, the phone now sends the key with every save and restore from the settings page. While fresh, the watch only writes to flash on that message, and saving it ends fresh. Anything else, such as the time zone push on every `ready`, stays in memory until the restore lands. The phone also stops pushing the whole config back on every `ready`. A face without the key saves only when a setting changes. The key carries 1 on a restore and 0 on a save, so a unit switch on the first save of a fresh watch converts the reading in hand, where it read as a restore and showed 21 degrees C as 21F.
+- Fixed the sun readouts when sunset falls after midnight, as in a high latitude summer. Daytime read as night and the next event read as a sunrise hours away. `solar_day_progress`, `solar_night_progress`, and `solar_next_event` now handle it, and equal sunrise and sunset times, and readings outside the day, now return no data.
+- Fixed the time zone picker on the settings page reopening its list after a zone was tapped, while a search was still waiting or the geocoder had not answered, where a stray tap could overwrite the pick. Also fixed a zone's UTC offset hint coming out a minute short when the page opened as the minute rolled over.
+- Fixed the moon countdown reading 30 right on the new moon. `moon_days_to_phase` now returns 0 to 29, and the half day after the moon counts as now as well as the half day before.
+- Fixed a symbol outside the US showing NET ERROR on Finnhub's free plan, which answers 403 for one, such as `SHOP.TO`. That now shows NO ACCESS. Twelve Data's 403 for a symbol outside the plan now shows NO ACCESS too, and its server errors show NET ERROR. Both read as INVALID KEY, which shut the quota gate for a problem the key did not cause.
+- Fixed every settings save counting as a change, which rebuilt the face and made the calendar store refetch the whole feed. The custom colours are now compared with what the face holds, up to as much as it can hold, before they count as changed. The stock and calendar stores only catch up after a save when they have never had an answer, so a cleared watchlist or an empty agenda no longer asks again on every save.
+- Fixed a setting only seeding from the watch when the face listed it by hand, so a select such as the temperature unit opened the settings page on its default rather than what the watch was set to. A phone with nothing saved now refetches weather, stocks, and the calendar once the watch's settings are seeded, where the first fetch ran on the defaults and a watch on Fahrenheit showed a Celsius reading as 22F. A face without `SETTINGS_FRESH` gets the same refetch on its first seed, and a setting with nothing saved now compares as its default, with a single value compared as text so a number default matches the string Clay saves, so a seed or first save that writes the default back no longer spends a second call.
+
 ## [2.2.0] - 2026-09-23
 
-### Changed
+### Framework Changes
+
+#### Changed
 
 - Renamed the repo to `pebble-app-framework`, and its package to match. GitHub redirects the old URL, so a face's `.gitmodules` keeps working. Point it at `https://github.com/AKlitbo/pebble-app-framework.git` and run `git submodule sync`. A face moving `lib` to this release has to run `npm install` and commit `package-lock.json`, because the lock names the `lib` workspace and its `node_modules` link after the package. `npm ci`, and so CI, fails until it does.
 
 ## [2.1.1] - 2026-09-22
 
-### Changed
+### Framework Changes
 
-- The `locationsearch` prompt to pick a city again now draws as a callout, with an accent bar and a badge. A face can repaint it through `.loc-note`.
+#### Fixed
 
-### Fixed
+- Fixed `-DBUILD_WATCHAPP` never being passed, so an app target built as though it were a watchface. A face's `#ifdef BUILD_WATCHAPP` code now reaches the app, which for Gridlock is the weather request it makes as it opens. Run `npm run build:manifests` to rewrite the sandboxes, which `build.sh` and CI already do.
+
+### Wearer-Visible Changes
+
+#### Changed
+
+- The settings page's prompt to pick a city again now draws as a callout, with an accent bar and a badge. It is the `locationsearch` prompt, and a face can repaint it through `.loc-note`.
+
+#### Fixed
 
 - Fixed a timezone key never being seeded back from the watch, so the config page opened on an empty field when the phone had nothing saved. The place name now comes back and the picker asks for the city again. The watch's value only fills a field the phone has nothing saved in, so a saved place keeps its zone.
-- Fixed an empty timezone key being sent to the watch, which reads it as zero minutes under no name. The key is now left out until a place is saved.
-- Fixed a city picked in a `locationsearch` timezone field saving as UTC when the page was saved before the zone lookup answered, or while offline. The pick now takes its zone from the geocoder result straight away, and the prompt to pick again shows when the result has none.
+- Fixed the watch showing a time zone of zero minutes under no name before a place was saved. An empty timezone key was sent to the watch, which reads it that way. The key is now left out until a place is saved.
+- Fixed a city picked for a time zone on the settings page saving as UTC when the page was saved before the zone lookup answered, or while offline. A pick in a `locationsearch` timezone field now takes its zone from the geocoder result straight away, and the prompt to pick again shows when the result has none.
 - Fixed a moved occurrence of one recurring iCal event replacing the occurrence of every other recurring event at the same time, and showing once for each of them. `parseIcal` now relates a `RECURRENCE-ID` VEVENT only to the event with the same UID.
 - Fixed an older calendar fetch that answered last overwriting a newer one, such as the old feed showing after the iCal URL changed. Only the newest fetch's answer is sent to the watch.
-- Fixed `-DBUILD_WATCHAPP` never being passed, so an app target built as though it were a watchface. A face's `#ifdef BUILD_WATCHAPP` code now reaches the app, which for Gridlock is the weather request it makes as it opens. Run `npm run build:manifests` to rewrite the sandboxes, which `build.sh` and CI already do.
 
 ## [2.1.0] - 2026-09-20
 
-### Added
+### Framework Changes
+
+#### Added
 
 - Added `layout_has_any_block` in `c/core/layout/layout_string.h`, which says whether a layout wire string holds a placeable block. The catalog bound comes in as an argument.
 - Added `layout_role_pick` in `c/core/layout/layout_role.h`, which picks between a face's day, night and Quiet Time layouts. A trigger with no layout assigned falls through to the next one rather than drawing an empty grid.
@@ -252,14 +277,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [2.0.0] - 2026-09-17
 
-### Added
+### Framework Changes
+
+#### Added
 
 - Added `node-version` and `sdk-version` inputs to the `setup-pebble` action. Both are optional and default to Node 24 and the latest SDK.
 - Added `report-memory` and `render-memory` actions, which rank each face's memory use in the CI run summary.
 - Added `prepare-release` and `publish-release` actions for checking and publishing face releases.
 - Added an optional `cancel` callback to the builder's `DragSpec`, called when a pointer is taken away mid-drag. Builders that remove an item from their model in `lift` can restore it here.
 - Added `createDedupedSender` to `ts/pkjs/send-queue.ts`. It wraps a queueSend so an unchanged payload is skipped and a payload whose send failed is not counted as delivered, which is what the weather, stock, and calendar pushes all use now.
-### Changed
+
+#### Changed
 
 - **Breaking:** The engine can now be mounted under any folder name. The face repo declares that folder in its `package.json` workspaces, which is how the tools locate the engine.
 - `build.sh` and the waf build now find faces through the same lookup as the other tools. `build.sh` no longer needs the repo's `build:pkjs` script.
@@ -271,15 +299,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Pinned `@rebble/clay` to 1.1.0, which adds the `TOUCH`, `SPEAKER`, and `RGB_BACKLIGHT` capabilities and integer values for inputs, selects, and radio groups.
 - The `setup-pebble` action now verifies that pebble-tool runs and adds the pebble-tool and SDK versions to the job summary. A pinned `sdk-version` is cached between runs.
 - **Breaking:** A `locationsearch` field now persists the saved place as JSON for every key type, including its timezone alongside the coordinates. The pkjs side builds the `offset,label` value sent by a timezone field, so a face reading the setting from the phone's config now receives the JSON blob instead of the pair.
-- The config page now prompts for a timezone city again when the saved place has no timezone.
 - **Breaking:** `LocationConfig` now carries a `persist_key`, like every other store's config. Pass the key you want `location_store_init` to save the last fix under. A face that omits it gets key 0, and 253 is what earlier versions used.
 - The strip caps and marker values the phone and the watch both bound against are now generated into `c/core/wire/wire_caps.g.h` from `WIRE_CAPS` in `ts/pkjs/wire.ts`, rather than defined once per language. `npm run build:conditions` writes it alongside the weather tables, and it is committed like them.
 - The OpenWeatherMap provider now fetches its own endpoint and the Open-Meteo extras at the same time instead of one after the other. A weather round spends one request timeout rather than two, and the extras call goes out even when the OWM key is rejected.
-### Removed
+
+#### Removed
 
 - **Breaking:** Removed the `tools/ci/` scripts. A face repo moving to this engine should switch its workflows to the new actions in the same commit.
 - **Breaking:** Removed `weather_store_location_name` and the weather store's `LOCATION_NAME` handler. Nothing read them. `STORE_TAG_WEATHER` moves to `0x12` with the struct, so a saved reading is refused once after the upgrade and the weather panels show placeholders until the next poll.
-### Fixed
+
+#### Fixed
+
+- Fixed a nacked send retrying immediately when another send was queued during its backoff.
+- Fixed a store enabled after startup while disabled not receiving the reply to its poll.
+- Fixed `ICON_AUTOTRIM` and `ICON_TRIM_LOG` being impossible to override. They are `#ifndef`-guarded now, so a face can set either one before including `icon_cache.h` as the header always claimed.
+
+### Wearer-Visible Changes
+
+#### Changed
+
+- The config page now prompts for a timezone city again when the saved place has no timezone.
+
+#### Fixed
 
 - Fixed settings replies larger than the outbox being sent partially. They are now skipped unless they fit in full.
 - Fixed deleted calendar events remaining on the agenda. An empty calendar or removed feed now clears them.
@@ -288,24 +329,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed repeated weather requests from the watch each starting a provider fetch, and a failed send leaving weather stuck until the phone app restarted.
 - Fixed an error watchlist being sent back to the watch while the provider's quota gate remained closed.
 - Fixed drizzle displaying the N/A icon with OpenWeatherMap.
-- Fixed a nacked send retrying immediately when another send was queued during its backoff.
 - Fixed accented letters in calendar titles and stock statuses reaching the watch as different letters. The accent is now removed and the plain letter is retained.
-- Fixed a store enabled after startup while disabled not receiving the reply to its poll.
 - Fixed an overlong date format leaving the readout buffer unterminated for subsequent passes.
 - Fixed every settings save requesting fresh weather. A field now counts as changed only when its value actually changes.
 - Fixed timezone fields retaining the offset from when their city was selected. For example, a London selected in January previously ran an hour behind during summer. Places selected before this release have no saved timezone, so they retain the old offset until the city is selected again.
-- Fixed `readout_weather_cond` cutting a condition token at the first underscore rather than at a trailing `_NIGHT`. It now reads the generated label table, which applies the same rule as the phone.
-- Fixed `ICON_AUTOTRIM` and `ICON_TRIM_LOG` being impossible to override. They are `#ifndef`-guarded now, so a face can set either one before including `icon_cache.h` as the header always claimed.
+- Fixed the weather condition readout cutting a condition at the first underscore rather than at a trailing `_NIGHT`. `readout_weather_cond` now reads the generated label table, which applies the same rule as the phone.
 
 ## [1.1.0] - 2026-09-12
 
-### Added
+### Framework Changes
+
+#### Added
 
 - Added support for a repo that holds a single face at its root, laid out like a plain Pebble project with `config/`, `src/` and `resources/`. The build and the face release find that face by the name in its `config/pebble.appinfo.json`, and its changelog sits at the repo root.
 
 ## [1.0.0] - 2026-09-12
 
-### Added
+### Framework Changes
+
+#### Added
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
