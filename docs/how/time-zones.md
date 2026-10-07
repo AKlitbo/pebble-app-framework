@@ -75,7 +75,7 @@ sequenceDiagram
 
 **Up to 5 Minutes Late.** For the first few minutes after the change the second clock can still show the old hour. The check is a few lookups and sends nothing when nothing moved, so it costs the watch nothing between changes.
 
-**Only While the Phone Code Runs.** The timer is the phone code's background refresh, covered on [The Phone Side](phone-side.md#the-background-refresh). A phone that suspends the code sends nothing until it starts again, and every start sends every zone afresh, so the watch catches up then.
+**Only While the Phone Code Runs.** The timer is the phone code's background refresh, covered on [The Phone Side](phone-side.md#the-background-refresh). A phone that suspends the code sends nothing until it starts again, and every start sends every zone afresh, so the watch catches up then. A start whose push the watch turned away sends them again when the watch's settings reply lands.
 
 ## Reading It on the Watch
 

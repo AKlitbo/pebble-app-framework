@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fixed `startPebbleApp` missing every message from the watch on a real phone. The Pebble phone app keys a watch message by name, and the framework read it by number. A watch that was factory reset or reinstalled stayed on the face's defaults until the wearer pressed Save, and the watch's own weather, stock, and calendar requests went unanswered. Each message now gets the number for every key the face declares before the restore or any feature's `message` hook reads it.
 - Fixed the settings request sent on `ready` being lost when the face had not opened AppMessage yet. PebbleOS turns away a message that lands before the face's `init` opens AppMessage. The send queue's three tries ran out before a face that opens it late was listening, and that was the only request of the session. A request the watch turns away now goes again a second later, up to 8 more times, and stops as soon as the watch takes one. A repeat of the watch's reply is ignored, so a reply that arrives twice restores or seeds once.
+- Fixed the second clocks pushed on `ready` being lost when the face had not opened AppMessage yet. A second clock whose zone had changed its clocks since the last launch stayed on the old hour until the next background tick. The zones now go again when the watch's settings reply lands, since the reply proves the face is listening. A push still waiting in the queue is not queued twice.
 
 ## [4.0.0] - 2026-10-02
 

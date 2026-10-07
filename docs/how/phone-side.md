@@ -62,7 +62,7 @@ sequenceDiagram
 
 **The Settings Request.** It goes out first. A face that declares `SETTINGS_FRESH` and already has settings on the phone only asks whether the watch booted empty. Any other face asks for the watch's whole copy. The watch turns away anything that arrives before the face has opened its connection, which can be a moment into a launch, and the queue gives up after three quick tries. So when the watch turns the request away, the app waits a second and sends it again, up to 8 more times. The app never asks again for a request the watch took, since the watch queues its reply before it acks, and the first reply ends the run. A repeat of the reply is ignored. What happens with the answer is on [The Life of a Setting](life-of-a-setting.md#after-a-reinstall).
 
-**Every Second Clock Again.** A watch that has just been reset holds no zones, so the app forgets what it last sent and sends every second clock again. [Time Zones](time-zones.md#following-daylight-saving) covers what it sends.
+**Every Second Clock Again.** A watch that has just been reset holds no zones, so the app forgets what it last sent and sends every second clock again. [Time Zones](time-zones.md#following-daylight-saving) covers what it sends. A push the watch turned away because the face was not listening yet goes again when the watch's settings reply lands.
 
 **Each Feature Fetches.** A feature's `ready` forgets what the watch last took from it and fetches, so a watch that rebooted with empty stores always gets an answer. The stock feature may hand over the strip it kept on the phone instead, when its quota rules hold the fetch, as [The Stock Store](stock-store.md#surviving-a-restart) covers.
 

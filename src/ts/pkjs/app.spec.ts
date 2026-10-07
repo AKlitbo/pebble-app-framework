@@ -1523,12 +1523,18 @@ describe('startPebbleApp settings restore', () => {
     expect(later).toHaveBeenCalledTimes(2);
   });
 
+  // a face with one second clock, saved on the phone as London
+  const zonePage = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true }];
+  const londonSettings = JSON.stringify({
+    CLOCK_DATE_FORMAT: '%d.%m.%Y',
+    CLOCK_TIMEZONE_1: JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' }),
+  });
+
   /**
    * A save already carries the zone the wearer picked, but the push on the next background tick did
    * not know that and sent the same zone again, one wasted wake of the watch per save.
    */
   test('does not push a zone again that a settings save already sent', () => {
-    const zonePage = [{ type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true }];
     const london = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
 
     app.startPebbleApp({ clayConfig: zonePage });
@@ -1545,6 +1551,93 @@ describe('startPebbleApp settings restore', () => {
     expect(result).toBe(1);
   });
 
+  /** Every zones push the phone sent, refused or not. */
+  function zoneSends() {
+    return pebble.sendAppMessage.mock.calls.filter(([dict]) => 'CLOCK_TIMEZONE_1' in dict);
+  }
+
+  /** The zones pushes the watch took. A refused try is not one of them. */
+  function zonesTaken() {
+    return pebble.delivered.filter((dict) => 'CLOCK_TIMEZONE_1' in dict);
+  }
+
+  /**
+   * Has the watch refuse the ask and the zones on ready, then take the next ask. The ask's last try
+   * is at 500 ms and the zones' at 1000 ms, and the next ask goes at 1500 ms.
+   */
+  function refuseReadyThenTakeAsk() {
+    pebble.answer = 'nack';
+    pebble.fire('ready');
+    vi.advanceTimersByTime(SEND_RETRY_MS * 2 * (SEND_RETRIES - 1));
+    pebble.answer = 'ack';
+    vi.advanceTimersByTime(SETTINGS_ASK_RETRY_MS);
+  }
+
+  /**
+   * A face that opens AppMessage late refuses the zones sent on ready, and a zone whose clocks
+   * changed while the face was closed stayed an hour out until the 5 minute tick.
+   */
+  test('pushes the second clocks again when the settings reply lands after the watch turned the ready push away', () => {
+    localStorage.setItem('clay-settings', londonSettings);
+    app.startPebbleApp({ clayConfig: zonePage });
+    refuseReadyThenTakeAsk();
+
+    watchReplies(false, '%d.%m.%Y');
+    const result = zonesTaken();
+
+    expect(result).toHaveLength(1);
+  });
+
+  /**
+   * The watch replies before it acks the ask, so the reply can land with the ready zones still in the
+   * queue. A second push then would send the watch the same zones twice on every launch.
+   */
+  test('does not push the second clocks twice when the reply lands while the ready push is still out', () => {
+    localStorage.setItem('clay-settings', londonSettings);
+    app.startPebbleApp({ clayConfig: zonePage });
+    pebble.answer = 'hold';
+    pebble.fire('ready');
+    // the ask is taken, so the zones go out and wait
+    pebble.held[0].ok();
+
+    watchReplies(false, '%d.%m.%Y');
+    pebble.held[1].ok();
+    const result = zoneSends();
+
+    expect(result).toHaveLength(1);
+  });
+
+  /**
+   * A face without SETTINGS_FRESH seeds on every launch and keeps the zone the phone saved, so a
+   * zones push it refused on ready stayed an hour out until the 5 minute tick the same way.
+   */
+  test('pushes the second clocks again on the settings reply on a face without SETTINGS_FRESH', () => {
+    keys = Object.fromEntries(Object.entries(restoreKeys).filter(([name]) => name !== 'SETTINGS_FRESH'));
+    localStorage.setItem('clay-settings', londonSettings);
+    app.startPebbleApp({ clayConfig: zonePage });
+    refuseReadyThenTakeAsk();
+
+    watchReplies(false, '%d.%m.%Y');
+    const result = zonesTaken();
+
+    expect(result).toHaveLength(1);
+  });
+
+  /**
+   * With the page open, an empty phone seeds the watch's own zone string from the reply. Pushing it
+   * straight back would wake the watch for a value it already holds.
+   */
+  test('does not push the second clocks back after seeding them into an empty phone', () => {
+    keys = Object.fromEntries(Object.entries(restoreKeys).filter(([name]) => name !== 'SETTINGS_FRESH'));
+    app.startPebbleApp({ clayConfig: zonePage });
+    pebble.fire('showConfiguration');
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_TIMEZONE_1: '0,London' } });
+    const result = zoneSends();
+
+    expect(result).toEqual([]);
+  });
 });
 
 describe('collectDefaults', () => {

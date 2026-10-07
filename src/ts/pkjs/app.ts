@@ -362,6 +362,14 @@ function startPebbleApp(options: StartOptions): void {
   // the last string pushed for each timezone field, so a refresh only sends one whose offset moved
   let lastTimezoneValues: Record<string, string> = {};
 
+  // whether a zones push is still in the queue, so the push on the settings reply does not queue the
+  // same zones behind one from ready that has not settled yet
+  // a second ready in one session skips its push too while the first one's waits, and that push
+  // records the zones it carried once acked. a zone that moved while the code was suspended then
+  // waits for the 5 minute tick. a second ready with a push still queued is rare, and the doubled
+  // push the flag saves would go on every launch
+  let timezonePushPending = false;
+
   /**
    * Sends any timezone field whose zone has moved its clock since the last push.
    *
@@ -370,10 +378,11 @@ function startPebbleApp(options: StartOptions): void {
    * offset is genuinely different.
    *
    * A field is only recorded once the watch acks it, so a send that is dropped after its retries
-   * is picked up again on the next tick rather than counted as delivered.
+   * goes again when the watch's settings reply lands or on the next tick rather than counting as
+   * delivered. Nothing new is queued while a push is still waiting.
    */
   function pushTimezones() {
-    if (!timezoneFields.length) {
+    if (!timezoneFields.length || timezonePushPending) {
       return;
     }
 
@@ -401,8 +410,12 @@ function startPebbleApp(options: StartOptions): void {
     });
 
     if (moved) {
+      timezonePushPending = true;
       queueSend(dict, () => {
+        timezonePushPending = false;
         Object.keys(sent).forEach((name) => { lastTimezoneValues[name] = sent[name]; });
+      }, () => {
+        timezonePushPending = false;
       });
     }
   }
@@ -579,8 +592,11 @@ function startPebbleApp(options: StartOptions): void {
             seedFromWatch(payload);
             eachFeature((feature) => feature.configSaved?.());
           }
+        } else {
+          // both sides have settings: the phone is the source of truth and already correct. the reply
+          // proves the face is listening, so a zones push the watch turned away on ready goes again
+          pushTimezones();
         }
-        // both sides have settings: the phone is the source of truth and already correct
       } else if (Object.keys(getConfig()).length === 0 && !pageOpen) {
         // a first seed on a face without SETTINGS_FRESH gets the same refetch. it seeds on every
         // launch, so only the first, into an empty phone, runs the hooks. a later one can write a
@@ -589,7 +605,15 @@ function startPebbleApp(options: StartOptions): void {
         seedFromWatch(payload);
         eachFeature((feature) => feature.configSaved?.());
       } else {
+        const phoneHadConfig = Object.keys(getConfig()).length > 0;
+
         seedFromWatch(payload);
+
+        // a zone the phone saved survives the seed, and the reply proves the face is listening, so a
+        // zones push the watch turned away on ready goes again
+        if (phoneHadConfig) {
+          pushTimezones();
+        }
       }
     }
   });
