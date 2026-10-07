@@ -48,7 +48,7 @@ sequenceDiagram
   end
 ```
 
-**A Settings Request Stands Alone.** The phone asks for the watch's settings once per launch, in a message of its own. The watch queues its reply and stops there. A phone that already holds settings only needs to know whether the watch booted empty, so it can ask for just that, and the answer is one flag rather than the whole table.
+**A Settings Request Stands Alone.** The phone asks for the watch's settings when its code starts, and again if the watch turned the first ask away, each time in a message of its own. The watch queues its reply and stops there. It queues the reply before it acks the ask, so an ack tells the phone the reply is on its way. A phone that already holds settings only needs to know whether the watch booted empty, so it can ask for just that, and the answer is one flag rather than the whole table.
 
 **The Readings Go First.** Weather, the stock and calendar strips, and the coordinates each go to the store that registered for them. A part nobody registered for is skipped.
 

@@ -28,7 +28,10 @@ export interface FeatureHooks {
   requests?: string[];
   /** PebbleKit JS is ready, and the settings request has gone out. */
   ready?(): void;
-  /** A message arrived from the watch. */
+  /**
+   * A message arrived from the watch. Each key the face declares can be read by its number, whichever
+   * way the phone keyed it.
+   */
   message?(payload: Record<string, number | string>): void;
   /**
    * The background refresh ticked. slow is true on the less frequent ticks, the ones meant for data

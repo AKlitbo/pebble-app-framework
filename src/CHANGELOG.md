@@ -4,6 +4,13 @@ All notable API changes to the Pebble App Framework are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed `startPebbleApp` missing every message from the watch on a real phone. The Pebble phone app keys a watch message by name, and the framework read it by number. A watch that was factory reset or reinstalled stayed on the face's defaults until the wearer pressed Save, and the watch's own weather, stock, and calendar requests went unanswered. Each message now gets the number for every key the face declares before the restore or any feature's `message` hook reads it.
+- Fixed the settings request sent on `ready` being lost when the face had not opened AppMessage yet. PebbleOS turns away a message that lands before the face's `init` opens AppMessage. The send queue's three tries ran out before a face that opens it late was listening, and that was the only request of the session. A request the watch turns away now goes again a second later, up to 8 more times, and stops as soon as the watch takes one. A repeat of the watch's reply is ignored, so a reply that arrives twice restores or seeds once.
+
 ## [4.0.0] - 2026-10-02
 
 ### Added
@@ -301,6 +308,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.0.0...HEAD
 [4.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v2.2.0...v3.0.0
 [2.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v2.1.1...v2.2.0

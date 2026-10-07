@@ -13,6 +13,7 @@
 import locationComponent from '../clay/location-component';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
+import { createSettingsAsk } from './settings-ask';
 import { getConfig, readValue } from './settings-store';
 import { WIRE_CAPS } from './wire';
 import type { Feature, FeatureHooks } from './feature';
@@ -207,6 +208,33 @@ export function keyIdFor(messageKeys: any, name: string): number | undefined {
   }
 
   return messageKeys[slot[1]] + Number(slot[2]);
+}
+
+/**
+ * Copies a message from the watch so each key the face declares can be read by its number.
+ *
+ * Everything here reads a message by number, as in `payload[messageKeys.SETTINGS_REQUEST]`. The
+ * Pebble phone app hands PebbleKit JS a message keyed by name alone, such as `SETTINGS_REQUEST`. So
+ * a name the face declares gets its number beside it. A name in the array form, such as SLOT[1], is
+ * looked up through keyIdFor the same as a setting. The names stay, and a number already in the
+ * message is left as it came.
+ *
+ * @param messageKeys The face's message_keys map.
+ * @param payload The message as PebbleKit JS handed it over.
+ * @return A copy of the message with each declared key under its number as well as its name.
+ */
+export function payloadByKeyId(messageKeys: any, payload: Record<string, any>): Record<string, any> {
+  const keyed: Record<string, any> = Object.assign({}, payload);
+
+  Object.keys(payload).forEach((name) => {
+    const key = keyIdFor(messageKeys, name);
+
+    if (key !== undefined && !(key in keyed)) {
+      keyed[key] = payload[name];
+    }
+  });
+
+  return keyed;
 }
 
 /**
@@ -420,6 +448,9 @@ function startPebbleApp(options: StartOptions): void {
   // one AppMessage may be in flight at a time, so every send is serialized through this queue
   const queueSend = createSendQueue((dict, onOk, onFail) => Pebble.sendAppMessage(dict, onOk, onFail));
 
+  // the launch ask for the watch's settings, which goes again only while the watch turns it away
+  const settingsAsk = createSettingsAsk(queueSend);
+
   // the features this face opted into, each started once with what the app shares. a face that
   // lists none never imports their code, so it stays out of that face's bundle
   const features: FeatureHooks[] = (options.features || []).map((feature) => feature({
@@ -477,7 +508,7 @@ function startPebbleApp(options: StartOptions): void {
     // watch booted empty, so it asks for that one field. anything else seeds from the whole snapshot
     const freshOnly = messageKeys.SETTINGS_FRESH !== undefined && Object.keys(getConfig()).length > 0;
 
-    queueSend({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
+    settingsAsk.start({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
 
     // every start sends each zone again, whatever went out before. the phone can suspend this code
     // for a while, and sending them all on each ready is how the watch catches up after that
@@ -496,7 +527,8 @@ function startPebbleApp(options: StartOptions): void {
   });
 
   Pebble.addEventListener('appmessage', (event) => {
-    const payload: Record<string, number | string> = event.payload || {};
+    // the phone app keys the message by name, so it gets its numbers before anything reads it
+    const payload: Record<string, number | string> = payloadByKeyId(messageKeys, event.payload || {});
 
     eachFeature((feature) => feature.message?.(payload));
 
@@ -515,6 +547,13 @@ function startPebbleApp(options: StartOptions): void {
     // the watch's reply to our SETTINGS_REQUEST carries the request key back as its marker, so a
     // face is recognized whichever settings it declares
     if (messageKeys.SETTINGS_REQUEST in payload) {
+      // a repeat of the reply is dropped. with an empty phone, the first reply seeds the phone from the
+      // watch, and a second would find the phone has settings and restore them to the watch
+      // that restore sends the watch its own values and writes flash for nothing
+      if (!settingsAsk.answered()) {
+        return;
+      }
+
       // faces that declare SETTINGS_FRESH get the two-way restore: the watch flags when it booted
       // with no saved settings (wiped by an install or update) so we push our own config back
       // instead of letting its defaults seed over ours. faces without the key always seed from the watch

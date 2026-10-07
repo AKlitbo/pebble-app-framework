@@ -17,7 +17,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import app, { collectDefaults, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, wrapStoredConfig } from './app';
+import app, { collectDefaults, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, wrapStoredConfig } from './app';
+import { SETTINGS_ASK_RETRY_MS } from './settings-ask';
+import { SEND_RETRIES, SEND_RETRY_MS } from './send-queue';
 import { WIRE_CAPS } from './wire';
 import stocks from '../stock/feature';
 import calendar from '../calendar/feature';
@@ -391,6 +393,62 @@ describe('retimeSettings', () => {
   });
 });
 
+describe('payloadByKeyId', () => {
+  /**
+   * The Pebble phone app hands a watch message over keyed by name alone. Everything reads it by
+   * number, so without the number beside it the settings restore and every watch ask went unseen.
+   */
+  test('puts the number beside a name the phone app sent alone', () => {
+    const result = payloadByKeyId({ SETTINGS_REQUEST: 10004, SETTINGS_FRESH: 10005 }, { SETTINGS_REQUEST: 2, SETTINGS_FRESH: 1 });
+
+    expect(result).toEqual({ SETTINGS_REQUEST: 2, SETTINGS_FRESH: 1, 10004: 2, 10005: 1 });
+  });
+
+  /**
+   * A message that already carries the number keeps the value it came with there, so what the watch
+   * put under the number is what gets read.
+   */
+  test('leaves a message keyed both ways as it came', () => {
+    const payload = { SETTINGS_REQUEST: 2, 10004: 3 };
+
+    const result = payloadByKeyId({ SETTINGS_REQUEST: 10004 }, payload);
+
+    expect(result).toEqual(payload);
+  });
+
+  /**
+   * PebbleKit JS hands every listener the same message, so writing the numbers into it would change
+   * what the rest see.
+   */
+  test('leaves the message it was handed untouched', () => {
+    const payload = { SETTINGS_REQUEST: 2 };
+
+    payloadByKeyId({ SETTINGS_REQUEST: 10004 }, payload);
+
+    expect(payload).toEqual({ SETTINGS_REQUEST: 2 });
+  });
+
+  /**
+   * An array key is numbered through its base name, the same as a setting, or a slot reads as
+   * missing.
+   */
+  test('numbers a name in the array form from its base key', () => {
+    const result = payloadByKeyId({ SLOT: 10020 }, { 'SLOT[1]': 7 });
+
+    expect(result).toEqual({ 'SLOT[1]': 7, 10021: 7 });
+  });
+
+  /**
+   * A name the face does not declare has no number, and guessing one would land a value under the
+   * key `undefined`.
+   */
+  test('gives a name the face does not declare no number', () => {
+    const result = payloadByKeyId({ SETTINGS_REQUEST: 10004 }, { SOMETHING_ELSE: 1 });
+
+    expect(result).toEqual({ SOMETHING_ELSE: 1 });
+  });
+});
+
 describe('startPebbleApp weather', () => {
   // only the keys the weather path reads. no stock or calendar key, so those fetches stay off
   const weatherKeys = {
@@ -414,7 +472,7 @@ describe('startPebbleApp weather', () => {
   }
 
   // the keys the face under test declares. a spec that drops one sets this before it starts the app
-  let keys: Record<string, string> = weatherKeys;
+  let keys: Record<string, string | number> = weatherKeys;
 
   // stands in for the two modules startPebbleApp requires lazily
   function fakeModule(id: string): unknown {
@@ -634,6 +692,22 @@ describe('startPebbleApp weather', () => {
     sent[1].respond(200, currentBody(21));
 
     expect(weatherSends()).toHaveLength(2);
+  });
+
+  /**
+   * The Pebble phone app keys the watch's ask by name alone, while the feature reads it by number.
+   * Unseen, the ask started no fetch, and a watch that rebooted sat on placeholders until the next
+   * background refresh.
+   */
+  test('fetches for a watch ask the phone app keyed by name', () => {
+    keys = { SETTINGS_REQUEST: 10004, WEATHER_REQUEST: 10003, WEATHER_TEMPERATURE: 10001, WEATHER_CONDITIONS: 10002, WEATHER_OK: 10000 };
+    start([weather]);
+    fire('ready');
+    sent[0].respond(200, currentBody(21));
+
+    askForWeather();
+
+    expect(sent).toHaveLength(2);
   });
 
   /** The phone JS restarting is the other time the watch may hold nothing, so ready forgets the last dict too. */
@@ -1087,6 +1161,16 @@ describe('startPebbleApp settings restore', () => {
     CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1',
   };
 
+  // the same keys numbered the way a real build numbers them. the phone app keys a watch message by
+  // name alone, so these are the specs where reading it by number and by name come apart
+  const numberedKeys = {
+    SETTINGS_REQUEST: 10004,
+    SETTINGS_FRESH: 10005,
+    CLOCK_DATE_FORMAT: 10006,
+    APPEARANCE_THEME: 10007,
+    CLOCK_TIMEZONE_1: 10008,
+  };
+
   class FakeClay {
     registerComponent() {}
     // the real Clay reads the page's { value } wrapper off each setting and turns the result into
@@ -1109,7 +1193,7 @@ describe('startPebbleApp settings restore', () => {
   }
 
   // the keys the face under test declares. a spec for a face without SETTINGS_FRESH swaps them
-  let keys: Record<string, string> = restoreKeys;
+  let keys: Record<string, string | number> = restoreKeys;
 
   function fakeModule(id: string): unknown {
     if (id === 'message_keys') {
@@ -1138,6 +1222,11 @@ describe('startPebbleApp settings restore', () => {
     const requests = pebble.sendAppMessage.mock.calls.filter(([dict]) => 'SETTINGS_REQUEST' in dict);
 
     return requests.map(([dict]) => dict.SETTINGS_REQUEST);
+  }
+
+  /** The asks the watch took, by their value. A refused try is not one of them. */
+  function requestsTaken() {
+    return pebble.delivered.filter((dict) => 'SETTINGS_REQUEST' in dict).map((dict) => dict.SETTINGS_REQUEST);
   }
 
   /** What the phone has saved now. */
@@ -1208,6 +1297,74 @@ describe('startPebbleApp settings restore', () => {
     pebble.fire('ready');
 
     expect(requestSent()).toEqual([WIRE_CAPS.SETTINGS_REQUEST_FULL]);
+  });
+
+  /**
+   * A factory reset watch stayed on its default theme until the wearer pressed Save. The phone app
+   * keys the watch's reply by name alone, and the restore looked the marker up by number, so it
+   * never saw the reply and nothing went back to the watch.
+   */
+  test('restores a fresh watch from a reply the phone app keyed by name', () => {
+    keys = numberedKeys;
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5' }));
+    app.startPebbleApp({ clayConfig: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 1 } });
+    const result = restoreSends();
+
+    expect(result).toEqual([expect.objectContaining({ CLOCK_DATE_FORMAT: '%d.%m.%Y', APPEARANCE_THEME: '5', [numberedKeys.SETTINGS_FRESH]: 1 })]);
+  });
+
+  /**
+   * A phone with nothing saved missed the same reply, so the settings page opened on the defaults
+   * rather than on the watch.
+   */
+  test('seeds from a reply the phone app keyed by name', () => {
+    keys = numberedKeys;
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FULL, SETTINGS_FRESH: 0, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
+
+    expect(stored('CLOCK_DATE_FORMAT')).toBe('%Y-%m-%d');
+  });
+
+  /**
+   * A face that opens AppMessage late turns away the only ask the phone sent, and the restore never
+   * ran that session.
+   */
+  test('asks again once the watch stops turning the ask away', () => {
+    pebble.answer = 'nack';
+    localStorage.setItem('clay-settings', JSON.stringify({ CLOCK_DATE_FORMAT: '%d.%m.%Y' }));
+    app.startPebbleApp({ clayConfig: [] });
+    pebble.fire('ready');
+    // the third try is refused here, so the queue has dropped the ask and the next one is a gap away
+    vi.advanceTimersByTime(SEND_RETRY_MS * (SEND_RETRIES - 1));
+    pebble.answer = 'ack';
+
+    vi.advanceTimersByTime(SETTINGS_ASK_RETRY_MS);
+    const result = requestsTaken();
+
+    expect(result).toEqual([WIRE_CAPS.SETTINGS_REQUEST_FRESH]);
+  });
+
+  /**
+   * The first reply from a fresh watch seeds an empty phone with the watch's defaults, and a second
+   * would send those same defaults straight back to the watch, a message and a flash write that
+   * change nothing.
+   */
+  test('sends no restore for a second reply after the seed', () => {
+    const reply = { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FULL, SETTINGS_FRESH: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d', APPEARANCE_THEME: 2 };
+
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }] });
+    pebble.fire('ready');
+    pebble.fire('appmessage', { payload: reply });
+
+    pebble.fire('appmessage', { payload: reply });
+    const result = restoreSends();
+
+    expect(result).toEqual([]);
   });
 
   /**
@@ -1306,6 +1463,7 @@ describe('startPebbleApp settings restore', () => {
     pebble.fire('ready');
 
     pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
+    pebble.fire('ready');
     pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
 
     expect(dropped).toBe('SETTINGS_FRESH');
