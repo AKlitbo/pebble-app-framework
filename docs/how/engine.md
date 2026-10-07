@@ -8,7 +8,7 @@ It lives in [`engine.h`](../../src/c/pebble/ui/engine/engine.h) and [`engine.c`]
 
 A slot is one of two kinds, and an `EngineSlot` sets the fields for one or the other, never both.
 
-**A Text Slot.** It names a `Zone`, which is where the text sits plus the font, alignment, colour, and up to three smaller fonts to step down to when the text is too wide (see [Text That Fits Its Slot](#text-that-fits-its-slot)), and a function that writes the text. The function has the same shape as every one of the framework's [Readouts](readouts.md), so a slot can show the clock or the temperature with no code of the face's own.
+**A Text Slot.** It names a `Zone`, which is where the text sits plus the font, alignment, colour, and up to three smaller fonts to step down to when the text is too wide (see [Text That Fits Its Slot](#text-that-fits-its-slot)), and a function that writes the text. A text slot left without a function stays empty. The function has the same shape as every one of the framework's [Readouts](readouts.md), so a slot can show the clock or the temperature with no code of the face's own.
 
 **A Draw Slot.** It names a frame and a paint function, plus an optional pointer handed back to that function. This is for anything that is not a line of text: a gauge, an icon, a chart, or a backdrop that covers the whole window.
 

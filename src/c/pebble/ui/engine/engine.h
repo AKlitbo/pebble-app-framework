@@ -26,7 +26,8 @@
 
 /**
  * @brief One slot of a face. Set `zone` (+ `text`) for a text-slot, or `frame` (+ `draw`)
- * for a draw-slot. Never both.
+ * for a draw-slot. Never both. A text-slot with no `text` stays empty, and so does a draw-slot
+ * with no `draw`.
  */
 typedef struct
 {
@@ -45,7 +46,8 @@ typedef struct
  * A dynamic face works it out from settings.
  *
  * @param out Where to write the slots.
- * @param max How many slots `out` holds.
+ * @param max How many slots `out` holds. Never write past it. The engine cuts a count past `max`
+ * back, but a write past the end has already landed on the engine's other state by then.
  * @param bounds The window's root bounds, handy for a full-window draw-slot (overlays that
  * paint at absolute coords).
  * @return How many slots were written.

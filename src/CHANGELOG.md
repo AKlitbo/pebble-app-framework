@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Framework Changes
+
+#### Fixed
+
+- Fixed a text slot with a `zone` and no `text` function crashing the watch on its first repaint. The slot now stays empty, the same as a draw slot with no `draw`.
+
 ### Wearer-Visible Changes
 
 #### Fixed

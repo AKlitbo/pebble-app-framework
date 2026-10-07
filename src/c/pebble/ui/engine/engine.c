@@ -122,7 +122,8 @@ void engine_rebuild(void)
  */
 static void repaint_slot(uint8_t i)
 {
-    if (s_text_layers[i])
+    // a text-slot the face gave no text function stays empty rather than calling a null pointer
+    if (s_text_layers[i] && s_slots[i].text)
     {
         char buf[sizeof(s_last_text[0])]; // same width as the slot it gets copied into
         s_slots[i].text(buf, sizeof(buf));
