@@ -145,7 +145,7 @@ var group__lib__core =
     ] ],
     [ "CalendarStrip", "structCalendarStrip.html", [
       [ "count", "structCalendarStrip.html#a72c606e3a79d61f51137e7ab7630ffd2", null ],
-      [ "event", "structCalendarStrip.html#a0d1a09edc2e8f052753df7a6d1f23f00", null ]
+      [ "event", "structCalendarStrip.html#ab1ebd00551b1b306009bf85fca08746e", null ]
     ] ],
     [ "StockSlot", "structStockSlot.html", [
       [ "change_pct", "structStockSlot.html#a8dd9ac04b08e83a1400323dcd32e76f8", null ],
@@ -155,7 +155,7 @@ var group__lib__core =
     ] ],
     [ "StockStrip", "structStockStrip.html", [
       [ "count", "structStockStrip.html#a42f670ac4726b7bda534a6a5b0856b03", null ],
-      [ "slot", "structStockStrip.html#ab649e5971b963e25791eed01a504bded", null ]
+      [ "slot", "structStockStrip.html#a45e9c3f96711770e84c15dbc8ba8f14a", null ]
     ] ],
     [ "WeatherHourCol", "structWeatherHourCol.html", [
       [ "code", "structWeatherHourCol.html#ae088f957b24a2f5b36846803d1e1b383", null ],

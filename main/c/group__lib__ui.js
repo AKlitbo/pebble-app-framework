@@ -40,6 +40,7 @@ var group__lib__ui =
       [ "rect_fallback3", "structZone.html#a9991f1fe88fcf46da0b4e4e1fbdc8aab", null ]
     ] ],
     [ "ENGINE_MAX_SLOTS", "group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea", null ],
+    [ "ENGINE_SLOTS_MAX", "group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9", null ],
     [ "FONT_SLOTS_MAX", "group__lib__ui.html#ga4ca1872518ba74eea31ab554588e7398", null ],
     [ "ICON_AUTOTRIM", "group__lib__ui.html#ga0218b6d868d6c02e798e1f43e04a8d28", null ],
     [ "ICON_TRIM_LOG", "group__lib__ui.html#gacd235799baa707d5f8b99169732c0625", null ],

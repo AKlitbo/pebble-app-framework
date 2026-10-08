@@ -12,5 +12,6 @@ var searchData=
   ['step_5fcatchup_5fhours_9',['STEP_CATCHUP_HOURS',['../health__store_8c.html#ae8aeac449ddb0996fbb979993bc46de9',1,'health_store.c']]],
   ['stock_5ffirst_5fpoll_5fms_10',['STOCK_FIRST_POLL_MS',['../stock__store_8c.html#add7b6eb41b69d99664bcf9d324a8019d',1,'stock_store.c']]],
   ['stock_5fmax_5fslots_11',['STOCK_MAX_SLOTS',['../wire__caps_8g_8h.html#aa30008256f21f16b5c000b4f358a1709',1,'wire_caps.g.h']]],
-  ['stock_5fsymbol_5flen_12',['STOCK_SYMBOL_LEN',['../wire__caps_8g_8h.html#a12ebf366686d792fba83b752e39cb3f9',1,'wire_caps.g.h']]]
+  ['stock_5fslots_5fmax_12',['STOCK_SLOTS_MAX',['../wire__caps_8g_8h.html#acbdbc38584ba08e982342b3f916cdb6b',1,'wire_caps.g.h']]],
+  ['stock_5fsymbol_5flen_13',['STOCK_SYMBOL_LEN',['../wire__caps_8g_8h.html#a12ebf366686d792fba83b752e39cb3f9',1,'wire_caps.g.h']]]
 ];

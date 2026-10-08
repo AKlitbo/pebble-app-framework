@@ -1,6 +1,7 @@
 var engine_8h =
 [
     [ "ENGINE_MAX_SLOTS", "group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea", null ],
+    [ "ENGINE_SLOTS_MAX", "group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9", null ],
     [ "EngineBuild", "group__lib__ui.html#gafb4e0c889ad43fc740ce8968464eead4", null ],
     [ "engine_deinit", "group__lib__ui.html#ga371c44d7e8c48ce708a69bfd413a2a0e", null ],
     [ "engine_init", "group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f", null ],

@@ -235,18 +235,18 @@ static Window *&#160;</td><td class="memItemRight"><b>s_window</b></td></tr>
 <tr class="memitem:ad322bae72e6bc943d51af5902a99a3ad" id="r_ad322bae72e6bc943d51af5902a99a3ad"><td class="memItemLeft"><a id="ad322bae72e6bc943d51af5902a99a3ad" name="ad322bae72e6bc943d51af5902a99a3ad"></a>
 static <a class="el" href="group__lib__ui.html#gafb4e0c889ad43fc740ce8968464eead4">EngineBuild</a>&#160;</td><td class="memItemRight"><b>s_build</b></td></tr>
 <tr class="memdesc:ad322bae72e6bc943d51af5902a99a3ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the face passed to the engine at init. <br /></td></tr>
-<tr class="memitem:a01fb1f0b7c05dba36e53d2dbb10399a0" id="r_a01fb1f0b7c05dba36e53d2dbb10399a0"><td class="memItemLeft"><a id="a01fb1f0b7c05dba36e53d2dbb10399a0" name="a01fb1f0b7c05dba36e53d2dbb10399a0"></a>
-static <a class="el" href="structEngineSlot.html">EngineSlot</a>&#160;</td><td class="memItemRight"><b>s_slots</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>]</td></tr>
-<tr class="memdesc:a01fb1f0b7c05dba36e53d2dbb10399a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The slots as the face defined them. <br /></td></tr>
-<tr class="memitem:a909c063122f3aa3d55132a57c933431d" id="r_a909c063122f3aa3d55132a57c933431d"><td class="memItemLeft"><a id="a909c063122f3aa3d55132a57c933431d" name="a909c063122f3aa3d55132a57c933431d"></a>
-static Layer *&#160;</td><td class="memItemRight"><b>s_layers</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>]</td></tr>
-<tr class="memdesc:a909c063122f3aa3d55132a57c933431d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw-slot layers, NULL for text-slots. <br /></td></tr>
-<tr class="memitem:ab6aacb721186c806b81243810c84db56" id="r_ab6aacb721186c806b81243810c84db56"><td class="memItemLeft"><a id="ab6aacb721186c806b81243810c84db56" name="ab6aacb721186c806b81243810c84db56"></a>
-static TextLayer *&#160;</td><td class="memItemRight"><b>s_text_layers</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>]</td></tr>
-<tr class="memdesc:ab6aacb721186c806b81243810c84db56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text-slot layers, NULL for draw-slots. <br /></td></tr>
-<tr class="memitem:a4d0081c02703d45434f7c88b613044ec" id="r_a4d0081c02703d45434f7c88b613044ec"><td class="memItemLeft"><a id="a4d0081c02703d45434f7c88b613044ec" name="a4d0081c02703d45434f7c88b613044ec"></a>
-static char&#160;</td><td class="memItemRight"><b>s_last_text</b> [<a class="el" href="group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>][24]</td></tr>
-<tr class="memdesc:a4d0081c02703d45434f7c88b613044ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last string set on each slot, so an unchanged one skips the re-fit. <br /></td></tr>
+<tr class="memitem:ab47e3dffda0fb3da71f5308551ff8937" id="r_ab47e3dffda0fb3da71f5308551ff8937"><td class="memItemLeft"><a id="ab47e3dffda0fb3da71f5308551ff8937" name="ab47e3dffda0fb3da71f5308551ff8937"></a>
+static <a class="el" href="structEngineSlot.html">EngineSlot</a>&#160;</td><td class="memItemRight"><b>s_slots</b> [<a class="el" href="group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a>]</td></tr>
+<tr class="memdesc:ab47e3dffda0fb3da71f5308551ff8937"><td class="mdescLeft">&#160;</td><td class="mdescRight">The slots as the face defined them. <br /></td></tr>
+<tr class="memitem:a3fa7e2e9379aa307aa925cddced90a7d" id="r_a3fa7e2e9379aa307aa925cddced90a7d"><td class="memItemLeft"><a id="a3fa7e2e9379aa307aa925cddced90a7d" name="a3fa7e2e9379aa307aa925cddced90a7d"></a>
+static Layer *&#160;</td><td class="memItemRight"><b>s_layers</b> [<a class="el" href="group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a>]</td></tr>
+<tr class="memdesc:a3fa7e2e9379aa307aa925cddced90a7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw-slot layers, NULL for text-slots. <br /></td></tr>
+<tr class="memitem:ad792650669a1fe7fbc8ddd2ea0cfbbe3" id="r_ad792650669a1fe7fbc8ddd2ea0cfbbe3"><td class="memItemLeft"><a id="ad792650669a1fe7fbc8ddd2ea0cfbbe3" name="ad792650669a1fe7fbc8ddd2ea0cfbbe3"></a>
+static TextLayer *&#160;</td><td class="memItemRight"><b>s_text_layers</b> [<a class="el" href="group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a>]</td></tr>
+<tr class="memdesc:ad792650669a1fe7fbc8ddd2ea0cfbbe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text-slot layers, NULL for draw-slots. <br /></td></tr>
+<tr class="memitem:a3d49692c74bd5279da1b848ad2265459" id="r_a3d49692c74bd5279da1b848ad2265459"><td class="memItemLeft"><a id="a3d49692c74bd5279da1b848ad2265459" name="a3d49692c74bd5279da1b848ad2265459"></a>
+static char&#160;</td><td class="memItemRight"><b>s_last_text</b> [<a class="el" href="group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a>][24]</td></tr>
+<tr class="memdesc:a3d49692c74bd5279da1b848ad2265459"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last string set on each slot, so an unchanged one skips the re-fit. <br /></td></tr>
 <tr class="memitem:a7e54b2f45f314ed1fcc886592c28d8ea" id="r_a7e54b2f45f314ed1fcc886592c28d8ea"><td class="memItemLeft"><a id="a7e54b2f45f314ed1fcc886592c28d8ea" name="a7e54b2f45f314ed1fcc886592c28d8ea"></a>
 static uint8_t&#160;</td><td class="memItemRight"><b>s_count</b></td></tr>
 <tr class="memdesc:a7e54b2f45f314ed1fcc886592c28d8ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many slots are in use. <br /></td></tr>

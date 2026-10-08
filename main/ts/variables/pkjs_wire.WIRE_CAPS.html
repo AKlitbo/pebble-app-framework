@@ -50,8 +50,9 @@
 <li><a href="../modules/pkjs_wire.html">pkjs/wire</a></li>
 <li><a href="" aria-current="page">WIRE_CAPS</a></li></ul>
 <h1>Variable WIRE_CAPS<code class="tsd-tag">Const</code></h1></div>
-<div class="tsd-signature"><span class="tsd-kind-variable">WIRE_CAPS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">CALENDAR_LOC_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">16</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">CALENDAR_MAX_SLOTS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">6</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">CALENDAR_TITLE_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">24</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">FORECAST_MAX_COLS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">8</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">FORECAST_NO_TEMP</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">-1000</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">SETTINGS_REQUEST_FRESH</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">2</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">SETTINGS_REQUEST_FULL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">1</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">STOCK_LABEL_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">11</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">STOCK_MAX_SLOTS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">4</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = ...</span></div>
-<div class="tsd-comment tsd-typography"><p>Every cap and marker value the two sides of a strip have to agree on.</p>
+<div class="tsd-signature"><span class="tsd-kind-variable">WIRE_CAPS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">CALENDAR_LOC_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">16</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">CALENDAR_MAX_SLOTS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">6</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">CALENDAR_SLOTS_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">6</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">CALENDAR_TITLE_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">24</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">FORECAST_COLS_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">8</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">FORECAST_MAX_COLS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">8</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">FORECAST_NO_TEMP</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">-1000</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">SETTINGS_REQUEST_FRESH</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">2</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">SETTINGS_REQUEST_FULL</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">1</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">STOCK_LABEL_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">11</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">STOCK_MAX_SLOTS</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">4</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">STOCK_SLOTS_MAX</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">4</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>Every cap and marker value the two sides of a strip have to agree on, plus deprecated aliases
+that read the same numbers.</p>
 <p>The watch reads these back out of <code>c/core/wire/wire_caps.g.h</code>, which <code>npm run build:conditions</code>
 writes from this table. They are the numbers a decode is bounds-checked against, so a pair that
 drifted would truncate a strip or refuse a whole message with nothing to show for it.</p>
@@ -67,6 +68,12 @@ a terminator as well.</p>
 </div></li>
 <li class="tsd-parameter">
 <h5 id="calendar_max_slots"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">CALENDAR_MAX_SLOTS</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">6</span></h5>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated">Deprecated<a href="#deprecated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The old name for CALENDAR_SLOTS_MAX.</p>
+</div></div></li>
+<li class="tsd-parameter">
+<h5 id="calendar_slots_max"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">CALENDAR_SLOTS_MAX</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">6</span></h5>
 <div class="tsd-comment tsd-typography"><p>How many events the agenda strip can carry.</p>
 </div></li>
 <li class="tsd-parameter">
@@ -74,10 +81,16 @@ a terminator as well.</p>
 <div class="tsd-comment tsd-typography"><p>How long an event title can be, in characters.</p>
 </div></li>
 <li class="tsd-parameter">
-<h5 id="forecast_max_cols"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">FORECAST_MAX_COLS</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">8</span></h5>
+<h5 id="forecast_cols_max"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">FORECAST_COLS_MAX</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">8</span></h5>
 <div class="tsd-comment tsd-typography"><p>How many columns a forecast strip can carry. The watch re-clamps the count anyway, so slicing
 here just keeps the count byte honest and the packer in step with the other two.</p>
 </div></li>
+<li class="tsd-parameter">
+<h5 id="forecast_max_cols"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">FORECAST_MAX_COLS</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">8</span></h5>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-1">Deprecated<a href="#deprecated-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The old name for FORECAST_COLS_MAX.</p>
+</div></div></li>
 <li class="tsd-parameter">
 <h5 id="forecast_no_temp"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">FORECAST_NO_TEMP</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">-1000</span></h5>
 <div class="tsd-comment tsd-typography"><p>A forecast column with no reading ships this marker so the watch draws a placeholder.</p>
@@ -96,10 +109,16 @@ here just keeps the count byte honest and the packer in step with the other two.
 </div></li>
 <li class="tsd-parameter">
 <h5 id="stock_max_slots"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">STOCK_MAX_SLOTS</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">4</span></h5>
+<div class="tsd-comment tsd-typography">
+<div class="tsd-tag-deprecated">
+<h4 class="tsd-anchor-link" id="deprecated-2">Deprecated<a href="#deprecated-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The old name for STOCK_SLOTS_MAX.</p>
+</div></div></li>
+<li class="tsd-parameter">
+<h5 id="stock_slots_max"><code class="tsd-tag">Readonly</code><span class="tsd-kind-property">STOCK_SLOTS_MAX</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">4</span></h5>
 <div class="tsd-comment tsd-typography"><p>How many tickers the watchlist strip can carry.</p>
 </div></li></ul></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/4e782902a2ea2ab3cb811d279a347cc07e23c7ca/src/ts/pkjs/wire.ts#L23">pkjs/wire.ts:23</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/43d431aff6411a78870e2648073c37f424aba0dc/src/ts/pkjs/wire.ts#L47">pkjs/wire.ts:47</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

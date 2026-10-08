@@ -10,11 +10,12 @@ var searchData=
   ['engine_5fmark_5fdirty_5ftags_7',['engine_mark_dirty_tags',['../group__lib__ui.html#ga8cfbff710717e1257d8545775d7171b0',1,'engine_mark_dirty_tags(uint32_t changed):&#160;engine.c'],['../group__lib__ui.html#ga8cfbff710717e1257d8545775d7171b0',1,'engine_mark_dirty_tags(uint32_t changed):&#160;engine.c']]],
   ['engine_5fmax_5fslots_8',['ENGINE_MAX_SLOTS',['../group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea',1,'engine.h']]],
   ['engine_5frebuild_9',['engine_rebuild',['../group__lib__ui.html#ga878b25483298cd1601b2191e7eb9da87',1,'engine_rebuild(void):&#160;engine.c'],['../group__lib__ui.html#ga878b25483298cd1601b2191e7eb9da87',1,'engine_rebuild(void):&#160;engine.c']]],
-  ['enginebuild_10',['EngineBuild',['../group__lib__ui.html#gafb4e0c889ad43fc740ce8968464eead4',1,'engine.h']]],
-  ['engineslot_11',['EngineSlot',['../structEngineSlot.html',1,'']]],
-  ['enqueue_12',['enqueue',['../appmessage_8c.html#a4d5c99898dbd4b6c81ee21ab84e99965',1,'appmessage.c']]],
-  ['entries_13',['entries',['../structCallbackList.html#a7cb0e28a0c100340f47600574a57e79a',1,'CallbackList']]],
-  ['enum_5fcount_14',['enum_count',['../structSettingField.html#a1b26f28a04acef7e3ea2af0b7e1f1707',1,'SettingField']]],
-  ['enum_5ftext_15',['enum_text',['../settings_8c.html#a895927e65d1e699baf9e552d266c02cc',1,'settings.c']]],
-  ['event_16',['event',['../structCalendarStrip.html#a0d1a09edc2e8f052753df7a6d1f23f00',1,'CalendarStrip::event'],['../structCalendarPersist.html#aec7795407c3e51ac596988c7e65e4ad1',1,'CalendarPersist::event']]]
+  ['engine_5fslots_5fmax_10',['ENGINE_SLOTS_MAX',['../group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9',1,'engine.h']]],
+  ['enginebuild_11',['EngineBuild',['../group__lib__ui.html#gafb4e0c889ad43fc740ce8968464eead4',1,'engine.h']]],
+  ['engineslot_12',['EngineSlot',['../structEngineSlot.html',1,'']]],
+  ['enqueue_13',['enqueue',['../appmessage_8c.html#a4d5c99898dbd4b6c81ee21ab84e99965',1,'appmessage.c']]],
+  ['entries_14',['entries',['../structCallbackList.html#a7cb0e28a0c100340f47600574a57e79a',1,'CallbackList']]],
+  ['enum_5fcount_15',['enum_count',['../structSettingField.html#a1b26f28a04acef7e3ea2af0b7e1f1707',1,'SettingField']]],
+  ['enum_5ftext_16',['enum_text',['../settings_8c.html#a895927e65d1e699baf9e552d266c02cc',1,'settings.c']]],
+  ['event_17',['event',['../structCalendarStrip.html#ab1ebd00551b1b306009bf85fca08746e',1,'CalendarStrip::event'],['../structCalendarPersist.html#aec7795407c3e51ac596988c7e65e4ad1',1,'CalendarPersist::event']]]
 ];

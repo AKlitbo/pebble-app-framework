@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"structWeatherClock.html#a7562e2fafbe4bd092596ab24d60c1c21":[1,0,71,2],
 "structWeatherClock.html#a8e6c870f60a2694eaa5e8af7755bf724":[1,0,71,5],
 "structWeatherClock.html#a8ff4a083b881047a4608b0d328c3b6e6":[1,0,71,1],
 "structWeatherClock.html#a9fdd4c975baaa069590ed44b86c207a1":[1,0,71,3],

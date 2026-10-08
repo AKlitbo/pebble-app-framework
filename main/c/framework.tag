@@ -1956,6 +1956,13 @@
     <filename>wire__caps_8g_8h.html</filename>
     <member kind="define">
       <type>#define</type>
+      <name>STOCK_SLOTS_MAX</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>acbdbc38584ba08e982342b3f916cdb6b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>STOCK_MAX_SLOTS</name>
       <anchorfile>wire__caps_8g_8h.html</anchorfile>
       <anchor>aa30008256f21f16b5c000b4f358a1709</anchor>
@@ -1966,6 +1973,13 @@
       <name>STOCK_SYMBOL_LEN</name>
       <anchorfile>wire__caps_8g_8h.html</anchorfile>
       <anchor>a12ebf366686d792fba83b752e39cb3f9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>CALENDAR_SLOTS_MAX</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>afe3312551e2f2441936844dd431c42b8</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -5762,29 +5776,29 @@
       <type>static EngineSlot</type>
       <name>s_slots</name>
       <anchorfile>engine_8c.html</anchorfile>
-      <anchor>a01fb1f0b7c05dba36e53d2dbb10399a0</anchor>
-      <arglist>[ENGINE_MAX_SLOTS]</arglist>
+      <anchor>ab47e3dffda0fb3da71f5308551ff8937</anchor>
+      <arglist>[ENGINE_SLOTS_MAX]</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static Layer *</type>
       <name>s_layers</name>
       <anchorfile>engine_8c.html</anchorfile>
-      <anchor>a909c063122f3aa3d55132a57c933431d</anchor>
-      <arglist>[ENGINE_MAX_SLOTS]</arglist>
+      <anchor>a3fa7e2e9379aa307aa925cddced90a7d</anchor>
+      <arglist>[ENGINE_SLOTS_MAX]</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static TextLayer *</type>
       <name>s_text_layers</name>
       <anchorfile>engine_8c.html</anchorfile>
-      <anchor>ab6aacb721186c806b81243810c84db56</anchor>
-      <arglist>[ENGINE_MAX_SLOTS]</arglist>
+      <anchor>ad792650669a1fe7fbc8ddd2ea0cfbbe3</anchor>
+      <arglist>[ENGINE_SLOTS_MAX]</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static char</type>
       <name>s_last_text</name>
       <anchorfile>engine_8c.html</anchorfile>
-      <anchor>a4d0081c02703d45434f7c88b613044ec</anchor>
-      <arglist>[ENGINE_MAX_SLOTS][24]</arglist>
+      <anchor>a3d49692c74bd5279da1b848ad2265459</anchor>
+      <arglist>[ENGINE_SLOTS_MAX][24]</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static uint8_t</type>
@@ -5800,6 +5814,13 @@
     <filename>engine_8h.html</filename>
     <includes id="zone_8h" name="zone.h" local="yes" import="no" module="no" objc="no">ui/zone.h</includes>
     <class kind="struct">EngineSlot</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ENGINE_SLOTS_MAX</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga60efc891e07d5be12f10e4c1dc7f43d9</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>ENGINE_MAX_SLOTS</name>
@@ -6882,8 +6903,8 @@
       <type>CalendarEvent</type>
       <name>event</name>
       <anchorfile>structCalendarStrip.html</anchorfile>
-      <anchor>a0d1a09edc2e8f052753df7a6d1f23f00</anchor>
-      <arglist>[CALENDAR_MAX_SLOTS]</arglist>
+      <anchor>ab1ebd00551b1b306009bf85fca08746e</anchor>
+      <arglist>[CALENDAR_SLOTS_MAX]</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -7581,8 +7602,8 @@
       <type>StockSlot</type>
       <name>slot</name>
       <anchorfile>structStockStrip.html</anchorfile>
-      <anchor>ab649e5971b963e25791eed01a504bded</anchor>
-      <arglist>[STOCK_MAX_SLOTS]</arglist>
+      <anchor>a45e9c3f96711770e84c15dbc8ba8f14a</anchor>
+      <arglist>[STOCK_SLOTS_MAX]</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -10837,6 +10858,13 @@
     <class kind="struct">EngineSlot</class>
     <class kind="struct">IconMargins</class>
     <class kind="struct">Zone</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ENGINE_SLOTS_MAX</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga60efc891e07d5be12f10e4c1dc7f43d9</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>ENGINE_MAX_SLOTS</name>

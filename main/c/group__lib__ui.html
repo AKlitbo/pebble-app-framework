@@ -231,7 +231,7 @@ Files</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
 <tr class="memitem:EngineSlot" id="r_EngineSlot"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structEngineSlot.html">EngineSlot</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One slot of a face. Set <span class="tt"><a class="el" href="structEngineSlot.html#a69694269a011f100691b29354f0ca5c5" title="Text slot area and font tiers.">zone</a></span> (+ <span class="tt"><a class="el" href="structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180" title="Text slot, pulls and formats from a store.">text</a></span>) for a text-slot, or <span class="tt"><a class="el" href="structEngineSlot.html#a0cc398600007b0b9eafeb67ca50b9201" title="Draw slot layer frame.">frame</a></span> (+ <span class="tt"><a class="el" href="structEngineSlot.html#a1b963e9e7f45ae3fdd2a683646ad1124" title="Draw slot paint.">draw</a></span>) for a draw-slot. Never both.  <a href="structEngineSlot.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One slot of a face. Set <span class="tt"><a class="el" href="structEngineSlot.html#a69694269a011f100691b29354f0ca5c5" title="Text slot area and font tiers.">zone</a></span> (+ <span class="tt"><a class="el" href="structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180" title="Text slot, pulls and formats from a store.">text</a></span>) for a text-slot, or <span class="tt"><a class="el" href="structEngineSlot.html#a0cc398600007b0b9eafeb67ca50b9201" title="Draw slot layer frame.">frame</a></span> (+ <span class="tt"><a class="el" href="structEngineSlot.html#a1b963e9e7f45ae3fdd2a683646ad1124" title="Draw slot paint.">draw</a></span>) for a draw-slot. Never both. A text-slot with no <span class="tt"><a class="el" href="structEngineSlot.html#a8a5ac19edbcc57bc74acebfa446f4180" title="Text slot, pulls and formats from a store.">text</a></span> stays empty, and so does a draw-slot with no <span class="tt"><a class="el" href="structEngineSlot.html#a1b963e9e7f45ae3fdd2a683646ad1124" title="Draw slot paint.">draw</a></span>.  <a href="structEngineSlot.html#details">More...</a><br /></td></tr>
 <tr class="memitem:IconMargins" id="r_IconMargins"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structIconMargins.html">IconMargins</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The transparent border around an icon's opaque art, in pixels per side.  <a href="structIconMargins.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Zone" id="r_Zone"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structZone.html">Zone</a></td></tr>
@@ -239,7 +239,10 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ga36e1ce7a039108d509b546091b2f81ea" id="r_ga36e1ce7a039108d509b546091b2f81ea"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga36e1ce7a039108d509b546091b2f81ea">ENGINE_MAX_SLOTS</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memitem:ga60efc891e07d5be12f10e4c1dc7f43d9" id="r_ga60efc891e07d5be12f10e4c1dc7f43d9"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a>&#160;&#160;&#160;10</td></tr>
+<tr class="memitem:ga36e1ce7a039108d509b546091b2f81ea" id="r_ga36e1ce7a039108d509b546091b2f81ea"><td class="memItemLeft"><a id="ga36e1ce7a039108d509b546091b2f81ea" name="ga36e1ce7a039108d509b546091b2f81ea"></a>
+#define&#160;</td><td class="memItemRight"><b>ENGINE_MAX_SLOTS</b>&#160;&#160;&#160;<a class="el" href="#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a></td></tr>
+<tr class="memdesc:ga36e1ce7a039108d509b546091b2f81ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The old name for <span class="tt"><a class="el" href="#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a></span>, deprecated. A face that sets it or reads it gets the same cap. <br /></td></tr>
 <tr class="memitem:ga4ca1872518ba74eea31ab554588e7398" id="r_ga4ca1872518ba74eea31ab554588e7398"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga4ca1872518ba74eea31ab554588e7398">FONT_SLOTS_MAX</a>&#160;&#160;&#160;24</td></tr>
 <tr class="memitem:ga0218b6d868d6c02e798e1f43e04a8d28" id="r_ga0218b6d868d6c02e798e1f43e04a8d28"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0218b6d868d6c02e798e1f43e04a8d28">ICON_AUTOTRIM</a>&#160;&#160;&#160;1</td></tr>
 <tr class="memitem:gacd235799baa707d5f8b99169732c0625" id="r_gacd235799baa707d5f8b99169732c0625"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gacd235799baa707d5f8b99169732c0625">ICON_TRIM_LOG</a>&#160;&#160;&#160;0</td></tr>
@@ -323,18 +326,18 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
 <div class="textblock"><p>The slot engine, zones, fonts, icon cache, and weather icons and labels. </p>
 <p>Everything that puts pixels on the screen, shared by every face's layout.</p>
 </div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
-<a id="ga36e1ce7a039108d509b546091b2f81ea" name="ga36e1ce7a039108d509b546091b2f81ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga36e1ce7a039108d509b546091b2f81ea">&#9670;&#160;</a></span>ENGINE_MAX_SLOTS</h2>
+<a id="ga60efc891e07d5be12f10e4c1dc7f43d9" name="ga60efc891e07d5be12f10e4c1dc7f43d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga60efc891e07d5be12f10e4c1dc7f43d9">&#9670;&#160;</a></span>ENGINE_SLOTS_MAX</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define ENGINE_MAX_SLOTS&#160;&#160;&#160;10</td>
+          <td class="memname">#define ENGINE_SLOTS_MAX&#160;&#160;&#160;10</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Most slots a single face can declare. Ten is the ceiling of the largest layout a face builds here, so the slot arrays hold no dead entries. A face cannot raise it from its own build, so more slots means raising it here </p>
+<p>Most slots a single face can declare. Ten covers the largest layout the framework expects, so the slot arrays hold no dead entries. A face that needs more sets it in its appinfo's <span class="tt">defines</span> </p>
 
 </div>
 </div>
@@ -349,7 +352,7 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Registry capacity, shared by every face. The face's <span class="tt">draw/fonts.h</span> checks <span class="tt">FONT_COUNT</span> against this at build time, so adding a slot past it fails the build with a clear message. A face cannot raise it from its own build, so more slots means raising it here. </p>
+<p>Registry capacity. A face can check its own count against this at build time, so adding a slot past it fails the build with a clear message. A face that needs more sets it in its appinfo's <span class="tt">defines</span>. </p>
 
 </div>
 </div>
@@ -400,7 +403,7 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">out</td><td>Where to write the slots. </td></tr>
-    <tr><td class="paramname">max</td><td>How many slots <span class="tt">out</span> holds. </td></tr>
+    <tr><td class="paramname">max</td><td>How many slots <span class="tt">out</span> holds. Never write past it. The engine cuts a count past <span class="tt">max</span> back, but a write past the end has already landed on the engine's other state by then. </td></tr>
     <tr><td class="paramname">bounds</td><td>The window's root bounds, handy for a full-window draw-slot (overlays that paint at absolute coords). </td></tr>
   </table>
   </dd>

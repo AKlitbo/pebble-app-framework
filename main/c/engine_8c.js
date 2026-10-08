@@ -11,9 +11,9 @@ var engine_8c =
     [ "repaint_slot", "engine_8c.html#aa951c14b92f78cf5e7dd25b4ebf47007", null ],
     [ "s_build", "engine_8c.html#ad322bae72e6bc943d51af5902a99a3ad", null ],
     [ "s_count", "engine_8c.html#a7e54b2f45f314ed1fcc886592c28d8ea", null ],
-    [ "s_last_text", "engine_8c.html#a4d0081c02703d45434f7c88b613044ec", null ],
-    [ "s_layers", "engine_8c.html#a909c063122f3aa3d55132a57c933431d", null ],
-    [ "s_slots", "engine_8c.html#a01fb1f0b7c05dba36e53d2dbb10399a0", null ],
-    [ "s_text_layers", "engine_8c.html#ab6aacb721186c806b81243810c84db56", null ],
+    [ "s_last_text", "engine_8c.html#a3d49692c74bd5279da1b848ad2265459", null ],
+    [ "s_layers", "engine_8c.html#a3fa7e2e9379aa307aa925cddced90a7d", null ],
+    [ "s_slots", "engine_8c.html#ab47e3dffda0fb3da71f5308551ff8937", null ],
+    [ "s_text_layers", "engine_8c.html#ad792650669a1fe7fbc8ddd2ea0cfbbe3", null ],
     [ "s_window", "engine_8c.html#a3ddf81e700000ec6ae43c39a1be82d1c", null ]
 ];

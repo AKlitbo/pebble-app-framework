@@ -260,7 +260,7 @@ static uint8_t&#160;</td><td class="memItemRight"><b>s_cache_count</b></td></tr>
 
 <p>How many distinct icons the cache holds at once. </p>
 <p>It has to cover every icon one redraw touches. The busiest layout built so far is two eight column forecast strips with a pair of two icon panels under them, which is 20, so 24 leaves a little room. Past that the cache still works but thrashes. A redraw walks its icons in the same order every time, so the coldest entry is always the next one wanted, and every lookup reloads the resource and rescans its margins. A reload that fails on a busy heap leaves that icon blank.</p>
-<p>Icons nothing draws any more, such as the moon glyphs of days gone by, are what gets dropped. A face that draws more at once sets its own cap before this file is compiled. </p>
+<p>Icons nothing draws any more, such as the moon glyphs of days gone by, are what gets dropped. A face that draws more at once sets its own cap in its appinfo's <span class="tt">defines</span>. </p>
 
 </div>
 </div>
