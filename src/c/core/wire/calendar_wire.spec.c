@@ -78,7 +78,7 @@ void test_pins_a_count_past_the_array(void)
     uint8_t buffer[256];
     uint16_t len = 0;
     buffer[len++] = 200;
-    for (int i = 0; i < CALENDAR_MAX_SLOTS; i++)
+    for (int i = 0; i < CALENDAR_SLOTS_MAX; i++)
     {
         char title[8];
         snprintf(title, sizeof(title), "E%d", i);
@@ -89,8 +89,8 @@ void test_pins_a_count_past_the_array(void)
     bool result = calendar_wire_decode(buffer, len, &out);
 
     TEST_ASSERT_TRUE(result);
-    TEST_ASSERT_EQUAL_UINT8(CALENDAR_MAX_SLOTS, out.count);
-    TEST_ASSERT_EQUAL_STRING("E5", out.event[CALENDAR_MAX_SLOTS - 1].title);
+    TEST_ASSERT_EQUAL_UINT8(CALENDAR_SLOTS_MAX, out.count);
+    TEST_ASSERT_EQUAL_STRING("E5", out.event[CALENDAR_SLOTS_MAX - 1].title);
 }
 
 /** @brief A message that stops inside an event's fixed part is refused. */

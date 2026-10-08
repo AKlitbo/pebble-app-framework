@@ -21,7 +21,7 @@
  * @{
  */
 
-// CALENDAR_MAX_SLOTS, CAL_TITLE_LEN and CAL_LOC_LEN are generated from the phone's cap table, so
+// CALENDAR_SLOTS_MAX, CAL_TITLE_LEN and CAL_LOC_LEN are generated from the phone's cap table, so
 // the two sides of the strip cannot drift
 #include "wire/wire_caps.g.h"
 
@@ -42,7 +42,7 @@ typedef struct
 typedef struct
 {
     uint8_t       count;                   ///< How many events are filled (0 means none yet)
-    CalendarEvent event[CALENDAR_MAX_SLOTS]; ///< The event slots, filled up to count
+    CalendarEvent event[CALENDAR_SLOTS_MAX]; ///< The event slots, filled up to count
 } CalendarStrip;
 
 /**

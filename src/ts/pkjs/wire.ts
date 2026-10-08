@@ -10,26 +10,17 @@ import type { HourlyStrip, DailyStrip } from '../weather/util';
 import type { StockQuote } from '../stock/util';
 import type { CalendarEvent } from '../calendar/ical';
 
-/**
- * Every cap and marker value the two sides of a strip have to agree on.
- *
- * The watch reads these back out of `c/core/wire/wire_caps.g.h`, which `npm run build:conditions`
- * writes from this table. They are the numbers a decode is bounds-checked against, so a pair that
- * drifted would truncate a strip or refuse a whole message with nothing to show for it.
- *
- * A text cap here counts characters. The C side gets that plus one, because its buffer has to hold
- * a terminator as well.
- */
-export const WIRE_CAPS = {
+/** The caps and marker values themselves, which `WIRE_CAPS` hands out under every name. */
+const CAPS = {
   /** How many columns a forecast strip can carry. The watch re-clamps the count anyway, so slicing
    *  here just keeps the count byte honest and the packer in step with the other two. */
-  FORECAST_MAX_COLS: 8,
+  FORECAST_COLS_MAX: 8,
   /** How many tickers the watchlist strip can carry. */
-  STOCK_MAX_SLOTS: 4,
+  STOCK_SLOTS_MAX: 4,
   /** How wide a watchlist label is, in characters. */
   STOCK_LABEL_MAX: 11,
   /** How many events the agenda strip can carry. */
-  CALENDAR_MAX_SLOTS: 6,
+  CALENDAR_SLOTS_MAX: 6,
   /** How long an event title can be, in characters. */
   CALENDAR_TITLE_MAX: 24,
   /** How long an event location can be, in characters. */
@@ -42,9 +33,30 @@ export const WIRE_CAPS = {
   SETTINGS_REQUEST_FRESH: 2,
 } as const;
 
-const FORECAST_MAX_COLS = WIRE_CAPS.FORECAST_MAX_COLS;
-const STOCK_MAX_SLOTS = WIRE_CAPS.STOCK_MAX_SLOTS;
-const CALENDAR_MAX_SLOTS = WIRE_CAPS.CALENDAR_MAX_SLOTS;
+/**
+ * Every cap and marker value the two sides of a strip have to agree on, plus deprecated aliases
+ * that read the same numbers.
+ *
+ * The watch reads these back out of `c/core/wire/wire_caps.g.h`, which `npm run build:conditions`
+ * writes from this table. They are the numbers a decode is bounds-checked against, so a pair that
+ * drifted would truncate a strip or refuse a whole message with nothing to show for it.
+ *
+ * A text cap here counts characters. The C side gets that plus one, because its buffer has to hold
+ * a terminator as well.
+ */
+export const WIRE_CAPS = {
+  ...CAPS,
+  /** @deprecated The old name for FORECAST_COLS_MAX. */
+  FORECAST_MAX_COLS: CAPS.FORECAST_COLS_MAX,
+  /** @deprecated The old name for STOCK_SLOTS_MAX. */
+  STOCK_MAX_SLOTS: CAPS.STOCK_SLOTS_MAX,
+  /** @deprecated The old name for CALENDAR_SLOTS_MAX. */
+  CALENDAR_MAX_SLOTS: CAPS.CALENDAR_SLOTS_MAX,
+} as const;
+
+const FORECAST_COLS_MAX = WIRE_CAPS.FORECAST_COLS_MAX;
+const STOCK_SLOTS_MAX = WIRE_CAPS.STOCK_SLOTS_MAX;
+const CALENDAR_SLOTS_MAX = WIRE_CAPS.CALENDAR_SLOTS_MAX;
 const CALENDAR_TITLE_MAX = WIRE_CAPS.CALENDAR_TITLE_MAX;
 const CALENDAR_LOC_MAX = WIRE_CAPS.CALENDAR_LOC_MAX;
 const STOCK_LABEL_MAX = WIRE_CAPS.STOCK_LABEL_MAX;
@@ -190,7 +202,7 @@ function packForecastHourly(hourly: HourlyStrip | null | undefined): number[] | 
     return null;
   }
 
-  const cols = hourly.cols.slice(0, FORECAST_MAX_COLS);
+  const cols = hourly.cols.slice(0, FORECAST_COLS_MAX);
   const bytes = [cols.length, hourly.baseHour & 0xff, hourly.stepHours & 0xff];
 
   cols.forEach((col) => {
@@ -211,7 +223,7 @@ function packForecastDaily(daily: DailyStrip | null | undefined): number[] | nul
     return null;
   }
 
-  const cols = daily.cols.slice(0, FORECAST_MAX_COLS);
+  const cols = daily.cols.slice(0, FORECAST_COLS_MAX);
   const bytes = [cols.length, daily.baseWeekday & 0xff];
 
   cols.forEach((col) => {
@@ -235,7 +247,7 @@ function packStockStrip(results: Array<Pick<StockQuote, 'ok' | 'price' | 'change
     return null;
   }
 
-  const slots = results.slice(0, STOCK_MAX_SLOTS);
+  const slots = results.slice(0, STOCK_SLOTS_MAX);
   const bytes = [slots.length];
 
   // the loop walks every index so an array hole still packs as a failed slot. a skipped slot
@@ -275,7 +287,7 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
     return null;
   }
 
-  const slots = events.slice(0, CALENDAR_MAX_SLOTS);
+  const slots = events.slice(0, CALENDAR_SLOTS_MAX);
   const bytes = [slots.length];
 
   slots.forEach((event) => {
@@ -296,4 +308,13 @@ function packCalendarStrip(events: CalendarEvent[] | null): number[] | null {
   return bytes;
 }
 
-export default { packForecastHourly, packForecastDaily, packStockStrip, packCalendarStrip, toAscii, STOCK_MAX_SLOTS };
+export default {
+  packForecastHourly,
+  packForecastDaily,
+  packStockStrip,
+  packCalendarStrip,
+  toAscii,
+  STOCK_SLOTS_MAX,
+  /** @deprecated The old name for STOCK_SLOTS_MAX. */
+  STOCK_MAX_SLOTS: STOCK_SLOTS_MAX,
+};

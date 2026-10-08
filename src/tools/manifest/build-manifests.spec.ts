@@ -170,9 +170,9 @@ describe('buildManifest', () => {
     const rootPkg = { author: 'x', version: '0' };
     const target = { name: 'face', watchface: true };
 
-    const result = buildManifest(config, rootPkg, target, { ENGINE_MAX_SLOTS: 12 });
+    const result = buildManifest(config, rootPkg, target, { ENGINE_SLOTS_MAX: 12 });
 
-    expect(result).toMatchObject({ defines: { ENGINE_MAX_SLOTS: 12 } });
+    expect(result).toMatchObject({ defines: { ENGINE_SLOTS_MAX: 12 } });
   });
 
   /**
@@ -214,20 +214,20 @@ describe('readDefines', () => {
    * compiler another flag, or break the build with an error that never names the appinfo.
    */
   test('refuses a name that is not a macro name, naming the face', () => {
-    const config = { ...makeConfig(), defines: { 'ENGINE_MAX_SLOTS -DOTHER': 12 } };
+    const config = { ...makeConfig(), defines: { 'ENGINE_SLOTS_MAX -DOTHER': 12 } };
 
     const call = () => readDefines(config, 'gridlock');
 
-    expect(call).toThrow("gridlock's appinfo defines ENGINE_MAX_SLOTS -DOTHER, which is not a macro name");
+    expect(call).toThrow("gridlock's appinfo defines ENGINE_SLOTS_MAX -DOTHER, which is not a macro name");
   });
 
   /** A quoted number reads fine in JSON and then sizes the slot arrays with a string the C cannot take. */
   test('refuses a value that is not a whole number', () => {
-    const config = { ...makeConfig(), defines: { ENGINE_MAX_SLOTS: '12' } };
+    const config = { ...makeConfig(), defines: { ENGINE_SLOTS_MAX: '12' } };
 
     const call = () => readDefines(config, 'gridlock');
 
-    expect(call).toThrow(/ENGINE_MAX_SLOTS as "12", which is not a whole number/);
+    expect(call).toThrow(/ENGINE_SLOTS_MAX as "12", which is not a whole number/);
   });
 
   /** A HAS_ switch follows from the face's message keys, so setting one by hand would build code for a feature the face lacks. */

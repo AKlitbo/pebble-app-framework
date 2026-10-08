@@ -10,7 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Added
 
-- Added `defines` to the appinfo, for C defines a face sets for its own build, such as `"defines": { "ENGINE_MAX_SLOTS": 12 }`. The build passes each one as a `-D` flag. `ENGINE_MAX_SLOTS`, `FONT_SLOTS_MAX`, and `ICON_CACHE_MAX` can each be raised this way, up to 254 for the slots and 255 for the fonts and the icon cache, and a value outside that stops the build. A name that is not a macro name, a value that is not a whole number, and a name the build sets itself, a `HAS_` switch or `BUILD_WATCHAPP`, stop the build with a message naming the face.
+- Added `defines` to the appinfo, for C defines a face sets for its own build, such as `"defines": { "ENGINE_SLOTS_MAX": 12 }`. The build passes each one as a `-D` flag. `ENGINE_SLOTS_MAX`, `FONT_SLOTS_MAX`, and `ICON_CACHE_MAX` can each be raised this way, up to 254 for the slots and 255 for the fonts and the icon cache, and a value outside that stops the build. A name that is not a macro name, a value that is not a whole number, and a name the build sets itself, a `HAS_` switch or `BUILD_WATCHAPP`, stop the build with a message naming the face.
+
+#### Deprecated
+
+- Deprecated the limits named with `MAX` in the middle, for names that end in `MAX` like `FONT_SLOTS_MAX` and `ICON_CACHE_MAX`. In C, `ENGINE_MAX_SLOTS` is now `ENGINE_SLOTS_MAX`. In C and in `WIRE_CAPS`, `STOCK_MAX_SLOTS` is now `STOCK_SLOTS_MAX` and `CALENDAR_MAX_SLOTS` is `CALENDAR_SLOTS_MAX`. `WIRE_CAPS.FORECAST_MAX_COLS` is `WIRE_CAPS.FORECAST_COLS_MAX`, and the wire module's default export carries `STOCK_SLOTS_MAX` beside the deprecated `STOCK_MAX_SLOTS`. The old names still work, including `ENGINE_MAX_SLOTS` in a face's `defines`, and go at the next major release. A face that sets both engine names has to set them to the same value. Move to the new names when convenient.
 
 #### Fixed
 

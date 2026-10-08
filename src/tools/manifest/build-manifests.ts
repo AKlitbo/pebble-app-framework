@@ -13,7 +13,7 @@
  * `pebble build` needs package.json to exist before it runs, so each build regenerates it
  * via tools/build.ts. A file whose contents would not change is left alone, so its mtime does too.
  *
- * A face can also set C defines for its own build, such as a raised ENGINE_MAX_SLOTS. They are checked
+ * A face can also set C defines for its own build, such as a raised ENGINE_SLOTS_MAX. They are checked
  * here and carried into the manifest, where the waf build turns each one into a -D flag.
  *
  * Usage: node tools/manifest/build-manifests.ts [--targets] <face>
@@ -107,7 +107,7 @@ export function readDefines(config: SharedAppinfo, face: string): Defines {
 
   for (const [name, value] of Object.entries(config.defines)) {
     if (!/^[A-Z][A-Z0-9_]*$/.test(name)) {
-      throw new ToolError(`${face}'s appinfo defines ${name}, which is not a macro name such as ENGINE_MAX_SLOTS`);
+      throw new ToolError(`${face}'s appinfo defines ${name}, which is not a macro name such as ENGINE_SLOTS_MAX`);
     }
 
     if (/^HAS_/.test(name) || name === 'BUILD_WATCHAPP') {

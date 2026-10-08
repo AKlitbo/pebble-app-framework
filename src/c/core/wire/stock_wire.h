@@ -19,7 +19,7 @@
  * @{
  */
 
-// STOCK_MAX_SLOTS and STOCK_SYMBOL_LEN are generated from the phone's cap table, so the two sides
+// STOCK_SLOTS_MAX and STOCK_SYMBOL_LEN are generated from the phone's cap table, so the two sides
 // of the strip cannot drift. A ticker runs to about six characters and a status word such as
 // "INVALID KEY" to eleven, which is what the label width is sized for
 #include "wire/wire_caps.g.h"
@@ -40,7 +40,7 @@ typedef struct
 typedef struct
 {
     uint8_t   count;                 ///< How many slots are filled (0 means none yet)
-    StockSlot slot[STOCK_MAX_SLOTS]; ///< The quote slots, filled up to count
+    StockSlot slot[STOCK_SLOTS_MAX]; ///< The quote slots, filled up to count
 } StockStrip;
 
 /**

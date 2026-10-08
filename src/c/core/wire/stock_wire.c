@@ -17,11 +17,11 @@ bool stock_wire_decode(const uint8_t *buf, uint16_t len, StockStrip *out)
     }
 
     uint8_t count = buf[0];
-    if (count > STOCK_MAX_SLOTS)
+    if (count > STOCK_SLOTS_MAX)
     {
         // the phone's word for how many, pinned to how many there is room for. without this the
         // fill below walks straight off the end of the slot array
-        count = STOCK_MAX_SLOTS;
+        count = STOCK_SLOTS_MAX;
     }
 
     // zero-init so the unused slot[count..MAX-1] bytes are deterministic, not stale

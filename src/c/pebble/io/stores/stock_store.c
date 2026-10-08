@@ -155,13 +155,13 @@ void stock_store_init(StockConfig cfg, const StockSeed *seed)
         {
             // stock_store_slot bounds an index against this count, so pin it to what the slot
             // array actually holds before anything can ask for a slot past the end
-            if (s_state.strip.count > STOCK_MAX_SLOTS)
+            if (s_state.strip.count > STOCK_SLOTS_MAX)
             {
                 s_state.strip.count = 0;
             }
 
             // the symbols come back off flash too, so each gets an end of its own before it is printed
-            for (uint8_t i = 0; i < STOCK_MAX_SLOTS; i++)
+            for (uint8_t i = 0; i < STOCK_SLOTS_MAX; i++)
             {
                 s_state.strip.slot[i].symbol[STOCK_SYMBOL_LEN - 1] = '\0';
             }

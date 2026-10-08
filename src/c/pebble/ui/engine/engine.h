@@ -21,15 +21,30 @@
 
 /// Most slots a single face can declare. Ten covers the largest layout the framework expects, so the
 /// slot arrays hold no dead entries. A face that needs more sets it in its appinfo's `defines`
+#ifndef ENGINE_SLOTS_MAX
+#ifdef ENGINE_MAX_SLOTS
+#define ENGINE_SLOTS_MAX ENGINE_MAX_SLOTS
+#else
+#define ENGINE_SLOTS_MAX 10
+#endif
+#endif
+
+/// The old name for `ENGINE_SLOTS_MAX`, deprecated. A face that sets it or reads it gets the same cap
 #ifndef ENGINE_MAX_SLOTS
-#define ENGINE_MAX_SLOTS 10
+#define ENGINE_MAX_SLOTS ENGINE_SLOTS_MAX
+#endif
+
+// a face that sets both names to different numbers would size its own loops by one and the engine's
+// arrays by the other
+#if ENGINE_MAX_SLOTS != ENGINE_SLOTS_MAX
+#error "ENGINE_SLOTS_MAX and the old ENGINE_MAX_SLOTS are set to different values"
 #endif
 
 // the slot count and every slot index are a uint8_t, and the clamp on the count needs one value
 // above the cap to compare against. at 255 the SDK's -Werror stops the build on a compare that
 // can never be true
-#if ENGINE_MAX_SLOTS < 1 || ENGINE_MAX_SLOTS > 254
-#error "ENGINE_MAX_SLOTS has to be 1 to 254"
+#if ENGINE_SLOTS_MAX < 1 || ENGINE_SLOTS_MAX > 254
+#error "ENGINE_SLOTS_MAX, or the old ENGINE_MAX_SLOTS, has to be 1 to 254"
 #endif
 
 /**

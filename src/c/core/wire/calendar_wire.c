@@ -17,11 +17,11 @@ bool calendar_wire_decode(const uint8_t *buf, uint16_t len, CalendarStrip *out)
     }
 
     uint8_t count = buf[0];
-    if (count > CALENDAR_MAX_SLOTS)
+    if (count > CALENDAR_SLOTS_MAX)
     {
         // the phone's word for how many, pinned to how many there is room for. without this the
         // fill below walks straight off the end of the event array
-        count = CALENDAR_MAX_SLOTS;
+        count = CALENDAR_SLOTS_MAX;
     }
 
     // zero-init so the unused slot[count..MAX-1] bytes are deterministic, not stale

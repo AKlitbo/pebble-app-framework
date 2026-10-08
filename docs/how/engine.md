@@ -39,7 +39,7 @@ static uint8_t build(EngineSlot *out, uint8_t max, GRect bounds)
 
 `bounds` is the window's full area, which is what a backdrop or an overlay takes as its frame. The function runs again on every rebuild, so it can read the settings and return a different screen each time. A grid face works out its cells here, and a fixed face can swap one tall block for two smaller slots.
 
-**Ten Slots at Most.** The engine keeps its slots in fixed arrays of ten, so it never allocates for them. The build writes straight into that array and has to stop at `max`. A count past ten is cut back to ten, which keeps the engine's own loops inside the arrays, but a build that wrote past the end has already done its damage by then. A face that needs more sets `ENGINE_MAX_SLOTS` in its appinfo's `defines`, up to 254, as in `"defines": { "ENGINE_MAX_SLOTS": 12 }`.
+**Ten Slots at Most.** The engine keeps its slots in fixed arrays of ten, so it never allocates for them. The build writes straight into that array and has to stop at `max`. A count past ten is cut back to ten, which keeps the engine's own loops inside the arrays, but a build that wrote past the end has already done its damage by then. A face that needs more sets `ENGINE_SLOTS_MAX` in its appinfo's `defines`, up to 254, as in `"defines": { "ENGINE_SLOTS_MAX": 12 }`.
 
 **The Text Function Takes No Context.** It gets only a buffer and its size, so it cannot be told which slot it is filling. A face that shows the same kind of reading in four places writes four one-line wrappers, each with its slot baked in. That keeps a slot down to a single function pointer and keeps every readout callable on its own, outside the engine.
 

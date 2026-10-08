@@ -148,14 +148,16 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
     lines.push(`#define ${name} ${text} ///< ${brief}`);
   };
 
-  entry('STOCK_MAX_SLOTS', caps.STOCK_MAX_SLOTS, 'How many tickers the watchlist strip carries');
+  entry('STOCK_SLOTS_MAX', caps.STOCK_SLOTS_MAX, 'How many tickers the watchlist strip carries');
+  entry('STOCK_MAX_SLOTS', 'STOCK_SLOTS_MAX', 'The old name for STOCK_SLOTS_MAX, deprecated');
   entry('STOCK_SYMBOL_LEN', caps.STOCK_LABEL_MAX + 1, `A watchlist label, ${caps.STOCK_LABEL_MAX} characters plus its terminator`);
   lines.push('');
-  entry('CALENDAR_MAX_SLOTS', caps.CALENDAR_MAX_SLOTS, 'How many events the agenda strip carries');
+  entry('CALENDAR_SLOTS_MAX', caps.CALENDAR_SLOTS_MAX, 'How many events the agenda strip carries');
+  entry('CALENDAR_MAX_SLOTS', 'CALENDAR_SLOTS_MAX', 'The old name for CALENDAR_SLOTS_MAX, deprecated');
   entry('CAL_TITLE_LEN', caps.CALENDAR_TITLE_MAX + 1, `An event title, ${caps.CALENDAR_TITLE_MAX} characters plus its terminator`);
   entry('CAL_LOC_LEN', caps.CALENDAR_LOC_MAX + 1, `An event location, ${caps.CALENDAR_LOC_MAX} characters plus its terminator`);
   lines.push('');
-  entry('WEATHER_FORECAST_COLS', caps.FORECAST_MAX_COLS, 'How many columns a forecast strip carries');
+  entry('WEATHER_FORECAST_COLS', caps.FORECAST_COLS_MAX, 'How many columns a forecast strip carries');
   entry('WEATHER_NO_TEMP', caps.FORECAST_NO_TEMP, 'A column with no reading, so the watch draws a placeholder');
   lines.push('');
   entry('WX_FORECAST_NIGHT_BIT', `0x${nightBit.toString(16).toUpperCase()}`, 'Set on an hourly forecast code for a column after dark');

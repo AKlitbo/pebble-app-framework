@@ -77,7 +77,7 @@ void test_pins_a_count_past_the_array(void)
     uint8_t buffer[128];
     uint16_t len = 0;
     buffer[len++] = 200;
-    for (int i = 0; i < STOCK_MAX_SLOTS; i++)
+    for (int i = 0; i < STOCK_SLOTS_MAX; i++)
     {
         char sym[8];
         snprintf(sym, sizeof(sym), "S%d", i);
@@ -88,8 +88,8 @@ void test_pins_a_count_past_the_array(void)
     bool result = stock_wire_decode(buffer, len, &out);
 
     TEST_ASSERT_TRUE(result);
-    TEST_ASSERT_EQUAL_UINT8(STOCK_MAX_SLOTS, out.count);
-    TEST_ASSERT_EQUAL_STRING("S3", out.slot[STOCK_MAX_SLOTS - 1].symbol);
+    TEST_ASSERT_EQUAL_UINT8(STOCK_SLOTS_MAX, out.count);
+    TEST_ASSERT_EQUAL_STRING("S3", out.slot[STOCK_SLOTS_MAX - 1].symbol);
 }
 
 /**

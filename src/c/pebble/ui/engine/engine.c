@@ -12,10 +12,10 @@
 
 static Window     *s_window;                          ///< The window the slots are built in
 static EngineBuild s_build;                           ///< What the face passed to the engine at init
-static EngineSlot  s_slots[ENGINE_MAX_SLOTS];         ///< The slots as the face defined them
-static Layer      *s_layers[ENGINE_MAX_SLOTS];        ///< Draw-slot layers, NULL for text-slots
-static TextLayer  *s_text_layers[ENGINE_MAX_SLOTS];   ///< Text-slot layers, NULL for draw-slots
-static char        s_last_text[ENGINE_MAX_SLOTS][24]; ///< The last string set on each slot, so an unchanged one skips the re-fit
+static EngineSlot  s_slots[ENGINE_SLOTS_MAX];         ///< The slots as the face defined them
+static Layer      *s_layers[ENGINE_SLOTS_MAX];        ///< Draw-slot layers, NULL for text-slots
+static TextLayer  *s_text_layers[ENGINE_SLOTS_MAX];   ///< Text-slot layers, NULL for draw-slots
+static char        s_last_text[ENGINE_SLOTS_MAX][24]; ///< The last string set on each slot, so an unchanged one skips the re-fit
 static uint8_t     s_count;                           ///< How many slots are in use
 
 /**
@@ -39,10 +39,10 @@ static void draw_update(Layer *layer, GContext *ctx)
 static void build(void)
 {
     Layer *root = window_get_root_layer(s_window);
-    s_count = s_build(s_slots, ENGINE_MAX_SLOTS, layer_get_bounds(root));
-    if (s_count > ENGINE_MAX_SLOTS)
+    s_count = s_build(s_slots, ENGINE_SLOTS_MAX, layer_get_bounds(root));
+    if (s_count > ENGINE_SLOTS_MAX)
     {
-        s_count = ENGINE_MAX_SLOTS;  // every slot array is this long, so a count past it would write off the end
+        s_count = ENGINE_SLOTS_MAX;  // every slot array is this long, so a count past it would write off the end
     }
 
     for (uint8_t i = 0; i < s_count; i++)

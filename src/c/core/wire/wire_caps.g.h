@@ -17,10 +17,12 @@
  */
 #pragma once
 
-#define STOCK_MAX_SLOTS 4 ///< How many tickers the watchlist strip carries
+#define STOCK_SLOTS_MAX 4 ///< How many tickers the watchlist strip carries
+#define STOCK_MAX_SLOTS STOCK_SLOTS_MAX ///< The old name for STOCK_SLOTS_MAX, deprecated
 #define STOCK_SYMBOL_LEN 12 ///< A watchlist label, 11 characters plus its terminator
 
-#define CALENDAR_MAX_SLOTS 6 ///< How many events the agenda strip carries
+#define CALENDAR_SLOTS_MAX 6 ///< How many events the agenda strip carries
+#define CALENDAR_MAX_SLOTS CALENDAR_SLOTS_MAX ///< The old name for CALENDAR_SLOTS_MAX, deprecated
 #define CAL_TITLE_LEN 25 ///< An event title, 24 characters plus its terminator
 #define CAL_LOC_LEN 17 ///< An event location, 16 characters plus its terminator
 

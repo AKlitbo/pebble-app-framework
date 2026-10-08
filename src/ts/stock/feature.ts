@@ -60,7 +60,7 @@ export function parseSymbols(raw: unknown): string[] {
     .split(',')
     .map((symbol) => symbol.trim().toUpperCase())
     .filter((symbol) => STOCK_SYMBOL_RE.test(symbol))
-    .slice(0, wire.STOCK_MAX_SLOTS);
+    .slice(0, wire.STOCK_SLOTS_MAX);
 }
 
 // the statuses a quote carries when the provider was never reached, so no call was spent

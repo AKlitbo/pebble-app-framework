@@ -71,7 +71,7 @@ def feature_cflags(ctx, manifest):
 
 def define_cflags(ctx, manifest):
     """
-    The -D flags for the defines the face set in its appinfo, such as a raised ENGINE_MAX_SLOTS.
+    The -D flags for the defines the face set in its appinfo, such as a raised ENGINE_SLOTS_MAX.
     build-manifests.ts checks them before writing the manifest. The name and the number are checked
     again here, since each one goes straight onto the compiler's command line.
     """
