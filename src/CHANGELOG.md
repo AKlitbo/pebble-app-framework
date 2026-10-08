@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Framework Changes
 
+#### Added
+
+- Added `defines` to the appinfo, for C defines a face sets for its own build, such as `"defines": { "ENGINE_MAX_SLOTS": 12 }`. The build passes each one as a `-D` flag. `ENGINE_MAX_SLOTS`, `FONT_SLOTS_MAX`, and `ICON_CACHE_MAX` can each be raised this way, up to 254 for the slots and 255 for the fonts and the icon cache, and a value outside that stops the build. A name that is not a macro name, a value that is not a whole number, and a name the build sets itself, a `HAS_` switch or `BUILD_WATCHAPP`, stop the build with a message naming the face.
+
 #### Fixed
 
 - Fixed a text slot with a `zone` and no `text` function crashing the watch on its first repaint. The slot now stays empty, the same as a draw slot with no `draw`.

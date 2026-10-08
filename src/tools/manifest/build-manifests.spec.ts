@@ -4,13 +4,14 @@
  * buildMedia owns the per-target media list: which entry gets the menuIcon flag, and the
  * deep-clone that keeps one target's flag from bleeding onto the other. buildManifest is the
  * package.json wire shape pebble build reads. fillWscript is the only place a sandbox learns where
- * its framework and face sit. main()'s file I/O is glue, left to the build.
+ * its framework and face sit. readDefines guards what a face hands the compiler, since each define
+ * lands on its command line. main()'s file I/O is glue, left to the build.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildMedia, buildManifest, fillWscript, findTargetClash, resolveTargets } from './build-manifests';
+import { buildMedia, buildManifest, fillWscript, findTargetClash, readDefines, resolveTargets } from './build-manifests';
 import type { SharedAppinfo } from './build-manifests';
 
 // a fresh config per test so the mutation check can't be masked by an earlier test
@@ -161,6 +162,81 @@ describe('buildManifest', () => {
     const result = buildManifest(config, rootPkg, target);
 
     expect(result.pebble.resources.media.find((item) => item.name === 'ICON_ONE').menuIcon).toBe(true);
+  });
+
+  /** The waf build reads a face's defines off the manifest, so one left behind leaves a raised cap at its default. */
+  test('carries the defines into the manifest', () => {
+    const config = makeConfig();
+    const rootPkg = { author: 'x', version: '0' };
+    const target = { name: 'face', watchface: true };
+
+    const result = buildManifest(config, rootPkg, target, { ENGINE_MAX_SLOTS: 12 });
+
+    expect(result).toMatchObject({ defines: { ENGINE_MAX_SLOTS: 12 } });
+  });
+
+  /**
+   * A manifest that gained an empty defines key would differ from the one already in every sandbox,
+   * so a face that sets none would see its package.json rewritten for nothing.
+   */
+  test('leaves defines out when the face sets none', () => {
+    const config = makeConfig();
+    const rootPkg = { author: 'x', version: '0' };
+    const target = { name: 'face', watchface: true };
+
+    const result = buildManifest(config, rootPkg, target, {});
+
+    expect(result).not.toHaveProperty('defines');
+  });
+});
+
+describe('readDefines', () => {
+  /** A face with nothing to raise has no defines key, and that has to read as none rather than fail. */
+  test('reads no defines as empty', () => {
+    const config = makeConfig();
+
+    const result = readDefines(config, 'gridlock');
+
+    expect(result).toEqual({});
+  });
+
+  /** An empty map is a face that cleared its last define, and it has to build as one that never set any. */
+  test('reads an empty defines map as empty', () => {
+    const config = { ...makeConfig(), defines: {} };
+
+    const result = readDefines(config, 'gridlock');
+
+    expect(result).toEqual({});
+  });
+
+  /**
+   * Each name lands on the compiler's command line, so anything but a macro name could pass the
+   * compiler another flag, or break the build with an error that never names the appinfo.
+   */
+  test('refuses a name that is not a macro name, naming the face', () => {
+    const config = { ...makeConfig(), defines: { 'ENGINE_MAX_SLOTS -DOTHER': 12 } };
+
+    const call = () => readDefines(config, 'gridlock');
+
+    expect(call).toThrow("gridlock's appinfo defines ENGINE_MAX_SLOTS -DOTHER, which is not a macro name");
+  });
+
+  /** A quoted number reads fine in JSON and then sizes the slot arrays with a string the C cannot take. */
+  test('refuses a value that is not a whole number', () => {
+    const config = { ...makeConfig(), defines: { ENGINE_MAX_SLOTS: '12' } };
+
+    const call = () => readDefines(config, 'gridlock');
+
+    expect(call).toThrow(/ENGINE_MAX_SLOTS as "12", which is not a whole number/);
+  });
+
+  /** A HAS_ switch follows from the face's message keys, so setting one by hand would build code for a feature the face lacks. */
+  test('refuses a name the build sets itself', () => {
+    const config = { ...makeConfig(), defines: { HAS_MESSAGE_KEY_WEATHER_OK: 1 } };
+
+    const call = () => readDefines(config, 'gridlock');
+
+    expect(call).toThrow(/HAS_MESSAGE_KEY_WEATHER_OK, which the build sets itself/);
   });
 });
 

@@ -28,7 +28,7 @@ static const Zone s_zones[] = {
 
 `font_id_fallback` names the smaller font the engine steps down to when the time does not fit, as [The Engine](engine.md#text-that-fits-its-slot) covers.
 
-The face owns the numbering and what each slot means. The registry treats a slot as a plain index into a fixed table of 24, and a face with more fonts than that needs `FONT_SLOTS_MAX` raised in the framework. A face can check its own count against that cap with a `_Static_assert`, so going over fails the build. Without one, the registry turns the extra slots away with a log line at runtime, and their text draws in the fallback font.
+The face owns the numbering and what each slot means. The registry treats a slot as a plain index into a fixed table of 24, and a face with more fonts than that sets `FONT_SLOTS_MAX` in its appinfo's `defines`, up to 255. A face can check its own count against that cap with a `_Static_assert`, so going over fails the build. Without one, the registry turns the extra slots away with a log line at runtime, and their text draws in the fallback font.
 
 ## Loading at Startup
 

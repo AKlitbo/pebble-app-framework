@@ -19,10 +19,18 @@
  * @{
  */
 
-/// Most slots a single face can declare. Ten is the ceiling of the largest layout a face builds
-/// here, so the slot arrays hold no dead entries. A face cannot raise it from its own build, so
-/// more slots means raising it here
+/// Most slots a single face can declare. Ten covers the largest layout the framework expects, so the
+/// slot arrays hold no dead entries. A face that needs more sets it in its appinfo's `defines`
+#ifndef ENGINE_MAX_SLOTS
 #define ENGINE_MAX_SLOTS 10
+#endif
+
+// the slot count and every slot index are a uint8_t, and the clamp on the count needs one value
+// above the cap to compare against. at 255 the SDK's -Werror stops the build on a compare that
+// can never be true
+#if ENGINE_MAX_SLOTS < 1 || ENGINE_MAX_SLOTS > 254
+#error "ENGINE_MAX_SLOTS has to be 1 to 254"
+#endif
 
 /**
  * @brief One slot of a face. Set `zone` (+ `text`) for a text-slot, or `frame` (+ `draw`)

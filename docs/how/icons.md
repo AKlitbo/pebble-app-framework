@@ -25,7 +25,7 @@ if (icon)
 
 **24 Icons at Once.** The cache holds up to 24 pictures, enough for two forecast strips of eight columns with a few panels under them. When it is full, the icon nothing has asked for in the longest time is freed to make room. That is how icons nothing draws any more, such as last week's moon phase, drop out without the face having to free them. The new picture is loaded before anything is freed, so a load that fails costs the cache nothing.
 
-**Too Many for the Cache.** A screen that draws more than 24 icons still works, but slowly. A redraw asks for its icons in the same order every time, so the icon freed to make room is always the next one wanted, and every icon is loaded from flash again on every redraw. Once the heap is crowded, one of those loads can fail and leave a blank. A face that draws more than 24 can define `ICON_CACHE_MAX` higher for its build.
+**Too Many for the Cache.** A screen that draws more than 24 icons still works, but slowly. A redraw asks for its icons in the same order every time, so the icon freed to make room is always the next one wanted, and every icon is loaded from flash again on every redraw. Once the heap is crowded, one of those loads can fail and leave a blank. A face that draws more than 24 sets `ICON_CACHE_MAX` in its appinfo's `defines`, up to 255.
 
 **Draw It Straight Away.** A picture from the cache is only safe until the next lookup of a different icon, which might free it. So a face looks it up, draws it, and lets go of it in the same paint. Setting one on a `BitmapLayer`, which keeps the pointer and draws later, can leave that layer pointing at a freed picture.
 

@@ -13,6 +13,9 @@
  * `pebble build` needs package.json to exist before it runs, so each build regenerates it
  * via tools/build.ts. A file whose contents would not change is left alone, so its mtime does too.
  *
+ * A face can also set C defines for its own build, such as a raised ENGINE_MAX_SLOTS. They are checked
+ * here and carried into the manifest, where the waf build turns each one into a -D flag.
+ *
  * Usage: node tools/manifest/build-manifests.ts [--targets] <face>
  */
 import fs from 'node:fs';
@@ -46,9 +49,9 @@ export type MediaEntry = { type: string; name: string; file?: string; menuIcon?:
 type Target = { name: string; watchface: boolean; menuIcon?: string; uuid?: string };
 
 /**
- * The shared Pebble fields common to every face. This is what building a manifest reads.
- * The per-face build identity (name/watchface/menuIcon) rides alongside these in the file
- * but is split out into a Target before buildManifest sees it.
+ * The shared Pebble fields common to every face, plus the C defines the face sets for its own build.
+ * This is what building a manifest reads. The per-face build identity (name/watchface/menuIcon)
+ * rides alongside these in the file but is split out into a Target before buildManifest sees it.
  */
 export type SharedAppinfo = {
   displayName: string;
@@ -59,6 +62,7 @@ export type SharedAppinfo = {
   capabilities: unknown;
   messageKeys: unknown;
   resources: { media: MediaEntry[] };
+  defines?: unknown;
 };
 
 /**
@@ -75,6 +79,50 @@ type TargetsMap = Record<string, Target>;
  * the single-target fields (name/watchface/menuIcon) inline, or a `targets` map for many.
  */
 type Appinfo = SharedAppinfo & Partial<Target> & { version?: string; targets?: TargetsMap };
+
+/** The C defines a face sets for its own build, each a macro name and a whole number. */
+export type Defines = Record<string, number>;
+
+/**
+ * The C defines a face sets for its own build, checked so each one is safe to hand the compiler.
+ *
+ * Every define goes straight onto the compiler's command line, so only a macro name and a whole
+ * number get through. A name the build sets itself, a HAS_ feature switch or BUILD_WATCHAPP, is
+ * turned away too, since those follow from the face's message keys, resources, and targets.
+ *
+ * @param config The face's appinfo.
+ * @param face The face the appinfo belongs to, which a mistake in it names.
+ * @return The defines, empty when the face sets none.
+ */
+export function readDefines(config: SharedAppinfo, face: string): Defines {
+  if (config.defines === undefined) {
+    return {};
+  }
+
+  if (typeof config.defines !== 'object' || config.defines === null || Array.isArray(config.defines)) {
+    throw new ToolError(`${face}'s appinfo defines has to be a map of macro name to whole number`);
+  }
+
+  const defines: Defines = {};
+
+  for (const [name, value] of Object.entries(config.defines)) {
+    if (!/^[A-Z][A-Z0-9_]*$/.test(name)) {
+      throw new ToolError(`${face}'s appinfo defines ${name}, which is not a macro name such as ENGINE_MAX_SLOTS`);
+    }
+
+    if (/^HAS_/.test(name) || name === 'BUILD_WATCHAPP') {
+      throw new ToolError(`${face}'s appinfo defines ${name}, which the build sets itself`);
+    }
+
+    if (typeof value !== 'number' || !Number.isInteger(value)) {
+      throw new ToolError(`${face}'s appinfo defines ${name} as ${JSON.stringify(value)}, which is not a whole number`);
+    }
+
+    defines[name] = value;
+  }
+
+  return defines;
+}
 
 /**
  * The build targets a face declares, as a flat list. A `targets` map wins. Otherwise the inline
@@ -143,9 +191,10 @@ export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] 
  * @param config The shared appinfo fields.
  * @param rootPkg The author and version to copy in from the root package.json.
  * @param target The build target this manifest is for.
+ * @param defines The C defines the face sets for its own build.
  * @return The finished manifest, ready to write out as package.json.
  */
-export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target) {
+export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target, defines: Defines = {}) {
   return {
     name: target.name,
     author: rootPkg.author,
@@ -164,6 +213,9 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
       messageKeys: config.messageKeys,
       resources: { media: buildMedia(config, target) },
     },
+    // outside the pebble block, which the SDK reads. left out when there are none, so a face that
+    // sets none gets a manifest with no defines key
+    ...(Object.keys(defines).length > 0 ? { defines: defines } : {}),
   };
 }
 
@@ -228,7 +280,7 @@ export function faceVersion(config: { version?: string }, rootPkg: { version?: s
 function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target): string {
   // the root package.json still owns the author
   const version = faceVersion(config, rootPkg) as string;
-  const manifest = buildManifest(config, { author: rootPkg.author, version }, target);
+  const manifest = buildManifest(config, { author: rootPkg.author, version }, target, readDefines(config, face));
 
   const outDir = path.join(ROOT, 'targets', target.name);
 

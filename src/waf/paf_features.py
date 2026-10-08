@@ -4,6 +4,7 @@ its sandbox.
 """
 
 import json
+import re
 
 
 def read_manifest(ctx):
@@ -64,5 +65,26 @@ def feature_cflags(ctx, manifest):
     # one that only ships the muted one draws it when it applies and leaves the slot empty otherwise
     if 'ICON_QUIET_ON' in names:
         cflags.append('-DHAS_QUIET_PAIR=1')
+
+    return cflags
+
+
+def define_cflags(ctx, manifest):
+    """
+    The -D flags for the defines the face set in its appinfo, such as a raised ENGINE_MAX_SLOTS.
+    build-manifests.ts checks them before writing the manifest. The name and the number are checked
+    again here, since each one goes straight onto the compiler's command line.
+    """
+    defines = manifest.get('defines', {})
+    if not isinstance(defines, dict):
+        ctx.fatal('package.json defines has to be a map of macro name to whole number.')
+
+    cflags = []
+    for name in sorted(defines):
+        value = defines[name]
+        # a JSON true reads as an int in Python, so a bool is turned away on its own
+        if not re.match(r'^[A-Z][A-Z0-9_]*$', name) or isinstance(value, bool) or not isinstance(value, int):
+            ctx.fatal('package.json defines {} as {!r}, which is not a macro name and a whole number.'.format(name, value))
+        cflags.append('-D{}={}'.format(name, value))
 
     return cflags

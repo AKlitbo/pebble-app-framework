@@ -5,7 +5,7 @@ the bundle.
 
 import os
 
-from paf_features import feature_cflags, read_manifest
+from paf_features import define_cflags, feature_cflags, read_manifest
 
 
 def build_face(ctx, source, extra_cflags=None):
@@ -65,7 +65,9 @@ def build_face(ctx, source, extra_cflags=None):
     binaries = []
     cached_env = ctx.env
 
-    cflags = feature_cflags(ctx, read_manifest(ctx))
+    # the framework's own feature switches, then any define the face set for itself
+    manifest = read_manifest(ctx)
+    cflags = feature_cflags(ctx, manifest) + define_cflags(ctx, manifest)
     if extra_cflags:
         cflags.extend(extra_cflags)
 

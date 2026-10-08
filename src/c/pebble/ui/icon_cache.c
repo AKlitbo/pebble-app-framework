@@ -19,10 +19,15 @@
  * the resource and rescans its margins. A reload that fails on a busy heap leaves that icon blank.
  *
  * Icons nothing draws any more, such as the moon glyphs of days gone by, are what gets dropped. A
- * face that draws more at once sets its own cap before this file is compiled.
+ * face that draws more at once sets its own cap in its appinfo's `defines`.
  */
 #ifndef ICON_CACHE_MAX
 #define ICON_CACHE_MAX 24
+#endif
+
+// the entry count and the eviction walk's index are a uint8_t, and the walk stops below the cap
+#if ICON_CACHE_MAX < 1 || ICON_CACHE_MAX > 255
+#error "ICON_CACHE_MAX has to be 1 to 255"
 #endif
 
 /**

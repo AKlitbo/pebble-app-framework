@@ -22,10 +22,18 @@
  */
 typedef uint8_t FontId;
 
-/// Registry capacity, shared by every face. The face's `draw/fonts.h` checks `FONT_COUNT` against
-/// this at build time, so adding a slot past it fails the build with a clear message. A face cannot
-/// raise it from its own build, so more slots means raising it here.
+/// Registry capacity. A face can check its own count against this at build time, so adding a slot
+/// past it fails the build with a clear message. A face that needs more sets it in its appinfo's
+/// `defines`.
+#ifndef FONT_SLOTS_MAX
 #define FONT_SLOTS_MAX 24
+#endif
+
+// a FontId is a uint8_t, and the registry turns away an id past the cap, which needs one id above
+// it. at 256 the SDK's -Werror stops the build on a compare that can never be true
+#if FONT_SLOTS_MAX < 1 || FONT_SLOTS_MAX > 255
+#error "FONT_SLOTS_MAX has to be 1 to 255"
+#endif
 
 /**
  * @brief Store a loaded font handle under its slot id.
