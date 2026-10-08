@@ -16,17 +16,19 @@ A unit lists the plugin under `plugins` in its `paf.config.json`, with `sources`
 }
 ```
 
-The folder can have any name, and its path is from the unit's own folder, so a unit under `watchfaces/` reaching a folder at the root of its repo writes `"../../icons"`. Without the setting, the generator reads the folder from the `ICON_SOURCES` environment variable, and with neither it stops and names the setting to add. It also stops when the folder is not there, or holds none of the icon sets, since a wrong folder would otherwise leave every icon on its old PNG with a warning each and pass.
+The folder can have any name, and its path is from the unit's own folder, so a unit under `watchfaces/` reaching a folder at the root of its repo writes `"../../icons"`. Without the setting, the generator reads the folder from the `ICON_SOURCES` environment variable, and with neither it stops and names the setting to add. It also stops when the folder is not there, or holds none of the SVGs the icons read, since a wrong folder would otherwise leave every icon on its old PNG with a warning each and pass. One SVG is enough, so a machine missing some sets still runs. `paf gen <face> icons` on a face whose SVGs are all missing stops too, since that run would draw nothing. Run with no face named, the generator does every face with an `icons.json` and stops only when none of them finds an SVG.
 
-**Sets by Key.** `icons.json` names an SVG by a short key and a file name, and each key reads from one subfolder of the sources folder. Both the keys and the subfolder names are fixed in the plugin:
+**SVGs by Path.** `icons.json` names each SVG by its path from the sources folder, without the `.svg`, so `status/bluetooth-on` reads `status/bluetooth-on.svg`. The folder can be laid out however suits the unit, with as many folders as it likes, nested as deep as it likes.
 
-| Key | Subfolder | Example |
+**Deprecated Keys.** A path can still open with one of three short keys, each standing for a fixed folder. They are deprecated and go at the next major release.
+
+| Key | Folder | Example |
 | :-- | :-- | :-- |
 | `wi` | `weather-icons/svg/` | `wi/wi-day-sunny` reads `weather-icons/svg/wi-day-sunny.svg` |
 | `ux` | `uxwing/` | `ux/thermometer-icon` reads `uxwing/thermometer-icon.svg` |
 | `sr` | `svgrepo/` | `sr/bluetooth-on` reads `svgrepo/bluetooth-on.svg` |
 
-The subfolders are named after the Weather Icons, UXWing, and SVG Repo collections the keys were made for, though an SVG from anywhere works once it sits in one of the three. An SVG outside them is never found. A key the plugin does not know stops the run, and a subfolder of another name needs a new key in the plugin.
+A run warns once for each key a face uses. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`. A name whose SVG is there as written reads from there, so a sources folder with its own `ux/` folder holding the SVG never goes to `uxwing/`. A name that leads outside the sources folder, such as `../shared/bt`, stops the run.
 
 **One Face at a Time.** `paf gen <face> icons` renders one face, and a face with no `resources/icons.json` gets an error saying so. `paf gen <face> all` only runs it on a face that has one.
 
@@ -38,10 +40,10 @@ The subfolders are named after the Weather Icons, UXWing, and SVG Repo collectio
 
 ```json
 {
-  "bluetooth":         { "svg": "sr/bluetooth-on",     "size": [14, 14] },
-  "thermometer":       { "svg": "ux/thermometer-icon", "size": [13, 17] },
-  "thermometer-sm":    { "svg": "ux/thermometer-icon", "size": [10, 13] },
-  "weather-now-clear": { "svg": "wi/wi-day-sunny",     "size": [24, 24] }
+  "bluetooth":         { "svg": "status/bluetooth-on",  "size": [14, 14] },
+  "thermometer":       { "svg": "status/thermometer",   "size": [13, 17] },
+  "thermometer-sm":    { "svg": "status/thermometer",   "size": [10, 13] },
+  "weather-now-clear": { "svg": "weather/day-sunny",    "size": [24, 24] }
 }
 ```
 
@@ -60,7 +62,7 @@ sharp then scales the drawing to fit the box `icons.json` gives, keeping its sha
 **Trimming to the Glyph.** Some SVGs draw a small glyph in the middle of a large empty canvas, so it comes out smaller than its neighbours at the same size. An icon marked `trim` is first drawn into a 240 pixel square and cropped to the pixels more than about six percent visible, and only then fitted to its box, so the glyph itself fills it:
 
 ```json
-"weather-hilo-up": { "svg": "wi/wi-direction-up", "size": [14, 14], "trim": true }
+"weather-hilo-up": { "svg": "weather/direction-up", "size": [14, 14], "trim": true }
 ```
 
 Trimming removes the empty space in the SVG once, when the PNG is made. Fitting the trimmed glyph to a box of another shape still leaves clear space on one side, and the watch measures that border for lining icons up by their visible art, as [Lining Up by the Visible Art](icons.md#lining-up-by-the-visible-art) covers.

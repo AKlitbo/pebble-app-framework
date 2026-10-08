@@ -12,8 +12,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added `defines` to the appinfo, for C defines a face sets for its own build, such as `"defines": { "ENGINE_SLOTS_MAX": 12 }`. The build passes each one as a `-D` flag. `ENGINE_SLOTS_MAX`, `FONT_SLOTS_MAX`, and `ICON_CACHE_MAX` can each be raised this way, up to 254 for the slots and 255 for the fonts and the icon cache, and a value outside that stops the build. A name that is not a macro name, a value that is not a whole number, and a name the build sets itself, a `HAS_` switch or `BUILD_WATCHAPP`, stop the build with a message naming the face.
 
+#### Changed
+
+- The icons generator now reads an icon's `svg` in `resources/icons.json` as a path from the `sources` folder, without the `.svg`, so `status/bluetooth-on` reads `status/bluetooth-on.svg`. The SVGs can sit in any folder under `sources`, at any depth, and a name that leads outside `sources` stops the run. The run stops when `sources` holds none of the SVGs a run's icons read, rather than none of the three fixed sets. So `paf gen <face> icons` on a face whose SVGs are all missing now stops, where it kept every PNG with a warning each.
+
 #### Deprecated
 
+- Deprecated the `wi`, `ux`, and `sr` keys at the start of an icon's `svg`. They still read from `weather-icons/svg/`, `uxwing/`, and `svgrepo/`, and `paf gen <face> icons` warns once for each key a face uses. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`. The keys go at the next major release. A name whose SVG is there as written, such as `ux/thermometer-icon` with a real `ux/` folder holding it, reads from there instead.
 - Deprecated the limits named with `MAX` in the middle, for names that end in `MAX` like `FONT_SLOTS_MAX` and `ICON_CACHE_MAX`. In C, `ENGINE_MAX_SLOTS` is now `ENGINE_SLOTS_MAX`. In C and in `WIRE_CAPS`, `STOCK_MAX_SLOTS` is now `STOCK_SLOTS_MAX` and `CALENDAR_MAX_SLOTS` is `CALENDAR_SLOTS_MAX`. `WIRE_CAPS.FORECAST_MAX_COLS` is `WIRE_CAPS.FORECAST_COLS_MAX`, and the wire module's default export carries `STOCK_SLOTS_MAX` beside the deprecated `STOCK_MAX_SLOTS`. The old names still work, including `ENGINE_MAX_SLOTS` in a face's `defines`, and go at the next major release. A face that sets both engine names has to set them to the same value. Move to the new names when convenient.
 
 #### Fixed

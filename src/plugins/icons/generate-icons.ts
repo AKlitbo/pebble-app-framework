@@ -2,19 +2,16 @@
 /**
  * Rasterize the watchface's SVG glyphs into its Pebble PNG resources.
  *
- * The SVG sources sit in a folder of their own, outside the framework, one set per subfolder:
- *   weather-icons/svg, by Erik Flowers (key "wi")
- *   uxwing, heart, feet, thermometer, and friends (key "ux")
- *   svgrepo, bluetooth on and slash (key "sr")
- *
+ * The SVG sources sit in a folder of their own, outside the framework, laid out however the unit likes.
  * The folder is whatever the unit's paf.config.json names as the icons plugin's sources setting,
  * relative to the unit. Without one, the ICON_SOURCES environment variable names it, which is how a
  * tool that fetched the sources for the unit passes them in.
  *
  * The face declares what it needs in resources/icons.json,
- * mapping an icon name to its vendored svg and final pixel size:
+ * mapping an icon name to its svg, as a path from the sources folder without the .svg, and its final
+ * pixel size:
  *
- *   { "wi-clear": { "svg": "wi/wi-day-sunny", "size": [24, 24] } }
+ *   { "wi-clear": { "svg": "weather/day-sunny", "size": [24, 24] } }
  *
  * The icon name is the file basename. Its Pebble resource id comes from it
  * (wi-clear -> ICON_WI_CLEAR). Faces own their sizes, so the same condition can
@@ -46,12 +43,17 @@ import { isMainScript } from '../../tools/shared/entry.ts';
 
 const ROOT = WORKSPACE;
 
-// manifest svg key -> the subfolder of the icon sources holding those svgs
-const VENDOR_DIRS: Record<string, string> = {
-  wi: path.join('weather-icons', 'svg'),
-  ux: 'uxwing',
-  sr: 'svgrepo',
-};
+// short keys an svg path could open with, each standing for a subfolder of the icon sources
+// a Map so a folder named constructor or toString never finds an object built-in as a key
+// TODO: remove these at the next major release
+const DEPRECATED_KEYS = new Map([
+  ['wi', 'weather-icons/svg'],
+  ['ux', 'uxwing'],
+  ['sr', 'svgrepo'],
+]);
+
+// how many folders the wrong-folder error names before it just counts the rest
+const FOLDERS_SHOWN = 5;
 
 const WHITE = '#ffffff';
 
@@ -191,17 +193,39 @@ export function iconSourcesDir(root: string, config: IconSourcesConfig, fromEnv:
   return fromEnv ? path.resolve(fromEnv) : null;
 }
 
-// "wi/wi-day-sunny" -> <icon sources>/weather-icons/svg/wi-day-sunny.svg
-function svgPath(sources: string, ref: string): string {
-  const slash = ref.indexOf('/');
-  const key = slash === -1 ? '' : ref.slice(0, slash);
-  const dir = VENDOR_DIRS[key];
+/** Where an icon's svg is, and the deprecated key it was named by, if any. */
+export type SvgSource = { file: string; deprecatedKey: string | null };
 
-  if (!dir) {
-    throw new ToolError(`Unknown vendor key in svg ref "${ref}" (expected one of: ${Object.keys(VENDOR_DIRS).join(', ')})`);
+/**
+ * Finds the svg file an icon names.
+ *
+ * The name is a path from the sources folder without the .svg, so "weather/day-sunny" reads
+ * weather/day-sunny.svg. A name opening with one of the deprecated keys, such as "wi/wi-day-sunny",
+ * reads from the key's subfolder, here weather-icons/svg, unless the svg is at the name as written,
+ * which wins. A name leading outside the sources folder stops the run, since a file found out there
+ * would pass the wrong-folder check for every other icon.
+ *
+ * @param sources The icon sources folder.
+ * @param ref The svg name from icons.json.
+ * @return The svg's path, and the deprecated key when one was used.
+ */
+export function svgSource(sources: string, ref: string): SvgSource {
+  const file = path.join(sources, `${ref}.svg`);
+  const fromSources = path.relative(sources, file);
+
+  if (fromSources === '..' || fromSources.startsWith(`..${path.sep}`) || path.isAbsolute(fromSources)) {
+    throw new ToolError(`The svg "${ref}" leads outside the icon sources folder ${sources}`);
   }
 
-  return path.join(sources, dir, `${ref.slice(slash + 1)}.svg`);
+  const slash = ref.indexOf('/');
+  const key = slash === -1 ? '' : ref.slice(0, slash);
+  const dir = DEPRECATED_KEYS.get(key);
+
+  if (dir && !fs.existsSync(file)) {
+    return { file: path.join(sources, dir, `${ref.slice(slash + 1)}.svg`), deprecatedKey: key };
+  }
+
+  return { file, deprecatedKey: null };
 }
 
 // rewrite a face's config so its media icon block matches the manifest
@@ -221,14 +245,20 @@ function syncMedia(pkgPath: string, manifest: IconManifest): void {
 const RENDER_CONCURRENCY = 8;
 
 /**
- * Whether a folder holds at least one of the icon sets. One holding none is the wrong folder, such as a
- * level too deep, rather than a machine that lacks a set, and every icon would keep its PNG and pass.
+ * Whether the sources folder holds the svg of at least one icon a run asks for. One holding none is
+ * most likely the wrong folder, such as a level too deep, and every icon would keep its PNG and pass.
+ *
+ * It looks for the files rather than their folders, since an svg sitting straight in the sources
+ * folder has the sources folder as its folder, and that is always there. The cost is that a run whose
+ * every svg is missing stops, even when the folder is right and this machine just lacks those sets.
+ * A run that would draw nothing is worth stopping either way.
  *
  * @param sources The icon sources folder.
- * @return Whether any set's folder is in it.
+ * @param refs The svg names from every icons.json in the run.
+ * @return Whether any of their svgs is there, or true when the run has no icons.
  */
-export function holdsIconSets(sources: string): boolean {
-  return Object.values(VENDOR_DIRS).some((dir) => fs.existsSync(path.join(sources, dir)));
+export function holdsAnyIcon(sources: string, refs: string[]): boolean {
+  return refs.length === 0 || refs.some((ref) => fs.existsSync(svgSource(sources, ref).file));
 }
 
 /**
@@ -238,8 +268,11 @@ export function holdsIconSets(sources: string): boolean {
  * from a set this machine does not have still regenerates the rest. Without a PNG to keep, or with one
  * that is not the size icons.json asks for, it stops, since the build would fail on the missing
  * resource or draw the old size. A mistyped source name on an icon that has a PNG only warns, and the
- * old PNG ships. A sources folder that is missing, or holds none of the icon sets, still stops the run
- * before this, which catches the common mistake, so the warning is worth keeping a partial set working.
+ * old PNG ships. A sources folder that is missing, or holds none of the run's svgs, still stops the run before
+ * this, which catches the common mistake, so the warning is worth keeping a partial set working.
+ *
+ * An svg named by a deprecated key still renders, and the run warns once for each key the face
+ * uses, naming the path to write in its place.
  *
  * @param dir The face's folder.
  * @param manifest The face's icons.json.
@@ -251,15 +284,15 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
 
   await fs.promises.mkdir(outDir, { recursive: true });
 
-  const entries = Object.entries(manifest);
+  const icons = Object.entries(manifest).map(([name, spec]) => ({ name, spec, source: svgSource(sources, spec.svg) }));
   let next = 0;
   let rendered = 0;
 
   // each worker takes the next icon off the shared list until none are left
   const worker = async (): Promise<void> => {
-    while (next < entries.length) {
-      const [name, spec] = entries[next++];
-      const src = svgPath(sources, spec.svg);
+    while (next < icons.length) {
+      const { name, spec, source } = icons[next++];
+      const src = source.file;
       const out = path.join(outDir, `${name}.png`);
 
       if (!fs.existsSync(src)) {
@@ -286,18 +319,29 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
     }
   };
 
-  await Promise.all(Array.from({ length: Math.min(RENDER_CONCURRENCY, entries.length) }, worker));
+  // warned before the renders so a face whose run stops partway still hears about them
+  const keysUsed = new Set(icons.map((icon) => icon.source.deprecatedKey));
+
+  for (const key of keysUsed) {
+    if (key) {
+      console.warn(`warning: ${path.join(dir, 'resources', 'icons.json')} names svgs by the deprecated key ${key}, which goes at the next major release. Write ${key}/<name> as ${DEPRECATED_KEYS.get(key)}/<name>`);
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(RENDER_CONCURRENCY, icons.length) }, worker));
 
   return rendered;
 }
 
+/** Reads a face's resources/icons.json. */
+function readManifest(face: string): IconManifest {
+  return JSON.parse(fs.readFileSync(iconsManifestPath(face), 'utf8'));
+}
+
 /** Renders every icon a face's manifest asks for, then syncs its media list from the same manifest. */
-async function iconsFor(face: string, sources: string): Promise<void> {
-  const dir = faceDir(face);
+async function iconsFor(face: string, manifest: IconManifest, sources: string): Promise<void> {
   // resources (icons.json + rendered PNGs) and the appinfo live under the face dir
-  const manifestPath = iconsManifestPath(face);
-  const manifest: IconManifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf8'));
-  const rendered = await renderFace(dir, manifest, sources);
+  const rendered = await renderFace(faceDir(face), manifest, sources);
 
   // the media list is synced into the face's appinfo. its package.json is regenerated from
   // it at build time, when paf build runs build-manifests.ts
@@ -338,14 +382,19 @@ async function main(): Promise<void> {
     throw new ToolError(`The icon sources folder ${sources} is not there. It comes from ${from}.`);
   }
 
-  if (!holdsIconSets(sources)) {
-    const sets = Object.values(VENDOR_DIRS).map((dir) => dir.split(path.sep).join('/')).join(', ');
+  const manifests = new Map(faces.map((name) => [name, readManifest(name)]));
+  const refs = [...manifests.values()].flatMap((manifest) => Object.values(manifest).map((spec) => spec.svg));
 
-    throw new ToolError(`The icon sources folder ${sources} holds none of the icon sets (${sets}). Check that it is the folder holding them.`);
+  if (!holdsAnyIcon(sources, refs)) {
+    const folders = [...new Set(refs.map((ref) => path.relative(sources, path.dirname(svgSource(sources, ref).file)).split(path.sep).join('/') || '.'))];
+
+    const more = folders.length > FOLDERS_SHOWN ? ` and ${folders.length - FOLDERS_SHOWN} more` : '';
+
+    throw new ToolError(`The icon sources folder ${sources} holds none of the svgs the icons read, which it looked for in ${folders.slice(0, FOLDERS_SHOWN).join(', ')}${more}. Check that it is the folder holding them.`);
   }
 
-  for (const name of faces) {
-    await iconsFor(name, sources);
+  for (const [name, manifest] of manifests) {
+    await iconsFor(name, manifest, sources);
   }
 }
 
