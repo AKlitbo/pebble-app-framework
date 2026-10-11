@@ -70,7 +70,7 @@ sequenceDiagram
 
 ## Messages from the Watch
 
-The Pebble phone app hands over each message from the watch keyed by message key name rather than by number. The app fills in the number for every key the face declares before anything reads the message, so the settings reply and every feature see it however the phone keyed it. Every message from the watch then goes to every feature's `message` hook, and each one looks for its own request key. A request starts a fetch, unless one is already out, and forgets the copy the watch last took so the answer goes out even when nothing changed.
+The Pebble phone app hands over each message from the watch keyed by message key name rather than by number. The emulator keys each one both ways, under the number and again under the name, so a run there never sees the name-only form a phone sends. The app fills in the number for every key the face declares before anything reads the message, so the settings reply and every feature see it however the phone keyed it. Every message from the watch then goes to every feature's `message` hook, and each one looks for its own request key. A request starts a fetch, unless one is already out, and forgets the copy the watch last took so the answer goes out even when nothing changed.
 
 The watch's reply to the settings request is handled by the app itself. Depending on which side has settings, it restores the watch from the phone or fills the phone's saved settings from the watch. When it fills an empty phone, each feature gets `configOpened` and `configSaved` around the fill, the same as for a save on the page. A feature whose settings moved then fetches again, so a watch set to Fahrenheit does not keep a Celsius reading fetched on the defaults.
 
