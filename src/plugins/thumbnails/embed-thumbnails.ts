@@ -90,6 +90,11 @@ export function sizesFor(face: string): string[] {
     throw new ToolError(`module-meta.ts for ${face} has to export thumbnailSizes, the panel sizes its thumbnails come in`);
   }
 
+  // a PNG's size is what follows its last dash, so an empty one is a name no PNG can carry
+  if (sizes.some((size) => size === '' || size.includes('-'))) {
+    throw new ToolError(`module-meta.ts for ${face} lists an empty size or one holding a dash in thumbnailSizes, which no thumbnail's name can carry`);
+  }
+
   return sizes;
 }
 
@@ -99,7 +104,7 @@ export function sizesFor(face: string): string[] {
  */
 type ModuleMetaRegistry = Record<string, Pick<ModuleMeta, 'slug'>>;
 
-/** slug -> which module owns it and where its row sorts. */
+/** slug -> which module owns it and where its row sorts. Built with no prototype, so only a real slug is a key. */
 type SlugIndex = Record<string, { label: string; order: number }>;
 
 /** A PNG that matched a known slug and a real size. */
@@ -116,7 +121,8 @@ type ThumbFile = { file: string; slug: string; label: string; order: number; siz
  * @return The same rows keyed by slug, each with its label and sort order.
  */
 export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
-  const bySlug: SlugIndex = {};
+  // no prototype, so a file named after something every object has, such as toString, is no module
+  const bySlug: SlugIndex = Object.create(null);
 
   Object.keys(meta).forEach((label, index) => {
     const slug = meta[label].slug;
@@ -131,18 +137,32 @@ export function indexBySlug(meta: ModuleMetaRegistry): SlugIndex {
 }
 
 /**
+ * A PNG the face cannot use, and why. Its name matched no module, it named a module with no size
+ * after it, or its size is not one the face lists in thumbnailSizes.
+ */
+export type Stray =
+  | { file: string; reason: 'no-module' }
+  | { file: string; reason: 'no-size'; slug: string }
+  | { file: string; reason: 'size'; slug: string; size: string };
+
+/**
  * Splits the PNG names into the ones that match a known slug and one of the face's sizes, and
- * the strays. A name is <slug>-<size>, split on the last dash so a slug can hold
- * its own dashes.
+ * the strays, each with why it was turned away. A name is <slug>-<size>, split on the last dash so
+ * a slug can hold its own dashes.
+ *
+ * A name that splits into a known slug and a listed size is a picture, even when the whole name is
+ * another module's slug. Only when the split finds no picture is a whole name that is a module read
+ * as that module with no size. A name nothing matches either way names no module. Names that could
+ * be read more than one way, such as a typo in a dashed slug, get the reading this order gives.
  *
  * @param files The PNG filenames to classify.
  * @param bySlug The slug-keyed index to match each filename's slug against.
  * @param sizes The panel sizes the face's thumbnails may come in.
- * @return The matched files plus the strays that matched no known slug or size.
+ * @return The matched files plus the strays and why each matched no module or size.
  */
-export function classify(files: string[], bySlug: SlugIndex, sizes: string[]): { found: ThumbFile[]; stray: string[] } {
+export function classify(files: string[], bySlug: SlugIndex, sizes: string[]): { found: ThumbFile[]; stray: Stray[] } {
   const found: ThumbFile[] = [];
-  const stray: string[] = [];
+  const stray: Stray[] = [];
 
   files.forEach((file) => {
     const base = file.replace(/\.png$/i, '');
@@ -151,12 +171,22 @@ export function classify(files: string[], bySlug: SlugIndex, sizes: string[]): {
     const size = dash > 0 ? base.slice(dash + 1) : '';
     const entry = bySlug[slug];
 
-    if (!entry || sizes.indexOf(size) === -1) {
-      stray.push(file);
+    if (entry && size !== '' && sizes.indexOf(size) !== -1) {
+      found.push({ file: file, slug: slug, label: entry.label, order: entry.order, size: size });
       return;
     }
 
-    found.push({ file: file, slug: slug, label: entry.label, order: entry.order, size: size });
+    // the split found no picture, so a whole name that is a module, such as weekday-dots.png, is that
+    // module with no size rather than the weekday module at size dots
+    if (bySlug[base]) {
+      stray.push({ file, reason: 'no-size', slug: base });
+    } else if (!entry) {
+      stray.push({ file, reason: 'no-module' });
+    } else if (size === '') {
+      stray.push({ file, reason: 'no-size', slug });
+    } else {
+      stray.push({ file, reason: 'size', slug, size });
+    }
   });
 
   return { found: found, stray: stray };
@@ -196,14 +226,53 @@ export function buildSource(thumbs: Thumbs, order: Record<string, number>): stri
  * One picture is enough to count, since a module only has pictures at the sizes it fits. Most
  * fit one or two of the sizes a face offers, so a check for every size would fail every face.
  *
+ * A module a stray PNG names, one at a size the face does not list or with no size, is left out, since
+ * that stray already names it and a second line saying it has no picture would send the developer
+ * looking for a file that is there.
+ *
  * @param meta The label-keyed registry to check.
  * @param seen The slugs a PNG was found for.
+ * @param stray The PNGs turned away, whose modules are already reported.
  * @return The slugs with no matching PNG.
  */
-export function missingSlugs(meta: ModuleMetaRegistry, seen: Record<string, boolean>): string[] {
+export function missingSlugs(meta: ModuleMetaRegistry, seen: Record<string, boolean>, stray: Stray[] = []): string[] {
+  const named = new Set(stray.flatMap((entry) => (entry.reason === 'no-module' ? [] : [entry.slug])));
+
+  // seen is only ever set to true, so a slug such as toString that every object answers is not seen
   return Object.keys(meta)
-    .filter((label) => !seen[meta[label].slug])
+    .filter((label) => seen[meta[label].slug] !== true && !named.has(meta[label].slug))
     .map((label) => meta[label].slug);
+}
+
+/**
+ * The line that says why a PNG was turned away, for the check and the generator alike.
+ *
+ * @param stray The PNG and why it matched no module or size.
+ * @param sizes The panel sizes the face lists in thumbnailSizes.
+ * @return The line naming the PNG and what is wrong with its name.
+ */
+export function describeStray(stray: Stray, sizes: string[]): string {
+  const file = `resources/thumbnails/${stray.file}`;
+
+  if (stray.reason === 'no-module') {
+    return `${file} names no module`;
+  }
+
+  if (stray.reason === 'no-size') {
+    return `${file} has no size after the module name, as in ${stray.slug}-<size>.png with one of ${sizes.join(', ')}`;
+  }
+
+  return `${file} is at size ${stray.size}, which thumbnailSizes does not list (it lists ${sizes.join(', ')})`;
+}
+
+/**
+ * The line that says a module has no picture, for the check and the generator alike.
+ *
+ * @param slug The module's slug.
+ * @return The line naming the module.
+ */
+export function describeMissing(slug: string): string {
+  return `the ${slug} module has no thumbnail`;
 }
 
 /** What one run would produce: the asset source plus what it found on the way. */
@@ -212,7 +281,8 @@ export interface Built {
   modules: number;
   panels: number;
   missing: string[];
-  stray: string[];
+  stray: Stray[];
+  sizes: string[];
 }
 
 /**
@@ -233,7 +303,8 @@ export function encodeThumbnails(face: string): Built {
     ? fs.readdirSync(dir).filter((name) => name.toLowerCase().endsWith('.png'))
     : [];
 
-  const { found, stray } = classify(files, bySlug, sizesFor(face));
+  const sizes = sizesFor(face);
+  const { found, stray } = classify(files, bySlug, sizes);
 
   const thumbs: Thumbs = {};
   const order: Record<string, number> = {};
@@ -255,8 +326,9 @@ export function encodeThumbnails(face: string): Built {
     source: buildSource(thumbs, order),
     modules: Object.keys(thumbs).length,
     panels: files.length - stray.length,
-    missing: missingSlugs(moduleMeta, seen),
+    missing: missingSlugs(moduleMeta, seen, stray),
     stray: stray,
+    sizes: sizes,
   };
 }
 
@@ -272,16 +344,20 @@ export function build(face: string): void {
 
   const built = encodeThumbnails(face);
 
-  // check before writing. a stray png names a slug no module claims and a missing
-  // one leaves a module with no preview
+  // check before writing. a stray png names no module or a size the face does not list,
+  // and a missing one leaves a module with no preview
   // writing first would clobber the good committed asset with a broken one on the
   // way to throwing and nothing would force a checkout
   if (built.stray.length) {
-    throw new ToolError(`stray png with no module (${built.stray.length}): ${built.stray.join(', ')}`);
+    const lines = built.stray.map((stray) => `  ${describeStray(stray, built.sizes)}`);
+
+    throw new ToolError(`${face}: png the face cannot use (${built.stray.length}):\n${lines.join('\n')}`);
   }
 
   if (built.missing.length) {
-    throw new ToolError(`module with no png (${built.missing.length}): ${built.missing.join(', ')}`);
+    const lines = built.missing.map((slug) => `  ${describeMissing(slug)}`);
+
+    throw new ToolError(`${face}: module with no png (${built.missing.length}):\n${lines.join('\n')}`);
   }
 
   const out = outFile(face);

@@ -54,7 +54,7 @@ module.exports = {
 
 **The Same File Every Run.** Rows follow the order of the module list, and each row's sizes are sorted, so an unchanged folder writes the same file byte for byte. A diff of the committed file shows only the pictures that really changed.
 
-**Nothing Is Written on a Problem.** Every PNG is matched before anything is written. A PNG whose slug no panel claims, or whose size the face does not list, stops the run. So does a panel with no picture at all, and so do two panels sharing one slug, which would hand both the same pictures and leave one of them blank. The run names each file or slug at fault and leaves the committed file as it was, rather than replacing a good file with a broken one.
+**Nothing Is Written on a Problem.** Every PNG is matched before anything is written. A PNG whose slug no panel claims, or whose size the face does not list, stops the run. So does a panel with no picture at all, and so do two panels sharing one slug, which would hand both the same pictures and leave one of them blank. The run names each file or slug at fault, and for a PNG says whether its name matches no panel, has no size after the panel's name, or carries a size the face does not list. It leaves the committed file as it was, rather than replacing a good file with a broken one.
 
 **One Picture Is Enough.** A panel counts as covered once it has a picture at any size. Most panels fit only one or two of the sizes a face offers, so asking for every size would fail every face. The cost is that a panel offered at a size it has no picture for is not caught here. The editor shows its emoji tile at that size instead.
 
@@ -91,8 +91,8 @@ Base64 writes every three bytes as four characters, so the generated file is abo
 The check runs the generator in memory for every face in the unit and compares the result with the committed file, without writing anything. It reports, one line per face and problem:
 
 * a committed file that differs from what the generator would write now, such as after a new picture, a new panel, a renamed label, or a changed order, with the `paf gen <face> thumbnails` line that fixes it
-* a PNG that names no panel, or a size the face does not list
-* a panel with no picture at any size
+* a PNG that names no panel, one named for a panel with no size after it, or one at a size the face does not list, which names the size and the sizes the face does list
+* a panel with no picture at any size, unless a PNG above already names it, since then the fix is renaming that PNG
 * a committed `module-thumbnails.g.js` in a face with no `resources/thumbnails` folder to build it from, since the face would still ship it
 * a face that cannot be checked at all, such as one missing its `module-meta.ts` or its `thumbnailSizes`, with the reason
 
