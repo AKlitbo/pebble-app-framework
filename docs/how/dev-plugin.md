@@ -108,7 +108,7 @@ dev_start(apply_theme);
 
 **Out of a Release.** With the switch at 0, `dev_seed_stores` returns false, the live inits run, and the face never includes the harness's header. `dev_walk.c` is still compiled for every face in a unit that lists the plugin. The Pebble SDK puts each function in its own section and has the linker drop any section nothing calls, so a face that never calls the harness ships none of it. Nothing checks the switch at build time, so it is up to the face to commit it at 0.
 
-**A Settings Save Unpins the Clock.** A store stays seeded until something starts it live. A face whose settings handler calls `time_store_reconfigure` with `live` true starts the ticker again, so a save from the settings page on the emulator's phone puts the real time back on the face at the next minute. Seeding the time store again on a tap puts the pinned time back but leaves the ticker running, so the next minute moves the clock on again until the face restarts.
+**A Settings Save Unpins the Stores.** A store stays seeded until something starts it live, and a face's settings handler normally reconfigures its stores with `live` true. So a save from the settings page on the emulator's phone starts the time store's ticker, which puts the real time back at the next minute, and turns on the weather, stock, and calendar stores, which then fetch real readings and spend the provider's quota. Seeding the time store again on a tap puts the pinned time back but leaves the ticker running. A face keeps a dev build pinned by skipping those reconfigures in its settings handler while its dev switch is on.
 
 ## Previewing the Settings Page
 
