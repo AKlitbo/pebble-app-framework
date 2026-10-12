@@ -258,13 +258,21 @@ static bool sanitize(const SettingsSchema *schema)
 }
 
 /**
- * @brief Persist one schema's struct under its key.
+ * @brief Persist one schema's struct under its key, logging an error when the whole struct did not
+ * reach flash.
  *
  * @param schema The schema to save.
  */
 static void save_schema(const SettingsSchema *schema)
 {
-    persist_write_data(schema->key, schema->blob, schema->blob_size);
+    // a failed write is logged and not tried again
+    // a write falls short when the struct is over the 256 bytes a key holds, when the app's storage is
+    // full, or when the watch cannot rewrite its settings file. none of those clears on its own, so a
+    // retry would cost bytes and never land
+    if (persist_write_data(schema->key, schema->blob, schema->blob_size) != (int)schema->blob_size)
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "settings: key %lu not saved whole", (unsigned long)schema->key);
+    }
 }
 
 /**
@@ -341,6 +349,15 @@ void settings_init(const SettingsSchema *head)
     // load every schema in the chain (the primary plus any companions)
     for (const SettingsSchema *schema = head; schema; schema = schema->companion)
     {
+        // a struct over what one key holds is only ever saved in part, so its tail comes back as the
+        // defaults on every launch. SETTINGS_BLOB_SIZE stops the build for it, and this catches a face
+        // that sets blob_size with plain sizeof
+        if (schema->blob_size > PERSIST_DATA_MAX_LENGTH)
+        {
+            APP_LOG(APP_LOG_LEVEL_ERROR, "settings: key %lu is over %d bytes", (unsigned long)schema->key,
+                    PERSIST_DATA_MAX_LENGTH);
+        }
+
         if (!persist_exists(schema->key))
         {
             s_was_fresh = true;

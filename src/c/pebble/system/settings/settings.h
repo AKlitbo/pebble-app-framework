@@ -88,12 +88,31 @@ typedef struct SettingsSchema
     uint8_t version;                  ///< This face's current schema version
     uint16_t min_versioned_size;      ///< Smallest versioned blob accepted, the frozen v1 size
     void *blob;                       ///< The face's settings struct, version byte first
-    uint16_t blob_size;               ///< Size of that struct
+    uint16_t blob_size;               ///< Size of that struct, best set with SETTINGS_BLOB_SIZE
     const SettingField *fields;       ///< The face's field table
     uint8_t field_count;              ///< How many entries are in `fields`
     bool (*migrate)(int stored_size); ///< Lifts an old blob from before versioning, true if handled. NULL when none
     const struct SettingsSchema *companion; ///< Next schema in the chain, or NULL
 } SettingsSchema;
+
+/**
+ * @brief The size of a settings struct, for a schema's `blob_size`, and a build that stops when the
+ * struct is too big to save.
+ *
+ * One persist key holds at most 256 bytes, and the watch saves only the first 256 bytes of a longer
+ * write. The fields past that would come back as their defaults on every launch. settings_init and
+ * settings_save log it at runtime, and this stops the build instead, so a face with more than 256
+ * bytes of settings moves some into a companion schema.
+ *
+ * @param blob The settings struct itself, not a pointer to it.
+ * @return The struct's size in bytes.
+ */
+#define SETTINGS_BLOB_SIZE(blob) \
+    (sizeof(blob) + 0 * sizeof(struct { \
+        _Static_assert(sizeof(blob) <= PERSIST_DATA_MAX_LENGTH, \
+                       "settings struct is over 256 bytes, so move some fields into a companion schema"); \
+        char unused; \
+    }))
 
 /**
  * @brief Carries what an inbound settings message changed, so the caller can react.
@@ -110,7 +129,9 @@ typedef struct
  *
  * Walks the companion chain so every schema in it is loaded. A saved blob is read only when its
  * size and version fit the schema, or when the schema's migrate hook takes it, and every field read
- * back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults.
+ * back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults. A
+ * schema over the 256 bytes one persist key holds is logged as an error, since it can never be saved
+ * whole.
  *
  * @param schema The head schema defining the face's settings.
  */
@@ -128,6 +149,8 @@ bool settings_was_fresh(void);
 
 /**
  * @brief Persist the active face's structs under their keys (the whole chain).
+ *
+ * A struct that does not reach flash whole is logged as an error and not tried again.
  */
 void settings_save(void);
 

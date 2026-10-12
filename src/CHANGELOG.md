@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Added
 
 - Added `defines` to the appinfo, for C defines a face sets for its own build, such as `"defines": { "ENGINE_SLOTS_MAX": 12 }`. The build passes each one as a `-D` flag. `ENGINE_SLOTS_MAX`, `FONT_SLOTS_MAX`, and `ICON_CACHE_MAX` can each be raised this way, up to 254 for the slots and 255 for the fonts and the icon cache, and a value outside that stops the build. A name that is not a macro name, a value that is not a whole number, and a name the build sets itself, a `HAS_` switch or `BUILD_WATCHAPP`, stop the build with a message naming the face.
+- Added `SETTINGS_BLOB_SIZE` in `settings.h`, which gives a settings struct's size for a schema's `blob_size` and stops the build when the struct is over the 256 bytes one persist key holds. The watch saves only the first 256 bytes of a longer struct, so the fields past that come back as their defaults on every launch. Write `.blob_size = SETTINGS_BLOB_SIZE(s_settings)` in place of `sizeof(s_settings)` to catch it at build time.
 
 #### Changed
 
@@ -23,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Fixed
 
+- Fixed a settings struct that could not be saved whole going unnoticed. `settings_init` now logs an error naming the key for a struct over 256 bytes, and `settings_save` logs one when a struct is not written whole, which also happens when the app's persist storage is full. A failed save is not tried again.
 - Fixed a text slot with a `zone` and no `text` function crashing the watch on its first repaint. The slot now stays empty, the same as a draw slot with no `draw`.
 
 ### Wearer-Visible Changes
