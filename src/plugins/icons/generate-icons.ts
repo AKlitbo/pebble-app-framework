@@ -34,7 +34,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 // the media list this rewrites is the same one build-manifests reads, so share its shape
-import { buildMedia, iconsManifestPath, mediaOf, replaceMediaArray } from './media.ts';
+import { buildMedia, iconPngPath, iconSizeProblems, iconsManifestPath, mediaOf, readPngHeader, replaceMediaArray } from './media.ts';
 import type { IconManifest } from './media.ts';
 import { appinfoPath, faceDir, listFaceNames } from '../../tools/shared/faces.ts';
 import { WORKSPACE } from '../../tools/shared/paths.ts';
@@ -293,7 +293,7 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
     while (next < icons.length) {
       const { name, spec, source } = icons[next++];
       const src = source.file;
-      const out = path.join(outDir, `${name}.png`);
+      const out = path.join(dir, iconPngPath(name));
 
       if (!fs.existsSync(src)) {
         if (!fs.existsSync(out)) {
@@ -301,11 +301,12 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
         }
 
         // every render comes out at exactly the size asked for, so a PNG of another size was made
-        // before icons.json changed, and keeping it would draw the old size in the new spot
-        const kept = await sharp(out).metadata();
+        // before icons.json changed, and keeping it would draw the old size in the new spot. the
+        // check reads it with the same rule, so the two never disagree on one PNG
+        const [problem] = iconSizeProblems({ [name]: spec }, () => readPngHeader(out));
 
-        if (kept.width !== spec.size[0] || kept.height !== spec.size[1]) {
-          throw new ToolError(`Missing source: ${src} (for ${name}), and its PNG is ${kept.width}x${kept.height} where icons.json asks for ${spec.size[0]}x${spec.size[1]}`);
+        if (problem) {
+          throw new ToolError(`Missing source: ${src} (for ${name}), and ${problem}`);
         }
 
         console.warn(`warning: ${src} is missing, so ${name} keeps the PNG it has`);

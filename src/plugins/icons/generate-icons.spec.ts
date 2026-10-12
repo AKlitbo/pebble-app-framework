@@ -10,8 +10,8 @@
  * into a file, including the deprecated set keys, and holdsAnyIcon catches a sources folder pointed
  * at the wrong place. Everything else in the pipeline is sharp I/O, covered by eyeballing the PNGs.
  *
- * Whether a face's committed media block still matches its icons.json is check-icons.ts, which paf
- * check runs in the face's unit.
+ * Whether a face's committed media block and icon PNGs still match its icons.json is check-icons.ts,
+ * which paf check runs in the face's unit. media.spec.ts covers how it reads a PNG's size.
  */
 
 import fs from 'node:fs';
@@ -419,7 +419,7 @@ describe('renderFace', () => {
 
     const result = renderFace(face, { 'bt-on': { svg: 'status/bluetooth-on', size: [16, 16] } }, tempDir('icons-src-'));
 
-    await expect(result).rejects.toThrow(/its PNG is 12x12 where icons.json asks for 16x16/);
+    await expect(result).rejects.toThrow(/resources\/icons\/bt-on.png is 12x12 where icons.json asks for 16x16/);
   });
 
   /** With no source and no PNG the build would fail on the resource later, so it stops here with the icon named. */

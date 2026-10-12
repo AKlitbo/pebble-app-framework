@@ -238,7 +238,7 @@ Runs every check the framework and the listed plugins ship, such as whether each
 $ paf check
 == check: pebble-watchface-lcars ==
 Clay components: every face is current
-icon media: every face is current
+icons: every face is current
 thumbnails: every face is current
 ```
 

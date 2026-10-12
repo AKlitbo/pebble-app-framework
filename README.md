@@ -66,7 +66,7 @@ Everything a face gets lives under `src/`, which is the folder paf copies, witho
 A unit lists the plugins it wants in its `paf.config.json`, and paf copies only those.
 
 * **`frame`**: bakes a face's HTML frame into background PNGs, and carries `css/pebble-colors.css`, the Pebble-64 palette the frames link to. It needs Playwright and `sharp`.
-* **`icons`**: turns the face's vendored SVG glyphs into its icon PNGs, and checks the appinfo media block is current. It reads the SVGs from `plugins.icons.sources` in `paf.config.json`, relative to the unit, or from the `ICON_SOURCES` environment variable when that names none. It needs `sharp`.
+* **`icons`**: turns the face's vendored SVG glyphs into its icon PNGs, and checks the appinfo media block and each PNG's size are current. It reads the SVGs from `plugins.icons.sources` in `paf.config.json`, relative to the unit, or from the `ICON_SOURCES` environment variable when that names none. It needs `sharp`.
 * **`thumbnails`**: inlines the panel PNGs as base64 so the Clay layout builder shows real panels, and checks the asset is current.
 * **`code-style`**: the house ESLint style `paf lint` uses, and Prettier for a unit's CSS, JSON, and YAML through `paf format`, which stays off until the unit turns it on. It brings ESLint and Prettier with it.
 * **`dev`**: the screenshot harness in `c/dev/`, the Clay settings preview in `clay-preview.ts`, and `tap-walk.ts`, which screenshots every state of a face's dev tap walk.

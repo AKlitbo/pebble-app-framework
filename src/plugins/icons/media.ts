@@ -5,8 +5,10 @@
  *
  * Kept apart from the rasterizer so the icon check can compare media blocks without loading sharp.
  */
+import fs from 'node:fs';
 import path from 'node:path';
 import { faceDir } from '../../tools/shared/faces.ts';
+import { ToolError } from '../../tools/shared/tool-error.ts';
 import type { MediaEntry } from '../../tools/manifest/build-manifests.ts';
 
 /** One icon's row in resources/icons.json: which vendored svg and its final pixel size. */
@@ -174,4 +176,105 @@ export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   const body = newMedia.map((entry) => formatEntry(entry, entryIndent)).join(',\n');
 
   return raw.slice(0, open + 1) + '\n' + body + '\n' + mediaIndent + raw.slice(close);
+}
+
+/**
+ * Where an icon's PNG sits in its face, the path the generator writes and the check reads. The
+ * media block names the same file from inside resources/, as icons/<name>.png.
+ *
+ * @param name The icon's name in icons.json.
+ * @return The PNG's path from the face's folder, with forward slashes.
+ */
+export function iconPngPath(name: string): string {
+  return `resources/icons/${name}.png`;
+}
+
+/**
+ * The first 24 bytes of a file, which hold a PNG's signature, width, and height.
+ *
+ * A file that is there but cannot be read, such as a folder in the PNG's place, stops with one line
+ * naming it rather than a stack that reads as a bug in the check.
+ *
+ * @param file The file to read.
+ * @return Up to the first 24 bytes, or null when there is no such file.
+ */
+export function readPngHeader(file: string): Buffer | null {
+  let fd: number | null = null;
+
+  try {
+    fd = fs.openSync(file, 'r');
+
+    const header = Buffer.alloc(24);
+    const read = fs.readSync(fd, header, 0, header.length, 0);
+
+    return header.subarray(0, read);
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+
+    if (code === 'ENOENT') {
+      return null;
+    }
+
+    throw new ToolError(`${file} could not be read (${code ?? (error as Error).message})`);
+  } finally {
+    if (fd !== null) {
+      fs.closeSync(fd);
+    }
+  }
+}
+
+/** The eight bytes every PNG file starts with. */
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+/**
+ * The width and height a PNG's header records, read straight from its bytes so the icon check needs
+ * no image library.
+ *
+ * A PNG opens with its eight byte signature and then the IHDR chunk, whose first two fields are the
+ * width and height as big-endian 32-bit numbers, at bytes 16 and 20.
+ *
+ * @param bytes The file's contents, or at least its first 24 bytes.
+ * @return The width and height, or null when the bytes are not a PNG.
+ */
+export function pngSize(bytes: Buffer): [number, number] | null {
+  if (bytes.length < 24 || !bytes.subarray(0, 8).equals(PNG_SIGNATURE) || bytes.toString('latin1', 12, 16) !== 'IHDR') {
+    return null;
+  }
+
+  return [bytes.readUInt32BE(16), bytes.readUInt32BE(20)];
+}
+
+/**
+ * Every icon whose committed PNG is missing, is not a PNG, or is not the size icons.json asks for.
+ *
+ * The generator draws each icon at exactly its size, so a PNG of another size was drawn before
+ * icons.json changed. Left alone it ships the old icon, drawn at the old size inside a box laid out
+ * for the new one. A changed svg or trim keeps the size, so this cannot see those.
+ *
+ * @param manifest The face's icons.json.
+ * @param readPng Reads an icon's committed PNG by name, or gives null when there is none.
+ * @return One line per icon that is out of step, empty when every PNG matches.
+ */
+export function iconSizeProblems(manifest: IconManifest, readPng: (name: string) => Buffer | null): string[] {
+  const problems: string[] = [];
+
+  for (const [name, spec] of Object.entries(manifest)) {
+    const file = iconPngPath(name);
+    const bytes = readPng(name);
+
+    if (bytes === null) {
+      problems.push(`${file} is missing`);
+      continue;
+    }
+
+    const size = pngSize(bytes);
+
+    if (size === null) {
+      problems.push(`${file} is not a PNG`);
+    } else if (size[0] !== spec.size[0] || size[1] !== spec.size[1]) {
+      problems.push(`${file} is ${size[0]}x${size[1]} where icons.json asks for ${spec.size[0]}x${spec.size[1]}`);
+    }
+  }
+
+  return problems;
 }
