@@ -1,6 +1,6 @@
 # The Time Store
 
-The time store holds the current time and runs the ticker that moves it on: the minute tick, the .beats timer, or both. A face picks the ticker from its settings and reads the time back, and the store swaps tickers when the wearer changes the time format. Every other store's regular work rides on the same ticker, so the time store also decides when the weather is polled and when the step count is read.
+The time store holds the current time and runs the tickers that move it on: the minute tick, the .beats timer, or both, and an hour tick for a face that runs no minute tick but still needs the top of the hour. A face picks the ticker from its settings and reads the time back, and the store swaps tickers when the wearer changes the time format. Every other store's regular work rides on the same ticker, so the time store also decides when the weather is polled and when the step count is read.
 
 It lives in [`time_store.h`](../../src/c/pebble/io/stores/time_store.h) and [`time_store.c`](../../src/c/pebble/io/stores/time_store.c).
 
@@ -12,7 +12,8 @@ A face builds the store's rules from its own settings, so the store never reads 
 static TimeConfig time_config(void)
 {
     bool beats = settings_u8(SETTING_TIME_FORMAT) == TIME_FORMAT_BEATS;
-    return (TimeConfig){.live = true, .minute_tick = !beats, .beats = beats};
+    bool hourly = settings_u8(SETTING_HOURLY_VIBE) != VIBE_NONE;
+    return (TimeConfig){.live = true, .minute_tick = !beats, .beats = beats, .hourly = hourly};
 }
 
 time_store_init(time_config(), NULL);
@@ -23,6 +24,8 @@ time_store_subscribe(on_time_changed);
 
 **`beats`** runs a timer that fires on each .beats boundary, every 86.4 seconds. [.beats](beats.md) covers how it finds the boundary.
 
+**`hourly`** wakes the face at the top of each hour when `minute_tick` is off, through the SDK's hour tick. A .beats clock with an hourly buzz sets it, and wakes once an hour rather than sixty times. With the minute tick on it changes nothing, since the minute tick already lands on the hour.
+
 **`live`** runs whichever tickers are on. With `live` false the store runs none and the clock stays at the time it was seeded with.
 
 Init takes the current time straight away, so the face's first paint has a time to draw before any tick arrives. It redraws nothing, since the face subscribes afterwards.
@@ -31,7 +34,7 @@ Init takes the current time straight away, so the face's first paint has a time 
 
 ## Picking the Tickers
 
-The two tickers are independent, so a face can run either one or both.
+The minute tick and the .beats timer are independent, so a face can run either one or both. With the minute tick off, `hourly` adds the SDK's hour tick.
 
 **The Minute Tick Alone.** The usual clock. The store wakes once a minute, on the minute.
 
@@ -39,13 +42,15 @@ The two tickers are independent, so a face can run either one or both.
 
 **Both.** For a clock face that also shows a beat somewhere, such as in the date line. Each ticker moves the time and runs the stores on its own. The stores' polls go by deadline, so the extra turns never ask the phone for more.
 
+**The Hour Tick Alone, or with the .beats Timer.** With `hourly` on and the minute tick off, the store also wakes at the top of each hour. That is a .beats clock with an hourly buzz. With the hour tick alone the time and the other stores move only once an hour, so a face that polls the weather or reads steps runs another ticker as well.
+
 **Neither.** The time never moves and the other stores never get their turn, so nothing polls. Only a seeded face runs this way.
 
-The face's callback runs on every tick from either ticker. A face that does something on the hour, such as an hourly buzz, checks `tm_min == 0` and needs the minute tick running. On the .beats timer alone it can miss the hour, as [Vibrations](vibrations.md#on-the-hour) explains.
+The face's callback runs on every tick from any ticker. A face that does something on the hour, such as an hourly buzz, checks `tm_min == 0` and needs the minute tick or `hourly` on. On the .beats timer alone it can miss the hour, as [Vibrations](vibrations.md#on-the-hour) explains.
 
 ## Each Tick, in Order
 
-Both tickers end in the same few lines:
+Every ticker ends in the same few lines:
 
 ```c
 static void set(const struct tm *t)
@@ -90,7 +95,7 @@ pinned.tm_sec = 0;
 time_store_init((TimeConfig){.live = false}, &pinned);
 ```
 
-With `live` false no ticker runs, whatever `minute_tick` and `beats` say, so the face shows 10:08 for as long as it runs. Starting from today's date and changing only the hour and the minute keeps the date line real. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+With `live` false no ticker runs, whatever `minute_tick`, `beats`, and `hourly` say, so the face shows 10:08 for as long as it runs. Starting from today's date and changing only the hour and the minute keeps the date line real. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
 
 ## Changing the Time Format
 

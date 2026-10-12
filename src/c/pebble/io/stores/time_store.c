@@ -17,6 +17,7 @@ static void (*s_cb)(void);      ///< Called whenever the time moves, so the face
 static AppTimer *s_beats_timer; ///< The .beats ticker. NULL when it isn't running
 static bool s_minute;           ///< Whether the minute tick is on
 static bool s_beats;            ///< Whether the .beats timer is on
+static bool s_hourly;           ///< Whether to wake on the hour when the minute tick is off
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed);
 
@@ -37,7 +38,7 @@ static void set(const struct tm *t)
 }
 
 /**
- * @brief Minute-tick handler: feed the tick straight in.
+ * @brief Minute or hour tick handler: feed the tick straight in.
  *
  * @param tick_time The new time.
  * @param units_changed Which units changed (unused, the store always takes the whole tick).
@@ -61,14 +62,22 @@ static void beats_fire(void *data)
 }
 
 /**
- * @brief Run the tickers the config asks for. The two cadences are independent, so a face can
- * have the minute tick, the .beats timer, or both (a clock and .beats can run together).
+ * @brief Run the tickers the config asks for. The minute tick and the .beats timer are independent,
+ * so a face can have either or both (a clock and .beats can run together). With the minute tick off,
+ * hourly subscribes the hour tick instead.
  */
 static void start_ticker(void)
 {
     if (s_minute)
     {
         tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+    }
+    else if (s_hourly)
+    {
+        // a face that needs only the top of the hour, such as an hourly buzz on a .beats clock,
+        // wakes once an hour rather than every minute. the .beats timer alone lands in minute 0 of
+        // only two hours in three in a zone half an hour or 45 minutes off UTC
+        tick_timer_service_subscribe(HOUR_UNIT, tick_handler);
     }
     else
     {
@@ -111,6 +120,7 @@ void time_store_init(TimeConfig cfg, const struct tm *seed)
 {
     s_minute = cfg.minute_tick;
     s_beats = cfg.beats;
+    s_hourly = cfg.hourly;
 
     // seed the current time (or the pinned one) so the first paint has something to draw.
     // s_cb is NULL until the face subscribes so this doesn't redraw
@@ -134,6 +144,7 @@ void time_store_reconfigure(TimeConfig cfg)
 {
     s_minute = cfg.minute_tick;
     s_beats = cfg.beats;
+    s_hourly = cfg.hourly;
 
     if (cfg.live)
     {

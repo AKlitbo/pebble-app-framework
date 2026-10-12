@@ -1,8 +1,8 @@
 /**
  * @file time_store.h
- * @brief Active time store. It owns the tickers (the minute tick and the swatch .beats
- * AppTimer) and swaps between them for the current cadence, so a face just hands it the
- * rules and reads the time back.
+ * @brief Active time store. It owns the tickers (the minute tick, the swatch .beats AppTimer,
+ * and the hour tick) and swaps between them for the current cadence, so a face just hands it
+ * the rules and reads the time back.
  *
  * @ingroup lib_stores
  */
@@ -18,15 +18,17 @@
  * @brief The rules a face hands the store, built from its own settings so the store names no
  * SETTING_*.
  *
- * The two cadences are independent, so a face can run either or both. One face might run
- * exactly one when its time format is a single exclusive choice. Another runs the minute
- * tick always plus the beats timer whenever a live .beats module is on screen.
+ * The minute tick and the beats timer are independent, so a face can run either or both. One face
+ * might run exactly one when its time format is a single exclusive choice. Another runs the minute
+ * tick always plus the beats timer whenever a live .beats module is on screen. With the minute tick
+ * off, hourly adds the SDK's hour tick, so a face still wakes at the top of the hour.
  */
 typedef struct
 {
     bool live;        ///< True runs the tickers and false freezes the clock for screenshots
     bool minute_tick; ///< Run the minute tick (clock date and most readouts)
     bool beats;       ///< Also run the 86.4 second .beats timer for a live .beats readout
+    bool hourly;      ///< With the minute tick off, still wake at the top of each hour, such as for an hourly buzz
 } TimeConfig;
 
 /**

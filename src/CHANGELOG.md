@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Added `hourly` to `TimeConfig`. With `minute_tick` off, the time store subscribes to the SDK's hour tick, so a face wakes at the top of each hour without the minute tick. Set it on a .beats clock that buzzes on the hour. The .beats timer alone lands in minute 0 of only two hours in three in a time zone a half hour or 45 minutes off UTC, and the minute tick would wake the watch sixty times an hour for one buzz.
+
 ## [4.1.0] - 2026-10-11
 
 ### Framework Changes
@@ -385,6 +393,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.1.0...HEAD
 [4.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...v4.0.0
 [3.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v2.2.0...v3.0.0

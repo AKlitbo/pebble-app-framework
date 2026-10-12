@@ -46,10 +46,11 @@ static void on_time_changed(void)
 {
     static int s_buzzed_hour = -1;
     const struct tm *now = time_store_tm();
+    int hour = now->tm_hour + (now->tm_isdst > 0 ? 24 : 0);
 
-    if (now->tm_min == 0 && now->tm_hour != s_buzzed_hour)
+    if (now->tm_min == 0 && hour != s_buzzed_hour)
     {
-        s_buzzed_hour = now->tm_hour;
+        s_buzzed_hour = hour;
         vibe_choice(settings_u8(SETTING_HOURLY_VIBE));
     }
 
@@ -57,9 +58,9 @@ static void on_time_changed(void)
 }
 ```
 
-**Once per Hour.** The time callback runs on the minute tick, and on each beat as well when the face shows .beats (see [.beats](beats.md)), so the check for minute 0 can pass twice in the same minute. Remembering the hour that buzzed keeps it to one buzz.
+**Once per Hour.** The time callback runs on the minute tick or the hour tick, and on each beat as well when the face shows .beats (see [.beats](beats.md)), so the check for minute 0 can pass twice in the same minute. Remembering the hour that buzzed keeps it to one buzz. It remembers `tm_hour` along with whether daylight saving is on, since the hour the clocks repeat when they fall back has the same `tm_hour` and would otherwise pass without a buzz. It stays on local time, so a change of time zone never makes the next hour look like the last one.
 
-**Keep the Minute Tick On.** A face that turns the minute tick off and runs only the beat timer is called every 86.4 seconds, so it only gets a call during minute 0 when a beat happens to turn over in it. In a time zone a whole number of hours from UTC that happens every hour. In one that sits half an hour or 45 minutes off, such as India or Nepal, one hour in three has no beat in its first minute and passes without a buzz.
+**Wake on the Hour.** A face that turns the minute tick off and runs only the beat timer is called every 86.4 seconds, so it only gets a call during minute 0 when a beat happens to turn over in it. In a time zone a whole number of hours from UTC that happens every hour. In one that sits half an hour or 45 minutes off, such as India or Nepal, one hour in three has no beat in its first minute and passes without a buzz. Such a face sets `hourly` in its `TimeConfig` whenever the buzz is on, so the time store wakes it at the top of every hour without running the minute tick, as the `time_config` in [The Time Store](time-store.md#setting-it-up) does.
 
 ## Playing Your Own Rhythm
 
