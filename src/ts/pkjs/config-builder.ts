@@ -355,7 +355,7 @@ export function locationSection(options: ConfigBuilderOptions): ClayConfigItem |
       'type': 'toggle',
       'messageKey': 'LOCATION_GPS_FALLBACK',
       'label': 'Fallback to Manual Location',
-      'description': 'If GPS is disabled or unavailable, use the city typed below.',
+      'description': 'If GPS is on but cannot find you, use the city picked below.',
       'defaultValue': true,
     },
     {

@@ -17,10 +17,12 @@
  * (wi-clear -> ICON_WI_CLEAR). Faces own their sizes, so the same condition can
  * ship at 24px on one face and 12px on another with no shared -sm/-md variants.
  *
- * Glyphs are forced to white because upstream SVGs do not define a consistent
- * fill or stroke colour. Faces recolour the loaded bitmap's palette at runtime, so
- * one white master serves every tint. Each icon is rasterized at its final size:
- * Pebble clips bitmaps rather than scaling them at draw time.
+ * Black fill and stroke attributes are turned white, and an svg with no fill on its root
+ * gets a white fill and stroke there, since upstream SVGs do not agree on a colour. A glyph
+ * drawn in another colour, or coloured through a style attribute or CSS, keeps that colour.
+ * Faces recolour the loaded bitmap's palette at runtime, so one white master serves every
+ * tint. Each icon is rasterized at its final size, since Pebble clips bitmaps rather than
+ * scaling them at draw time.
  *
  * This:
  *   1. renders each glyph into resources/icons/<name>.png
@@ -65,10 +67,11 @@ const TRANSPARENT = {
 };
 
 /**
- * Forces a glyph white so the face can recolour the loaded bitmap's palette at runtime.
+ * Turns a glyph's black white so the face can recolour the loaded bitmap's palette at runtime.
  *
  * @param svgText The svg source to recolour.
- * @return The same svg source with its glyph forced white.
+ * @return The same svg source with its black fills and strokes made white, and a white fill and
+ *   stroke added to a root that sets no fill of its own.
  */
 export function whiten(svgText: string): string {
   // recolour any hard-coded black so stroke-style glyphs (which set their own colour on the path) come through white
@@ -144,7 +147,7 @@ async function render(
   outputFile: string,
   opts: { trim?: boolean } = {}
 ): Promise<void> {
-  // sharp requires a buffer here instead of a file path because we modified the raw svg string in memory above
+  // the svg arrives as text, already whitened by the caller, so sharp gets it as a buffer
   const input = opts.trim ? await trimToGlyph(svgText) : Buffer.from(svgText);
 
   await sharp(input)
@@ -229,15 +232,15 @@ export function svgSource(sources: string, ref: string): SvgSource {
 }
 
 // rewrite a face's config so its media icon block matches the manifest
-function syncMedia(pkgPath: string, manifest: IconManifest): void {
-  const raw = fs.readFileSync(pkgPath, 'utf8');
+function syncMedia(appinfoFile: string, manifest: IconManifest): void {
+  const raw = fs.readFileSync(appinfoFile, 'utf8');
   const media = mediaOf(raw);
 
   if (!Array.isArray(media)) {
-    throw new ToolError(`no resources.media array in ${pkgPath}`);
+    throw new ToolError(`no resources.media array in ${appinfoFile}`);
   }
 
-  fs.writeFileSync(pkgPath, replaceMediaArray(raw, buildMedia(media, manifest)));
+  fs.writeFileSync(appinfoFile, replaceMediaArray(raw, buildMedia(media, manifest)));
 }
 
 // how many icons render at once. each one is a few sharp passes and a pixel scan, and a face

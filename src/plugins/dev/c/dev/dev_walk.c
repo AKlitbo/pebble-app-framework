@@ -1,6 +1,6 @@
 /**
  * @file dev_walk.c
- * @brief The shared frame-face dev harness. It seeds the stores from a fixed fixture and
+ * @brief The shared dev harness. It seeds the stores from a fixed fixture and
  * drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops
  * it from any face that never calls it, which is every release build.
  *
@@ -29,8 +29,8 @@ static const struct
     int sleep_min;    ///< Minutes slept
     int active_min;   ///< Active minutes
     int distance_m;   ///< Distance walked, in metres
-    const char *lat;  ///< Latitude, in the dash style the phone sends it in, such as "33-44"
-    const char *lon;  ///< Longitude, in the same dash style
+    const char *lat;  ///< Latitude as the text the location store holds, such as "33-44"
+    const char *lon;  ///< Longitude as the same kind of text
 } s_fixed = {
     .calories = 420, .sleep_min = 431, .active_min = 52, .distance_m = 5300,
     .lat = "33-44", .lon = "-112-07",
@@ -60,9 +60,9 @@ typedef struct
 /**
  * @brief The shots a theme walk steps through. The first is also what a face shows with no walk.
  *
- * Spread on purpose rather than at random: a flat battery and a full one, a dropped phone, the
- * Quiet Time mark up and down, and a range of weather so the scene is not drawing the same sky
- * eight times.
+ * They cover the range rather than falling at random, with a flat battery and a full one, a
+ * dropped phone, the Quiet Time mark up and down, and a range of weather so the scene is not
+ * drawing the same sky eight times.
  */
 static const DevShot s_shots[] = {
     {.temp = 21, .cond = "PCLDY", .hr = 72, .steps = 8431,  .battery = 64,  .bluetooth = true,  .quiet_icon = false},
@@ -85,8 +85,8 @@ static int s_minute;                ///< The minute the face pinned the clock to
  * @brief Seed the clock, weather, health, and system stores from one shot. A face without weather
  * gets an empty weather store, so it never boots the harness with a reading it cannot show.
  *
- * The stores are only ever seeded here with live off, and neither takes a subscription on that
- * path, so seeding again on a tap re-seeds rather than stacking handlers.
+ * The stores are only ever seeded here with live off, and none of them takes a subscription on
+ * that path, so seeding again on a tap re-seeds rather than stacking handlers.
  *
  * @param shot The shot to seed from.
  */
@@ -190,7 +190,7 @@ void dev_walk_init(DevWalkMode mode, void (*apply_theme)(void))
         apply_shot(0);
     }
 
-    // re-colour zones + swap the frame for the forced theme then repaint everything
+    // re-colour the zones and swap the frame for the current theme, then repaint everything
     if (apply_theme) apply_theme();
     engine_rebuild();
 

@@ -60,8 +60,9 @@ const ROOT = WORKSPACE;
  * A face either bakes each look from its own frame/<name>~<platform>.html (supportsTheme: false,
  * one HTML per look) or swaps a palette over one HTML (supportsTheme: true, a theme_<name>.css
  * per look). clearTextSelectors have their text emptied and hideSelectors are hidden, so the
- * bake is pure chrome. The "bareBackgroundBase" frame bakes to background.png. Every other
- * base lands at background-<base>.png.
+ * bake is pure chrome. Every file ends in its ~<platform> tag. A themed face bakes each theme to
+ * background-<theme>~<platform>.png. Otherwise the "bareBackgroundBase" frame bakes to
+ * background~<platform>.png and every other frame to background-<frame>~<platform>.png.
  *
  * hideSelectors drop out of the flow, so use them for something nothing else is positioned
  * against. unpaintSelectors keep their box and lose only their pixels, which is what a piece of
@@ -117,8 +118,7 @@ function loadFaceConfig(face: string, dirs: FaceDirs): FaceConfig {
  * The platforms a face's appinfo targets that a frame can be baked for.
  *
  * A platform with no known screen size is left out with a warning, since there is no size to bake
- * it at. A face
- * with no appinfo yet, or none of its platforms known, bakes for emery.
+ * it at. A face with no appinfo yet, or none of its platforms known, bakes for emery.
  *
  * @param appinfoPath The face's pebble.appinfo.json path.
  * @return The platforms to bake, in the appinfo's order.

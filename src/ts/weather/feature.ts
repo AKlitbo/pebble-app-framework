@@ -83,7 +83,7 @@ const EXTRA_WEATHER_FIELDS = [
 
 // how long each failed weather fetch waits before the next try. a cold launch (gps still warming
 // and network not up yet) misses the first fetch so a couple of spaced retries let it recover instead
-// of sitting blank until the 30-min poll
+// of sitting blank until the watch's next poll
 export const WEATHER_RETRY_DELAYS_MS = [5000, 15000];
 
 // how long to wait on a geolocation lookup before giving up and using the fallback. shorter than

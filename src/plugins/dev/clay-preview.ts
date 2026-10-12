@@ -4,8 +4,8 @@
  * Builds a face's real settings page (the same @rebble/clay the watch build uses, with its own
  * custom components and every normal item) into a plain HTML file you can open in a browser. Lets
  * you click around the config UI without loading it onto the watch after every change. It also
- * shows you the console error when the page refuses to render, which on the watch just looks like
- * a settings screen that never appears. That is the real reason it earns its keep.
+ * shows you the console error when the page refuses to render, which on the phone just looks like
+ * a settings screen that never opens. That is the real reason it earns its keep.
  *
  * The page, its components, and its customClay come from what the face hands startPebbleApp in its
  * own src/pkjs/index.ts, so a component the face forgets to pass fails here the same way it fails
@@ -254,10 +254,9 @@ function build(args: ClayPreviewArgs, paths: FacePaths): void {
   const start = captureStart(app.default, () => requireHost(path.join(paths.emitPkjs, 'index.js')), args.face);
   const clay = app.createClay(start);
 
-  // Clay only fills meta inside its showConfiguration handler, and generateUrl is called here
-  // without one, so the page would carry activeWatchInfo: null. Clay then throws on any item that
-  // names capabilities, since it has no watch to check them against. filling it is what makes the
-  // capability filter testable off-watch
+  // Clay fills meta from the Pebble global, which the preview does not have
+  // left alone the page carries activeWatchInfo: null, and any item with capabilities throws on it
+  // filling it with --platform's watch is what lets the capability filter run off the phone
   (clay as { meta?: unknown }).meta = {
     activeWatchInfo: { platform: args.platform, firmware: { major: 4, minor: 3, patch: 0 } },
     accountToken: '',

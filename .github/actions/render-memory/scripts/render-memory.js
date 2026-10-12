@@ -6,7 +6,7 @@
  * which face is closest to the edge, and that needs every face in one place. A row at 80% of a limit or more
  * also gets a warning, so it shows on the run itself and not only in the table.
  *
- * It reports and never fails on size, since the SDK already fails a build at the only limit that counts. A
+ * It reports and never fails on size, since the SDK already fails a build past its own limits. A
  * face that failed to build has no rows, and the faces that did build are still worth seeing.
  */
 const fs = require('node:fs');

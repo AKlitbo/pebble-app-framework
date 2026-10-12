@@ -114,7 +114,7 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
   }
 
   // prefer the label resolved at geocode time then WeatherAPI's own
-  // resolved name then the raw place the user typed
+  // resolved name then the place name the caller passed
   const label = opts.label ||
       (json.location && json.location.name) ||
       (opts.coords ? 'My Location' : opts.place);

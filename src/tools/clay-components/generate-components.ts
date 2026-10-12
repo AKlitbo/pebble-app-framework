@@ -5,9 +5,9 @@
  * Clay serializes a component's initialize and re-runs it in an isolated
  * webview where require does not exist, so the shipped file has to carry
  * everything inline. The pieces under src/pkjs/clay/builder/ stay small,
- * importable and testable (the waf pkjs glob skips that subtree, only the
- * generated files ship), and esbuild bundles them into one ES2015 IIFE that
- * becomes the component's initialize.
+ * importable, and testable. The pkjs build's tsconfig leaves that folder out,
+ * so only the generated files ship, and esbuild bundles the pieces into one
+ * ES2015 IIFE that becomes the component's initialize.
  *
  * Per component the generator builds a tiny entry that pulls in every piece and
  * re-exports the piece that declares init, bundles it, and drops the bundle into

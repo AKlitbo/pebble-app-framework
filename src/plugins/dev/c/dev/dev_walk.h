@@ -1,9 +1,9 @@
 /**
  * @file dev_walk.h
- * @brief Shared dev harness for the frame faces. It seeds every store with a fixed fixture,
- * using the store seed mechanism so no live source overwrites it, and drives an
- * accelerometer-tap theme "walk" for deterministic screenshots. Each tap steps to the next
- * theme on the same fixed data and the same fixed clock.
+ * @brief Shared dev harness for screenshots. It seeds the clock, weather, health, system, and
+ * location stores with a fixed fixture, using the store seed mechanism so no live source
+ * overwrites it, and drives an accelerometer-tap theme "walk". Each tap steps to the next
+ * theme and the next fixed set of readings, on the same fixed clock.
  *
  * The dev plugin owns the walk and the fixture. A face owns only its switches, in its own
  * `src/c/dev/dev.h`, and passes them in. Compiled for any face that lists the dev plugin, but never
@@ -40,8 +40,8 @@ typedef enum
 void dev_walk_seed_stores(int hour, int min);
 
 /**
- * @brief Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes
- * the accelerometer tap. Call after `engine_init`.
+ * @brief Starts the walk. A theme walk forces the first theme and subscribes the accelerometer
+ * tap. Either mode then paints. Call after `engine_init`.
  *
  * @param mode Which walk to run.
  * @param apply_theme The face's own theme-apply hook. It re-colours the zones and swaps the

@@ -2,9 +2,9 @@
  * Checks a pushed face release tag against the tree it points at, and writes the release notes.
  *
  * Everything that can stop a release is checked here, before the SDK install and the build, so a typo in a
- * tag costs seconds rather than a build. The framework has to sit exactly on a framework tag, the face the tag
- * names has to exist with that version in its appinfo, its changelog entry has to be dated and written, and
- * the tag cannot already be released.
+ * tag costs seconds rather than a build. The framework's package.json in paf/ has to name a framework version,
+ * the face the tag names has to exist with that version in its appinfo, its changelog entry has to be dated
+ * and written, and the tag cannot already be released.
  *
  * The face is found with tools/shared/faces.ts from the face's own paf/, the same way its build finds
  * it, even when the action comes from a newer tag. That file is TypeScript, and the Node that github-script runs

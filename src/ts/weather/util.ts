@@ -459,7 +459,7 @@ function attachForecast(result: WeatherResult, forecast: ForecastCols | null | u
  * the response shape it expects via the type parameter.
  *
  * @param url The URL to fetch.
- * @param request The GET function to call, usually PebbleKit JS's xhrRequest wrapper.
+ * @param request The GET function to call, normally `request` from pkjs/request.ts.
  * @param done Called with a status result when the request or the parse fails.
  * @param onJson Called with the parsed body when it parses.
  */

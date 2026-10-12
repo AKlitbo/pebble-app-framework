@@ -2,10 +2,9 @@
  * Base64-encodes the panel PNGs already sitting in resources/thumbnails/ into the JS asset the
  * Clay builders read, so a palette shows the real panel instead of an emoji.
  *
- * It embeds, it does not draw: the PNGs are made elsewhere and committed, the same way the
- * vendored SVGs behind generate-icons are. All this does is inline them, because a builder runs
- * in a sandboxed config webview that cannot reach local resource files, so the pictures have to
- * travel as data URLs.
+ * It embeds and does not draw. The PNGs are made elsewhere and committed with the face. All this
+ * does is inline them, because a builder runs in a sandboxed config webview that cannot reach
+ * local resource files, so the pictures have to travel as data URLs.
  *
  * Input:  resources/thumbnails/<slug>-<size>.png
  * Output: src/pkjs/clay/module-thumbnails.g.js  ->  module.exports = { label: { size: dataUrl } }
@@ -31,8 +30,7 @@ import type { Thumbs } from '../../ts/clay/builder/ts/types.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 import { isMainScript } from '../../tools/shared/entry.ts';
 
-// every path this touches hangs off the face it is handed
-// the PNGs and that face's module list and the asset it writes
+// loads a face's module-meta.ts by path in moduleMetaFile
 const requireMeta = createRequire(import.meta.url);
 
 /**
@@ -76,7 +74,7 @@ function metaFor(face: string): Record<string, ModuleMeta> {
 /**
  * The panel sizes a face's thumbnails come in, which its module-meta.ts exports as thumbnailSizes.
  *
- * The sizes belong to the face, since each one draws its own panel shapes. The Mosaic grid places
+ * The sizes belong to the face, since each one draws its own panel shapes. A grid face places
  * blocks such as 1x2 and 2x4, and a fixed-slot face has a slot and a tall panel. A face that does
  * not export them leaves nothing to check a png's size against, so that throws.
  *

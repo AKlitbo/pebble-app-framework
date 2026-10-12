@@ -1,6 +1,6 @@
 /**
- * Shared Clay types for the pkjs runtime. Kept in lib (not imported from
- * src/pkjs) so lib stays independent as the copy-as-starter base.
+ * Shared Clay types for the pkjs runtime. They live in the framework rather than
+ * in a face's src/pkjs, so the framework never imports from a face.
  */
 
 /** A value Clay stores for a setting: a single value, or the { value } wrapper Clay

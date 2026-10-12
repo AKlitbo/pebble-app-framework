@@ -2,9 +2,9 @@
  * Single source of truth for the weather-condition vocabulary.
  *
  * Each token is the short condition word the PebbleKit JS producer emits (see
- * util.ts wmoToCondition / applyNight / CONDITION_ALIASES) and the C consumer
- * looks up for an icon and a label. The C side (icons_table.g.h, labels_table.g.h)
- * is generated from this list by the framework repo's tools/build-conditions.ts. Edit the
+ * util.ts wmoToCondition / applyNight / CONDITION_ALIASES) and the C side looks up
+ * to pick an icon. The C icon table, icons_table.g.h, is generated from this list by the
+ * framework repo's tools/build-conditions.ts. Edit the
  * vocabulary here, never there.
  *
  * Fields per row:
@@ -13,14 +13,14 @@
  *   resource      day icon (RESOURCE_ID_ICON_<resource>).
  *   nightResource optional night icon. When present the JS emits "<token>_NIGHT"
  *                 after dark and the generator adds a "<token>_NIGHT" branch to
- *                 both tables (the night row reuses the day labels).
- *   labelShort    compact display for tiny faces / small slots. Seeded to the
- *                 token text (exactly what small faces show) so you can reword
- *                 it freely later without touching the token.
- *   labelLong     full readable display for roomy faces.
+ *                 the icon table.
+ *   labelShort    compact display for small slots. Nothing reads it, since the
+ *                 watch's wx_label_short shows the token itself.
+ *   labelLong     the sky in words, sent as WEATHER_CONDITION_LABEL to a face
+ *                 that declares it.
  *
- * FZDZ and FZRN intentionally share WEATHER_NOW_SLEET / WEATHER_NOW_NIGHT_SLEET (there is no
- * distinct freezing-drizzle glyph).
+ * FZDZ and FZRN share WEATHER_NOW_SLEET and WEATHER_NOW_NIGHT_SLEET, since there is no
+ * freezing-drizzle glyph of its own.
  */
 
 /** One condition row: its wire token plus its day/night icons and labels. */

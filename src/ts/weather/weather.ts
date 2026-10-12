@@ -1,9 +1,8 @@
 /**
  * Weather lookup dispatcher.
  *
- * Routes a request to the configured provider module. Each provider returns
- * its result through `done` as {temperature, condition, location, ok}, already
- * formatted to the user's unit preference.
+ * Routes a request to the configured provider module. Each provider hands back
+ * a WeatherResult through `done`, already in the user's unit.
  */
 
 import openMeteo from './providers/openmeteo';

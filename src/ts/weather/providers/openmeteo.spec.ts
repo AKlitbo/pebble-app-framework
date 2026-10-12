@@ -513,7 +513,9 @@ describe('openmeteo provider', () => {
       'apparent_temperature',
       'pressure_msl',
       'dew_point_2m',
-      'daily=sunrise,sunset',
+      'daily=',
+      'sunrise',
+      'sunset',
       'temperature_2m_max',
       'temperature_2m_min',
       'precipitation_probability_max',
@@ -613,7 +615,7 @@ describe('openmeteo provider', () => {
       expect(result.location).toBe('My Location');
     });
 
-    /** A label (the geocoded place name) must be carried through to the watch. */
+    /** A supplied label (the saved place's name) wins over the My Location default. */
     test('uses the supplied label for the reading location', () => {
       const result = run({ ...COORDS, label: 'Phoenix' }, routing({ [FC]: { body: FC_OK } }, []));
 

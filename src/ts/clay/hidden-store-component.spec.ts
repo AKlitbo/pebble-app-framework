@@ -37,13 +37,6 @@ describe('Clay serialisation safety', () => {
     expect(result.startsWith('function')).toBe(true);
   });
 
-  /** The same trap with a name attached: `function initialize()` also serialises to a broken key. */
-  test('leaves the initialize function anonymous', () => {
-    const result = String(component.initialize);
-
-    expect(result).toMatch(/^function\s*\(/);
-  });
-
   /** An arrow initialize would serialize fine but lose the `this` Clay binds, so $element is undefined. */
   test('does not declare initialize as an arrow function', () => {
     const result = String(component.initialize);

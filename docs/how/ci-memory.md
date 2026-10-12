@@ -62,20 +62,20 @@ It prints it only while linking, so the log of a build that linked is the only p
 
 ## The Limits
 
-`render-memory` ranks each row against the app image and static size limits of the current public Pebble SDK:
+`render-memory` ranks each row against these limits. The static one is the SDK's own, and the image one is rounded to 64 KB to stand in for the SDK's 65,535 byte cap on the loaded part:
 
 | Size | Limit |
 | :-- | :-- |
 | App Image | 64 KB, 65536 bytes |
 | Static | 65535 bytes |
 
-**The App Image.** The SDK's `inject_metadata.py` hard codes `MAX_APP_BINARY_SIZE` as `0x10000` and ignores the platform config, so emery and gabbro get 64 KB too, even though they declare 128 KB.
+**The App Image.** The SDK stops an image over the platform's limit, which is 128 KB on emery and gabbro. The loaded part, everything but the relocation table, is also held to 65,535 bytes, since the app's header keeps its size in 16 bits. The table measures the image against 64 KB, which stands in for that second limit.
 
 **The Static Size.** The cap is 65535 because `virtual_size` is a 16-bit field in the app header, and a larger size cannot be written into it. A face carries little relocation table, so this is normally the tighter of the two.
 
 **The Heap Is Shown, Not Ranked.** The free heap is what is left of the 128 KB after the app, the system's own allocations, and the resources. The table shows it, and the resources, but neither plays any part in the ranking or the warnings, since no face is near the heap.
 
-**Reports Only.** Neither action fails a build for size, since the SDK already fails a build at the limit that counts. A face at 95% still builds and still ships, and the table is there to show how much room is left before a change, not to stop one.
+**Reports Only.** Neither action fails a build for size, since the SDK already fails a build whose loaded part or static size passes 65,535 bytes. An image over 64 KB on emery or gabbro can still build, so a row over 100% there is a warning rather than a failed build. A face at 95% still builds and still ships, and the table is there to show how much room is left before a change, not to stop one.
 
 ## The Table
 

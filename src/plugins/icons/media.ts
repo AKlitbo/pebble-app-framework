@@ -115,11 +115,11 @@ function formatEntry(entry: MediaEntry, indent: string): string {
 }
 
 /**
- * Splices the rebuilt media array back into the raw package.json text and leaves every
+ * Splices the rebuilt media array back into the raw appinfo text and leaves every
  * other byte of the file untouched. Bracket matching steps over array-valued fields
  * inside an entry (like a font's targetPlatforms) and quoted brackets in strings.
  *
- * @param raw The face's package.json text, unparsed.
+ * @param raw The face's pebble.appinfo.json text, unparsed.
  * @param newMedia The media array to splice in, in place of the existing one.
  * @return The same text with its media array replaced.
  */
@@ -128,7 +128,7 @@ export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   const key = /"media"\s*:\s*\[/.exec(raw);
 
   if (!key) {
-    throw new Error('no "media" array in package.json');
+    throw new Error('no "media" array in pebble.appinfo.json');
   }
 
   const keyAt = key.index;
@@ -165,7 +165,7 @@ export function replaceMediaArray(raw: string, newMedia: MediaEntry[]): string {
   }
 
   if (close === -1) {
-    throw new Error('unterminated "media" array in package.json');
+    throw new Error('unterminated "media" array in pebble.appinfo.json');
   }
 
   const lineStart = raw.lastIndexOf('\n', keyAt) + 1;

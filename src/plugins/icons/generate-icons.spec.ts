@@ -2,7 +2,7 @@
  * Specs for the icon rasterizer's pure steps.
  *
  * whiten decides whether a glyph comes through visible white or invisible black.
- * resourceName/buildMedia/replaceMediaArray own the package.json sync: which
+ * resourceName/buildMedia/replaceMediaArray own the appinfo media sync: which
  * Pebble id a file maps to, how a manifest's icons fold into an existing media
  * array, and how that array is spliced back without disturbing the rest of the
  * file. iconSourcesDir decides where the SVGs are read from, and renderFace what

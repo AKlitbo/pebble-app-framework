@@ -12,7 +12,8 @@ import type { RequestFn, DoneFn, WeatherOpts, WeatherCoords, HourlyStrip, DailyS
 const OPEN_METEO_FORECAST_API = 'https://api.open-meteo.com/v1/forecast';
 
 // how many columns the forecast row shows and how far apart the hourly ones sit. eight fills
-// the 2x4's two stacked rows (the hourly strip then spans the next 16 hours at a 2-hour step)
+// a 2x4 panel's two stacked rows, and at a 2-hour step the last column sits 14 hours after
+// the first
 const FORECAST_COLS = 8;
 const HOURLY_STEP_HOURS = 2;
 
@@ -478,13 +479,13 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   // surface_pressure is ground level and reads about 170 hPa low in Denver
   const current = 'temperature_2m,weather_code,is_day,relative_humidity_2m,wind_speed_10m,wind_direction_10m,' +
     'uv_index,apparent_temperature,pressure_msl,dew_point_2m';
-  // the sunrise and sunset fields stay first so existing URL assertions still match daily=
+  // the parser reads each daily field by name, so their order here changes nothing on the watch
   let dailyFields = 'sunrise,sunset,temperature_2m_max,temperature_2m_min,precipitation_probability_max';
 
   // only a face that shows the forecast row pays for the hourly block and the extra
   // days. everyone else gets just the current reading plus today's daily extras
   if (opts.wantForecast) {
-    // weather_code rides last so the daily strip knows each day's sky
+    // weather_code gives the daily strip each day's sky
     dailyFields += ',weather_code';
   }
 

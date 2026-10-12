@@ -10,7 +10,8 @@
   The values follow the SDK's gcolor_definitions.h and are kept by hand, so a palette
   change there has to be copied here.
 
-  Link this before a face's frame.css and theme so the variables resolve.
+  Link this from each frame HTML beside the face's frame.css and theme. Any order works,
+  since a variable resolves once every sheet is read.
 */
 :root {
   --GColorBlack: #000000;

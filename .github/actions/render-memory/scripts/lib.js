@@ -1,20 +1,21 @@
 /**
  * Ranks the memory rows every face build left behind, and lays them out as one table.
  *
- * Three limits stop a face building, and the heap is not the one to watch.
+ * The SDK stops a face building when its loaded part or its static size passes 65,535 bytes. The image
+ * column stands in for the first, since only the relocation table can take an image past 64 KB, and the
+ * SDK's own image cap is 128 KB on emery and gabbro. The heap is shown beside them but never stops a build.
  *
- * The app image is load_size plus the relocation table, capped at 64 KB. The SDK's inject_metadata.py hard
- * codes MAX_APP_BINARY_SIZE = 0x10000 and ignores the platform config, so emery and gabbro get 64 KB too even
- * though they declare 128 KB.
+ * The app image is load_size plus the relocation table. The SDK's inject_metadata.py holds load_size to 65,535,
+ * since that header field is a uint16_t, and the whole image to the platform's MAX_APP_BINARY_SIZE.
  *
- * The static size is virtual_size, which is .text plus .data plus .bss, capped at 65535 because that header
+ * The static size is virtual_size, which is .text plus .data plus .bss, capped at 65,535 because that header
  * field is a uint16_t. A face carries little relocation table, so this is normally the tighter of the two.
  *
  * The free heap is what is left of 128 KB, and nothing is close to it, so it is shown but never ranked on.
  */
 const { markdownTable } = require('../../../shared/lib');
 
-/** The app image limit, MAX_APP_BINARY_SIZE in the SDK's inject_metadata.py. */
+/** What the table measures the app image against, 64 KB, rounded up from the SDK's 65,535 byte cap on load_size. */
 const IMAGE_LIMIT = 0x10000;
 
 /** The static size limit, since PebbleProcessInfo.virtual_size is a uint16_t. */
@@ -29,7 +30,6 @@ const ALARM_AT = 90;
 /**
  * Works out how close each row is to its limits, closest first.
  *
- * @param rows The rows every face build reported.
  * A row whose binary was missing reads as 0 bytes, which no real app image is, and one too short to hold its
  * header reads a static size of 0. Either is marked unmeasured and goes first, since reading as 0% would rank
  * a face that may be near a limit as the safest.
@@ -98,7 +98,7 @@ function renderReport(ranked) {
     '',
     markdownTable(['Face', 'Target', 'Platform', 'App Image', 'Static', 'Free Heap', 'Resources'], rows),
     '',
-    '**App Image** is `load_size` plus the relocation table. It is capped at 64 KB by `MAX_APP_BINARY_SIZE` in inject_metadata.py, which ignores the platform config, so emery and gabbro get 64 KB too.',
+    '**App Image** is `load_size` plus the relocation table. The SDK stops it at 128 KB on emery and gabbro and at 64 KB on the older platforms. It is measured against 64 KB here, since `load_size` alone is held to 65535 bytes and only the relocation table can take the image past that.',
     '',
     '**Static** is `virtual_size`, which is .text plus .data plus .bss. It is capped at 65535 because that header field is a uint16_t, and for a face it is normally the tighter of the two.',
     '',
