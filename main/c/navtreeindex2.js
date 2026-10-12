@@ -246,8 +246,8 @@ var NAVTREEINDEX2 =
 "structTimeBandSpan.html#a9a878a11dc8dcb894f60e121ffb50c20":[1,0,67,1],
 "structTimeBandSpan.html#abb8db41808468ee3b0693a2a427e12c9":[1,0,67,0],
 "structTimeConfig.html":[1,2,36],
-"structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20":[1,2,36,2],
+"structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20":[1,2,36,3],
 "structTimeConfig.html#a9f051ec76f4f1a95058f5ec52506aabc":[1,2,36,0],
-"structTimeConfig.html#af951cac1e7733963949ff707dcfe650e":[1,2,36,1],
-"structWeatherClock.html":[1,0,71]
+"structTimeConfig.html#ab302b6ad83ef9a9f1a26f0bcab293e16":[1,2,36,1],
+"structTimeConfig.html#af951cac1e7733963949ff707dcfe650e":[1,2,36,2]
 };

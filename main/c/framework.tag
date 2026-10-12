@@ -4294,6 +4294,13 @@
       <anchor>a3d9299acd4b3e475b07567a74035c95c</anchor>
       <arglist></arglist>
     </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_hourly</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>abd6c3228e1087f58110eea09b52dbbe4</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>time_store.h</name>
@@ -7841,6 +7848,13 @@
       <name>beats</name>
       <anchorfile>structTimeConfig.html</anchorfile>
       <anchor>a9f051ec76f4f1a95058f5ec52506aabc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>hourly</name>
+      <anchorfile>structTimeConfig.html</anchorfile>
+      <anchor>ab302b6ad83ef9a9f1a26f0bcab293e16</anchor>
       <arglist></arglist>
     </member>
   </compound>

@@ -1,7 +1,7 @@
 var searchData=
 [
   ['hour_0',['hour',['../structWeatherClock.html#a8ff4a083b881047a4608b0d328c3b6e6',1,'WeatherClock']]],
-  ['hourly_1',['hourly',['../structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010',1,'WeatherMessage::hourly'],['../structWeatherState.html#a51b784635421b939e7c3d77c78523d92',1,'WeatherState::hourly']]],
+  ['hourly_1',['hourly',['../structWeatherMessage.html#a7b03071ef02a2a9a5906f65735f1b010',1,'WeatherMessage::hourly'],['../structWeatherState.html#a51b784635421b939e7c3d77c78523d92',1,'WeatherState::hourly'],['../structTimeConfig.html#ab302b6ad83ef9a9f1a26f0bcab293e16',1,'TimeConfig::hourly']]],
   ['hourly_5ffirst_2',['hourly_first',['../structWeatherState.html#a0880368890fa96ac09b581c38f07f714',1,'WeatherState']]],
   ['hourly_5flen_3',['hourly_len',['../structWeatherMessage.html#a9137b2f3ba3f619fbecd49e518a97bcb',1,'WeatherMessage']]],
   ['hr_4',['hr',['../structHealthSeed.html#a164c62c872f758f093f13bb1772e3cbe',1,'HealthSeed::hr'],['../structDevShot.html#a61106f9c84b95b72b4da3cca2a312f74',1,'DevShot::hr'],['../struct_0fstruct_0e_8s__state.html#a69dfa550f32ab21f5c6c5d378d8acd7f',1,'[struct].s_state::hr']]],

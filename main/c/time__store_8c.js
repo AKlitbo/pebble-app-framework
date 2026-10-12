@@ -12,6 +12,7 @@ var time__store_8c =
     [ "s_beats", "time__store_8c.html#a3d9299acd4b3e475b07567a74035c95c", null ],
     [ "s_beats_timer", "time__store_8c.html#a25cfc5c232d6d20427553ac3cd954060", null ],
     [ "s_cb", "time__store_8c.html#a0d75601f9ac1a6725c17065d338a664a", null ],
+    [ "s_hourly", "time__store_8c.html#abd6c3228e1087f58110eea09b52dbbe4", null ],
     [ "s_minute", "time__store_8c.html#a8d97f148044f6486b6f7880444989530", null ],
     [ "s_tm", "time__store_8c.html#ac91dab61b991b18d0b6f0632cb71a458", null ]
 ];

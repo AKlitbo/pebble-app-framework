@@ -211,10 +211,13 @@ bool&#160;</td><td class="memItemRight"><b>minute_tick</b></td></tr>
 <tr class="memitem:a9f051ec76f4f1a95058f5ec52506aabc" id="r_a9f051ec76f4f1a95058f5ec52506aabc"><td class="memItemLeft"><a id="a9f051ec76f4f1a95058f5ec52506aabc" name="a9f051ec76f4f1a95058f5ec52506aabc"></a>
 bool&#160;</td><td class="memItemRight"><b>beats</b></td></tr>
 <tr class="memdesc:a9f051ec76f4f1a95058f5ec52506aabc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Also run the 86.4 second .beats timer for a live .beats readout. <br /></td></tr>
+<tr class="memitem:ab302b6ad83ef9a9f1a26f0bcab293e16" id="r_ab302b6ad83ef9a9f1a26f0bcab293e16"><td class="memItemLeft"><a id="ab302b6ad83ef9a9f1a26f0bcab293e16" name="ab302b6ad83ef9a9f1a26f0bcab293e16"></a>
+bool&#160;</td><td class="memItemRight"><b>hourly</b></td></tr>
+<tr class="memdesc:ab302b6ad83ef9a9f1a26f0bcab293e16"><td class="mdescLeft">&#160;</td><td class="mdescRight">With the minute tick off, still wake at the top of each hour, such as for an hourly buzz. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The rules a face hands the store, built from its own settings so the store names no SETTING_*. </p>
-<p>The two cadences are independent, so a face can run either or both. One face might run exactly one when its time format is a single exclusive choice. Another runs the minute tick always plus the beats timer whenever a live .beats module is on screen. </p>
+<p>The minute tick and the beats timer are independent, so a face can run either or both. One face might run exactly one when its time format is a single exclusive choice. Another runs the minute tick always plus the beats timer whenever a live .beats module is on screen. With the minute tick off, hourly adds the SDK's hour tick, so a face still wakes at the top of the hour. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/c/pebble/io/stores/<a class="el" href="time__store_8h_source.html">time_store.h</a></li>
 </ul>

@@ -55,7 +55,7 @@ var NAVTREEINDEX =
 "annotated.html",
 "group__lib__core.html#gaed0238885522c47e90f7a547719983bc",
 "group__lib__ui.html#ga0218b6d868d6c02e798e1f43e04a8d28",
-"structWeatherClock.html#a392bd2d9e6c9ecc8247663108492fcbb"
+"structWeatherClock.html"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

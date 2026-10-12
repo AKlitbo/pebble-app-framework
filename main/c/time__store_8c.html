@@ -205,14 +205,14 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('time__store_8c
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a693304ffdfb2fb3a8f990f8f6bab9f45" id="r_a693304ffdfb2fb3a8f990f8f6bab9f45"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a693304ffdfb2fb3a8f990f8f6bab9f45">tick_handler</a> (struct tm *tick_time, TimeUnits units_changed)</td></tr>
-<tr class="memdesc:a693304ffdfb2fb3a8f990f8f6bab9f45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minute-tick handler: feed the tick straight in.  <br /></td></tr>
+<tr class="memdesc:a693304ffdfb2fb3a8f990f8f6bab9f45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minute or hour tick handler: feed the tick straight in.  <br /></td></tr>
 <tr class="memitem:af5ca081d291a55bf66553c888a21abf4" id="r_af5ca081d291a55bf66553c888a21abf4"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#af5ca081d291a55bf66553c888a21abf4">set</a> (const struct tm *t)</td></tr>
 <tr class="memdesc:af5ca081d291a55bf66553c888a21abf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the new time and tell whoever is listening.  <br /></td></tr>
 <tr class="memitem:a760d605d56d3d2830e7356ad248400b2" id="r_a760d605d56d3d2830e7356ad248400b2"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a760d605d56d3d2830e7356ad248400b2">beats_fire</a> (void *data)</td></tr>
 <tr class="memdesc:a760d605d56d3d2830e7356ad248400b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">.beats ticker: refresh the time and re-arm for the next beat boundary.  <br /></td></tr>
 <tr class="memitem:ab8e8312ec2a60fbeb416d80c0858872f" id="r_ab8e8312ec2a60fbeb416d80c0858872f"><td class="memItemLeft"><a id="ab8e8312ec2a60fbeb416d80c0858872f" name="ab8e8312ec2a60fbeb416d80c0858872f"></a>
 static void&#160;</td><td class="memItemRight"><b>start_ticker</b> (void)</td></tr>
-<tr class="memdesc:ab8e8312ec2a60fbeb416d80c0858872f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the tickers the config asks for. The two cadences are independent, so a face can have the minute tick, the .beats timer, or both (a clock and .beats can run together). <br /></td></tr>
+<tr class="memdesc:ab8e8312ec2a60fbeb416d80c0858872f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the tickers the config asks for. The minute tick and the .beats timer are independent, so a face can have either or both (a clock and .beats can run together). With the minute tick off, hourly subscribes the hour tick instead. <br /></td></tr>
 <tr class="memitem:a598578fd5c48946f7fd5962c92b526b5" id="r_a598578fd5c48946f7fd5962c92b526b5"><td class="memItemLeft"><a id="a598578fd5c48946f7fd5962c92b526b5" name="a598578fd5c48946f7fd5962c92b526b5"></a>
 static void&#160;</td><td class="memItemRight"><b>stop_ticker</b> (void)</td></tr>
 <tr class="memdesc:a598578fd5c48946f7fd5962c92b526b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop both tickers (seed mode / teardown). <br /></td></tr>
@@ -244,6 +244,9 @@ static bool&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 <tr class="memitem:a3d9299acd4b3e475b07567a74035c95c" id="r_a3d9299acd4b3e475b07567a74035c95c"><td class="memItemLeft"><a id="a3d9299acd4b3e475b07567a74035c95c" name="a3d9299acd4b3e475b07567a74035c95c"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_beats</b></td></tr>
 <tr class="memdesc:a3d9299acd4b3e475b07567a74035c95c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the .beats timer is on. <br /></td></tr>
+<tr class="memitem:abd6c3228e1087f58110eea09b52dbbe4" id="r_abd6c3228e1087f58110eea09b52dbbe4"><td class="memItemLeft"><a id="abd6c3228e1087f58110eea09b52dbbe4" name="abd6c3228e1087f58110eea09b52dbbe4"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_hourly</b></td></tr>
+<tr class="memdesc:abd6c3228e1087f58110eea09b52dbbe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to wake on the hour when the minute tick is off. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The active time store: holds the current time and owns the tickers that update it. </p>
@@ -341,7 +344,7 @@ static bool&#160;</td><td class="memItemRight"><b>s_beats</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Minute-tick handler: feed the tick straight in. </p>
+<p>Minute or hour tick handler: feed the tick straight in. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">tick_time</td><td>The new time. </td></tr>
