@@ -156,9 +156,16 @@ function snapChannel(value: number): number {
 // one Pebble-64 colour as a single number, so the buckets can key a Map
 // the >>> 0 matters: a red channel of 255 shifts into the sign bit and would otherwise come back
 // negative, which no longer matches the same colour read out of a Uint32Array
+// alpha snaps to the same four levels as the colour, and every fully clear pixel is one colour
+// whatever its rgb, since the SDK turns clear pixels into a single palette entry
 function bucketKey(red: number, green: number, blue: number, alpha: number): number {
-  return ((snapChannel(red) << 24) | (snapChannel(green) << 16) | (snapChannel(blue) << 8) |
-    (alpha >= 128 ? 255 : 0)) >>> 0;
+  const level = snapChannel(alpha);
+
+  if (level === 0) {
+    return 0;
+  }
+
+  return ((snapChannel(red) << 24) | (snapChannel(green) << 16) | (snapChannel(blue) << 8) | level) >>> 0;
 }
 
 /** Splits a bucket key back into its four channel bytes. */
@@ -602,7 +609,10 @@ async function main(): Promise<void> {
         await page.evaluate(() => {
           document.querySelectorAll('link[href*="theme_"]').forEach((link) => link.remove());
         });
-        await page.addStyleTag({ path: themeCss });
+        // a link rather than inlined text, so a url() in the sheet resolves from css/ as it does in a browser.
+        // the sheet loading does not wait for an image it points at, so the bake waits for the network to settle
+        await page.addStyleTag({ url: pathToFileURL(themeCss).href });
+        await page.waitForLoadState('networkidle');
       }
 
       await page.evaluate(

@@ -372,6 +372,32 @@ describe('capColors', () => {
 
     expect(Array.from(result)).toEqual([250, 250, 250, 255, 255, 255, 255, 255]);
   });
+
+  /** The SDK makes every clear pixel one palette entry, so counting each clear pixel's rgb would fold real colours away to meet a cap the watch already meets. */
+  test('counts every fully clear pixel as one colour', () => {
+    // two clear pixels of different rgb and one red. the watch sees two colours, so a cap of two keeps all three
+    const buffer = raw([
+      [0, 0, 0, 0],
+      [255, 255, 255, 0],
+      [255, 0, 0, 255],
+    ]);
+
+    const result = capColors(buffer, 2);
+
+    expect(Array.from(result)).toEqual([0, 0, 0, 0, 255, 255, 255, 0, 255, 0, 0, 255]);
+  });
+
+  /** The SDK keeps four alpha levels, so a half-clear pixel is a colour of its own, not the same as a solid or a clear one. */
+  test('counts half-clear pixels as their own colour', () => {
+    const buffer = raw([
+      [255, 0, 0, 255],
+      [255, 0, 0, 170],
+    ]);
+
+    const result = capColors(buffer, 1);
+
+    expect(Array.from(result)).toEqual([255, 0, 0, 255, 255, 0, 0, 255]);
+  });
 });
 
 describe('missingStylesheets', () => {

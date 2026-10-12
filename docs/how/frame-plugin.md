@@ -87,7 +87,7 @@ resources/images/
 
 **A Page per Look.** With `supportsTheme` off, every look is a frame with a page of its own, and each page links its own palette sheets. A `theme_*.css` file such a page links is a plain stylesheet, and the generator never treats it as a theme.
 
-**One Page, Many Palettes.** With `supportsTheme` on, the face has one page and one `frame/css/theme_<name>.css` sheet per theme. For each theme the generator takes out every stylesheet link whose address holds `theme_` and adds that theme's sheet to the page.
+**One Page, Many Palettes.** With `supportsTheme` on, the face has one page and one `frame/css/theme_<name>.css` sheet per theme. For each theme the generator takes out every stylesheet link whose address holds `theme_` and adds that theme's sheet to the page as a link, so a `url()` inside it resolves from `frame/css/` the same as in a browser.
 
 **Picking with `--frame` and `--theme`.** Each takes a name or `all`, and `all` means every one the face has:
 
