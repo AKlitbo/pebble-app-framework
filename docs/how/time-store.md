@@ -24,7 +24,7 @@ time_store_subscribe(on_time_changed);
 
 **`beats`** runs a timer that fires on each .beats boundary, every 86.4 seconds. [.beats](beats.md) covers how it finds the boundary.
 
-**`hourly`** wakes the face at the top of each hour when `minute_tick` is off, through the SDK's hour tick. A .beats clock with an hourly buzz sets it, and wakes once an hour rather than sixty times. With the minute tick on it changes nothing, since the minute tick already lands on the hour.
+**`hourly`** wakes the face at the top of each hour when `minute_tick` is off, through the SDK's hour tick. A .beats clock with an hourly buzz sets it, and wakes once an hour rather than sixty times. With the minute tick on it changes nothing, since the minute tick already lands on the hour. The SDK fires the hour tick when the hour number changes, so the hour the clocks repeat when they fall back gets none.
 
 **`live`** runs whichever tickers are on. With `live` false the store runs none and the clock stays at the time it was seeded with.
 

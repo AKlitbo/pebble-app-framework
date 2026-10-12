@@ -42,15 +42,21 @@ It reads Vibrate on Connect or Vibrate on Disconnect, whichever fits, and plays 
 The framework provides the hourly setting but not a timer for it, since the face already has one. The time store calls the face on every tick (see [The Time Store](time-store.md)). The settings page shows an Hourly Vibration row in the Clock section when the face passes `hourlyVibe` to `buildConfig`, and the watch side is the `KNOWN_HOURLY_VIBE` entry in `settings_catalog.h`. The face plays it from its time callback when the minute is 0:
 
 ```c
+static time_t s_buzzed_hour = -1;
+
+static time_t hour_start(void)
+{
+    time_t now = time(NULL);
+    const struct tm *local = localtime(&now);
+
+    return now - local->tm_min * 60 - local->tm_sec;
+}
+
 static void on_time_changed(void)
 {
-    static int s_buzzed_hour = -1;
-    const struct tm *now = time_store_tm();
-    int hour = now->tm_hour + (now->tm_isdst > 0 ? 24 : 0);
-
-    if (now->tm_min == 0 && hour != s_buzzed_hour)
+    if (time_store_tm()->tm_min == 0 && hour_start() != s_buzzed_hour)
     {
-        s_buzzed_hour = hour;
+        s_buzzed_hour = hour_start();
         vibe_choice(settings_u8(SETTING_HOURLY_VIBE));
     }
 
@@ -58,9 +64,11 @@ static void on_time_changed(void)
 }
 ```
 
-**Once per Hour.** The time callback runs on the minute tick or the hour tick, and on each beat as well when the face shows .beats (see [.beats](beats.md)), so the check for minute 0 can pass twice in the same minute. Remembering the hour that buzzed keeps it to one buzz. It remembers `tm_hour` along with whether daylight saving is on, since the hour the clocks repeat when they fall back has the same `tm_hour` and would otherwise pass without a buzz. It stays on local time, so a change of time zone never makes the next hour look like the last one.
+**Once per Hour.** The time callback runs on the minute tick or the hour tick, and on each beat as well when the face shows .beats (see [.beats](beats.md)), so the check for minute 0 can pass twice in the same minute. Remembering the hour that buzzed keeps it to one buzz. It remembers when the local hour began rather than `tm_hour`, since two different real hours never share a start, and the hour the clocks repeat when they fall back has the same `tm_hour` as the one before it. `hour_start` reads the clock once and breaks that same reading apart. Pairing a fresh `time(NULL)` with the minutes and seconds of an older tick gives one hour two starts whenever a second turns over between them, and the hour buzzes twice.
 
-**Wake on the Hour.** A face that turns the minute tick off and runs only the beat timer is called every 86.4 seconds, so it only gets a call during minute 0 when a beat happens to turn over in it. In a time zone a whole number of hours from UTC that happens every hour. In one that sits half an hour or 45 minutes off, such as India or Nepal, one hour in three has no beat in its first minute and passes without a buzz. Such a face sets `hourly` in its `TimeConfig` whenever the buzz is on, so the time store wakes it at the top of every hour without running the minute tick, as the `time_config` in [The Time Store](time-store.md#setting-it-up) does.
+**Opening the Face in Minute 0.** Subscribing to a tick sends one tick straight away, so a face opened in minute 0 runs the check at once and buzzes an hour that already buzzed before the wearer left it. Setting `s_buzzed_hour` to `hour_start()` right after `time_store_init` counts the hour the face opens in as done.
+
+**Wake on the Hour.** A face that turns the minute tick off and runs only the beat timer is called every 86.4 seconds, so it only gets a call during minute 0 when a beat happens to turn over in it. In a time zone a whole number of hours from UTC that happens every hour. In one that sits half an hour or 45 minutes off, such as India or Nepal, one hour in three has no beat in its first minute and passes without a buzz. Such a face sets `hourly` in its `TimeConfig` whenever the buzz is on, so the time store wakes it at the top of every hour without running the minute tick, as the `time_config` in [The Time Store](time-store.md#setting-it-up) does. The SDK's hour tick fires only when the hour number changes, so the hour the clocks repeat in autumn gets no hour tick, and on the beat timer alone it buzzes only when a beat lands in its minute 0.
 
 ## Playing Your Own Rhythm
 
