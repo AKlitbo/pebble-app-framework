@@ -69,7 +69,7 @@ A real coordinate in any format carries digits, and the ways a phone says it has
 
 ## Saved and Restored
 
-The store saves both strings as one blob to the face's persist key, with the location store's tag in front. A restore checks the blob's size and tag before reading it, then gives each string a closing zero, so damaged bytes cannot run on past the end of a field when it is printed. Only a live store saves, and only a real fix. The save skips a pair already on flash, and with no sync time in the blob the whole of it counts as the reading. [How the Stores Work](stores.md#saving-to-flash) covers the tag, the check, and the skipped write.
+The store saves both strings as one blob to the face's persist key, with the location store's tag in front. A restore checks the blob's size and tag before reading it, then gives each string a closing zero, so damaged bytes cannot run on past the end of a field when it is printed. Only a live store saves, and only a real fix from the phone. A seed is never saved, so it cannot take the place of the wearer's last real fix. The save skips a pair already on flash, and with no sync time in the blob the whole of it counts as the reading. [How the Stores Work](stores.md#saving-to-flash) covers the tag, the check, and the skipped write.
 
 ## Seeding
 
@@ -78,4 +78,4 @@ LocationSeed seed = {.lat = "43.653", .lon = "-79.383"};
 location_store_init((LocationConfig){.live = false}, &seed);
 ```
 
-The framework's dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+The framework's dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. A live store takes a seed too. The seed then takes the place of restoring the last real fix, shows until the phone sends coordinates, and is never saved. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.

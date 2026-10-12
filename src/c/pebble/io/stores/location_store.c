@@ -59,8 +59,23 @@ static void persist_save(void)
 }
 
 /**
- * @brief Save the latest coordinates and tell whoever is listening. Doubles as the coords
- * channel handler (its signature matches) and the seed writer.
+ * @brief Copy a pair of coordinates into two fields the size of the state's, reading a missing
+ * one as empty.
+ *
+ * @param out_lat Where the latitude goes, sizeof(s_state.lat) long.
+ * @param out_lon Where the longitude goes, sizeof(s_state.lon) long.
+ * @param lat Latitude string, or NULL.
+ * @param lon Longitude string, or NULL.
+ */
+static void copy_pair(char *out_lat, char *out_lon, const char *lat, const char *lon)
+{
+    cstring_fit(out_lat, lat ? lat : "", sizeof(s_state.lat));
+    cstring_fit(out_lon, lon ? lon : "", sizeof(s_state.lon));
+}
+
+/**
+ * @brief Save the latest coordinates, and tell whoever is listening when they changed. It is the
+ * coords channel handler, since its signature matches.
  *
  * @param lat Latitude string, empty when unavailable.
  * @param lon Longitude string, empty when unavailable.
@@ -69,20 +84,20 @@ static void set(const char *lat, const char *lon)
 {
     char next_lat[sizeof(s_state.lat)];
     char next_lon[sizeof(s_state.lon)];
-    cstring_fit(next_lat, lat ? lat : "", sizeof(next_lat));
-    cstring_fit(next_lon, lon ? lon : "", sizeof(next_lon));
+    copy_pair(next_lat, next_lon, lat, lon);
 
-    // the phone sends the coords with every weather push and a wearer standing still sends the
-    // same two strings each time, so an unmoved fix skips the write rather than wearing the flash
-    if (strcmp(next_lat, s_state.lat) == 0 && strcmp(next_lon, s_state.lon) == 0)
-    {
-        return;
-    }
+    bool moved = strcmp(next_lat, s_state.lat) != 0 || strcmp(next_lon, s_state.lon) != 0;
+    copy_pair(s_state.lat, s_state.lon, next_lat, next_lon);
 
-    cstring_fit(s_state.lat, next_lat, sizeof(s_state.lat));
-    cstring_fit(s_state.lon, next_lon, sizeof(s_state.lon));
+    // saved even when the pair is the one already showing, since that can be a seed that was never
+    // saved. the save compares against what is on flash, so a wearer standing still, who gets the
+    // same two strings with every weather push, writes nothing
     persist_save();
-    if (s_cb) s_cb();
+
+    if (moved && s_cb)
+    {
+        s_cb();
+    }
 }
 
 void location_store_subscribe(void (*cb)(void))
@@ -96,10 +111,14 @@ void location_store_init(LocationConfig cfg, const LocationSeed *seed)
     s_persist_key = cfg.persist_key;
     s_state.lat[0] = '\0';
     s_state.lon[0] = '\0';
+    s_saved_sum = 0;  // nothing is known to be on flash until a restore or a save says so
 
     if (seed)
     {
-        set(seed->lat, seed->lon);  // s_cb is NULL until the face subscribes so no redraw yet
+        // a seed takes the place of the restore and shows until the phone sends a fix. it goes
+        // straight into the state rather than through set(), so it is never saved over the last
+        // real fix. s_cb is NULL until the face subscribes so no redraw fires yet
+        copy_pair(s_state.lat, s_state.lon, seed->lat, seed->lon);
     }
     else if (cfg.live)
     {

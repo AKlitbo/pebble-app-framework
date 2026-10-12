@@ -24,7 +24,9 @@ typedef struct
 } LocationConfig;
 
 /**
- * @brief Optional prefill, or pinned coords when live = false.
+ * @brief Optional prefill, or pinned coords when live = false. On a live store a seed takes the
+ * place of restoring the last real fix, and shows until the phone sends coordinates. A seed is
+ * never saved, so the fix on flash stays as it was for the next launch without one.
  */
 typedef struct
 {
