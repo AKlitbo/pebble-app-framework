@@ -219,6 +219,27 @@ void test_expand_leaves_a_tokenless_string_untouched(void)
     TEST_ASSERT_EQUAL_STRING("2026.0618", text);
 }
 
+/** @brief A token cut short at the end of the string is not a token, so it is left as it is rather than read past. */
+void test_expand_leaves_a_token_cut_short_at_the_end(void)
+{
+    char text[16] = "0618.{B";
+
+    beats_expand_token(text, 672);
+
+    TEST_ASSERT_EQUAL_STRING("0618.{B", text);
+    TEST_ASSERT_FALSE(beats_has_token(text));
+}
+
+/** @brief A partial token right before a real one must not hide it, or a raw {B} would show on screen. */
+void test_expand_finds_a_token_right_after_a_partial_one(void)
+{
+    char text[16] = "{B" BEATS_TOKEN;
+
+    beats_expand_token(text, 672);
+
+    TEST_ASSERT_EQUAL_STRING("{B672", text);
+}
+
 /** @brief Every token gets filled, or a format using two would show a stray brace on screen. */
 void test_expand_fills_every_token(void)
 {
@@ -282,6 +303,8 @@ int main(void)
     RUN_TEST(test_expand_writes_zero_as_three_zeroes);
     RUN_TEST(test_expand_leaves_the_rest_of_the_string_alone);
     RUN_TEST(test_expand_leaves_a_tokenless_string_untouched);
+    RUN_TEST(test_expand_leaves_a_token_cut_short_at_the_end);
+    RUN_TEST(test_expand_finds_a_token_right_after_a_partial_one);
     RUN_TEST(test_expand_fills_every_token);
     RUN_TEST(test_expand_clamps_a_reading_past_the_top_of_the_day);
     RUN_TEST(test_expand_clamps_a_negative_reading);

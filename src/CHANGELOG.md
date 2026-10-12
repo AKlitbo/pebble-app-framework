@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Changed
 
+- `beats_has_token` and `beats_expand_token` find the .beats token with `strncmp`, which the firmware exports, rather than `strstr`, which it does not. A face that references the date readout no longer links about 1.4 KB of newlib for it.
 - `setup-pebble` now warns when a `node-version` it ignores differs from the Node the face's framework records, the same as for the SDK and pebble-tool, and when the Node on the path before it, normally the one `paf sync` installed the unit under, is a different major from the one the build runs on. Its `node-version` input now defaults to empty, which takes 24 when there is no face.
 - The icons plugin's check, which `paf check` runs, now also fails when a committed icon PNG is missing, is not a PNG, or is not the size `resources/icons.json` asks for. A size changed in `icons.json` without a `paf gen <face> icons` no longer passes and ships the old icon. It reads the size from each PNG's header, so it still needs no sources folder. Its line in the output is now `icons:` rather than `icon media:`.
 - The `dev` plugin's `clay-preview` now stops on an argument it does not know and names it, rather than ignoring it. So `--settings saved.json`, with a space in place of the `=`, no longer previews a fresh install. `-h` and `--help` print the usage, which now lists `--settings=<file>`.
