@@ -46,7 +46,7 @@ The minute tick and the .beats timer are independent, so a face can run either o
 
 **Neither.** The time never moves and the other stores never get their turn, so nothing polls. Only a seeded face runs this way.
 
-The face's callback runs on every tick from any ticker. A face that does something on the hour, such as an hourly buzz, checks `tm_min == 0` and needs the minute tick or `hourly` on. On the .beats timer alone it can miss the hour, as [Vibrations](vibrations.md#on-the-hour) explains.
+The face's callback runs on every tick from any ticker. A face that does something on the hour checks `tm_min == 0` and needs the minute tick or `hourly` on. For an hourly buzz, `vibe_hourly` does the check and buzzes each hour once, as [Vibrations](vibrations.md#on-the-hour) shows. On the .beats timer alone it can miss the hour, as [Vibrations](vibrations.md#on-the-hour) explains.
 
 ## Each Tick, in Order
 

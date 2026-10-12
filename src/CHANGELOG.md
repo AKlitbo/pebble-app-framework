@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Added `vibe_hourly` in `vibe.h` for an hourly buzz. Call `vibe_hourly(time_store_tm(), choice)` from the face's time callback on every tick. It buzzes each real hour once however many tickers land in minute 0, including the hour the clocks repeat when they fall back. Its first call after launch only remembers the hour, so a face opened in minute 0 does not buzz an hour that already buzzed. The decision is `hour_latch.h` in the core.
+
 ## [4.2.0] - 2026-10-11
 
 ### Framework Changes
@@ -393,6 +401,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.2.0...HEAD
 [4.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...v4.0.0

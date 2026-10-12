@@ -59,4 +59,23 @@ void vibe_choice(uint8_t choice);
  */
 void vibe_bt_transition(bool connected);
 
+/**
+ * @brief Buzz once at the top of each hour. A face calls this from its time callback on every
+ * tick, and it buzzes on the first tick of each hour's minute 0.
+ *
+ * More than one ticker can tick inside minute 0, so it remembers when the hour that last buzzed
+ * began and buzzes each real hour once, including the hour the clocks repeat when they fall back.
+ * On a .beats clock the face sets hourly in its TimeConfig, so a tick lands in minute 0 at all.
+ *
+ * The first call after launch only remembers its hour. Subscribing to a tick sends one tick
+ * straight away, so a face opened in minute 0 would otherwise buzz an hour that already buzzed
+ * before the wearer left it. A face that was not running at the top of the hour, such as one
+ * closed for an app, then stays silent until the next hour, which beats a second buzz on every
+ * return in minute 0.
+ *
+ * @param tick The time of the tick, normally time_store_tm().
+ * @param choice A VibeChoice value, normally the Hourly Vibration setting. VIBE_NONE stays silent.
+ */
+void vibe_hourly(const struct tm *tick, uint8_t choice);
+
 /** @} */
