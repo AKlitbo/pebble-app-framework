@@ -52,6 +52,15 @@
       .type = SETTING_ENUM_U8, .offset = (off), .enum_count = (count) }
 
 /**
+ * @brief Setting definition for Header Font, an index into the face's own header font table.
+ * @param off Offset into the face's settings struct.
+ * @param count How many fonts the face's table holds.
+ */
+#define KNOWN_HEADER_FONT(off, count) \
+    { .id = SETTING_HEADER_FONT, .message_key = &MESSAGE_KEY_APPEARANCE_HEADER_FONT, \
+      .type = SETTING_ENUM_U8, .offset = (off), .enum_count = (count) }
+
+/**
  * @brief Setting definition for Steps Mode.
  * @param off Offset into the face's settings struct.
  * @param count The number of enum values.
