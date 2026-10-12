@@ -67,28 +67,98 @@ const TRANSPARENT = {
 };
 
 /**
+ * Comments and CDATA blocks, which can hold text that looks like a tag, and svg opening tags, whose
+ * quoted values can hold a '>'. Walking these in order finds the real root.
+ */
+const ROOT_SCAN = /<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<svg\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi;
+
+/** The colour properties whiten reads on the root, each as an attribute and inside a style. */
+const PROPERTY_PATTERNS: Record<'fill' | 'stroke' | 'color', { attribute: RegExp; style: RegExp }> = {
+  fill: { attribute: /\sfill\s*=/i, style: /\sstyle\s*=\s*["']([^"']*[;\s])?fill\s*:/i },
+  stroke: { attribute: /\sstroke\s*=/i, style: /\sstyle\s*=\s*["']([^"']*[;\s])?stroke\s*:/i },
+  color: { attribute: /\scolor\s*=/i, style: /\sstyle\s*=\s*["']([^"']*[;\s])?color\s*:/i },
+};
+
+/**
+ * The root element's opening tag and where it starts, skipping comments and CDATA before it.
+ *
+ * @param svgText The svg source.
+ * @return The root's opening tag and its offset, or null when there is none.
+ */
+function findRoot(svgText: string): { tag: string; index: number } | null {
+  for (const match of svgText.matchAll(ROOT_SCAN)) {
+    if (/^<svg/i.test(match[0])) {
+      return { tag: match[0], index: match.index ?? 0 };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * The opening tag of an svg's root element, skipping any comment or CDATA block before it.
+ *
+ * @param svgText The svg source.
+ * @return The root's opening tag, or an empty string when there is none.
+ */
+export function rootTag(svgText: string): string {
+  return findRoot(svgText)?.tag ?? '';
+}
+
+/** Whether a tag sets a colour property, as an attribute of its own or inside its style. */
+function setsProperty(tag: string, name: 'fill' | 'stroke' | 'color'): boolean {
+  const patterns = PROPERTY_PATTERNS[name];
+
+  return patterns.attribute.test(tag) || patterns.style.test(tag);
+}
+
+/**
  * Turns a glyph's black white so the face can recolour the loaded bitmap's palette at runtime.
  *
+ * Every fill, stroke, or color written as black becomes white, as an attribute or inside a style.
+ * The root gets a white fill when it sets none, a white stroke when it sets neither a fill nor a
+ * stroke, and a white color when it sets no color, so currentColor draws white too.
+ *
  * @param svgText The svg source to recolour.
- * @return The same svg source with its black fills and strokes made white, and a white fill and
- *   stroke added to a root that sets no fill of its own.
+ * @return The same svg source with its black made white and the root's missing colours added in white.
  */
 export function whiten(svgText: string): string {
-  // recolour any hard-coded black so stroke-style glyphs (which set their own colour on the path) come through white
-  let out = svgText.replace(
-    /(fill|stroke)="(#000000|#000|black)"/gi,
-    `$1="${WHITE}"`
-  );
+  // recolour any hard-coded black so stroke-style glyphs (which set their own colour on the path) come
+  // through white, whether it is written as an attribute or inside a style
+  let out = svgText
+    .replace(/(fill|stroke|color)="(#000000|#000|black)"/gi, `$1="${WHITE}"`)
+    .replace(/(^|[;"'\s])(fill|stroke|color)\s*:\s*(#000000|#000|black)\b/gi, `$1$2:${WHITE}`);
 
-  // glyphs that never set a fill on the root default to black so force white there
-  // glyphs that already set a root fill (like fill="none" on stroke icons) are left alone
-  // so their outlines stay open instead of getting flooded white. poking white into the
-  // root svg tag with a regex saves loading a whole dom parser just to change colours
-  if (!/<svg\b[^>]*\bfill=/i.test(out)) {
-    out = out.replace(
-      /<svg\b/,
-      `<svg fill="${WHITE}" stroke="${WHITE}"`
-    );
+  // poking white into the root svg tag with a regex saves loading a whole dom parser just to
+  // change colours. each one goes on only when the root sets none, as an attribute or in its
+  // style, since a second attribute of one name is invalid xml that sharp refuses
+  const root = findRoot(out);
+
+  if (!root) {
+    return out;
+  }
+
+  const added: string[] = [];
+
+  // a root with no fill defaults to black, so it is forced white. one that sets a fill, like
+  // fill="none" on a stroke icon, is left alone so its outline stays open rather than flooding
+  if (!setsProperty(root.tag, 'fill')) {
+    added.push(`fill="${WHITE}"`);
+
+    if (!setsProperty(root.tag, 'stroke')) {
+      added.push(`stroke="${WHITE}"`);
+    }
+  }
+
+  // currentColor reads the color property, which is black unless something sets it
+  if (!setsProperty(root.tag, 'color')) {
+    added.push(`color="${WHITE}"`);
+  }
+
+  if (added.length) {
+    const nameEnd = root.index + '<svg'.length;
+
+    out = out.slice(0, nameEnd) + ' ' + added.join(' ') + out.slice(nameEnd);
   }
 
   return out;

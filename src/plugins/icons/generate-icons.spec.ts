@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
 import { describe, test, expect, vi } from 'vitest';
-import { whiten, iconSourcesDir, renderFace, holdsAnyIcon, svgSource } from './generate-icons';
+import { whiten, rootTag, iconSourcesDir, renderFace, holdsAnyIcon, svgSource } from './generate-icons';
 import { resourceName, buildMedia, replaceMediaArray } from './media';
 import type { IconManifest } from './media';
 import { tempDir } from '../../ts/testing/temp-dir';
@@ -55,17 +55,90 @@ describe('whiten', () => {
   test('injects white fill and stroke on a root svg that declares no fill', () => {
     const result = whiten('<svg viewBox="0 0 24 24"><path d="M0 0"/></svg>');
 
-    expect(result).toContain('<svg fill="#ffffff" stroke="#ffffff" viewBox="0 0 24 24"');
+    expect(result).toContain('<svg fill="#ffffff" stroke="#ffffff" color="#ffffff" viewBox="0 0 24 24"');
   });
 
   /** Flooding a stroke icon's fill="none" root with white fills the outline solid, destroying the shape. */
-  test('leaves a root that already declares a fill untouched', () => {
+  test('leaves the fill of a root that already declares one', () => {
     const input = '<svg fill="none" stroke="#000" viewBox="0 0 24 24"><path d="M0 0"/></svg>';
 
     const result = whiten(input);
 
-    expect(result).toContain('<svg fill="none"');
+    expect(rootTag(result)).toContain(' fill="none"');
     expect(result).not.toContain('fill="#ffffff"');
+  });
+
+  /**
+   * A root that sets its own stroke but no fill would get a second stroke, which is invalid xml.
+   * sharp refuses it, so paf gen icons stopped on that glyph.
+   */
+  test('adds no second stroke to a root that already sets one', async () => {
+    const svg = whiten('<svg xmlns="http://www.w3.org/2000/svg" stroke="#000" viewBox="0 0 24 24" width="24" height="24"><path d="M2 2L22 22"/></svg>');
+
+    const result = sharp(Buffer.from(svg)).png().toBuffer();
+
+    await expect(result).resolves.toBeInstanceOf(Buffer);
+    expect(rootTag(svg).match(/\sstroke=/g)).toEqual([' stroke=']);
+    expect(rootTag(svg)).toContain('stroke="#ffffff"');
+  });
+
+  /** currentColor reads color, which is black unless set, so a glyph drawn with it would come out black. */
+  test('makes currentColor draw white', () => {
+    const result = whiten('<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result)).toContain('color="#ffffff"');
+  });
+
+  /** A colour set through style counts the same as an attribute, and a black one there is whitened too. */
+  test('treats a fill or stroke set in the root style as set, and whitens it', () => {
+    const result = whiten('<svg style="fill:none;stroke:#000" viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result)).not.toMatch(/\s(fill|stroke)=/);
+    expect(rootTag(result)).toContain('stroke:#ffffff');
+  });
+
+  /** A root that sets color to black would leave currentColor black, so that black is whitened like any other. */
+  test('whitens a black color so currentColor draws white', () => {
+    const result = whiten('<svg color="#000" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result).match(/\scolor=/g)).toEqual([' color=']);
+    expect(rootTag(result)).toContain('color="#ffffff"');
+  });
+
+  /** A root that sets its own color keeps it, and a second color attribute would be invalid xml sharp refuses. */
+  test('adds no second color to a root that already sets one', () => {
+    const result = whiten('<svg color="red" viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result).match(/\scolor=/g)).toEqual([' color=']);
+  });
+
+  /** A '>' inside a quoted value must not end the root tag, or a stroke after it would look unset and be doubled. */
+  test('reads the whole root tag past a > inside a quoted value', () => {
+    const result = whiten('<svg aria-label="a > b" stroke="#000" viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result).match(/\sstroke=/g)).toEqual([' stroke=']);
+  });
+
+  /** An svg tag written inside a comment before the root is not the root, so the real root still gets its white. */
+  test('skips an svg tag inside a comment before the root', () => {
+    const result = whiten('<!-- based on <svg fill="none"> --><svg viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result)).toContain('fill="#ffffff"');
+    expect(result).toContain('<!-- based on <svg fill="none"> -->');
+  });
+
+  /** Only the root counts. A nested svg that sets a stroke must not stop the root getting its white stroke. */
+  test('reads only the root tag, not a nested svg', () => {
+    const result = whiten('<svg viewBox="0 0 24 24"><svg x="2" stroke="#000"><path d="M0 0"/></svg></svg>');
+
+    expect(rootTag(result)).toContain('stroke="#ffffff"');
+  });
+
+  /** A prefixed attribute such as data-stroke is not the stroke, so the root still gets a white one. */
+  test('does not mistake a prefixed attribute for the property', () => {
+    const result = whiten('<svg data-stroke="x" viewBox="0 0 24 24"><path d="M0 0"/></svg>');
+
+    expect(rootTag(result)).toContain('stroke="#ffffff"');
   });
 });
 
