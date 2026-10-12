@@ -103,7 +103,11 @@ static void seed_shot(const DevShot *shot)
 #if defined(APPMESSAGE_HAS_WEATHER)
     // spread the empty seed so every reading the shot does not set (humidity, wind, uv, ...)
     // reads as "--" rather than a bogus 0
-    WeatherSeed wx = WEATHER_SEED_EMPTY;
+    // the seed is copied from a named constant, which gets a section of its own that the linker
+    // drops with this function in a release build. the macro written straight into wx leaves an
+    // unnamed copy in the file's shared .data, which the SDK's linker keeps in every build
+    static const WeatherSeed s_empty = WEATHER_SEED_EMPTY;
+    WeatherSeed wx = s_empty;
     wx.temp = shot->temp;
     wx.cond = shot->cond;
     weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);

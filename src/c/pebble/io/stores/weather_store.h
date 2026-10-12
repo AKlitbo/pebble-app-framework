@@ -55,10 +55,13 @@ typedef struct
 
 /// A WeatherSeed with every optional reading already set to its no-data value. Spread it and
 /// override only what you have, so a partial seed still reads as "--" instead of a bogus 0.
+/// Copy it from a named static const, which the linker drops with the dev code in a release build.
+/// Written straight into a local, it leaves an unnamed copy in .data that every build keeps.
 /// @code
-/// WeatherSeed seed = WEATHER_SEED_EMPTY;
+/// static const WeatherSeed s_empty = WEATHER_SEED_EMPTY;
+/// WeatherSeed seed = s_empty;
 /// seed.temp = 23;
-/// seed.cond = "SUNNY";
+/// seed.cond = "CLEAR";
 /// @endcode
 #define WEATHER_SEED_EMPTY ((WeatherSeed){                       \
     .temp = WEATHER_NO_TEMP, .cond = "",                         \

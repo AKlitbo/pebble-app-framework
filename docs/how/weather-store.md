@@ -12,10 +12,11 @@ weather_store_init((WeatherConfig){.live = true, .poll_min = WEATHER_POLL_MIN,
 weather_store_subscribe(engine_mark_dirty);
 ```
 
-`WEATHER_SEED_EMPTY` starts every field at its no-data value, so a seed for screenshots sets only what it shows:
+`WEATHER_SEED_EMPTY` starts every field at its no-data value, so a seed for screenshots sets only what it shows. Copying it from a named `static const` lets the linker drop it with the rest of the dev code in a release build. Written straight into a local, it leaves an unnamed copy in `.data`, which the SDK's linker keeps in every build:
 
 ```c
-WeatherSeed seed = WEATHER_SEED_EMPTY;
+static const WeatherSeed s_empty = WEATHER_SEED_EMPTY;
+WeatherSeed seed = s_empty;
 seed.temp = 23;
 seed.cond = "CLEAR";
 weather_store_init((WeatherConfig){.live = false}, &seed);
