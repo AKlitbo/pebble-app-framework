@@ -120,6 +120,73 @@ void test_a_temperature_out_of_range_is_clamped(void)
     TEST_ASSERT_EQUAL_INT(199, state.temp);
 }
 
+/**
+ * @brief The high, low, feels-like, and dew point are pinned to -99 to 199 the same as the current
+ * temperature, so a phone that sends a wild one cannot run it past a three digit label.
+ */
+void test_the_other_temperatures_out_of_range_are_clamped(void)
+{
+    WeatherState state = held();
+    WeatherMessage msg = empty_message();
+    msg.groups = WEATHER_GROUP_FORECAST | WEATHER_GROUP_AIR;
+    msg.temp_max = 400;
+    msg.temp_min = -400;
+    msg.feels_like = 250;
+    msg.dew_point = -150;
+
+    weather_reading_apply(&state, &msg, &AFTERNOON);
+
+    TEST_ASSERT_EQUAL_INT(199, state.temp_max);
+    TEST_ASSERT_EQUAL_INT(-99, state.temp_min);
+    TEST_ASSERT_EQUAL_INT(199, state.feels_like);
+    TEST_ASSERT_EQUAL_INT(-99, state.dew_point);
+}
+
+/**
+ * @brief A phone that sends the no-data value itself gets a dash for every temperature, not a
+ * clamped -99 that reads as a real one.
+ */
+void test_the_no_data_temperature_stays_no_data(void)
+{
+    WeatherState state = held();
+    WeatherMessage msg = empty_message();
+    msg.groups = WEATHER_GROUP_CURRENT | WEATHER_GROUP_FORECAST | WEATHER_GROUP_AIR;
+    msg.ok = true;
+    msg.temp = WEATHER_NO_TEMP;
+    msg.temp_max = WEATHER_NO_TEMP;
+    msg.temp_min = WEATHER_NO_TEMP;
+    msg.feels_like = WEATHER_NO_TEMP;
+    msg.dew_point = WEATHER_NO_TEMP;
+
+    weather_reading_apply(&state, &msg, &AFTERNOON);
+
+    TEST_ASSERT_EQUAL_INT(WEATHER_NO_TEMP, state.temp);
+    TEST_ASSERT_EQUAL_INT(WEATHER_NO_TEMP, state.temp_max);
+    TEST_ASSERT_EQUAL_INT(WEATHER_NO_TEMP, state.temp_min);
+    TEST_ASSERT_EQUAL_INT(WEATHER_NO_TEMP, state.feels_like);
+    TEST_ASSERT_EQUAL_INT(WEATHER_NO_TEMP, state.dew_point);
+}
+
+/**
+ * @brief A good fetch whose current temperature could not be read shows a dash, not -99.
+ *
+ * The decoder reads a temperature of a width it does not know as left out. Without the no-data
+ * check that marker clamps to the lowest temperature the face can show, so the panel reads a
+ * confident -99 where it has nothing to show.
+ */
+void test_a_good_fetch_without_a_temperature_shows_no_data(void)
+{
+    WeatherState state = held();
+    WeatherMessage msg = empty_message();
+    msg.groups = WEATHER_GROUP_CURRENT;
+    msg.ok = true;
+    msg.cond = "RAIN";
+
+    weather_reading_apply(&state, &msg, &AFTERNOON);
+
+    TEST_ASSERT_EQUAL_INT(WEATHER_NO_TEMP, state.temp);
+}
+
 /** @brief A forecast group missing one reading blanks it, so today's low never sits beside a stale high. */
 void test_a_group_blanks_the_readings_it_left_out(void)
 {
@@ -412,6 +479,9 @@ int main(void)
     RUN_TEST(test_a_failed_fetch_keeps_the_last_reading);
     RUN_TEST(test_a_good_reading_is_kept_and_stamped);
     RUN_TEST(test_a_temperature_out_of_range_is_clamped);
+    RUN_TEST(test_the_other_temperatures_out_of_range_are_clamped);
+    RUN_TEST(test_the_no_data_temperature_stays_no_data);
+    RUN_TEST(test_a_good_fetch_without_a_temperature_shows_no_data);
     RUN_TEST(test_a_group_blanks_the_readings_it_left_out);
     RUN_TEST(test_a_missing_extra_string_reads_empty);
     RUN_TEST(test_a_group_that_did_not_arrive_is_left_alone);

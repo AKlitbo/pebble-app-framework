@@ -118,8 +118,10 @@ typedef struct
  *
  * A group that did not arrive leaves its readings alone. One that did replaces all of them, and a
  * reading it left out becomes that reading's no-data value, -1 or WEATHER_NO_TEMP for the
- * temperatures. A failed fetch keeps the last good temperature and sky. A strip that does not
- * read clean keeps the last good row.
+ * temperatures. The current temperature, the high and low, the feels-like, and the dew point are
+ * held to -99 to 199, and one sent as WEATHER_NO_TEMP stays no data. A failed fetch keeps the last
+ * good temperature and sky. A strip that does not read clean keeps the last good row, and a strip's
+ * temperatures are kept as they arrive until weather_reading_convert holds them to the same range.
  *
  * Each strip that reads clean records where its first column starts, and the high, low, UV, and
  * rain chance record the day they came, so the store can tell later what has gone by.

@@ -465,7 +465,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
             // it on the unavailable side, so a failed fetch's status text never shows as a live 0
             msg.groups |= WEATHER_GROUP_CURRENT;
             msg.ok = tuple_int_or(dict_find(iterator, MESSAGE_KEY_WEATHER_OK), 0) == 1;
-            msg.temp = tuple_int_or(temp_t, 0);
+            msg.temp = tuple_int_or(temp_t, INT_MIN);  // a width it cannot read is no reading, not 0
             msg.cond = cond;
 #if defined(HAS_MESSAGE_KEY_WEATHER_CONDITION_LABEL)
             // the sky in words, which only a face that shows it declares a key for

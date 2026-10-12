@@ -14,11 +14,27 @@
 #define SECONDS_PER_READING_HOUR 3600  ///< Seconds in an hour, for placing a strip's first column
 #define SECONDS_PER_READING_DAY  86400 ///< Seconds in a day, for placing a strip's first day
 #define MINUTES_PER_READING_DAY  1440  ///< Minutes in a day, the range a sunrise or sunset is held to
+#define TEMP_LOWEST  (-99) ///< The lowest temperature kept, the most a three digit label shows below zero
+#define TEMP_HIGHEST 199   ///< The highest temperature kept, the most a three digit label shows
 
 /** A number the message left out, as the store's own no-data value. */
 static int or_none(int value, int none)
 {
     return value == INT_MIN ? none : value;
+}
+
+/**
+ * A temperature held to TEMP_LOWEST to TEMP_HIGHEST, so a wild one cannot run past a three digit
+ * label or overflow the current temperature's int16, or no data for one the message left out. The
+ * store's own no-data value counts as left out too, since clamping it would turn it into a real -99.
+ *
+ * @param value The temperature from the message, or INT_MIN when it left one out.
+ * @return The temperature held to the range, or WEATHER_NO_TEMP.
+ */
+static int temp_or_none(int value)
+{
+    return (value == INT_MIN || value == WEATHER_NO_TEMP) ? WEATHER_NO_TEMP
+                                                           : clamp_int(value, TEMP_LOWEST, TEMP_HIGHEST);
 }
 
 /** A time of day in minutes, or -1 for one the message left out or one no clock can read. */
@@ -31,11 +47,10 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const
 {
     bool kept = false;
 
-    // a failed fetch still answers, but its temperature is not a reading, so the last good one
-    // stays. only a real one is clamped, so a corrupt value cannot overflow the int16 or draw absurd
+    // a failed fetch still answers, but its temperature is not a reading, so the last good one stays
     if ((msg->groups & WEATHER_GROUP_CURRENT) && msg->ok)
     {
-        state->temp = (int16_t)clamp_int(msg->temp, -99, 199);
+        state->temp = (int16_t)temp_or_none(msg->temp);
         cstring_fit(state->cond, msg->cond ? msg->cond : "--", sizeof(state->cond));
         cstring_fit(state->cond_label, msg->cond_label ? msg->cond_label : "", sizeof(state->cond_label));
         kept = true;
@@ -54,8 +69,8 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const
     if (msg->groups & WEATHER_GROUP_FORECAST)
     {
         state->uv = or_none(msg->uv, -1);
-        state->temp_max = or_none(msg->temp_max, WEATHER_NO_TEMP);
-        state->temp_min = or_none(msg->temp_min, WEATHER_NO_TEMP);
+        state->temp_max = temp_or_none(msg->temp_max);
+        state->temp_min = temp_or_none(msg->temp_min);
         state->precip_chance = or_none(msg->precip_chance, -1);
         state->forecast_day = clock->day_start;
         kept = true;
@@ -63,9 +78,9 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const
 
     if (msg->groups & WEATHER_GROUP_AIR)
     {
-        state->feels_like = or_none(msg->feels_like, WEATHER_NO_TEMP);
+        state->feels_like = temp_or_none(msg->feels_like);
         state->pressure = or_none(msg->pressure, -1);
-        state->dew_point = or_none(msg->dew_point, WEATHER_NO_TEMP);
+        state->dew_point = temp_or_none(msg->dew_point);
         kept = true;
     }
 
@@ -114,7 +129,7 @@ static int convert_temp(int value, bool to_fahrenheit)
     }
 
     int converted = to_fahrenheit ? div_nearest(value * 9, 5) + 32 : div_nearest((value - 32) * 5, 9);
-    return clamp_int(converted, -99, 199);
+    return clamp_int(converted, TEMP_LOWEST, TEMP_HIGHEST);
 }
 
 void weather_reading_convert(WeatherState *state, bool to_fahrenheit)
