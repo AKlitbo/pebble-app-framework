@@ -1,9 +1,9 @@
 name: Setup Pebble
 description: >
-  Installs Node, the project's npm dependencies, pebble-tool and the Pebble SDK so `paf build`
-  can run, then checks the toolchain answers and puts the pebble-tool and SDK versions on the job summary.
-  Given a face that paf sync has already filled and installed, it installs the Node, SDK, and pebble-tool
-  that face's framework records. Linux runners only.
+  Installs Node, pebble-tool, and the Pebble SDK so `paf build` can run, then checks the toolchain answers
+  and puts the pebble-tool and SDK versions on the job summary. Given a face that paf sync has already
+  filled and installed, it takes the Node, SDK, and pebble-tool that face's framework records. Without
+  one, it takes them from the inputs and runs npm ci at the repo root. Linux runners only.
 
 # a face repo's ci.yml and release.yml both run this, since a release built with a different toolchain
 # from CI is a release nobody tested
@@ -17,9 +17,12 @@ inputs:
     required: false
     default: ''
   node-version:
-    description: The Node version to install.
+    description: >
+      The Node version to install when there is no face, or when the face's framework records no Node.
+      Empty takes 24. A face's framework that records one wins, and a different major here is named
+      in a warning.
     required: false
-    default: '24'
+    default: ''
   sdk-version:
     description: >
       The Pebble SDK to install, such as 4.17. The default, latest, takes whatever is newest on the day,
@@ -57,8 +60,10 @@ runs:
       id: versions
       shell: bash
       env:
+        FROM_FACE_NODE: ${{ steps.toolchain.outputs.node }}
         FROM_FACE_SDK: ${{ steps.toolchain.outputs.sdk }}
         FROM_FACE_TOOL: ${{ steps.toolchain.outputs.pebble-tool }}
+        INPUT_NODE: ${{ inputs.node-version }}
         INPUT_SDK: ${{ inputs.sdk-version }}
         INPUT_TOOL: ${{ inputs.pebble-tool-version }}
       run: |
@@ -69,6 +74,25 @@ runs:
         if [ -n "$FROM_FACE_TOOL" ] && [ -n "$INPUT_TOOL" ] && [ "$INPUT_TOOL" != "$FROM_FACE_TOOL" ]; then
           echo "::warning title=Setup Pebble::pebble-tool-version $INPUT_TOOL is ignored, since the face's framework records pebble-tool $FROM_FACE_TOOL"
         fi
+        # a major is compared only when it is a plain number, since setup-node also takes forms such as
+        # lts/* or node that name no major here
+        WANT=${FROM_FACE_NODE%%.*}
+        ASKED=${INPUT_NODE#v}
+        ASKED=${ASKED%%.*}
+        if [ -n "$WANT" ] && [[ "$ASKED" =~ ^[0-9]+$ ]] && [ "$ASKED" != "$WANT" ]; then
+          echo "::warning title=Setup Pebble::node-version $INPUT_NODE is ignored, since the face's framework records Node $FROM_FACE_NODE"
+        fi
+        # the unit was installed by paf sync, normally under the Node still on the path, and the build
+        # runs on the one the framework records. a native package installed under one major can fail
+        # to load on another, so a different major on the path is named. it only warns, so a node that
+        # will not answer is skipped rather than failing the step
+        if [ -n "$WANT" ] && command -v node > /dev/null; then
+          ON_PATH=$(node -p 'process.versions.node.split(".")[0]' 2> /dev/null || true)
+          if [[ "$ON_PATH" =~ ^[0-9]+$ ]] && [ "$ON_PATH" != "$WANT" ]; then
+            echo "::warning title=Setup Pebble::the Node on the path before this step is $ON_PATH, and the build runs on Node $FROM_FACE_NODE, which the face's framework records. If paf sync installed the unit under Node $ON_PATH, run it under Node $FROM_FACE_NODE instead"
+          fi
+        fi
+        echo "node=${FROM_FACE_NODE:-${INPUT_NODE:-24}}" >> "$GITHUB_OUTPUT"
         echo "sdk=${FROM_FACE_SDK:-$INPUT_SDK}" >> "$GITHUB_OUTPUT"
         echo "pebble-tool=${FROM_FACE_TOOL:-$INPUT_TOOL}" >> "$GITHUB_OUTPUT"
 
@@ -76,7 +100,7 @@ runs:
     - name: Setup Node
       uses: actions/setup-node@v7
       with:
-        node-version: ${{ steps.toolchain.outputs.node || inputs.node-version }}
+        node-version: ${{ steps.versions.outputs.node }}
         cache: ${{ inputs.face == '' && 'npm' || '' }}
 
     # the pkjs bundle requires @rebble/clay, so a full install is needed
