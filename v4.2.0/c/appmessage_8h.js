@@ -1,0 +1,26 @@
+var appmessage_8h =
+[
+    [ "APPMESSAGE_CUSTOM_COLORS_MAX", "group__lib__io.html#ga8bfcc8d396856901aeea684974fdb15c", null ],
+    [ "CalendarStripHandler", "group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b", null ],
+    [ "CoordsHandler", "group__lib__io.html#ga59b6055d84a446d8b469ba7ef8883030", null ],
+    [ "CustomColorsHandler", "group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931", null ],
+    [ "CustomColorsProvider", "group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc", null ],
+    [ "InboxCompleteHandler", "group__lib__io.html#gaae586b1981cefa58e0284ec05e167205", null ],
+    [ "SettingsChangedHandler", "group__lib__io.html#gaa75e1339172964d75887a1c2b7b464fe", null ],
+    [ "StockStripHandler", "group__lib__io.html#gaad5cc31baad613ac137e95653cdab162", null ],
+    [ "UnitChangedHandler", "group__lib__io.html#ga6fb408316f6f72341bf67751cdbd36d9", null ],
+    [ "WeatherHandler", "group__lib__io.html#ga5e383acfcc7c48eb2dd8caac176bf5cb", null ],
+    [ "appmessage_add_inbox_complete", "group__lib__io.html#ga502ebf1b6d9c87b77f5f708cd7424f86", null ],
+    [ "appmessage_on_calendar_strip", "group__lib__io.html#ga1ab2899a032be1fe4ab307e70f8bf3cd", null ],
+    [ "appmessage_on_coords", "group__lib__io.html#ga7c64814ef2b8dcd4ee38743e31fb58d2", null ],
+    [ "appmessage_on_custom_colors", "group__lib__io.html#gacd479537bb794bc2cc1f07b4db3fb830", null ],
+    [ "appmessage_on_settings_changed", "group__lib__io.html#gad9d1d40d059728d240df1d07fd713323", null ],
+    [ "appmessage_on_stock_strip", "group__lib__io.html#ga45a5f177aabba862b779b38b5b4ed288", null ],
+    [ "appmessage_on_unit_changed", "group__lib__io.html#gab58b5b73b9f4c46fa2b249e2378b71b3", null ],
+    [ "appmessage_on_weather", "group__lib__io.html#ga8760e9417f2f894915a0950dc1fdab07", null ],
+    [ "appmessage_open", "group__lib__io.html#gab954f122b1dd5b44dfd5bda314c53831", null ],
+    [ "appmessage_request_calendar", "group__lib__io.html#gac18380f0c5fdc613452b569ef4d88c35", null ],
+    [ "appmessage_request_stock", "group__lib__io.html#gac7dbcd76bf92e5bbf684d2c9849b5ebf", null ],
+    [ "appmessage_request_weather", "group__lib__io.html#gaf552756e4da1e1818775bb984bdd36c0", null ],
+    [ "appmessage_set_custom_colors_provider", "group__lib__io.html#gaf7a398e20625029f2e376405e9132660", null ]
+];
