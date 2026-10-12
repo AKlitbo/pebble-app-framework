@@ -310,9 +310,9 @@
  * Single source of truth for the weather-condition vocabulary.
  *
  * Each token is the short condition word the PebbleKit JS producer emits (see
- * util.ts wmoToCondition / applyNight / CONDITION_ALIASES) and the C consumer
- * looks up for an icon and a label. The C side (icons_table.g.h, labels_table.g.h)
- * is generated from this list by the framework repo's tools/build-conditions.ts. Edit the
+ * util.ts wmoToCondition / applyNight / CONDITION_ALIASES) and the C side looks up
+ * to pick an icon. The C icon table, icons_table.g.h, is generated from this list by the
+ * framework repo's tools/build-conditions.ts. Edit the
  * vocabulary here, never there.
  *
  * Fields per row:
@@ -321,29 +321,29 @@
  *   resource      day icon (RESOURCE_ID_ICON_&lt;resource&gt;).
  *   nightResource optional night icon. When present the JS emits "&lt;token&gt;_NIGHT"
  *                 after dark and the generator adds a "&lt;token&gt;_NIGHT" branch to
- *                 both tables (the night row reuses the day labels).
- *   labelShort    compact display for tiny faces / small slots. Seeded to the
- *                 token text (exactly what small faces show) so you can reword
- *                 it freely later without touching the token.
- *   labelLong     full readable display for roomy faces.
+ *                 the icon table.
+ *   labelLong     the sky in words, sent as WEATHER_CONDITION_LABEL to a face
+ *                 that declares it.
  *
- * FZDZ and FZRN intentionally share WEATHER_NOW_SLEET / WEATHER_NOW_NIGHT_SLEET (there is no
- * distinct freezing-drizzle glyph).
+ * FZDZ and FZRN share WEATHER_NOW_SLEET and WEATHER_NOW_NIGHT_SLEET, since there is no
+ * freezing-drizzle glyph of its own.
  */
 &nbsp;
-/** One condition row: its wire token plus its day/night icons and labels. */
+/** One condition row: its wire token plus its day/night icons and its label. */
 export interface ConditionEntry {
   token: string;
   resource: string;
   nightResource?: string;
-  labelShort: string;
+  /** @deprecated Nothing reads it, since the watch's wx_label_short shows the token itself. It goes at the next major release. */
+  labelShort?: string;
   labelLong: string;
 }
 &nbsp;
-/** The glyph and labels an unrecognized condition falls back to. No token: nothing sends it. */
+/** The glyph and label an unrecognized condition falls back to. No token: nothing sends it. */
 export interface ConditionFallback {
   resource: string;
-  labelShort: string;
+  /** @deprecated Nothing reads it. It goes at the next major release. */
+  labelShort?: string;
   labelLong: string;
 }
 &nbsp;
@@ -364,21 +364,21 @@ const UNKNOWN_CODE = 255;
 const FORECAST_NIGHT_BIT = 0x80;
 &nbsp;
 // shown when a condition isn't recognized (the UNKNOWN token routes here)
-const fallback: ConditionFallback = { resource: 'WEATHER_NOW_NA', labelShort: 'UNKNOWN', labelLong: 'Unknown' };
+const fallback: ConditionFallback = { resource: 'WEATHER_NOW_NA', labelLong: 'Unknown' };
 &nbsp;
 const conditions: ConditionEntry[] = [
-  { token: 'CLEAR', resource: 'WEATHER_NOW_CLEAR',         nightResource: 'WEATHER_NOW_NIGHT_CLEAR',         labelShort: 'CLEAR', labelLong: 'Clear' },
-  { token: 'PCLDY', resource: 'WEATHER_NOW_PARTLY_CLOUDY', nightResource: 'WEATHER_NOW_NIGHT_PARTLY_CLOUDY', labelShort: 'PCLDY', labelLong: 'Partly Cloudy' },
-  { token: 'CLDY',  resource: 'WEATHER_NOW_CLOUDY',        nightResource: 'WEATHER_NOW_NIGHT_CLOUDY',        labelShort: 'CLDY',  labelLong: 'Cloudy' },
-  { token: 'FOGGY', resource: 'WEATHER_NOW_FOG',           nightResource: 'WEATHER_NOW_NIGHT_FOG',           labelShort: 'FOGGY', labelLong: 'Fog' },
-  { token: 'DRZL',  resource: 'WEATHER_NOW_DRIZZLE',       nightResource: 'WEATHER_NOW_NIGHT_DRIZZLE',       labelShort: 'DRZL',  labelLong: 'Drizzle' },
-  { token: 'FZDZ',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelShort: 'FZDZ',  labelLong: 'Freezing Drizzle' },
-  { token: 'RAIN',  resource: 'WEATHER_NOW_RAIN',          nightResource: 'WEATHER_NOW_NIGHT_RAIN',          labelShort: 'RAIN',  labelLong: 'Rain' },
-  { token: 'FZRN',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelShort: 'FZRN',  labelLong: 'Freezing Rain' },
-  { token: 'SNOW',  resource: 'WEATHER_NOW_SNOW',          nightResource: 'WEATHER_NOW_NIGHT_SNOW',          labelShort: 'SNOW',  labelLong: 'Snow' },
-  { token: 'SHWR',  resource: 'WEATHER_NOW_SHOWERS',       nightResource: 'WEATHER_NOW_NIGHT_SHOWERS',       labelShort: 'SHWR',  labelLong: 'Showers' },
-  { token: 'SNSH',  resource: 'WEATHER_NOW_SNOW_WIND',     nightResource: 'WEATHER_NOW_NIGHT_SNOW_WIND',     labelShort: 'SNSH',  labelLong: 'Snow Showers' },
-  { token: 'STRM',  resource: 'WEATHER_NOW_THUNDERSTORM',  nightResource: 'WEATHER_NOW_NIGHT_THUNDERSTORM',  labelShort: 'STRM',  labelLong: 'Thunderstorm' },
+  { token: 'CLEAR', resource: 'WEATHER_NOW_CLEAR',         nightResource: 'WEATHER_NOW_NIGHT_CLEAR',         labelLong: 'Clear' },
+  { token: 'PCLDY', resource: 'WEATHER_NOW_PARTLY_CLOUDY', nightResource: 'WEATHER_NOW_NIGHT_PARTLY_CLOUDY', labelLong: 'Partly Cloudy' },
+  { token: 'CLDY',  resource: 'WEATHER_NOW_CLOUDY',        nightResource: 'WEATHER_NOW_NIGHT_CLOUDY',        labelLong: 'Cloudy' },
+  { token: 'FOGGY', resource: 'WEATHER_NOW_FOG',           nightResource: 'WEATHER_NOW_NIGHT_FOG',           labelLong: 'Fog' },
+  { token: 'DRZL',  resource: 'WEATHER_NOW_DRIZZLE',       nightResource: 'WEATHER_NOW_NIGHT_DRIZZLE',       labelLong: 'Drizzle' },
+  { token: 'FZDZ',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelLong: 'Freezing Drizzle' },
+  { token: 'RAIN',  resource: 'WEATHER_NOW_RAIN',          nightResource: 'WEATHER_NOW_NIGHT_RAIN',          labelLong: 'Rain' },
+  { token: 'FZRN',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelLong: 'Freezing Rain' },
+  { token: 'SNOW',  resource: 'WEATHER_NOW_SNOW',          nightResource: 'WEATHER_NOW_NIGHT_SNOW',          labelLong: 'Snow' },
+  { token: 'SHWR',  resource: 'WEATHER_NOW_SHOWERS',       nightResource: 'WEATHER_NOW_NIGHT_SHOWERS',       labelLong: 'Showers' },
+  { token: 'SNSH',  resource: 'WEATHER_NOW_SNOW_WIND',     nightResource: 'WEATHER_NOW_NIGHT_SNOW_WIND',     labelLong: 'Snow Showers' },
+  { token: 'STRM',  resource: 'WEATHER_NOW_THUNDERSTORM',  nightResource: 'WEATHER_NOW_NIGHT_THUNDERSTORM',  labelLong: 'Thunderstorm' },
 ];
 &nbsp;
 /**
@@ -414,7 +414,7 @@ export default vocabulary;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-08T04:30:46.146Z
+                at 2026-10-12T05:08:59.785Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

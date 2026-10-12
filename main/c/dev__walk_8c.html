@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dev__walk_8c.h
 </div><!--header-->
 <div class="contents">
 
-<p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build.  
+<p>The shared dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="dev__walk_8h_source.html">dev/dev_walk.h</a>&quot;</code><br />
 <code>#include &lt;time.h&gt;</code><br />
@@ -225,7 +225,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
 <tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. Call in place of those stores' live inits.  <br /></td></tr>
 <tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__dev.html#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="group__lib__dev.html#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
-<tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. Forces the initial theme, paints, and, for a real walk, subscribes the accelerometer tap. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
+<tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. A theme walk forces the first theme and subscribes the accelerometer tap. Either mode then paints. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
 <tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
 <tr class="memdesc:ga1ff4ca8046b48b20d4d60258901384c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drop the tap subscription. Call from deinit. <br /></td></tr>
@@ -253,7 +253,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 <tr class="memdesc:ab5090bdb6421b46ebdbb010b88a0dae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The minute the face pinned the clock to. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. </p>
+<div class="textblock"><p>The shared dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="a626e6bc16739d5be4d8e8ff0e4233ecb" name="a626e6bc16739d5be4d8e8ff0e4233ecb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a626e6bc16739d5be4d8e8ff0e4233ecb">&#9670;&#160;</a></span>apply_shot()</h2>
@@ -312,7 +312,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 </div><div class="memdoc">
 
 <p>Seed the clock, weather, health, and system stores from one shot. A face without weather gets an empty weather store, so it never boots the harness with a reading it cannot show. </p>
-<p>The stores are only ever seeded here with live off, and neither takes a subscription on that path, so seeding again on a tap re-seeds rather than stacking handlers.</p>
+<p>The stores are only ever seeded here with live off, and none of them takes a subscription on that path, so seeding again on a tap re-seeds rather than stacking handlers.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">shot</td><td>The shot to seed from. </td></tr>
@@ -412,7 +412,7 @@ static int&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
 <div class="line">}</div>
 </div><!-- fragment -->
 <p>The shots a theme walk steps through. The first is also what a face shows with no walk. </p>
-<p>Spread on purpose rather than at random: a flat battery and a full one, a dropped phone, the Quiet Time mark up and down, and a range of weather so the scene is not drawing the same sky eight times. </p>
+<p>They cover the range rather than falling at random, with a flat battery and a full one, a dropped phone, the Quiet Time mark up and down, and a range of weather so the scene is not drawing the same sky eight times. </p>
 
 </div>
 </div>

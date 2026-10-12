@@ -213,8 +213,10 @@ Data Structures</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a7929b94f95a6b9dba4c3af1f4ee2acd2" id="r_a7929b94f95a6b9dba4c3af1f4ee2acd2"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a7929b94f95a6b9dba4c3af1f4ee2acd2">persist_save</a> (void)</td></tr>
 <tr class="memdesc:a7929b94f95a6b9dba4c3af1f4ee2acd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stash the coords so a relaunch can restore them.  <br /></td></tr>
+<tr class="memitem:a7238543f70fce43dac381df674ccca7a" id="r_a7238543f70fce43dac381df674ccca7a"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a7238543f70fce43dac381df674ccca7a">copy_pair</a> (char *out_lat, char *out_lon, const char *lat, const char *lon)</td></tr>
+<tr class="memdesc:a7238543f70fce43dac381df674ccca7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a pair of coordinates into two fields the size of the state's, reading a missing one as empty.  <br /></td></tr>
 <tr class="memitem:ae105e0a25cad9f394204c3eebad894f5" id="r_ae105e0a25cad9f394204c3eebad894f5"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ae105e0a25cad9f394204c3eebad894f5">set</a> (const char *lat, const char *lon)</td></tr>
-<tr class="memdesc:ae105e0a25cad9f394204c3eebad894f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the latest coordinates and tell whoever is listening. Doubles as the coords channel handler (its signature matches) and the seed writer.  <br /></td></tr>
+<tr class="memdesc:ae105e0a25cad9f394204c3eebad894f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the latest coordinates, and tell whoever is listening when they changed. It is the coords channel handler, since its signature matches.  <br /></td></tr>
 <tr class="memitem:ga59425f07e9de612bbcaae2dd0bcf266f" id="r_ga59425f07e9de612bbcaae2dd0bcf266f"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>location_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga59425f07e9de612bbcaae2dd0bcf266f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the coordinates change (the screen redraw). <br /></td></tr>
@@ -247,6 +249,56 @@ static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The active location store: holds the phone's coordinates and owns the appmessage coords channel. </p>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="a7238543f70fce43dac381df674ccca7a" name="a7238543f70fce43dac381df674ccca7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7238543f70fce43dac381df674ccca7a">&#9670;&#160;</a></span>copy_pair()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void copy_pair </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_lat</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out_lon</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>lat</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>lon</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Copy a pair of coordinates into two fields the size of the state's, reading a missing one as empty. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">out_lat</td><td>Where the latitude goes, sizeof(s_state.lat) long. </td></tr>
+    <tr><td class="paramname">out_lon</td><td>Where the longitude goes, sizeof(s_state.lon) long. </td></tr>
+    <tr><td class="paramname">lat</td><td>Latitude string, or NULL. </td></tr>
+    <tr><td class="paramname">lon</td><td>Longitude string, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a7929b94f95a6b9dba4c3af1f4ee2acd2" name="a7929b94f95a6b9dba4c3af1f4ee2acd2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7929b94f95a6b9dba4c3af1f4ee2acd2">&#9670;&#160;</a></span>persist_save()</h2>
 
@@ -302,7 +354,7 @@ static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Save the latest coordinates and tell whoever is listening. Doubles as the coords channel handler (its signature matches) and the seed writer. </p>
+<p>Save the latest coordinates, and tell whoever is listening when they changed. It is the coords channel handler, since its signature matches. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">lat</td><td>Latitude string, empty when unavailable. </td></tr>

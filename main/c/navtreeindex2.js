@@ -1,5 +1,7 @@
 var NAVTREEINDEX2 =
 {
+"group__lib__ui.html#ga0218b6d868d6c02e798e1f43e04a8d28":[1,5,19],
+"group__lib__ui.html#ga2040f8e16081e8b48289641c6914c73f":[1,5,34],
 "group__lib__ui.html#ga27e66e5fb5efa50e5cd3a641ca95f3e1":[1,5,39],
 "group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea":[1,5,16],
 "group__lib__ui.html#ga371c44d7e8c48ce708a69bfd413a2a0e":[1,5,23],
@@ -247,7 +249,5 @@ var NAVTREEINDEX2 =
 "structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20":[1,2,36,2],
 "structTimeConfig.html#a9f051ec76f4f1a95058f5ec52506aabc":[1,2,36,0],
 "structTimeConfig.html#af951cac1e7733963949ff707dcfe650e":[1,2,36,1],
-"structWeatherClock.html":[1,0,71],
-"structWeatherClock.html#a392bd2d9e6c9ecc8247663108492fcbb":[1,0,71,4],
-"structWeatherClock.html#a3ae8fad6167ba4194d754c420fed06cb":[1,0,71,0]
+"structWeatherClock.html":[1,0,71]
 };

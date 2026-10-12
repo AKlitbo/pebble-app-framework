@@ -9,10 +9,11 @@ var searchData=
   ['known_5fbluetooth_5fvibe_5fdisconnect_6',['KNOWN_BLUETOOTH_VIBE_DISCONNECT',['../group__lib__settings.html#ga1f3cdcddc8652b8560d494e04b4f4ae7',1,'settings_catalog.h']]],
   ['known_5fdate_5fformat_7',['KNOWN_DATE_FORMAT',['../group__lib__settings.html#ga25c13546f27ddad133d5d8cbe348d84a',1,'settings_catalog.h']]],
   ['known_5fdistance_5funit_8',['KNOWN_DISTANCE_UNIT',['../group__lib__settings.html#gace7412b22cb2958264322350c07c65cd',1,'settings_catalog.h']]],
-  ['known_5fhourly_5fvibe_9',['KNOWN_HOURLY_VIBE',['../group__lib__settings.html#ga841203aee583d7a932bc02a1f4517847',1,'settings_catalog.h']]],
-  ['known_5fquiet_5ftime_5ficon_10',['KNOWN_QUIET_TIME_ICON',['../group__lib__settings.html#ga85914fbaf222c55ef9c16f52c16fceb0',1,'settings_catalog.h']]],
-  ['known_5fsteps_5fmode_11',['KNOWN_STEPS_MODE',['../group__lib__settings.html#ga019f574fbd717df373aa4f6a2fa623f7',1,'settings_catalog.h']]],
-  ['known_5ftemperature_5funit_12',['KNOWN_TEMPERATURE_UNIT',['../group__lib__settings.html#gaeeceac8a6d66376b0fbb3b495e245a8c',1,'settings_catalog.h']]],
-  ['known_5ftheme_13',['KNOWN_THEME',['../group__lib__settings.html#ga0d7b14fdb5d548d8571799ed3b9f2325',1,'settings_catalog.h']]],
-  ['known_5ftime_5fformat_14',['KNOWN_TIME_FORMAT',['../group__lib__settings.html#ga51c9800159631adbf77eafe13eeb3d34',1,'settings_catalog.h']]]
+  ['known_5fheader_5ffont_9',['KNOWN_HEADER_FONT',['../group__lib__settings.html#ga4f0896ebba24b4f1ca8b02f5229986af',1,'settings_catalog.h']]],
+  ['known_5fhourly_5fvibe_10',['KNOWN_HOURLY_VIBE',['../group__lib__settings.html#ga841203aee583d7a932bc02a1f4517847',1,'settings_catalog.h']]],
+  ['known_5fquiet_5ftime_5ficon_11',['KNOWN_QUIET_TIME_ICON',['../group__lib__settings.html#ga85914fbaf222c55ef9c16f52c16fceb0',1,'settings_catalog.h']]],
+  ['known_5fsteps_5fmode_12',['KNOWN_STEPS_MODE',['../group__lib__settings.html#ga019f574fbd717df373aa4f6a2fa623f7',1,'settings_catalog.h']]],
+  ['known_5ftemperature_5funit_13',['KNOWN_TEMPERATURE_UNIT',['../group__lib__settings.html#gaeeceac8a6d66376b0fbb3b495e245a8c',1,'settings_catalog.h']]],
+  ['known_5ftheme_14',['KNOWN_THEME',['../group__lib__settings.html#ga0d7b14fdb5d548d8571799ed3b9f2325',1,'settings_catalog.h']]],
+  ['known_5ftime_5fformat_15',['KNOWN_TIME_FORMAT',['../group__lib__settings.html#ga51c9800159631adbf77eafe13eeb3d34',1,'settings_catalog.h']]]
 ];

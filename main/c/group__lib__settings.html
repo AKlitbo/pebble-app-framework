@@ -220,12 +220,16 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ga9f418302396c6aa0b9d2bc9a2e75a9b0" id="r_ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga9f418302396c6aa0b9d2bc9a2e75a9b0">SETTINGS_BLOB_SIZE</a>(blob)</td></tr>
+<tr class="memdesc:ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of a settings struct, for a schema's <span class="tt">blob_size</span>, and a build that stops when the struct is too big to save.  <br /></td></tr>
 <tr class="memitem:gaeeceac8a6d66376b0fbb3b495e245a8c" id="r_gaeeceac8a6d66376b0fbb3b495e245a8c"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gaeeceac8a6d66376b0fbb3b495e245a8c">KNOWN_TEMPERATURE_UNIT</a>(off)</td></tr>
 <tr class="memdesc:gaeeceac8a6d66376b0fbb3b495e245a8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Temperature Unit (Celsius or Fahrenheit).  <br /></td></tr>
 <tr class="memitem:ga25c13546f27ddad133d5d8cbe348d84a" id="r_ga25c13546f27ddad133d5d8cbe348d84a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga25c13546f27ddad133d5d8cbe348d84a">KNOWN_DATE_FORMAT</a>(off,  dflt)</td></tr>
 <tr class="memdesc:ga25c13546f27ddad133d5d8cbe348d84a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Date Format.  <br /></td></tr>
 <tr class="memitem:ga0d7b14fdb5d548d8571799ed3b9f2325" id="r_ga0d7b14fdb5d548d8571799ed3b9f2325"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0d7b14fdb5d548d8571799ed3b9f2325">KNOWN_THEME</a>(off,  count)</td></tr>
 <tr class="memdesc:ga0d7b14fdb5d548d8571799ed3b9f2325"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Theme.  <br /></td></tr>
+<tr class="memitem:ga4f0896ebba24b4f1ca8b02f5229986af" id="r_ga4f0896ebba24b4f1ca8b02f5229986af"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga4f0896ebba24b4f1ca8b02f5229986af">KNOWN_HEADER_FONT</a>(off,  count)</td></tr>
+<tr class="memdesc:ga4f0896ebba24b4f1ca8b02f5229986af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Header Font, an index into the face's own header font table.  <br /></td></tr>
 <tr class="memitem:ga019f574fbd717df373aa4f6a2fa623f7" id="r_ga019f574fbd717df373aa4f6a2fa623f7"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga019f574fbd717df373aa4f6a2fa623f7">KNOWN_STEPS_MODE</a>(off,  count)</td></tr>
 <tr class="memdesc:ga019f574fbd717df373aa4f6a2fa623f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setting definition for Steps Mode.  <br /></td></tr>
 <tr class="memitem:gace7412b22cb2958264322350c07c65cd" id="r_gace7412b22cb2958264322350c07c65cd"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gace7412b22cb2958264322350c07c65cd">KNOWN_DISTANCE_UNIT</a>(off,  count)</td></tr>
@@ -324,9 +328,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:gabf78fb93dcb30f9c8f17cc2eaa9a934e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a face's settings from their saved blobs, applying defaults first.  <br /></td></tr>
 <tr class="memitem:ga40b5dc5d02dfa2e8a630782dc5be7263" id="r_ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga40b5dc5d02dfa2e8a630782dc5be7263">settings_was_fresh</a> (void)</td></tr>
 <tr class="memdesc:ga40b5dc5d02dfa2e8a630782dc5be7263"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch booted with no saved settings, because storage was wiped by a fresh install or an update. Lets the phone know it should push its own config back rather than trust the watch's defaults.  <br /></td></tr>
-<tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft"><a id="gab9d20e3758e874e18f045827a5cd29b3" name="gab9d20e3758e874e18f045827a5cd29b3"></a>
-void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
-<tr class="memdesc:gab9d20e3758e874e18f045827a5cd29b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persist the active face's structs under their keys (the whole chain). <br /></td></tr>
+<tr class="memitem:gab9d20e3758e874e18f045827a5cd29b3" id="r_gab9d20e3758e874e18f045827a5cd29b3"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gab9d20e3758e874e18f045827a5cd29b3">settings_save</a> (void)</td></tr>
+<tr class="memdesc:gab9d20e3758e874e18f045827a5cd29b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persist the active face's structs under their keys (the whole chain).  <br /></td></tr>
 <tr class="memitem:ga311ba161873a4026937acc17c57525cc" id="r_ga311ba161873a4026937acc17c57525cc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga311ba161873a4026937acc17c57525cc">settings_mark_restored</a> (void)</td></tr>
 <tr class="memdesc:ga311ba161873a4026937acc17c57525cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears settings_was_fresh once a save or restore from the settings page has been saved.  <br /></td></tr>
 <tr class="memitem:ga3751b197b3c6a12637ebdf7ebc0ea997" id="r_ga3751b197b3c6a12637ebdf7ebc0ea997"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="#ga3751b197b3c6a12637ebdf7ebc0ea997">settings_u8</a> (<a class="el" href="#ga5b6861430c47031f602e2af972953f53">SettingId</a> id)</td></tr>
@@ -545,6 +548,39 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 
 </div>
 </div>
+<a id="ga4f0896ebba24b4f1ca8b02f5229986af" name="ga4f0896ebba24b4f1ca8b02f5229986af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4f0896ebba24b4f1ca8b02f5229986af">&#9670;&#160;</a></span>KNOWN_HEADER_FONT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define KNOWN_HEADER_FONT</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>off</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">{ .id = <a class="code hl_enumvalue" href="#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a>, .message_key = &amp;MESSAGE_KEY_APPEARANCE_HEADER_FONT, \</div>
+<div class="line">  .type = <a class="code hl_enumvalue" href="#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066">SETTING_ENUM_U8</a>, .offset = (off), .enum_count = (count) }</div>
+<div class="ttc" id="agroup__lib__settings_html_gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9"><div class="ttname"><a href="#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a></div><div class="ttdeci">@ SETTING_HEADER_FONT</div><div class="ttdoc">Which font the panel header labels use, as an index into the face&#39;s header font table.</div><div class="ttdef"><b>Definition</b> settings.h:37</div></div>
+</div><!-- fragment -->
+<p>Setting definition for Header Font, an index into the face's own header font table. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off</td><td>Offset into the face's settings struct. </td></tr>
+    <tr><td class="paramname">count</td><td>How many fonts the face's table holds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga841203aee583d7a932bc02a1f4517847" name="ga841203aee583d7a932bc02a1f4517847"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga841203aee583d7a932bc02a1f4517847">&#9670;&#160;</a></span>KNOWN_HOURLY_VIBE</h2>
 
@@ -733,6 +769,38 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="ga9f418302396c6aa0b9d2bc9a2e75a9b0" name="ga9f418302396c6aa0b9d2bc9a2e75a9b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9f418302396c6aa0b9d2bc9a2e75a9b0">&#9670;&#160;</a></span>SETTINGS_BLOB_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SETTINGS_BLOB_SIZE</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>blob</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">(<span class="keyword">sizeof</span>(blob) + 0 * <span class="keyword">sizeof</span>(<span class="keyword">struct </span>{ \</div>
+<div class="line">    _Static_assert(<span class="keyword">sizeof</span>(blob) &lt;= PERSIST_DATA_MAX_LENGTH, \</div>
+<div class="line">                   <span class="stringliteral">&quot;settings struct is over 256 bytes, so move some fields into a companion schema&quot;</span>); \</div>
+<div class="line">    <span class="keywordtype">char</span> unused; \</div>
+<div class="line">}))</div>
+</div><!-- fragment -->
+<p>The size of a settings struct, for a schema's <span class="tt">blob_size</span>, and a build that stops when the struct is too big to save. </p>
+<p>One persist key holds at most 256 bytes, and the watch saves only the first 256 bytes of a longer write. The fields past that would come back as their defaults on every launch. settings_init and settings_save log it at runtime, and this stops the build instead, so a face with more than 256 bytes of settings moves some into a companion schema.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">blob</td><td>The settings struct itself, not a pointer to it. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The struct's size in bytes. </dd></dl>
 
 </div>
 </div>
@@ -1035,7 +1103,7 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Load a face's settings from their saved blobs, applying defaults first. </p>
-<p>Walks the companion chain so every schema in it is loaded. A saved blob is read only when its size and version fit the schema, or when the schema's migrate hook takes it, and every field read back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults.</p>
+<p>Walks the companion chain so every schema in it is loaded. A saved blob is read only when its size and version fit the schema, or when the schema's migrate hook takes it, and every field read back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults. A schema over the 256 bytes one persist key holds is logged as an error, since it can never be saved whole.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">schema</td><td>The head schema defining the face's settings. </td></tr>
@@ -1062,6 +1130,26 @@ void&#160;</td><td class="memItemRight"><b>settings_save</b> (void)</td></tr>
 
 <p>Clears settings_was_fresh once a save or restore from the settings page has been saved. </p>
 <p>Only that message counts. Anything else the phone sends while the watch is fresh stays in memory, so the phone still sees a fresh watch and pushes its whole config back. </p>
+
+</div>
+</div>
+<a id="gab9d20e3758e874e18f045827a5cd29b3" name="gab9d20e3758e874e18f045827a5cd29b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab9d20e3758e874e18f045827a5cd29b3">&#9670;&#160;</a></span>settings_save()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void settings_save </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Persist the active face's structs under their keys (the whole chain). </p>
+<p>A struct that does not reach flash whole is logged as an error and not tried again. </p>
 
 </div>
 </div>

@@ -198,9 +198,9 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('dir_68134aa6fe
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
 <tr class="memitem:dev_5Fwalk_2Ec" id="r_dev_5Fwalk_2Ec"><td class="memItemLeft"><span class="icondoc"><div class="doc-icon"></div></span>&#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">dev_walk.c</a></td></tr>
-<tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared frame-face dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
+<tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
 <tr class="memitem:dev_5Fwalk_2Eh" id="r_dev_5Fwalk_2Eh"><td class="memItemLeft"><a href="dev__walk_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a>&#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">dev_walk.h</a></td></tr>
-<tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for the frame faces. It seeds every store with a fixed fixture, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk" for deterministic screenshots. Each tap steps to the next theme on the same fixed data and the same fixed clock. <br /></td></tr>
+<tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for screenshots. It seeds the clock, weather, health, system, and location stores with a fixed fixture, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk". Each tap steps to the next theme and the next fixed set of readings, on the same fixed clock. <br /></td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

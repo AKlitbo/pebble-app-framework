@@ -52,6 +52,13 @@
       <anchor>ga60ea394a4edab1661bfdfcec61a49a73</anchor>
       <arglist>(int hour, int minute, int second, uint16_t ms)</arglist>
     </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>token_at</name>
+      <anchorfile>beats_8c.html</anchorfile>
+      <anchor>af9f96a0956b8fe8f3c08e08739e8a28d</anchor>
+      <arglist>(const char *text)</arglist>
+    </member>
     <member kind="function">
       <type>bool</type>
       <name>beats_has_token</name>
@@ -591,6 +598,13 @@
     <path>src/c/core/clock/</path>
     <filename>tide_8c.html</filename>
     <includes id="tide_8h" name="tide.h" local="yes" import="no" module="no" objc="no">clock/tide.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>TIDE_PERIOD_CUBE</name>
+      <anchorfile>tide_8c.html</anchorfile>
+      <anchor>addd7b1e7073eecf23e026be9c1ac3a89</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static int32_t</type>
       <name>phase</name>
@@ -1620,12 +1634,33 @@
       <anchor>a69b123c097f7af6d5901cefdaa36c6b9</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TEMP_LOWEST</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>aa7091b4d7d5f6ea887e278b9974335cc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TEMP_HIGHEST</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a75ef5ef2173a3350a52f59697c9335fb</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static int</type>
       <name>or_none</name>
       <anchorfile>weather__reading_8c.html</anchorfile>
       <anchor>aefa5e1e7ffa9129d5821b0d9f1fd1528</anchor>
       <arglist>(int value, int none)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>temp_or_none</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>af4636375c66617c9a9bf6b7e28eed0f2</anchor>
+      <arglist>(int value)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static int16_t</type>
@@ -3275,6 +3310,13 @@
       <anchorfile>location__store_8c.html</anchorfile>
       <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>copy_pair</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>a7238543f70fce43dac381df674ccca7a</anchor>
+      <arglist>(char *out_lat, char *out_lon, const char *lat, const char *lon)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -5208,6 +5250,13 @@
     <class kind="struct">SettingField</class>
     <class kind="struct">SettingsSchema</class>
     <class kind="struct">SettingsInbound</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9f418302396c6aa0b9d2bc9a2e75a9b0</anchor>
+      <arglist>(blob)</arglist>
+    </member>
     <member kind="typedef">
       <type>struct SettingsSchema</type>
       <name>SettingsSchema</name>
@@ -5439,6 +5488,13 @@
       <name>KNOWN_THEME</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga0d7b14fdb5d548d8571799ed3b9f2325</anchor>
+      <arglist>(off, count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_HEADER_FONT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4f0896ebba24b4f1ca8b02f5229986af</anchor>
       <arglist>(off, count)</arglist>
     </member>
     <member kind="define">
@@ -10285,6 +10341,13 @@
     <class kind="struct">SettingsInbound</class>
     <member kind="define">
       <type>#define</type>
+      <name>SETTINGS_BLOB_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9f418302396c6aa0b9d2bc9a2e75a9b0</anchor>
+      <arglist>(blob)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>KNOWN_TEMPERATURE_UNIT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gaeeceac8a6d66376b0fbb3b495e245a8c</anchor>
@@ -10302,6 +10365,13 @@
       <name>KNOWN_THEME</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga0d7b14fdb5d548d8571799ed3b9f2325</anchor>
+      <arglist>(off, count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_HEADER_FONT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4f0896ebba24b4f1ca8b02f5229986af</anchor>
       <arglist>(off, count)</arglist>
     </member>
     <member kind="define">

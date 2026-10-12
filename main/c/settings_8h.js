@@ -1,5 +1,6 @@
 var settings_8h =
 [
+    [ "SETTINGS_BLOB_SIZE", "group__lib__settings.html#ga9f418302396c6aa0b9d2bc9a2e75a9b0", null ],
     [ "SettingsSchema", "group__lib__settings.html#ga4c71229864f5dc765a8b70c2c971fb99", null ],
     [ "SettingId", "group__lib__settings.html#ga5b6861430c47031f602e2af972953f53", [
       [ "SETTING_TEMPERATURE_UNIT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188", null ],

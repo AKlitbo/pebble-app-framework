@@ -209,6 +209,7 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga7b06de249c8214693fdf100d868f54f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates milliseconds until the next .beats boundary.  <br /></td></tr>
 <tr class="memitem:ga60ea394a4edab1661bfdfcec61a49a73" id="r_ga60ea394a4edab1661bfdfcec61a49a73"><td class="memItemLeft">int32_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga60ea394a4edab1661bfdfcec61a49a73">beats_ms_from_hms</a> (int hour, int minute, int second, uint16_t ms)</td></tr>
 <tr class="memdesc:ga60ea394a4edab1661bfdfcec61a49a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Milliseconds into the Biel Mean Time day, from a UTC wall clock.  <br /></td></tr>
+<tr class="memitem:af9f96a0956b8fe8f3c08e08739e8a28d" id="r_af9f96a0956b8fe8f3c08e08739e8a28d"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#af9f96a0956b8fe8f3c08e08739e8a28d">token_at</a> (const char *text)</td></tr>
 <tr class="memitem:gaaed371b1b105688cc7ca824ba6ed0090" id="r_gaaed371b1b105688cc7ca824ba6ed0090"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaaed371b1b105688cc7ca824ba6ed0090">beats_has_token</a> (const char *format)</td></tr>
 <tr class="memdesc:gaaed371b1b105688cc7ca824ba6ed0090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a date format asks for a .beats reading.  <br /></td></tr>
 <tr class="memitem:ga2fdfec41ce1bb098586cf3d82c921cd5" id="r_ga2fdfec41ce1bb098586cf3d82c921cd5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga2fdfec41ce1bb098586cf3d82c921cd5">beats_expand_token</a> (char *text, int beats)</td></tr>
@@ -216,7 +217,41 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Pure swatch .beats math, host-testable off-device. </p>
-</div></div><!-- contents -->
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="af9f96a0956b8fe8f3c08e08739e8a28d" name="af9f96a0956b8fe8f3c08e08739e8a28d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9f96a0956b8fe8f3c08e08739e8a28d">&#9670;&#160;</a></span>token_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int token_at </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Where the first .beats token starts in a string, or -1 when there is none. The token is three fixed characters, so a plain walk finds it with strncmp, which the firmware already exports. strstr is not exported, so it would link about 1.4 KB of newlib into every face that references the date readout.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>The string to search. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The offset of the first token, or -1 when there is none. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
 <div id="page-nav-resize-handle"></div>
