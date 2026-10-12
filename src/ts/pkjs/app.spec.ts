@@ -17,7 +17,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import app, { collectDefaults, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, wrapStoredConfig } from './app';
+import app, { collectDefaults, createClay, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, wrapStoredConfig } from './app';
+import locationComponent from '../clay/location-component';
 import { SETTINGS_ASK_RETRY_MS } from './settings-ask';
 import { SEND_RETRIES, SEND_RETRY_MS } from './send-queue';
 import { WIRE_CAPS } from './wire';
@@ -446,6 +447,57 @@ describe('payloadByKeyId', () => {
     const result = payloadByKeyId({ SETTINGS_REQUEST: 10004 }, { SOMETHING_ELSE: 1 });
 
     expect(result).toEqual({ SOMETHING_ELSE: 1 });
+  });
+});
+
+describe('createClay', () => {
+  /** A Clay that records what it was built with and every component registered on it. */
+  class RecordingClay {
+    static built: { config: unknown; customClay: unknown; options: unknown } | null = null;
+    registered: unknown[] = [];
+
+    constructor(config: unknown, customClay: unknown, options: unknown) {
+      RecordingClay.built = { config, customClay, options };
+    }
+
+    registerComponent(component: unknown) {
+      this.registered.push(component);
+    }
+  }
+
+  let restoreLoad: () => void;
+
+  beforeEach(() => {
+    RecordingClay.built = null;
+    restoreLoad = stubModuleLoad((id) => (id === '@rebble/clay/src/js/index' ? RecordingClay : undefined));
+  });
+
+  afterEach(() => {
+    restoreLoad();
+  });
+
+  /**
+   * The phone and the dev plugin's preview both build their page here, so this is what decides the
+   * preview registers what the phone does. A component missing from the phone's list makes Clay stop
+   * with "is not registered" and the settings page never opens.
+   */
+  test('registers the location component and then the components the face passes, in order', () => {
+    const layout = { name: 'layoutBuilder' };
+    const store = { name: 'hiddenStore' };
+
+    const result = createClay({ clayConfig: [], components: [layout, store] }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([locationComponent, layout, store]);
+  });
+
+  /** A face's page code and its rows have to reach Clay, and Clay's own send path has to stay off. */
+  test('builds Clay from the page and customClay the face passes, with its own event handling off', () => {
+    const clayConfig = [{ type: 'heading', defaultValue: 'Page' }];
+    const customClay = () => {};
+
+    createClay({ clayConfig, customClay });
+
+    expect(RecordingClay.built).toEqual({ config: clayConfig, customClay, options: { autoHandleEvents: false } });
   });
 });
 

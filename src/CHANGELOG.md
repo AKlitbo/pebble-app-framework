@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Changed
 
+- The `dev` plugin's `clay-preview` now stops on an argument it does not know and names it, rather than ignoring it. So `--settings saved.json`, with a space in place of the `=`, no longer previews a fresh install. `-h` and `--help` print the usage, which now lists `--settings=<file>`.
 - The icons generator now reads an icon's `svg` in `resources/icons.json` as a path from the `sources` folder, without the `.svg`, so `status/bluetooth-on` reads `status/bluetooth-on.svg`. The SVGs can sit in any folder under `sources`, at any depth, and a name that leads outside `sources` stops the run. The run stops when `sources` holds none of the SVGs a run's icons read, rather than none of the three fixed sets. So `paf gen <face> icons` on a face whose SVGs are all missing now stops, where it kept every PNG with a warning each.
 
 #### Deprecated
@@ -24,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Fixed
 
+- Fixed `clay-preview` showing a working settings page for a face that leaves a component out of `startPebbleApp`, where the phone stops with "The component: X is not registered" and the page never opens. The preview now loads the face's `src/pkjs/index.ts` and takes the page, the components, and `customClay` from what it hands `startPebbleApp`, and registers only those and the location component, as the phone does. A face with no `src/pkjs/index.ts`, or one whose `index.ts` never calls `startPebbleApp`, stops the preview.
 - Fixed a settings struct that could not be saved whole going unnoticed. `settings_init` now logs an error naming the key for a struct over 256 bytes, and `settings_save` logs one when a struct is not written whole, which also happens when the app's persist storage is full. A failed save is not tried again.
 - Fixed a text slot with a `zone` and no `text` function crashing the watch on its first repaint. The slot now stays empty, the same as a draw slot with no `draw`.
 

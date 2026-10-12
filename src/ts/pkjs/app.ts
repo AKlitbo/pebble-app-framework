@@ -325,6 +325,36 @@ export function seedConfigFromWatch(messageKeys: any, payload: any, clayConfig: 
 }
 
 /**
+ * Builds the face's Clay settings page with every component it needs registered.
+ *
+ * That is the location autocomplete, which config.ts names as type "locationsearch", and then the
+ * components the face passes. startPebbleApp builds the phone's page here, and the dev plugin's
+ * clay-preview builds its copy here too, so the two always register the same components.
+ *
+ * @param options The face's Clay config, its customClay, and its own components.
+ * @return The Clay page, ready to open or to turn into a URL.
+ */
+export function createClay(options: StartOptions): InstanceType<ClayConstructor> {
+  // required here (not at module load) so the unit specs can use the shared
+  // helpers without loading Clay
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const Clay = require('@rebble/clay/src/js/index') as ClayConstructor;
+  // auto-handling off so we own the send path: Clay's own webviewclosed handler sends the settings
+  // through Pebble.sendAppMessage directly, which bypasses queueSend and collides with any other
+  // in-flight send (the losing message drops with no retry). startPebbleApp opens the config and
+  // sends the saved settings itself so every send goes through the one queue
+  const clay = new Clay(options.clayConfig, options.customClay, { autoHandleEvents: false });
+
+  // the location autocomplete goes first, before the settings page is built
+  clay.registerComponent(locationComponent);
+
+  // any face-specific custom components (e.g. a layout builder)
+  (options.components || []).forEach((component) => clay.registerComponent(component));
+
+  return clay;
+}
+
+/**
  * Starts the app: builds the Clay settings page, wires the lifecycle listeners,
  * and starts the features the face opts into.
  *
@@ -335,23 +365,10 @@ function startPebbleApp(options: StartOptions): void {
   const clayConfig = options.clayConfig;
 
   // required here (not at module load) so the unit specs can use the shared
-  // helpers without loading Clay or the per-face message_keys alias
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Clay = require('@rebble/clay/src/js/index') as ClayConstructor;
+  // helpers without loading the per-face message_keys alias
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const messageKeys = require('message_keys');
-  // auto-handling off so we own the send path: Clay's own webviewclosed handler sends the settings
-  // through Pebble.sendAppMessage directly, which bypasses queueSend and collides with any other
-  // in-flight send (the losing message drops with no retry). we open the config and send the saved
-  // settings ourselves below so every send goes through the one queue
-  const clay = new Clay(clayConfig, options.customClay, { autoHandleEvents: false });
-
-  // register the location autocomplete (referenced as type "locationsearch" in
-  // config.ts) before the settings page is built
-  clay.registerComponent(locationComponent);
-
-  // any face-specific custom components (e.g. a layout builder)
-  (options.components || []).forEach((component) => clay.registerComponent(component));
+  const clay = createClay(options);
 
   // the defaults declared in config.ts
   const DEFAULTS = collectDefaults(clayConfig);
