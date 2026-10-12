@@ -33,7 +33,7 @@ export default buildConfig({
 
 | Section | Shown When | What It Offers |
 | :-- | :-- | :-- |
-| Appearance | always | the theme picker when `theme` is passed, the face's `appearanceItems`, and a Quiet Time icon toggle with `quietTime` |
+| Appearance | `theme` or `quietTime` is passed, or `appearanceItems` holds at least one item | the theme picker when `theme` is passed, the face's `appearanceItems`, and a Quiet Time icon toggle with `quietTime` |
 | the face's own | `layoutSections` is passed | whatever the face builds, such as a layout editor |
 | Bluetooth | always | the connection icon, and a buzz on connect and on disconnect |
 | Clock | always | the date and time formats, the face's `clockItems`, a second clock's time zone with `clock.timeZone`, and the hourly buzz with `hourlyVibe` |
@@ -55,7 +55,7 @@ export default buildConfig({
 
 ## Laying Out a Page by Hand
 
-`buildConfig` is the section builders in their usual order. Each one is exported on its own and takes the same description: `appearanceSection`, `bluetoothSection`, `clockSection`, `healthSection`, `locationSection`, `weatherSection`, `calendarSection`, and `stocksSection`. The optional ones return `null` when the description leaves them out. A face whose page needs its own sections between the standard ones calls the builders it needs and puts them in its own order.
+`buildConfig` is the section builders in their usual order. Each one is exported on its own and takes the same description: `appearanceSection`, `bluetoothSection`, `clockSection`, `healthSection`, `locationSection`, `weatherSection`, `calendarSection`, and `stocksSection`. The optional ones return `null` when the description leaves them out. `appearanceSection` always returns its section, so a face with nothing for it gets the heading alone, and `hasAppearance` says whether to include it. A face whose page needs its own sections between the standard ones calls the builders it needs and puts them in its own order.
 
 For the rows inside its own sections, [`config-rows.ts`](../../src/ts/pkjs/config-rows.ts) has `select`, `heading`, and `toggle`, plus `VIBE_OPTIONS`, the plain buzz picker whose values line up with the watch's own vibration choices:
 

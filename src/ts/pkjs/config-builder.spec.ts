@@ -59,6 +59,33 @@ describe('buildConfig optional sections', () => {
     expect(result).toBe(false);
   });
 
+  /** A face with nothing for Appearance would get the heading alone, which reads as a control that failed to load. */
+  test('leaves the Appearance section out when the face has nothing for it', () => {
+    const config = buildConfig({});
+
+    const result = config.some((section) => (section.items || []).some((item) => item.defaultValue === 'Appearance'));
+
+    expect(result).toBe(false);
+  });
+
+  /** A face that builds its control list and ends up with none would otherwise get the heading alone. */
+  test('leaves the Appearance section out for an empty list of appearance controls', () => {
+    const config = buildConfig({ appearanceItems: [] });
+
+    const result = config.some((section) => (section.items || []).some((item) => item.defaultValue === 'Appearance'));
+
+    expect(result).toBe(false);
+  });
+
+  /** A face that colours itself from its own pickers, with no theme list, still gets its controls under Appearance. */
+  test('keeps the Appearance section for a face with only its own controls', () => {
+    const config = buildConfig({ appearanceItems: [{ type: 'toggle', messageKey: 'APPEARANCE_INVERT', label: 'Invert' }] });
+
+    const result = config.find((section) => (section.items || []).some((item) => item.defaultValue === 'Appearance'));
+
+    expect(result?.items?.map((item) => item.messageKey ?? item.defaultValue)).toEqual(['Appearance', 'APPEARANCE_INVERT']);
+  });
+
   /** A face with a battery readout and no steps gets the battery control alone, under a heading that says so. */
   test('gives a battery-only face the battery control and no steps control', () => {
     const config = buildConfig({ theme: minimalTheme, battery: {} });

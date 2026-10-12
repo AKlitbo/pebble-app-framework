@@ -84,6 +84,10 @@ const beatsDateOptions = [
  * The Appearance section: the theme picker when the face has one, its own appearance controls, and
  * the Quiet Time icon toggle when asked for.
  *
+ * It always returns a section, so a face with no theme, no appearanceItems, and no quietTime gets the
+ * heading alone. buildConfig leaves that out, and a face laying out its own page checks
+ * hasAppearance first.
+ *
  * @param options The per-section description, read for theme, appearanceItems, and quietTime.
  * @return The section.
  */
@@ -119,6 +123,17 @@ export function appearanceSection(options: ConfigBuilderOptions): ClayConfigItem
       }] : []),
     ],
   };
+}
+
+/**
+ * Whether the Appearance section has anything to show: a theme picker, at least one of the face's own
+ * appearance controls, or the Quiet Time icon toggle.
+ *
+ * @param options The per-section description, read for theme, appearanceItems, and quietTime.
+ * @return True when appearanceSection would hold more than its heading.
+ */
+export function hasAppearance(options: ConfigBuilderOptions): boolean {
+  return Boolean(options.theme || options.appearanceItems?.length || options.quietTime);
 }
 
 /**
@@ -536,7 +551,8 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
  *   heading, intro        page title and lead paragraph (both optional)
  *
  * Section objects (each section is customized through its own fields):
- *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section
+ *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section, which
+ *                                               shows when there is a theme, one of these, or quietTime
  *   clockItems      [ClayConfigItem]            extra controls inside the Clock section
  *   bluetooth { description? }                   always shown
  *   date     { label?, description?, default?, beats?, options? }
@@ -557,6 +573,9 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
  * @return The assembled Clay config array, ready to hand to Clay.
  */
 function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
+  // appearanceSection always returns a section, since a face can put it straight into its own page.
+  // with nothing for it that is the heading alone, which reads as a control that failed to load, so
+  // it is left out here
   const config: ClayConfigItem[] = [
     {
       'type': 'heading',
@@ -566,8 +585,8 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
       'type': 'text',
       'defaultValue': options.intro || 'Personalize your layout and make this watchface your own.',
     },
-    appearanceSection(options),
-    // face-specific sections (e.g. a layout and goals) sit right after Appearance
+    ...(hasAppearance(options) ? [appearanceSection(options)] : []),
+    // face-specific sections (e.g. a layout and goals) sit after Appearance, or open the page without it
     ...(options.layoutSections || []),
     bluetoothSection(options),
     clockSection(options),
