@@ -6,6 +6,9 @@
  */
 #include "clock/tide.h"
 
+/// The cycle's length cubed, which the smoothstep divides by
+#define TIDE_PERIOD_CUBE ((int64_t)TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN)
+
 /**
  * @brief Where in the cycle a minute count lands.
  *
@@ -24,14 +27,19 @@ static int32_t phase(int32_t minutes)
 
 int tide_level(int32_t minutes)
 {
-    // the cycle as a triangle first: up over the first half of the period, back down over the
-    // second
-    int32_t pos = (phase(minutes) * 200) / TIDE_PERIOD_MIN;  // 0..199
-    int32_t tri = pos <= 100 ? pos : 200 - pos;              // 0..100
+    // twice the phase, folded back at the turn, so it climbs from 0 to the period over the first
+    // half of the cycle and comes back down over the second
+    int32_t twice = phase(minutes) * 2;
+    int32_t climb = twice < TIDE_PERIOD_MIN ? twice : 2 * TIDE_PERIOD_MIN - twice;
 
-    // then eased with a smoothstep, which flattens both turns and steepens the middle. it is
-    // exact at 0, 50 and 100, so dead low and high water really do reach the ends
-    return (int)((tri * tri * (300 - 2 * tri)) / 10000);
+    // the smoothstep curve 3t^2-2t^3 of climb over the period, scaled to 0..100. it flattens both
+    // turns and steepens the middle
+    // it is worked out in one go with one rounding at the end, so the level moves at most one point
+    // a minute and low and high water last about as long as each other
+    // the product on top runs past 40 billion, so it is worked in 64 bits
+    int64_t top = (int64_t)100 * climb * climb * (3 * TIDE_PERIOD_MIN - 2 * climb);
+
+    return (int)((top + TIDE_PERIOD_CUBE / 2) / TIDE_PERIOD_CUBE);
 }
 
 bool tide_rising(int32_t minutes)

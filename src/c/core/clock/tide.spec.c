@@ -2,11 +2,13 @@
  * @file tide.spec.c
  * @brief Host tests for the tidal rise and fall.
  *
- * The shape matters more than any one reading here, so the cases worth pinning are the ones a
- * plain sawtooth would also pass: that the turns really flatten out, that the level never leaves
- * 0..100, and that a negative minute count wraps instead of running the maths on a negative
- * remainder. The 24h50m drift is the other half of it, since a tide that came back at the same
- * clock time every day would be the one thing a tide never does.
+ * The shape matters more than any one reading here, so the cases worth pinning are the ones a plain
+ * sawtooth would get wrong or never be asked: that the turns really flatten out, that the level
+ * never leaves 0..100, and that a negative minute count wraps instead of running the maths on a
+ * negative remainder. The 24h50m drift is the other half of it, since a tide that came back at the
+ * same clock time every day would be the one thing a tide never does. How long each end lasts,
+ * where high water sits, and how far the level moves in a minute are pinned too, since the integer
+ * maths gets all three wrong easily and a face drawing the water shows every one of them.
  */
 #include "unity.h"
 
@@ -57,6 +59,69 @@ void test_stays_within_range_across_the_cycle(void)
 
     TEST_ASSERT_EQUAL_INT(0, lowest);
     TEST_ASSERT_EQUAL_INT(100, highest);
+}
+
+/**
+ * @brief High water holds about as long as low water.
+ *
+ * Working the level out in two rounded-down steps left it on 0 for 41 minutes a cycle and on 100
+ * for only 4, so a face drawing the water showed a high tide that barely arrived before it turned.
+ * The two can never match exactly. Low water is centred on a whole minute, so it spans an odd
+ * number of them, and high water on the half minute at 372.5, so it spans an even number.
+ */
+void test_holds_high_water_as_long_as_low_water(void)
+{
+    int at_low = 0;
+    int at_high = 0;
+
+    for (int32_t minute = 0; minute < TIDE_PERIOD_MIN; minute++)
+    {
+        int level = tide_level(minute);
+        at_low += level == 0;
+        at_high += level == 100;
+    }
+
+    TEST_ASSERT_EQUAL_INT(31, at_low);
+    TEST_ASSERT_EQUAL_INT(30, at_high);
+}
+
+/**
+ * @brief High water sits centred on the turn, halfway through the cycle at minute 372.5.
+ *
+ * Counting the minutes at 100 says nothing about where they fall. Rounding off centre still gives
+ * the right count with high water a couple of minutes late, out of step with `tide_rising`.
+ */
+void test_centres_high_water_on_the_turn(void)
+{
+    int before = tide_level(357);
+    int first = tide_level(358);
+    int last = tide_level(387);
+    int after = tide_level(388);
+
+    TEST_ASSERT_EQUAL_INT(99, before);
+    TEST_ASSERT_EQUAL_INT(100, first);
+    TEST_ASSERT_EQUAL_INT(100, last);
+    TEST_ASSERT_EQUAL_INT(99, after);
+}
+
+/**
+ * @brief The level moves at most one point from one minute to the next.
+ *
+ * A face redraws the water every minute, and a jump of two points is a pixel or more on a small
+ * waterline, which shows as the water hopping rather than creeping.
+ */
+void test_moves_at_most_one_point_a_minute(void)
+{
+    int biggest = 0;
+
+    for (int32_t minute = 0; minute < TIDE_PERIOD_MIN; minute++)
+    {
+        int step = tide_level(minute + 1) - tide_level(minute);
+        step = step < 0 ? -step : step;
+        biggest = step > biggest ? step : biggest;
+    }
+
+    TEST_ASSERT_EQUAL_INT(1, biggest);
 }
 
 /** @brief The same point in a later cycle reads the same, so the water does not wander. */
@@ -134,6 +199,9 @@ int main(void)
     RUN_TEST(test_returns_to_low_water_after_one_period);
     RUN_TEST(test_reaches_high_water_midway);
     RUN_TEST(test_stays_within_range_across_the_cycle);
+    RUN_TEST(test_holds_high_water_as_long_as_low_water);
+    RUN_TEST(test_centres_high_water_on_the_turn);
+    RUN_TEST(test_moves_at_most_one_point_a_minute);
     RUN_TEST(test_repeats_every_period);
     RUN_TEST(test_negative_minutes_wrap_into_the_cycle);
     RUN_TEST(test_moves_slower_at_the_turn_than_at_mid_tide);

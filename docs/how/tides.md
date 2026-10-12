@@ -16,33 +16,35 @@ It lives in [`tide.h`](../../src/c/core/clock/tide.h) and [`tide.c`](../../src/c
 
 ## The Shape of the Water
 
-The level starts as a triangle, rising in a straight line from 0 to 100 over the first half of the cycle and falling back over the second:
+The level starts as a triangle, rising in a straight line over the first half of the cycle and falling back over the second. The code doubles the phase and folds it back at the turn, so `climb` runs from 0 up to the length of the cycle and back down:
 
 ```c
-int32_t pos = (phase(minutes) * 200) / TIDE_PERIOD_MIN;  // 0 to 199
-int32_t tri = pos <= 100 ? pos : 200 - pos;              // 0 to 100
+int64_t twice = (int64_t)phase(minutes) * 2;
+int64_t climb = twice < TIDE_PERIOD_MIN ? twice : 2 * TIDE_PERIOD_MIN - twice;
 ```
 
 Then the triangle is eased so the water slows into each turn:
 
 ```c
-return (int)((tri * tri * (300 - 2 * tri)) / 10000);
+int64_t cube = (int64_t)TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN;
+
+return (int)((100 * climb * climb * (3 * TIDE_PERIOD_MIN - 2 * climb) + cube / 2) / cube);
 ```
 
-That is the smoothstep curve, 3t² − 2t³, scaled to run from 0 to 100. It is exact at 0, 50, and 100, so low and high water really do reach the ends. In between it flattens both turns and steepens the middle. The chart shows a cycle hour by hour. The pointed line is the triangle, and the rounder one is the level the code returns:
+That is the smoothstep curve, 3t² − 2t³, with t as `climb` over the length of the cycle, scaled to run from 0 to 100. It is exact at 0, 50, and 100, so low and high water really do reach the ends. In between it flattens both turns and steepens the middle. The whole curve is worked out in one go and rounded once at the end, so the level moves at most one point a minute, and it holds at 0 for 31 minutes a cycle and at 100 for 30, centred on each turn. The product on top runs past 40 billion, which is why it is done in 64 bits. The chart shows a cycle hour by hour. The pointed line is the triangle, `climb` as a share of the cycle out of 100, and the rounder one is the level the code returns:
 
 ```mermaid
 xychart-beta
   title "Water Level across One Cycle"
   x-axis "Hours after Low Water" [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   y-axis "Level" 0 --> 100
-  line [0, 16, 32, 48, 64, 80, 96, 88, 72, 56, 39, 23, 7]
-  line [0, 6, 24, 47, 70, 89, 99, 96, 80, 58, 33, 13, 1]
+  line [0, 16, 32, 48, 64, 81, 97, 87, 71, 55, 39, 23, 7]
+  line [0, 7, 24, 47, 71, 90, 100, 96, 80, 58, 34, 13, 1]
 ```
 
-The triangle crawls up the beach at one steady rate, which is the giveaway that nothing real is behind it. A real tide is close to a cosine wave, and the smoothstep curve stays within about one point of a cosine. With the rounding down to whole numbers, the level the code returns is never more than about three points off it.
+The triangle crawls up the beach at one steady rate, which is the giveaway that nothing real is behind it. A real tide is close to a cosine wave, and the smoothstep curve stays within about one point of a cosine. With the rounding to whole numbers, the level the code returns is never more than about one and a half points off it.
 
-Sailors have a rule of thumb for the same shape, the rule of twelfths. It says the tide rises a twelfth of its range in the first hour, two in the second, three in each of the third and fourth, two in the fifth, and one in the sixth. Added up that is 8, 25, 50, 75, 92, and 100. The code reads 6, 24, 47, 70, 89, and 99 at the same hours.
+Sailors have a rule of thumb for the same shape, the rule of twelfths. It says the tide rises a twelfth of its range in the first hour, two in the second, three in each of the third and fourth, two in the fifth, and one in the sixth. Added up that is 8, 25, 50, 75, 92, and 100. The code reads 7, 24, 47, 71, 90, and 100 at the same hours.
 
 **Rising or Falling.** `tide_rising` is true over the first half of the cycle and false over the second, so a face can point an arrow or tilt a boat the right way. The flood and the ebb are the same length here.
 
