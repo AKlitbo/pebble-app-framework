@@ -9,13 +9,14 @@ var searchData=
   ['vibe_5fcount_6',['VIBE_COUNT',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856',1,'setting_values.h']]],
   ['vibe_5fcustom_7',['vibe_custom',['../group__lib__system.html#ga005b71470c6beaa166cd9cc7c5cf10b1',1,'vibe_custom(const uint32_t *durations, uint32_t num_segments):&#160;vibe.c'],['../group__lib__system.html#ga005b71470c6beaa166cd9cc7c5cf10b1',1,'vibe_custom(const uint32_t *durations, uint32_t num_segments):&#160;vibe.c']]],
   ['vibe_5fdouble_8',['VIBE_DOUBLE',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26',1,'setting_values.h']]],
-  ['vibe_5flong_9',['VIBE_LONG',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79',1,'setting_values.h']]],
-  ['vibe_5fnone_10',['VIBE_NONE',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a',1,'setting_values.h']]],
-  ['vibe_5fpulse_11',['vibe_pulse',['../group__lib__system.html#ga06fdc71bb88f3abae23d9c6ac8ef7c8e',1,'vibe_pulse(VibePulse pulse):&#160;vibe.c'],['../group__lib__system.html#ga06fdc71bb88f3abae23d9c6ac8ef7c8e',1,'vibe_pulse(VibePulse pulse):&#160;vibe.c']]],
-  ['vibe_5fshort_12',['VIBE_SHORT',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052',1,'setting_values.h']]],
-  ['vibechoice_13',['VibeChoice',['../group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819',1,'setting_values.h']]],
-  ['vibepulse_14',['VibePulse',['../group__lib__system.html#gabbe12c91a0e3541c91618e6765204e19',1,'vibe.h']]],
-  ['vibepulsedouble_15',['VibePulseDouble',['../group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19ae2653abdfc98405084bd8d0da715af1c',1,'vibe.h']]],
-  ['vibepulselong_16',['VibePulseLong',['../group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19a362ca2d17606221941dfa679ddb9ecbe',1,'vibe.h']]],
-  ['vibepulseshort_17',['VibePulseShort',['../group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19ae9aaea4d3226665ad0772d40537a1319',1,'vibe.h']]]
+  ['vibe_5fhourly_9',['vibe_hourly',['../group__lib__system.html#ga984f91ed1f50b63098f92155a219cc56',1,'vibe_hourly(const struct tm *tick, uint8_t choice):&#160;vibe.c'],['../group__lib__system.html#ga984f91ed1f50b63098f92155a219cc56',1,'vibe_hourly(const struct tm *tick, uint8_t choice):&#160;vibe.c']]],
+  ['vibe_5flong_10',['VIBE_LONG',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79',1,'setting_values.h']]],
+  ['vibe_5fnone_11',['VIBE_NONE',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a',1,'setting_values.h']]],
+  ['vibe_5fpulse_12',['vibe_pulse',['../group__lib__system.html#ga06fdc71bb88f3abae23d9c6ac8ef7c8e',1,'vibe_pulse(VibePulse pulse):&#160;vibe.c'],['../group__lib__system.html#ga06fdc71bb88f3abae23d9c6ac8ef7c8e',1,'vibe_pulse(VibePulse pulse):&#160;vibe.c']]],
+  ['vibe_5fshort_13',['VIBE_SHORT',['../group__lib__settings.html#gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052',1,'setting_values.h']]],
+  ['vibechoice_14',['VibeChoice',['../group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819',1,'setting_values.h']]],
+  ['vibepulse_15',['VibePulse',['../group__lib__system.html#gabbe12c91a0e3541c91618e6765204e19',1,'vibe.h']]],
+  ['vibepulsedouble_16',['VibePulseDouble',['../group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19ae2653abdfc98405084bd8d0da715af1c',1,'vibe.h']]],
+  ['vibepulselong_17',['VibePulseLong',['../group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19a362ca2d17606221941dfa679ddb9ecbe',1,'vibe.h']]],
+  ['vibepulseshort_18',['VibePulseShort',['../group__lib__system.html#ggabbe12c91a0e3541c91618e6765204e19ae9aaea4d3226665ad0772d40537a1319',1,'vibe.h']]]
 ];

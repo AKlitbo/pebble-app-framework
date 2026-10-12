@@ -14,6 +14,7 @@ var annotated_dup =
     [ "HealthConfig", "structHealthConfig.html", "structHealthConfig" ],
     [ "HealthSaved", "structHealthSaved.html", "structHealthSaved" ],
     [ "HealthSeed", "structHealthSeed.html", "structHealthSeed" ],
+    [ "HourLatch", "structHourLatch.html", "structHourLatch" ],
     [ "IconEntry", "structIconEntry.html", "structIconEntry" ],
     [ "IconMargins", "structIconMargins.html", "structIconMargins" ],
     [ "LocationConfig", "structLocationConfig.html", "structLocationConfig" ],

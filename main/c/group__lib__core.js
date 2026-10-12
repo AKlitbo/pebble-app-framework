@@ -8,6 +8,8 @@ var group__lib__core =
     [ "date.h", "date_8h.html", null ],
     [ "duration.c", "duration_8c.html", null ],
     [ "duration.h", "duration_8h.html", null ],
+    [ "hour_latch.c", "hour__latch_8c.html", null ],
+    [ "hour_latch.h", "hour__latch_8h.html", null ],
     [ "moon.c", "moon_8c.html", null ],
     [ "moon.h", "moon_8h.html", null ],
     [ "nightsched.c", "nightsched_8c.html", null ],
@@ -66,6 +68,9 @@ var group__lib__core =
     [ "weather_wire.h", "weather__wire_8h.html", null ],
     [ "wire_caps.g.h", "wire__caps_8g_8h.html", null ],
     [ "wire_read.h", "wire__read_8h.html", null ],
+    [ "HourLatch", "structHourLatch.html", [
+      [ "last_start", "structHourLatch.html#af42cb17bd6a6dfea7d7c95e87eb8f37a", null ]
+    ] ],
     [ "TimeBand", "structTimeBand.html", [
       [ "span_min", "structTimeBand.html#a9841d94a14ac1b0ca9e1f33868437da5", null ],
       [ "start_min", "structTimeBand.html#a740086bb48f2ad7e76e859f9eb151232", null ]
@@ -177,6 +182,7 @@ var group__lib__core =
       [ "col", "structWeatherDaily.html#a989f24bc5dd7bd2740be75a9b1be6904", null ],
       [ "count", "structWeatherDaily.html#abbd4a49f7df11b0756e1418e49fb391b", null ]
     ] ],
+    [ "HOUR_LATCH_EMPTY", "group__lib__core.html#ga9462df08933e714a6f14495ba12c19e4", null ],
     [ "LAYOUT_INT_MAX", "group__lib__core.html#ga19726e59e3c59c41210823d2d3dac836", null ],
     [ "MOON_EPOCH_UTC", "group__lib__core.html#gaf586f63d0905b47c9548a10f0310bc81", null ],
     [ "MOON_SYNODIC_SEC", "group__lib__core.html#ga550e4dc38f3305d3ad3dcd0dd394de94", null ],
@@ -239,6 +245,9 @@ var group__lib__core =
     [ "forecast_days_past", "group__lib__core.html#ga2f750b53c34d89db9ce79a2a252ebf02", null ],
     [ "forecast_hours_past", "group__lib__core.html#ga39e6efbba632aacf61875379354b1c38", null ],
     [ "fraction_px", "group__lib__core.html#ga9ed357804da26e96f0ae19aa3d02873f", null ],
+    [ "hour_latch_seed", "group__lib__core.html#ga3cbf613cf79116cd37b00238914036f8", null ],
+    [ "hour_latch_start", "group__lib__core.html#ga7c35b1a9c0faafc665826130832ddf52", null ],
+    [ "hour_latch_take", "group__lib__core.html#gaafead0993ab7c57e2ae8a7b8fe65d6d7", null ],
     [ "layout_has_any_block", "group__lib__core.html#gadb8a7e98c9c67c5167942ae96433c21f", null ],
     [ "layout_parse_int", "group__lib__core.html#ga6de1604c8d0aab3e3a3226dccb171cce", null ],
     [ "layout_role_pick", "group__lib__core.html#ga483c460c27f1f46834ac736434668598", null ],

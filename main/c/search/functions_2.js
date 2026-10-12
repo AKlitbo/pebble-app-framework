@@ -23,5 +23,6 @@ var searchData=
   ['cstring_5ffit_20',['cstring_fit',['../group__lib__core.html#ga48dcd72e49fa122dc562f64605efdc75',1,'cstring_fit.h']]],
   ['cstring_5ffit_5fsame_21',['cstring_fit_same',['../group__lib__core.html#ga13d8bf38f7877df6836f074354b4bcb9',1,'cstring_fit.h']]],
   ['cstring_5fis_5fclean_22',['cstring_is_clean',['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;number_format.c'],['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;number_format.c']]],
-  ['cstring_5fsetting_5fis_5fclean_23',['cstring_setting_is_clean',['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;number_format.c'],['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;number_format.c']]]
+  ['cstring_5fsetting_5fis_5fclean_23',['cstring_setting_is_clean',['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;number_format.c'],['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;number_format.c']]],
+  ['current_5fhour_5fstart_24',['current_hour_start',['../vibe_8c.html#ac6e503c7200a4d17d92d72bf022b100a',1,'vibe.c']]]
 ];

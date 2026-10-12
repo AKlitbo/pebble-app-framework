@@ -62,7 +62,8 @@ var searchData=
   ['cstring_5ffit_5fsame_59',['cstring_fit_same',['../group__lib__core.html#ga13d8bf38f7877df6836f074354b4bcb9',1,'cstring_fit.h']]],
   ['cstring_5fis_5fclean_60',['cstring_is_clean',['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;number_format.c'],['../group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35',1,'cstring_is_clean(const char *s, uint16_t size):&#160;number_format.c']]],
   ['cstring_5fsetting_5fis_5fclean_61',['cstring_setting_is_clean',['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;number_format.c'],['../group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22',1,'cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str):&#160;number_format.c']]],
-  ['custom_5fcolors_5fprovider_62',['custom_colors_provider',['../struct_0fstruct_0e_8s__handlers.html#a03250f868919dfc3d4477ad54741f30e',1,'[struct].s_handlers']]],
-  ['customcolorshandler_63',['CustomColorsHandler',['../group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931',1,'appmessage.h']]],
-  ['customcolorsprovider_64',['CustomColorsProvider',['../group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc',1,'appmessage.h']]]
+  ['current_5fhour_5fstart_62',['current_hour_start',['../vibe_8c.html#ac6e503c7200a4d17d92d72bf022b100a',1,'vibe.c']]],
+  ['custom_5fcolors_5fprovider_63',['custom_colors_provider',['../struct_0fstruct_0e_8s__handlers.html#a03250f868919dfc3d4477ad54741f30e',1,'[struct].s_handlers']]],
+  ['customcolorshandler_64',['CustomColorsHandler',['../group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931',1,'appmessage.h']]],
+  ['customcolorsprovider_65',['CustomColorsProvider',['../group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc',1,'appmessage.h']]]
 ];

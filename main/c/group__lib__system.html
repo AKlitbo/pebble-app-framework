@@ -237,6 +237,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga68e3aacc6c4efcb6b2827627e09da299"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fire the pattern named by a <a class="el" href="group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> (VIBE_NONE stays silent). The caller resolves the choice from wherever it likes, so the lib never has to know which setting it came from.  <br /></td></tr>
 <tr class="memitem:ga9b510de5a24f5136dfb470f5aa6aafd5" id="r_ga9b510de5a24f5136dfb470f5aa6aafd5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga9b510de5a24f5136dfb470f5aa6aafd5">vibe_bt_transition</a> (bool connected)</td></tr>
 <tr class="memdesc:ga9b510de5a24f5136dfb470f5aa6aafd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The default bluetooth-transition buzz: fire the pattern the user picked in settings for a connect or disconnect. A face installs this as system_store's vibe policy so the store itself never has to know about settings or buzzing.  <br /></td></tr>
+<tr class="memitem:ga984f91ed1f50b63098f92155a219cc56" id="r_ga984f91ed1f50b63098f92155a219cc56"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga984f91ed1f50b63098f92155a219cc56">vibe_hourly</a> (const struct tm *tick, uint8_t choice)</td></tr>
+<tr class="memdesc:ga984f91ed1f50b63098f92155a219cc56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Buzz once at the top of each hour. A face calls this from its time callback on every tick, and it buzzes on the first tick of each hour's minute 0.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Bluetooth buzzing and the watch's own unit settings. </p>
@@ -493,6 +495,38 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">durations</td><td>The on and off times in milliseconds. The first entry is a buzz. </td></tr>
     <tr><td class="paramname">num_segments</td><td>How many entries the durations array has. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga984f91ed1f50b63098f92155a219cc56" name="ga984f91ed1f50b63098f92155a219cc56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga984f91ed1f50b63098f92155a219cc56">&#9670;&#160;</a></span>vibe_hourly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void vibe_hourly </td>
+          <td>(</td>
+          <td class="paramtype">const struct tm *</td>          <td class="paramname"><span class="paramname"><em>tick</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>choice</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Buzz once at the top of each hour. A face calls this from its time callback on every tick, and it buzzes on the first tick of each hour's minute 0. </p>
+<p>More than one ticker can tick inside minute 0, so it remembers when the hour that last buzzed began and buzzes each real hour once, including the hour the clocks repeat when they fall back. On a .beats clock the face sets hourly in its <a class="el" href="structTimeConfig.html" title="The rules a face hands the store, built from its own settings so the store names no SETTING_*.">TimeConfig</a>, so a tick lands in minute 0 at all.</p>
+<p>The first call after launch only remembers its hour. Subscribing to a tick sends one tick straight away, so a face opened in minute 0 would otherwise buzz an hour that already buzzed before the wearer left it. A face that was not running at the top of the hour, such as one closed for an app, then stays silent until the next hour, which beats a second buzz on every return in minute 0.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tick</td><td>The time of the tick, normally <a class="el" href="group__lib__stores.html#gadc9650a7506ac75294df48a7a8deadcd" title="The time we hold right now.">time_store_tm()</a>. </td></tr>
+    <tr><td class="paramname">choice</td><td>A <a class="el" href="group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819" title="Bluetooth connect/disconnect vibe pattern choices.">VibeChoice</a> value, normally the Hourly Vibration setting. VIBE_NONE stays silent. </td></tr>
   </table>
   </dd>
 </dl>

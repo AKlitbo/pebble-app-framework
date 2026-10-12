@@ -8,6 +8,8 @@ var dir_dc67d81611f66b3039b01ee4f45488a7 =
     [ "date.h", "date_8h.html", "date_8h" ],
     [ "duration.c", "duration_8c.html", "duration_8c" ],
     [ "duration.h", "duration_8h.html", "duration_8h" ],
+    [ "hour_latch.c", "hour__latch_8c.html", "hour__latch_8c" ],
+    [ "hour_latch.h", "hour__latch_8h.html", "hour__latch_8h" ],
     [ "moon.c", "moon_8c.html", "moon_8c" ],
     [ "moon.h", "moon_8h.html", "moon_8h" ],
     [ "nightsched.c", "nightsched_8c.html", "nightsched_8c" ],

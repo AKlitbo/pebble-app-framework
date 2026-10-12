@@ -347,6 +347,67 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>hour_latch.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>hour__latch_8c.html</filename>
+    <includes id="hour__latch_8h" name="hour_latch.h" local="yes" import="no" module="no" objc="no">clock/hour_latch.h</includes>
+    <member kind="function">
+      <type>time_t</type>
+      <name>hour_latch_start</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c35b1a9c0faafc665826130832ddf52</anchor>
+      <arglist>(time_t now, int tm_min, int tm_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hour_latch_take</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaafead0993ab7c57e2ae8a7b8fe65d6d7</anchor>
+      <arglist>(HourLatch *latch, int tick_min, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hour_latch_seed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3cbf613cf79116cd37b00238914036f8</anchor>
+      <arglist>(HourLatch *latch, time_t start)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hour_latch.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>hour__latch_8h.html</filename>
+    <class kind="struct">HourLatch</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HOUR_LATCH_EMPTY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9462df08933e714a6f14495ba12c19e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>hour_latch_start</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c35b1a9c0faafc665826130832ddf52</anchor>
+      <arglist>(time_t now, int tm_min, int tm_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hour_latch_take</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaafead0993ab7c57e2ae8a7b8fe65d6d7</anchor>
+      <arglist>(HourLatch *latch, int tick_min, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hour_latch_seed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3cbf613cf79116cd37b00238914036f8</anchor>
+      <arglist>(HourLatch *latch, time_t start)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>moon.c</name>
     <path>src/c/core/clock/</path>
     <filename>moon_8c.html</filename>
@@ -5665,6 +5726,7 @@
     <includes id="vibe_8h" name="vibe.h" local="yes" import="no" module="no" objc="no">system/vibe/vibe.h</includes>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <includes id="hour__latch_8h" name="hour_latch.h" local="yes" import="no" module="no" objc="no">clock/hour_latch.h</includes>
     <member kind="function">
       <type>void</type>
       <name>vibe_pulse</name>
@@ -5692,6 +5754,34 @@
       <anchorfile>group__lib__system.html</anchorfile>
       <anchor>ga9b510de5a24f5136dfb470f5aa6aafd5</anchor>
       <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static time_t</type>
+      <name>current_hour_start</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>ac6e503c7200a4d17d92d72bf022b100a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_hourly</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
+      <arglist>(const struct tm *tick, uint8_t choice)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HourLatch</type>
+      <name>s_hour_latch</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>ae7894f3fe6b89ec0d145e0333e66a1b0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_hourly_seeded</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>a1a5df4ca02d3ced1f6fa3bb20fd17006</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -5750,6 +5840,13 @@
       <anchorfile>group__lib__system.html</anchorfile>
       <anchor>ga9b510de5a24f5136dfb470f5aa6aafd5</anchor>
       <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_hourly</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
+      <arglist>(const struct tm *tick, uint8_t choice)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -7247,6 +7344,17 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>HourLatch</name>
+    <filename>structHourLatch.html</filename>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_start</name>
+      <anchorfile>structHourLatch.html</anchorfile>
+      <anchor>af42cb17bd6a6dfea7d7c95e87eb8f37a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>IconEntry</name>
     <filename>structIconEntry.html</filename>
     <member kind="variable">
@@ -8547,6 +8655,8 @@
     <file path="src/c/core/clock/">date.h</file>
     <file path="src/c/core/clock/">duration.c</file>
     <file path="src/c/core/clock/">duration.h</file>
+    <file path="src/c/core/clock/">hour_latch.c</file>
+    <file path="src/c/core/clock/">hour_latch.h</file>
     <file path="src/c/core/clock/">moon.c</file>
     <file path="src/c/core/clock/">moon.h</file>
     <file path="src/c/core/clock/">nightsched.c</file>
@@ -8605,6 +8715,7 @@
     <file path="src/c/core/wire/">weather_wire.h</file>
     <file path="src/c/core/wire/">wire_caps.g.h</file>
     <file path="src/c/core/wire/">wire_read.h</file>
+    <class kind="struct">HourLatch</class>
     <class kind="struct">TimeBand</class>
     <class kind="struct">TimeBandSpan</class>
     <class kind="struct">CallbackList</class>
@@ -8619,6 +8730,13 @@
     <class kind="struct">WeatherDayCol</class>
     <class kind="struct">WeatherHourly</class>
     <class kind="struct">WeatherDaily</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HOUR_LATCH_EMPTY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9462df08933e714a6f14495ba12c19e4</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>MOON_SYNODIC_SEC</name>
@@ -8887,6 +9005,27 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga0b34387761f2f9297553dcad5ac0f206</anchor>
       <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>hour_latch_start</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c35b1a9c0faafc665826130832ddf52</anchor>
+      <arglist>(time_t now, int tm_min, int tm_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hour_latch_take</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaafead0993ab7c57e2ae8a7b8fe65d6d7</anchor>
+      <arglist>(HourLatch *latch, int tick_min, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hour_latch_seed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3cbf613cf79116cd37b00238914036f8</anchor>
+      <arglist>(HourLatch *latch, time_t start)</arglist>
     </member>
     <member kind="function">
       <type>int32_t</type>
@@ -10920,6 +11059,13 @@
       <anchorfile>group__lib__system.html</anchorfile>
       <anchor>ga9b510de5a24f5136dfb470f5aa6aafd5</anchor>
       <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_hourly</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
+      <arglist>(const struct tm *tick, uint8_t choice)</arglist>
     </member>
   </compound>
   <compound kind="group">
