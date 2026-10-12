@@ -21,8 +21,8 @@ describe('condition vocabulary', () => {
     expect(result).toEqual([]);
   });
 
-  /** A row missing its token, icon, or a label generates RESOURCE_ID_ICON_undefined or shows the user an empty word. */
-  test.each(['token', 'resource', 'labelShort', 'labelLong'])('has a non-empty %s on every condition', (field) => {
+  /** A row missing its token, icon, or label generates RESOURCE_ID_ICON_undefined or shows the user an empty word. */
+  test.each(['token', 'resource', 'labelLong'])('has a non-empty %s on every condition', (field) => {
     const result = conditions.conditions.filter((row) => !row[field]);
 
     expect(result).toEqual([]);
@@ -40,10 +40,10 @@ describe('condition vocabulary', () => {
   });
 
   /** A fallback missing its icon or labels renders nothing at all for any unrecognized condition. */
-  test('gives the fallback an icon and both labels', () => {
+  test('gives the fallback an icon and its label', () => {
     const fallback = conditions.fallback;
 
-    const result = ['resource', 'labelShort', 'labelLong'].filter((field) => !fallback[field]);
+    const result = ['resource', 'labelLong'].filter((field) => !fallback[field]);
 
     expect(result).toEqual([]);
   });

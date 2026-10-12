@@ -67,6 +67,10 @@ export interface WeatherOpts {
   fahrenheit?: boolean;
   coords?: WeatherCoords | null;
   label?: string;
+  /**
+   * @deprecated A place name for WeatherAPI to look up. The weather feature always sends coords, so
+   * nothing sets it, and it goes at the next major release with the lookup.
+   */
   place?: string;
   wantForecast?: boolean;
   /** The reading fields the face shows, such as `humidity` or `uvIndex`. Left out, a provider fetches all of them. */

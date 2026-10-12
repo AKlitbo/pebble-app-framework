@@ -14,8 +14,6 @@
  *   nightResource optional night icon. When present the JS emits "<token>_NIGHT"
  *                 after dark and the generator adds a "<token>_NIGHT" branch to
  *                 the icon table.
- *   labelShort    compact display for small slots. Nothing reads it, since the
- *                 watch's wx_label_short shows the token itself.
  *   labelLong     the sky in words, sent as WEATHER_CONDITION_LABEL to a face
  *                 that declares it.
  *
@@ -23,19 +21,21 @@
  * freezing-drizzle glyph of its own.
  */
 
-/** One condition row: its wire token plus its day/night icons and labels. */
+/** One condition row: its wire token plus its day/night icons and its label. */
 export interface ConditionEntry {
   token: string;
   resource: string;
   nightResource?: string;
-  labelShort: string;
+  /** @deprecated Nothing reads it, since the watch's wx_label_short shows the token itself. It goes at the next major release. */
+  labelShort?: string;
   labelLong: string;
 }
 
-/** The glyph and labels an unrecognized condition falls back to. No token: nothing sends it. */
+/** The glyph and label an unrecognized condition falls back to. No token: nothing sends it. */
 export interface ConditionFallback {
   resource: string;
-  labelShort: string;
+  /** @deprecated Nothing reads it. It goes at the next major release. */
+  labelShort?: string;
   labelLong: string;
 }
 
@@ -56,21 +56,21 @@ const UNKNOWN_CODE = 255;
 const FORECAST_NIGHT_BIT = 0x80;
 
 // shown when a condition isn't recognized (the UNKNOWN token routes here)
-const fallback: ConditionFallback = { resource: 'WEATHER_NOW_NA', labelShort: 'UNKNOWN', labelLong: 'Unknown' };
+const fallback: ConditionFallback = { resource: 'WEATHER_NOW_NA', labelLong: 'Unknown' };
 
 const conditions: ConditionEntry[] = [
-  { token: 'CLEAR', resource: 'WEATHER_NOW_CLEAR',         nightResource: 'WEATHER_NOW_NIGHT_CLEAR',         labelShort: 'CLEAR', labelLong: 'Clear' },
-  { token: 'PCLDY', resource: 'WEATHER_NOW_PARTLY_CLOUDY', nightResource: 'WEATHER_NOW_NIGHT_PARTLY_CLOUDY', labelShort: 'PCLDY', labelLong: 'Partly Cloudy' },
-  { token: 'CLDY',  resource: 'WEATHER_NOW_CLOUDY',        nightResource: 'WEATHER_NOW_NIGHT_CLOUDY',        labelShort: 'CLDY',  labelLong: 'Cloudy' },
-  { token: 'FOGGY', resource: 'WEATHER_NOW_FOG',           nightResource: 'WEATHER_NOW_NIGHT_FOG',           labelShort: 'FOGGY', labelLong: 'Fog' },
-  { token: 'DRZL',  resource: 'WEATHER_NOW_DRIZZLE',       nightResource: 'WEATHER_NOW_NIGHT_DRIZZLE',       labelShort: 'DRZL',  labelLong: 'Drizzle' },
-  { token: 'FZDZ',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelShort: 'FZDZ',  labelLong: 'Freezing Drizzle' },
-  { token: 'RAIN',  resource: 'WEATHER_NOW_RAIN',          nightResource: 'WEATHER_NOW_NIGHT_RAIN',          labelShort: 'RAIN',  labelLong: 'Rain' },
-  { token: 'FZRN',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelShort: 'FZRN',  labelLong: 'Freezing Rain' },
-  { token: 'SNOW',  resource: 'WEATHER_NOW_SNOW',          nightResource: 'WEATHER_NOW_NIGHT_SNOW',          labelShort: 'SNOW',  labelLong: 'Snow' },
-  { token: 'SHWR',  resource: 'WEATHER_NOW_SHOWERS',       nightResource: 'WEATHER_NOW_NIGHT_SHOWERS',       labelShort: 'SHWR',  labelLong: 'Showers' },
-  { token: 'SNSH',  resource: 'WEATHER_NOW_SNOW_WIND',     nightResource: 'WEATHER_NOW_NIGHT_SNOW_WIND',     labelShort: 'SNSH',  labelLong: 'Snow Showers' },
-  { token: 'STRM',  resource: 'WEATHER_NOW_THUNDERSTORM',  nightResource: 'WEATHER_NOW_NIGHT_THUNDERSTORM',  labelShort: 'STRM',  labelLong: 'Thunderstorm' },
+  { token: 'CLEAR', resource: 'WEATHER_NOW_CLEAR',         nightResource: 'WEATHER_NOW_NIGHT_CLEAR',         labelLong: 'Clear' },
+  { token: 'PCLDY', resource: 'WEATHER_NOW_PARTLY_CLOUDY', nightResource: 'WEATHER_NOW_NIGHT_PARTLY_CLOUDY', labelLong: 'Partly Cloudy' },
+  { token: 'CLDY',  resource: 'WEATHER_NOW_CLOUDY',        nightResource: 'WEATHER_NOW_NIGHT_CLOUDY',        labelLong: 'Cloudy' },
+  { token: 'FOGGY', resource: 'WEATHER_NOW_FOG',           nightResource: 'WEATHER_NOW_NIGHT_FOG',           labelLong: 'Fog' },
+  { token: 'DRZL',  resource: 'WEATHER_NOW_DRIZZLE',       nightResource: 'WEATHER_NOW_NIGHT_DRIZZLE',       labelLong: 'Drizzle' },
+  { token: 'FZDZ',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelLong: 'Freezing Drizzle' },
+  { token: 'RAIN',  resource: 'WEATHER_NOW_RAIN',          nightResource: 'WEATHER_NOW_NIGHT_RAIN',          labelLong: 'Rain' },
+  { token: 'FZRN',  resource: 'WEATHER_NOW_SLEET',         nightResource: 'WEATHER_NOW_NIGHT_SLEET',         labelLong: 'Freezing Rain' },
+  { token: 'SNOW',  resource: 'WEATHER_NOW_SNOW',          nightResource: 'WEATHER_NOW_NIGHT_SNOW',          labelLong: 'Snow' },
+  { token: 'SHWR',  resource: 'WEATHER_NOW_SHOWERS',       nightResource: 'WEATHER_NOW_NIGHT_SHOWERS',       labelLong: 'Showers' },
+  { token: 'SNSH',  resource: 'WEATHER_NOW_SNOW_WIND',     nightResource: 'WEATHER_NOW_NIGHT_SNOW_WIND',     labelLong: 'Snow Showers' },
+  { token: 'STRM',  resource: 'WEATHER_NOW_THUNDERSTORM',  nightResource: 'WEATHER_NOW_NIGHT_THUNDERSTORM',  labelLong: 'Thunderstorm' },
 ];
 
 /**

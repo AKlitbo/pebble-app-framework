@@ -17,17 +17,17 @@ import { buildIconsTable, GENERATED } from './build-conditions';
 import vocabulary from '../src/ts/weather/conditions.ts';
 import type { ConditionEntry, ConditionFallback } from '../src/ts/weather/conditions.ts';
 
-/** The fallback shape conditions.ts really exports: a resource plus both labels. */
-const FALLBACK: ConditionFallback = { resource: 'WI_NA', labelShort: 'UNKNOWN', labelLong: 'Unknown' };
+/** The fallback shape conditions.ts really exports: a resource plus its label. */
+const FALLBACK: ConditionFallback = { resource: 'WI_NA', labelLong: 'Unknown' };
 
 /** A fallback on a named resource, for the cases that pin which resource is used. */
 function fallbackOf(resource: string): ConditionFallback {
-  return { resource: resource, labelShort: 'UNKNOWN', labelLong: 'Unknown' };
+  return { resource: resource, labelLong: 'Unknown' };
 }
 
 /** One row, labels defaulted so an icon case only spells out the fields it is about. */
 function row(token: string, resource: string, nightResource?: string): ConditionEntry {
-  return { token: token, resource: resource, nightResource: nightResource, labelShort: token, labelLong: token };
+  return { token: token, resource: resource, nightResource: nightResource, labelLong: token };
 }
 
 // the forecast wire code is the token's position in conditions.ts, so this order is the contract
