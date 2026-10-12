@@ -25,6 +25,14 @@ export interface ClayConfigItem {
   description?: string;
   defaultValue?: string | number | boolean;
   options?: ClayOption[];
+  /** input, select, and radiogroup only: how Clay sends the value to the watch. 'string', the
+   * default, sends it as it is. 'integer' sends a whole number, and Clay turns any value that is not
+   * one into 0, so it only suits a select whose option values are all numbers and that fills a choice
+   * setting. A text setting on the watch drops an integer, and a word would land as the first choice. */
+  serializeValueAs?: 'string' | 'integer';
+  /** A name Clay's getItemsByGroup finds the item by, for a custom function that works on several
+   * items at once. */
+  group?: string;
   items?: ClayConfigItem[];
   attributes?: Record<string, unknown>;
   /** Clay's own per-item filter, resolved against the watch the page was opened from. Names come

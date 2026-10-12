@@ -78,7 +78,7 @@ A persist key holds at most 256 bytes, and the watch saves only the first 256 by
 
 `settings_apply_inbox` walks the face's table and looks each key up in the incoming message. It only decodes. It hands back what moved and leaves saving and redrawing to the AppMessage layer, which [Talking to the Phone](talking-to-the-phone.md#what-happens-to-a-message) covers. A key in the message that is not in the table is ignored. Each type has its own checks on the way in.
 
-**A Choice.** Clay sends a select as text, so a choice is normally read with `atoi`. Text that does not start with a digit leaves the setting as it was. A number past the end of the list, or below 0, becomes the default, so a theme of `"12"` on a face with 9 themes reads as theme 0. A choice that arrives as a number, such as from a custom component, is taken as it is.
+**A Choice.** Clay sends a select as text, so a choice is normally read with `atoi`. Text that does not start with a digit leaves the setting as it was. A number past the end of the list, or below 0, becomes the default, so a theme of `"12"` on a face with 9 themes reads as theme 0. A choice that arrives as a number, such as from a custom component or a select set to `serializeValueAs: 'integer'`, is taken as it is, so a 0 there is the first choice whether or not it was meant. A text setting takes only text and leaves a number alone.
 
 **A Toggle or a Colour.** A value of the wrong type leaves the setting as it was.
 
