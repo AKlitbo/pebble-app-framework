@@ -4,7 +4,7 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4.4.0] - 2026-10-14
+## [4.4.0] - Unreleased
 
 ### Framework Changes
 
@@ -12,10 +12,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added a theme picker that shows a picture of each theme. Pass `previews` to the `theme` section of `buildConfig`, a map from a theme's option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme's pictures under it, a theme with a day and a night shot getting both side by side. It still saves under `APPEARANCE_THEME` exactly as the plain select. The `themePreview` component is registered only when a page holds one, so a face without previews is unchanged.
 - Added a `theme-previews` generator and check to the `thumbnails` plugin. A face lists the plugin and keeps a `resources/theme-previews.json`, which maps each theme's value to a picture path or a list of paths relative to the face folder. `paf gen <face> theme-previews` base64-encodes them into `src/pkjs/clay/theme-previews.g.js`, which the face's `config.ts` imports and passes as `theme.previews`. `paf check` fails when the committed file is stale or a path is missing or is not a PNG.
+- Added `role_pick` and the `Role` enum in `role/role.h`, for a face that shows a different look by day, after dark, and during Quiet Time. It takes each trigger as a pair, whether it is firing and whether a look is assigned to it, and returns `ROLE_DAY`, `ROLE_NIGHT`, or `ROLE_QUIET`, with Quiet Time winning over night and a trigger with nothing assigned falling through to the next. It is host-tested and touches no SDK.
+- Added `rotate_index` in `clock/rotate.h`, which picks which of a set is up now on a timed rotation. Pass it the clock's `tm_year`, `tm_yday`, `tm_hour`, and `tm_min`, how many minutes each one is shown for, and how many there are, and it returns the index, worked out from the time rather than a saved counter so it survives a restart. It holds steady through a slot and steps by one on each boundary.
 
 #### Changed
 
 - The `thumbnails` plugin now offers two generators, `thumbnails` for the layout builder's panel pictures and `theme-previews` for the theme picker. A face lists the plugin for either.
+
+#### Deprecated
+
+- Deprecated `layout_role_pick`, `LayoutRole`, and the `LAYOUT_ROLE_*` constants in `layout/layout_role.h`. They are now thin aliases for `role_pick`, `Role`, and the `ROLE_*` constants in `role/role.h`, which do the same job for any face rather than only a layout one. The old names still work and go at the next major release. Move to `role_pick` and `Role` when convenient.
 
 ## [4.3.0] - 2026-10-11
 

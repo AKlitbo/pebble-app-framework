@@ -1,45 +1,36 @@
 /**
  * @file layout_role.h
- * @brief Which of a face's layouts should be on screen right now.
+ * @brief Deprecated names for the day/night/Quiet Time picker, which is now `role.h`.
  *
- * A face can hold more than one grid and swap between them. This answers which one wins when more
- * than one thing wants to. Every reading comes in as a pair: whether that trigger is firing, and
- * whether there is actually a layout assigned to it. Both halves matter, since a trigger with
- * nothing behind it has to hand the screen to whatever would have had it otherwise rather than
- * draw nothing.
- *
- * The caller gathers the readings. Nothing here touches a watch, which is what keeps it
- * host-testable.
+ * `role_pick` and `Role` in `role/role.h` do this job for any face, a layout editor or a themed
+ * face alike. These names stay so a face already on them keeps building. They go at the next major
+ * release. Move to `role_pick` and `Role` when convenient.
  *
  * @ingroup lib_core
  */
 #pragma once
-#include <stdbool.h>
+#include "role/role.h"
 
 /**
  * @addtogroup lib_core
  * @{
  */
 
-/// Which layout is showing. The caller's own storage should line up with these
-typedef enum
-{
-    LAYOUT_ROLE_DAY = 0,   ///< The everyday grid, and what everything else falls back to
-    LAYOUT_ROLE_NIGHT,     ///< The one the night schedule brings in after dark
-    LAYOUT_ROLE_QUIET,     ///< The one Quiet Time brings in, whatever the hour
-    LAYOUT_ROLE_COUNT
-} LayoutRole;
+/// @deprecated Use `Role`. The names line up one for one.
+typedef Role LayoutRole;
+
+/// @deprecated Use `ROLE_DAY`.
+#define LAYOUT_ROLE_DAY ROLE_DAY
+/// @deprecated Use `ROLE_NIGHT`.
+#define LAYOUT_ROLE_NIGHT ROLE_NIGHT
+/// @deprecated Use `ROLE_QUIET`.
+#define LAYOUT_ROLE_QUIET ROLE_QUIET
+/// @deprecated Use `ROLE_COUNT`.
+#define LAYOUT_ROLE_COUNT ROLE_COUNT
 
 /**
- * @brief Which layout wins, given what is firing and what has a grid behind it.
- *
- * Quiet Time sits above the night schedule on purpose. Someone who has set both is saying they
- * want a quieter screen while the watch is quiet, and that holds whether it happens to be dark
- * out or not.
- *
- * A trigger with no layout assigned is skipped rather than honoured, so the answer walks down to
- * the next one that has something to show and lands on the day grid if nothing else does. That is
- * what lets someone use one of these without filling in the other.
+ * @brief Which layout wins. Forwards to `role_pick`.
+ * @deprecated Call `role_pick`. The arguments are the same.
  *
  * @param quiet_on True while Quiet Time is on.
  * @param quiet_set True when a layout is assigned to Quiet Time.
