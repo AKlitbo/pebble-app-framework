@@ -116,7 +116,7 @@ Framework 4 ships these. List one under `plugins` to use it.
 | Plugin | What `paf` runs from it |
 | :-- | :-- |
 | `icons` | the `icons` generator and its check. `sources` is the folder of icon SVGs, from the unit |
-| `thumbnails` | the `thumbnails` generator and its check |
+| `thumbnails` | the `thumbnails` and `theme-previews` generators and their checks |
 | `frame` | the `background` generator, for faces with a `frame/frame.config.json` |
 | `dev` | the `clay-preview` and `tap-walk` tools |
 | `code-style` | `paf lint` and `paf format`. `"prettier": true` turns on Prettier for `paf format` |

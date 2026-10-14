@@ -33,7 +33,7 @@ export default buildConfig({
 
 | Section | Shown When | What It Offers |
 | :-- | :-- | :-- |
-| Appearance | `theme` or `quietTime` is passed, or `appearanceItems` holds at least one item | the theme picker when `theme` is passed, the face's `appearanceItems`, and a Quiet Time icon toggle with `quietTime` |
+| Appearance | `theme` or `quietTime` is passed, or `appearanceItems` holds at least one item | the theme picker when `theme` is passed, with a picture of each theme when `theme.previews` is given, the face's `appearanceItems`, and a Quiet Time icon toggle with `quietTime` |
 | the face's own | `layoutSections` is passed | whatever the face builds, such as a layout editor |
 | Bluetooth | always | the connection icon, and a buzz on connect and on disconnect |
 | Clock | always | the date and time formats, the face's `clockItems`, a second clock's time zone with `clock.timeZone`, and the hourly buzz with `hourlyVibe` |
@@ -162,6 +162,26 @@ Typing clears the saved place, so a name typed but never picked from the list sa
 **GPS and the Manual Place.** The Location Settings section puts **Enable Phone GPS** and **Fallback to Manual Location** beside the search. GPS starts off unless the face passes `location: { gpsDefault: true }`, and the fallback starts on. [Where the Location Comes From](fetching-the-weather.md#where-the-location-comes-from) covers how a fetch picks between them.
 
 **A Second Clock.** An item marked `timeZone: true` becomes a time zone picker, which `clock: { timeZone: true }` adds to the Clock section. A hand-built page can mark any `locationsearch` item the same way, and the phone keeps each marked item's offset current. [Picking a Place](time-zones.md#picking-a-place) covers what the picker offers and how the saved zone becomes the offset the watch is sent.
+
+## The Theme Picker with Pictures
+
+The theme picker is a dropdown by default. A face can give it a picture of each theme by passing `previews` in the `theme` section, a map from a theme's option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme's pictures under it, a theme with a day and a night shot getting both side by side:
+
+```ts
+import themePreviews from './clay/theme-previews.g';
+
+buildConfig({
+  theme: {
+    label: 'Theme',
+    options: [{ label: 'Day', value: 0 }, { label: 'Night', value: 1 }],
+    previews: themePreviews,
+  },
+});
+```
+
+The pictures come from the `thumbnails` plugin's `theme-previews` generator, which base64-encodes a face's screenshots into the `theme-previews.g.js` the `previews` import reads. [The Thumbnails Plugin](thumbnails-plugin.md#theme-previews) covers the manifest and the generator.
+
+The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker.
 
 ## A Face's Own Builder
 

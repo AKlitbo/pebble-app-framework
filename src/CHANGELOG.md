@@ -4,6 +4,19 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.0] - 2026-10-14
+
+### Framework Changes
+
+#### Added
+
+- Added a theme picker that shows a picture of each theme. Pass `previews` to the `theme` section of `buildConfig`, a map from a theme's option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme's pictures under it, a theme with a day and a night shot getting both side by side. It still saves under `APPEARANCE_THEME` exactly as the plain select. The `themePreview` component is registered only when a page holds one, so a face without previews is unchanged.
+- Added a `theme-previews` generator and check to the `thumbnails` plugin. A face lists the plugin and keeps a `resources/theme-previews.json`, which maps each theme's value to a picture path or a list of paths relative to the face folder. `paf gen <face> theme-previews` base64-encodes them into `src/pkjs/clay/theme-previews.g.js`, which the face's `config.ts` imports and passes as `theme.previews`. `paf check` fails when the committed file is stale or a path is missing or is not a PNG.
+
+#### Changed
+
+- The `thumbnails` plugin now offers two generators, `thumbnails` for the layout builder's panel pictures and `theme-previews` for the theme picker. A face lists the plugin for either.
+
 ## [4.3.0] - 2026-10-11
 
 ### Framework Changes
@@ -401,6 +414,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[4.4.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.0.0...v4.1.0
