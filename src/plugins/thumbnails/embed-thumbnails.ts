@@ -29,6 +29,7 @@ import type { ModuleMeta } from '../../ts/clay/types.ts';
 import type { Thumbs } from '../../ts/clay/builder/ts/types.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 import { isMainScript } from '../../tools/shared/entry.ts';
+import { pngDataUrl } from './data-url.ts';
 
 // loads a face's module-meta.ts by path in moduleMetaFile
 const requireMeta = createRequire(import.meta.url);
@@ -309,13 +310,11 @@ export function encodeThumbnails(face: string): Built {
   const seen: Record<string, boolean> = {};
 
   found.forEach((thumb) => {
-    const data = fs.readFileSync(path.join(dir, thumb.file)).toString('base64');
-
     if (!thumbs[thumb.label]) {
       thumbs[thumb.label] = {};
     }
 
-    thumbs[thumb.label][thumb.size] = 'data:image/png;base64,' + data;
+    thumbs[thumb.label][thumb.size] = pngDataUrl(path.join(dir, thumb.file));
     order[thumb.label] = thumb.order;
     seen[thumb.slug] = true;
   });

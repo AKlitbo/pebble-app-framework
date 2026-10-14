@@ -1,6 +1,6 @@
 {
   "name": "@paf/thumbnails",
-  "description": "Inlines a face's panel thumbnails as base64 so the Clay layout builder can show them.",
+  "description": "Inlines a face's pictures as base64 for its settings page: panel thumbnails for the Clay layout builder, and theme previews for the theme picker.",
   "author": "Null Syntax",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
@@ -9,10 +9,15 @@
       "thumbnails": {
         "script": "embed-thumbnails.ts",
         "when": "resources/thumbnails"
+      },
+      "theme-previews": {
+        "script": "embed-theme-previews.ts",
+        "when": "resources/theme-previews.json"
       }
     },
     "check": [
-      "check-thumbnails.ts"
+      "check-thumbnails.ts",
+      "check-theme-previews.ts"
     ]
   }
 }
