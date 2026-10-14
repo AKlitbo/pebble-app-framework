@@ -11,6 +11,7 @@
 // face-generated message_keys map plus the AppMessage dict it keys
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import locationComponent from '../clay/location-component';
+import themePreviewComponent from '../clay/theme-preview-component';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { createSettingsAsk } from './settings-ask';
@@ -51,6 +52,17 @@ export function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
 
     return defaults;
   }, {});
+}
+
+/**
+ * Whether any item on the page, sections and their nested items included, is of one component type.
+ *
+ * @param items The Clay config items to walk.
+ * @param type The component type name to look for, such as 'themePreview'.
+ * @return True when any item carries that type.
+ */
+export function usesComponent(items: ClayConfigItem[], type: string): boolean {
+  return items.some((item) => item.type === type || (item.items ? usesComponent(item.items, type) : false));
 }
 
 // the watch payload is already sanitized C-side but guard each copy anyway so
@@ -347,6 +359,12 @@ export function createClay(options: StartOptions): InstanceType<ClayConstructor>
 
   // the location autocomplete goes first, before the settings page is built
   clay.registerComponent(locationComponent);
+
+  // the theme picker with pictures is registered only when the page holds one, so a face without
+  // previews carries none of its code in its page and needs no components entry of its own
+  if (usesComponent(options.clayConfig, 'themePreview')) {
+    clay.registerComponent(themePreviewComponent);
+  }
 
   // any face-specific custom components (e.g. a layout builder)
   (options.components || []).forEach((component) => clay.registerComponent(component));

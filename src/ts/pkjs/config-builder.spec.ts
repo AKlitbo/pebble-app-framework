@@ -212,6 +212,55 @@ describe('buildConfig per-section values', () => {
   });
 });
 
+describe('buildConfig theme preview picker', () => {
+  /** Without previews the picker stays Clay's stock select, so a face that added none is unaffected. */
+  test('keeps the plain select when the theme has no previews', () => {
+    const config = buildConfig({ theme: minimalTheme });
+
+    const picker = findItemByKey(config, 'APPEARANCE_THEME');
+
+    expect(picker.type).toBe('select');
+  });
+
+  /** With previews the picker becomes the image component, or the pictures never reach the page. */
+  test('uses the themePreview component when the theme has previews', () => {
+    const previews = { 0: ['data:image/png;base64,AAAA'] };
+
+    const config = buildConfig({ theme: { options: [{ label: 'A', value: 0 }], previews } });
+    const picker = findItemByKey(config, 'APPEARANCE_THEME');
+
+    expect(picker.type).toBe('themePreview');
+  });
+
+  /** The picker still saves under the theme key with its options and default, pictures or not. */
+  test('keeps the theme key, options, default, and previews on the picture picker', () => {
+    const options = [{ label: 'A', value: 0 }];
+    const previews = { 0: ['data:image/png;base64,AAAA'] };
+
+    const config = buildConfig({ theme: { options, previews } });
+    const picker = findItemByKey(config, 'APPEARANCE_THEME');
+
+    expect(picker.messageKey).toBe('APPEARANCE_THEME');
+    expect(picker.options).toEqual(options);
+    expect(picker.defaultValue).toBe(0);
+    expect(picker.previews).toEqual(previews);
+  });
+
+  /** A theme option with no picture is a gen or manifest slip, so the builder names the one it missed. */
+  test('warns once for each option with no picture', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const options = [{ label: 'A', value: 0 }, { label: 'B', value: 1 }];
+    const previews = { 0: ['data:image/png;base64,AAAA'] };
+
+    buildConfig({ theme: { options, previews } });
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toContain('"B"');
+
+    warn.mockRestore();
+  });
+});
+
 describe('buildConfig time zone picker', () => {
   /**
    * A second clock does not need weather, so the picker has to come from the Clock section. A face

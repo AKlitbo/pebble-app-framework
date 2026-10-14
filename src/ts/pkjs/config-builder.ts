@@ -17,7 +17,10 @@ import { VIBE_OPTIONS } from './config-rows';
 export interface ConfigBuilderOptions {
   heading?: string;
   intro?: string;
-  theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }> };
+  /** previews shows a picture of the chosen theme under the dropdown, keyed by the option's value as
+   * a string, each a list of one or more pictures (such as a day and a night shot). It comes from
+   * the file `paf gen <face> theme-previews` writes. Without it the picker is the plain select. */
+  theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }>; previews?: Record<string, string[]> };
   /** Extra controls to sit inside the Appearance section, under the theme picker. For a setting
    * that belongs with the look of the face rather than in a section of its own. */
   appearanceItems?: ClayConfigItem[];
@@ -81,6 +84,40 @@ const beatsDateOptions = [
 ];
 
 /**
+ * The theme picker: rows with a picture beside each name when the face has previews, the plain
+ * select otherwise. Either way the value saves under APPEARANCE_THEME with 0 as the default.
+ *
+ * @param theme The theme section description, read for its label, description, options, and previews.
+ * @return The picker item.
+ */
+function themePicker(theme: NonNullable<ConfigBuilderOptions['theme']>): ClayConfigItem {
+  const picker: ClayConfigItem = {
+    'type': 'select',
+    'messageKey': 'APPEARANCE_THEME',
+    'label': theme.label || 'Frame Theme',
+    'description': theme.description || 'Colour scheme for the watch frame.',
+    'defaultValue': 0,
+    'options': theme.options,
+  };
+
+  if (!theme.previews || !Object.keys(theme.previews).length) {
+    return picker;
+  }
+
+  // a theme with no picture still shows, by its name alone, so the picker is not the place this is
+  // noticed. warn so a missing preview turns up in the preview tool's console instead
+  (theme.options || []).forEach((option) => {
+    const pictures = theme.previews![String(option.value)];
+
+    if (!pictures || !pictures.length) {
+      console.warn(`buildConfig: theme.previews has no picture for "${option.label}" (value ${option.value})`);
+    }
+  });
+
+  return { ...picker, 'type': 'themePreview', 'previews': theme.previews };
+}
+
+/**
  * The Appearance section: the theme picker when the face has one, its own appearance controls, and
  * the Quiet Time icon toggle when asked for.
  *
@@ -92,8 +129,6 @@ const beatsDateOptions = [
  * @return The section.
  */
 export function appearanceSection(options: ConfigBuilderOptions): ClayConfigItem {
-  const theme = options.theme || {};
-
   return {
     'type': 'section',
     'items': [
@@ -103,14 +138,7 @@ export function appearanceSection(options: ConfigBuilderOptions): ClayConfigItem
       },
       // a face that colours itself from individual pickers rather than a preset list omits
       // theme entirely, and the section is then just its own appearanceItems
-      ...(options.theme ? [{
-        'type': 'select',
-        'messageKey': 'APPEARANCE_THEME',
-        'label': theme.label || 'Frame Theme',
-        'description': theme.description || 'Colour scheme for the watch frame.',
-        'defaultValue': 0,
-        'options': theme.options,
-      }] : []),
+      ...(options.theme ? [themePicker(options.theme)] : []),
       // a face's own appearance controls sit with the theme picker rather than in a section
       // of their own, because a section per setting reads as a longer page than it is
       ...(options.appearanceItems || []),
@@ -560,8 +588,9 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
  * Optional sections (present = included, omitted = excluded):
  *   steps       { label?, description?, capabilities? }  the steps control in the Health section
  *   battery     { label?, description? }         the battery readout control in the Health section
- *   theme       { label?, description?, options? }  the theme picker. options is the theme list,
- *                                                   and a picker given none has nothing to offer
+ *   theme       { label?, description?, options?, previews? }  the theme picker. options is the theme
+ *                                                   list, and a picker given none has nothing to offer.
+ *                                                   previews shows a picture beside each name
  *   clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
  *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
  *   weather     {}                               marker, adds the provider picker to the Weather section

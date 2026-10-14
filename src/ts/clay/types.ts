@@ -46,6 +46,10 @@ export interface ClayConfigItem {
   // custom components (layoutBuilder / themeBuilder / slotBuilder) carry these
   moduleOptions?: unknown;
   moduleThumbnails?: unknown;
+  /** themePreview only: the pictures for each option, keyed by the option's value as a string, as a
+   * list of data URLs from the face's theme-previews.g.js. A theme can carry one (a single preview)
+   * or a few (such as a day and a night shot), drawn side by side. */
+  previews?: Record<string, string[]>;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
   /** color only: false shows the true colours instead of their washed-out sunlight pair. */

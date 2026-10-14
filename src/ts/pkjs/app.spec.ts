@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import app, { collectDefaults, createClay, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, wrapStoredConfig } from './app';
+import app, { collectDefaults, createClay, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, usesComponent, wrapStoredConfig } from './app';
 import locationComponent from '../clay/location-component';
 import { SETTINGS_ASK_RETRY_MS } from './settings-ask';
 import { SEND_RETRIES, SEND_RETRY_MS } from './send-queue';
@@ -277,6 +277,29 @@ describe('seedConfigFromWatch', () => {
     const result = stored('CLOCK_TIMEZONE_1');
 
     expect(result).toBe(saved);
+  });
+});
+
+describe('usesComponent', () => {
+  /** The theme picture component registers only when the page holds one, so a nested hit must count. */
+  test('finds a component type nested inside a section', () => {
+    const items = [
+      { type: 'heading' },
+      { type: 'section', items: [{ type: 'heading' }, { type: 'themePreview', messageKey: 'APPEARANCE_THEME' }] },
+    ];
+
+    const result = usesComponent(items, 'themePreview');
+
+    expect(result).toBe(true);
+  });
+
+  /** A page without the type must report false, or every face would carry the component's code. */
+  test('returns false when no item is of the type', () => {
+    const items = [{ type: 'section', items: [{ type: 'select', messageKey: 'APPEARANCE_THEME' }] }];
+
+    const result = usesComponent(items, 'themePreview');
+
+    expect(result).toBe(false);
   });
 });
 
