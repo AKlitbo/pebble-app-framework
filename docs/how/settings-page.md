@@ -183,6 +183,33 @@ The pictures come from the `thumbnails` plugin's `theme-previews` generator, whi
 
 The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker.
 
+## Showing Rows Only When They Apply
+
+A row that does nothing under the current choice can be hidden rather than left on the page looking live. Give it a `visibleWhen`, naming a control and the values of that control which reveal the row:
+
+```ts
+{
+  type: 'select',
+  messageKey: 'REFRESH_EVERY',
+  label: 'Refresh Every',
+  options: [ /* ... */ ],
+  visibleWhen: { key: 'DATA_SOURCE', in: ['live'] },
+}
+```
+
+`key` is the controlling item's messageKey, and `in` is the list of its values that show this row. A select's values match as written, and a toggle's are `true` and `false`.
+
+**More Than One Condition.** Pass a list instead of a single condition, and the row shows only when every one of them holds. This is how a row depends on both a mode and a switch inside it:
+
+```ts
+visibleWhen: [
+  { key: 'MODE', in: ['advanced'] },
+  { key: 'USE_CUSTOM', in: [true] },
+]
+```
+
+**How It Works.** When a page has any `visibleWhen` row, the framework runs its own custom function to do the showing and hiding, set once as the page opens and again whenever a named control changes. A hidden row keeps its saved value, so a control turning a section back on brings the earlier choices back. A face that passes its own `customClay` owns the whole page, so it wires the showing itself rather than getting the framework's. The rows ride on the page as plain config, so a hand-built page uses `visibleWhen` the same way.
+
 ## A Face's Own Builder
 
 An editor too big for one hand-written component, such as a drag and drop grid with presets and an import panel, is written as small TypeScript pieces and bundled into a component. The pieces are plain modules, so Vitest tests them like any other code, and the generator turns them into the one self-contained file Clay can copy.
