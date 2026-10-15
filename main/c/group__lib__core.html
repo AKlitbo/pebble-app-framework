@@ -228,6 +228,10 @@ Files</h2></td></tr>
 <tr class="memdesc:nightsched_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The night window, by containment rather than by edge. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fnightsched_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Fnightsched_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="nightsched_8h.html">src/c/core/clock/nightsched.h</a></td></tr>
 <tr class="memdesc:nightsched_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a night-time window is open right now, from plain clock readings. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fclock_2Frotate_2Ec" id="r_src_2Fc_2Fcore_2Fclock_2Frotate_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="rotate_8c.html">src/c/core/clock/rotate.c</a></td></tr>
+<tr class="memdesc:rotate_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Working out which one is up from the clock. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Fclock_2Frotate_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Frotate_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="rotate_8h.html">src/c/core/clock/rotate.h</a></td></tr>
+<tr class="memdesc:rotate_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which one of a set to show right now, on a timed rotation. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fsolar_2Ec" id="r_src_2Fc_2Fcore_2Fclock_2Fsolar_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="solar_8c.html">src/c/core/clock/solar.c</a></td></tr>
 <tr class="memdesc:solar_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">How the day's light is going, worked out from three plain clock readings. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fclock_2Fsolar_2Eh" id="r_src_2Fc_2Fcore_2Fclock_2Fsolar_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="solar_8h.html">src/c/core/clock/solar.h</a></td></tr>
@@ -263,9 +267,9 @@ Files</h2></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fio_2Fcallback_5Flist_2Eh" id="r_src_2Fc_2Fcore_2Fio_2Fcallback_5Flist_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="callback__list_8h.html">src/c/core/io/callback_list.h</a></td></tr>
 <tr class="memdesc:callback__list_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">A short fixed list of callbacks, run in the order they were added. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Flayout_2Flayout_5Frole_2Ec" id="r_src_2Fc_2Fcore_2Flayout_2Flayout_5Frole_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__role_8c.html">src/c/core/layout/layout_role.c</a></td></tr>
-<tr class="memdesc:layout__role_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The order the layout triggers are asked in. <br /></td></tr>
+<tr class="memdesc:layout__role_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The deprecated <span class="tt"><a class="el" href="#ga483c460c27f1f46834ac736434668598" title="Which layout wins. Forwards to role_pick.">layout_role_pick</a></span>, forwarding to <span class="tt"><a class="el" href="#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span>. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Flayout_2Flayout_5Frole_2Eh" id="r_src_2Fc_2Fcore_2Flayout_2Flayout_5Frole_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__role_8h.html">src/c/core/layout/layout_role.h</a></td></tr>
-<tr class="memdesc:layout__role_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of a face's layouts should be on screen right now. <br /></td></tr>
+<tr class="memdesc:layout__role_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deprecated names for the day/night/Quiet Time picker that <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role.h</a></span> provides. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Flayout_2Flayout_5Fstring_2Ec" id="r_src_2Fc_2Fcore_2Flayout_2Flayout_5Fstring_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__string_8c.html">src/c/core/layout/layout_string.c</a></td></tr>
 <tr class="memdesc:layout__string_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Walking a layout wire string far enough to answer whether it holds anything. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Flayout_2Flayout_5Fstring_2Eh" id="r_src_2Fc_2Fcore_2Flayout_2Flayout_5Fstring_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="layout__string_8h.html">src/c/core/layout/layout_string.h</a></td></tr>
@@ -282,6 +286,10 @@ Files</h2></td></tr>
 <tr class="memdesc:series_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reducing a run of samples to the few numbers a chart draws from. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Fmath_2Fseries_2Eh" id="r_src_2Fc_2Fcore_2Fmath_2Fseries_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="series_8h.html">src/c/core/math/series.h</a></td></tr>
 <tr class="memdesc:series_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reducing a run of samples to the few numbers a chart draws from, no SDK. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Frole_2Frole_2Ec" id="r_src_2Fc_2Fcore_2Frole_2Frole_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="role_8c.html">src/c/core/role/role.c</a></td></tr>
+<tr class="memdesc:role_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The order the day, night, and Quiet Time triggers are asked in. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fcore_2Frole_2Frole_2Eh" id="r_src_2Fc_2Fcore_2Frole_2Frole_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="role_8h.html">src/c/core/role/role.h</a></td></tr>
+<tr class="memdesc:role_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of day, night, and Quiet Time should be on screen right now. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Ftext_2Fcstring_5Ffit_2Eh" id="r_src_2Fc_2Fcore_2Ftext_2Fcstring_5Ffit_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="cstring__fit_8h.html">src/c/core/text/cstring_fit.h</a></td></tr>
 <tr class="memdesc:cstring__fit_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Comparing a string against a fixed buffer it is about to be copied into. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fcore_2Ftext_2Fnumber_5Fformat_2Ec" id="r_src_2Fc_2Fcore_2Ftext_2Fnumber_5Fformat_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="number__format_8c.html">src/c/core/text/number_format.c</a></td></tr>
@@ -388,6 +396,10 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight"><b>TIMEBAND_DAY_MINUTES</b>&#160;&#160;&#160;1440</td></tr>
 <tr class="memdesc:gad3c2b297779efc19aa0c02f2e8635917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes in a day, the modulus every wrap here is taken over. <br /></td></tr>
 <tr class="memitem:gab582a8ca15586973977cd7f48de42fa2" id="r_gab582a8ca15586973977cd7f48de42fa2"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gab582a8ca15586973977cd7f48de42fa2">STEP_HOURS_PER_DAY</a>&#160;&#160;&#160;24</td></tr>
+<tr class="memitem:ga3dc49de3b843fe808d5bf5112994550a" id="r_ga3dc49de3b843fe808d5bf5112994550a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga3dc49de3b843fe808d5bf5112994550a">LAYOUT_ROLE_DAY</a>&#160;&#160;&#160;<a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb">ROLE_DAY</a></td></tr>
+<tr class="memitem:gabb959b5a5b52510b68c39b3e64bc751f" id="r_gabb959b5a5b52510b68c39b3e64bc751f"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gabb959b5a5b52510b68c39b3e64bc751f">LAYOUT_ROLE_NIGHT</a>&#160;&#160;&#160;<a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4">ROLE_NIGHT</a></td></tr>
+<tr class="memitem:gae6ae052785561853f23b2384151f3962" id="r_gae6ae052785561853f23b2384151f3962"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gae6ae052785561853f23b2384151f3962">LAYOUT_ROLE_QUIET</a>&#160;&#160;&#160;<a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0">ROLE_QUIET</a></td></tr>
+<tr class="memitem:ga949da367e692cdac11c761d3327ff620" id="r_ga949da367e692cdac11c761d3327ff620"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga949da367e692cdac11c761d3327ff620">LAYOUT_ROLE_COUNT</a>&#160;&#160;&#160;ROLE_COUNT</td></tr>
 <tr class="memitem:ga19726e59e3c59c41210823d2d3dac836" id="r_ga19726e59e3c59c41210823d2d3dac836"><td class="memItemLeft"><a id="ga19726e59e3c59c41210823d2d3dac836" name="ga19726e59e3c59c41210823d2d3dac836"></a>
 #define&#160;</td><td class="memItemRight"><b>LAYOUT_INT_MAX</b>&#160;&#160;&#160;9999</td></tr>
 <tr class="memdesc:ga19726e59e3c59c41210823d2d3dac836"><td class="mdescLeft">&#160;</td><td class="mdescRight">The biggest number a layout field holds. Nothing the builder writes comes close. <br /></td></tr>
@@ -409,6 +421,7 @@ Typedefs</h2></td></tr>
 <tr class="memitem:gace9c32cbf32397ccc0a34a750ce3ea68" id="r_gace9c32cbf32397ccc0a34a750ce3ea68"><td class="memItemLeft"><a id="gace9c32cbf32397ccc0a34a750ce3ea68" name="gace9c32cbf32397ccc0a34a750ce3ea68"></a>
 typedef void(*)&#160;</td><td class="memItemRight"><b>CallbackListFn</b>(void)</td></tr>
 <tr class="memdesc:gace9c32cbf32397ccc0a34a750ce3ea68"><td class="mdescLeft">&#160;</td><td class="mdescRight">One callback in a list. <br /></td></tr>
+<tr class="memitem:ga4fc6414086f7b94d66f865e4b92091ff" id="r_ga4fc6414086f7b94d66f865e4b92091ff"><td class="memItemLeft">typedef <a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga4fc6414086f7b94d66f865e4b92091ff">LayoutRole</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -418,12 +431,12 @@ Enumerations</h2></td></tr>
 , <b>NIGHT_SCHED_COUNT</b>
  }</td></tr>
 <tr class="memdesc:ga90cd678ac8db70a4a741a5ef04cd8793"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the schedule is following. The caller's own enum should line up with these.  <a href="#ga90cd678ac8db70a4a741a5ef04cd8793">More...</a><br /></td></tr>
-<tr class="memitem:gacc6a111ebb7ba5e35f9c1946e436943f" id="r_gacc6a111ebb7ba5e35f9c1946e436943f"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a> { <a class="el" href="#ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971">LAYOUT_ROLE_DAY</a> = 0
-, <a class="el" href="#ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5">LAYOUT_ROLE_NIGHT</a>
-, <a class="el" href="#ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e">LAYOUT_ROLE_QUIET</a>
-, <b>LAYOUT_ROLE_COUNT</b>
+<tr class="memitem:gacdd79a1a4f81dd6ee5cddcb21149b951" id="r_gacdd79a1a4f81dd6ee5cddcb21149b951"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a> { <a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb">ROLE_DAY</a> = 0
+, <a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4">ROLE_NIGHT</a>
+, <a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0">ROLE_QUIET</a>
+, <b>ROLE_COUNT</b>
  }</td></tr>
-<tr class="memdesc:gacc6a111ebb7ba5e35f9c1946e436943f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout is showing. The caller's own storage should line up with these.  <a href="#gacc6a111ebb7ba5e35f9c1946e436943f">More...</a><br /></td></tr>
+<tr class="memdesc:gacdd79a1a4f81dd6ee5cddcb21149b951"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of the three is showing. The caller's own storage should line up with these.  <a href="#gacdd79a1a4f81dd6ee5cddcb21149b951">More...</a><br /></td></tr>
 <tr class="memitem:ga81835140b8dd390d395cd5fcf7dee1b1" id="r_ga81835140b8dd390d395cd5fcf7dee1b1"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#ga81835140b8dd390d395cd5fcf7dee1b1">WindUnit</a> { <br />
 &#160;&#160;<a class="el" href="#gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c">WIND_UNIT_KMH</a> = 0
 , <a class="el" href="#gga81835140b8dd390d395cd5fcf7dee1b1a3d492848e908a0c4425a669ee67ee63b">WIND_UNIT_MPH</a>
@@ -487,6 +500,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga284e05094c9084b2fca021122f13488d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether now falls inside a window that may run past midnight.  <br /></td></tr>
 <tr class="memitem:gab655e624866f012b97621268f0038504" id="r_gab655e624866f012b97621268f0038504"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gab655e624866f012b97621268f0038504">night_schedule_active</a> (int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</td></tr>
 <tr class="memdesc:gab655e624866f012b97621268f0038504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the night window is open, whichever way the schedule is set.  <br /></td></tr>
+<tr class="memitem:ga2c930ac9149442ad63c57a55927f6090" id="r_ga2c930ac9149442ad63c57a55927f6090"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga2c930ac9149442ad63c57a55927f6090">rotate_index</a> (int year, int yday, int hour, int minute, int interval_min, int count)</td></tr>
+<tr class="memdesc:ga2c930ac9149442ad63c57a55927f6090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of <span class="tt">count</span> is up now, advancing by one every <span class="tt">interval_min</span> minutes and wrapping round at the end.  <br /></td></tr>
 <tr class="memitem:gac982a31420ab76dbaa86ab1885c065ad" id="r_gac982a31420ab76dbaa86ab1885c065ad"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gac982a31420ab76dbaa86ab1885c065ad">solar_day_progress</a> (int rise, int set, int now)</td></tr>
 <tr class="memdesc:gac982a31420ab76dbaa86ab1885c065ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">How far through the daylight it is, from 0 at sunrise to 100 at sunset.  <br /></td></tr>
 <tr class="memitem:gaee0b6058425e523d5393b77aceb34a54" id="r_gaee0b6058425e523d5393b77aceb34a54"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#gaee0b6058425e523d5393b77aceb34a54">solar_night_progress</a> (int rise, int set, int now)</td></tr>
@@ -536,8 +551,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaed0238885522c47e90f7a547719983bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a callback to the end of the list. Adding one that is already there does nothing.  <br /></td></tr>
 <tr class="memitem:ga6b4dbe785f6d28d845b326a152444ddd" id="r_ga6b4dbe785f6d28d845b326a152444ddd"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga6b4dbe785f6d28d845b326a152444ddd">callback_list_fire</a> (const <a class="el" href="structCallbackList.html">CallbackList</a> *list)</td></tr>
 <tr class="memdesc:ga6b4dbe785f6d28d845b326a152444ddd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs every callback in the order it was added.  <br /></td></tr>
-<tr class="memitem:ga483c460c27f1f46834ac736434668598" id="r_ga483c460c27f1f46834ac736434668598"><td class="memItemLeft"><a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga483c460c27f1f46834ac736434668598">layout_role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
-<tr class="memdesc:ga483c460c27f1f46834ac736434668598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout wins, given what is firing and what has a grid behind it.  <br /></td></tr>
+<tr class="memitem:ga483c460c27f1f46834ac736434668598" id="r_ga483c460c27f1f46834ac736434668598"><td class="memItemLeft"><a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">LayoutRole</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga483c460c27f1f46834ac736434668598">layout_role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
+<tr class="memdesc:ga483c460c27f1f46834ac736434668598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout wins. Forwards to <span class="tt"><a class="el" href="#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span>.  <br /></td></tr>
 <tr class="memitem:ga6de1604c8d0aab3e3a3226dccb171cce" id="r_ga6de1604c8d0aab3e3a3226dccb171cce"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga6de1604c8d0aab3e3a3226dccb171cce">layout_parse_int</a> (const char **cursor)</td></tr>
 <tr class="memdesc:ga6de1604c8d0aab3e3a3226dccb171cce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a run of digits and moves the cursor past them.  <br /></td></tr>
 <tr class="memitem:gadb8a7e98c9c67c5167942ae96433c21f" id="r_gadb8a7e98c9c67c5167942ae96433c21f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gadb8a7e98c9c67c5167942ae96433c21f">layout_has_any_block</a> (const char *layout, int type_count)</td></tr>
@@ -558,6 +573,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga4260de92aa2412a987a0d0ee799d5406"><td class="mdescLeft">&#160;</td><td class="mdescRight">Walk a series of samples for its low, high, and most recent reading.  <br /></td></tr>
 <tr class="memitem:ga8cc817ecf16f05e721472b4f6714943a" id="r_ga8cc817ecf16f05e721472b4f6714943a"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga8cc817ecf16f05e721472b4f6714943a">series_max_u16</a> (const uint16_t *values, int count)</td></tr>
 <tr class="memdesc:ga8cc817ecf16f05e721472b4f6714943a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The largest value in a series, for scaling a bar strip against its busiest slot.  <br /></td></tr>
+<tr class="memitem:ga402c61aef6b17ca699ea0d42ebe1f1c8" id="r_ga402c61aef6b17ca699ea0d42ebe1f1c8"><td class="memItemLeft"><a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a>&#160;</td><td class="memItemRight"><a class="el" href="#ga402c61aef6b17ca699ea0d42ebe1f1c8">role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
+<tr class="memdesc:ga402c61aef6b17ca699ea0d42ebe1f1c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which role wins, given what is firing and what has something behind it.  <br /></td></tr>
 <tr class="memitem:ga48dcd72e49fa122dc562f64605efdc75" id="r_ga48dcd72e49fa122dc562f64605efdc75"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ga48dcd72e49fa122dc562f64605efdc75">cstring_fit</a> (char *dst, const char *src, size_t size)</td></tr>
 <tr class="memdesc:ga48dcd72e49fa122dc562f64605efdc75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a string into a fixed buffer, keeping only what fits and always terminating it.  <br /></td></tr>
 <tr class="memitem:ga13d8bf38f7877df6836f074354b4bcb9" id="r_ga13d8bf38f7877df6836f074354b4bcb9"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga13d8bf38f7877df6836f074354b4bcb9">cstring_fit_same</a> (const char *current, const char *value, size_t size)</td></tr>
@@ -621,6 +638,66 @@ Functions</h2></td></tr>
 <div class="textblock"><p>Pure maths, clock, text, and unit helpers that need no watch SDK. </p>
 <p>Needing no SDK is what lets them be tested off the watch. Think .beats time, moon phase, weekday names, number formatting, and unit conversions.</p>
 </div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ga949da367e692cdac11c761d3327ff620" name="ga949da367e692cdac11c761d3327ff620"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga949da367e692cdac11c761d3327ff620">&#9670;&#160;</a></span>LAYOUT_ROLE_COUNT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAYOUT_ROLE_COUNT&#160;&#160;&#160;ROLE_COUNT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated</a></b></dt><dd>Use <span class="tt">ROLE_COUNT</span>. </dd></dl>
+
+</div>
+</div>
+<a id="ga3dc49de3b843fe808d5bf5112994550a" name="ga3dc49de3b843fe808d5bf5112994550a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3dc49de3b843fe808d5bf5112994550a">&#9670;&#160;</a></span>LAYOUT_ROLE_DAY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAYOUT_ROLE_DAY&#160;&#160;&#160;<a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb">ROLE_DAY</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated</a></b></dt><dd>Use <span class="tt"><a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb" title="The everyday look, and what everything else falls back to.">ROLE_DAY</a></span>. </dd></dl>
+
+</div>
+</div>
+<a id="gabb959b5a5b52510b68c39b3e64bc751f" name="gabb959b5a5b52510b68c39b3e64bc751f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabb959b5a5b52510b68c39b3e64bc751f">&#9670;&#160;</a></span>LAYOUT_ROLE_NIGHT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAYOUT_ROLE_NIGHT&#160;&#160;&#160;<a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4">ROLE_NIGHT</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated</a></b></dt><dd>Use <span class="tt"><a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4" title="The one the night schedule brings in after dark.">ROLE_NIGHT</a></span>. </dd></dl>
+
+</div>
+</div>
+<a id="gae6ae052785561853f23b2384151f3962" name="gae6ae052785561853f23b2384151f3962"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae6ae052785561853f23b2384151f3962">&#9670;&#160;</a></span>LAYOUT_ROLE_QUIET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAYOUT_ROLE_QUIET&#160;&#160;&#160;<a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0">ROLE_QUIET</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000004">Deprecated</a></b></dt><dd>Use <span class="tt"><a class="el" href="#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0" title="The one Quiet Time brings in, whatever the hour.">ROLE_QUIET</a></span>. </dd></dl>
+
+</div>
+</div>
 <a id="gab582a8ca15586973977cd7f48de42fa2" name="gab582a8ca15586973977cd7f48de42fa2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab582a8ca15586973977cd7f48de42fa2">&#9670;&#160;</a></span>STEP_HOURS_PER_DAY</h2>
 
@@ -636,31 +713,23 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
-<a id="gacc6a111ebb7ba5e35f9c1946e436943f" name="gacc6a111ebb7ba5e35f9c1946e436943f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gacc6a111ebb7ba5e35f9c1946e436943f">&#9670;&#160;</a></span>LayoutRole</h2>
+<a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
+<a id="ga4fc6414086f7b94d66f865e4b92091ff" name="ga4fc6414086f7b94d66f865e4b92091ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4fc6414086f7b94d66f865e4b92091ff">&#9670;&#160;</a></span>LayoutRole</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a></td>
+          <td class="memname">typedef <a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a> <a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">LayoutRole</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Which layout is showing. The caller's own storage should line up with these. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971" name="ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971"></a>LAYOUT_ROLE_DAY&#160;</td><td class="fielddoc"><p>The everyday grid, and what everything else falls back to. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5" name="ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5"></a>LAYOUT_ROLE_NIGHT&#160;</td><td class="fielddoc"><p>The one the night schedule brings in after dark. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e" name="ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e"></a>LAYOUT_ROLE_QUIET&#160;</td><td class="fielddoc"><p>The one Quiet Time brings in, whatever the hour. </p>
-</td></tr>
-</table>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated</a></b></dt><dd>Use <span class="tt"><a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951" title="Which of the three is showing. The caller&#39;s own storage should line up with these.">Role</a></span>. The names line up one for one. </dd></dl>
 
 </div>
 </div>
+<a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Enumeration Type Documentation</h2>
 <a id="ga90cd678ac8db70a4a741a5ef04cd8793" name="ga90cd678ac8db70a4a741a5ef04cd8793"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga90cd678ac8db70a4a741a5ef04cd8793">&#9670;&#160;</a></span>NightSchedMode</h2>
 
@@ -680,6 +749,30 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73" name="gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73"></a>NIGHT_SCHED_SOLAR&#160;</td><td class="fielddoc"><p>Sunset to sunrise, falling back to the fixed pair with no reading. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be" name="gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be"></a>NIGHT_SCHED_FIXED&#160;</td><td class="fielddoc"><p>The fixed pair only. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="gacdd79a1a4f81dd6ee5cddcb21149b951" name="gacdd79a1a4f81dd6ee5cddcb21149b951"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gacdd79a1a4f81dd6ee5cddcb21149b951">&#9670;&#160;</a></span>Role</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which of the three is showing. The caller's own storage should line up with these. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb" name="ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb"></a>ROLE_DAY&#160;</td><td class="fielddoc"><p>The everyday look, and what everything else falls back to. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4" name="ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4"></a>ROLE_NIGHT&#160;</td><td class="fielddoc"><p>The one the night schedule brings in after dark. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0" name="ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0"></a>ROLE_QUIET&#160;</td><td class="fielddoc"><p>The one Quiet Time brings in, whatever the hour. </p>
 </td></tr>
 </table>
 
@@ -2076,7 +2169,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a> layout_role_pick </td>
+          <td class="memname"><a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">LayoutRole</a> layout_role_pick </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>quiet_on</em></span>, </td>
         </tr>
@@ -2098,9 +2191,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Which layout wins, given what is firing and what has a grid behind it. </p>
-<p>Quiet Time sits above the night schedule on purpose. Someone who has set both is saying they want a quieter screen while the watch is quiet, and that holds whether it happens to be dark out or not.</p>
-<p>A trigger with no layout assigned is skipped rather than honoured, so the answer walks down to the next one that has something to show and lands on the day grid if nothing else does. That is what lets someone use one of these without filling in the other.</p>
+<p>Which layout wins. Forwards to <span class="tt"><a class="el" href="#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span>. </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000006">Deprecated</a></b></dt><dd>Call <span class="tt"><a class="el" href="#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span>. The arguments are the same.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">quiet_on</td><td>True while Quiet Time is on. </td></tr>
@@ -2568,6 +2660,109 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The value the four bytes encode. </dd></dl>
+
+</div>
+</div>
+<a id="ga402c61aef6b17ca699ea0d42ebe1f1c8" name="ga402c61aef6b17ca699ea0d42ebe1f1c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga402c61aef6b17ca699ea0d42ebe1f1c8">&#9670;&#160;</a></span>role_pick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a> role_pick </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>quiet_on</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>quiet_set</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>night_on</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>night_set</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which role wins, given what is firing and what has something behind it. </p>
+<p>Quiet Time sits above the night schedule on purpose. Someone who has set both is saying they want a quieter screen while the watch is quiet, and that holds whether it happens to be dark out or not.</p>
+<p>A trigger with nothing assigned is skipped rather than honoured, so the answer walks down to the next one that has something to show and lands on the day role if nothing else does. That is what lets someone use one of these without filling in the other.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">quiet_on</td><td>True while Quiet Time is on. </td></tr>
+    <tr><td class="paramname">quiet_set</td><td>True when something is assigned to Quiet Time. </td></tr>
+    <tr><td class="paramname">night_on</td><td>True while the night schedule says it is night. </td></tr>
+    <tr><td class="paramname">night_set</td><td>True when something is assigned to night. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The role whose look should be drawn. </dd></dl>
+
+</div>
+</div>
+<a id="ga2c930ac9149442ad63c57a55927f6090" name="ga2c930ac9149442ad63c57a55927f6090"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2c930ac9149442ad63c57a55927f6090">&#9670;&#160;</a></span>rotate_index()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rotate_index </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>year</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>yday</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>minute</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>interval_min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Which of <span class="tt">count</span> is up now, advancing by one every <span class="tt">interval_min</span> minutes and wrapping round at the end. </p>
+<p>The answer holds steady through a slot and steps to the next when the slot turns over, so a screen drawn from it only changes on a boundary. It is 0 for a count of one, and for an interval or a count that is not positive, which is the safe nothing-to-rotate answer.</p>
+<p>It counts the year as a round 366 days, so the one boundary at a non-leap new year jumps by more than a single step and can, for a count that divides the jump, land on the same one twice. For a shuffle that one ragged boundary a year does not matter.</p>
+<p>The time comes in as the same fields a struct tm carries, so the caller hands them straight from its broken-apart clock.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">year</td><td>Years since 1900, as tm_year. </td></tr>
+    <tr><td class="paramname">yday</td><td>Days into the year, 0 to 365, as tm_yday. </td></tr>
+    <tr><td class="paramname">hour</td><td>The hour, 0 to 23, as tm_hour. </td></tr>
+    <tr><td class="paramname">minute</td><td>The minute, 0 to 59, as tm_min. </td></tr>
+    <tr><td class="paramname">interval_min</td><td>How many minutes each one is shown for. </td></tr>
+    <tr><td class="paramname">count</td><td>How many there are to rotate through. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The index that is up, from 0 to count - 1. </dd></dl>
 
 </div>
 </div>

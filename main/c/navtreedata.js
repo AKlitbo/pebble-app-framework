@@ -26,6 +26,7 @@ var NAVTREE =
 [
   [ "Pebble App Framework", "index.html", [
     [ "Device API", "index.html", null ],
+    [ "Deprecated List", "deprecated.html", null ],
     [ "Topics", "topics.html", "topics" ],
     [ "Data Structures", "annotated.html", [
       [ "Data Structures", "annotated.html", "annotated_dup" ],
@@ -53,9 +54,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"group__lib__core.html#gadc6c8c4764edd2d25babbc4689eaa73b",
-"group__lib__system.html#gabbe12c91a0e3541c91618e6765204e19",
-"structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7"
+"group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951",
+"group__lib__system.html#ga06fdc71bb88f3abae23d9c6ac8ef7c8e",
+"structStorePoll.html#ad96becb58ae977574a0b761caa011cb8"
 ];
 
 const SYNCONMSG = 'click to disable panel synchronization';

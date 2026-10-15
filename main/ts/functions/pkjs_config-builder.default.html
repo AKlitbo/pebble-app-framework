@@ -69,8 +69,9 @@ date     { label?, description?, default?, beats?, options? }</p>
 <p>Optional sections (present = included, omitted = excluded):
 steps       { label?, description?, capabilities? }  the steps control in the Health section
 battery     { label?, description? }         the battery readout control in the Health section
-theme       { label?, description?, options? }  the theme picker. options is the theme list,
-and a picker given none has nothing to offer
+theme       { label?, description?, options?, previews? }  the theme picker. options is the theme
+list, and a picker given none has nothing to offer.
+previews shows a picture beside each name
 clock       { timeZone? }                    adds the alternate time zone picker to the Clock section
 location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
 weather     {}                               marker, adds the provider picker to the Weather section
@@ -87,7 +88,7 @@ stocks      { description?, items? }         the data source, key, and tickers, 
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The assembled Clay config array, ready to hand to Clay.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/69a549ea335d7bd45e16e5dda298494c2c0a45bc/src/ts/pkjs/config-builder.ts#L575">pkjs/config-builder.ts:575</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d47384c326b91983088296fdaf5261a8ce2c8c23/src/ts/pkjs/config-builder.ts#L604">pkjs/config-builder.ts:604</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -105,12 +106,12 @@ stocks      { description?, items? }         the data source, key, and tickers, 
 <h3 class="tsd-anchor-link" id="beatsdateoptions"><span>beats<wbr/>Date<wbr/>Options</span><a href="#beatsdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">beatsDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/69a549ea335d7bd45e16e5dda298494c2c0a45bc/src/ts/pkjs/config-builder.ts#L612">pkjs/config-builder.ts:612</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d47384c326b91983088296fdaf5261a8ce2c8c23/src/ts/pkjs/config-builder.ts#L641">pkjs/config-builder.ts:641</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="defaultdateoptions"><span>default<wbr/>Date<wbr/>Options</span><a href="#defaultdateoptions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">defaultDateOptions</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">label</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">value</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">[]</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/69a549ea335d7bd45e16e5dda298494c2c0a45bc/src/ts/pkjs/config-builder.ts#L611">pkjs/config-builder.ts:611</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d47384c326b91983088296fdaf5261a8ce2c8c23/src/ts/pkjs/config-builder.ts#L640">pkjs/config-builder.ts:640</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

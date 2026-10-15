@@ -21,5 +21,7 @@ var searchData=
   ['refresh_5fhr_18',['refresh_hr',['../health__store_8c.html#a621aad019cd81f1ec9165baaf42524c5',1,'health_store.c']]],
   ['repaint_5fslot_19',['repaint_slot',['../engine_8c.html#aa951c14b92f78cf5e7dd25b4ebf47007',1,'engine.c']]],
   ['reset_5fstate_20',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
-  ['retry_5fpass_21',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]]
+  ['retry_5fpass_21',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]],
+  ['role_5fpick_22',['role_pick',['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c'],['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c']]],
+  ['rotate_5findex_23',['rotate_index',['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c'],['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c']]]
 ];

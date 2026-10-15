@@ -32,5 +32,15 @@ var searchData=
   ['res_29',['res',['../structIconEntry.html#afbac9a3396568064669ee57bbeb0b533',1,'IconEntry']]],
   ['reset_5fstate_30',['reset_state',['../calendar__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;calendar_store.c'],['../stock__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;stock_store.c'],['../weather__store_8c.html#a9fbef29f6a0a976770a3055c37a35d95',1,'reset_state(void):&#160;weather_store.c']]],
   ['retries_5fleft_31',['retries_left',['../structOutboxJob.html#ad67e53a2715d5da68bcfc499b76ac9f1',1,'OutboxJob']]],
-  ['retry_5fpass_32',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]]
+  ['retry_5fpass_32',['retry_pass',['../appmessage_8c.html#aa69231abc10b6f39ee8277edc53f1e11',1,'appmessage.c']]],
+  ['role_33',['Role',['../group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951',1,'role.h']]],
+  ['role_2ec_34',['role.c',['../role_8c.html',1,'']]],
+  ['role_2eh_35',['role.h',['../role_8h.html',1,'']]],
+  ['role_5fday_36',['ROLE_DAY',['../group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb',1,'role.h']]],
+  ['role_5fnight_37',['ROLE_NIGHT',['../group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4',1,'role.h']]],
+  ['role_5fpick_38',['role_pick',['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c'],['../group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8',1,'role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set):&#160;role.c']]],
+  ['role_5fquiet_39',['ROLE_QUIET',['../group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0',1,'role.h']]],
+  ['rotate_2ec_40',['rotate.c',['../rotate_8c.html',1,'']]],
+  ['rotate_2eh_41',['rotate.h',['../rotate_8h.html',1,'']]],
+  ['rotate_5findex_42',['rotate_index',['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c'],['../group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090',1,'rotate_index(int year, int yday, int hour, int minute, int interval_min, int count):&#160;rotate.c']]]
 ];

@@ -581,6 +581,31 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>rotate.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>rotate_8c.html</filename>
+    <includes id="rotate_8h" name="rotate.h" local="yes" import="no" module="no" objc="no">rotate.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>rotate_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2c930ac9149442ad63c57a55927f6090</anchor>
+      <arglist>(int year, int yday, int hour, int minute, int interval_min, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>rotate.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>rotate_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>rotate_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2c930ac9149442ad63c57a55927f6090</anchor>
+      <arglist>(int year, int yday, int hour, int minute, int interval_min, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>solar.c</name>
     <path>src/c/core/clock/</path>
     <filename>solar_8c.html</filename>
@@ -1107,29 +1132,40 @@
     <name>layout_role.h</name>
     <path>src/c/core/layout/</path>
     <filename>layout__role_8h.html</filename>
-    <member kind="enumeration">
-      <type></type>
-      <name>LayoutRole</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>gacc6a111ebb7ba5e35f9c1946e436943f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
+    <includes id="role_8h" name="role.h" local="yes" import="no" module="no" objc="no">role/role.h</includes>
+    <member kind="define">
+      <type>#define</type>
       <name>LAYOUT_ROLE_DAY</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971</anchor>
+      <anchor>ga3dc49de3b843fe808d5bf5112994550a</anchor>
       <arglist></arglist>
     </member>
-    <member kind="enumvalue">
+    <member kind="define">
+      <type>#define</type>
       <name>LAYOUT_ROLE_NIGHT</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5</anchor>
+      <anchor>gabb959b5a5b52510b68c39b3e64bc751f</anchor>
       <arglist></arglist>
     </member>
-    <member kind="enumvalue">
+    <member kind="define">
+      <type>#define</type>
       <name>LAYOUT_ROLE_QUIET</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e</anchor>
+      <anchor>gae6ae052785561853f23b2384151f3962</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LAYOUT_ROLE_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga949da367e692cdac11c761d3327ff620</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>Role</type>
+      <name>LayoutRole</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4fc6414086f7b94d66f865e4b92091ff</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -1329,6 +1365,56 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga8cc817ecf16f05e721472b4f6714943a</anchor>
       <arglist>(const uint16_t *values, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>role.c</name>
+    <path>src/c/core/role/</path>
+    <filename>role_8c.html</filename>
+    <includes id="role_8h" name="role.h" local="yes" import="no" module="no" objc="no">role.h</includes>
+    <member kind="function">
+      <type>Role</type>
+      <name>role_pick</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga402c61aef6b17ca699ea0d42ebe1f1c8</anchor>
+      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>role.h</name>
+    <path>src/c/core/role/</path>
+    <filename>role_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>Role</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacdd79a1a4f81dd6ee5cddcb21149b951</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_DAY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_NIGHT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_QUIET</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>Role</type>
+      <name>role_pick</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga402c61aef6b17ca699ea0d42ebe1f1c8</anchor>
+      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -8661,6 +8747,8 @@
     <file path="src/c/core/clock/">moon.h</file>
     <file path="src/c/core/clock/">nightsched.c</file>
     <file path="src/c/core/clock/">nightsched.h</file>
+    <file path="src/c/core/clock/">rotate.c</file>
+    <file path="src/c/core/clock/">rotate.h</file>
     <file path="src/c/core/clock/">solar.c</file>
     <file path="src/c/core/clock/">solar.h</file>
     <file path="src/c/core/clock/">tide.c</file>
@@ -8688,6 +8776,8 @@
     <file path="src/c/core/math/">scale.h</file>
     <file path="src/c/core/math/">series.c</file>
     <file path="src/c/core/math/">series.h</file>
+    <file path="src/c/core/role/">role.c</file>
+    <file path="src/c/core/role/">role.h</file>
     <file path="src/c/core/text/">cstring_fit.h</file>
     <file path="src/c/core/text/">number_format.c</file>
     <file path="src/c/core/text/">number_format.h</file>
@@ -8774,6 +8864,34 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>LAYOUT_ROLE_DAY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3dc49de3b843fe808d5bf5112994550a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LAYOUT_ROLE_NIGHT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabb959b5a5b52510b68c39b3e64bc751f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LAYOUT_ROLE_QUIET</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae6ae052785561853f23b2384151f3962</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LAYOUT_ROLE_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga949da367e692cdac11c761d3327ff620</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>LAYOUT_INT_MAX</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga19726e59e3c59c41210823d2d3dac836</anchor>
@@ -8814,6 +8932,13 @@
       <anchor>gace9c32cbf32397ccc0a34a750ce3ea68</anchor>
       <arglist>(void)</arglist>
     </member>
+    <member kind="typedef">
+      <type>Role</type>
+      <name>LayoutRole</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4fc6414086f7b94d66f865e4b92091ff</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="enumeration">
       <type></type>
       <name>NightSchedMode</name>
@@ -8841,27 +8966,27 @@
     </member>
     <member kind="enumeration">
       <type></type>
-      <name>LayoutRole</name>
+      <name>Role</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>gacc6a111ebb7ba5e35f9c1946e436943f</anchor>
+      <anchor>gacdd79a1a4f81dd6ee5cddcb21149b951</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LAYOUT_ROLE_DAY</name>
+      <name>ROLE_DAY</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971</anchor>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LAYOUT_ROLE_NIGHT</name>
+      <name>ROLE_NIGHT</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5</anchor>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
-      <name>LAYOUT_ROLE_QUIET</name>
+      <name>ROLE_QUIET</name>
       <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e</anchor>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -9075,6 +9200,13 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gab655e624866f012b97621268f0038504</anchor>
       <arglist>(int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>rotate_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2c930ac9149442ad63c57a55927f6090</anchor>
+      <arglist>(int year, int yday, int hour, int minute, int interval_min, int count)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -9320,6 +9452,13 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga8cc817ecf16f05e721472b4f6714943a</anchor>
       <arglist>(const uint16_t *values, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>Role</type>
+      <name>role_pick</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga402c61aef6b17ca699ea0d42ebe1f1c8</anchor>
+      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>

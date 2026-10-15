@@ -14,6 +14,8 @@ var dir_dc67d81611f66b3039b01ee4f45488a7 =
     [ "moon.h", "moon_8h.html", "moon_8h" ],
     [ "nightsched.c", "nightsched_8c.html", "nightsched_8c" ],
     [ "nightsched.h", "nightsched_8h.html", "nightsched_8h" ],
+    [ "rotate.c", "rotate_8c.html", "rotate_8c" ],
+    [ "rotate.h", "rotate_8h.html", "rotate_8h" ],
     [ "solar.c", "solar_8c.html", "solar_8c" ],
     [ "solar.h", "solar_8h.html", "solar_8h" ],
     [ "tide.c", "tide_8c.html", "tide_8c" ],

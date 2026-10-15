@@ -14,6 +14,8 @@ var group__lib__core =
     [ "moon.h", "moon_8h.html", null ],
     [ "nightsched.c", "nightsched_8c.html", null ],
     [ "nightsched.h", "nightsched_8h.html", null ],
+    [ "rotate.c", "rotate_8c.html", null ],
+    [ "rotate.h", "rotate_8h.html", null ],
     [ "solar.c", "solar_8c.html", null ],
     [ "solar.h", "solar_8h.html", null ],
     [ "tide.c", "tide_8c.html", null ],
@@ -41,6 +43,8 @@ var group__lib__core =
     [ "scale.h", "scale_8h.html", null ],
     [ "series.c", "series_8c.html", null ],
     [ "series.h", "series_8h.html", null ],
+    [ "role.c", "role_8c.html", null ],
+    [ "role.h", "role_8h.html", null ],
     [ "cstring_fit.h", "cstring__fit_8h.html", null ],
     [ "number_format.c", "number__format_8c.html", null ],
     [ "number_format.h", "number__format_8h.html", null ],
@@ -184,6 +188,10 @@ var group__lib__core =
     ] ],
     [ "HOUR_LATCH_EMPTY", "group__lib__core.html#ga9462df08933e714a6f14495ba12c19e4", null ],
     [ "LAYOUT_INT_MAX", "group__lib__core.html#ga19726e59e3c59c41210823d2d3dac836", null ],
+    [ "LAYOUT_ROLE_COUNT", "group__lib__core.html#ga949da367e692cdac11c761d3327ff620", null ],
+    [ "LAYOUT_ROLE_DAY", "group__lib__core.html#ga3dc49de3b843fe808d5bf5112994550a", null ],
+    [ "LAYOUT_ROLE_NIGHT", "group__lib__core.html#gabb959b5a5b52510b68c39b3e64bc751f", null ],
+    [ "LAYOUT_ROLE_QUIET", "group__lib__core.html#gae6ae052785561853f23b2384151f3962", null ],
     [ "MOON_EPOCH_UTC", "group__lib__core.html#gaf586f63d0905b47c9548a10f0310bc81", null ],
     [ "MOON_SYNODIC_SEC", "group__lib__core.html#ga550e4dc38f3305d3ad3dcd0dd394de94", null ],
     [ "STEP_HOURS_PER_DAY", "group__lib__core.html#gab582a8ca15586973977cd7f48de42fa2", null ],
@@ -194,15 +202,16 @@ var group__lib__core =
     [ "WEATHER_GROUP_EXTRA", "group__lib__core.html#gad2a50305c20a2dc3acf340c9837a065b", null ],
     [ "WEATHER_GROUP_FORECAST", "group__lib__core.html#ga7eef9602c89fd58adb11e058618d1dd7", null ],
     [ "CallbackListFn", "group__lib__core.html#gace9c32cbf32397ccc0a34a750ce3ea68", null ],
-    [ "LayoutRole", "group__lib__core.html#gacc6a111ebb7ba5e35f9c1946e436943f", [
-      [ "LAYOUT_ROLE_DAY", "group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971", null ],
-      [ "LAYOUT_ROLE_NIGHT", "group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5", null ],
-      [ "LAYOUT_ROLE_QUIET", "group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e", null ]
-    ] ],
+    [ "LayoutRole", "group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff", null ],
     [ "NightSchedMode", "group__lib__core.html#ga90cd678ac8db70a4a741a5ef04cd8793", [
       [ "NIGHT_SCHED_OFF", "group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997", null ],
       [ "NIGHT_SCHED_SOLAR", "group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73", null ],
       [ "NIGHT_SCHED_FIXED", "group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be", null ]
+    ] ],
+    [ "Role", "group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951", [
+      [ "ROLE_DAY", "group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb", null ],
+      [ "ROLE_NIGHT", "group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4", null ],
+      [ "ROLE_QUIET", "group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0", null ]
     ] ],
     [ "WindUnit", "group__lib__core.html#ga81835140b8dd390d395cd5fcf7dee1b1", [
       [ "WIND_UNIT_KMH", "group__lib__core.html#gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c", null ],
@@ -264,6 +273,8 @@ var group__lib__core =
     [ "plot_y", "group__lib__core.html#gadc6c8c4764edd2d25babbc4689eaa73b", null ],
     [ "read_i16_le", "group__lib__core.html#ga3fd54f4514af9738e081706d21fd44bc", null ],
     [ "read_i32_le", "group__lib__core.html#ga7ac2e494355ca66ce8ec8bbd881e90e9", null ],
+    [ "role_pick", "group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8", null ],
+    [ "rotate_index", "group__lib__core.html#ga2c930ac9149442ad63c57a55927f6090", null ],
     [ "segment_width", "group__lib__core.html#gac01ee128d72ea0af440967d27c4de224", null ],
     [ "segments_filled", "group__lib__core.html#ga5e3c99e7f2fade51632dd8aa3f3988f0", null ],
     [ "series_max_u16", "group__lib__core.html#ga8cc817ecf16f05e721472b4f6714943a", null ],

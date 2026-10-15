@@ -195,30 +195,31 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('layout__role_8
 </div><!--header-->
 <div class="contents">
 
-<p>Which of a face's layouts should be on screen right now.  
+<p>Deprecated names for the day/night/Quiet Time picker that <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role.h</a></span> provides.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="role_8h_source.html">role/role.h</a>&quot;</code><br />
 </div>
 <p><a href="layout__role_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:gacc6a111ebb7ba5e35f9c1946e436943f" id="r_gacc6a111ebb7ba5e35f9c1946e436943f"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a> { <a class="el" href="group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa61de7d05aeb87ca0661859381a064971">LAYOUT_ROLE_DAY</a> = 0
-, <a class="el" href="group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa19e9e96220840a3831e03b59067e9be5">LAYOUT_ROLE_NIGHT</a>
-, <a class="el" href="group__lib__core.html#ggacc6a111ebb7ba5e35f9c1946e436943fa518cbe3bd0c7d438b484dc05afc5c11e">LAYOUT_ROLE_QUIET</a>
-, <b>LAYOUT_ROLE_COUNT</b>
- }</td></tr>
-<tr class="memdesc:gacc6a111ebb7ba5e35f9c1946e436943f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout is showing. The caller's own storage should line up with these.  <a href="group__lib__core.html#gacc6a111ebb7ba5e35f9c1946e436943f">More...</a><br /></td></tr>
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga3dc49de3b843fe808d5bf5112994550a" id="r_ga3dc49de3b843fe808d5bf5112994550a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3dc49de3b843fe808d5bf5112994550a">LAYOUT_ROLE_DAY</a>&#160;&#160;&#160;<a class="el" href="group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb">ROLE_DAY</a></td></tr>
+<tr class="memitem:gabb959b5a5b52510b68c39b3e64bc751f" id="r_gabb959b5a5b52510b68c39b3e64bc751f"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gabb959b5a5b52510b68c39b3e64bc751f">LAYOUT_ROLE_NIGHT</a>&#160;&#160;&#160;<a class="el" href="group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4">ROLE_NIGHT</a></td></tr>
+<tr class="memitem:gae6ae052785561853f23b2384151f3962" id="r_gae6ae052785561853f23b2384151f3962"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gae6ae052785561853f23b2384151f3962">LAYOUT_ROLE_QUIET</a>&#160;&#160;&#160;<a class="el" href="group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0">ROLE_QUIET</a></td></tr>
+<tr class="memitem:ga949da367e692cdac11c761d3327ff620" id="r_ga949da367e692cdac11c761d3327ff620"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga949da367e692cdac11c761d3327ff620">LAYOUT_ROLE_COUNT</a>&#160;&#160;&#160;ROLE_COUNT</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ga4fc6414086f7b94d66f865e4b92091ff" id="r_ga4fc6414086f7b94d66f865e4b92091ff"><td class="memItemLeft">typedef <a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff">LayoutRole</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga483c460c27f1f46834ac736434668598" id="r_ga483c460c27f1f46834ac736434668598"><td class="memItemLeft"><a class="el" href="group__lib__core.html#gacc6a111ebb7ba5e35f9c1946e436943f">LayoutRole</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga483c460c27f1f46834ac736434668598">layout_role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
-<tr class="memdesc:ga483c460c27f1f46834ac736434668598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout wins, given what is firing and what has a grid behind it.  <br /></td></tr>
+<tr class="memitem:ga483c460c27f1f46834ac736434668598" id="r_ga483c460c27f1f46834ac736434668598"><td class="memItemLeft"><a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951">LayoutRole</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga483c460c27f1f46834ac736434668598">layout_role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
+<tr class="memdesc:ga483c460c27f1f46834ac736434668598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout wins. Forwards to <span class="tt"><a class="el" href="group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span>.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Which of a face's layouts should be on screen right now. </p>
-<p>A face can hold more than one grid and swap between them. This answers which one wins when more than one thing wants to. Every reading comes in as a pair: whether that trigger is firing, and whether there is actually a layout assigned to it. Both halves matter, since a trigger with nothing behind it has to hand the screen to whatever would have had it otherwise rather than draw nothing.</p>
-<p>The caller gathers the readings. Nothing here touches a watch, which is what keeps it host-testable. </p>
+<div class="textblock"><p>Deprecated names for the day/night/Quiet Time picker that <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role.h</a></span> provides. </p>
+<p><span class="tt"><a class="el" href="group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span> and <span class="tt"><a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951" title="Which of the three is showing. The caller&#39;s own storage should line up with these.">Role</a></span> in <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role/role.h</a></span> do this job for any face, a layout editor or a themed face alike. These names forward to them so a face on them keeps building. They go at the next major release. Move to <span class="tt"><a class="el" href="group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span> and <span class="tt"><a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951" title="Which of the three is showing. The caller&#39;s own storage should line up with these.">Role</a></span> when convenient. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

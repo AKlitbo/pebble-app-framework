@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['outboxkind_0',['OutboxKind',['../group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17',1,'outbox_queue.h']]]
+  ['role_0',['Role',['../group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951',1,'role.h']]]
 ];
