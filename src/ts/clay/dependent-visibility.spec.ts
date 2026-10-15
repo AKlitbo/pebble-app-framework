@@ -14,9 +14,15 @@ interface Rule {
   in: Array<string | number | boolean>;
 }
 
-/** A stand-in Clay row: it records whether it is shown and hands back a settable value. */
+/** A stand-in Clay row: it toggles a `hide` class on its element the way the real show/hide does. */
 class FakeRow {
-  shown = true;
+  private readonly classes = new Set<string>();
+  readonly $element = [{
+    classList: {
+      add: (name: string) => this.classes.add(name),
+      remove: (name: string) => this.classes.delete(name),
+    },
+  }];
   value: unknown;
   readonly changeHandlers: Array<() => void> = [];
 
@@ -34,12 +40,9 @@ class FakeRow {
     }
   }
 
-  hide(): void {
-    this.shown = false;
-  }
-
-  show(): void {
-    this.shown = true;
+  /** Shown when nothing has added the `hide` class, which is how the real page reads it. */
+  get shown(): boolean {
+    return !this.classes.has('hide');
   }
 }
 

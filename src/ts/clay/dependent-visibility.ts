@@ -21,10 +21,12 @@ interface Condition {
 /** The bits of a Clay row this reaches. */
 interface ClayRow {
   config: { visibleWhen?: Condition | Condition[] };
+  // the row's own element, so its `hide` class can be toggled straight. the manipulator's hide/show
+  // only exist on Clay's built-in controls, not on a locationsearch or a face's own component, and
+  // the class is what those methods set anyway
+  $element: Array<{ classList: { add(name: string): void; remove(name: string): void } }>;
   get(): unknown;
   on(event: string, handler: () => void): void;
-  hide(): void;
-  show(): void;
 }
 
 /** The bits of the Clay config page this reaches. */
@@ -65,10 +67,16 @@ export default function dependentVisibility(this: ClayPage): void {
 
     const update = () => {
       dependents.forEach((item) => {
+        const root = item.$element && item.$element[0];
+
+        if (!root) {
+          return;
+        }
+
         if (conditionsOf(item).every(holds)) {
-          item.show();
+          root.classList.remove('hide');
         } else {
-          item.hide();
+          root.classList.add('hide');
         }
       });
     };

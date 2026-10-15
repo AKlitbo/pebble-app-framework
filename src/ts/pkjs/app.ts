@@ -362,6 +362,7 @@ export function createClay(options: StartOptions): InstanceType<ClayConstructor>
   // helpers without loading Clay
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Clay = require('@rebble/clay/src/js/index') as ClayConstructor;
+
   // auto-handling off so we own the send path: Clay's own webviewclosed handler sends the settings
   // through Pebble.sendAppMessage directly, which bypasses queueSend and collides with any other
   // in-flight send (the losing message drops with no retry). startPebbleApp opens the config and
@@ -369,6 +370,10 @@ export function createClay(options: StartOptions): InstanceType<ClayConstructor>
   // a page that declares visibleWhen rows gets the framework's show/hide as its custom function,
   // unless the face brought its own custom function, which then owns the whole page and can wire the
   // showing itself
+  if (options.customClay && hasVisibleWhen(options.clayConfig)) {
+    console.warn('startPebbleApp: this face passes its own customClay, so its visibleWhen rows are not wired. The custom function owns the page and can hide and show the rows itself.');
+  }
+
   const customClay = options.customClay || (hasVisibleWhen(options.clayConfig) ? dependentVisibility : undefined);
   const clay = new Clay(options.clayConfig, customClay, { autoHandleEvents: false });
 
