@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.4.1] - 2026-10-14
+
+### Framework Changes
+
+#### Fixed
+
+- Fixed the phone-side script dying in the emulator on every weather fetch, every settings send with a timezone field, and every stock poll. The emulator's JavaScript runtime has no locale data, and building an `Intl.DateTimeFormat` there runs the process out of memory rather than throwing, which no try/catch can stop. `timezone.ts` now asks `Intl.DateTimeFormat.supportedLocalesOf` first and answers null for every zone when nothing comes back, so weather is asked in the location's own zone and moved onto the phone's clock, a timezone field sends its saved offset, and the stock schedule reads the market as shut. Real phones have the locale data and are unaffected.
+
 ## [4.4.0] - 2026-10-14
 
 ### Framework Changes
@@ -421,6 +429,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[4.4.1]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.1.0...v4.2.0

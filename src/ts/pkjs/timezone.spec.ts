@@ -50,17 +50,28 @@ describe('offsetMinutes', () => {
 });
 
 describe('phoneZone', () => {
-  /** Swaps the runtime's zone name for one test and puts the real one back after. */
+  /**
+   * Swaps the runtime's zero-argument Intl.DateTimeFormat for one test and puts the real one back
+   * after. A call with arguments is a real formatter, so formatterFor still reads the zone for real,
+   * and supportedLocalesOf answers so the locale-data gate passes.
+   */
   function withRuntimeZone(zone: string | (() => never), run: () => void): void {
     const real = Intl.DateTimeFormat;
 
-    (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = () => {
+    function stub(...args: unknown[]): unknown {
+      if (args.length > 0) {
+        return new (real as unknown as new (...rest: unknown[]) => unknown)(...args);
+      }
+
       if (typeof zone === 'function') {
         return zone();
       }
 
       return { resolvedOptions: () => ({ timeZone: zone }) };
-    };
+    }
+
+    (stub as unknown as { supportedLocalesOf: unknown }).supportedLocalesOf = () => ['en'];
+    (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = stub;
 
     try {
       run();
@@ -93,6 +104,63 @@ describe('phoneZone', () => {
     });
 
     expect(result).toBe(null);
+  });
+
+  /**
+   * A formatter built on a runtime with no locale data runs the phone-side script out of memory and
+   * kills it, which no try/catch can stop. So the gate reads supportedLocalesOf first and builds
+   * nothing when it answers empty.
+   */
+  test('builds no formatter when the runtime has no locale data', () => {
+    const real = Intl.DateTimeFormat;
+    let built = 0;
+
+    function stub(): never {
+      built += 1;
+      throw new Error('a formatter was built');
+    }
+
+    (stub as unknown as { supportedLocalesOf: unknown }).supportedLocalesOf = () => [];
+    (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = stub;
+
+    try {
+      const zone = phoneZone(WINTER);
+      const offset = offsetMinutes('Europe/London', WINTER);
+
+      expect(zone).toBeNull();
+      expect(offset).toBeNull();
+      expect(built).toBe(0);
+    } finally {
+      (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = real;
+    }
+  });
+
+  /** Some runtimes throw while even listing the locales they have, so that counts as no data too. */
+  test('builds no formatter when checking locale support throws', () => {
+    const real = Intl.DateTimeFormat;
+    let built = 0;
+
+    function stub(): never {
+      built += 1;
+      throw new Error('a formatter was built');
+    }
+
+    (stub as unknown as { supportedLocalesOf: unknown }).supportedLocalesOf = () => {
+      throw new RangeError('Invalid language tag');
+    };
+
+    (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = stub;
+
+    try {
+      const zone = phoneZone(WINTER);
+      const offset = offsetMinutes('Europe/London', WINTER);
+
+      expect(zone).toBeNull();
+      expect(offset).toBeNull();
+      expect(built).toBe(0);
+    } finally {
+      (Intl as unknown as { DateTimeFormat: unknown }).DateTimeFormat = real;
+    }
   });
 });
 

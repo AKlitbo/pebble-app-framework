@@ -42,7 +42,7 @@ const offset = live === null ? place.offset || 0 : live;
 return offset + ',' + wire.toAscii(place.label);
 ```
 
-**Reading a Zone's Offset.** `offsetMinutes` asks `Intl.DateTimeFormat` what the zone's wall clock reads now, builds that wall clock as if it were UTC, and subtracts the real UTC time. What is left is the offset, which comes out right for the half hour and three quarter hour zones too: 330 for Kolkata, 345 for Kathmandu, and -150 for St. John's in summer. Building a formatter is the slow part, so each zone keeps the one it built.
+**Reading a Zone's Offset.** `offsetMinutes` asks `Intl.DateTimeFormat` what the zone's wall clock reads now, builds that wall clock as if it were UTC, and subtracts the real UTC time. What is left is the offset, which comes out right for the half hour and three quarter hour zones too: 330 for Kolkata, 345 for Kathmandu, and -150 for St. John's in summer. Building a formatter is the slow part, so each zone keeps the one it built. A runtime with no locale data behind it, such as the one the emulator runs, runs out of memory building that formatter rather than throwing, and the process dies with it. So `Intl.DateTimeFormat.supportedLocalesOf` is asked first, and every zone comes back null when it answers empty.
 
 **Plain Letters.** The name is flattened to ASCII on the way out, the same as every text the phone sends, as [The Message Formats](message-formats.md#text-on-the-way-over) covers. São Paulo goes over as Sao Paulo.
 

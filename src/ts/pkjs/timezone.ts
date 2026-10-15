@@ -24,6 +24,20 @@ export interface ZoneParts {
 // one, so each zone keeps the formatter it already built
 const formatters: Record<string, Intl.DateTimeFormat> = {};
 
+/**
+ * Whether this runtime has the locale data a formatter needs. The emulator's runtime has none, and
+ * building an Intl.DateTimeFormat there runs it out of memory and kills the process, which no
+ * try/catch can stop. supportedLocalesOf reads the same list without building a formatter, so an
+ * empty answer means leave the formatter alone.
+ */
+function intlUsable(): boolean {
+  try {
+    return Intl.DateTimeFormat.supportedLocalesOf(['en']).length > 0;
+  } catch (error) {
+    return false;
+  }
+}
+
 /** The formatter for a zone, built once and kept. Throws for a zone the runtime cannot read. */
 function formatterFor(zone: string): Intl.DateTimeFormat {
   if (!formatters[zone]) {
@@ -52,7 +66,7 @@ function formatterFor(zone: string): Intl.DateTimeFormat {
  * @return The zone's wall clock, or null when the runtime cannot read that zone.
  */
 export function zoneParts(zone: string, nowMs: number): ZoneParts | null {
-  if (!zone) {
+  if (!zone || !intlUsable()) {
     return null;
   }
 
@@ -146,14 +160,19 @@ export function toWire(saved: unknown, nowMs: number): string {
 /**
  * The phone's own time zone name, when the runtime can name it and read it right.
  *
- * A runtime with no zone table can throw, or answer UTC while the phone is not on UTC, and a wrong
- * name would put every sun time and forecast hour off. So the name is only trusted when its offset
- * now matches the phone clock's own.
+ * A runtime with no locale data cannot build the formatter this needs, so it is checked for first
+ * and this answers null. A runtime that answers UTC while the phone is not on UTC would put every
+ * sun time and forecast hour off, so the name is only trusted when its offset now matches the phone
+ * clock's own.
  *
  * @param nowMs The moment to check the offset at, as epoch milliseconds.
  * @return The zone name, such as "America/Toronto", or null when it cannot be trusted.
  */
 export function phoneZone(nowMs: number): string | null {
+  if (!intlUsable()) {
+    return null;
+  }
+
   let zone: string;
 
   try {
