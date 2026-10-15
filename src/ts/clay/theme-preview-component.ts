@@ -10,14 +10,22 @@
  * writes, drawn side by side. That is how a face shows a day and a night shot of the same theme. An
  * option with no picture leaves the preview area empty rather than a broken image.
  *
+ * A theme's pictures can instead be a map keyed by platform, so a round watch and a rectangular one
+ * each get their own shots. Clay hands initialize the config instance, whose meta carries the watch
+ * the page was opened from, so the picker draws that platform's list. A face whose manifest left the
+ * platform out, or a watch the map does not name, falls back to any list the map does carry rather
+ * than an empty row.
+ *
  * Labels are written with textContent, not as markup, so a label holding angle brackets shows them
  * as text rather than as tags. None of ours carries markup.
  *
  * IMPORTANT: initialize is serialized (via .toString()) and run inside the Clay config webview, a
  * separate JS context. It must be self-contained and must NOT reference anything from this module's
  * scope (imports, module-level constants, and so on). Those are undefined in the webview and will
- * throw. Keep such values inline.
+ * throw. Keep such values inline. The imports here are type-only, so they erase and never ship.
  */
+
+import type { ThemePreviewPictures } from './types';
 
 /** The Clay row context initialize binds to. It is a ClayItem, so it carries on() as well. */
 export interface ThemePreviewContext {
@@ -28,9 +36,15 @@ export interface ThemePreviewContext {
     description?: string;
     messageKey?: string;
     options?: Array<{ label: string; value: string | number }>;
-    previews?: Record<string, string[]>;
+    previews?: Record<string, ThemePreviewPictures>;
   };
   on(event: string, handler: () => void): void;
+}
+
+/** The Clay config instance initialize is handed as its second argument. Its meta carries the watch
+ * the page was opened from, which is all the picker reads from it. */
+export interface ThemePreviewClay {
+  meta?: { activeWatchInfo?: { platform?: string } };
 }
 
 export default {
@@ -72,8 +86,12 @@ export default {
    * by writing `key:` followed by the function's own toString, and a shorthand method stringifies
    * with its name attached, which comes out as `initialize:initialize() {` and stops the whole
    * settings page parsing.
+   *
+   * Clay calls this with the lodash build it bundles and then the config instance. The config
+   * instance carries the watch the page was opened from, which is how a platform-keyed theme knows
+   * which shots to draw.
    */
-  initialize: function (this: ThemePreviewContext): void {
+  initialize: function (this: ThemePreviewContext, _minified?: unknown, clay?: ThemePreviewClay): void {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     const root = self.$element && self.$element[0];
@@ -81,6 +99,11 @@ export default {
     if (!root) {
       return;
     }
+
+    // the watch the page was opened from, for a theme that carries a set of shots per platform. empty
+    // when Clay hands no meta, which falls back to whatever set the theme does carry
+    const watchInfo = clay && clay.meta ? clay.meta.activeWatchInfo : undefined;
+    const platform = watchInfo && watchInfo.platform ? watchInfo.platform : '';
 
     const config = self.config || {};
     const previews = config.previews || {};
@@ -116,7 +139,25 @@ export default {
         gallery.removeChild(gallery.firstChild);
       }
 
-      const pictures = previews[String(select.value)] || [];
+      const entry = previews[String(select.value)];
+      let pictures: string[];
+
+      if (Array.isArray(entry)) {
+        // one set of shots for every watch
+        pictures = entry;
+      } else if (entry && typeof entry === 'object') {
+        // a set per platform. draw this watch's, and if the theme left this platform out fall back
+        // to any set it does carry so the row is never empty when pictures exist
+        pictures = entry[platform];
+
+        if (!pictures || !pictures.length) {
+          const names = Object.keys(entry);
+
+          pictures = names.length ? entry[names[0]] : [];
+        }
+      } else {
+        pictures = [];
+      }
 
       pictures.forEach(function (picture) {
         // only a data url the generator wrote. anything else is skipped rather than drawn broken

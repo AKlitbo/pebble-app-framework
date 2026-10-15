@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.5.0] - 2026-10-15
+
+### Framework Changes
+
+#### Changed
+
+- The theme picker can show a different preview per platform, so a face built for more than one watch shows each watch its own shots. A `theme-previews.json` value can now be a map keyed by platform, `{ "emery": <path|list>, "gabbro": <path|list> }`, as well as the path or list it already took. `paf gen <face> theme-previews` writes the map through to `theme-previews.g.js`, and the `themePreview` component reads the watch the settings page was opened from and draws that platform's shots. A platform name has to be one Pebble builds for, so a typo stops the generator. A flat value is unchanged, and a theme whose map leaves out the watch in hand falls back to any shots the map carries.
+
 ## [4.4.1] - 2026-10-14
 
 ### Framework Changes
@@ -429,6 +437,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[4.5.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.1...v4.5.0
 [4.4.1]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.2.0...v4.3.0

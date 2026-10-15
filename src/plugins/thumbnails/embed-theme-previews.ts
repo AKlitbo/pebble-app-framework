@@ -14,6 +14,12 @@
  * list of paths. The output always holds a list, so the picker draws however many it is given side
  * by side.
  *
+ * A value can instead be a map keyed by platform, `{ "emery": <path|list>, "gabbro": <path|list> }`,
+ * so a face shows a round watch its round shots and a rectangular one its own. The picker reads the
+ * watch the page was opened from and draws that platform's list. A platform name has to be one Pebble
+ * knows, so a typo stops the run rather than shipping a theme that shows nothing on that watch. The
+ * output mirrors the shape, a list for a flat value and a map of lists for a platform-keyed one.
+ *
  * The keys are the theme values the picker's options carry, as strings, since JSON keys are strings
  * and Clay sends the value as one anyway. A path is relative to the face folder, and may climb out
  * of it with .. since the whole repo is checked out when this runs. JS lists an object's integer
@@ -50,19 +56,50 @@ export function outFile(face: string): string {
   return path.join(faceDir(face), 'src', 'pkjs', 'clay', 'theme-previews.g.js');
 }
 
-/** One manifest entry: the theme value as its string key, and its png paths as written, in order. */
-export interface PreviewEntry {
-  value: string;
-  files: string[];
+/** The platform names a platform-keyed value may use, the ones Pebble builds for. */
+export const KNOWN_PLATFORMS = ['emery', 'gabbro', 'chalk', 'basalt', 'aplite', 'diorite', 'flint'];
+
+/**
+ * One manifest entry: the theme value as its string key, and its pictures.
+ *
+ * A flat entry carries one list of paths for every watch. A platform-keyed one carries a list per
+ * platform, in the order the manifest wrote them so the asset is stable.
+ */
+export type PreviewEntry =
+  | { value: string; kind: 'flat'; files: string[] }
+  | { value: string; kind: 'byPlatform'; platforms: Array<{ platform: string; files: string[] }> };
+
+/** Validates one theme value's paths, a single path or a list of them, and hands them back as a
+ * list. label says what the paths belong to, the theme value or a platform under it, so a bad one
+ * names the right thing. */
+function readPaths(picture: unknown, label: string, file: string): string[] {
+  const paths = Array.isArray(picture) ? picture : [picture];
+
+  if (!paths.length) {
+    throw new ToolError(`${file}: ${label} has to name at least one picture`);
+  }
+
+  paths.forEach((one) => {
+    if (typeof one !== 'string' || one.trim() === '') {
+      throw new ToolError(`${file}: a path for ${label} has to be a non-empty string`);
+    }
+
+    if (path.isAbsolute(one)) {
+      throw new ToolError(`${file}: a path for ${label} has to be relative to the face folder, not absolute`);
+    }
+  });
+
+  return paths as string[];
 }
 
 /**
  * Reads and validates the manifest text, keeping the keys in the order JS lists them, smallest integer first.
  *
- * It parses as an object of theme value to a path or a list of paths. A value that is not a
- * non-empty string or a list of them, or a path that is absolute, is the author's mistake and stops
- * the run naming the key. A single path is normalised to a one-item list. Whether a file is there is
- * left to encodePreviews, since that is a separate thing from whether the manifest is well formed.
+ * It parses as an object of theme value to a path, a list of paths, or a map of a path or list per
+ * platform. A value that is not any of those, a path that is absolute, or a platform name Pebble
+ * does not build for is the author's mistake and stops the run naming the key. A single path is
+ * normalised to a one-item list. Whether a file is there is left to encodePreviews, since that is a
+ * separate thing from whether the manifest is well formed.
  *
  * @param text The manifest's contents.
  * @param file The manifest's path, for the error message.
@@ -78,28 +115,34 @@ export function readManifest(text: string, file: string): PreviewEntry[] {
   }
 
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-    throw new ToolError(`${file} has to be a JSON object of theme value to a picture path or a list of them`);
+    throw new ToolError(`${file} has to be a JSON object of theme value to a picture path, a list of them, or a map per platform`);
   }
 
-  return Object.keys(parsed).map((value) => {
+  return Object.keys(parsed).map((value): PreviewEntry => {
     const picture = (parsed as Record<string, unknown>)[value];
-    const paths = Array.isArray(picture) ? picture : [picture];
 
-    if (!paths.length) {
-      throw new ToolError(`${file}: "${value}" has to name at least one picture`);
+    // a map keyed by platform: a list per watch, so each shows its own shots
+    if (picture !== null && typeof picture === 'object' && !Array.isArray(picture)) {
+      const names = Object.keys(picture as Record<string, unknown>);
+
+      if (!names.length) {
+        throw new ToolError(`${file}: "${value}" has to name at least one platform`);
+      }
+
+      const platforms = names.map((platform) => {
+        if (KNOWN_PLATFORMS.indexOf(platform) === -1) {
+          throw new ToolError(`${file}: "${value}" names an unknown platform "${platform}". known: ${KNOWN_PLATFORMS.join(', ')}`);
+        }
+
+        const files = readPaths((picture as Record<string, unknown>)[platform], `"${value}" platform "${platform}"`, file);
+
+        return { platform: platform, files: files };
+      });
+
+      return { value: value, kind: 'byPlatform', platforms: platforms };
     }
 
-    paths.forEach((one) => {
-      if (typeof one !== 'string' || one.trim() === '') {
-        throw new ToolError(`${file}: a path for "${value}" has to be a non-empty string`);
-      }
-
-      if (path.isAbsolute(one)) {
-        throw new ToolError(`${file}: a path for "${value}" has to be relative to the face folder, not absolute`);
-      }
-    });
-
-    return { value: value, files: paths as string[] };
+    return { value: value, kind: 'flat', files: readPaths(picture, `"${value}"`, file) };
   });
 }
 
@@ -111,12 +154,25 @@ export interface BuiltPreviews {
 }
 
 /**
+ * One encoded theme value, ready to write. A flat one holds a list of data URLs. A platform-keyed one
+ * holds a list per platform, in the manifest's order.
+ */
+export type EncodedPreview =
+  | { value: string; dataUrls: string[] }
+  | { value: string; byPlatform: Array<{ platform: string; dataUrls: string[] }> };
+
+/** Renders a list of data URLs as a JS array literal. */
+function urlList(dataUrls: string[]): string {
+  return '[' + dataUrls.map((url) => JSON.stringify(url)).join(', ') + ']';
+}
+
+/**
  * Renders the asset source, rows in the order given so the file is stable across runs.
  *
  * @param previews Each theme value and its encoded data URLs, smallest key first.
  * @return The generated asset's full source text.
  */
-export function buildSource(previews: Array<{ value: string; dataUrls: string[] }>): string {
+export function buildSource(previews: EncodedPreview[]): string {
   const lines = [
     '// generated by the thumbnails plugin',
     '// do not edit by hand: run `paf gen <face> theme-previews` after changing the pictures',
@@ -124,9 +180,13 @@ export function buildSource(previews: Array<{ value: string; dataUrls: string[] 
   ];
 
   previews.forEach((preview) => {
-    const urls = preview.dataUrls.map((url) => JSON.stringify(url)).join(', ');
+    if ('byPlatform' in preview) {
+      const parts = preview.byPlatform.map((one) => JSON.stringify(one.platform) + ': ' + urlList(one.dataUrls));
 
-    lines.push('  ' + JSON.stringify(preview.value) + ': [' + urls + '],');
+      lines.push('  ' + JSON.stringify(preview.value) + ': { ' + parts.join(', ') + ' },');
+    } else {
+      lines.push('  ' + JSON.stringify(preview.value) + ': ' + urlList(preview.dataUrls) + ',');
+    }
   });
   lines.push('};', '');
   return lines.join('\n');
@@ -148,24 +208,26 @@ export function encodePreviews(face: string): BuiltPreviews {
   const entries = readManifest(fs.readFileSync(file, 'utf8'), file);
   const dir = faceDir(face);
 
-  const encoded: Array<{ value: string; dataUrls: string[] }> = [];
+  const encoded: EncodedPreview[] = [];
   const problems: string[] = [];
 
-  entries.forEach((entry) => {
+  /** Encodes one theme value's paths, noting any it cannot use as a problem line, and hands back the
+   * data URLs and whether every path encoded. */
+  function encodeFiles(value: string, files: string[]): { dataUrls: string[]; ok: boolean } {
     const urls: string[] = [];
     let ok = true;
 
-    entry.files.forEach((one) => {
+    files.forEach((one) => {
       const picture = path.resolve(dir, one);
 
       if (!fs.existsSync(picture)) {
-        problems.push(`"${entry.value}": ${one} is missing`);
+        problems.push(`"${value}": ${one} is missing`);
         ok = false;
         return;
       }
 
       if (!isPng(picture)) {
-        problems.push(`"${entry.value}": ${one} is not a PNG`);
+        problems.push(`"${value}": ${one} is not a PNG`);
         ok = false;
         return;
       }
@@ -173,10 +235,26 @@ export function encodePreviews(face: string): BuiltPreviews {
       urls.push(pngDataUrl(picture));
     });
 
+    return { dataUrls: urls, ok: ok };
+  }
+
+  entries.forEach((entry) => {
     // a theme goes in whole or not at all, so a value with one good and one bad picture is held
     // back rather than shipping half its row. the bad path is already a problem line
-    if (ok) {
-      encoded.push({ value: entry.value, dataUrls: urls });
+    if (entry.kind === 'flat') {
+      const built = encodeFiles(entry.value, entry.files);
+
+      if (built.ok) {
+        encoded.push({ value: entry.value, dataUrls: built.dataUrls });
+      }
+
+      return;
+    }
+
+    const byPlatform = entry.platforms.map((one) => ({ platform: one.platform, built: encodeFiles(entry.value, one.files) }));
+
+    if (byPlatform.every((one) => one.built.ok)) {
+      encoded.push({ value: entry.value, byPlatform: byPlatform.map((one) => ({ platform: one.platform, dataUrls: one.built.dataUrls })) });
     }
   });
 

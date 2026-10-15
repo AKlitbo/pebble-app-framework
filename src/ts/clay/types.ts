@@ -13,6 +13,12 @@ export type ClayOption = { label: string; value: string | number };
 /** One `visibleWhen` test: the control to read, by messageKey, and the values that reveal the item. */
 export type VisibilityCondition = { key: string; in: Array<string | number | boolean> };
 
+/** The pictures a themePreview draws for one option. A plain list is drawn on every watch. A map
+ * keyed by platform name (emery, gabbro, and so on) draws that watch's own list, so a round watch
+ * shows its round shots and a rectangular one shows its. The generator writes whichever shape the
+ * face's manifest uses. */
+export type ThemePreviewPictures = string[] | Record<string, string[]>;
+
 /**
  * One Clay config item (a section, heading, select, toggle, input, custom
  * component, etc.). The fields both the config builder and the runtime touch are
@@ -49,10 +55,11 @@ export interface ClayConfigItem {
   // custom components (layoutBuilder / themeBuilder / slotBuilder) carry these
   moduleOptions?: unknown;
   moduleThumbnails?: unknown;
-  /** themePreview only: the pictures for each option, keyed by the option's value as a string, as a
-   * list of data URLs from the face's theme-previews.g.js. A theme can carry one (a single preview)
-   * or a few (such as a day and a night shot), drawn side by side. */
-  previews?: Record<string, string[]>;
+  /** themePreview only: the pictures for each option, keyed by the option's value as a string, from
+   * the face's theme-previews.g.js. A value is a list of data URLs, drawn side by side, so a theme
+   * can carry one picture or a few (such as a day and a night shot). A value can instead be a map
+   * keyed by platform, so a round and a rectangular watch each show their own shots. */
+  previews?: Record<string, ThemePreviewPictures>;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
   /** Shows this item only while another control holds one of the given values, so a row that does

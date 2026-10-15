@@ -9,7 +9,7 @@
  * starting point a copied face would reach for first.
  */
 
-import type { ClayConfigItem } from '../clay/types';
+import type { ClayConfigItem, ThemePreviewPictures } from '../clay/types';
 import { VIBE_OPTIONS } from './config-rows';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
@@ -18,9 +18,10 @@ export interface ConfigBuilderOptions {
   heading?: string;
   intro?: string;
   /** previews shows a picture of the chosen theme under the dropdown, keyed by the option's value as
-   * a string, each a list of one or more pictures (such as a day and a night shot). It comes from
-   * the file `paf gen <face> theme-previews` writes. Without it the picker is the plain select. */
-  theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }>; previews?: Record<string, string[]> };
+   * a string, each a list of one or more pictures (such as a day and a night shot), or a map of such
+   * a list per platform so each watch shows its own shots. It comes from the file
+   * `paf gen <face> theme-previews` writes. Without it the picker is the plain select. */
+  theme?: { label?: string; description?: string; options?: Array<{ label: string; value: string | number }>; previews?: Record<string, ThemePreviewPictures> };
   /** Extra controls to sit inside the Appearance section, under the theme picker. For a setting
    * that belongs with the look of the face rather than in a section of its own. */
   appearanceItems?: ClayConfigItem[];
@@ -83,6 +84,20 @@ const beatsDateOptions = [
   { 'label': '2026.0618.672 (yyyy.mmdd.beat)', 'value': '%Y.%m%d.{B}' },
 ];
 
+/** Whether a theme's previews entry carries at least one picture, across both shapes it can take, a
+ * plain list or a list per platform. */
+function hasPicture(pictures?: ThemePreviewPictures): boolean {
+  if (!pictures) {
+    return false;
+  }
+
+  if (Array.isArray(pictures)) {
+    return pictures.length > 0;
+  }
+
+  return Object.keys(pictures).some((platform) => (pictures[platform] || []).length > 0);
+}
+
 /**
  * The theme picker: rows with a picture beside each name when the face has previews, the plain
  * select otherwise. Either way the value saves under APPEARANCE_THEME with 0 as the default.
@@ -107,9 +122,7 @@ function themePicker(theme: NonNullable<ConfigBuilderOptions['theme']>): ClayCon
   // a theme with no picture still shows, by its name alone, so the picker is not the place this is
   // noticed. warn so a missing preview turns up in the preview tool's console instead
   (theme.options || []).forEach((option) => {
-    const pictures = theme.previews![String(option.value)];
-
-    if (!pictures || !pictures.length) {
+    if (!hasPicture(theme.previews![String(option.value)])) {
       console.warn(`buildConfig: theme.previews has no picture for "${option.label}" (value ${option.value})`);
     }
   });

@@ -14,12 +14,30 @@ import type { ClayComponentDefinition } from './builder/ts/testing/harness';
 
 const DAY = 'data:image/png;base64,AAAA';
 const NIGHT = 'data:image/png;base64,BBBB';
+const EMERY = 'data:image/png;base64,CCCC';
+const GABBRO = 'data:image/png;base64,DDDD';
 
 const themeConfig = {
   label: 'Scene Palette',
   options: [{ label: 'Sketchbook', value: 0 }, { label: 'Forest', value: 4 }],
   previews: { 0: [DAY, NIGHT], 4: [DAY] },
 };
+
+const platformConfig = {
+  label: 'Scene Palette',
+  options: [{ label: 'Sketchbook', value: 0 }],
+  previews: { 0: { emery: [EMERY], gabbro: [GABBRO] } },
+};
+
+/** Clay hands initialize the config instance second, whose meta names the watch the page opened from. */
+function clayOn(platform?: string) {
+  return { meta: { activeWatchInfo: platform ? { platform } : undefined } };
+}
+
+/** Runs initialize the way Clay does, passing the lodash build and the config instance. */
+function run(context: { initialize(): void }, clay?: unknown): void {
+  (context.initialize as unknown as (minified: unknown, clay: unknown) => void)(undefined, clay);
+}
 
 /**
  * Mounts the component the way Clay does, and stubs the ClayItem's own change subscription so the
@@ -128,6 +146,53 @@ describe('the preview', () => {
     const result = previewSrcs(root).length;
 
     expect(result).toBe(0);
+  });
+});
+
+describe('platform-keyed previews', () => {
+  /** A round watch has to show its round shots, so the picker draws the opened watch's platform. */
+  test('draws the gabbro shots when the page is opened from a gabbro', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn('gabbro'));
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([GABBRO]);
+  });
+
+  /** The same theme on a rectangular watch draws the emery shots, not the round ones. */
+  test('draws the emery shots when the page is opened from an emery', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn('emery'));
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([EMERY]);
+  });
+
+  /** A theme that left this watch's platform out still shows something, so the row is never blank
+   * when the theme carries pictures for any platform at all. */
+  test('falls back to another platform when the watch is not in the map', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn('chalk'));
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([EMERY]);
+  });
+
+  /** The preview tool and an old Clay can hand no watch info, which must still draw a picture. */
+  test('falls back to a platform when Clay passes no watch info', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn());
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([EMERY]);
   });
 });
 

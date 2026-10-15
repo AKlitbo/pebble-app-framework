@@ -179,7 +179,9 @@ buildConfig({
 });
 ```
 
-The pictures come from the `thumbnails` plugin's `theme-previews` generator, which base64-encodes a face's screenshots into the `theme-previews.g.js` the `previews` import reads. [The Thumbnails Plugin](thumbnails-plugin.md#theme-previews) covers the manifest and the generator.
+A theme's value can instead carry a set of pictures per platform, so a face built for more than one watch shows each watch its own shots. The picker reads the watch the page was opened from and draws that platform's set. The map lives in the manifest, so a face's `config.ts` passes `previews` the same way either way.
+
+The pictures come from the `thumbnails` plugin's `theme-previews` generator, which base64-encodes a face's screenshots into the `theme-previews.g.js` the `previews` import reads. [The Thumbnails Plugin](thumbnails-plugin.md#theme-previews) covers the manifest, the per-platform map, and the generator.
 
 The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker. It borrows the dropdown's look from Clay's own select styling, which Clay only adds to a page that holds a plain `select`, so a hand-built page wants one of those somewhere too. A `buildConfig` page always has them in its other sections.
 
