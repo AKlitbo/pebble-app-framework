@@ -8,7 +8,7 @@
   "out": "site/dist/ts",
   "readme": "none",
   "excludeInternal": true,
-  "intentionallyNotExported": ["AppMessageDict"],
+  "intentionallyNotExported": ["AppMessageDict", "ClayPage"],
   "treatWarningsAsErrors": true,
   "customCss": "typedoc/pebble.css"
 }
