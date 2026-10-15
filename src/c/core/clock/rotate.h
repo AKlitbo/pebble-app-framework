@@ -27,6 +27,10 @@
  * screen drawn from it only changes on a boundary. It is 0 for a count of one, and for an interval
  * or a count that is not positive, which is the safe nothing-to-rotate answer.
  *
+ * It counts the year as a round 366 days, so the one boundary at a non-leap new year jumps by more
+ * than a single step and can, for a count that divides the jump, land on the same one twice. For a
+ * shuffle that one ragged boundary a year does not matter.
+ *
  * The time comes in as the same fields a struct tm carries, so the caller hands them straight from
  * its broken-apart clock.
  *

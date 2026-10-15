@@ -181,7 +181,7 @@ buildConfig({
 
 The pictures come from the `thumbnails` plugin's `theme-previews` generator, which base64-encodes a face's screenshots into the `theme-previews.g.js` the `previews` import reads. [The Thumbnails Plugin](thumbnails-plugin.md#theme-previews) covers the manifest and the generator.
 
-The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker.
+The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker. It borrows the dropdown's look from Clay's own select styling, which Clay only adds to a page that holds a plain `select`, so a hand-built page wants one of those somewhere too. A `buildConfig` page always has them in its other sections.
 
 ## Showing Rows Only When They Apply
 
@@ -209,6 +209,8 @@ visibleWhen: [
 ```
 
 **How It Works.** When a page has any `visibleWhen` row, the framework runs its own custom function to do the showing and hiding, set once as the page opens and again whenever a named control changes. A hidden row keeps its saved value, so a control turning a section back on brings the earlier choices back. A face that passes its own `customClay` owns the whole page, so it wires the showing itself rather than getting the framework's. The rows ride on the page as plain config, so a hand-built page uses `visibleWhen` the same way.
+
+Put `visibleWhen` on a control, not a `section`, since Clay gives a section no row to hide. A row whose named control is dropped from a watch by its own `capabilities` is hidden along with it on that watch, since the value it waits on is not there to read.
 
 ## A Face's Own Builder
 

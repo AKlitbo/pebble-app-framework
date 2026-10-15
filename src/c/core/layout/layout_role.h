@@ -1,10 +1,10 @@
 /**
  * @file layout_role.h
- * @brief Deprecated names for the day/night/Quiet Time picker, which is now `role.h`.
+ * @brief Deprecated names for the day/night/Quiet Time picker that `role.h` provides.
  *
  * `role_pick` and `Role` in `role/role.h` do this job for any face, a layout editor or a themed
- * face alike. These names stay so a face already on them keeps building. They go at the next major
- * release. Move to `role_pick` and `Role` when convenient.
+ * face alike. These names forward to them so a face on them keeps building. They go at the next
+ * major release. Move to `role_pick` and `Role` when convenient.
  *
  * @ingroup lib_core
  */

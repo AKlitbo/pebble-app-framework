@@ -36,14 +36,21 @@ export async function checkThemePreviews(): Promise<string[]> {
       }
 
       const built = encodePreviews(face);
+
+      // a missing or non-PNG path also makes the committed file differ from what would be written, so
+      // report those on their own rather than adding a stale line for the same root cause
+      if (built.problems.length) {
+        for (const problem of built.problems) {
+          problems.push(`${face}: ${problem}`);
+        }
+
+        return;
+      }
+
       const current = committed ? readText(outFile(face)) : null;
 
       if (current !== built.source) {
         problems.push(`${face}: theme-previews.g.js is stale, run paf gen ${face} theme-previews`);
-      }
-
-      for (const problem of built.problems) {
-        problems.push(`${face}: ${problem}`);
       }
     });
   }

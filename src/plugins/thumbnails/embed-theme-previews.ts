@@ -16,9 +16,9 @@
  *
  * The keys are the theme values the picker's options carry, as strings, since JSON keys are strings
  * and Clay sends the value as one anyway. A path is relative to the face folder, and may climb out
- * of it with .. since the whole repo is checked out when this runs. The rows come out smallest key
- * first, the order JS lists an object's integer keys in, so the asset is the same however the
- * manifest is ordered.
+ * of it with .. since the whole repo is checked out when this runs. JS lists an object's integer
+ * keys smallest first and any other key in insertion order, so the theme values a picker uses come
+ * out smallest first and the asset is the same however the manifest is ordered.
  *
  * Run: paf gen <face> theme-previews, or by hand with no face for every face with a manifest. It
  * reports what it encoded and throws if a path is missing or is not a PNG.
