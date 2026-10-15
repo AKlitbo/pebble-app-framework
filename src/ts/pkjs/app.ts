@@ -12,6 +12,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import locationComponent from '../clay/location-component';
 import themePreviewComponent from '../clay/theme-preview-component';
+import dependentVisibility from '../clay/dependent-visibility';
 import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { createSettingsAsk } from './settings-ask';
@@ -63,6 +64,16 @@ export function collectDefaults(items: ClayConfigItem[]): Record<string, any> {
  */
 export function usesComponent(items: ClayConfigItem[], type: string): boolean {
   return items.some((item) => item.type === type || (item.items ? usesComponent(item.items, type) : false));
+}
+
+/**
+ * Whether any item on the page, sections and their nested items included, declares a `visibleWhen`.
+ *
+ * @param items The Clay config items to walk.
+ * @return True when any item depends on another's value for whether it shows.
+ */
+export function hasVisibleWhen(items: ClayConfigItem[]): boolean {
+  return items.some((item) => item.visibleWhen !== undefined || (item.items ? hasVisibleWhen(item.items) : false));
 }
 
 // the watch payload is already sanitized C-side but guard each copy anyway so
@@ -355,7 +366,11 @@ export function createClay(options: StartOptions): InstanceType<ClayConstructor>
   // through Pebble.sendAppMessage directly, which bypasses queueSend and collides with any other
   // in-flight send (the losing message drops with no retry). startPebbleApp opens the config and
   // sends the saved settings itself so every send goes through the one queue
-  const clay = new Clay(options.clayConfig, options.customClay, { autoHandleEvents: false });
+  // a page that declares visibleWhen rows gets the framework's show/hide as its custom function,
+  // unless the face brought its own custom function, which then owns the whole page and can wire the
+  // showing itself
+  const customClay = options.customClay || (hasVisibleWhen(options.clayConfig) ? dependentVisibility : undefined);
+  const clay = new Clay(options.clayConfig, customClay, { autoHandleEvents: false });
 
   // the location autocomplete goes first, before the settings page is built
   clay.registerComponent(locationComponent);

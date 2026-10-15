@@ -10,6 +10,9 @@ export type ClayValue = string | number | boolean | { value: string | number | b
 /** One choice a select or radio group offers: its label and the value Clay stores. */
 export type ClayOption = { label: string; value: string | number };
 
+/** One `visibleWhen` test: the control to read, by messageKey, and the values that reveal the item. */
+export type VisibilityCondition = { key: string; in: Array<string | number | boolean> };
+
 /**
  * One Clay config item (a section, heading, select, toggle, input, custom
  * component, etc.). The fields both the config builder and the runtime touch are
@@ -52,6 +55,12 @@ export interface ClayConfigItem {
   previews?: Record<string, string[]>;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
+  /** Shows this item only while another control holds one of the given values, so a row that does
+   * nothing under the current choice is hidden rather than left on the page. One condition, or a
+   * list of them that all have to hold. `key` is a control's messageKey and `in` the values that
+   * reveal this item (a toggle's are `true`/`false`). The framework wires the showing and hiding
+   * when a page has any, as long as the face passes no customClay of its own. */
+  visibleWhen?: VisibilityCondition | VisibilityCondition[];
   /** color only: false shows the true colours instead of their washed-out sunlight pair. */
   sunlight?: boolean;
   /** slider only: the gap between values. Its decimal places are how far Clay scales the value up for the watch. */
