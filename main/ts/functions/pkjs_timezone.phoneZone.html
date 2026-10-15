@@ -56,9 +56,10 @@
 <div class="tsd-signature tsd-anchor-link" id="phonezone"><span class="tsd-kind-call-signature">phoneZone</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">nowMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><a href="#phonezone" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>The phone's own time zone name, when the runtime can name it and read it right.</p>
-<p>A runtime with no zone table can throw, or answer UTC while the phone is not on UTC, and a wrong
-name would put every sun time and forecast hour off. So the name is only trusted when its offset
-now matches the phone clock's own.</p>
+<p>A runtime with no locale data cannot build the formatter this needs, so it is checked for first
+and this answers null. A runtime that answers UTC while the phone is not on UTC would put every
+sun time and forecast hour off, so the name is only trusted when its offset now matches the phone
+clock's own.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -69,7 +70,7 @@ now matches the phone clock's own.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><p>The zone name, such as &quot;America/Toronto&quot;, or null when it cannot be trusted.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/d47384c326b91983088296fdaf5261a8ce2c8c23/src/ts/pkjs/timezone.ts#L156">pkjs/timezone.ts:156</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/f2a50770a19c946d48b6e2211e03ef7fcf0f71f1/src/ts/pkjs/timezone.ts#L171">pkjs/timezone.ts:171</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
