@@ -66,14 +66,15 @@ export default {
     '</div>',
   ].join(''),
 
-  // the pictures sit centred in framed boxes the way the mosaic faces show a watch: a black backing,
-  // a muted border, and pixelated scaling so the low-res watch screen stays crisp when it is blown up.
-  // a theme with a day and a night shot gets both, side by side. a round watch's shot is a square
-  // framebuffer with the corners outside the circle, so the box is rounded off to the circle the watch
-  // really shows. the dropdown itself takes Clay's own select styles
+  // the pictures sit centred in framed boxes the way the mosaic faces show a watch: a black backing
+  // and a muted border. a theme with a day and a night shot gets both, side by side. a round watch's
+  // shot is a square framebuffer with the corners outside the circle, so the box is rounded off to the
+  // circle the watch really shows. initialize sets image-rendering per shot: crisp pixels when a shot
+  // is drawn larger than its own pixels, smooth when a hi-res shot is shrunk to fit. the dropdown
+  // itself takes Clay's own select styles
   style: [
     '.theme-preview .tp-preview { display: flex; justify-content: center; gap: 1.4rem; margin: 0.9rem 0 0.3rem; }',
-    '.theme-preview .tp-img { display: block; width: 8rem; max-width: 40%; height: auto; background: #000; border: 2px solid #3d434d; image-rendering: pixelated; }',
+    '.theme-preview .tp-img { display: block; width: 8rem; max-width: 40%; height: auto; background: #000; border: 2px solid #3d434d; }',
     '.theme-preview .tp-img.tp-round { border-radius: 50%; }',
   ].join(''),
 
@@ -185,8 +186,17 @@ export default {
 
           img.className = round ? 'tp-img tp-round' : 'tp-img';
           img.alt = '';
-          img.src = picture;
+
+          // a watch shot drawn bigger than its own pixels keeps hard edges, so it stays pixelated. a
+          // hi-res shot shrunk to fit the row is smoothed instead, since nearest-neighbour shrinking
+          // drops pixels unevenly and leaves the small text looking rough. the box is already on the
+          // page, so clientWidth is the real drawn width once the picture has loaded
+          img.addEventListener('load', function () {
+            img.style.imageRendering = img.clientWidth > img.naturalWidth ? 'pixelated' : 'auto';
+          });
+
           gallery.appendChild(img);
+          img.src = picture;
         }
       });
     }
