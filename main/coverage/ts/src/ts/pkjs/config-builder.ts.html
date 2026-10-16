@@ -64,30 +64,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">98.33% </span>
+                <span class="strong">95.38% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>59/60</span>
+                <span class='fraction'>62/65</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.6% </span>
+                <span class="strong">85.6% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>106/121</span>
+                <span class='fraction'>107/125</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">93.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>14/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">98.33% </span>
+                <span class="strong">96.87% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>59/60</span>
+                <span class='fraction'>62/64</span>
             </div>
         
             
@@ -749,7 +749,21 @@
 <a name='L643'></a><a href='#L643'>643</a>
 <a name='L644'></a><a href='#L644'>644</a>
 <a name='L645'></a><a href='#L645'>645</a>
-<a name='L646'></a><a href='#L646'>646</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L646'></a><a href='#L646'>646</a>
+<a name='L647'></a><a href='#L647'>647</a>
+<a name='L648'></a><a href='#L648'>648</a>
+<a name='L649'></a><a href='#L649'>649</a>
+<a name='L650'></a><a href='#L650'>650</a>
+<a name='L651'></a><a href='#L651'>651</a>
+<a name='L652'></a><a href='#L652'>652</a>
+<a name='L653'></a><a href='#L653'>653</a>
+<a name='L654'></a><a href='#L654'>654</a>
+<a name='L655'></a><a href='#L655'>655</a>
+<a name='L656'></a><a href='#L656'>656</a>
+<a name='L657'></a><a href='#L657'>657</a>
+<a name='L658'></a><a href='#L658'>658</a>
+<a name='L659'></a><a href='#L659'>659</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -832,6 +846,20 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -858,8 +886,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1405,7 +1431,7 @@
  * starting point a copied face would reach for first.
  */
 &nbsp;
-import type { ClayConfigItem } from '../clay/types';
+import type { ClayConfigItem, ThemePreviewPictures } from '../clay/types';
 import { VIBE_OPTIONS } from './config-rows';
 &nbsp;
 /** The per-section description a face hands buildConfig. Each section is optional.
@@ -1414,9 +1440,10 @@ export interface ConfigBuilderOptions {
   heading?: string;
   intro?: string;
   /** previews shows a picture of the chosen theme under the dropdown, keyed by the option's value as
-   * a string, each a list of one or more pictures (such as a day and a night shot). It comes from
-   * the file `paf gen &lt;face&gt; theme-previews` writes. Without it the picker is the plain select. */
-  theme?: { label?: string; description?: string; options?: Array&lt;{ label: string; value: string | number }&gt;; previews?: Record&lt;string, string[]&gt; };
+   * a string, each a list of one or more pictures (such as a day and a night shot), or a map of such
+   * a list per platform so each watch shows its own shots. It comes from the file
+   * `paf gen &lt;face&gt; theme-previews` writes. Without it the picker is the plain select. */
+  theme?: { label?: string; description?: string; options?: Array&lt;{ label: string; value: string | number }&gt;; previews?: Record&lt;string, ThemePreviewPictures&gt; };
   /** Extra controls to sit inside the Appearance section, under the theme picker. For a setting
    * that belongs with the look of the face rather than in a section of its own. */
   appearanceItems?: ClayConfigItem[];
@@ -1479,6 +1506,20 @@ const beatsDateOptions = [
   { 'label': '2026.0618.672 (yyyy.mmdd.beat)', 'value': '%Y.%m%d.{B}' },
 ];
 &nbsp;
+/** Whether a theme's previews entry carries at least one picture, across both shapes it can take, a
+ * plain list or a list per platform. */
+function hasPicture(pictures?: ThemePreviewPictures): boolean {
+  if (!pictures) {
+    return false;
+  }
+&nbsp;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (Array.isArray(pictures)) {
+    return pictures.length &gt; 0;
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return Object.keys(pictures).<span class="fstat-no" title="function not covered" >some((<span class="cstat-no" title="statement not covered" >p</span>latform) =&gt; (pictures[platform] || []).length &gt; 0)</span>;</span>
+}
+&nbsp;
 /**
  * The theme picker: rows with a picture beside each name when the face has previews, the plain
  * select otherwise. Either way the value saves under APPEARANCE_THEME with 0 as the default.
@@ -1503,9 +1544,7 @@ function themePicker(theme: NonNullable&lt;ConfigBuilderOptions['theme']&gt;): C
   // a theme with no picture still shows, by its name alone, so the picker is not the place this is
   // noticed. warn so a missing preview turns up in the preview tool's console instead
   (theme.options || <span class="branch-1 cbranch-no" title="branch not covered" >[])</span>.forEach((option) =&gt; {
-    const pictures = theme.previews![String(option.value)];
-&nbsp;
-    if (!pictures || !pictures.length) {
+    if (!hasPicture(theme.previews![String(option.value)])) {
       console.warn(`buildConfig: theme.previews has no picture for "${option.label}" (value ${option.value})`);
     }
   });
@@ -2046,7 +2085,7 @@ export default buildConfig;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-15T03:35:05.978Z
+                at 2026-10-16T03:00:43.646Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
