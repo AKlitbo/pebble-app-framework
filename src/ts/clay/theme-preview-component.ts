@@ -68,11 +68,13 @@ export default {
 
   // the pictures sit centred in framed boxes the way the mosaic faces show a watch: a black backing,
   // a muted border, and pixelated scaling so the low-res watch screen stays crisp when it is blown up.
-  // a theme with a day and a night shot gets both, side by side. the dropdown itself takes Clay's own
-  // select styles
+  // a theme with a day and a night shot gets both, side by side. a round watch's shot is a square
+  // framebuffer with the corners outside the circle, so the box is rounded off to the circle the watch
+  // really shows. the dropdown itself takes Clay's own select styles
   style: [
     '.theme-preview .tp-preview { display: flex; justify-content: center; gap: 1.4rem; margin: 0.9rem 0 0.3rem; }',
     '.theme-preview .tp-img { display: block; width: 8rem; max-width: 40%; height: auto; background: #000; border: 2px solid #3d434d; image-rendering: pixelated; }',
+    '.theme-preview .tp-img.tp-round { border-radius: 50%; }',
   ].join(''),
 
   // Clay's built-in value manipulator reads and writes the select's value, so the chosen theme saves
@@ -141,6 +143,10 @@ export default {
 
       const entry = previews[String(select.value)];
       let pictures: string[];
+      // which platform's shots are actually drawn, so the round mask follows the shot's own shape
+      // rather than the watch viewing it. a flat value names no platform, so it stays square the way
+      // it did before a map could carry one
+      let shotPlatform = '';
 
       if (Array.isArray(entry)) {
         // one set of shots for every watch
@@ -148,23 +154,36 @@ export default {
       } else if (entry && typeof entry === 'object') {
         // a set per platform. draw this watch's, and if the theme left this platform out fall back
         // to any set it does carry so the row is never empty when pictures exist
-        pictures = entry[platform];
-
-        if (!pictures || !pictures.length) {
+        if (entry[platform] && entry[platform].length) {
+          pictures = entry[platform];
+          shotPlatform = platform;
+        } else {
           const names = Object.keys(entry);
 
           pictures = names.length ? entry[names[0]] : [];
+          shotPlatform = names.length ? names[0] : '';
         }
       } else {
         pictures = [];
       }
+
+      // a platform value that is not a list, which the generator never writes but a hand-built page
+      // could, would make the forEach below throw and take the whole settings page down. treat
+      // anything but a list as no pictures
+      if (!Array.isArray(pictures)) {
+        pictures = [];
+      }
+
+      // chalk and gabbro are the round watches, so a shot from one is a square framebuffer with the
+      // corners outside the circle. mask it to the circle the screen really shows
+      const round = shotPlatform === 'chalk' || shotPlatform === 'gabbro';
 
       pictures.forEach(function (picture) {
         // only a data url the generator wrote. anything else is skipped rather than drawn broken
         if (typeof picture === 'string' && picture.indexOf('data:image/') === 0) {
           const img = document.createElement('img');
 
-          img.className = 'tp-img';
+          img.className = round ? 'tp-img tp-round' : 'tp-img';
           img.alt = '';
           img.src = picture;
           gallery.appendChild(img);

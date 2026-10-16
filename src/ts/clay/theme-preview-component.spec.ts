@@ -29,6 +29,12 @@ const platformConfig = {
   previews: { 0: { emery: [EMERY], gabbro: [GABBRO] } },
 };
 
+const gabbroOnlyConfig = {
+  label: 'Scene Palette',
+  options: [{ label: 'Sketchbook', value: 0 }],
+  previews: { 0: { gabbro: [GABBRO] } },
+};
+
 /** Clay hands initialize the config instance second, whose meta names the watch the page opened from. */
 function clayOn(platform?: string) {
   return { meta: { activeWatchInfo: platform ? { platform } : undefined } };
@@ -57,6 +63,11 @@ function mount(config?: Record<string, unknown>) {
 /** The src of every preview image currently drawn. */
 function previewSrcs(root: HTMLElement): string[] {
   return [...root.querySelectorAll('.tp-preview img')].map((img) => (img as HTMLImageElement).src);
+}
+
+/** Whether a preview image carries the round mask class. */
+function previewRounded(root: HTMLElement): boolean[] {
+  return [...root.querySelectorAll('.tp-preview img')].map((img) => (img as HTMLElement).classList.contains('tp-round'));
 }
 
 describe('Clay serialisation safety', () => {
@@ -194,6 +205,65 @@ describe('platform-keyed previews', () => {
 
     expect(result).toEqual([EMERY]);
   });
+
+  /** A round watch's shot is a square framebuffer with the corners outside the circle, so it has to
+   * carry the round mask or it shows as a square box with the corners the watch never displays. */
+  test('rounds the preview when the page is opened from a round watch', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn('gabbro'));
+
+    const result = previewRounded(root);
+
+    expect(result).toEqual([true]);
+  });
+
+  /** A rectangular watch fills its whole screen, so its shot stays a square and must not be rounded. */
+  test('leaves the preview square when the page is opened from a rectangular watch', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn('emery'));
+
+    const result = previewRounded(root);
+
+    expect(result).toEqual([false]);
+  });
+
+  /** The mask follows the shot, not the watch. A round chalk opening a map with no chalk shots draws
+   * the emery fallback, a rectangular screenshot, so rounding it off its corners would be wrong. */
+  test('does not round a rectangular fallback shot shown on a round watch', () => {
+    const { context, root } = mount(platformConfig);
+
+    run(context, clayOn('chalk'));
+
+    const result = previewRounded(root);
+
+    expect(result).toEqual([false]);
+  });
+
+  /** The mirror. A rectangular emery opening a gabbro-only theme draws the round gabbro framebuffer,
+   * so it still masks to the circle even though the watch viewing it is square. */
+  test('rounds a round fallback shot shown on a rectangular watch', () => {
+    const { context, root } = mount(gabbroOnlyConfig);
+
+    run(context, clayOn('emery'));
+
+    const result = previewRounded(root);
+
+    expect(result).toEqual([true]);
+  });
+
+  /** A flat value carries no platform, so its shape is unknown and it keeps the square box it always
+   * had rather than being clipped to a circle that may chop its edges. */
+  test('leaves a flat value square even on a round watch', () => {
+    const { context, root } = mount(themeConfig);
+
+    run(context, clayOn('gabbro'));
+
+    const result = previewRounded(root);
+
+    expect(result).toEqual([false, false]);
+  });
 });
 
 describe('robustness', () => {
@@ -204,6 +274,16 @@ describe('robustness', () => {
     (context as { config?: unknown }).config = undefined;
 
     const result = () => context.initialize();
+
+    expect(result).not.toThrow();
+  });
+
+  /** A platform value that is a bare string instead of a list is malformed, so initialize treats it
+   * as no pictures rather than calling forEach on a string and taking the whole settings page down. */
+  test('does not throw when a platform value is not a list', () => {
+    const { context } = mount({ options: [{ label: 'A', value: 0 }], previews: { 0: { gabbro: 'data:image/png;base64,AAAA' } } });
+
+    const result = () => run(context, clayOn('gabbro'));
 
     expect(result).not.toThrow();
   });

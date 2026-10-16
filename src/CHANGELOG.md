@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Changed
 
-- The theme picker can show a different preview per platform, so a face built for more than one watch shows each watch its own shots. A `theme-previews.json` value can now be a map keyed by platform, `{ "emery": <path|list>, "gabbro": <path|list> }`, as well as the path or list it already took. `paf gen <face> theme-previews` writes the map through to `theme-previews.g.js`, and the `themePreview` component reads the watch the settings page was opened from and draws that platform's shots. A platform name has to be one Pebble builds for, so a typo stops the generator. A flat value is unchanged, and a theme whose map leaves out the watch in hand falls back to any shots the map carries.
+- The theme picker can show a different preview per platform, so a face built for more than one watch shows each watch its own shots. A `theme-previews.json` value can now be a map keyed by platform, `{ "emery": <path|list>, "gabbro": <path|list> }`, as well as the path or list it already took. `paf gen <face> theme-previews` writes the map through to `theme-previews.g.js`, and the `themePreview` component reads the watch the settings page was opened from and draws that platform's shots. A platform name has to be one Pebble builds for, so a typo stops the generator. A flat value is unchanged, and a theme whose map leaves out the watch in hand falls back to any shots the map carries. A shot a map names for a round watch is masked to the circle the screen shows, since a round watch's screenshot is a square framebuffer with the corners outside the circle. A flat value names no platform, so it is left square.
 
 ## [4.4.1] - 2026-10-14
 
