@@ -266,6 +266,120 @@ describe('platform-keyed previews', () => {
   });
 });
 
+describe('previews keyed by a sibling control', () => {
+  const RIDGE = 'data:image/png;base64,EEEE';
+  const SHORE = 'data:image/png;base64,FFFF';
+
+  // one palette picker owning APPEARANCE_THEME, its shots nested by the scene the sibling holds
+  const sceneNestedConfig = {
+    label: 'Scene Palette',
+    options: [{ label: 'Sketchbook', value: 0 }, { label: 'Forest', value: 4 }],
+    previewsByKey: 'APPEARANCE_SCENE',
+    previews: {
+      0: { 0: [RIDGE], 4: [DAY] },
+      1: { 0: [SHORE], 4: [NIGHT] },
+    },
+  };
+
+  /** Holds a value and fires its change handlers when picked, the way the scene select does. */
+  function sceneControl(initial: string) {
+    let value = initial;
+    const changeHandlers: Array<() => void> = [];
+
+    return {
+      get: () => value,
+      on: (_event: string, handler: () => void) => {
+        changeHandlers.push(handler);
+      },
+      pick: (next: string) => {
+        value = next;
+        changeHandlers.forEach((handler) => handler());
+      },
+    };
+  }
+
+  /** A Clay page that lists one sibling by messageKey and fires AFTER_BUILD when told to build. */
+  function clayWithSibling(control: { get(): string; on(event: string, handler: () => void): void }) {
+    const builtHandlers: Array<() => void> = [];
+
+    return {
+      EVENTS: { AFTER_BUILD: 'AFTER_BUILD' },
+      on: (event: string, handler: () => void) => {
+        if (event === 'AFTER_BUILD') {
+          builtHandlers.push(handler);
+        }
+      },
+      getItemByMessageKey: (wanted: string) => (wanted === 'APPEARANCE_SCENE' ? control : undefined),
+      build: () => {
+        builtHandlers.forEach((handler) => handler());
+      },
+    };
+  }
+
+  /**
+   * The whole point of previewsByKey, and the fix for the bug it was added for. The palette is one
+   * control saving under one key, and the shots it draws are the chosen scene's. Four separate pickers
+   * sharing a key, one per scene, had three of them shadowed out of Clay's messageKey map, so the
+   * palette saved from one scene only and silently did nothing on the other three.
+   */
+  test('draws the scene the sibling holds once the page is built', () => {
+    const scene = sceneControl('1');
+    const clay = clayWithSibling(scene);
+    const { context, root } = mount(sceneNestedConfig);
+
+    run(context, clay);
+    clay.build();
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([SHORE]);
+  });
+
+  /** Picking another scene has to swap the palette shots, or the preview sticks on the first scene. */
+  test('redraws when the sibling scene changes', () => {
+    const scene = sceneControl('1');
+    const clay = clayWithSibling(scene);
+    const { context, root } = mount(sceneNestedConfig);
+
+    run(context, clay);
+    clay.build();
+    scene.pick('0');
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([RIDGE]);
+  });
+
+  /** Picking a palette still swaps its shots within the scene the sibling holds. */
+  test('redraws when the palette changes, keeping the sibling scene', () => {
+    const scene = sceneControl('1');
+    const clay = clayWithSibling(scene);
+    const { context, root, handlers } = mount(sceneNestedConfig);
+
+    run(context, clay);
+    clay.build();
+    (root.querySelector('.tp-select') as HTMLSelectElement).value = '4';
+    handlers.change();
+
+    const result = previewSrcs(root);
+
+    expect(result).toEqual([NIGHT]);
+  });
+
+  /** A previewsByKey that names no control on the page draws nothing rather than throwing. */
+  test('draws nothing when the named sibling is absent', () => {
+    const clay = clayWithSibling(sceneControl('0'));
+    const { context, root } = mount({ ...sceneNestedConfig, previewsByKey: 'MISSING' });
+
+    run(context, clay);
+    clay.build();
+
+    const result = previewSrcs(root).length;
+
+    expect(result).toBe(0);
+  });
+});
+
 describe('robustness', () => {
   /** A throw in initialize takes the whole settings page down, so a missing config must survive. */
   test('does not throw without options, previews, or config', () => {

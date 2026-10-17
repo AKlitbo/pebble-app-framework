@@ -16,6 +16,11 @@
  * platform out, or a watch the map does not name, falls back to any list the map does carry rather
  * than an empty row.
  *
+ * A config item can also set previewsByKey, the messageKey of another control on the page. The
+ * previews then nest, keyed first by that control's value, so the picker draws the set for whatever
+ * the sibling holds, such as the scene chosen above the palette. Clay only lists the controls once
+ * the page is built, so the sibling is reached then and the preview redraws whenever it changes.
+ *
  * Labels are written with textContent, not as markup, so a label holding angle brackets shows them
  * as text rather than as tags. None of ours carries markup.
  *
@@ -36,15 +41,27 @@ export interface ThemePreviewContext {
     description?: string;
     messageKey?: string;
     options?: Array<{ label: string; value: string | number }>;
-    previews?: Record<string, ThemePreviewPictures>;
+    previews?: Record<string, ThemePreviewPictures> | Record<string, Record<string, ThemePreviewPictures>>;
+    previewsByKey?: string;
   };
   on(event: string, handler: () => void): void;
 }
 
+/** A sibling control the picker reaches through previewsByKey, read for its value and watched for a
+ * change so the preview follows it. */
+export interface ThemePreviewSibling {
+  get(): unknown;
+  on(event: string, handler: () => void): void;
+}
+
 /** The Clay config instance initialize is handed as its second argument. Its meta carries the watch
- * the page was opened from, which is all the picker reads from it. */
+ * the page was opened from. A picker with previewsByKey also reaches a sibling control through it,
+ * which Clay only lists once the page is built. */
 export interface ThemePreviewClay {
   meta?: { activeWatchInfo?: { platform?: string } };
+  EVENTS?: { AFTER_BUILD: string };
+  on?(event: string, handler: () => void): void;
+  getItemByMessageKey?(messageKey: string): ThemePreviewSibling | undefined;
 }
 
 export default {
@@ -110,6 +127,11 @@ export default {
 
     const config = self.config || {};
     const previews = config.previews || {};
+    // previewsByKey names another control on the page whose value picks which nested previews map to
+    // draw, so the scene chosen above the palette decides which scene's shots sit under it. the named
+    // control is only reachable once the page is built
+    const previewsByKey = config.previewsByKey;
+    let sibling: ThemePreviewSibling | undefined;
     const select = root.querySelector('.tp-select') as HTMLSelectElement;
     const valueSpan = root.querySelector('.value') as HTMLElement;
     const gallery = root.querySelector('.tp-preview') as HTMLElement;
@@ -132,6 +154,23 @@ export default {
       select.appendChild(el);
     });
 
+    /** The theme to pictures map the preview draws from. A flat previews map is drawn as it is. With
+     * previewsByKey, the sibling's current value picks the nested map, so a scene change swaps the
+     * whole set of shots under the picker. */
+    function themeMap(): Record<string, ThemePreviewPictures> {
+      if (!previewsByKey) {
+        return previews as Record<string, ThemePreviewPictures>;
+      }
+
+      if (!sibling) {
+        return {};
+      }
+
+      const nested = (previews as Record<string, Record<string, ThemePreviewPictures>>)[String(sibling.get())];
+
+      return nested && typeof nested === 'object' ? nested : {};
+    }
+
     /** Mirrors the chosen option's name into Clay's value display, and redraws its pictures. */
     function sync() {
       const chosen = select.options[select.selectedIndex];
@@ -142,7 +181,7 @@ export default {
         gallery.removeChild(gallery.firstChild);
       }
 
-      const entry = previews[String(select.value)];
+      const entry = themeMap()[String(select.value)];
       let pictures: string[];
       // which platform's shots are actually drawn, so the round mask follows the shot's own shape
       // rather than the watch viewing it. a flat value names no platform, so it stays square the way
@@ -206,5 +245,25 @@ export default {
     // Clay bridges the native select change and its own restore of the saved value to this one event,
     // so this keeps the name and the picture right for a pick and for the page opening on a saved theme
     self.on('change', sync);
+
+    // a picker tied to a sibling through previewsByKey can only reach it once the page is built, since
+    // Clay lists the controls then. resolve it at that point, redraw with the value it holds, and
+    // redraw again each time it changes so the preview follows the sibling
+    const page = clay;
+
+    if (previewsByKey && page && page.on && page.EVENTS && page.getItemByMessageKey) {
+      const afterBuild = page.EVENTS.AFTER_BUILD;
+      const getItem = page.getItemByMessageKey;
+
+      page.on(afterBuild, function () {
+        sibling = getItem(previewsByKey);
+
+        if (sibling) {
+          sibling.on('change', sync);
+        }
+
+        sync();
+      });
+    }
   },
 };

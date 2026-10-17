@@ -185,6 +185,8 @@ The pictures come from the `thumbnails` plugin's `theme-previews` generator, whi
 
 The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker. It borrows the dropdown's look from Clay's own select styling, which Clay only adds to a page that holds a plain `select`, so a hand-built page wants one of those somewhere too. A `buildConfig` page always has them in its other sections.
 
+A hand-built `themePreview` item can also set `previewsByKey`, the `messageKey` of another control on the page. Its `previews` then nest, keyed first by that control's value and then by the option's value, so the shots under the picker follow a second choice elsewhere on the page, such as a scene or a mode. The picker still owns `APPEARANCE_THEME` on its own, so the value saves the usual way. Clay lists the page's controls only once it is built, so the named control is read then and the preview redraws whenever it changes.
+
 ## Showing Rows Only When They Apply
 
 A row that does nothing under the current choice can be hidden rather than left on the page looking live. Give it a `visibleWhen`, naming a control and the values of that control which reveal the row:

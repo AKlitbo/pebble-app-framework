@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.6.0] - 2026-10-16
+
+### Framework Changes
+
+#### Added
+
+- A `themePreview` config item takes an optional `previewsByKey`, the `messageKey` of another control on the page. Its `previews` then nest, keyed first by that control's value and then by the option's value, so the shots drawn under the picker follow a second choice on the page such as a scene or a mode. One picker still owns `APPEARANCE_THEME`, so the value saves the usual way. The named control is read once the page is built, and the preview redraws whenever it changes.
+
 ## [4.5.0] - 2026-10-15
 
 ### Framework Changes
@@ -443,6 +451,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[4.6.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.5.0...v4.6.0
 [4.5.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.1...v4.5.0
 [4.4.1]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.0...v4.4.1
 [4.4.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.3.0...v4.4.0

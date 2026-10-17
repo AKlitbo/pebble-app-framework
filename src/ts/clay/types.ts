@@ -58,8 +58,14 @@ export interface ClayConfigItem {
   /** themePreview only: the pictures for each option, keyed by the option's value as a string, from
    * the face's theme-previews.g.js. A value is a list of data URLs, drawn side by side, so a theme
    * can carry one picture or a few (such as a day and a night shot). A value can instead be a map
-   * keyed by platform, so a round and a rectangular watch each show their own shots. */
-  previews?: Record<string, ThemePreviewPictures>;
+   * keyed by platform, so a round and a rectangular watch each show their own shots. With
+   * previewsByKey set, it nests one level deeper, keyed first by the sibling control's value. */
+  previews?: Record<string, ThemePreviewPictures> | Record<string, Record<string, ThemePreviewPictures>>;
+  /** themePreview only: the messageKey of another control on the page whose value picks which set of
+   * previews to draw. The previews map then nests, keyed first by that control's value and then by the
+   * option's value, so the shots under the picker follow a second choice such as the scene. The named
+   * control is read once the page is built, and the preview redraws whenever it changes. */
+  previewsByKey?: string;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
   /** Shows this item only while another control holds one of the given values, so a row that does
