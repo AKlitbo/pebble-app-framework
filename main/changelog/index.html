@@ -61,8 +61,14 @@
           
           <div class="readme"><p>All notable changes to the Pebble App Framework are documented in this file. Each version lists the framework changes a face developer has to know about first, then the wearer-visible changes, the ones someone wearing any face built on it would see without the face changing its code.</p>
 <p>The format is based on <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a>, and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
-<h2 id="450---2026-10-15"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.1...v4.5.0">4.5.0</a> - 2026-10-15</h2>
+<h2 id="460---2026-10-16"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.5.0...v4.6.0">4.6.0</a> - 2026-10-16</h2>
 <h3 id="framework-changes">Framework Changes</h3>
+<h4 id="added">Added</h4>
+<ul>
+<li>A <code>themePreview</code> config item takes an optional <code>previewsByKey</code>, the <code>messageKey</code> of another control on the page. Its <code>previews</code> then nest, keyed first by that control&#39;s value and then by the option&#39;s value, so the shots drawn under the picker follow a second choice on the page such as a scene or a mode. One picker still owns <code>APPEARANCE_THEME</code>, so the value saves the usual way. The named control is read once the page is built, and the preview redraws whenever it changes.</li>
+</ul>
+<h2 id="450---2026-10-15"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.1...v4.5.0">4.5.0</a> - 2026-10-15</h2>
+<h3 id="framework-changes-1">Framework Changes</h3>
 <h4 id="changed">Changed</h4>
 <ul>
 <li>The theme picker can show a different preview per platform, so a face built for more than one watch shows each watch its own shots. A <code>theme-previews.json</code> value can now be a map keyed by platform, <code>{ &quot;emery&quot;: &lt;path|list&gt;, &quot;gabbro&quot;: &lt;path|list&gt; }</code>, as well as the path or list it already took. <code>paf gen &lt;face&gt; theme-previews</code> writes the map through to <code>theme-previews.g.js</code>, and the <code>themePreview</code> component reads the watch the settings page was opened from and draws that platform&#39;s shots. A platform name has to be one Pebble builds for, so a typo stops the generator. A flat value is unchanged, and a theme whose map leaves out the watch in hand falls back to any shots the map carries. A shot a map names for a round watch is masked to the circle the screen shows, since a round watch&#39;s screenshot is a square framebuffer with the corners outside the circle. A flat value names no platform, so it is left square.</li>
@@ -73,14 +79,14 @@
 <li>A theme preview picture is now kept crisp only when it is drawn larger than its own pixels, and smoothed when a higher-resolution shot is shrunk to fit the picker, so a watch&#39;s small text no longer looks rough in the settings page.</li>
 </ul>
 <h2 id="441---2026-10-14"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.0...v4.4.1">4.4.1</a> - 2026-10-14</h2>
-<h3 id="framework-changes-1">Framework Changes</h3>
+<h3 id="framework-changes-2">Framework Changes</h3>
 <h4 id="fixed">Fixed</h4>
 <ul>
 <li>Fixed the phone-side script dying in the emulator on every weather fetch, every settings send with a timezone field, and every stock poll. The emulator&#39;s JavaScript runtime has no locale data, and building an <code>Intl.DateTimeFormat</code> there runs the process out of memory rather than throwing, which no try/catch can stop. <code>timezone.ts</code> now asks <code>Intl.DateTimeFormat.supportedLocalesOf</code> first and answers null for every zone when nothing comes back, so weather is asked in the location&#39;s own zone and moved onto the phone&#39;s clock, a timezone field sends its saved offset, and the stock schedule reads the market as shut. Real phones have the locale data and are unaffected.</li>
 </ul>
 <h2 id="440---2026-10-14"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.3.0...v4.4.0">4.4.0</a> - 2026-10-14</h2>
-<h3 id="framework-changes-2">Framework Changes</h3>
-<h4 id="added">Added</h4>
+<h3 id="framework-changes-3">Framework Changes</h3>
+<h4 id="added-1">Added</h4>
 <ul>
 <li>Added a theme picker that shows a picture of each theme. Pass <code>previews</code> to the <code>theme</code> section of <code>buildConfig</code>, a map from a theme&#39;s option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme&#39;s pictures under it, a theme with a day and a night shot getting both side by side. It still saves under <code>APPEARANCE_THEME</code> exactly as the plain select. The <code>themePreview</code> component is registered only when a page holds one, so a face without previews is unchanged.</li>
 <li>Added a <code>theme-previews</code> generator and check to the <code>thumbnails</code> plugin. A face lists the plugin and keeps a <code>resources/theme-previews.json</code>, which maps each theme&#39;s value to a picture path or a list of paths relative to the face folder. <code>paf gen &lt;face&gt; theme-previews</code> base64-encodes them into <code>src/pkjs/clay/theme-previews.g.js</code>, which the face&#39;s <code>config.ts</code> imports and passes as <code>theme.previews</code>. <code>paf check</code> fails when the committed file is stale or a path is missing or is not a PNG.</li>
@@ -97,20 +103,20 @@
 <li>Deprecated <code>layout_role_pick</code>, <code>LayoutRole</code>, and the <code>LAYOUT_ROLE_*</code> constants in <code>layout/layout_role.h</code>. They are now thin aliases for <code>role_pick</code>, <code>Role</code>, and the <code>ROLE_*</code> constants in <code>role/role.h</code>, which do the same job for any face rather than only a layout one. The old names still work and go at the next major release. Move to <code>role_pick</code> and <code>Role</code> when convenient.</li>
 </ul>
 <h2 id="430---2026-10-11"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.2.0...v4.3.0">4.3.0</a> - 2026-10-11</h2>
-<h3 id="framework-changes-3">Framework Changes</h3>
-<h4 id="added-1">Added</h4>
+<h3 id="framework-changes-4">Framework Changes</h3>
+<h4 id="added-2">Added</h4>
 <ul>
 <li>Added <code>vibe_hourly</code> in <code>vibe.h</code> for an hourly buzz. Call <code>vibe_hourly(time_store_tm(), choice)</code> from the face&#39;s time callback on every tick. It buzzes each real hour once however many tickers land in minute 0, including the hour the clocks repeat when they fall back. Its first call after launch only remembers the hour, so a face opened in minute 0 does not buzz an hour that already buzzed. The decision is <code>hour_latch.h</code> in the core.</li>
 </ul>
 <h2 id="420---2026-10-11"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.1.0...v4.2.0">4.2.0</a> - 2026-10-11</h2>
-<h3 id="framework-changes-4">Framework Changes</h3>
-<h4 id="added-2">Added</h4>
+<h3 id="framework-changes-5">Framework Changes</h3>
+<h4 id="added-3">Added</h4>
 <ul>
 <li>Added <code>hourly</code> to <code>TimeConfig</code>. With <code>minute_tick</code> off, the time store subscribes to the SDK&#39;s hour tick, so a face wakes at the top of each hour without the minute tick. Set it on a .beats clock that buzzes on the hour. The .beats timer alone lands in minute 0 of only two hours in three in a time zone a half hour or 45 minutes off UTC, and the minute tick would wake the watch sixty times an hour for one buzz.</li>
 </ul>
 <h2 id="410---2026-10-11"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v4.0.0...v4.1.0">4.1.0</a> - 2026-10-11</h2>
-<h3 id="framework-changes-5">Framework Changes</h3>
-<h4 id="added-3">Added</h4>
+<h3 id="framework-changes-6">Framework Changes</h3>
+<h4 id="added-4">Added</h4>
 <ul>
 <li>Added <code>KNOWN_HEADER_FONT(off, count)</code> to <code>settings_catalog.h</code> for <code>SETTING_HEADER_FONT</code>, with <code>count</code> the size of the face&#39;s own header font table.</li>
 <li>Added <code>defines</code> to the appinfo, for C defines a face sets for its own build, such as <code>&quot;defines&quot;: { &quot;ENGINE_SLOTS_MAX&quot;: 12 }</code>. The build passes each one as a <code>-D</code> flag. <code>ENGINE_SLOTS_MAX</code>, <code>FONT_SLOTS_MAX</code>, and <code>ICON_CACHE_MAX</code> can each be raised this way, up to 254 for the slots and 255 for the fonts and the icon cache, and a value outside that stops the build. A name that is not a macro name, a value that is not a whole number, and a name the build sets itself, a <code>HAS_</code> switch or <code>BUILD_WATCHAPP</code>, stop the build with a message naming the face.</li>
@@ -150,8 +156,8 @@
 <li>Fixed the settings page saying Fallback to Manual Location also covers GPS being turned off. With Enable Phone GPS off the manual city is always used, and the toggle only decides what happens when GPS is on but cannot find the phone. Its description in <code>config-builder.ts</code> now says so.</li>
 </ul>
 <h2 id="400---2026-10-02"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v3.0.0...v4.0.0">4.0.0</a> - 2026-10-02</h2>
-<h3 id="framework-changes-6">Framework Changes</h3>
-<h4 id="added-4">Added</h4>
+<h3 id="framework-changes-7">Framework Changes</h3>
+<h4 id="added-5">Added</h4>
 <ul>
 <li>Added a <code>paf</code> key to the framework&#39;s <code>package.json</code> and to each plugin&#39;s, naming the build, its generators, what a face has to hold for each to apply, the checks it adds to <code>paf check</code>, the tools <code>paf tool &lt;face&gt; &lt;name&gt;</code> runs, and the scripts <code>paf lint</code> and <code>paf format</code> run. For a path under <code>src/pkjs/</code>, a family face&#39;s core counts too, at the matching folder under <code>core/pkjs/</code>. <code>paf build</code>, <code>paf gen</code>, <code>paf check</code>, <code>paf tool</code>, <code>paf lint</code>, and <code>paf format</code> read them, so a face&#39;s <code>package.json</code> no longer needs scripts that point into the framework. A face&#39;s own generators go under <code>gen</code> in its <code>paf.config.json</code>, each naming its script and the generator it runs after.</li>
 <li>Added <code>tools/build.ts</code>, which builds a face&#39;s <code>.pbw</code> with the same arguments and steps as <code>build.sh</code>, under Node like the framework&#39;s other tools.</li>
@@ -206,8 +212,8 @@
 <li>Fixed every framework tool exiting 0 having done nothing under a Node with no <code>import.meta.main</code>, which is 22 before 22.18, any 23, and 24 before 24.2. A generator reported success with nothing written, and <code>build.sh</code> stopped saying the unit had no faces. Each tool now stops with exit code 1 and names the Nodes that have it.</li>
 </ul>
 <h2 id="300---2026-09-27"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v2.2.0...v3.0.0">3.0.0</a> - 2026-09-27</h2>
-<h3 id="framework-changes-7">Framework Changes</h3>
-<h4 id="added-5">Added</h4>
+<h3 id="framework-changes-8">Framework Changes</h3>
+<h4 id="added-6">Added</h4>
 <ul>
 <li>Added <code>weather_reading_apply</code> and the <code>WeatherMessage</code> and <code>WeatherState</code> types in <code>core/weather/weather_reading.h</code>. They turn one weather message off the phone into the kept reading, and every missing value is converted there once.</li>
 <li>Added <code>StorePoll</code> with <code>store_poll_set</code> and <code>store_poll_turn</code> to <code>io/stores/store_poll.h</code>, the polling decisions the weather, stock, and calendar stores share. Each store keeps its own interval and its own first fetch.</li>
@@ -366,13 +372,13 @@
 <li>Fixed a setting only seeding from the watch when the face listed it by hand, so a select such as the temperature unit opened the settings page on its default rather than what the watch was set to. A phone with nothing saved now refetches weather, stocks, and the calendar once the watch&#39;s settings are seeded, where the first fetch ran on the defaults and a watch on Fahrenheit showed a Celsius reading as 22F. A face without <code>SETTINGS_FRESH</code> gets the same refetch on its first seed, and a setting with nothing saved now compares as its default, with a single value compared as text so a number default matches the string Clay saves, so a seed or first save that writes the default back no longer spends a second call.</li>
 </ul>
 <h2 id="220---2026-09-23"><a href="https://github.com/AKlitbo/pebble-app-framework/compare/v2.1.1...v2.2.0">2.2.0</a> - 2026-09-23</h2>
-<h3 id="framework-changes-8">Framework Changes</h3>
+<h3 id="framework-changes-9">Framework Changes</h3>
 <h4 id="changed-7">Changed</h4>
 <ul>
 <li>Renamed the repo to <code>pebble-app-framework</code>, and its package to match. GitHub redirects the old URL, so a face&#39;s <code>.gitmodules</code> keeps working. Point it at <code>https://github.com/AKlitbo/pebble-app-framework.git</code> and run <code>git submodule sync</code>. A face moving <code>lib</code> to this release has to run <code>npm install</code> and commit <code>package-lock.json</code>, because the lock names the <code>lib</code> workspace and its <code>node_modules</code> link after the package. <code>npm ci</code>, and so CI, fails until it does.</li>
 </ul>
 <h2 id="211---2026-09-22"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.1.0...v2.1.1">2.1.1</a> - 2026-09-22</h2>
-<h3 id="framework-changes-9">Framework Changes</h3>
+<h3 id="framework-changes-10">Framework Changes</h3>
 <h4 id="fixed-6">Fixed</h4>
 <ul>
 <li>Fixed <code>-DBUILD_WATCHAPP</code> never being passed, so an app target built as though it were a watchface. A face&#39;s <code>#ifdef BUILD_WATCHAPP</code> code now reaches the app, which for Gridlock is the weather request it makes as it opens. Run <code>npm run build:manifests</code> to rewrite the sandboxes, which <code>build.sh</code> and CI already do.</li>
@@ -391,16 +397,16 @@
 <li>Fixed an older calendar fetch that answered last overwriting a newer one, such as the old feed showing after the iCal URL changed. Only the newest fetch&#39;s answer is sent to the watch.</li>
 </ul>
 <h2 id="210---2026-09-20"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v2.0.0...v2.1.0">2.1.0</a> - 2026-09-20</h2>
-<h3 id="framework-changes-10">Framework Changes</h3>
-<h4 id="added-6">Added</h4>
+<h3 id="framework-changes-11">Framework Changes</h3>
+<h4 id="added-7">Added</h4>
 <ul>
 <li>Added <code>layout_has_any_block</code> in <code>c/core/layout/layout_string.h</code>, which says whether a layout wire string holds a placeable block. The catalog bound comes in as an argument.</li>
 <li>Added <code>layout_role_pick</code> in <code>c/core/layout/layout_role.h</code>, which picks between a face&#39;s day, night and Quiet Time layouts. A trigger with no layout assigned falls through to the next one rather than drawing an empty grid.</li>
 <li>Added time zones to a <code>locationsearch</code> field on a timezone key. It matches UTC, a zone name, or a typed offset such as <code>utc+05:30</code> as well as a city, and a zone pick persists <code>{label, offset, tz, fixed}</code> with no coordinates.</li>
 </ul>
 <h2 id="200---2026-09-17"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.1.0...v2.0.0">2.0.0</a> - 2026-09-17</h2>
-<h3 id="framework-changes-11">Framework Changes</h3>
-<h4 id="added-7">Added</h4>
+<h3 id="framework-changes-12">Framework Changes</h3>
+<h4 id="added-8">Added</h4>
 <ul>
 <li>Added <code>node-version</code> and <code>sdk-version</code> inputs to the <code>setup-pebble</code> action. Both are optional and default to Node 24 and the latest SDK.</li>
 <li>Added <code>report-memory</code> and <code>render-memory</code> actions, which rank each face&#39;s memory use in the CI run summary.</li>
@@ -456,14 +462,14 @@
 <li>Fixed the weather condition readout cutting a condition at the first underscore rather than at a trailing <code>_NIGHT</code>. <code>readout_weather_cond</code> now reads the generated label table, which applies the same rule as the phone.</li>
 </ul>
 <h2 id="110---2026-09-12"><a href="https://github.com/AKlitbo/pebble-watchface-engine/compare/v1.0.0...v1.1.0">1.1.0</a> - 2026-09-12</h2>
-<h3 id="framework-changes-12">Framework Changes</h3>
-<h4 id="added-8">Added</h4>
+<h3 id="framework-changes-13">Framework Changes</h3>
+<h4 id="added-9">Added</h4>
 <ul>
 <li>Added support for a repo that holds a single face at its root, laid out like a plain Pebble project with <code>config/</code>, <code>src/</code> and <code>resources/</code>. The build and the face release find that face by the name in its <code>config/pebble.appinfo.json</code>, and its changelog sits at the repo root.</li>
 </ul>
 <h2 id="100---2026-09-12"><a href="https://github.com/AKlitbo/pebble-watchface-engine/releases/tag/v1.0.0">1.0.0</a> - 2026-09-12</h2>
-<h3 id="framework-changes-13">Framework Changes</h3>
-<h4 id="added-9">Added</h4>
+<h3 id="framework-changes-14">Framework Changes</h3>
+<h4 id="added-10">Added</h4>
 <ul>
 <li>First release of the engine as its own repo, split out of the shared <code>lib/</code> in pebble-watchfaces.</li>
 </ul>
