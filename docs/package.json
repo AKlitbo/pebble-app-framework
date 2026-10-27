@@ -17,8 +17,8 @@
     "site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-site.ts"
   },
   "devDependencies": {
-    "marked": "^18.0.13",
-    "prettier": "^3.9.6",
+    "marked": "^18.1.2",
+    "prettier": "^3.9.10",
     "shiki": "^4.5.0",
     "typedoc": "^0.28.20",
     "typescript": "^5.9.3"
