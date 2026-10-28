@@ -118,6 +118,16 @@ describe('buildMedia', () => {
 });
 
 describe('buildManifest', () => {
+  /** The SDK copies only the pebble block into appinfo.json, so a list written beside it never reaches the phone. */
+  test('puts usesPermissions inside the pebble block', () => {
+    const config = makeConfig();
+    const target = { name: 'face', watchface: true };
+
+    const result = buildManifest(config, { author: 'x', version: '0' }, target, {}, ['Location']);
+
+    expect(result.pebble.usesPermissions).toEqual(['Location']);
+  });
+
   /** author and version come from the root package, not the build config, so a wrong source ships a mislabeled release. */
   test('takes name from the target and author/version from the root package', () => {
     const config = makeConfig();

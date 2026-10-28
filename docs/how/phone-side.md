@@ -42,6 +42,18 @@ Every hook is optional. A feature also lists the watch's request keys it answers
 
 **A Feature Checks Its Own Keys.** Weather that is listed but missing one of its four core message keys fetches nothing and logs which keys are missing, since a fetch would spend provider quota on a reading the watch cannot show. Stocks without `STOCK_STRIP` and a calendar without `CALENDAR_STRIP` skip every fetch, with no log line.
 
+## What the Phone Lets It Reach
+
+A pbw built as `manifestVersion` 2, the default from SDK 4.42.0 on, gets only the sites and phone features its appinfo lists in `usesPermissions`. The Pebble app holds the phone code to that list whenever the wearer has plugins turned on. A request to a site the list leaves out fails straight away, and a GPS lookup is turned away unless the list has `Location`.
+
+**The List Comes from the Keys.** The manifest builder writes `usesPermissions` into each target's `package.json`, in [`permissions.ts`](../../src/tools/manifest/permissions.ts). `WEATHER_REQUEST` adds the weather providers' sites, and `Location` as well when the face declares `LOCATION_USE_GPS`. `STOCK_STRIP` adds the stock providers' sites. `CALENDAR_STRIP` asks for the whole web instead of a list, since a calendar feed can sit on any site. A face with none of these keys gets no list. Each site covers its subdomains, so `open-meteo.com` takes in `api.open-meteo.com`. Every weather face lists Open-Meteo, since OpenWeatherMap and WeatherAPI borrow the readings they lack from it.
+
+**A Face's Own Entries.** A face that fetches from somewhere of its own lists it in its appinfo's `usesPermissions`, in the form the Pebble app reads, as in `"usesPermissions": [{ "name": "Internet", "parameters": { "domains": ["example.com"] } }]`. Its entries go after the ones its keys add, and an entry that repeats one of those is left out. An entry that is neither a name nor an object with one stops the build, and so do parameters that are not each a list of text.
+
+**A Blocked Request.** A site the wearer has not allowed fails at once. iOS reports status 0 and Android a 403 with an empty body. Neither carries a provider's error, so weather reads it as `NET ERROR` and tries again, and a stock provider reads it as `NET ERROR`, apart from Finnhub, which reads any 403 as `NO ACCESS`. None of them reads it as a bad key.
+
+**An Older SDK.** An SDK before 4.42.0 copies the list into `appinfo.json` without a `manifestVersion`, and the Pebble app treats that pbw as a legacy app and ignores the list.
+
 ## When the Phone Code Starts
 
 The Pebble app starts the phone code when the face opens, and fires `ready` once it is up. The app then does the same things in the same order every time:

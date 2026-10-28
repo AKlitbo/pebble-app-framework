@@ -16,6 +16,9 @@
  * A face can also set C defines for its own build, such as a raised ENGINE_SLOTS_MAX. They are checked
  * here and carried into the manifest, where the waf build turns each one into a -D flag.
  *
+ * The manifest also lists the sites and phone features the face's phone-side script uses, as
+ * usesPermissions. permissions.ts works them out from the face's message keys.
+ *
  * Usage: node tools/manifest/build-manifests.ts [--targets] <face>
  */
 import fs from 'node:fs';
@@ -25,6 +28,8 @@ import { writeIfChanged } from '../shared/files.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE } from '../shared/paths.ts';
 import { ToolError, reportFailure } from '../shared/tool-error.ts';
 import { isMainScript } from '../shared/entry.ts';
+import { permissionsFor } from './permissions.ts';
+import type { Permission } from './permissions.ts';
 
 const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
@@ -63,6 +68,7 @@ export type SharedAppinfo = {
   messageKeys: unknown;
   resources: { media: MediaEntry[] };
   defines?: unknown;
+  usesPermissions?: unknown;
 };
 
 /**
@@ -192,9 +198,10 @@ export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] 
  * @param rootPkg The author and version to copy in from the root package.json.
  * @param target The build target this manifest is for.
  * @param defines The C defines the face sets for its own build.
+ * @param permissions The usesPermissions list, from permissionsFor.
  * @return The finished manifest, ready to write out as package.json.
  */
-export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target, defines: Defines = {}) {
+export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target, defines: Defines = {}, permissions: Permission[] = []) {
   return {
     name: target.name,
     author: rootPkg.author,
@@ -212,6 +219,8 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
       capabilities: config.capabilities,
       messageKeys: config.messageKeys,
       resources: { media: buildMedia(config, target) },
+      // left out when there are none, so a face with no phone-side fetches gets no empty list
+      ...(permissions.length > 0 ? { usesPermissions: permissions } : {}),
     },
     // outside the pebble block, which the SDK reads. left out when there are none, so a face that
     // sets none gets a manifest with no defines key
@@ -280,7 +289,8 @@ export function faceVersion(config: { version?: string }, rootPkg: { version?: s
 function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target): string {
   // the root package.json still owns the author
   const version = faceVersion(config, rootPkg) as string;
-  const manifest = buildManifest(config, { author: rootPkg.author, version }, target, readDefines(config, face));
+  const permissions = permissionsFor(config.messageKeys, config.usesPermissions, face);
+  const manifest = buildManifest(config, { author: rootPkg.author, version }, target, readDefines(config, face), permissions);
 
   const outDir = path.join(ROOT, 'targets', target.name);
 

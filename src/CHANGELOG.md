@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Each target's `package.json` now carries `usesPermissions`, worked out from the face's message keys. `WEATHER_REQUEST` adds the weather providers' sites, plus `Location` when the face declares `LOCATION_USE_GPS`. `STOCK_STRIP` adds the stock providers' sites, and `CALENDAR_STRIP` asks for any site, since a feed can live anywhere. SDK 4.42.0 and later build every pbw as `manifestVersion` 2, and the Pebble app then holds the phone code to this list whenever the wearer has plugins on. A face that fetches from a site of its own lists it in its appinfo's `usesPermissions`, and those entries are added after the generated ones. An older SDK copies the list into the pbw too, and the phone ignores it there.
+
 ## [4.6.0] - 2026-10-16
 
 ### Framework Changes
@@ -451,6 +459,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.6.0...HEAD
 [4.6.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.5.0...v4.6.0
 [4.5.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.1...v4.5.0
 [4.4.1]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.0...v4.4.1
