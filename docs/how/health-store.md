@@ -52,6 +52,17 @@ Events alone are not enough. Heart rate events are sparse, so a graph built only
 
 The window is 60 one-byte slots, oldest on the left and the current minute in the last slot, with 0 meaning no reading. Each time the store reads the heart rate it writes the watch's current reading into the current minute's slot. When the minute moves on, the window slides left and the minutes that passed with no reading are left at 0. A clock that jumps back would put the window's minutes in the future, so it starts over from the new time.
 
+A graph reads the window through `health_store_hr_history`, which hands back a read-only pointer to the 60 slots:
+
+```c
+const uint8_t *history = health_store_hr_history();
+
+for (int minute = 0; minute < 60; minute++)
+{
+    // a point at history[minute], with 0 a minute that had no reading
+}
+```
+
 **Why Not the Watch's Own Log.** The watch keeps a minute by minute log, but it only records a heart rate in it now and then. A graph drawn from the log alone would be mostly empty. Peeking the live reading every minute fills it.
 
 **Saved Once a Minute.** The window lives in memory, and a face is closed whenever the wearer opens an app. So on a real reading the store saves the window to flash, at most once a minute. A burst of heart rate events can bring a reading a second, and a flash write blocks, so the limit keeps a burst to one write. The save runs while the store is already awake for a reading, so it costs no extra wake. Saving less often would bring the graph back missing its last few minutes every time the wearer opened an app.

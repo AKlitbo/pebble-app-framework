@@ -66,7 +66,7 @@ void health_store_subscribe(void (*cb)(void));
  * @brief The last hour of heart rate readings, one per minute (a 60 slot buffer). The store
  * fills it on each update. The little charts read it back out.
  */
-uint8_t *health_store_hr_history(void);
+const uint8_t *health_store_hr_history(void);
 
 /**
  * @brief Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots).

@@ -764,7 +764,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
     }
 }
 
-uint8_t *health_store_hr_history(void) { return s_state.hr_history; }
+const uint8_t *health_store_hr_history(void) { return s_state.hr_history; }
 
 const uint16_t *health_store_step_hourly(void) { return s_state.step_hourly; }
 int health_store_step_hours(void)              { return s_state.step_hours; }
