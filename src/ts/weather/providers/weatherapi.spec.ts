@@ -1,7 +1,7 @@
 /**
  * Deterministic specs for the WeatherAPI.com provider.
  *
- * The provider resolves a place name or "lat,lon" in a single call. The
+ * The provider sends the coordinates as "lat,lon" in a single call. The
  * injected `request` is stubbed and every call is recorded so the URL and
  * error mapping can be asserted.
  */
@@ -23,7 +23,7 @@ function run(opts: WeatherOpts, request: RequestFn): WeatherResult {
   return result;
 }
 
-const BASE_OPTS = { key: 'test-key', place: 'London', coords: null, fahrenheit: false };
+const BASE_OPTS = { key: 'test-key', coords: { lat: 51.5, lon: -0.12 }, fahrenheit: false };
 
 const OK_BODY = JSON.stringify({
   location: { name: 'London' },
@@ -47,11 +47,11 @@ describe('weatherapi provider', () => {
       expect(calls).toHaveLength(0);
     });
 
-    /** With neither coords nor a place there is nothing to query. */
-    test('reports No Location when neither place nor coords is given', () => {
+    /** With no coordinates there is nothing to query, and the borrowed forecast must not fire a coordless request either. */
+    test('reports No Location when no coords are given, even with a forecast wanted', () => {
       const calls: string[] = [];
 
-      const result = run({ ...BASE_OPTS, place: '', coords: null }, routing({}, calls));
+      const result = run({ ...BASE_OPTS, coords: null, wantForecast: true }, routing({}, calls));
 
       expect(result.condition).toBe('NO LOCATION');
       expect(calls).toHaveLength(0);
@@ -305,20 +305,11 @@ describe('weatherapi provider', () => {
       expect(result.temperature).toBe(56);
     });
 
-    /** The place name must be sent as the q parameter or the wrong location is fetched. */
-    test('sends the place name as the q parameter', () => {
-      const calls: string[] = [];
-
-      run(BASE_OPTS, routing({ [WX]: { body: OK_BODY } }, calls));
-
-      expect(calls[0]).toMatch(/[?&]q=London(?:&|$)/);
-    });
-
-    /** Coords must be sent as an encoded "lat,lon" q value, not the empty place name. */
+    /** Coords must be sent as an encoded "lat,lon" q value. */
     test('sends "lat,lon" as the q parameter when coords are present', () => {
       const calls: string[] = [];
 
-      run({ ...BASE_OPTS, place: '', coords: { lat: 51.5, lon: -0.12 } }, routing({ [WX]: { body: OK_BODY } }, calls));
+      run({ ...BASE_OPTS, coords: { lat: 51.5, lon: -0.12 } }, routing({ [WX]: { body: OK_BODY } }, calls));
 
       expect(calls[0]).toMatch(/[?&]q=51\.5%2C-0\.12(?:&|$)/);
     });
@@ -395,7 +386,7 @@ describe('weatherapi provider', () => {
 
     /** WeatherAPI has no hourly of its own, so a blank forecast row means the borrowed Open-Meteo strip never attached. */
     test('borrows the Open-Meteo forecast strip when the face wants it', () => {
-      const opts = { ...BASE_OPTS, place: '', coords: { lat: 51.5, lon: -0.12 }, wantForecast: true };
+      const opts = { ...BASE_OPTS, coords: { lat: 51.5, lon: -0.12 }, wantForecast: true };
 
       const result = run(opts, routing({ [WX]: { body: OK_BODY }, [OM]: { body: OM_FORECAST } }, []));
 
@@ -405,15 +396,6 @@ describe('weatherapi provider', () => {
       expect(result.forecastHourly.cols.map((col) => col.temp)).toEqual([18, 20, 22]);
       expect(result.forecastDaily.baseWeekday).toBe(5); // 2026-07-10 is a Friday
       expect(result.forecastDaily.cols.map((col) => col.tempMax)).toEqual([22, 23]);
-    });
-
-    /** Open-Meteo needs coordinates, so a place-name-only forecast face must not fire a coordless strip request. */
-    test('skips the Open-Meteo call when the face wants a forecast but has no coords', () => {
-      const calls: string[] = [];
-
-      run({ ...BASE_OPTS, wantForecast: true, coords: null }, routing({ [WX]: { body: OK_BODY } }, calls));
-
-      expect(calls).toHaveLength(1);
     });
 
     /** Without a forecast row the extra Open-Meteo call must not fire, so a plain reading stays one request. */
@@ -437,18 +419,9 @@ describe('weatherapi provider', () => {
     const KEY = process.env.WEATHERAPI_KEY;
     const live = (opts: WeatherOpts) => new Promise<WeatherResult>((resolve) => weatherapi.fetch(opts, fetchRequest, resolve));
 
-    /** The real place-name response must still parse into a usable reading. */
-    test('returns a usable reading for a place name', async () => {
-      const result = await live({ key: KEY, place: 'London', coords: null, fahrenheit: false });
-
-      expect(result.ok).toBe(true);
-      expect(typeof result.temperature).toBe('number');
-      expect(result.condition).toBeTruthy();
-    });
-
     /** The real coords response must still parse into a usable reading. */
     test('returns a usable reading for gps coords', async () => {
-      const result = await live({ key: KEY, place: '', coords: { lat: 51.5074, lon: -0.1278 }, fahrenheit: false });
+      const result = await live({ key: KEY, coords: { lat: 51.5074, lon: -0.1278 }, fahrenheit: false });
 
       expect(result.ok).toBe(true);
       expect(typeof result.temperature).toBe('number');

@@ -16,6 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Breaking:** `health_store_hr_history` now returns `const uint8_t *`, the same as `health_store_step_hourly`, since only the store writes its heart rate window. Hold what it returns as a `const uint8_t *`.
 
+#### Removed
+
+- **Breaking:** Removed `WeatherOpts.place` and the WeatherAPI provider's place-name lookup. Pass `coords` to a provider called directly, since WeatherAPI given only a place now answers No Location. The weather feature always passes `coords`, so a face using it needs no change.
+- **Breaking:** Removed `labelShort` from `ConditionEntry` and `ConditionFallback`. Nothing read it, since the watch's `wx_label_short` shows the token itself. Take it out of a face's own condition rows.
+
 ## [4.6.0] - 2026-10-16
 
 ### Framework Changes

@@ -56,7 +56,7 @@ flowchart TD
 
 **The GPS Fix.** The phone accepts a fix up to 10 minutes old, since a cold start has no fresh one, and the weather barely moves in that time. The Pebble app does not reliably honour the location request's own timeout, so the phone gives up after 10 seconds on a timer of its own and takes the fallback. A phone with no location service counts as a failed fix. With GPS off, the saved place is used whatever the fallback toggle says.
 
-**Coordinates on the Way to the Watch.** The result carries the coordinates the reading was for, or for WeatherAPI the coordinates it placed the query at. A failed fetch carries none, and the face's formatter runs on it anyway, so a face can show its own text for no fix rather than keep the last place.
+**Coordinates on the Way to the Watch.** The result carries the coordinates the reading was for, or for WeatherAPI the coordinates of the place it matched them to. A failed fetch carries none, and the face's formatter runs on it anyway, so a face can show its own text for no fix rather than keep the last place.
 
 ## A Fetch Round
 
@@ -77,7 +77,7 @@ Until its first reading lands, the watch asks again every few seconds, as [The W
 | `NO API KEY` | the provider needs a key and none is saved |
 | `INVALID KEY` | the provider refused the key, as with OpenWeatherMap's 401 or WeatherAPI's codes for a bad or disabled key |
 | `RATE LIMIT` | the key's call allowance is used up, as with OpenWeatherMap's 429 or WeatherAPI's monthly quota |
-| `LOC NOT FOUND` | WeatherAPI could not place the query |
+| `LOC NOT FOUND` | WeatherAPI matched no place to the coordinates |
 | `API ERROR` | the provider reported some other error |
 | `NO WX DATA` | the reply had no current reading or no usable temperature |
 | `BAD WX DATA` | the request worked but the reply was not JSON |

@@ -67,11 +67,6 @@ export interface WeatherOpts {
   fahrenheit?: boolean;
   coords?: WeatherCoords | null;
   label?: string;
-  /**
-   * @deprecated A place name for WeatherAPI to look up. The weather feature always sends coords, so
-   * nothing sets it, and it goes at the next major release with the lookup.
-   */
-  place?: string;
   wantForecast?: boolean;
   /** The reading fields the face shows, such as `humidity` or `uvIndex`. Left out, a provider fetches all of them. */
   fields?: string[];
@@ -513,9 +508,9 @@ function ok(
     ok: true,
   };
 
-  // carry the resolved coordinates so the watch can show lat/lon for whatever
-  // location the weather actually used (manual place name included) not just
-  // the phone GPS path. only attached when both are real numbers
+  // carry the coordinates so the watch can show lat/lon for whatever location
+  // the weather actually used, the saved place as well as the phone GPS fix.
+  // only attached when both are real numbers
   if (typeof lat === 'number' && typeof lon === 'number') {
     result.lat = lat;
     result.lon = lon;

@@ -23,7 +23,7 @@ const ENDPOINT = {
   weatherapi: '/v1/forecast.json',
 };
 
-const BASE = { key: 'k', place: 'London', coords: { lat: 40, lon: -73 }, fahrenheit: false };
+const BASE = { key: 'k', coords: { lat: 40, lon: -73 }, fahrenheit: false };
 
 describe('fetchWeather dispatcher', () => {
   /** Each config provider name must route to its own module, or the user's choice is silently ignored. */

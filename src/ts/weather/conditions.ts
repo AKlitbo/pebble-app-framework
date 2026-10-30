@@ -26,16 +26,12 @@ export interface ConditionEntry {
   token: string;
   resource: string;
   nightResource?: string;
-  /** @deprecated Nothing reads it, since the watch's wx_label_short shows the token itself. It goes at the next major release. */
-  labelShort?: string;
   labelLong: string;
 }
 
 /** The glyph and label an unrecognized condition falls back to. No token: nothing sends it. */
 export interface ConditionFallback {
   resource: string;
-  /** @deprecated Nothing reads it. It goes at the next major release. */
-  labelShort?: string;
   labelLong: string;
 }
 

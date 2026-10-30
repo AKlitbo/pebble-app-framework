@@ -1,8 +1,8 @@
 /**
  * WeatherAPI.com weather provider (requires an API key).
  *
- * WeatherAPI resolves a place name or "lat,lon" query server-side, so this
- * module needs no separate geocoding step.
+ * Takes coordinates only, sent as a "lat,lon" query: the phone's GPS fix, or the saved place the
+ * settings page looked up once (see ../../clay/location-component.ts). This module never geocodes.
  */
 
 import util from '../util';
@@ -113,11 +113,10 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
     return util.status('No Wx Data');
   }
 
-  // prefer the label resolved at geocode time then WeatherAPI's own
-  // resolved name then the place name the caller passed
+  // prefer the label resolved at geocode time then WeatherAPI's own resolved name
   const label = opts.label ||
       (json.location && json.location.name) ||
-      (opts.coords ? 'My Location' : opts.place);
+      'My Location';
 
   const temperature = opts.fahrenheit ? json.current.temp_f : json.current.temp_c;
 
@@ -165,7 +164,7 @@ function parseWeather(json: WeatherApiResponse, opts: WeatherOpts): WeatherResul
 /**
  * Fetches current weather from WeatherAPI.com.
  *
- * @param opts The weather request options, read for the key, the place or coordinates, and whether a forecast is wanted.
+ * @param opts The weather request options, read for the key, the coordinates, and whether a forecast is wanted.
  * @param request The function that performs the actual network request.
  * @param done Called with the weather result.
  */
@@ -174,26 +173,21 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     return done(util.status('No API Key'));
   }
 
-  // WeatherAPI accepts a lat/lon string or a place name in the same q param
-  const query = opts.coords
-    ? `${opts.coords.lat},${opts.coords.lon}`
-    : opts.place;
-
-  if (!query) {
+  if (!opts.coords) {
     return done(util.status('No Location'));
   }
+
+  const query = `${opts.coords.lat},${opts.coords.lon}`;
 
   const url = `${WEATHER_API_URL}?key=${encodeURIComponent(opts.key)}&q=${encodeURIComponent(query)}&days=2`;
 
   // WeatherAPI has no forecast strip of its own so when the face shows the forecast row we
   // borrow it from Open-Meteo the same way OWM does. firing it in parallel here keeps it from
-  // becoming a fragile follow-up request. Open-Meteo needs coordinates so a place-name-only
-  // lookup just goes without a strip
-  const withForecast = opts.wantForecast && opts.coords;
+  // becoming a fragile follow-up request
   let result: WeatherResult | null = null;
   let forecast: ForecastCols | null = null;
 
-  const tryDone = joinCalls(withForecast ? 2 : 1, () => {
+  const tryDone = joinCalls(opts.wantForecast ? 2 : 1, () => {
     if (result && result.ok && forecast) {
       util.attachForecast(result, forecast);
     }
@@ -209,7 +203,7 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
     tryDone();
   });
 
-  if (withForecast) {
+  if (opts.wantForecast) {
     openMeteo.fetchForecast(opts, request, (fetched) => {
       forecast = fetched;
       tryDone();
