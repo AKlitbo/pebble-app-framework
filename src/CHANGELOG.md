@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Added
 
-- Each target's `package.json` now carries `usesPermissions`, worked out from the face's message keys. `WEATHER_REQUEST` adds the weather providers' sites, plus `Location` when the face declares `LOCATION_USE_GPS`. `STOCK_STRIP` adds the stock providers' sites, and `CALENDAR_STRIP` asks for any site, since a feed can live anywhere. SDK 4.42.0 and later build every pbw as `manifestVersion` 2, and the Pebble app then holds the phone code to this list whenever the wearer has plugins on. A face that fetches from a site of its own lists it in its appinfo's `usesPermissions`, and those entries are added after the generated ones. An older SDK copies the list into the pbw too, and the phone ignores it there.
+- Each target's `package.json` now carries `usesPermissions`, worked out from the face's message keys. `WEATHER_REQUEST` adds `Location` and the weather providers' sites. `STOCK_STRIP` adds the stock providers' sites, and `CALENDAR_STRIP` asks for any site, since a feed can live anywhere. SDK 4.42.0 and later build every pbw as `manifestVersion` 2, and the Pebble app then holds the phone code to this list whenever the wearer has plugins on. A face that fetches from a site of its own lists it in its appinfo's `usesPermissions`, and those entries are added after the generated ones. An older SDK copies the list into the pbw too, and the phone ignores it there.
 
 #### Changed
 

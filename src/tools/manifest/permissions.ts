@@ -66,7 +66,7 @@ function isParameters(value: unknown): boolean {
  * The usesPermissions list for a face, from the features its message keys switch on plus any the
  * face lists itself.
  *
- * Weather asks for its providers' sites, and for location when the face has the GPS switch. Stocks
+ * Weather asks for location and its providers' sites. Stocks
  * ask for theirs. A calendar feed can sit on any site, so a face with the calendar asks for the whole
  * web rather than a list. A face's own entries go after these, and one that repeats an entry is left out.
  *
@@ -80,7 +80,9 @@ export function permissionsFor(messageKeys: unknown, declared: unknown, face: st
   const weather = keys.has('WEATHER_REQUEST');
   const permissions: Permission[] = [];
 
-  if (weather && keys.has('LOCATION_USE_GPS')) {
+  // whether GPS is used comes from the saved setting and its default, which the build cannot read,
+  // so every weather face lists it. the phone only asks the wearer once a lookup actually happens
+  if (weather) {
     permissions.push('Location');
   }
 

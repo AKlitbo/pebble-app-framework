@@ -29,9 +29,9 @@ function covers(domains: string[], host: string): boolean {
 }
 
 describe('permissionsFor', () => {
-  /** A weather face with the GPS switch needs both, or wearers with plugins on get No GPS and Net Error. */
-  test('asks a weather face with the GPS switch for location and the weather sites', () => {
-    const keys = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'LOCATION_USE_GPS'];
+  /** A weather face needs both, or wearers with plugins on get No GPS and Net Error. */
+  test('asks a weather face for location and the weather sites', () => {
+    const keys = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
@@ -41,13 +41,16 @@ describe('permissionsFor', () => {
     ]);
   });
 
-  /** A face that only ever uses the manual city has no reason to put a location prompt in front of the wearer. */
-  test('leaves location out for a weather face with no GPS switch', () => {
-    const keys = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE'];
+  /**
+   * GPS can be on from a default in the settings page without the face declaring LOCATION_USE_GPS, and
+   * a lookup the list leaves out is turned away, so a weather face asks for location either way.
+   */
+  test('asks for location without the GPS switch key', () => {
+    const keys = ['WEATHER_REQUEST'];
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).not.toContain('Location');
+    expect(result).toContain('Location');
   });
 
   /** Weather and stocks on one face share the one Internet entry, so both sets of sites have to be in it. */
@@ -57,6 +60,7 @@ describe('permissionsFor', () => {
     const result = permissionsFor(keys, undefined, 'face');
 
     expect(result).toEqual([
+      'Location',
       { name: 'Internet', parameters: { domains: [...WEATHER_DOMAINS, ...STOCK_DOMAINS] } },
     ]);
   });
@@ -67,7 +71,7 @@ describe('permissionsFor', () => {
 
     const result = permissionsFor(keys, undefined, 'face');
 
-    expect(result).toEqual(['Internet']);
+    expect(result).toEqual(['Location', 'Internet']);
   });
 
   /** A key declared as an array, such as STOCK_STRIP[2], is the same key and still switches the feature on. */
