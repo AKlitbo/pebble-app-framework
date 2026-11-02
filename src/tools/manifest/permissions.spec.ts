@@ -93,17 +93,45 @@ describe('permissionsFor', () => {
   });
 
   /** A face that fetches from a site of its own has to be able to list it, or that fetch fails for every wearer with plugins on. */
-  test('adds a face\'s own entries after the ones its keys ask for and drops a repeat', () => {
-    const keys = ['WEATHER_REQUEST', 'LOCATION_USE_GPS'];
-    const own = ['Location', { name: 'Internet', parameters: { domains: ['example.com'] } }];
+  test('adds a face\'s own sites to the one Internet entry', () => {
+    const keys = ['WEATHER_REQUEST'];
+    const own = [{ name: 'Internet', parameters: { domains: ['example.com'] } }];
 
     const result = permissionsFor(keys, own, 'face');
 
     expect(result).toEqual([
       'Location',
-      { name: 'Internet', parameters: { domains: WEATHER_DOMAINS } },
-      { name: 'Internet', parameters: { domains: ['example.com'] } },
+      { name: 'Internet', parameters: { domains: [...WEATHER_DOMAINS, 'example.com'] } },
     ]);
+  });
+
+  /** A face that asks for any site of its own would still be held to the providers' sites if its entry sat beside the list. */
+  test('opens the Internet entry to any site when the face asks for it bare', () => {
+    const keys = ['STOCK_STRIP'];
+
+    const result = permissionsFor(keys, ['Internet'], 'face');
+
+    expect(result).toEqual(['Internet']);
+  });
+
+  /** A calendar face already reaches every site, so a site list of the face's own beside it would only narrow what the wearer sees asked for. */
+  test('keeps a calendar face on any site when it also lists sites of its own', () => {
+    const keys = ['CALENDAR_STRIP'];
+    const own = [{ name: 'Internet', parameters: { domains: ['example.com'] } }];
+
+    const result = permissionsFor(keys, own, 'face');
+
+    expect(result).toEqual(['Internet']);
+  });
+
+  /** Location written as an object is the same permission, and listing it twice puts it on the install prompt twice. */
+  test('does not add a name the list already has, whichever way it is written', () => {
+    const keys = ['WEATHER_REQUEST'];
+    const own = [{ name: 'Location' }, 'Location', 'Calendar'];
+
+    const result = permissionsFor(keys, own, 'face');
+
+    expect(result).toEqual(['Location', 'Calendar', { name: 'Internet', parameters: { domains: WEATHER_DOMAINS } }]);
   });
 
   /** An entry with no name reaches the phone as a permission it cannot read, so the build stops on it and names the face. */

@@ -66,9 +66,10 @@ function isParameters(value: unknown): boolean {
  * The usesPermissions list for a face, from the features its message keys switch on plus any the
  * face lists itself.
  *
- * Weather asks for location and its providers' sites. Stocks
- * ask for theirs. A calendar feed can sit on any site, so a face with the calendar asks for the whole
- * web rather than a list. A face's own entries go after these, and one that repeats an entry is left out.
+ * Weather asks for location and its providers' sites. Stocks ask for theirs. A calendar feed can sit
+ * on any site, so a face with the calendar asks for the whole web rather than a list. The face's own
+ * entries join these. Its sites go into the one Internet entry, a bare Internet of its own opens it
+ * to every site, and a name already on the list is not added twice.
  *
  * @param messageKeys The face's message keys, as its appinfo declares them.
  * @param declared The face's own usesPermissions from its appinfo, if it has any.
@@ -78,30 +79,46 @@ function isParameters(value: unknown): boolean {
 export function permissionsFor(messageKeys: unknown, declared: unknown, face: string): Permission[] {
   const keys = keyNames(messageKeys);
   const weather = keys.has('WEATHER_REQUEST');
-  const permissions: Permission[] = [];
+  const names = new Set<string>();
+  const domains = new Set([...(weather ? WEATHER_DOMAINS : []), ...(keys.has('STOCK_STRIP') ? STOCK_DOMAINS : [])]);
+  const others: Permission[] = [];
+  let anySite = keys.has('CALENDAR_STRIP');
 
   // whether GPS is used comes from the saved setting and its default, which the build cannot read,
   // so every weather face lists it. the phone only asks the wearer once a lookup actually happens
   if (weather) {
-    permissions.push('Location');
+    names.add('Location');
   }
-
-  const domains = [...(weather ? WEATHER_DOMAINS : []), ...(keys.has('STOCK_STRIP') ? STOCK_DOMAINS : [])];
-
-  if (keys.has('CALENDAR_STRIP')) {
-    permissions.push('Internet');
-  } else if (domains.length > 0) {
-    permissions.push({ name: 'Internet', parameters: { domains } });
-  }
-
-  const seen = new Set(permissions.map((entry) => JSON.stringify(entry)));
 
   for (const entry of readOwn(declared, face)) {
-    if (!seen.has(JSON.stringify(entry))) {
-      seen.add(JSON.stringify(entry));
-      permissions.push(entry);
+    const name = typeof entry === 'string' ? entry : entry.name;
+    const parameters = typeof entry === 'string' ? {} : entry.parameters ?? {};
+    const plain = typeof entry === 'string' || (entry.plugin === undefined && Object.keys(parameters).length === 0);
+
+    if (name === 'Internet' && typeof entry !== 'string' && entry.plugin === undefined && Object.keys(parameters).every((key) => key === 'domains')) {
+      // one Internet entry carries every site, and a list with nothing in it means any site, as on the phone
+      const sites = parameters.domains ?? [];
+
+      sites.forEach((site) => domains.add(site));
+      anySite = anySite || sites.length === 0;
+    } else if (plain) {
+      if (name === 'Internet') {
+        anySite = true;
+      } else {
+        names.add(name);
+      }
+    } else if (!others.some((other) => JSON.stringify(other) === JSON.stringify(entry))) {
+      others.push(entry);
     }
   }
 
-  return permissions;
+  const permissions: Permission[] = [...names];
+
+  if (anySite) {
+    permissions.push('Internet');
+  } else if (domains.size > 0) {
+    permissions.push({ name: 'Internet', parameters: { domains: [...domains] } });
+  }
+
+  return [...permissions, ...others];
 }
