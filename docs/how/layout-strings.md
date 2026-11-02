@@ -2,7 +2,7 @@
 
 Some faces let the wearer build their own screen on the settings page, placing panels on a grid, and can hold more than one grid: one for the day, one for after dark, and one for while Quiet Time is on. The layout code is the part of that every such face needs the same way. It reads the numbers out of a grid sent as text without ever overflowing on a damaged one, tells a grid with real panels in it from an empty or broken one, and picks which of the three grids belongs on the screen right now. A face that adds a night or Quiet Time grid gets the fallbacks for free, so a trigger with no grid behind it never leaves the wearer looking at a blank screen.
 
-It lives in [`layout_string.h`](../../src/c/core/layout/layout_string.h), [`layout_string.c`](../../src/c/core/layout/layout_string.c), [`layout_role.h`](../../src/c/core/layout/layout_role.h), and [`layout_role.c`](../../src/c/core/layout/layout_role.c) under `src/c/core/layout/` (see [Where the Code Lives](index.md#where-the-code-lives)). The face reads Quiet Time, the clock, and its own settings, and passes in plain answers and strings.
+It lives in [`layout_string.h`](../../src/c/core/layout/layout_string.h) and [`layout_string.c`](../../src/c/core/layout/layout_string.c) under `src/c/core/layout/`, with the grid picker in [`role.h`](../../src/c/core/role/role.h) and [`role.c`](../../src/c/core/role/role.c) under `src/c/core/role/` (see [Where the Code Lives](index.md#where-the-code-lives)). The face reads Quiet Time, the clock, and its own settings, and passes in plain answers and strings.
 
 ## A Grid as Text
 
@@ -48,22 +48,22 @@ The answer is what decides whether a night or Quiet Time grid counts as set. A n
 
 ## Which Grid Is Showing
 
-`layout_role_pick` takes four answers and returns the grid that wins:
+`role_pick` takes four answers and returns the grid that wins:
 
 ```c
-LayoutRole layout_role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set)
+Role role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set)
 {
     if (quiet_on && quiet_set)
     {
-        return LAYOUT_ROLE_QUIET;
+        return ROLE_QUIET;
     }
 
     if (night_on && night_set)
     {
-        return LAYOUT_ROLE_NIGHT;
+        return ROLE_NIGHT;
     }
 
-    return LAYOUT_ROLE_DAY;
+    return ROLE_DAY;
 }
 ```
 
@@ -86,7 +86,7 @@ sequenceDiagram
   Time->>Face: the minute tick
   Face->>Face: read Quiet Time and the night schedule
   Face->>Layout: layout_has_any_block, for the night and Quiet Time grids
-  Face->>Layout: layout_role_pick
+  Face->>Layout: role_pick
   Layout-->>Face: day, night, or quiet
   alt the grid changed
     Face->>Engine: engine_rebuild
