@@ -7,8 +7,8 @@
  * array, and how that array is spliced back without disturbing the rest of the
  * file. iconSourcesDir decides where the SVGs are read from, and renderFace what
  * happens to an icon whose source this machine does not have. svgSource turns an icon's svg name
- * into a file, including the deprecated set keys, and holdsAnyIcon catches a sources folder pointed
- * at the wrong place. Everything else in the pipeline is sharp I/O, covered by eyeballing the PNGs.
+ * into a file, and holdsAnyIcon catches a sources folder pointed at the wrong place. Everything else
+ * in the pipeline is sharp I/O, covered by eyeballing the PNGs.
  *
  * Whether a face's committed media block and icon PNGs still match its icons.json is check-icons.ts,
  * which paf check runs in the face's unit. media.spec.ts covers how it reads a PNG's size.
@@ -17,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import sharp from 'sharp';
-import { describe, test, expect, vi } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import { whiten, rootTag, iconSourcesDir, renderFace, holdsAnyIcon, svgSource } from './generate-icons';
 import { resourceName, buildMedia, replaceMediaArray } from './media';
 import type { IconManifest } from './media';
@@ -159,8 +159,8 @@ describe('resourceName', () => {
 
 describe('buildMedia', () => {
   const manifest: IconManifest = {
-    'wi-clear': { svg: 'wi/wi-day-sunny', size: [24, 24] },
-    'bluetooth': { svg: 'sr/bluetooth-on', size: [14, 14] },
+    'wi-clear': { svg: 'weather/day-sunny', size: [24, 24] },
+    'bluetooth': { svg: 'status/bluetooth-on', size: [14, 14] },
   };
 
   /** Icons render into the face, so the media file paths must point at its own resources/icons dir. */
@@ -345,60 +345,14 @@ describe('svgSource', () => {
   test('reads a name as a path from the sources folder', () => {
     const result = svgSource('/src', 'status/bluetooth-on');
 
-    expect(result).toEqual({ file: path.join('/src', 'status', 'bluetooth-on.svg'), deprecatedKey: null });
+    expect(result).toBe(path.join('/src', 'status', 'bluetooth-on.svg'));
   });
 
   /** A set that keeps its svgs a few folders down is reached by naming the whole path. */
   test('follows a name down more than one folder', () => {
     const result = svgSource('/src', 'weather-icons/svg/wi-day-sunny');
 
-    expect(result.file).toBe(path.join('/src', 'weather-icons', 'svg', 'wi-day-sunny.svg'));
-  });
-
-  /** Every face written against the keys would lose its icons on the next regenerate if the keys stopped working. */
-  test.each([
-    ['wi/wi-day-sunny', path.join('weather-icons', 'svg', 'wi-day-sunny.svg'), 'wi'],
-    ['ux/thermometer-icon', path.join('uxwing', 'thermometer-icon.svg'), 'ux'],
-    ['sr/bluetooth-on', path.join('svgrepo', 'bluetooth-on.svg'), 'sr'],
-  ])('reads %s from the folder its deprecated key stands for', (ref, file, key) => {
-    const sources = tempDir('icons-src-');
-
-    const result = svgSource(sources, ref);
-
-    expect(result).toEqual({ file: path.join(sources, file), deprecatedKey: key });
-  });
-
-  /** A folder named like an object built-in matched as a key and crashed the run with a stack trace. */
-  test('reads a folder named like an object built-in as a plain folder', () => {
-    const result = svgSource('/src', 'constructor/bluetooth-on');
-
-    expect(result).toEqual({ file: path.join('/src', 'constructor', 'bluetooth-on.svg'), deprecatedKey: null });
-  });
-
-  /** A unit that keeps a real folder called ux would otherwise have its svgs read from somewhere it never put them. */
-  test('reads the svg at the name as written when it is there', () => {
-    const sources = tempDir('icons-src-');
-
-    fs.mkdirSync(path.join(sources, 'ux'));
-    fs.writeFileSync(path.join(sources, 'ux', 'thermometer-icon.svg'), DOT);
-
-    const result = svgSource(sources, 'ux/thermometer-icon');
-
-    expect(result).toEqual({ file: path.join(sources, 'ux', 'thermometer-icon.svg'), deprecatedKey: null });
-  });
-
-  /**
-   * A stray or half-moved ux folder took over every ux name, so the svgs came up missing and the
-   * deprecation warning that would point at the cause went quiet.
-   */
-  test('reads from the key folder when a folder named like the key lacks the svg', () => {
-    const sources = tempDir('icons-src-');
-
-    fs.mkdirSync(path.join(sources, 'ux'));
-
-    const result = svgSource(sources, 'ux/thermometer-icon');
-
-    expect(result).toEqual({ file: path.join(sources, 'uxwing', 'thermometer-icon.svg'), deprecatedKey: 'ux' });
+    expect(result).toBe(path.join('/src', 'weather-icons', 'svg', 'wi-day-sunny.svg'));
   });
 
   /** A file found outside the sources folder would pass the wrong-folder check for every other icon. */
@@ -443,18 +397,6 @@ describe('holdsAnyIcon', () => {
     const result = holdsAnyIcon(sources, ['bluetooth-on']);
 
     expect(result).toBe(false);
-  });
-
-  /** A face still on the keys would stop every run if the check looked only at the names as written. */
-  test('finds the svg a deprecated key stands for', () => {
-    const sources = tempDir('icons-src-');
-
-    fs.mkdirSync(path.join(sources, 'uxwing'));
-    fs.writeFileSync(path.join(sources, 'uxwing', 'thermometer-icon.svg'), DOT);
-
-    const result = holdsAnyIcon(sources, ['ux/thermometer-icon']);
-
-    expect(result).toBe(true);
   });
 });
 
@@ -502,29 +444,5 @@ describe('renderFace', () => {
     const result = renderFace(face, { 'bt-on': { svg: 'status/bluetooth-on', size: [12, 12] } }, tempDir('icons-src-'));
 
     await expect(result).rejects.toThrow(/Missing source: .*bluetooth-on\.svg \(for bt-on\)/);
-  });
-
-  /** A face still on a key keeps rendering until the next major, and the warning is all that tells its developer to move. */
-  test('renders an svg named by a deprecated key and warns once for the key', async () => {
-    const face = tempDir('icons-face-');
-    const sources = tempDir('icons-src-');
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-
-    fs.mkdirSync(path.join(sources, 'weather-icons', 'svg'), { recursive: true });
-    fs.writeFileSync(path.join(sources, 'weather-icons', 'svg', 'dot.svg'), DOT);
-
-    let result: number;
-    let warnings: string[];
-
-    try {
-      result = await renderFace(face, { 'dot': { svg: 'wi/dot', size: [8, 8] }, 'dot-sm': { svg: 'wi/dot', size: [4, 4] } }, sources);
-      warnings = warn.mock.calls.map((call) => String(call[0]));
-    } finally {
-      warn.mockRestore();
-    }
-
-    expect(result).toBe(2);
-    expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toMatch(/deprecated key wi, .* Write wi\/<name> as weather-icons\/svg\/<name>/);
   });
 });

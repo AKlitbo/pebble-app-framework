@@ -45,15 +45,6 @@ import { isMainScript } from '../../tools/shared/entry.ts';
 
 const ROOT = WORKSPACE;
 
-// short keys an svg path could open with, each standing for a subfolder of the icon sources
-// a Map so a folder named constructor or toString never finds an object built-in as a key
-// TODO: remove these at the next major release
-const DEPRECATED_KEYS = new Map([
-  ['wi', 'weather-icons/svg'],
-  ['ux', 'uxwing'],
-  ['sr', 'svgrepo'],
-]);
-
 // how many folders the wrong-folder error names before it just counts the rest
 const FOLDERS_SHOWN = 5;
 
@@ -266,23 +257,18 @@ export function iconSourcesDir(root: string, config: IconSourcesConfig, fromEnv:
   return fromEnv ? path.resolve(fromEnv) : null;
 }
 
-/** Where an icon's svg is, and the deprecated key it was named by, if any. */
-export type SvgSource = { file: string; deprecatedKey: string | null };
-
 /**
  * Finds the svg file an icon names.
  *
  * The name is a path from the sources folder without the .svg, so "weather/day-sunny" reads
- * weather/day-sunny.svg. A name opening with one of the deprecated keys, such as "wi/wi-day-sunny",
- * reads from the key's subfolder, here weather-icons/svg, unless the svg is at the name as written,
- * which wins. A name leading outside the sources folder stops the run, since a file found out there
- * would pass the wrong-folder check for every other icon.
+ * weather/day-sunny.svg. A name leading outside the sources folder stops the run, since a file found
+ * out there would pass the wrong-folder check for every other icon.
  *
  * @param sources The icon sources folder.
  * @param ref The svg name from icons.json.
- * @return The svg's path, and the deprecated key when one was used.
+ * @return The svg's path.
  */
-export function svgSource(sources: string, ref: string): SvgSource {
+export function svgSource(sources: string, ref: string): string {
   const file = path.join(sources, `${ref}.svg`);
   const fromSources = path.relative(sources, file);
 
@@ -290,15 +276,7 @@ export function svgSource(sources: string, ref: string): SvgSource {
     throw new ToolError(`The svg "${ref}" leads outside the icon sources folder ${sources}`);
   }
 
-  const slash = ref.indexOf('/');
-  const key = slash === -1 ? '' : ref.slice(0, slash);
-  const dir = DEPRECATED_KEYS.get(key);
-
-  if (dir && !fs.existsSync(file)) {
-    return { file: path.join(sources, dir, `${ref.slice(slash + 1)}.svg`), deprecatedKey: key };
-  }
-
-  return { file, deprecatedKey: null };
+  return file;
 }
 
 // rewrite a face's config so its media icon block matches the manifest
@@ -331,7 +309,7 @@ const RENDER_CONCURRENCY = 8;
  * @return Whether any of their svgs is there, or true when the run has no icons.
  */
 export function holdsAnyIcon(sources: string, refs: string[]): boolean {
-  return refs.length === 0 || refs.some((ref) => fs.existsSync(svgSource(sources, ref).file));
+  return refs.length === 0 || refs.some((ref) => fs.existsSync(svgSource(sources, ref)));
 }
 
 /**
@@ -344,9 +322,6 @@ export function holdsAnyIcon(sources: string, refs: string[]): boolean {
  * old PNG ships. A sources folder that is missing, or holds none of the run's svgs, still stops the run before
  * this, which catches the common mistake, so the warning is worth keeping a partial set working.
  *
- * An svg named by a deprecated key still renders, and the run warns once for each key the face
- * uses, naming the path to write in its place.
- *
  * @param dir The face's folder.
  * @param manifest The face's icons.json.
  * @param sources The icon sources folder.
@@ -357,15 +332,14 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
 
   await fs.promises.mkdir(outDir, { recursive: true });
 
-  const icons = Object.entries(manifest).map(([name, spec]) => ({ name, spec, source: svgSource(sources, spec.svg) }));
+  const icons = Object.entries(manifest).map(([name, spec]) => ({ name, spec, src: svgSource(sources, spec.svg) }));
   let next = 0;
   let rendered = 0;
 
   // each worker takes the next icon off the shared list until none are left
   const worker = async (): Promise<void> => {
     while (next < icons.length) {
-      const { name, spec, source } = icons[next++];
-      const src = source.file;
+      const { name, spec, src } = icons[next++];
       const out = path.join(dir, iconPngPath(name));
 
       if (!fs.existsSync(src)) {
@@ -392,15 +366,6 @@ export async function renderFace(dir: string, manifest: IconManifest, sources: s
       rendered++;
     }
   };
-
-  // warned before the renders so a face whose run stops partway still hears about them
-  const keysUsed = new Set(icons.map((icon) => icon.source.deprecatedKey));
-
-  for (const key of keysUsed) {
-    if (key) {
-      console.warn(`warning: ${path.join(dir, 'resources', 'icons.json')} names svgs by the deprecated key ${key}, which goes at the next major release. Write ${key}/<name> as ${DEPRECATED_KEYS.get(key)}/<name>`);
-    }
-  }
 
   await Promise.all(Array.from({ length: Math.min(RENDER_CONCURRENCY, icons.length) }, worker));
 
@@ -460,7 +425,7 @@ async function main(): Promise<void> {
   const refs = [...manifests.values()].flatMap((manifest) => Object.values(manifest).map((spec) => spec.svg));
 
   if (!holdsAnyIcon(sources, refs)) {
-    const folders = [...new Set(refs.map((ref) => path.relative(sources, path.dirname(svgSource(sources, ref).file)).split(path.sep).join('/') || '.'))];
+    const folders = [...new Set(refs.map((ref) => path.relative(sources, path.dirname(svgSource(sources, ref))).split(path.sep).join('/') || '.'))];
 
     const more = folders.length > FOLDERS_SHOWN ? ` and ${folders.length - FOLDERS_SHOWN} more` : '';
 

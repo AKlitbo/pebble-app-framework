@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed `WeatherOpts.place` and the WeatherAPI provider's place-name lookup. Pass `coords` to a provider called directly, since WeatherAPI given only a place now answers No Location. The weather feature always passes `coords`, so a face using it needs no change.
 - **Breaking:** Removed `labelShort` from `ConditionEntry` and `ConditionFallback`. Nothing read it, since the watch's `wx_label_short` shows the token itself. Take it out of a face's own condition rows.
 - **Breaking:** Removed `layout/layout_role.h` with `layout_role_pick`, `LayoutRole`, and the `LAYOUT_ROLE_*` constants. Include `role/role.h` and call `role_pick`, which takes the same arguments. `LayoutRole` becomes `Role`, and `LAYOUT_ROLE_DAY` becomes `ROLE_DAY`, and likewise for `NIGHT`, `QUIET`, and `COUNT`.
+- **Breaking:** Removed the `wi`, `ux`, and `sr` keys at the start of an icon's `svg` in `resources/icons.json`. Every name is now read as a path from the sources folder. Write the folder in place of the key, so `wi/wi-day-sunny` becomes `weather-icons/svg/wi-day-sunny`, `ux/` becomes `uxwing/`, and `sr/` becomes `svgrepo/`. A name left on a key reads as a missing SVG, so the icon keeps its PNG with a warning, and a run where every SVG is missing stops.
 
 ## [4.6.0] - 2026-10-16
 
