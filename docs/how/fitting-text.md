@@ -2,7 +2,7 @@
 
 Every string a face shows sits in a fixed `char` array, and much of that text comes from somewhere the watch does not control: the settings page, a weather provider, a calendar. A string one byte too long for its array writes over whatever sits next to it, and on the watch that shows up as a crash or as garbage on screen with nothing in the log. The text helpers make every copy fit and stay terminated, tell whether a copy would change anything, print the numbers the watch's own `snprintf` cannot, and put a date into capitals for fonts that only carry capitals. Fitting text to a slot's width in pixels is the engine's job, covered in [The Engine](engine.md#text-that-fits-its-slot).
 
-They live under `src/c/core/text/` (see [Where the Code Lives](index.md#where-the-code-lives)), in [`cstring_fit.h`](../../src/c/core/text/cstring_fit.h), [`number_format.h`](../../src/c/core/text/number_format.h) and [`number_format.c`](../../src/c/core/text/number_format.c), and [`text_case.h`](../../src/c/core/text/text_case.h) and [`text_case.c`](../../src/c/core/text/text_case.c).
+They live under `src/c/core/text/` (see [Where the Code Lives](index.md#where-the-code-lives)), in [`cstring_fit.h`](../../src/c/core/text/cstring_fit.h) and [`cstring_fit.c`](../../src/c/core/text/cstring_fit.c), [`number_format.h`](../../src/c/core/text/number_format.h) and [`number_format.c`](../../src/c/core/text/number_format.c), and [`text_case.h`](../../src/c/core/text/text_case.h) and [`text_case.c`](../../src/c/core/text/text_case.c).
 
 ## Copying into a Fixed Buffer
 

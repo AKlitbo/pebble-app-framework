@@ -8,7 +8,6 @@
 
 #include "io/tuple_read.h"
 #include "text/cstring_fit.h"
-#include "text/number_format.h"
 
 #include <stdio.h>
 #include <stdlib.h>

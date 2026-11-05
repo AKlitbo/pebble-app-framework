@@ -68,7 +68,7 @@ Flash can come back damaged, and a damaged byte in a theme number would otherwis
 * **Text** has to end inside its buffer, hold no control bytes, and say something, unless its default is itself empty. Every byte from 0x20 up counts as text, so a city spelled with an accent keeps its UTF-8 bytes across a reboot rather than reading as damage.
 * **A colour** has to be opaque. Every colour the watch paints has both alpha bits set, so a byte without them came from damage rather than from the colour picker.
 
-Anything repaired is saved back once, so the same repair does not run on every launch. The text check is `cstring_setting_is_clean`, in [`number_format.h`](../../src/c/core/text/number_format.h).
+Anything repaired is saved back once, so the same repair does not run on every launch. The text check is `cstring_setting_is_clean`, in [`cstring_fit.h`](../../src/c/core/text/cstring_fit.h).
 
 ## Settings across Several Keys
 

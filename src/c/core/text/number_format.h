@@ -1,13 +1,11 @@
 /**
  * @file number_format.h
- * @brief Pure number and string formatting, no SDK behind it.
+ * @brief Pure number formatting, no SDK behind it.
  *
  * @ingroup lib_core
  */
 #pragma once
-#include <stdbool.h>
 #include <stddef.h>
-#include <stdint.h>
 
 /**
  * @addtogroup lib_core
@@ -64,47 +62,5 @@ void fmt_hundredths(char *buffer, size_t size, int value);
  * @param value The percent times 100, signed.
  */
 void fmt_pct_signed(char *buffer, size_t size, int value);
-
-/**
- * @brief Copy bytes into a fixed buffer, taking what fits and terminating it.
- *
- * For the length-prefixed text the phone sends, where the length is the phone's word and the room
- * is ours. What does not fit is dropped rather than written past the end.
- *
- * @param[out] dst Where to write. Ends terminated whenever cap is at least 1.
- * @param cap How much room dst has, terminator included. A cap of 0 has no room even for the
- *   terminator, so dst is left untouched and not terminated.
- * @param src The bytes to copy.
- * @param len How many bytes there are.
- */
-void copy_bounded(char *dst, uint8_t cap, const uint8_t *src, uint8_t len);
-
-/**
- * @brief Whether a byte range holds a string worth keeping.
- *
- * Worth keeping means it ends inside its own room, it says something, and it carries no control
- * bytes. Everything from 0x20 up counts as text, UTF-8 included, so a place name spelled with an
- * umlaut is text and not damage. Getting that wrong is how a saved city turns back into the
- * default one on the next boot.
- *
- * @param s The bytes to look at.
- * @param size How much room they have.
- * @return Whether it reads as a string.
- */
-bool cstring_is_clean(const char *s, uint16_t size);
-
-/**
- * @brief Whether a saved text setting reads as one, where an empty setting can be the real value.
- *
- * A setting whose default is empty, such as a picker whose "None" is "", holds nothing on
- * purpose, so empty is a value for it and not damage. Any other setting keeps the cstring_is_clean
- * rule, since an empty one there is what a wiped blob reads like.
- *
- * @param s The bytes to look at.
- * @param size How much room they have.
- * @param default_str The setting's default, or NULL for none.
- * @return Whether the setting is worth keeping.
- */
-bool cstring_setting_is_clean(const char *s, uint16_t size, const char *default_str);
 
 /** @} */

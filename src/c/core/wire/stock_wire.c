@@ -7,7 +7,7 @@
 #include "wire/stock_wire.h"
 
 #include "io/bytes_le.h"
-#include "text/number_format.h"
+#include "text/cstring_fit.h"
 
 bool stock_wire_decode(const uint8_t *buf, uint16_t len, StockStrip *out)
 {
