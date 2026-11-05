@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Changed
 
-- **Breaking:** The framework now needs SDK 4.44 or later, and a build on an older SDK stops at configure. 4.44 is the first SDK `pebble sdk install` offers that builds `manifestVersion` 2. `src/toolchain.json` records SDK 4.44 and pebble-tool 5.1.2 for `setup-pebble` and `paf doctor`. Run `pebble sdk install 4.44`, or `pebble sdk activate 4.44` when it is already installed. Then run `uv tool install --force pebble-tool==5.1.2` and rebuild with `--clean`.
+- **Breaking:** The framework now needs SDK 4.44 or later, and a build on an older SDK stops at configure. 4.44 is the first SDK `pebble sdk install` offers that builds `manifestVersion` 2. `src/toolchain.json` records SDK 4.44 and pebble-tool 5.1.2 for `setup-pebble` and `paf doctor`. Run `pebble sdk install 4.44`, or `pebble sdk activate 4.44` when it is already installed. Then run `uv tool install --force pebble-tool==5.1.2` and rebuild with `--clean`. SDK 4.44 stamps its apps with SDK version 5.110, and a watch turns away an app stamped newer than its own firmware, so a face built with it needs watch firmware 4.44.3 or later. On older firmware the watch lists the face as incompatible until it updates.
 - **Breaking:** `health_store_hr_history` now returns `const uint8_t *`, the same as `health_store_step_hourly`, since only the store writes its heart rate window. Hold what it returns as a `const uint8_t *`.
 
 #### Removed
