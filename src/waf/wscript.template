@@ -43,6 +43,11 @@ def options(ctx):
 def configure(ctx):
     ctx.load('pebble_sdk')
 
+    # an SDK before 4.42.0 never sets manifestVersion, and the phone reads its pbw as a legacy app that
+    # ignores usesPermissions. 4.44 is the first of the newer SDKs pebble sdk install offers
+    if 'manifestVersion' not in ctx.env.PROJECT_INFO:
+        ctx.fatal('This framework needs Pebble SDK 4.44 or later. Run pebble sdk install 4.44, or pebble sdk activate 4.44 if it is installed, then build again with --clean')
+
 
 def build(ctx):
     # load the shared waf helpers from the framework at the repo root. the staged copy of the framework

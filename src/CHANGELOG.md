@@ -10,10 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Added
 
-- Each target's `package.json` now carries `usesPermissions`, worked out from the face's message keys. `WEATHER_REQUEST` adds `Location` and the weather providers' sites. `STOCK_STRIP` adds the stock providers' sites, and `CALENDAR_STRIP` asks for any site, since a feed can live anywhere. SDK 4.42.0 and later build every pbw as `manifestVersion` 2, and the Pebble app then holds the phone code to this list whenever the wearer has plugins on. A face that fetches from a site of its own lists it in its appinfo's `usesPermissions`, and its sites join the generated `Internet` entry. An older SDK copies the list into the pbw too, and the phone ignores it there.
+- Each target's `package.json` now carries `usesPermissions`, worked out from the face's message keys. `WEATHER_REQUEST` adds `Location` and the weather providers' sites. `STOCK_STRIP` adds the stock providers' sites, and `CALENDAR_STRIP` asks for any site, since a feed can live anywhere. SDK 4.42.0 and later build every pbw as `manifestVersion` 2, and the Pebble app then holds the phone code to this list whenever the wearer has plugins on. A face that fetches from a site of its own lists it in its appinfo's `usesPermissions`, and its sites join the generated `Internet` entry.
 
 #### Changed
 
+- **Breaking:** The framework now needs SDK 4.44 or later, and a build on an older SDK stops at configure. 4.44 is the first SDK `pebble sdk install` offers that builds `manifestVersion` 2. `src/toolchain.json` records SDK 4.44 and pebble-tool 5.1.2 for `setup-pebble` and `paf doctor`. Run `pebble sdk install 4.44`, or `pebble sdk activate 4.44` when it is already installed. Then run `uv tool install --force pebble-tool==5.1.2` and rebuild with `--clean`.
 - **Breaking:** `health_store_hr_history` now returns `const uint8_t *`, the same as `health_store_step_hourly`, since only the store writes its heart rate window. Hold what it returns as a `const uint8_t *`.
 
 #### Removed

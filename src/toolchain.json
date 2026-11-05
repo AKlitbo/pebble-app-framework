@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "sdk": "4.33.1",
-  "pebbleTool": "5.0.40",
+  "sdk": "4.44",
+  "pebbleTool": "5.1.2",
   "node": 24
 }

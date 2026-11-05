@@ -3,7 +3,7 @@
 The shared framework for Pebble watchfaces and watchapps. It holds the watch C, the PebbleKit JS runtime and Clay pieces, the waf build helpers, the build tools, and opt-in plugins. Watchfaces and watchapps get it through [paf](https://github.com/AKlitbo/pebble-app-framework-cli), which the [paf pages](https://aklitbo.github.io/pebble-app-framework/main/paf/) on the docs site cover.
 
 > [!NOTE]
-> Built and tested with Pebble SDK 4.33.1 and pebble-tool 5.0.40, for emery and gabbro. A PebbleOS feature the SDK lacks, such as the newer vibe patterns, is not available to a face. A face built with another SDK may behave differently.
+> Built and tested with Pebble SDK 4.44 and pebble-tool 5.1.2, for emery and gabbro. SDK 4.44 is the oldest it supports. SDK 4.42.0 is where a pbw starts carrying the `usesPermissions` list the Pebble app checks, and 4.44 is the first of those `pebble sdk install` offers. A PebbleOS feature the SDK lacks, such as the newer vibe patterns, is not available to a face. A face built with another SDK may behave differently.
 
 ## Using It
 

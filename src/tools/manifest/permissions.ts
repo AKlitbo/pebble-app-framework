@@ -5,9 +5,6 @@
  * usesPermissions, once the wearer turns plugins on in the Pebble app. A request to a site it never
  * listed fails at once, and a location lookup it never listed is turned away. The list follows the
  * features a face's keys switch on, so a face never names a provider's site by hand.
- *
- * An SDK that builds manifestVersion 1 copies the list into appinfo.json too, and the phone ignores it
- * there, so a face can carry it before the SDK moves.
  */
 import { ToolError } from '../shared/tool-error.ts';
 

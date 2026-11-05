@@ -52,7 +52,7 @@ A pbw built as `manifestVersion` 2, the default from SDK 4.42.0 on, gets only th
 
 **A Blocked Request.** A site the wearer has not allowed fails at once. iOS reports status 0 and Android a 403 with an empty body. Neither carries a provider's error, so weather reads it as `NET ERROR` and tries again, and a stock provider reads it as `NET ERROR`, apart from Finnhub, which reads any 403 as `NO ACCESS`. None of them reads it as a bad key.
 
-**An Older SDK.** An SDK before 4.42.0 copies the list into `appinfo.json` without a `manifestVersion`, and the Pebble app treats that pbw as a legacy app and ignores the list.
+**An Older SDK.** An SDK before 4.42.0 builds a pbw the Pebble app reads as a legacy app, which ignores the list. The build stops at configure on one and names the SDK to install, and SDK 4.44 is the oldest the framework supports.
 
 ## When the Phone Code Starts
 
