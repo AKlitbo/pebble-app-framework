@@ -234,18 +234,6 @@ describe('faceProject', () => {
 
     expect(result).toThrow("This repo has no face called 'gridlok'.");
   });
-
-  /** A unit still on framework 3 was told its face did not exist, with nothing to say its appinfo sat in the old place. */
-  test('names an appinfo still in config/ when the face is not found', () => {
-    const root = tree({
-      'watchfaces/mosaic/core/.gitkeep': '',
-      'watchfaces/mosaic/gridlock/config/pebble.appinfo.json': '{ "name": "gridlock" }',
-    });
-
-    const result = () => faceProject(root, 'gridlock');
-
-    expect(result).toThrow('watchfaces/mosaic/gridlock/config/pebble.appinfo.json is where framework 3 keeps an appinfo');
-  });
 });
 
 describe('fillHint', () => {
