@@ -141,6 +141,20 @@ describe('permissionsFor', () => {
     expect(call).toThrow(/my-face's appinfo usesPermissions holds/);
   });
 
+  /** An empty name is no permission the phone knows, so the entry would ship and ask for nothing. */
+  test.each([[''], [{ name: '' }]])('refuses an entry of the face\'s own with an empty name', (entry) => {
+    const call = () => permissionsFor([], [entry], 'my-face');
+
+    expect(call).toThrow(/my-face's appinfo usesPermissions holds/);
+  });
+
+  /** A plugin id written as a number leaves the entry unreadable on the phone, so the permission it names is never granted. */
+  test('refuses a plugin that is not text', () => {
+    const call = () => permissionsFor([], [{ name: 'HomeControl', plugin: 5 }], 'my-face');
+
+    expect(call).toThrow(/gives HomeControl the plugin 5/);
+  });
+
   /** A site written as a bare string rather than a list leaves the entry unreadable on the phone, so the fetch it was for is blocked. */
   test('refuses parameters that are not lists of text', () => {
     const call = () => permissionsFor([], [{ name: 'Internet', parameters: { domains: 'example.com' } }], 'my-face');

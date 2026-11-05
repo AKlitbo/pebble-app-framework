@@ -37,7 +37,8 @@ function readOwn(declared: unknown, face: string): Permission[] {
   }
 
   for (const entry of declared) {
-    const named = typeof entry === 'string' || (typeof entry === 'object' && entry !== null && typeof entry.name === 'string');
+    const name = typeof entry === 'string' ? entry : typeof entry === 'object' && entry !== null ? entry.name : undefined;
+    const named = typeof name === 'string' && name.length > 0;
 
     if (!named) {
       throw new ToolError(`${face}'s appinfo usesPermissions holds ${JSON.stringify(entry)}, which is neither a name nor an object with one`);
@@ -47,6 +48,11 @@ function readOwn(declared: unknown, face: string): Permission[] {
     // would leave the whole entry unreadable there and the fetch it was for blocked
     if (typeof entry === 'object' && entry.parameters !== undefined && !isParameters(entry.parameters)) {
       throw new ToolError(`${face}'s appinfo usesPermissions gives ${entry.name} parameters ${JSON.stringify(entry.parameters)}, which has to map each name to a list of text`);
+    }
+
+    // the phone reads plugin as the id of the plugin that defines the permission, which is text
+    if (typeof entry === 'object' && entry.plugin !== undefined && typeof entry.plugin !== 'string') {
+      throw new ToolError(`${face}'s appinfo usesPermissions gives ${entry.name} the plugin ${JSON.stringify(entry.plugin)}, which has to be the plugin's id as text`);
     }
   }
 
