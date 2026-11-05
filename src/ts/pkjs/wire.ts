@@ -10,8 +10,17 @@ import type { HourlyStrip, DailyStrip } from '../weather/util';
 import type { StockQuote } from '../stock/util';
 import type { CalendarEvent } from '../calendar/ical';
 
-/** The caps and marker values themselves, which `WIRE_CAPS` hands out under every name. */
-const CAPS = {
+/**
+ * Every cap and marker value the two sides of a strip have to agree on.
+ *
+ * The watch reads these back out of `c/core/wire/wire_caps.g.h`, which `npm run build:conditions`
+ * writes from this table. They are the numbers a decode is bounds-checked against, so a pair that
+ * drifted would truncate a strip or refuse a whole message with nothing to show for it.
+ *
+ * A text cap here counts characters. The C side gets that plus one, because its buffer has to hold
+ * a terminator as well.
+ */
+export const WIRE_CAPS = {
   /** How many columns a forecast strip can carry. The watch re-clamps the count anyway, so slicing
    *  here just keeps the count byte honest and the packer in step with the other two. */
   FORECAST_COLS_MAX: 8,
@@ -31,27 +40,6 @@ const CAPS = {
   SETTINGS_REQUEST_FULL: 1,
   /** A settings request for only whether the watch booted with nothing saved. */
   SETTINGS_REQUEST_FRESH: 2,
-} as const;
-
-/**
- * Every cap and marker value the two sides of a strip have to agree on, plus deprecated aliases
- * that read the same numbers.
- *
- * The watch reads these back out of `c/core/wire/wire_caps.g.h`, which `npm run build:conditions`
- * writes from this table. They are the numbers a decode is bounds-checked against, so a pair that
- * drifted would truncate a strip or refuse a whole message with nothing to show for it.
- *
- * A text cap here counts characters. The C side gets that plus one, because its buffer has to hold
- * a terminator as well.
- */
-export const WIRE_CAPS = {
-  ...CAPS,
-  /** @deprecated The old name for FORECAST_COLS_MAX. */
-  FORECAST_MAX_COLS: CAPS.FORECAST_COLS_MAX,
-  /** @deprecated The old name for STOCK_SLOTS_MAX. */
-  STOCK_MAX_SLOTS: CAPS.STOCK_SLOTS_MAX,
-  /** @deprecated The old name for CALENDAR_SLOTS_MAX. */
-  CALENDAR_MAX_SLOTS: CAPS.CALENDAR_SLOTS_MAX,
 } as const;
 
 const FORECAST_COLS_MAX = WIRE_CAPS.FORECAST_COLS_MAX;
@@ -315,6 +303,4 @@ export default {
   packCalendarStrip,
   toAscii,
   STOCK_SLOTS_MAX,
-  /** @deprecated The old name for STOCK_SLOTS_MAX. */
-  STOCK_MAX_SLOTS: STOCK_SLOTS_MAX,
 };
