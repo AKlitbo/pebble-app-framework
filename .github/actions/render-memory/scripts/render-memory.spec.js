@@ -49,7 +49,7 @@ describe('render-memory', () => {
 
   /** A face creeping toward its static limit only in the table is easy to miss until the build that finally fails. */
   test('warns on a face at 80% of a limit and puts every face in one table', async () => {
-    upload('lcars-stardate', [{ face: 'lcars-stardate', target: 'lcars-stardate', platform: 'emery', image: 30000, virtualSize: 56000, resources: 90000, footprint: 60000, free: 40000 }]);
+    upload('lcars-stardate', [{ face: 'lcars-stardate', target: 'lcars-stardate', platform: 'emery', image: 30000, virtualSize: 112000, resources: 90000, footprint: 60000, free: 40000 }]);
     upload('radar-array', [{ face: 'radar-array', target: 'radar-array', platform: 'emery', image: 20000, virtualSize: 20000, resources: 10000, footprint: 30000, free: 90000 }]);
 
     const core = await render();

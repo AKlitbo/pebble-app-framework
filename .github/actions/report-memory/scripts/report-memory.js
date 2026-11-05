@@ -6,8 +6,8 @@
  * to a JSON file for the action to upload, since the table that ranks every face is built in a later job.
  *
  * The heap figures only print when the build links, so an incremental build with nothing to relink has none.
- * CI always builds clean. It never fails a build for being large, since the SDK already does that at the
- * only limit that counts.
+ * CI always builds clean. It never fails a build for being large, since the SDK already fails one that passes
+ * its platform's app image or memory limit.
  */
 const fs = require('node:fs');
 const os = require('node:os');

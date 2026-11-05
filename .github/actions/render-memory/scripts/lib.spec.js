@@ -3,7 +3,7 @@
  *
  * The table exists to answer one question at a glance, which face is closest to failing its build. So what
  * is worth pinning is that the ranking follows whichever limit a row is closest to rather than raw size, and
- * that the marks land at the right thresholds.
+ * that the marks land at the right thresholds, and that each row is measured against its own platform.
  */
 import { describe, expect, test } from 'vitest';
 import { rankRows, renderReport } from './lib.js';
@@ -13,10 +13,10 @@ function row(fields) {
 }
 
 describe('rankRows', () => {
-  /** Ranking on the bigger image would put a face with room to spare above one about to overflow its uint16 static size. */
+  /** Ranking on the bigger image would put a face with room to spare above one about to run out of static memory. */
   test('ranks on whichever limit a row is closest to', () => {
-    const roomy = row({ face: 'roomy', image: 50000, virtualSize: 30000 });
-    const tight = row({ face: 'tight', image: 40000, virtualSize: 62000 });
+    const roomy = row({ face: 'roomy', image: 100000, virtualSize: 60000 });
+    const tight = row({ face: 'tight', image: 80000, virtualSize: 124000 });
 
     const result = rankRows([roomy, tight]);
 
@@ -26,7 +26,7 @@ describe('rankRows', () => {
 
   /** A binary that could not be read showed as 0% and sorted last, so a face that may be near a limit looked the safest. */
   test('puts a row whose binary was missing first', () => {
-    const tight = row({ face: 'tight', virtualSize: 62000 });
+    const tight = row({ face: 'tight', virtualSize: 124000 });
     const missing = row({ face: 'missing', image: 0, virtualSize: 0 });
 
     const result = rankRows([tight, missing]);
@@ -37,7 +37,7 @@ describe('rankRows', () => {
 
   /** A binary too short for its header read a static size of 0, so the face ranked as the safest when nobody knew its size. */
   test('treats a static size of 0 as not measured', () => {
-    const tight = row({ face: 'tight', virtualSize: 62000 });
+    const tight = row({ face: 'tight', virtualSize: 124000 });
     const short = row({ face: 'short', image: 40, virtualSize: 0 });
 
     const result = rankRows([tight, short]);
@@ -46,12 +46,43 @@ describe('rankRows', () => {
   });
 });
 
+describe('the limits', () => {
+  /**
+   * Emery and gabbro give an app twice the memory of the older platforms, and aplite far less. A row measured
+   * against the wrong one reads as half full when it is about to fail, or the other way round.
+   */
+  test.each([
+    ['emery', 65536, 50],
+    ['gabbro', 65536, 50],
+    ['basalt', 65536, 100],
+    ['aplite', 12288, 50],
+    ['some-new-watch', 32768, 50],
+  ])('measures a static size on %s against its own limit', (platform, virtualSize, expected) => {
+    const [result] = rankRows([row({ platform, virtualSize })]);
+
+    expect(result.staticPct).toBe(expected);
+  });
+
+  /** An app image limit off by a factor of two would hide a face about to stop building, or flag one with room to spare. */
+  test.each([
+    ['emery', 65536, 50],
+    ['gabbro', 65536, 50],
+    ['basalt', 65536, 100],
+    ['aplite', 32768, 50],
+    ['some-new-watch', 32768, 50],
+  ])('measures an app image on %s against its own limit', (platform, image, expected) => {
+    const [result] = rankRows([row({ platform, image })]);
+
+    expect(result.imagePct).toBe(expected);
+  });
+});
+
 describe('renderReport', () => {
   /** A mark that fires too late gives no warning before a build starts failing, and one that fires too early gets ignored. */
   test.each([
-    [52400, ''],
-    [52500, ' :warning:'],
-    [59000, ' :rotating_light:'],
+    [104800, ''],
+    [104900, ' :warning:'],
+    [118000, ' :rotating_light:'],
   ])('marks a static size of %i bytes with "%s"', (virtualSize, mark) => {
     const ranked = rankRows([row({ virtualSize })]);
 
@@ -64,7 +95,7 @@ describe('renderReport', () => {
 
   /** The mark always sat on Static, so a face near its app image cap sent the reader to the wrong column. */
   test('marks the app image when that is the tighter limit', () => {
-    const ranked = rankRows([row({ image: 60000, virtualSize: 40000 })]);
+    const ranked = rankRows([row({ image: 120000, virtualSize: 40000 })]);
 
     const result = renderReport(ranked);
 

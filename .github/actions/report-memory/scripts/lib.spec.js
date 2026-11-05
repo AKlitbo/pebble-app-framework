@@ -4,7 +4,7 @@
  * The log is the SDK's plain output and nothing else turns it into numbers, so a block read against the wrong
  * target puts one face's heap on another's row. What is worth pinning is the two ways a sandbox prints more
  * than one block, several platforms in one sandbox and several targets from one face, and where virtual_size
- * sits in the binary. The log lines below are cut from real CI runs of Ridgeline and Gridlock.
+ * sits in the binary, including its high byte in a newer header. The log lines below are cut from real CI runs of Ridgeline and Gridlock.
  */
 import { describe, expect, test } from 'vitest';
 import { readBuildLog, readVirtualSize } from './lib.js';
@@ -84,5 +84,33 @@ describe('readVirtualSize', () => {
     const result = readVirtualSize(binary);
 
     expect(result).toBe(59394);
+  });
+
+  /** A face past 64 KB of static on emery would read as a few KB and rank as the safest face if the high byte were left off. */
+  test('adds the high byte at 0x83 from a 0x10.0x01 header', () => {
+    const binary = Buffer.alloc(0x100);
+
+    binary[0x08] = 0x10;
+    binary[0x09] = 0x01;
+    binary.writeUInt16LE(0x2345, 0x80);
+    binary[0x83] = 0x01;
+
+    const result = readVirtualSize(binary);
+
+    expect(result).toBe(74565);
+  });
+
+  /** An older header has padding at 0x83, and the firmware reads only 16 bits from it, so the report has to as well. */
+  test('reads only 16 bits from a 0x10.0x00 header', () => {
+    const binary = Buffer.alloc(0x100);
+
+    binary[0x08] = 0x10;
+    binary[0x09] = 0x00;
+    binary.writeUInt16LE(0x2345, 0x80);
+    binary[0x83] = 0x01;
+
+    const result = readVirtualSize(binary);
+
+    expect(result).toBe(0x2345);
   });
 });

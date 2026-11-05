@@ -1,25 +1,39 @@
 /**
  * Ranks the memory rows every face build left behind, and lays them out as one table.
  *
- * The SDK stops a face building when its loaded part or its static size passes 65,535 bytes. The image
- * column stands in for the first, since only the relocation table can take an image past 64 KB, and the
- * SDK's own image cap is 128 KB on emery and gabbro. The heap is shown beside them but never stops a build.
+ * Each row is measured against its own platform's limits, the ones the SDK's pebble_sdk_platform.py sets.
+ * The app image is load_size plus the relocation table, held to MAX_APP_BINARY_SIZE. The static size is
+ * virtual_size, which is .text plus .data plus .bss, and it shares MAX_APP_MEMORY_SIZE with the heap. Emery
+ * and gabbro give an app 128 KB of each, and the older platforms 64 KB, apart from aplite's 24 KB of memory.
  *
- * The app image is load_size plus the relocation table. The SDK's inject_metadata.py holds load_size to 65,535,
- * since that header field is a uint16_t, and the whole image to the platform's MAX_APP_BINARY_SIZE.
- *
- * The static size is virtual_size, which is .text plus .data plus .bss, capped at 65,535 because that header
- * field is a uint16_t. A face carries little relocation table, so this is normally the tighter of the two.
- *
- * The free heap is what is left of 128 KB, and nothing is close to it, so it is shown but never ranked on.
+ * The free heap is what is left of the app's memory, and nothing is close to it, so it is shown but never
+ * ranked on.
  */
 const { markdownTable } = require('../../../shared/lib');
 
-/** What the table measures the app image against, 64 KB, rounded up from the SDK's 65,535 byte cap on load_size. */
-const IMAGE_LIMIT = 0x10000;
+/** Each platform's app image and static size limits in bytes, from the SDK's pebble_sdk_platform.py. */
+const LIMITS = {
+  aplite: { image: 0x10000, static: 0x6000 },
+  basalt: { image: 0x10000, static: 0x10000 },
+  chalk: { image: 0x10000, static: 0x10000 },
+  diorite: { image: 0x10000, static: 0x10000 },
+  flint: { image: 0x10000, static: 0x10000 },
+  emery: { image: 0x20000, static: 0x20000 },
+  gabbro: { image: 0x20000, static: 0x20000 },
+};
 
-/** The static size limit, since PebbleProcessInfo.virtual_size is a uint16_t. */
-const STATIC_LIMIT = 0xffff;
+/** The limits for a platform the table does not know, the 64 KB that most platforms give. */
+const FALLBACK_LIMITS = { image: 0x10000, static: 0x10000 };
+
+/**
+ * The app image and static size limits for a platform.
+ *
+ * @param platform The platform the row was built for, such as emery.
+ * @return Its limits in bytes, or the 64 KB ones for a platform the table does not know.
+ */
+function limitsFor(platform) {
+  return Object.prototype.hasOwnProperty.call(LIMITS, platform) ? LIMITS[platform] : FALLBACK_LIMITS;
+}
 
 /** How close to a limit a row gets, as a percentage, before it is flagged. */
 const WARN_AT = 80;
@@ -41,8 +55,9 @@ const ALARM_AT = 90;
 function rankRows(rows) {
   return rows
     .map((row) => {
-      const imagePct = (row.image * 100) / IMAGE_LIMIT;
-      const staticPct = (row.virtualSize * 100) / STATIC_LIMIT;
+      const limits = limitsFor(row.platform);
+      const imagePct = (row.image * 100) / limits.image;
+      const staticPct = (row.virtualSize * 100) / limits.static;
       const tighter = staticPct > imagePct ? 'static size' : 'app image';
 
       return { ...row, imagePct, staticPct, worst: Math.max(imagePct, staticPct), tighter, measured: row.image > 0 && row.virtualSize > 0 };
@@ -98,12 +113,12 @@ function renderReport(ranked) {
     '',
     markdownTable(['Face', 'Target', 'Platform', 'App Image', 'Static', 'Free Heap', 'Resources'], rows),
     '',
-    '**App Image** is `load_size` plus the relocation table. The SDK stops it at 128 KB on emery and gabbro and at 64 KB on the older platforms. It is measured against 64 KB here, since `load_size` alone is held to 65535 bytes and only the relocation table can take the image past that.',
+    '**App Image** is `load_size` plus the relocation table. It is measured against the limit for its platform, which is 128 KB on emery and gabbro and 64 KB on the older platforms.',
     '',
-    '**Static** is `virtual_size`, which is .text plus .data plus .bss. It is capped at 65535 because that header field is a uint16_t, and for a face it is normally the tighter of the two.',
+    '**Static** is `virtual_size`, which is .text plus .data plus .bss. It is measured against the app memory the platform gives, 128 KB on emery and gabbro, 64 KB on the older platforms, and 24 KB on aplite. For a face it is normally the tighter of the two.',
     '',
-    '**Free Heap** is what is left of the 128 KB after the app, system allocations and resources. The mark follows whichever limit the row is closest to.',
+    '**Free Heap** is what is left of the app memory after the app, system allocations and resources. The mark follows whichever limit the row is closest to.',
   ].join('\n');
 }
 
-module.exports = { IMAGE_LIMIT, STATIC_LIMIT, WARN_AT, ALARM_AT, rankRows, renderReport };
+module.exports = { WARN_AT, ALARM_AT, rankRows, renderReport };

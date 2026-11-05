@@ -62,20 +62,23 @@ It prints it only while linking, so the log of a build that linked is the only p
 
 ## The Limits
 
-`render-memory` ranks each row against these limits. The static one is the SDK's own, and the image one is rounded to 64 KB to stand in for the SDK's 65,535 byte cap on the loaded part:
+`render-memory` ranks each row against the limits for its platform, the ones the SDK sets in `pebble_sdk_platform.py`:
 
-| Size | Limit |
-| :-- | :-- |
-| App Image | 64 KB, 65536 bytes |
-| Static | 65535 bytes |
+| Platform | App Image | Static |
+| :-- | :-- | :-- |
+| emery, gabbro | 128 KB | 128 KB |
+| basalt, chalk, diorite, flint | 64 KB | 64 KB |
+| aplite | 64 KB | 24 KB |
 
-**The App Image.** The SDK stops an image over the platform's limit, which is 128 KB on emery and gabbro. The loaded part, everything but the relocation table, is also held to 65,535 bytes, since the app's header keeps its size in 16 bits. The table measures the image against 64 KB, which stands in for that second limit.
+A platform the table does not know is measured against 64 KB for both.
 
-**The Static Size.** The cap is 65535 because `virtual_size` is a 16-bit field in the app header, and a larger size cannot be written into it. A face carries little relocation table, so this is normally the tighter of the two.
+**The App Image.** The SDK stops an image over the platform's `MAX_APP_BINARY_SIZE`. The image is the loaded part plus the relocation table.
 
-**The Heap Is Shown, Not Ranked.** The free heap is what is left of the 128 KB after the app, the system's own allocations, and the resources. The table shows it, and the resources, but neither plays any part in the ranking or the warnings, since no face is near the heap.
+**The Static Size.** `.text`, `.data`, and `.bss` share the platform's app memory with the heap, so the static size is measured against all of it. From header version `0x10.0x01`, which SDK 4.39.0 and later write, `virtual_size` carries 24 bits, its low 16 at `0x80` and its high 8 at `0x83`. The action reads all 24 from such a header. An older header has padding at `0x83`, so only the low 16 bits are read from it, the same as the firmware does. A face carries little relocation table, so the static size is normally the tighter of the two.
 
-**Reports Only.** Neither action fails a build for size, since the SDK already fails a build whose loaded part or static size passes 65,535 bytes. An image over 64 KB on emery or gabbro can still build, so a row over 100% there is a warning rather than a failed build. A face at 95% still builds and still ships, and the table is there to show how much room is left before a change, not to stop one.
+**The Heap Is Shown, Not Ranked.** The free heap is what is left of the app memory after the app, the system's own allocations, and the resources. The table shows it, and the resources, but neither plays any part in the ranking or the warnings, since no face is near the heap.
+
+**Reports Only.** Neither action fails a build for size, since the SDK already fails a build that passes either limit. A face at 95% still builds and still ships, and the table is there to show how much room is left before a change, not to stop one.
 
 ## The Table
 
