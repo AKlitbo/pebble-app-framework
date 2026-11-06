@@ -286,6 +286,131 @@ __attribute__((noinline)) static time_t hour_start(const struct tm *today, int h
     return mktime(&at);
 }
 
+#if defined(PBL_HEALTH)
+/**
+ * @brief Called for each good record a walk of the minute log finds.
+ *
+ * @param hour The hour of today the record falls in.
+ * @param record The record.
+ * @param context What the caller handed the walk.
+ */
+typedef void (*MinuteRecordFn)(int hour, const HealthMinuteData *record, void *context);
+
+/**
+ * @brief Walks the watch's minute log over today's hours and hands each good record, with the hour
+ * it falls in, to the `each` callback.
+ *
+ * The records come into a buffer borrowed from the heap, so the hours go STEP_CATCHUP_HOURS at a
+ * time to keep that buffer a few KB. Each read blocks on a scan of the watch's whole minute log,
+ * and costs the same whatever window it asks for, so a batch that size takes a day in four reads.
+ * Each hour is the wall clock's own, so on a clock change day a record lands in the hour the chart
+ * labels.
+ *
+ * @param local Today's local time, broken apart.
+ * @param first_hour The first hour to read.
+ * @param end_hour The hour to stop before.
+ * @param until The time to stop at, for a walk that ends partway through its last hour. One that ends
+ * on an hour passes that hour's start.
+ * @param each Called for each good record.
+ * @param context Handed to each.
+ * @return False when there was no room for the records, so nothing was read.
+ */
+static bool walk_minute_log(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each,
+                            void *context)
+{
+    // room for one hour more than a batch spans on the wall clock, since the batch holding the
+    // hour the clocks go back through runs an hour longer in real time
+    const uint32_t room = (STEP_CATCHUP_HOURS + 1) * MINUTES_PER_HOUR;
+    HealthMinuteData *scratch = scratch_take(room);
+    if (!scratch)
+    {
+        return false;
+    }
+
+    for (int h = first_hour; h < end_hour; h += STEP_CATCHUP_HOURS)
+    {
+        int span = end_hour - h;
+        if (span > STEP_CATCHUP_HOURS)
+        {
+            span = STEP_CATCHUP_HOURS;
+        }
+
+        time_t want_end = hour_start(local, h + span);
+        if (want_end > until)
+        {
+            want_end = until;
+        }
+        time_t q_start = hour_start(local, h);
+        if (q_start >= want_end)
+        {
+            continue; // nothing to ask for in this batch
+        }
+        time_t q_end = want_end;
+
+        // the batch's real length rather than its wall hours, since the batch holding the hour the
+        // clocks go back through runs an hour longer than its wall hours and its last hour would
+        // otherwise come back empty
+        uint32_t asked = (uint32_t)((want_end - q_start) / SECONDS_PER_MINUTE);
+        if (asked > room)
+        {
+            asked = room;
+        }
+        uint32_t got = health_service_get_minute_history(scratch, asked, &q_start, &q_end);
+
+        // the service says it returns no more records than asked for, and this holds it to that, so
+        // a bigger count never reads past the end of the buffer
+        if (got > asked)
+        {
+            got = asked;
+        }
+
+        // q_start comes back moved on to the first record the watch held, so a record's place
+        // in the array says nothing about its hour. only its own time does
+        int bucket = h;
+        time_t bucket_end = hour_start(local, h + 1);
+        for (uint32_t i = 0; i < got; i++)
+        {
+            time_t record_at = q_start + (time_t)i * SECONDS_PER_MINUTE;
+
+            // the watch caps the count from the start asked for, not the one it moved on to, so a
+            // read that opened on a gap runs past what was asked for and the next batch would count
+            // it twice
+            if (record_at >= want_end)
+            {
+                break; // the records run in order, so nothing after this is wanted either
+            }
+
+            // the records run in order, so the bucket only ever moves forward
+            while (record_at >= bucket_end && bucket < h + span - 1)
+            {
+                bucket++;
+                bucket_end = hour_start(local, bucket + 1);
+            }
+
+            if (!scratch[i].is_invalid)
+            {
+                each(bucket, &scratch[i], context);
+            }
+        }
+    }
+
+    free(scratch);
+    return true;
+}
+
+/** @brief Adds a record's steps to its hour's total, for the hourly step read. */
+static void add_record_steps(int hour, const HealthMinuteData *record, void *context)
+{
+    ((int *)context)[hour] += record->steps;
+}
+
+/** @brief Adds a record's heart rate to its hour, for the heart rate day. */
+static void add_record_hr(int hour, const HealthMinuteData *record, void *context)
+{
+    hr_day_add((HrDay *)context, hour, record->heart_rate_bpm);
+}
+#endif
+
 /**
  * @brief Fill the per-hour step buckets from midnight up to the current hour.
  *
@@ -323,82 +448,16 @@ static void read_step_hourly(void)
     // turn an hour rolls over, and the run since midnight on the first turn after a launch
     if (s_settled_hours < cur_hour)
     {
-        // room for one hour more than a batch spans on the wall clock, since the batch holding the
-        // hour the clocks go back through runs an hour longer in real time
-        const uint32_t room = (STEP_CATCHUP_HOURS + 1) * MINUTES_PER_HOUR;
-        HealthMinuteData *scratch = scratch_take(room);
-        if (!scratch)
+        int sums[HOURS_PER_DAY] = {0};
+        if (!walk_minute_log(&local, s_settled_hours, cur_hour, hour_start(&local, cur_hour), add_record_steps, sums))
         {
             return; // no room, so leave the buckets as they are and try again next turn
-        }
-
-        int sums[HOURS_PER_DAY] = {0};
-
-        for (int h = s_settled_hours; h < cur_hour; h += STEP_CATCHUP_HOURS)
-        {
-            int span = cur_hour - h;
-            if (span > STEP_CATCHUP_HOURS)
-            {
-                span = STEP_CATCHUP_HOURS;
-            }
-
-            // each hour is the wall clock's own, so on a clock change day the buckets still line up
-            // with the hour the chart labels and the one the current bar is worked out from
-            time_t want_end = hour_start(&local, h + span);
-            time_t q_start = hour_start(&local, h);
-            time_t q_end = want_end;
-
-            // the batch's real length rather than its wall hours. asking for only its wall hours
-            // left the last hour of a clocks-back batch empty and settled, and the current hour's bar
-            // took its steps
-            uint32_t asked = (uint32_t)((want_end - q_start) / SECONDS_PER_MINUTE);
-            if (asked > room)
-            {
-                asked = room;
-            }
-            uint32_t got = health_service_get_minute_history(scratch, asked, &q_start, &q_end);
-
-            // same guard as the backfill: trust the promise no further than the buffer goes
-            if (got > asked)
-            {
-                got = asked;
-            }
-
-            // q_start comes back moved on to the first record the watch held, so a record's place
-            // in the array says nothing about its hour. only its own time does
-            int bucket = h;
-            time_t bucket_end = hour_start(&local, h + 1);
-            for (uint32_t i = 0; i < got; i++)
-            {
-                time_t record_at = q_start + (time_t)i * SECONDS_PER_MINUTE;
-
-                // only the count reaches the watch, never the window's end, so a read that opened
-                // on a gap runs past what was asked for and the next batch would count it twice
-                if (record_at >= want_end)
-                {
-                    break; // the records run in order, so nothing after this is wanted either
-                }
-
-                // the records run in order, so the bucket only ever moves forward
-                while (record_at >= bucket_end && bucket < h + span - 1)
-                {
-                    bucket++;
-                    bucket_end = hour_start(&local, bucket + 1);
-                }
-
-                if (!scratch[i].is_invalid)
-                {
-                    sums[bucket] += scratch[i].steps;
-                }
-            }
         }
 
         for (int h = s_settled_hours; h < cur_hour && h < HOURS_PER_DAY; h++)
         {
             s_state.step_hourly[h] = (uint16_t)clamp_int(sums[h], 0, 65535);
         }
-
-        free(scratch);
     }
 
     s_settled_hours = step_hours_settled(cur_hour, local.tm_min);
@@ -434,7 +493,7 @@ static void hr_day_roll(void)
  *
  * The log holds a reading for each minute the sensor took one, the same as it holds the steps, so
  * the hours before launch read the same as they would have live. It is a blocking scan of the log,
- * so it runs once, after the face has painted, in batches of the same six hours the steps use.
+ * so it runs once, after the face has painted.
  *
  * @return False when there was no room for the records, so the read is still owed.
  */
@@ -443,72 +502,19 @@ static bool read_hr_day(void)
 #if defined(PBL_HEALTH)
     hr_day_roll();
 
-    time_t now = time(NULL);
-    struct tm local = *localtime(&now);  // a copy, since mktime in hour_start reuses the same buffer
     time_t until = s_hr_day_from_min * SECONDS_PER_MINUTE;
     if (until <= s_hr_day_start)
     {
         return true;
     }
 
-    const uint32_t room = STEP_CATCHUP_HOURS * MINUTES_PER_HOUR;
-    HealthMinuteData *scratch = scratch_take(room);
-    if (!scratch)
-    {
-        return false;
-    }
-
-    int bucket = 0;
-    time_t bucket_end = hour_start(&local, 1);
-    time_t from = s_hr_day_start;
-    while (from < until)
-    {
-        time_t q_start = from;
-        time_t q_end = from + (time_t)room * SECONDS_PER_MINUTE;
-        if (q_end > until)
-        {
-            q_end = until;
-        }
-        uint32_t asked = (uint32_t)((q_end - q_start) / SECONDS_PER_MINUTE);
-        uint32_t got = health_service_get_minute_history(scratch, asked, &q_start, &q_end);
-
-        // the service says it returns no more records than asked for, and this holds it to that, so
-        // a bigger count never reads past the end of the buffer
-        if (got > asked)
-        {
-            got = asked;
-        }
-
-        // q_start comes back moved on to the first record the watch held, so each record's hour
-        // comes from its own time
-        for (uint32_t i = 0; i < got; i++)
-        {
-            time_t record_at = q_start + (time_t)i * SECONDS_PER_MINUTE;
-            if (record_at >= until)
-            {
-                break;
-            }
-
-            while (record_at >= bucket_end && bucket < HR_DAY_HOURS - 1)
-            {
-                bucket++;
-                bucket_end = hour_start(&local, bucket + 1);
-            }
-
-            if (!scratch[i].is_invalid)
-            {
-                hr_day_add(&s_state.hr_day, bucket, scratch[i].heart_rate_bpm);
-            }
-        }
-
-        // a batch with nothing in it moves on to the next one rather than asking for it again
-        time_t next = got > 0 ? q_start + (time_t)got * SECONDS_PER_MINUTE : from + (time_t)room * SECONDS_PER_MINUTE;
-        from = next > from ? next : from + (time_t)room * SECONDS_PER_MINUTE;
-    }
-
-    free(scratch);
-#endif
+    // today's hours come from the start minute itself, so a midnight passing during the read
+    // cannot move them. the hour the store started in is the last one read, up to that minute
+    struct tm local = *localtime(&until);  // a copy, since mktime in hour_start reuses the same buffer
+    return walk_minute_log(&local, 0, local.tm_hour + 1, until, add_record_hr, &s_state.hr_day);
+#else
     return true;
+#endif
 }
 
 /**
