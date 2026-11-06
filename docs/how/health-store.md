@@ -1,6 +1,6 @@
 # The Health Store
 
-The health store gives a face the wearer's numbers from Pebble Health: heart rate, steps, distance, active calories, sleep, and active minutes. For a face that draws charts it also keeps the last hour of heart rate, a reading a minute, and today's steps hour by hour. Nothing goes through the phone. What the store handles is cost. Some of these reads block on the watch's flash, the charts need scans of the watch's minute log, and Pebble Health sends events every few seconds while the wearer walks. The store holds the costly reads to once a minute, reads only what the face asked for, and keeps what it has already worked out, so a face can show health readings without a health read on every redraw.
+The health store gives a face the wearer's numbers from Pebble Health: heart rate, steps, distance, active calories, sleep, and active minutes. For a face that draws charts it also keeps the last hour of heart rate, a reading a minute, today's heart rate hour by hour, and today's steps hour by hour. Nothing goes through the phone. What the store handles is cost. Some of these reads block on the watch's flash, the charts need scans of the watch's minute log, and Pebble Health sends events every few seconds while the wearer walks. The store holds the costly reads to once a minute, reads only what the face asked for, and keeps what it has already worked out, so a face can show health readings without a health read on every redraw.
 
 It lives in [`health_store.h`](../../src/c/pebble/io/stores/health_store.h) and [`health_store.c`](../../src/c/pebble/io/stores/health_store.c). The arithmetic behind the two charts, which hour is finished and where a minute record lands in the heart rate window, is in [`step_hours.c`](../../src/c/core/health/step_hours.c) and [`minute_window.c`](../../src/c/core/health/minute_window.c) under `src/c/core/health/`. Those are the parts that can be wrong without anyone noticing, such as a bar that quietly loses the last minute of every hour, so they sit in `c/core` (see [Where the Code Lives](index.md#where-the-code-lives)). The store takes its turn on the face's cadence like the others, as [How the Stores Work](stores.md#riding-the-faces-cadence) covers, but it asks the watch rather than the phone.
 
@@ -21,6 +21,7 @@ The heart rate and the step count are always read. Each of the others has its ow
 * **`sleep`, `active`, `calories`, and `distance`** read the day's sleep, active minutes, active calories, and walked distance. A total left off is never read, and its getter keeps returning its no-data value.
 * **`hr_history`** keeps the hour of heart rate for a graph, and saves it to flash under `persist_key`.
 * **`step_history`** keeps today's steps by the hour for a bar chart.
+* **`hr_day`** keeps today's heart rate by the hour, with the day's low, average, and high, as [Heart Rate Through the Day](#heart-rate-through-the-day) covers.
 
 A `HealthSeed` pins fixed numbers and curves for screenshots, as [How the Stores Work](stores.md#seeded-for-screenshots) covers.
 
@@ -118,6 +119,14 @@ for (int hour = 0; hour < hours; hour++)
 ## What the Histories Cost
 
 The two buffers are part of the store on every face, 60 bytes for the heart rate and 48 for the steps. What the flags turn off is the work. Without `hr_history` there is no read of the log at launch, no window sliding each minute, and no flash write. Without `step_history` there are no log scans and no 5 KB borrowed from the heap. A face that shows only a heart rate and a step count pays for two cheap reads a minute.
+
+## Heart Rate Through the Day
+
+With `hr_day` set, the store keeps every heart rate reading of today in its hour, as an [`HrDay`](../../src/c/core/health/hr_day.h). `health_store_hr_day` hands it back, `hr_day_hour_avg` gives an hour's average for a bar, and `hr_day_stats` gives the day's low, average, and high. An hour with no readings answers -1, so a chart leaves a gap rather than a bar at 0.
+
+The watch only answers a heart rate low, average, or high over the last two hours, so the day cannot come from those. It does log a heart rate in the same minute records as the steps, kept as long as the steps are. So once the face has painted, the store reads the log from midnight up to the minute it started, in the same six hour batches as the steps. From then on it adds each new reading as it arrives, at most one a minute, which keeps the minutes HRV holds the sensor on from outweighing the rest of the day. Only a heart rate event adds one, since a peek can hand back the same reading for up to fifteen minutes. The day empties at midnight.
+
+The average weighs every reading the same, so an hour with many readings counts for more than an hour with one. The maths is in [`hr_day.c`](../../src/c/core/health/hr_day.c) with its specs. The day takes 144 bytes of the store on every face, and a face without `hr_day` never reads the log for it. `HealthSeed.hr_day` pins a day for screenshots, or prefills a live store in place of the log.
 
 ## Reading It Back
 

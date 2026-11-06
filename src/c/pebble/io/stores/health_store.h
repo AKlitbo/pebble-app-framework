@@ -10,6 +10,7 @@
 #include <pebble.h>
 #include "health/hrv_motion.h"
 #include "health/hrv_log.h"
+#include "health/hr_day.h"
 
 /**
  * @addtogroup lib_stores
@@ -24,6 +25,7 @@ typedef struct
     bool     live;         ///< True subscribes the health service and false just keeps the fake data for screenshots
     bool     hr_history;   ///< Keep the rolling minute by minute heart rate window, for a face that graphs it
     bool     step_history; ///< Keep the hour by hour step buckets, for a face that graphs them
+    bool     hr_day;       ///< Keep today's heart rate by the hour with its low, average, and high, for a face that charts the day
     // the heart rate and steps are read for every face, since the watch keeps both to hand. these
     // four are not, so each is only read for a face that shows it. the getter for one left off
     // keeps returning its no reading value, -1 for the first three and 0 for the distance
@@ -59,6 +61,7 @@ typedef struct
     int step_hours;              ///< How many of those hourly buckets are real (0 to 24)
     int hrv_ms;                  ///< Heart rate variability as RMSSD in ms, or 0 for none
     const HrvLog *hrv_log;       ///< Optional HRV readings for the panels that show the log, or NULL
+    const HrDay *hr_day;         ///< Optional heart rate by the hour for today, or NULL
 } HealthSeed;
 
 /**
@@ -113,6 +116,14 @@ void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount
  * fills it on each update. The little charts read it back out.
  */
 const uint8_t *health_store_hr_history(void);
+
+/**
+ * @brief Today's heart rate by the hour, for a face that set hr_day. Read each hour and the day's
+ * low, average, and high from it with the hr_day.h getters. Empty for a face that did not ask.
+ *
+ * @return The day, midnight first.
+ */
+const HrDay *health_store_hr_day(void);
 
 /**
  * @brief Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots).

@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added still, busy, and walking to each HRV burst. Steps through the burst decide walking, from `hrv_walk_steps`, and the accelerometer's movement score splits still from busy, from `hrv_still_mg`. `hrv_count` takes an `HrvCount` for which bursts become the reading, and `health_store_set_hrv_rules` changes all of these when a setting does. The store reads the accelerometer's data service while a burst is held, so a face that reads that service itself cannot use HRV.
 - Added the HRV log. `health_store_hrv_log` gives the latest 24 readings with what the wearer was doing, today by the hour, and the night's average, read with the functions in `health/hrv_log.h`. Give `HealthConfig` an `hrv_persist_key` to keep it across launches. `health_store_hrv_recent`, `health_store_hrv_live`, `health_store_hrv_still_mg`, and `health_store_hrv_walk_steps` give a tuning panel each burst's numbers and the limits in use.
 - Added `health_store_deinit`. Call it from the face's deinit. With HRV on it stops the request for beat gaps, which the watch otherwise keeps going for an hour after the face closes.
+- Added `hr_day` to `HealthConfig`. The store keeps today's heart rate by the hour, filled from the watch's minute log at launch and from each reading after, and `health_store_hr_day` hands it back to read with `hr_day_hour_avg` and `hr_day_stats` from `health/hr_day.h`. `HealthSeed.hr_day` pins a day for screenshots.
 
 #### Changed
 

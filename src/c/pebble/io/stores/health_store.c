@@ -52,6 +52,7 @@ static struct
     int      distance_m;                     ///< Distance walked, in metres
     uint16_t step_hourly[HOURS_PER_DAY];     ///< Steps in each hour of today, midnight first
     int      step_hours;                     ///< How many of those hours are real (0 to 24)
+    HrDay    hr_day;                         ///< Today's heart rate by the hour
 } s_state;
 
 /**
@@ -80,6 +81,7 @@ static bool s_live;        ///< True once subscribed to the live health service,
  */
 static bool s_hr_history;   ///< Whether the face graphs heart rate history
 static bool s_step_history; ///< Whether the face graphs steps by the hour
+static bool s_hr_day;       ///< Whether the face charts today's heart rate by the hour
 /** @} */
 
 /**
@@ -106,6 +108,19 @@ static int s_settled_hours; ///< How many finished hours are already read and ke
 /** @} */
 
 static bool s_steps_pending;   ///< True between init and the first bucket read, which is held back until the face has painted
+
+/**
+ * @name Heart rate by the hour
+ *
+ * The minute log fills the day up to the minute the store started, once the face has painted. Each
+ * reading after that is added as it arrives, so the two never count the same minute.
+ * @{
+ */
+static time_t s_hr_day_start;    ///< The midnight the kept hours belong to
+static time_t s_hr_day_from_min; ///< The minute the store started. The log fills before it, live readings from it on
+static time_t s_hr_day_last_min; ///< The minute of the last live reading added, so a burst adds one a minute
+static bool s_hr_day_pending;    ///< True between a live start and its read of the log
+/** @} */
 static uint32_t s_persist_key; ///< The persist slot the face handed us for the saved history
 
 // --- health service reads (stubs that do nothing without PBL_HEALTH) ---
@@ -400,6 +415,154 @@ static void read_step_hourly(void)
 #endif
 }
 
+/**
+ * @brief Empties the hours once midnight has passed since they were filled.
+ */
+static void hr_day_roll(void)
+{
+    time_t today = time_start_of_today();
+    if (today != s_hr_day_start)
+    {
+        hr_day_clear(&s_state.hr_day);
+        s_hr_day_start = today;
+    }
+}
+
+/**
+ * @brief Fills today's hours from the watch's minute log, from midnight up to the minute the store
+ * started.
+ *
+ * The log holds a reading for each minute the sensor took one, the same as it holds the steps, so
+ * the hours before launch read the same as they would have live. It is a blocking scan of the log,
+ * so it runs once, after the face has painted, in batches of the same six hours the steps use.
+ *
+ * @return False when there was no room for the records, so the read is still owed.
+ */
+static bool read_hr_day(void)
+{
+#if defined(PBL_HEALTH)
+    hr_day_roll();
+
+    time_t now = time(NULL);
+    struct tm local = *localtime(&now);  // a copy, since mktime in hour_start reuses the same buffer
+    time_t until = s_hr_day_from_min * SECONDS_PER_MINUTE;
+    if (until <= s_hr_day_start)
+    {
+        return true;
+    }
+
+    const uint32_t room = STEP_CATCHUP_HOURS * MINUTES_PER_HOUR;
+    HealthMinuteData *scratch = scratch_take(room);
+    if (!scratch)
+    {
+        return false;
+    }
+
+    int bucket = 0;
+    time_t bucket_end = hour_start(&local, 1);
+    time_t from = s_hr_day_start;
+    while (from < until)
+    {
+        time_t q_start = from;
+        time_t q_end = from + (time_t)room * SECONDS_PER_MINUTE;
+        if (q_end > until)
+        {
+            q_end = until;
+        }
+        uint32_t asked = (uint32_t)((q_end - q_start) / SECONDS_PER_MINUTE);
+        uint32_t got = health_service_get_minute_history(scratch, asked, &q_start, &q_end);
+
+        // the service says it returns no more records than asked for, and this holds it to that, so
+        // a bigger count never reads past the end of the buffer
+        if (got > asked)
+        {
+            got = asked;
+        }
+
+        // q_start comes back moved on to the first record the watch held, so each record's hour
+        // comes from its own time
+        for (uint32_t i = 0; i < got; i++)
+        {
+            time_t record_at = q_start + (time_t)i * SECONDS_PER_MINUTE;
+            if (record_at >= until)
+            {
+                break;
+            }
+
+            while (record_at >= bucket_end && bucket < HR_DAY_HOURS - 1)
+            {
+                bucket++;
+                bucket_end = hour_start(&local, bucket + 1);
+            }
+
+            if (!scratch[i].is_invalid)
+            {
+                hr_day_add(&s_state.hr_day, bucket, scratch[i].heart_rate_bpm);
+            }
+        }
+
+        // a batch with nothing in it moves on to the next one rather than asking for it again
+        time_t next = got > 0 ? q_start + (time_t)got * SECONDS_PER_MINUTE : from + (time_t)room * SECONDS_PER_MINUTE;
+        from = next > from ? next : from + (time_t)room * SECONDS_PER_MINUTE;
+    }
+
+    free(scratch);
+#endif
+    return true;
+}
+
+/**
+ * @brief Adds a new reading to its hour, at most one a minute.
+ *
+ * While HRV holds the sensor on, a reading lands about once a second. Keeping one a minute weighs
+ * those minutes the same as the rest of the day, where the watch logs one now and then.
+ *
+ * @param hr The reading in beats per minute, or -1 for none.
+ */
+static void hr_day_note(int hr)
+{
+    time_t now = time(NULL);
+    time_t now_min = now / SECONDS_PER_MINUTE;
+    if (hr <= 0 || now_min == s_hr_day_last_min)
+    {
+        return;
+    }
+
+    // a clock the phone set back would leave every reading short of the start minute until the
+    // clock caught up, so the start comes back to now and the day keeps filling
+    if (now_min < s_hr_day_from_min)
+    {
+        s_hr_day_from_min = now_min;
+    }
+
+    s_hr_day_last_min = now_min;
+    hr_day_roll();
+    hr_day_add(&s_state.hr_day, localtime(&now)->tm_hour, hr);
+}
+
+/**
+ * @brief The first read of today's heart rate from the log, once the face is up.
+ *
+ * @param data The timer context (unused).
+ */
+static void hr_day_first_read(void *data)
+{
+    // a store started again since this was queued is seeded, so it keeps its fixture, or live, so
+    // its own read is queued behind this one and a second would count every hour twice
+    if (!s_hr_day_pending)
+    {
+        return;
+    }
+
+    // with no room for the records the read stays owed, and the cadence asks again
+    uint32_t before = store_sum(&s_state, sizeof(s_state));
+    s_hr_day_pending = !read_hr_day();
+    if (s_cb && store_sum(&s_state, sizeof(s_state)) != before)
+    {
+        s_cb();
+    }
+}
+
 // --- state + poller ---
 
 /**
@@ -660,6 +823,12 @@ static void on_health_event(HealthEventType event, void *context)
     {
         refresh_hr();
     }
+    // only a heart rate event brings a new reading. a peek on the cadence can hand back the same one
+    // for up to fifteen minutes, which would count it many times
+    if (event == HealthEventHeartRateUpdate && s_hr_day)
+    {
+        hr_day_note(s_state.hr);
+    }
     if (activity)
     {
         refresh_activity(force);
@@ -690,6 +859,14 @@ static void cadence_poll(void)
 
     refresh_hr();
     refresh_activity(false);
+    if (s_hr_day)
+    {
+        hr_day_roll(); // so midnight empties the chart even with no reading to bring it
+    }
+    if (s_hr_day_pending)
+    {
+        s_hr_day_pending = !read_hr_day(); // a launch read that found no room tries again
+    }
 
     notify_if_moved(before);
 }
@@ -754,6 +931,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
     s_live = false;
     s_hr_history = cfg.hr_history;
     s_step_history = cfg.step_history;
+    s_hr_day = cfg.hr_day;
     s_sleep = cfg.sleep;
     s_active = cfg.active;
     s_calories = cfg.calories;
@@ -780,6 +958,11 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
     s_settled_hours = 0;
     // a store coming up seeded never arms the timer, so it must not inherit a gate from a live run
     s_steps_pending = false;
+    hr_day_clear(&s_state.hr_day);
+    s_hr_day_start = time_start_of_today();
+    s_hr_day_from_min = time(NULL) / SECONDS_PER_MINUTE;
+    s_hr_day_last_min = 0;
+    s_hr_day_pending = false;
 
     if (seed)
     {
@@ -797,6 +980,10 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
         if (seed->step_hourly)
         {
             memcpy(s_state.step_hourly, seed->step_hourly, sizeof(s_state.step_hourly));
+        }
+        if (seed->hr_day)
+        {
+            s_state.hr_day = *seed->hr_day;
         }
     }
     else if (cfg.live && s_hr_history)
@@ -854,6 +1041,15 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
         {
             s_steps_pending = false;
         }
+
+        // the day's log read waits for the paint the same way. with no timer it runs here instead,
+        // since nothing else would ever fill the hours before launch. a seeded day stands in for
+        // the log, so it is not read on top
+        s_hr_day_pending = s_hr_day && !(seed && seed->hr_day);
+        if (s_hr_day_pending && !app_timer_register(0, hr_day_first_read, NULL))
+        {
+            s_hr_day_pending = !read_hr_day();
+        }
     }
 
 #if HRV_BUILT
@@ -875,6 +1071,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
 const uint8_t *health_store_hr_history(void) { return s_state.hr_history; }
 
 const uint16_t *health_store_step_hourly(void) { return s_state.step_hourly; }
+const HrDay *health_store_hr_day(void)         { return &s_state.hr_day; }
 int health_store_step_hours(void)              { return s_state.step_hours; }
 
 int health_store_hr(void)         { return s_state.hr; }
