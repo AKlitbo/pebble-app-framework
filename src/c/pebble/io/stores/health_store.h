@@ -17,15 +17,51 @@
  * @{
  */
 
+struct HealthConfig;
+struct HealthSeed;
+
+/**
+ * @brief An optional part of the store, such as the heart rate graph.
+ *
+ * A face turns a part on by naming it in its HealthConfig, as HEALTH_HR_HISTORY,
+ * HEALTH_STEP_HISTORY, or HEALTH_HR_DAY. The store only calls a part through the pointer the face
+ * hands it, so a face that never names one leaves nothing pointing at its code or its data, and the
+ * linker drops the lot. A setting the store checked while running could not do that, since the
+ * linker cannot see which way it goes. The store skips any hook a part leaves NULL.
+ */
+typedef struct HealthPart
+{
+    /** Empties the part, then takes its seed, or restores and queues its launch read for a live store. */
+    void (*start)(const struct HealthConfig *cfg, const struct HealthSeed *seed);
+    /** The heart rate was read, -1 for none. from_event is true when a heart rate event brought it rather than a peek. */
+    void (*heart_rate)(int hr, bool from_event);
+    /** The day's step count was read again, at most once a minute, -1 for none. */
+    void (*steps)(int steps);
+    /** The face's cadence turn, on a live store only. */
+    void (*poll)(void);
+    /** The part's state summed, so the store redraws the face only when it moved. */
+    uint32_t (*sum)(void);
+} HealthPart;
+
+extern const HealthPart health_part_hr_history;   ///< The last hour of heart rate. Name it as HEALTH_HR_HISTORY
+extern const HealthPart health_part_step_history; ///< Today's steps by the hour. Name it as HEALTH_STEP_HISTORY
+extern const HealthPart health_part_hr_day;       ///< Today's heart rate by the hour. Name it as HEALTH_HR_DAY
+
+#define HEALTH_HR_HISTORY (&health_part_hr_history)     ///< Keeps the last hour of heart rate, a reading a minute, and saves it under persist_key
+#define HEALTH_STEP_HISTORY (&health_part_step_history) ///< Keeps today's steps by the hour
+#define HEALTH_HR_DAY (&health_part_hr_day)             ///< Keeps today's heart rate by the hour with its low, average, and high
+
 /**
  * @brief The rules a face hands the store.
  */
-typedef struct
+typedef struct HealthConfig
 {
     bool     live;         ///< True subscribes the health service and false just keeps the fake data for screenshots
-    bool     hr_history;   ///< Keep the rolling minute by minute heart rate window, for a face that graphs it
-    bool     step_history; ///< Keep the hour by hour step buckets, for a face that graphs them
-    bool     hr_day;       ///< Keep today's heart rate by the hour with its low, average, and high, for a face that charts the day
+    // the three parts each cost real work, so a face names only the ones it shows. one left NULL
+    // is never run, its getter answers empty, and its seed is not taken
+    const HealthPart *hr_history;   ///< HEALTH_HR_HISTORY for a face that graphs the last hour of heart rate, or NULL
+    const HealthPart *step_history; ///< HEALTH_STEP_HISTORY for a face that graphs today's steps by the hour, or NULL
+    const HealthPart *hr_day;       ///< HEALTH_HR_DAY for a face that charts today's heart rate by the hour, or NULL
     // the heart rate and steps are read for every face, since the watch keeps both to hand. these
     // four are not, so each is only read for a face that shows it. the getter for one left off
     // keeps returning its no reading value, -1 for the first three and 0 for the distance
@@ -42,13 +78,14 @@ typedef struct
     bool     hrv_keep_all;      ///< Measure a burst that cannot count rather than drop it, for a panel that shows walking readings
     bool     hrv_live_redraw;   ///< Redraw once a second while a burst is held, for a panel that shows the burst as it happens
     uint32_t hrv_persist_key;   ///< Slot for the saved HRV readings, or 0 to keep them in memory only
-    uint32_t persist_key;  ///< Slot for the saved history so the face owns the key instead of the store
+    uint32_t persist_key;  ///< Slot for the saved heart rate graph, so the face owns the key instead of the store
 } HealthConfig;
 
 /**
- * @brief Optional prefill, or pinned readings when live = false.
+ * @brief Optional prefill, or pinned readings when live = false. A part's seed is only taken when the
+ * face named the part in its HealthConfig.
  */
-typedef struct
+typedef struct HealthSeed
 {
     int hr;         ///< Heart rate in beats per minute
     int steps;      ///< Steps so far today
@@ -112,22 +149,22 @@ void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount
 // so nothing here needs calling once a minute by hand
 
 /**
- * @brief The last hour of heart rate readings, one per minute (a 60 slot buffer). The store
- * fills it on each update. The little charts read it back out.
+ * @brief The last hour of heart rate readings, one per minute (a 60 slot buffer), for a face that
+ * named HEALTH_HR_HISTORY. The little charts read it back out. Empty for a face that did not.
  */
 const uint8_t *health_store_hr_history(void);
 
 /**
- * @brief Today's heart rate by the hour, for a face that set hr_day. Read each hour and the day's
- * low, average, and high from it with the hr_day.h getters. Empty for a face that did not ask.
+ * @brief Today's heart rate by the hour, for a face that named HEALTH_HR_DAY. Read each hour and
+ * the day's low, average, and high from it with the hr_day.h getters. Empty for a face that did not.
  *
  * @return The day, midnight first.
  */
 const HrDay *health_store_hr_day(void);
 
 /**
- * @brief Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots).
- * The bar chart reads it back out.
+ * @brief Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots), for
+ * a face that named HEALTH_STEP_HISTORY. The bar chart reads it back out. Empty for a face that did not.
  */
 const uint16_t *health_store_step_hourly(void);
 
