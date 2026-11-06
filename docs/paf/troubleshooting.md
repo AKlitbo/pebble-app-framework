@@ -15,12 +15,12 @@ The framework tag the unit pins was moved to another commit after the unit recor
 ## A Framework 3 Pin
 
 ```
-watchfaces/mosaic: mosaic/paf.config.json pins v3.0.0, which is framework 3 and needs paf 1.0.0. This paf fills framework 4, so move the unit to a framework 4 tag with paf pin
+watchfaces/mosaic: mosaic/paf.config.json pins v3.0.0, which is framework 3 and needs paf 1.0.0. This paf fills framework 4 and later, so move the unit to one of those tags with paf pin
 ```
 
-`paf` 2.0.0 only fills framework 4. Move the unit with `paf pin mosaic latest` once its faces are ready for framework 4, or keep `paf` 1.0.0 for it until then.
+`paf` 2.0.0 and later fill framework 4 and up, not framework 3. Move the unit with `paf pin mosaic latest` once its faces are ready, or keep `paf` 1.0.0 for it until then.
 
-`paf pin` refuses a framework 3 tag the same way, and lists the framework 4 tags it would take.
+`paf pin` refuses a framework 3 tag the same way, and lists the tags it would take.
 
 ## node_modules from the Other System
 
@@ -115,7 +115,7 @@ paf: watchfaces/mosaic still has a paf.json, which paf 1.0.0 reads. This paf rea
 `paf doctor` also finds a `lib/` that `paf` 1.0.0 filled:
 
 ```
-problem  watchfaces/mosaic/lib is left from paf 1.0.0, which filled it. Delete it, since paf 2.0.0 fills paf/
+problem  watchfaces/mosaic/lib is left from paf 1.0.0, which filled it. Delete it, since paf 2.0.0 and later fill paf/
 ```
 
 ## Workflows on an Older Framework

@@ -88,7 +88,7 @@ The CLI repo has an action that installs `paf` and runs `paf sync --locked`. Loa
 steps:
   - uses: actions/checkout@v7
 
-  - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0
+  - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.1.0
     with:
       face: my-face
 

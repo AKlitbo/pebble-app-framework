@@ -9,7 +9,7 @@ usage: paf <command> [args]
 
   sync [unit] [--locked] [--force]
                                fill each unit's paf/ from its pinned tag and install its node_modules
-  status                       each unit's faces, tag, the newest framework 4 tag, and whether it is ready
+  status                       each unit's faces, tag, the newest framework tag, and whether it is ready
   pin <unit> <tag|latest>
                                move a unit to another tag, showing the changelog between them first
   use <unit> local [path]      point a unit's paf/ at a local framework clone, builds included
@@ -90,7 +90,7 @@ Every unit is checked before the fetch, so a pin `paf` cannot fill or a unit it 
 paf status
 ```
 
-Shows each unit, its faces, the tag it pins, the newest framework 4 tag, and whether it is ready to build. It changes nothing and never fetches, so `LATEST` is as of the last fetch.
+Shows each unit, its faces, the tag it pins, the newest framework tag paf fills, and whether it is ready to build. It changes nothing and never fetches, so `LATEST` is as of the last fetch.
 
 ```
 $ paf status
@@ -99,7 +99,7 @@ watchfaces/ide-vscode   ide-vscode                      v4.0.0  v4.0.0  ready
 watchfaces/mosaic       gridlock, sidereel              v4.0.0  v4.0.0  ready
 watchfaces/radar-array  radar-array                     v4.0.0  v4.0.0  ready
 watchfaces/sketchbook   ridgeline, shoreline, treeline  v4.0.0  v4.0.0  ready
-LATEST is the newest framework 4 tag as of the last fetch, a release when there is one, and paf sync fetches again.
+LATEST is the newest framework tag paf fills as of the last fetch, a release when there is one, and paf sync fetches again.
 
 toolchain: SDK 4.33.1 active. v4.0.0 was built with 4.33.1
 ```
@@ -122,9 +122,9 @@ The `toolchain` line compares the SDK `pebble --version` reports with the SDK ea
 paf pin <unit> <tag|latest>
 ```
 
-Moves one unit to another framework tag, fills its `paf/`, and installs. Naming a face moves the whole family it belongs to. `latest` is the newest framework 4 release, or the newest release candidate when there is no release yet.
+Moves one unit to another framework tag, fills its `paf/`, and installs. Naming a face moves the whole family it belongs to. `latest` is the newest release of framework 4 or later, or the newest release candidate when there is no release yet.
 
-Before it writes anything it checks that the tag is a framework 4 version tag, that the framework has it, and that it has every plugin the unit lists. Then it prints what changed between the two tags in the framework changelog: every breaking entry in full, and a count of the rest. It ends with the generators to run, since a new framework can change what they write.
+Before it writes anything it checks that the tag is a version tag of framework 4 or later, that the framework has it, and that it has every plugin the unit lists. Then it prints what changed between the two tags in the framework changelog: every breaking entry in full, and a count of the rest. It ends with the generators to run, since a new framework can change what they write.
 
 Moving `mosaic` to a newer tag prints this, with the parts in angle brackets filled in:
 
@@ -165,7 +165,7 @@ pebble-watchface-lcars: paf/ is on 8b45d9e from /home/me/src/pebble-app-framewor
 paf sync --locked refuses until paf use pebble-watchface-lcars pinned
 ```
 
-The clone has to be framework 4, with a `src/package.json` named `pebble-app-framework`. Its specs, fixtures, and the plugins the unit does not list are left out, the same as from a tag.
+The clone has to be framework 4 or later, with a `src/package.json` named `pebble-app-framework`. Its specs, fixtures, and the plugins the unit does not list are left out, the same as from a tag.
 
 **`pinned`** puts the unit back on its tag. If the sync refuses, the local copy stays in place.
 

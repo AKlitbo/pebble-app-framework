@@ -4,14 +4,14 @@
 
 `paf build` runs `pebble build` for you, once the framework's build script has staged the face into `targets/`. Every other `pebble` command is yours to run the usual way, such as installing an app, the emulator, logs, screenshots, and SDK installs.
 
-These pages cover `paf` 2.0.0, which fills framework 4 tags. The source and the release downloads are in the [pebble-app-framework-cli](https://github.com/AKlitbo/pebble-app-framework-cli) repo.
+These pages cover `paf` 2.1.0, which fills framework 4 and every later framework that keeps its layout. The source and the release downloads are in the [pebble-app-framework-cli](https://github.com/AKlitbo/pebble-app-framework-cli) repo.
 
 ## Install
 
 Each release on GitHub carries the built package. Install it with npm, in WSL and on Windows alike:
 
 ```sh
-npm i -g https://github.com/AKlitbo/pebble-app-framework-cli/releases/download/v2.0.0/pebble-app-framework-cli-2.0.0.tgz
+npm i -g https://github.com/AKlitbo/pebble-app-framework-cli/releases/download/v2.1.0/pebble-app-framework-cli-2.1.0.tgz
 ```
 
 `paf` needs `git` and Node 22.18 or later, with the npm that ships with it. It has no other dependencies.

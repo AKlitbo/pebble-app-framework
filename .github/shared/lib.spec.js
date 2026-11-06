@@ -243,7 +243,7 @@ describe('fillHint', () => {
 
     const result = fillHint(root);
 
-    expect(result).toBe('Its framework is in lib/, which paf 1.0.0 fills. This framework needs paf 2.0.0, which fills paf/.');
+    expect(result).toBe('Its framework is in lib/, which paf 1.0.0 fills. This framework needs paf 2.1.0 or later, which fills paf/.');
   });
 
   /** A unit with no framework at all only needs a sync. */

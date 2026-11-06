@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0
+      - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.1.0
 
       - name: Prepare Release
         id: release

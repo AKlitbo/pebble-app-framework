@@ -2,7 +2,7 @@
 
 A face repo's build workflow turns every push and pull request into a built `.pbw` for each face, made with the framework, plugins, packages, SDK, and pebble-tool the face's unit committed to. It runs the CLI's sync action to fill the unit's `paf/` from its pinned tag, the framework's `setup-pebble` action to install the SDK and pebble-tool that framework records, and then `paf build`, once per face in a matrix. The workflow names no version of anything but the actions' own tags, so moving a unit to a new framework is a change to its `paf.config.json` and lock, and the next run builds with whatever that framework records.
 
-The sync action is the CLI's [`action.yml`](https://github.com/AKlitbo/pebble-app-framework-cli/blob/v2.0.0/.github/actions/sync/action.yml), and what it runs is [`sync.ts`](https://github.com/AKlitbo/pebble-app-framework-cli/blob/v2.0.0/src/commands/sync.ts). `setup-pebble` is the framework's [`action.yml`](../../.github/actions/setup-pebble/action.yml), with its scripts beside it in [`toolchain.js`](../../.github/actions/setup-pebble/scripts/toolchain.js) and [`verify-pebble.js`](../../.github/actions/setup-pebble/scripts/verify-pebble.js). [Workflows](../paf/workflows.md#ci) has the short version for setting a repo up. The memory steps in the same job are on [Memory Reports](ci-memory.md).
+The sync action is the CLI's [`action.yml`](https://github.com/AKlitbo/pebble-app-framework-cli/blob/v2.1.0/.github/actions/sync/action.yml), and what it runs is [`sync.ts`](https://github.com/AKlitbo/pebble-app-framework-cli/blob/v2.1.0/src/commands/sync.ts). `setup-pebble` is the framework's [`action.yml`](../../.github/actions/setup-pebble/action.yml), with its scripts beside it in [`toolchain.js`](../../.github/actions/setup-pebble/scripts/toolchain.js) and [`verify-pebble.js`](../../.github/actions/setup-pebble/scripts/verify-pebble.js). [Workflows](../paf/workflows.md#ci) has the short version for setting a repo up. The memory steps in the same job are on [Memory Reports](ci-memory.md).
 
 ## The Build Job
 
@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.0.0
+      - uses: AKlitbo/pebble-app-framework-cli/.github/actions/sync@v2.1.0
         with:
           face: ${{ matrix.face }}
 
@@ -58,7 +58,7 @@ The other jobs in the same workflow, such as `paf test`, `paf lint`, `paf typech
 
 The sync action sets up Node, installs `paf`, and runs `paf sync --locked`, passing the face when the workflow gave one.
 
-**paf Comes from the Action's Tag.** The runner checks out the CLI repo at the tag the workflow names to run the action, and the action installs `paf` from that checkout with `npm ci` and a global install. Nothing is fetched from npm for it, so the `@v2.0.0` on the `uses:` line is the `paf` version the job runs.
+**paf Comes from the Action's Tag.** The runner checks out the CLI repo at the tag the workflow names to run the action, and the action installs `paf` from that checkout with `npm ci` and a global install. Nothing is fetched from npm for it, so the `@v2.1.0` on the `uses:` line is the `paf` version the job runs.
 
 **Node.** `node-version` defaults to 24. The install and any `paf` command in the same job run under it, so it has to fall inside the framework's `engines.node`, which on framework 4 is 22.18 or later on Node 22, or 24.2 or later. A `paf` command that runs the framework's tools refuses a Node outside that range before it starts. In a build job, `setup-pebble` then installs the Node major the framework records, and the build runs under that one, so keeping `node-version` at the same major keeps the install and the build on one Node.
 
