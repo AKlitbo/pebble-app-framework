@@ -204,10 +204,22 @@ Files</h2></td></tr>
 <tr class="memdesc:calendar__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active calendar store: holds the agenda, owns the appmessage calendar channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fcalendar_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fcalendar_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="calendar__store_8h.html">src/c/pebble/io/stores/calendar_store.h</a></td></tr>
 <tr class="memdesc:calendar__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active calendar store. It owns the appmessage calendar channel and its place on the shared cadence, so a face just hands it the rules (live / poll interval), optionally seeds it, then reads the events and subscribes for repaints. The phone data flows straight in and nobody wires it. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhr_5Fday_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhr_5Fday_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__hr__day_8c.html">src/c/pebble/io/stores/health_hr_day.c</a></td></tr>
+<tr class="memdesc:health__hr__day_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The health store's heart rate day: today's heart rate by the hour, filled from the watch's minute log at launch and from each reading after. A face turns it on with HEALTH_HR_DAY, and one that never names it carries none of this. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhr_5Fhistory_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhr_5Fhistory_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__hr__history_8c.html">src/c/pebble/io/stores/health_hr_history.c</a></td></tr>
+<tr class="memdesc:health__hr__history_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The health store's heart rate graph: the last hour of heart rate, a reading a minute, saved to flash so a relaunch shows it straight away. A face turns it on with HEALTH_HR_HISTORY, and one that never names it carries none of this. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhrv_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhrv_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__hrv_8c.html">src/c/pebble/io/stores/health_hrv.c</a></td></tr>
+<tr class="memdesc:health__hrv_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heart rate variability half of the health store. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhrv_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fhrv_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__hrv_8h.html">src/c/pebble/io/stores/health_hrv.h</a></td></tr>
+<tr class="memdesc:health__hrv_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heart rate variability half of the health store. It asks the watch for beat gaps now and then, holds the sensor on while a burst is measured, and keeps the latest reading. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstep_5Fhistory_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstep_5Fhistory_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__step__history_8c.html">src/c/pebble/io/stores/health_step_history.c</a></td></tr>
+<tr class="memdesc:health__step__history_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The health store's hourly steps: today's steps by the hour for a bar chart. A face turns it on with HEALTH_STEP_HISTORY, and one that never names it carries none of this. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__store_8c.html">src/c/pebble/io/stores/health_store.c</a></td></tr>
 <tr class="memdesc:health__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active health store: reads the watch's health service and holds the numbers. It owns the service accessors too so it is the single point of truth for health. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__store_8h.html">src/c/pebble/io/stores/health_store.h</a></td></tr>
 <tr class="memdesc:health__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active health store. It subscribes to the watch's health service itself and holds the readings, so a face just hands it the rules, optionally seeds it, then reads the numbers back. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_5Fparts_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fhealth_5Fstore_5Fparts_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="health__store__parts_8h.html">src/c/pebble/io/stores/health_store_parts.h</a></td></tr>
+<tr class="memdesc:health__store__parts_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the health store shares with its optional parts, the heart rate graph, the hourly steps, and the heart rate day. A face never includes this. It names a part in its <a class="el" href="structHealthConfig.html" title="The rules a face hands the store.">HealthConfig</a>. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="location__store_8c.html">src/c/pebble/io/stores/location_store.c</a></td></tr>
 <tr class="memdesc:location__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active location store: holds the phone's coordinates and owns the appmessage coords channel. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="location__store_8h.html">src/c/pebble/io/stores/location_store.h</a></td></tr>
@@ -255,10 +267,14 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structCalendarConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:CalendarSeed" id="r_CalendarSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structCalendarSeed.html">CalendarSeed</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill: shown until the first real reading lands, or pinned when live = false.  <a href="structCalendarSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:HealthHrvConfig" id="r_HealthHrvConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHealthHrvConfig.html">HealthHrvConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The HRV rules the health store passes on from its own config.  <a href="structHealthHrvConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:HealthPart" id="r_HealthPart"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHealthPart.html">HealthPart</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An optional part of the store, such as the heart rate graph.  <a href="structHealthPart.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HealthConfig" id="r_HealthConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHealthConfig.html">HealthConfig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structHealthConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:HealthSeed" id="r_HealthSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHealthSeed.html">HealthSeed</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned readings when live = false.  <a href="structHealthSeed.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned readings when live = false. A part's seed is only taken when the face named the part in its <a class="el" href="structHealthConfig.html" title="The rules a face hands the store.">HealthConfig</a>.  <a href="structHealthSeed.html#details">More...</a><br /></td></tr>
 <tr class="memitem:LocationConfig" id="r_LocationConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structLocationConfig.html">LocationConfig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structLocationConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:LocationSeed" id="r_LocationSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structLocationSeed.html">LocationSeed</a></td></tr>
@@ -281,10 +297,21 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structWeatherConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:WeatherSeed" id="r_WeatherSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structWeatherSeed.html">WeatherSeed</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill: shown until the first real reading lands, or pinned when live = false.  <a href="structWeatherSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Fhours" id="r__5Bstruct_5D_2Es_5Fhours"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__hours.html">[struct].s_hours</a></td></tr>
 <tr class="memitem:_5Bstruct_5D_2Es_5Fstate" id="r__5Bstruct_5D_2Es_5Fstate"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__state.html">[struct].s_state</a></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Fwindow" id="r__5Bstruct_5D_2Es_5Fwindow"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__window.html">[struct].s_window</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:gaf58a7b0cae4bb710b1c4834cd90df0ba" id="r_gaf58a7b0cae4bb710b1c4834cd90df0ba"><td class="memItemLeft"><a id="gaf58a7b0cae4bb710b1c4834cd90df0ba" name="gaf58a7b0cae4bb710b1c4834cd90df0ba"></a>
+#define&#160;</td><td class="memItemRight"><b>HEALTH_HR_HISTORY</b>&#160;&#160;&#160;(&amp;<a class="el" href="#gab3c6bccf52afd82d7b55d77836e6ae39">health_part_hr_history</a>)</td></tr>
+<tr class="memdesc:gaf58a7b0cae4bb710b1c4834cd90df0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps the last hour of heart rate, a reading a minute, and saves it under persist_key. <br /></td></tr>
+<tr class="memitem:gaf48ed118c83053074b953aa994ace230" id="r_gaf48ed118c83053074b953aa994ace230"><td class="memItemLeft"><a id="gaf48ed118c83053074b953aa994ace230" name="gaf48ed118c83053074b953aa994ace230"></a>
+#define&#160;</td><td class="memItemRight"><b>HEALTH_STEP_HISTORY</b>&#160;&#160;&#160;(&amp;<a class="el" href="#ga81bcfdc1cea1875ac0c3a5140dc8d80d">health_part_step_history</a>)</td></tr>
+<tr class="memdesc:gaf48ed118c83053074b953aa994ace230"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps today's steps by the hour. <br /></td></tr>
+<tr class="memitem:ga5f959c79f659728bb1df249db66cefaf" id="r_ga5f959c79f659728bb1df249db66cefaf"><td class="memItemLeft"><a id="ga5f959c79f659728bb1df249db66cefaf" name="ga5f959c79f659728bb1df249db66cefaf"></a>
+#define&#160;</td><td class="memItemRight"><b>HEALTH_HR_DAY</b>&#160;&#160;&#160;(&amp;<a class="el" href="#ga41c920e1c1687197b86fcae1bd17c5aa">health_part_hr_day</a>)</td></tr>
+<tr class="memdesc:ga5f959c79f659728bb1df249db66cefaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps today's heart rate by the hour with its low, average, and high. <br /></td></tr>
 <tr class="memitem:ga60f6d598b8ff59f299aa4ded2e48b695" id="r_ga60f6d598b8ff59f299aa4ded2e48b695"><td class="memItemLeft"><a id="ga60f6d598b8ff59f299aa4ded2e48b695" name="ga60f6d598b8ff59f299aa4ded2e48b695"></a>
 #define&#160;</td><td class="memItemRight"><b>STORE_CADENCE_MAX</b>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:ga60f6d598b8ff59f299aa4ded2e48b695"><td class="mdescLeft">&#160;</td><td class="mdescRight">Room for one entry per store that wants the cadence. <br /></td></tr>
@@ -294,6 +321,16 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:ga23f35f535d443dacbf52ac58dde0b22c" id="r_ga23f35f535d443dacbf52ac58dde0b22c"><td class="memItemLeft">typedef struct HealthPart&#160;</td><td class="memItemRight"><a class="el" href="#ga23f35f535d443dacbf52ac58dde0b22c">HealthPart</a></td></tr>
+<tr class="memdesc:ga23f35f535d443dacbf52ac58dde0b22c"><td class="mdescLeft">&#160;</td><td class="mdescRight">An optional part of the store, such as the heart rate graph.  <br /></td></tr>
+<tr class="memitem:ga70156b27716f66602b46ccb5449a0e84" id="r_ga70156b27716f66602b46ccb5449a0e84"><td class="memItemLeft"><a id="ga70156b27716f66602b46ccb5449a0e84" name="ga70156b27716f66602b46ccb5449a0e84"></a>
+typedef struct HealthConfig&#160;</td><td class="memItemRight"><b>HealthConfig</b></td></tr>
+<tr class="memdesc:ga70156b27716f66602b46ccb5449a0e84"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store. <br /></td></tr>
+<tr class="memitem:gae837bb856deb22a451dd505b6c72e844" id="r_gae837bb856deb22a451dd505b6c72e844"><td class="memItemLeft"><a id="gae837bb856deb22a451dd505b6c72e844" name="gae837bb856deb22a451dd505b6c72e844"></a>
+typedef struct HealthSeed&#160;</td><td class="memItemRight"><b>HealthSeed</b></td></tr>
+<tr class="memdesc:gae837bb856deb22a451dd505b6c72e844"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned readings when live = false. A part's seed is only taken when the face named the part in its <a class="el" href="structHealthConfig.html" title="The rules a face hands the store.">HealthConfig</a>. <br /></td></tr>
+<tr class="memitem:ga67ca3e59cfbc387a8cc491a82a19a3a5" id="r_ga67ca3e59cfbc387a8cc491a82a19a3a5"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga67ca3e59cfbc387a8cc491a82a19a3a5">MinuteRecordFn</a>(int hour, const HealthMinuteData *record, void *context)</td></tr>
+<tr class="memdesc:ga67ca3e59cfbc387a8cc491a82a19a3a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called for each good record a walk of the minute log finds.  <br /></td></tr>
 <tr class="memitem:ga96c4cb6d425115a65f787896786b232f" id="r_ga96c4cb6d425115a65f787896786b232f"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga96c4cb6d425115a65f787896786b232f">BtVibePolicy</a>(bool connected)</td></tr>
 <tr class="memdesc:ga96c4cb6d425115a65f787896786b232f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called on a real bluetooth transition (a change, not the first reading), so the face can buzz however its own settings say. NULL for a silent link change.  <br /></td></tr>
 </table><table class="memberdecls">
@@ -314,17 +351,61 @@ const <a class="el" href="structCalendarStrip.html">CalendarStrip</a> *&#160;</t
 <tr class="memitem:ga53bd3d81fba50d07ccee2739d53c22ae" id="r_ga53bd3d81fba50d07ccee2739d53c22ae"><td class="memItemLeft"><a id="ga53bd3d81fba50d07ccee2739d53c22ae" name="ga53bd3d81fba50d07ccee2739d53c22ae"></a>
 int&#160;</td><td class="memItemRight"><b>calendar_store_age_s</b> (void)</td></tr>
 <tr class="memdesc:ga53bd3d81fba50d07ccee2739d53c22ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
+<tr class="memitem:ga302a123979f2732edb6738c61c8d0650" id="r_ga302a123979f2732edb6738c61c8d0650"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga302a123979f2732edb6738c61c8d0650">health_hrv_start</a> (const <a class="el" href="structHealthHrvConfig.html">HealthHrvConfig</a> *cfg, int seed_ms, const <a class="el" href="structHrvLog.html">HrvLog</a> *seed_log, void(*changed)(void))</td></tr>
+<tr class="memdesc:ga302a123979f2732edb6738c61c8d0650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts HRV with the health store's rules, or starts it again with new ones.  <br /></td></tr>
+<tr class="memitem:ga3de2b90ca51ac9d5544c9cebf2eb7239" id="r_ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3de2b90ca51ac9d5544c9cebf2eb7239">health_hrv_set_period</a> (uint16_t period_sec)</td></tr>
+<tr class="memdesc:ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes how often the watch takes a burst. A period of 0 stops the sampling and puts the reading back to none on a live store, and a seeded store keeps its seed.  <br /></td></tr>
+<tr class="memitem:gabc78d1ab551531851c68847138ad5f16" id="r_gabc78d1ab551531851c68847138ad5f16"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gabc78d1ab551531851c68847138ad5f16">health_hrv_set_rules</a> (uint16_t still_mg, uint16_t walk_steps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
+<tr class="memdesc:gabc78d1ab551531851c68847138ad5f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
+<tr class="memitem:ga223234c2f0122059fd1706b2ff12e987" id="r_ga223234c2f0122059fd1706b2ff12e987"><td class="memItemLeft"><a id="ga223234c2f0122059fd1706b2ff12e987" name="ga223234c2f0122059fd1706b2ff12e987"></a>
+void&#160;</td><td class="memItemRight"><b>health_hrv_on_gap</b> (void)</td></tr>
+<tr class="memdesc:ga223234c2f0122059fd1706b2ff12e987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one beat gap from the watch. The health store calls it for each HRV event. <br /></td></tr>
+<tr class="memitem:ga364caae9b733dea62975ada41d355328" id="r_ga364caae9b733dea62975ada41d355328"><td class="memItemLeft"><a id="ga364caae9b733dea62975ada41d355328" name="ga364caae9b733dea62975ada41d355328"></a>
+void&#160;</td><td class="memItemRight"><b>health_hrv_poll</b> (void)</td></tr>
+<tr class="memdesc:ga364caae9b733dea62975ada41d355328"><td class="mdescLeft">&#160;</td><td class="mdescRight">The HRV turn on the face's cadence, which the health store passes on while it is live. <br /></td></tr>
+<tr class="memitem:gaeb21c567d464de358f3f62a99315af26" id="r_gaeb21c567d464de358f3f62a99315af26"><td class="memItemLeft"><a id="gaeb21c567d464de358f3f62a99315af26" name="gaeb21c567d464de358f3f62a99315af26"></a>
+void&#160;</td><td class="memItemRight"><b>health_hrv_stop</b> (void)</td></tr>
+<tr class="memdesc:gaeb21c567d464de358f3f62a99315af26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the sampling, since the watch keeps an app's request going for an hour after it closes. <br /></td></tr>
+<tr class="memitem:ga0ac4ace78fa451b80f418f1c9dbe1ada" id="r_ga0ac4ace78fa451b80f418f1c9dbe1ada"><td class="memItemLeft"><a id="ga0ac4ace78fa451b80f418f1c9dbe1ada" name="ga0ac4ace78fa451b80f418f1c9dbe1ada"></a>
+int&#160;</td><td class="memItemRight"><b>health_hrv_ms</b> (void)</td></tr>
+<tr class="memdesc:ga0ac4ace78fa451b80f418f1c9dbe1ada"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest reading as RMSSD in ms, or -1 if there is none or it went stale. <br /></td></tr>
+<tr class="memitem:ga37582149cbe5836b28881faff2fd5705" id="r_ga37582149cbe5836b28881faff2fd5705"><td class="memItemLeft"><a id="ga37582149cbe5836b28881faff2fd5705" name="ga37582149cbe5836b28881faff2fd5705"></a>
+bool&#160;</td><td class="memItemRight"><b>health_hrv_sampling</b> (void)</td></tr>
+<tr class="memdesc:ga37582149cbe5836b28881faff2fd5705"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch took the last request for beat gaps. <br /></td></tr>
+<tr class="memitem:ga372e93534744b6e53b18de37df9001f9" id="r_ga372e93534744b6e53b18de37df9001f9"><td class="memItemLeft"><a id="ga372e93534744b6e53b18de37df9001f9" name="ga372e93534744b6e53b18de37df9001f9"></a>
+bool&#160;</td><td class="memItemRight"><b>health_hrv_measuring</b> (void)</td></tr>
+<tr class="memdesc:ga372e93534744b6e53b18de37df9001f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a burst is being measured right now, with the sensor held on. <br /></td></tr>
+<tr class="memitem:ga72d9d6bfe8bca402429ac3e0c09845ae" id="r_ga72d9d6bfe8bca402429ac3e0c09845ae"><td class="memItemLeft"><a id="ga72d9d6bfe8bca402429ac3e0c09845ae" name="ga72d9d6bfe8bca402429ac3e0c09845ae"></a>
+const <a class="el" href="structHrvLog.html">HrvLog</a> *&#160;</td><td class="memItemRight"><b>health_hrv_log</b> (void)</td></tr>
+<tr class="memdesc:ga72d9d6bfe8bca402429ac3e0c09845ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings kept for the face's panels. Never NULL. <br /></td></tr>
+<tr class="memitem:ga4d9e68b5550cc8cf8ca340322883a01b" id="r_ga4d9e68b5550cc8cf8ca340322883a01b"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga4d9e68b5550cc8cf8ca340322883a01b">health_hrv_recent</a> (int back, <a class="el" href="structHrvBurst.html">HrvBurst</a> *out)</td></tr>
+<tr class="memdesc:ga4d9e68b5550cc8cf8ca340322883a01b"><td class="mdescLeft">&#160;</td><td class="mdescRight">One of the latest bursts, dropped ones included, newest first.  <br /></td></tr>
+<tr class="memitem:gab389960f3a525c0eaf80a93a62171c5f" id="r_gab389960f3a525c0eaf80a93a62171c5f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gab389960f3a525c0eaf80a93a62171c5f">health_hrv_live</a> (int *score, int *steps, int *held_sec)</td></tr>
+<tr class="memdesc:gab389960f3a525c0eaf80a93a62171c5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The burst being held right now.  <br /></td></tr>
+<tr class="memitem:ga07a3890b8ec14d604f9c33f3882885fb" id="r_ga07a3890b8ec14d604f9c33f3882885fb"><td class="memItemLeft"><a id="ga07a3890b8ec14d604f9c33f3882885fb" name="ga07a3890b8ec14d604f9c33f3882885fb"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_still_mg</b> (void)</td></tr>
+<tr class="memdesc:ga07a3890b8ec14d604f9c33f3882885fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The still limit in use, in milli-g a sample. <br /></td></tr>
+<tr class="memitem:ga3681a65febb8fb93ba84f3413ffac786" id="r_ga3681a65febb8fb93ba84f3413ffac786"><td class="memItemLeft"><a id="ga3681a65febb8fb93ba84f3413ffac786" name="ga3681a65febb8fb93ba84f3413ffac786"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_walk_steps</b> (void)</td></tr>
+<tr class="memdesc:ga3681a65febb8fb93ba84f3413ffac786"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk. <br /></td></tr>
 <tr class="memitem:gadb98993f8a5d2ea3ac0b99effab8b393" id="r_gadb98993f8a5d2ea3ac0b99effab8b393"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gadb98993f8a5d2ea3ac0b99effab8b393">health_store_init</a> (<a class="el" href="structHealthConfig.html">HealthConfig</a> cfg, const <a class="el" href="structHealthSeed.html">HealthSeed</a> *seed)</td></tr>
 <tr class="memdesc:gadb98993f8a5d2ea3ac0b99effab8b393"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
-<tr class="memitem:ga3d23a155e70dad9fd2ac23f2ec39775c" id="r_ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="memItemLeft"><a id="ga3d23a155e70dad9fd2ac23f2ec39775c" name="ga3d23a155e70dad9fd2ac23f2ec39775c"></a>
-void&#160;</td><td class="memItemRight"><b>health_store_subscribe</b> (void(*cb)(void))</td></tr>
-<tr class="memdesc:ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the numbers change (the screen redraw). <br /></td></tr>
-<tr class="memitem:ga2db6e554fac24c95cdb2823cdb18bef0" id="r_ga2db6e554fac24c95cdb2823cdb18bef0"><td class="memItemLeft"><a id="ga2db6e554fac24c95cdb2823cdb18bef0" name="ga2db6e554fac24c95cdb2823cdb18bef0"></a>
-uint8_t *&#160;</td><td class="memItemRight"><b>health_store_hr_history</b> (void)</td></tr>
-<tr class="memdesc:ga2db6e554fac24c95cdb2823cdb18bef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last hour of heart rate readings, one per minute (a 60 slot buffer). The store fills it on each update. The little charts read it back out. <br /></td></tr>
+<tr class="memitem:ga3d23a155e70dad9fd2ac23f2ec39775c" id="r_ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3d23a155e70dad9fd2ac23f2ec39775c">health_store_subscribe</a> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the numbers change (the screen redraw).  <br /></td></tr>
+<tr class="memitem:ga0e1f4e480b7ae883e73cc7270bbf7ffc" id="r_ga0e1f4e480b7ae883e73cc7270bbf7ffc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga0e1f4e480b7ae883e73cc7270bbf7ffc">health_store_deinit</a> (void)</td></tr>
+<tr class="memdesc:ga0e1f4e480b7ae883e73cc7270bbf7ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops what the store asked of the watch. Call from the face's deinit.  <br /></td></tr>
+<tr class="memitem:gad4831647379f8aee421bde9e18cf09b9" id="r_gad4831647379f8aee421bde9e18cf09b9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad4831647379f8aee421bde9e18cf09b9">health_store_set_hrv_period</a> (uint16_t period_sec)</td></tr>
+<tr class="memdesc:gad4831647379f8aee421bde9e18cf09b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes how often the watch takes a burst of beat gaps, such as when the wearer changes a setting or places a panel. A period of 0 stops the sampling and puts the reading back to none.  <br /></td></tr>
+<tr class="memitem:gae4ed9e0080bd4d0d9147692a3ba2539f" id="r_gae4ed9e0080bd4d0d9147692a3ba2539f"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gae4ed9e0080bd4d0d9147692a3ba2539f">health_store_set_hrv_rules</a> (uint16_t still_mg, uint16_t walk_steps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
+<tr class="memdesc:gae4ed9e0080bd4d0d9147692a3ba2539f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes which HRV bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
+<tr class="memitem:gab42f7ec6f1b3c4b0403d76027e1a856e" id="r_gab42f7ec6f1b3c4b0403d76027e1a856e"><td class="memItemLeft"><a id="gab42f7ec6f1b3c4b0403d76027e1a856e" name="gab42f7ec6f1b3c4b0403d76027e1a856e"></a>
+const uint8_t *&#160;</td><td class="memItemRight"><b>health_store_hr_history</b> (void)</td></tr>
+<tr class="memdesc:gab42f7ec6f1b3c4b0403d76027e1a856e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last hour of heart rate readings, one per minute (a 60 slot buffer), for a face that named HEALTH_HR_HISTORY. The little charts read it back out. Empty for a face that did not. <br /></td></tr>
+<tr class="memitem:gaa83227ebe779ce764a7ce57df3311f77" id="r_gaa83227ebe779ce764a7ce57df3311f77"><td class="memItemLeft">const <a class="el" href="structHrDay.html">HrDay</a> *&#160;</td><td class="memItemRight"><a class="el" href="#gaa83227ebe779ce764a7ce57df3311f77">health_store_hr_day</a> (void)</td></tr>
+<tr class="memdesc:gaa83227ebe779ce764a7ce57df3311f77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's heart rate by the hour, for a face that named HEALTH_HR_DAY. Read each hour and the day's low, average, and high from it with the <a class="el" href="hr__day_8h.html" title="Today&#39;s heart rate by the hour, for a panel that charts the day with its low, average,...">hr_day.h</a> getters. Empty for a face that did not.  <br /></td></tr>
 <tr class="memitem:ga34ce959b4e7f9802230c7e1319b3bf28" id="r_ga34ce959b4e7f9802230c7e1319b3bf28"><td class="memItemLeft"><a id="ga34ce959b4e7f9802230c7e1319b3bf28" name="ga34ce959b4e7f9802230c7e1319b3bf28"></a>
 const uint16_t *&#160;</td><td class="memItemRight"><b>health_store_step_hourly</b> (void)</td></tr>
-<tr class="memdesc:ga34ce959b4e7f9802230c7e1319b3bf28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots). The bar chart reads it back out. <br /></td></tr>
+<tr class="memdesc:ga34ce959b4e7f9802230c7e1319b3bf28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots), for a face that named HEALTH_STEP_HISTORY. The bar chart reads it back out. Empty for a face that did not. <br /></td></tr>
 <tr class="memitem:ga7f6eb32c1ad9a2a9ffa41d13dc507204" id="r_ga7f6eb32c1ad9a2a9ffa41d13dc507204"><td class="memItemLeft"><a id="ga7f6eb32c1ad9a2a9ffa41d13dc507204" name="ga7f6eb32c1ad9a2a9ffa41d13dc507204"></a>
 int&#160;</td><td class="memItemRight"><b>health_store_step_hours</b> (void)</td></tr>
 <tr class="memdesc:ga7f6eb32c1ad9a2a9ffa41d13dc507204"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of the hourly step buckets hold a real value (0 to 24). Steps count 0 as a real reading (a quiet hour), so a chart needs the count rather than a no-data marker. <br /></td></tr>
@@ -346,6 +427,33 @@ int&#160;</td><td class="memItemRight"><b>health_store_active_min</b> (void)</td
 <tr class="memitem:ga82d8e5fff446bf3a7e20228c8cb49df9" id="r_ga82d8e5fff446bf3a7e20228c8cb49df9"><td class="memItemLeft"><a id="ga82d8e5fff446bf3a7e20228c8cb49df9" name="ga82d8e5fff446bf3a7e20228c8cb49df9"></a>
 int&#160;</td><td class="memItemRight"><b>health_store_distance_m</b> (void)</td></tr>
 <tr class="memdesc:ga82d8e5fff446bf3a7e20228c8cb49df9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's walked distance in meters, or 0 if we cannot read it. <br /></td></tr>
+<tr class="memitem:ga46bf291eab60978c19fcd948808a0196" id="r_ga46bf291eab60978c19fcd948808a0196"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga46bf291eab60978c19fcd948808a0196">health_store_hrv_ms</a> (void)</td></tr>
+<tr class="memdesc:ga46bf291eab60978c19fcd948808a0196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heart rate variability as RMSSD in ms, or -1 if we have not got one, it went stale, or the face is built without HEALTH_HRV.  <br /></td></tr>
+<tr class="memitem:gab79c3a58fb2df070dbd4e0abcce41a22" id="r_gab79c3a58fb2df070dbd4e0abcce41a22"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gab79c3a58fb2df070dbd4e0abcce41a22">health_store_hrv_sampling</a> (void)</td></tr>
+<tr class="memdesc:gab79c3a58fb2df070dbd4e0abcce41a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch took the last request for beat gaps.  <br /></td></tr>
+<tr class="memitem:ga847895390fe76e993bc34ea4f2202a59" id="r_ga847895390fe76e993bc34ea4f2202a59"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga847895390fe76e993bc34ea4f2202a59">health_store_hrv_measuring</a> (void)</td></tr>
+<tr class="memdesc:ga847895390fe76e993bc34ea4f2202a59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a burst of beat gaps is being measured right now, with the sensor held on.  <br /></td></tr>
+<tr class="memitem:ga4ae6d44d0ab68b09306d57bae82eae77" id="r_ga4ae6d44d0ab68b09306d57bae82eae77"><td class="memItemLeft">const <a class="el" href="structHrvLog.html">HrvLog</a> *&#160;</td><td class="memItemRight"><a class="el" href="#ga4ae6d44d0ab68b09306d57bae82eae77">health_store_hrv_log</a> (void)</td></tr>
+<tr class="memdesc:ga4ae6d44d0ab68b09306d57bae82eae77"><td class="mdescLeft">&#160;</td><td class="mdescRight">The HRV readings kept for the panels: the latest few with what the wearer was doing, today by the hour, last night's average, and the latest of each kind.  <br /></td></tr>
+<tr class="memitem:ga4acc41f26f8a766529d223582a98cf01" id="r_ga4acc41f26f8a766529d223582a98cf01"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga4acc41f26f8a766529d223582a98cf01">health_store_hrv_recent</a> (int back, <a class="el" href="structHrvBurst.html">HrvBurst</a> *out)</td></tr>
+<tr class="memdesc:ga4acc41f26f8a766529d223582a98cf01"><td class="mdescLeft">&#160;</td><td class="mdescRight">One of the latest HRV bursts as a tuning panel shows it, dropped ones included, newest first. Kept in memory only, so a face starts each launch with none.  <br /></td></tr>
+<tr class="memitem:ga651a1038499ef99c95416e64e71242d5" id="r_ga651a1038499ef99c95416e64e71242d5"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga651a1038499ef99c95416e64e71242d5">health_store_hrv_live</a> (int *score, int *steps, int *held_sec)</td></tr>
+<tr class="memdesc:ga651a1038499ef99c95416e64e71242d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The HRV burst being held right now, for a panel that shows it as it happens.  <br /></td></tr>
+<tr class="memitem:ga27882c04c06b01103dabf8fdc8069a61" id="r_ga27882c04c06b01103dabf8fdc8069a61"><td class="memItemLeft">uint16_t&#160;</td><td class="memItemRight"><a class="el" href="#ga27882c04c06b01103dabf8fdc8069a61">health_store_hrv_still_mg</a> (void)</td></tr>
+<tr class="memdesc:ga27882c04c06b01103dabf8fdc8069a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">The still limit in use, in milli-g a sample, so a panel shows the same number as the setting.  <br /></td></tr>
+<tr class="memitem:ga3e2d5278051f5cb8fc972614b3b6054f" id="r_ga3e2d5278051f5cb8fc972614b3b6054f"><td class="memItemLeft">uint16_t&#160;</td><td class="memItemRight"><a class="el" href="#ga3e2d5278051f5cb8fc972614b3b6054f">health_store_hrv_walk_steps</a> (void)</td></tr>
+<tr class="memdesc:ga3e2d5278051f5cb8fc972614b3b6054f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk, so a panel shows the same number as the setting.  <br /></td></tr>
+<tr class="memitem:ga91ad7f45647093a68eb19f67e6605c26" id="r_ga91ad7f45647093a68eb19f67e6605c26"><td class="memItemLeft"><a id="ga91ad7f45647093a68eb19f67e6605c26" name="ga91ad7f45647093a68eb19f67e6605c26"></a>
+void&#160;</td><td class="memItemRight"><b>health_store_redraw</b> (void)</td></tr>
+<tr class="memdesc:ga91ad7f45647093a68eb19f67e6605c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the face to redraw, for a part whose own timer changed what it holds. <br /></td></tr>
+<tr class="memitem:ga0ea9c8677cce316fa3d469d08faafc52" id="r_ga0ea9c8677cce316fa3d469d08faafc52"><td class="memItemLeft">time_t&#160;</td><td class="memItemRight"><a class="el" href="#ga0ea9c8677cce316fa3d469d08faafc52">health_hour_start</a> (const struct tm *today, int hour)</td></tr>
+<tr class="memdesc:ga0ea9c8677cce316fa3d469d08faafc52"><td class="mdescLeft">&#160;</td><td class="mdescRight">When a local hour of today starts.  <br /></td></tr>
+<tr class="memitem:gab3d46e137f1e65f3e36baf89f1557b87" id="r_gab3d46e137f1e65f3e36baf89f1557b87"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gab3d46e137f1e65f3e36baf89f1557b87">health_metric_available</a> (HealthMetric metric, time_t start, time_t end)</td></tr>
+<tr class="memdesc:gab3d46e137f1e65f3e36baf89f1557b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch actually has a reading for a metric over a time span.  <br /></td></tr>
+<tr class="memitem:gac028dda967096a1c36f3deff186a846c" id="r_gac028dda967096a1c36f3deff186a846c"><td class="memItemLeft">HealthMinuteData *&#160;</td><td class="memItemRight"><a class="el" href="#gac028dda967096a1c36f3deff186a846c">health_scratch_take</a> (int records)</td></tr>
+<tr class="memdesc:gac028dda967096a1c36f3deff186a846c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate scratch room for a minute-history read, off the heap for the length of the read rather than sitting in the app's fixed footprint.  <br /></td></tr>
+<tr class="memitem:gaf18cc0c1c6259577a616c734457c2f40" id="r_gaf18cc0c1c6259577a616c734457c2f40"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gaf18cc0c1c6259577a616c734457c2f40">health_walk_minute_log</a> (const struct tm *local, int first_hour, int end_hour, time_t until, <a class="el" href="#ga67ca3e59cfbc387a8cc491a82a19a3a5">MinuteRecordFn</a> each, void *context)</td></tr>
+<tr class="memdesc:gaf18cc0c1c6259577a616c734457c2f40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Walks the watch's minute log over today's hours and hands each good record, with the hour it falls in, to the <span class="tt">each</span> callback.  <br /></td></tr>
 <tr class="memitem:ga2027df7324b501eba2a93b048974f50c" id="r_ga2027df7324b501eba2a93b048974f50c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga2027df7324b501eba2a93b048974f50c">location_store_init</a> (<a class="el" href="structLocationConfig.html">LocationConfig</a> cfg, const <a class="el" href="structLocationSeed.html">LocationSeed</a> *seed)</td></tr>
 <tr class="memdesc:ga2027df7324b501eba2a93b048974f50c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:ga59425f07e9de612bbcaae2dd0bcf266f" id="r_ga59425f07e9de612bbcaae2dd0bcf266f"><td class="memItemLeft"><a id="ga59425f07e9de612bbcaae2dd0bcf266f" name="ga59425f07e9de612bbcaae2dd0bcf266f"></a>
@@ -500,6 +608,18 @@ int&#160;</td><td class="memItemRight"><b>weather_store_precip_chance</b> (void)
 int&#160;</td><td class="memItemRight"><b>weather_store_age_s</b> (void)</td></tr>
 <tr class="memdesc:ga7856768b2bde2cf55422b2c3b5ea3b4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many seconds since the last reading turned up, or -1 if we have none. <br /></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:gab3c6bccf52afd82d7b55d77836e6ae39" id="r_gab3c6bccf52afd82d7b55d77836e6ae39"><td class="memItemLeft"><a id="gab3c6bccf52afd82d7b55d77836e6ae39" name="gab3c6bccf52afd82d7b55d77836e6ae39"></a>
+const <a class="el" href="structHealthPart.html">HealthPart</a>&#160;</td><td class="memItemRight"><b>health_part_hr_history</b></td></tr>
+<tr class="memdesc:gab3c6bccf52afd82d7b55d77836e6ae39"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last hour of heart rate. Name it as HEALTH_HR_HISTORY. <br /></td></tr>
+<tr class="memitem:ga81bcfdc1cea1875ac0c3a5140dc8d80d" id="r_ga81bcfdc1cea1875ac0c3a5140dc8d80d"><td class="memItemLeft"><a id="ga81bcfdc1cea1875ac0c3a5140dc8d80d" name="ga81bcfdc1cea1875ac0c3a5140dc8d80d"></a>
+const <a class="el" href="structHealthPart.html">HealthPart</a>&#160;</td><td class="memItemRight"><b>health_part_step_history</b></td></tr>
+<tr class="memdesc:ga81bcfdc1cea1875ac0c3a5140dc8d80d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps by the hour. Name it as HEALTH_STEP_HISTORY. <br /></td></tr>
+<tr class="memitem:ga41c920e1c1687197b86fcae1bd17c5aa" id="r_ga41c920e1c1687197b86fcae1bd17c5aa"><td class="memItemLeft"><a id="ga41c920e1c1687197b86fcae1bd17c5aa" name="ga41c920e1c1687197b86fcae1bd17c5aa"></a>
+const <a class="el" href="structHealthPart.html">HealthPart</a>&#160;</td><td class="memItemRight"><b>health_part_hr_day</b></td></tr>
+<tr class="memdesc:ga41c920e1c1687197b86fcae1bd17c5aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's heart rate by the hour. Name it as HEALTH_HR_DAY. <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-member-group" class="groupheader"><a id="member-group" name="member-group"></a>
 Store tags</h2></td></tr>
 <tr><td class="ititle" colspan="2"><p>Every store stamps the first byte of its blob with a tag. The high nibble names the store and the low nibble is that store's layout revision.</p>
@@ -520,6 +640,9 @@ Store tags</h2></td></tr>
 <tr class="memitem:gaa19bf75ee3cb87a3a31a97238f4dcf73" id="r_gaa19bf75ee3cb87a3a31a97238f4dcf73"><td class="memItemLeft"><a id="gaa19bf75ee3cb87a3a31a97238f4dcf73" name="gaa19bf75ee3cb87a3a31a97238f4dcf73"></a>
 #define&#160;</td><td class="memItemRight"><b>STORE_TAG_LOCATION</b>&#160;&#160;&#160;0x51</td></tr>
 <tr class="memdesc:gaa19bf75ee3cb87a3a31a97238f4dcf73"><td class="mdescLeft">&#160;</td><td class="mdescRight">The location store's last fix. <br /></td></tr>
+<tr class="memitem:ga5dd549de392b92225c04280a50970e14" id="r_ga5dd549de392b92225c04280a50970e14"><td class="memItemLeft"><a id="ga5dd549de392b92225c04280a50970e14" name="ga5dd549de392b92225c04280a50970e14"></a>
+#define&#160;</td><td class="memItemRight"><b>STORE_TAG_HRV</b>&#160;&#160;&#160;0x61</td></tr>
+<tr class="memdesc:ga5dd549de392b92225c04280a50970e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">The health store's saved HRV readings. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Weather, health, calendar, stocks, and the other readings a face shows. </p>
@@ -577,7 +700,7 @@ Store tags</h2></td></tr>
 <div class="line">.dew_point = <a class="code hl_define" href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>,                                \</div>
 <div class="line">.forecast_hourly = NULL, .forecast_daily = NULL })</div>
 <div class="ttc" id="astructWeatherSeed_html"><div class="ttname"><a href="structWeatherSeed.html">WeatherSeed</a></div><div class="ttdoc">Optional prefill: shown until the first real reading lands, or pinned when live = false.</div><div class="ttdef"><b>Definition</b> weather_store.h:36</div></div>
-<div class="ttc" id="awire__caps_8g_8h_html_ad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A column with no reading, so the watch draws a placeholder.</div><div class="ttdef"><b>Definition</b> wire_caps.g.h:30</div></div>
+<div class="ttc" id="awire__caps_8g_8h_html_ad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A column with no reading, so the watch draws a placeholder.</div><div class="ttdef"><b>Definition</b> wire_caps.g.h:28</div></div>
 </div><!-- fragment --><p>A <a class="el" href="structWeatherSeed.html" title="Optional prefill: shown until the first real reading lands, or pinned when live = false.">WeatherSeed</a> with every optional reading already set to its no-data value. Spread it and override only what you have, so a partial seed still reads as "--" instead of a bogus 0. Copy it from a named static const, which the linker drops with the dev code in a release build. Written straight into a local, it leaves an unnamed copy in .data that every build keeps. </p><div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> s_empty = <a class="code hl_define" href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a>;</div>
 <div class="line"><a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> seed = s_empty;</div>
 <div class="line">seed.<a class="code hl_variable" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">temp</a> = 23;</div>
@@ -605,6 +728,47 @@ Store tags</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">connected</td><td>True when the link just came up, false when it just dropped. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga23f35f535d443dacbf52ac58dde0b22c" name="ga23f35f535d443dacbf52ac58dde0b22c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga23f35f535d443dacbf52ac58dde0b22c">&#9670;&#160;</a></span>HealthPart</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct HealthPart HealthPart</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>An optional part of the store, such as the heart rate graph. </p>
+<p>A face turns a part on by naming it in its <a class="el" href="structHealthConfig.html" title="The rules a face hands the store.">HealthConfig</a>, as HEALTH_HR_HISTORY, HEALTH_STEP_HISTORY, or HEALTH_HR_DAY. The store only calls a part through the pointer the face hands it, so a face that never names one leaves nothing pointing at its code or its data, and the linker drops the lot. A setting the store checked while running could not do that, since the linker cannot see which way it goes. The store skips any hook a part leaves NULL. </p>
+
+</div>
+</div>
+<a id="ga67ca3e59cfbc387a8cc491a82a19a3a5" name="ga67ca3e59cfbc387a8cc491a82a19a3a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga67ca3e59cfbc387a8cc491a82a19a3a5">&#9670;&#160;</a></span>MinuteRecordFn</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) MinuteRecordFn(int hour, const HealthMinuteData *record, void *context)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called for each good record a walk of the minute log finds. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hour</td><td>The hour of today the record falls in. </td></tr>
+    <tr><td class="paramname">record</td><td>The record. </td></tr>
+    <tr><td class="paramname">context</td><td>What the caller handed the walk. </td></tr>
   </table>
   </dd>
 </dl>
@@ -693,6 +857,516 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="ga0ea9c8677cce316fa3d469d08faafc52" name="ga0ea9c8677cce316fa3d469d08faafc52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0ea9c8677cce316fa3d469d08faafc52">&#9670;&#160;</a></span>health_hour_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">time_t health_hour_start </td>
+          <td>(</td>
+          <td class="paramtype">const struct tm *</td>          <td class="paramname"><span class="paramname"><em>today</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>hour</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>When a local hour of today starts. </p>
+<p>Counted on the wall clock rather than as hours since midnight, because on the days the clocks change the two part ways by an hour. An hour past the end of the day rolls onto the next midnight, and the hour a spring change skips starts where the one after it does.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">today</td><td>Today's local time, broken apart. </td></tr>
+    <tr><td class="paramname">hour</td><td>The hour of the day, 0 to 24. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The epoch the hour starts at. </dd></dl>
+
+</div>
+</div>
+<a id="gab389960f3a525c0eaf80a93a62171c5f" name="gab389960f3a525c0eaf80a93a62171c5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab389960f3a525c0eaf80a93a62171c5f">&#9670;&#160;</a></span>health_hrv_live()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_hrv_live </td>
+          <td>(</td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>score</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>steps</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>held_sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The burst being held right now. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">score</td><td>Its movement score so far, or -1 before there is one. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">steps</td><td>Its steps so far, or -1 when not known. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">held_sec</td><td>How long it has been held. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False when no burst is being held. </dd></dl>
+
+</div>
+</div>
+<a id="ga4d9e68b5550cc8cf8ca340322883a01b" name="ga4d9e68b5550cc8cf8ca340322883a01b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4d9e68b5550cc8cf8ca340322883a01b">&#9670;&#160;</a></span>health_hrv_recent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_hrv_recent </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>back</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structHrvBurst.html">HrvBurst</a> *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One of the latest bursts, dropped ones included, newest first. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">back</td><td>0 for the newest. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The burst. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False when there is none that far back. </dd></dl>
+
+</div>
+</div>
+<a id="ga3de2b90ca51ac9d5544c9cebf2eb7239" name="ga3de2b90ca51ac9d5544c9cebf2eb7239"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3de2b90ca51ac9d5544c9cebf2eb7239">&#9670;&#160;</a></span>health_hrv_set_period()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_hrv_set_period </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>period_sec</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Changes how often the watch takes a burst. A period of 0 stops the sampling and puts the reading back to none on a live store, and a seeded store keeps its seed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">period_sec</td><td>How often in seconds, or 0 for not at all. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gabc78d1ab551531851c68847138ad5f16" name="gabc78d1ab551531851c68847138ad5f16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabc78d1ab551531851c68847138ad5f16">&#9670;&#160;</a></span>health_hrv_set_rules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_hrv_set_rules </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>still_mg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>walk_steps</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a></td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>keep_all</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>live_redraw</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">still_mg</td><td>The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT. </td></tr>
+    <tr><td class="paramname">walk_steps</td><td>The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT. </td></tr>
+    <tr><td class="paramname">count</td><td>Which bursts count for the main reading. </td></tr>
+    <tr><td class="paramname">keep_all</td><td>Measure a burst that cannot count rather than drop it. </td></tr>
+    <tr><td class="paramname">live_redraw</td><td>Redraw the face once a second while a burst is held. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga302a123979f2732edb6738c61c8d0650" name="ga302a123979f2732edb6738c61c8d0650"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga302a123979f2732edb6738c61c8d0650">&#9670;&#160;</a></span>health_hrv_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_hrv_start </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structHealthHrvConfig.html">HealthHrvConfig</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>seed_ms</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structHrvLog.html">HrvLog</a> *</td>          <td class="paramname"><span class="paramname"><em>seed_log</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>changed&#160;</em></span>)(void)&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Starts HRV with the health store's rules, or starts it again with new ones. </p>
+<p>Started again live on a live store, only the period and the movement rules change, and the burst being added up, the reading shown, and the log are kept. Started with <span class="tt">live</span> false, any request an earlier start made is stopped and the seed is shown instead.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules. </td></tr>
+    <tr><td class="paramname">seed_ms</td><td>A reading to start with, or 0 or less for none. </td></tr>
+    <tr><td class="paramname">seed_log</td><td>A log to start with for screenshots, or NULL to restore the saved one. </td></tr>
+    <tr><td class="paramname">changed</td><td>Called whenever the reading or the log changes, so the face can redraw. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gab3d46e137f1e65f3e36baf89f1557b87" name="gab3d46e137f1e65f3e36baf89f1557b87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab3d46e137f1e65f3e36baf89f1557b87">&#9670;&#160;</a></span>health_metric_available()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_metric_available </td>
+          <td>(</td>
+          <td class="paramtype">HealthMetric</td>          <td class="paramname"><span class="paramname"><em>metric</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t</td>          <td class="paramname"><span class="paramname"><em>start</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t</td>          <td class="paramname"><span class="paramname"><em>end</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the watch actually has a reading for a metric over a time span. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">metric</td><td>The health metric to check. </td></tr>
+    <tr><td class="paramname">start</td><td>Start of the span to check. </td></tr>
+    <tr><td class="paramname">end</td><td>End of the span to check. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>True when the watch reports the metric available over that span. </dd></dl>
+
+</div>
+</div>
+<a id="gac028dda967096a1c36f3deff186a846c" name="gac028dda967096a1c36f3deff186a846c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac028dda967096a1c36f3deff186a846c">&#9670;&#160;</a></span>health_scratch_take()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">HealthMinuteData * health_scratch_take </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>records</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Allocate scratch room for a minute-history read, off the heap for the length of the read rather than sitting in the app's fixed footprint. </p>
+<p>What a Pebble app runs out of first is its image, and the heap does not count towards that.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">records</td><td>How many minute records to make room for. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The scratch buffer, or NULL if the allocation failed. </dd></dl>
+
+</div>
+</div>
+<a id="ga0e1f4e480b7ae883e73cc7270bbf7ffc" name="ga0e1f4e480b7ae883e73cc7270bbf7ffc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0e1f4e480b7ae883e73cc7270bbf7ffc">&#9670;&#160;</a></span>health_store_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_store_deinit </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stops what the store asked of the watch. Call from the face's deinit. </p>
+<p>The watch keeps an app's request for heart rate variability going for an hour after the app closes, so a face with HRV that leaves this out has the sensor sampling for that hour whenever the wearer opens an app from it. Without HRV it does nothing. </p>
+
+</div>
+</div>
+<a id="gaa83227ebe779ce764a7ce57df3311f77" name="gaa83227ebe779ce764a7ce57df3311f77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa83227ebe779ce764a7ce57df3311f77">&#9670;&#160;</a></span>health_store_hr_day()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structHrDay.html">HrDay</a> * health_store_hr_day </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Today's heart rate by the hour, for a face that named HEALTH_HR_DAY. Read each hour and the day's low, average, and high from it with the <a class="el" href="hr__day_8h.html" title="Today&#39;s heart rate by the hour, for a panel that charts the day with its low, average,...">hr_day.h</a> getters. Empty for a face that did not. </p>
+<dl class="section return"><dt>Returns</dt><dd>The day, midnight first. </dd></dl>
+
+</div>
+</div>
+<a id="ga651a1038499ef99c95416e64e71242d5" name="ga651a1038499ef99c95416e64e71242d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga651a1038499ef99c95416e64e71242d5">&#9670;&#160;</a></span>health_store_hrv_live()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_store_hrv_live </td>
+          <td>(</td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>score</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>steps</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>held_sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The HRV burst being held right now, for a panel that shows it as it happens. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">score</td><td>Its movement score so far, or -1 before there is one. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">steps</td><td>Its steps so far, or -1 when not known. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">held_sec</td><td>How long it has been held. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False when no burst is being held, or in a face built without HEALTH_HRV. </dd></dl>
+
+</div>
+</div>
+<a id="ga4ae6d44d0ab68b09306d57bae82eae77" name="ga4ae6d44d0ab68b09306d57bae82eae77"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4ae6d44d0ab68b09306d57bae82eae77">&#9670;&#160;</a></span>health_store_hrv_log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="structHrvLog.html">HrvLog</a> * health_store_hrv_log </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The HRV readings kept for the panels: the latest few with what the wearer was doing, today by the hour, last night's average, and the latest of each kind. </p>
+<p>Read it with the hrv_log functions in <a class="el" href="hrv__log_8h.html" title="The heart rate variability readings kept for a face&#39;s panels: the last few with what the wearer was d...">health/hrv_log.h</a>. A face built without HEALTH_HRV gets an empty log, so a panel that reads it still draws.</p>
+<dl class="section return"><dt>Returns</dt><dd>The log. Never NULL. </dd></dl>
+
+</div>
+</div>
+<a id="ga847895390fe76e993bc34ea4f2202a59" name="ga847895390fe76e993bc34ea4f2202a59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga847895390fe76e993bc34ea4f2202a59">&#9670;&#160;</a></span>health_store_hrv_measuring()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_store_hrv_measuring </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether a burst of beat gaps is being measured right now, with the sensor held on. </p>
+<dl class="section return"><dt>Returns</dt><dd>True for the 40 to 90 seconds a burst is held, false otherwise and in a face built without HEALTH_HRV. </dd></dl>
+
+</div>
+</div>
+<a id="ga46bf291eab60978c19fcd948808a0196" name="ga46bf291eab60978c19fcd948808a0196"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga46bf291eab60978c19fcd948808a0196">&#9670;&#160;</a></span>health_store_hrv_ms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int health_store_hrv_ms </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Heart rate variability as RMSSD in ms, or -1 if we have not got one, it went stale, or the face is built without HEALTH_HRV. </p>
+<p>Only a watch whose sensor reports beat gaps gives readings, which today is the Pebble Time 2. </p>
+
+</div>
+</div>
+<a id="ga4acc41f26f8a766529d223582a98cf01" name="ga4acc41f26f8a766529d223582a98cf01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4acc41f26f8a766529d223582a98cf01">&#9670;&#160;</a></span>health_store_hrv_recent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_store_hrv_recent </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>back</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structHrvBurst.html">HrvBurst</a> *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>One of the latest HRV bursts as a tuning panel shows it, dropped ones included, newest first. Kept in memory only, so a face starts each launch with none. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">back</td><td>0 for the newest. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>The burst. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False when there is none that far back, or in a face built without HEALTH_HRV. </dd></dl>
+
+</div>
+</div>
+<a id="gab79c3a58fb2df070dbd4e0abcce41a22" name="gab79c3a58fb2df070dbd4e0abcce41a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab79c3a58fb2df070dbd4e0abcce41a22">&#9670;&#160;</a></span>health_store_hrv_sampling()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_store_hrv_sampling </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether the watch took the last request for beat gaps. </p>
+<p>False on a watch without the sensor, with heart rate turned off in the watch's Health settings, with a period of 0, or in a face built without HEALTH_HRV.</p>
+<dl class="section return"><dt>Returns</dt><dd>True while the watch is sampling for HRV. </dd></dl>
+
+</div>
+</div>
+<a id="ga27882c04c06b01103dabf8fdc8069a61" name="ga27882c04c06b01103dabf8fdc8069a61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga27882c04c06b01103dabf8fdc8069a61">&#9670;&#160;</a></span>health_store_hrv_still_mg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t health_store_hrv_still_mg </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The still limit in use, in milli-g a sample, so a panel shows the same number as the setting. </p>
+<dl class="section return"><dt>Returns</dt><dd>The limit. </dd></dl>
+
+</div>
+</div>
+<a id="ga3e2d5278051f5cb8fc972614b3b6054f" name="ga3e2d5278051f5cb8fc972614b3b6054f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3e2d5278051f5cb8fc972614b3b6054f">&#9670;&#160;</a></span>health_store_hrv_walk_steps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t health_store_hrv_walk_steps </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The steps through a burst that make it a walk, so a panel shows the same number as the setting. </p>
+<dl class="section return"><dt>Returns</dt><dd>The step count. </dd></dl>
+
+</div>
+</div>
 <a id="gadb98993f8a5d2ea3ac0b99effab8b393" name="gadb98993f8a5d2ea3ac0b99effab8b393"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gadb98993f8a5d2ea3ac0b99effab8b393">&#9670;&#160;</a></span>health_store_init()</h2>
 
@@ -720,6 +1394,160 @@ Store tags</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="gad4831647379f8aee421bde9e18cf09b9" name="gad4831647379f8aee421bde9e18cf09b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad4831647379f8aee421bde9e18cf09b9">&#9670;&#160;</a></span>health_store_set_hrv_period()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_store_set_hrv_period </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>period_sec</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Changes how often the watch takes a burst of beat gaps, such as when the wearer changes a setting or places a panel. A period of 0 stops the sampling and puts the reading back to none. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">period_sec</td><td>How often in seconds, or 0 for no HRV. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gae4ed9e0080bd4d0d9147692a3ba2539f" name="gae4ed9e0080bd4d0d9147692a3ba2539f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae4ed9e0080bd4d0d9147692a3ba2539f">&#9670;&#160;</a></span>health_store_set_hrv_rules()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_store_set_hrv_rules </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>still_mg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>walk_steps</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a></td>          <td class="paramname"><span class="paramname"><em>count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>keep_all</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>live_redraw</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Changes which HRV bursts count and how they are measured, such as when the wearer changes a setting or places a panel. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">still_mg</td><td>The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT. </td></tr>
+    <tr><td class="paramname">walk_steps</td><td>The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT. </td></tr>
+    <tr><td class="paramname">count</td><td>Which bursts count for the main reading. </td></tr>
+    <tr><td class="paramname">keep_all</td><td>Measure a burst that cannot count rather than drop it. Holds the sensor on for up to 90 seconds more each. </td></tr>
+    <tr><td class="paramname">live_redraw</td><td>Redraw once a second while a burst is held. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3d23a155e70dad9fd2ac23f2ec39775c" name="ga3d23a155e70dad9fd2ac23f2ec39775c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3d23a155e70dad9fd2ac23f2ec39775c">&#9670;&#160;</a></span>health_store_subscribe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void health_store_subscribe </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>cb&#160;</em></span>)(void)</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hand it the function to call when the numbers change (the screen redraw). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cb</td><td>The function to call, or NULL for none. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gaf18cc0c1c6259577a616c734457c2f40" name="gaf18cc0c1c6259577a616c734457c2f40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf18cc0c1c6259577a616c734457c2f40">&#9670;&#160;</a></span>health_walk_minute_log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_walk_minute_log </td>
+          <td>(</td>
+          <td class="paramtype">const struct tm *</td>          <td class="paramname"><span class="paramname"><em>local</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>first_hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>end_hour</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t</td>          <td class="paramname"><span class="paramname"><em>until</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="#ga67ca3e59cfbc387a8cc491a82a19a3a5">MinuteRecordFn</a></td>          <td class="paramname"><span class="paramname"><em>each</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>context</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Walks the watch's minute log over today's hours and hands each good record, with the hour it falls in, to the <span class="tt">each</span> callback. </p>
+<p>The records come into a buffer borrowed from the heap, so the hours go STEP_CATCHUP_HOURS (six) at a time to keep that buffer a few KB. Each read blocks on a scan of the watch's whole minute log, and costs the same whatever window it asks for, so a batch that size takes a day in four reads. Each hour is the wall clock's own, so on a clock change day a record lands in the hour the chart labels.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">local</td><td>Today's local time, broken apart. </td></tr>
+    <tr><td class="paramname">first_hour</td><td>The first hour to read. </td></tr>
+    <tr><td class="paramname">end_hour</td><td>The hour to stop before. </td></tr>
+    <tr><td class="paramname">until</td><td>The time to stop at, for a walk that ends partway through its last hour. One that ends on an hour passes that hour's start. </td></tr>
+    <tr><td class="paramname">each</td><td>Called for each good record. </td></tr>
+    <tr><td class="paramname">context</td><td>Handed to each. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>False when there was no room for the records, so nothing was read. </dd></dl>
 
 </div>
 </div>

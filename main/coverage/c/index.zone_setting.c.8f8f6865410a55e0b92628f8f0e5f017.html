@@ -126,14 +126,14 @@
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="2">called 2 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">75.0%</div>
-    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">88.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">87.5%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l17">zone_setting_offset (src/c/core/clock/zone_setting.c:17)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="2">called 2 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">50.0%</div>
-    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">83.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">83.3%</div>
   </div>
 </div>  </details>
 </div>
@@ -260,10 +260,10 @@
           <details class="linebranchDetails">
             <summary class="linebranchSummary">4/4</summary>
             <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 0 taken 4 times.</div>
-              <div class="takenBranch">&check; Branch 1 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 2 taken 3 times.</div>
-              <div class="takenBranch">&check; Branch 3 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 3 taken 4 times.</div>
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 5 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 3 &rightarrow; 4 taken 3 times.</div>
+              <div class="takenBranch">&check; Branch 3 &rightarrow; 5 taken 1 time.</div>
             </div>
           </details>
         </td>
@@ -311,8 +311,8 @@
           <details class="linebranchDetails">
             <summary class="linebranchSummary">1/2</summary>
             <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 1 taken 2 times.</div>
-              <div class="notTakenBranch">&cross; Branch 2 not taken.</div>
+              <div class="takenBranch">&check; Branch 3 &rightarrow; 4 taken 2 times.</div>
+              <div class="notTakenBranch">&cross; Branch 3 &rightarrow; 5 not taken.</div>
             </div>
           </details>
         </td>
@@ -353,8 +353,8 @@
           <details class="linebranchDetails">
             <summary class="linebranchSummary">1/2</summary>
             <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 0 taken 2 times.</div>
-              <div class="notTakenBranch">&cross; Branch 1 not taken.</div>
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 3 taken 2 times.</div>
+              <div class="notTakenBranch">&cross; Branch 2 &rightarrow; 4 not taken.</div>
             </div>
           </details>
         </td>
@@ -367,8 +367,8 @@
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
             <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 0 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 1 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 5 &rightarrow; 6 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 5 &rightarrow; 7 taken 1 time.</div>
             </div>
           </details>
         </td>
@@ -396,7 +396,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-10-27 03:10:19
+          at 2026-11-06 03:45:13
         </footer>
       </div>
     </div>

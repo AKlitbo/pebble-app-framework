@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: src/c/core/layout/layout_role.h File Reference</title>
+<title>Pebble App Framework: src/c/core/health/hr_day.c File Reference</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('layout__role_8h.html','',''); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('hr__day_8c.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -191,35 +191,28 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('layout__role_8
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">layout_role.h File Reference<div class="ingroups"><a class="el" href="group__lib__core.html">Core Helpers</a></div></div></div>
+  <div class="headertitle"><div class="title">hr_day.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Deprecated names for the day/night/Quiet Time picker that <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role.h</a></span> provides.  
+<p>Today's heart rate by the hour. See <a class="el" href="hr__day_8h.html" title="Today&#39;s heart rate by the hour, for a panel that charts the day with its low, average,...">hr_day.h</a>.  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &quot;<a class="el" href="role_8h_source.html">role/role.h</a>&quot;</code><br />
-</div>
-<p><a href="layout__role_8h_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:ga3dc49de3b843fe808d5bf5112994550a" id="r_ga3dc49de3b843fe808d5bf5112994550a"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3dc49de3b843fe808d5bf5112994550a">LAYOUT_ROLE_DAY</a>&#160;&#160;&#160;<a class="el" href="group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb">ROLE_DAY</a></td></tr>
-<tr class="memitem:gabb959b5a5b52510b68c39b3e64bc751f" id="r_gabb959b5a5b52510b68c39b3e64bc751f"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gabb959b5a5b52510b68c39b3e64bc751f">LAYOUT_ROLE_NIGHT</a>&#160;&#160;&#160;<a class="el" href="group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4">ROLE_NIGHT</a></td></tr>
-<tr class="memitem:gae6ae052785561853f23b2384151f3962" id="r_gae6ae052785561853f23b2384151f3962"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gae6ae052785561853f23b2384151f3962">LAYOUT_ROLE_QUIET</a>&#160;&#160;&#160;<a class="el" href="group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0">ROLE_QUIET</a></td></tr>
-<tr class="memitem:ga949da367e692cdac11c761d3327ff620" id="r_ga949da367e692cdac11c761d3327ff620"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga949da367e692cdac11c761d3327ff620">LAYOUT_ROLE_COUNT</a>&#160;&#160;&#160;ROLE_COUNT</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:ga4fc6414086f7b94d66f865e4b92091ff" id="r_ga4fc6414086f7b94d66f865e4b92091ff"><td class="memItemLeft">typedef <a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff">LayoutRole</a></td></tr>
-</table><table class="memberdecls">
+<div class="textblock"><code>#include &quot;<a class="el" href="hr__day_8h_source.html">hr_day.h</a>&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga483c460c27f1f46834ac736434668598" id="r_ga483c460c27f1f46834ac736434668598"><td class="memItemLeft"><a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951">LayoutRole</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga483c460c27f1f46834ac736434668598">layout_role_pick</a> (bool quiet_on, bool quiet_set, bool night_on, bool night_set)</td></tr>
-<tr class="memdesc:ga483c460c27f1f46834ac736434668598"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which layout wins. Forwards to <span class="tt"><a class="el" href="group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span>.  <br /></td></tr>
+<tr class="memitem:ga10a8d6b3da25bae2446917c4d2926172" id="r_ga10a8d6b3da25bae2446917c4d2926172"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga10a8d6b3da25bae2446917c4d2926172">hr_day_clear</a> (<a class="el" href="structHrDay.html">HrDay</a> *day)</td></tr>
+<tr class="memdesc:ga10a8d6b3da25bae2446917c4d2926172"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties the day, for a new day or a fresh start.  <br /></td></tr>
+<tr class="memitem:ga3d58235334983237da2d42be7603056a" id="r_ga3d58235334983237da2d42be7603056a"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3d58235334983237da2d42be7603056a">hr_day_add</a> (<a class="el" href="structHrDay.html">HrDay</a> *day, int hour, int bpm)</td></tr>
+<tr class="memdesc:ga3d58235334983237da2d42be7603056a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds one reading to its hour.  <br /></td></tr>
+<tr class="memitem:ga9e6cbd7e421ca0ebd91abd4389a09e0c" id="r_ga9e6cbd7e421ca0ebd91abd4389a09e0c"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga9e6cbd7e421ca0ebd91abd4389a09e0c">hr_day_hour_avg</a> (const <a class="el" href="structHrDay.html">HrDay</a> *day, int hour)</td></tr>
+<tr class="memdesc:ga9e6cbd7e421ca0ebd91abd4389a09e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The average of one hour's readings.  <br /></td></tr>
+<tr class="memitem:ga66d1f37711cadadbbcc9d15f90fef1cf" id="r_ga66d1f37711cadadbbcc9d15f90fef1cf"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga66d1f37711cadadbbcc9d15f90fef1cf">hr_day_stats</a> (const <a class="el" href="structHrDay.html">HrDay</a> *day, int *low, int *avg, int *high)</td></tr>
+<tr class="memdesc:ga66d1f37711cadadbbcc9d15f90fef1cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">The day's lowest and highest readings, and the average of every reading so far.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Deprecated names for the day/night/Quiet Time picker that <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role.h</a></span> provides. </p>
-<p><span class="tt"><a class="el" href="group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span> and <span class="tt"><a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951" title="Which of the three is showing. The caller&#39;s own storage should line up with these.">Role</a></span> in <span class="tt"><a class="el" href="role_8h.html" title="Which of day, night, and Quiet Time should be on screen right now.">role/role.h</a></span> do this job for any face, a layout editor or a themed face alike. These names forward to them so a face on them keeps building. They go at the next major release. Move to <span class="tt"><a class="el" href="group__lib__core.html#ga402c61aef6b17ca699ea0d42ebe1f1c8" title="Which role wins, given what is firing and what has something behind it.">role_pick</a></span> and <span class="tt"><a class="el" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951" title="Which of the three is showing. The caller&#39;s own storage should line up with these.">Role</a></span> when convenient. </p>
+<div class="textblock"><p>Today's heart rate by the hour. See <a class="el" href="hr__day_8h.html" title="Today&#39;s heart rate by the hour, for a panel that charts the day with its low, average,...">hr_day.h</a>. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">
@@ -233,7 +226,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>layout</b></li><li class="navelem"><a href="layout__role_8h.html">layout_role.h</a></li>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>health</b></li><li class="navelem"><a href="hr__day_8c.html">hr_day.c</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

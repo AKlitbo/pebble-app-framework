@@ -1,0 +1,444 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/pebble/io/stores/health_step_history.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="main" selected>main</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('health__step__history_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">health_step_history.c File Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The health store's hourly steps: today's steps by the hour for a bar chart. A face turns it on with HEALTH_STEP_HISTORY, and one that never names it carries none of this.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="health__store_8h_source.html">io/stores/health_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="health__store__parts_8h_source.html">io/stores/health_store_parts.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__sum_8h_source.html">io/stores/store_sum.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="scale_8h_source.html">math/scale.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="step__hours_8h_source.html">health/step_hours.h</a>&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:_5Bstruct_5D_2Es_5Fhours" id="r__5Bstruct_5D_2Es_5Fhours"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="struct_0fstruct_0e_8s__hours.html">[struct].s_hours</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a3fb4ed9255723df69b4c5e0238be8b26" id="r_a3fb4ed9255723df69b4c5e0238be8b26"><td class="memItemLeft"><a id="a3fb4ed9255723df69b4c5e0238be8b26" name="a3fb4ed9255723df69b4c5e0238be8b26"></a>
+static void&#160;</td><td class="memItemRight"><b>add_record_steps</b> (int hour, const HealthMinuteData *record, void *context)</td></tr>
+<tr class="memdesc:a3fb4ed9255723df69b4c5e0238be8b26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a record's steps to its hour's total, for the hourly step read. <br /></td></tr>
+<tr class="memitem:ac5d29c457db49f5400731bc15fcb9c32" id="r_ac5d29c457db49f5400731bc15fcb9c32"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ac5d29c457db49f5400731bc15fcb9c32">read_step_hourly</a> (void)</td></tr>
+<tr class="memdesc:ac5d29c457db49f5400731bc15fcb9c32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill the per-hour step buckets from midnight up to the current hour.  <br /></td></tr>
+<tr class="memitem:a005cb76793b70941963f6480b8a38e8c" id="r_a005cb76793b70941963f6480b8a38e8c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a005cb76793b70941963f6480b8a38e8c">steps_first_read</a> (void *data)</td></tr>
+<tr class="memdesc:a005cb76793b70941963f6480b8a38e8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first read of the hourly buckets, once the face is up.  <br /></td></tr>
+<tr class="memitem:abe5b14e24afd654ebb1424945e9c7d85" id="r_abe5b14e24afd654ebb1424945e9c7d85"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#abe5b14e24afd654ebb1424945e9c7d85">step_history_start</a> (const <a class="el" href="structHealthConfig.html">HealthConfig</a> *cfg, const <a class="el" href="structHealthSeed.html">HealthSeed</a> *seed)</td></tr>
+<tr class="memdesc:abe5b14e24afd654ebb1424945e9c7d85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties the buckets, then takes the seed, or queues the first read for a live store.  <br /></td></tr>
+<tr class="memitem:acfce0af54967cea4c7432f55b04c265a" id="r_acfce0af54967cea4c7432f55b04c265a"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#acfce0af54967cea4c7432f55b04c265a">step_history_steps</a> (int steps)</td></tr>
+<tr class="memdesc:acfce0af54967cea4c7432f55b04c265a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Brings the buckets up to date after the store read the day's step count.  <br /></td></tr>
+<tr class="memitem:ad0ec27b23c098487914dec579cfe2951" id="r_ad0ec27b23c098487914dec579cfe2951"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ad0ec27b23c098487914dec579cfe2951">step_history_sum</a> (void)</td></tr>
+<tr class="memdesc:ad0ec27b23c098487914dec579cfe2951"><td class="mdescLeft">&#160;</td><td class="mdescRight">The buckets summed, so the store can tell when they moved.  <br /></td></tr>
+<tr class="memitem:ga34ce959b4e7f9802230c7e1319b3bf28" id="r_ga34ce959b4e7f9802230c7e1319b3bf28"><td class="memItemLeft">
+const uint16_t *&#160;</td><td class="memItemRight"><b>health_store_step_hourly</b> (void)</td></tr>
+<tr class="memdesc:ga34ce959b4e7f9802230c7e1319b3bf28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps split into per-hour buckets, one slot per hour from midnight (24 slots), for a face that named HEALTH_STEP_HISTORY. The bar chart reads it back out. Empty for a face that did not. <br /></td></tr>
+<tr class="memitem:ga7f6eb32c1ad9a2a9ffa41d13dc507204" id="r_ga7f6eb32c1ad9a2a9ffa41d13dc507204"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>health_store_step_hours</b> (void)</td></tr>
+<tr class="memdesc:ga7f6eb32c1ad9a2a9ffa41d13dc507204"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of the hourly step buckets hold a real value (0 to 24). Steps count 0 as a real reading (a quiet hour), so a chart needs the count rather than a no-data marker. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a2e906b2b92f6ee4e2395c0b2387f4b3c" name="a2e906b2b92f6ee4e2395c0b2387f4b3c"></a>
+<a class="el" href="struct_0fstruct_0e_8s__hours.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_hours</b></td></tr>
+<tr class="memdesc:a2e906b2b92f6ee4e2395c0b2387f4b3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps by the hour and how many of the hours are real. <br /></td></tr>
+<tr class="memitem:a92320ccd45668277bda8c95946d10c01" id="r_a92320ccd45668277bda8c95946d10c01"><td class="memItemLeft"><a id="a92320ccd45668277bda8c95946d10c01" name="a92320ccd45668277bda8c95946d10c01"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_pending</b></td></tr>
+<tr class="memdesc:a92320ccd45668277bda8c95946d10c01"><td class="mdescLeft">&#160;</td><td class="mdescRight">True between a live start and the first bucket read, which is held back until the face has painted. <br /></td></tr>
+<tr class="memitem:a658ff262f3d2e7fd0d12e963b290f7f3" id="r_a658ff262f3d2e7fd0d12e963b290f7f3"><td class="memItemLeft"><a id="a658ff262f3d2e7fd0d12e963b290f7f3" name="a658ff262f3d2e7fd0d12e963b290f7f3"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_no_timer</b></td></tr>
+<tr class="memdesc:a658ff262f3d2e7fd0d12e963b290f7f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the start got no timer, so the gate drops after the store's own launch read. <br /></td></tr>
+<tr class="memitem:a5f833cb8ed2204402eca026a668fb9e8" id="r_a5f833cb8ed2204402eca026a668fb9e8"><td class="memItemLeft"><a id="a5f833cb8ed2204402eca026a668fb9e8" name="a5f833cb8ed2204402eca026a668fb9e8"></a>
+static int&#160;</td><td class="memItemRight"><b>s_steps</b></td></tr>
+<tr class="memdesc:a5f833cb8ed2204402eca026a668fb9e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's step count as the store last read it, or -1 for none. <br /></td></tr>
+<tr class="memitem:ga81bcfdc1cea1875ac0c3a5140dc8d80d" id="r_ga81bcfdc1cea1875ac0c3a5140dc8d80d"><td class="memItemLeft">const <a class="el" href="structHealthPart.html">HealthPart</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga81bcfdc1cea1875ac0c3a5140dc8d80d">health_part_step_history</a></td></tr>
+<tr class="memdesc:ga81bcfdc1cea1875ac0c3a5140dc8d80d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's steps by the hour. Name it as HEALTH_STEP_HISTORY.  <br /></td></tr>
+<tr id="var-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Settled step hours</div></td></tr>
+<tr><td colspan="2" class="ititle"><div class="groupText"><p>Finished hours can never gain another step, so they are read once and kept. These live out here because a start clears the buckets, and stale beliefs about them would strand the cleared ones. </p>
+</div></td></tr>
+<tr class="memitem:aded462fa2005d5b78ddcc2ec22a3c224" id="r_aded462fa2005d5b78ddcc2ec22a3c224"><td class="memItemLeft"><a id="aded462fa2005d5b78ddcc2ec22a3c224" name="aded462fa2005d5b78ddcc2ec22a3c224"></a>
+static time_t&#160;</td><td class="memItemRight"><b>s_cached_day</b></td></tr>
+<tr class="memdesc:aded462fa2005d5b78ddcc2ec22a3c224"><td class="mdescLeft">&#160;</td><td class="mdescRight">The day the kept hours belong to. <br /></td></tr>
+<tr class="memitem:a368b1a1c575f22bb1bcd8da8f13d0523" id="r_a368b1a1c575f22bb1bcd8da8f13d0523"><td class="memItemLeft"><a id="a368b1a1c575f22bb1bcd8da8f13d0523" name="a368b1a1c575f22bb1bcd8da8f13d0523"></a>
+static int&#160;</td><td class="memItemRight"><b>s_settled_hours</b></td></tr>
+<tr class="memdesc:a368b1a1c575f22bb1bcd8da8f13d0523"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many finished hours are already read and kept. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The health store's hourly steps: today's steps by the hour for a bar chart. A face turns it on with HEALTH_STEP_HISTORY, and one that never names it carries none of this. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ac5d29c457db49f5400731bc15fcb9c32" name="ac5d29c457db49f5400731bc15fcb9c32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5d29c457db49f5400731bc15fcb9c32">&#9670;&#160;</a></span>read_step_hourly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void read_step_hourly </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Fill the per-hour step buckets from midnight up to the current hour. </p>
+<p><span class="tt">step_hours</span> records how many buckets are real so the chart can tell a quiet hour from one that has not happened yet.</p>
+<p>An hour is read as it rolls over and once more the minute after, then never again. The hour in progress is today's total less the settled ones, which is free. Each real read blocks on a scan of the watch's whole minute log, so they stay off the minute path. </p>
+
+</div>
+</div>
+<a id="abe5b14e24afd654ebb1424945e9c7d85" name="abe5b14e24afd654ebb1424945e9c7d85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe5b14e24afd654ebb1424945e9c7d85">&#9670;&#160;</a></span>step_history_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void step_history_start </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structHealthConfig.html">HealthConfig</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structHealthSeed.html">HealthSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Empties the buckets, then takes the seed, or queues the first read for a live store. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The store's rules. </td></tr>
+    <tr><td class="paramname">seed</td><td>The store's seed, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acfce0af54967cea4c7432f55b04c265a" name="acfce0af54967cea4c7432f55b04c265a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfce0af54967cea4c7432f55b04c265a">&#9670;&#160;</a></span>step_history_steps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void step_history_steps </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>steps</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Brings the buckets up to date after the store read the day's step count. </p>
+<p>The store only reads the count once a minute at most, so this runs at that pace too. The first read of all is owed to the launch timer, which runs once the face is on screen.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">steps</td><td>Today's step count, or -1 for none. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad0ec27b23c098487914dec579cfe2951" name="ad0ec27b23c098487914dec579cfe2951"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad0ec27b23c098487914dec579cfe2951">&#9670;&#160;</a></span>step_history_sum()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t step_history_sum </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The buckets summed, so the store can tell when they moved. </p>
+<dl class="section return"><dt>Returns</dt><dd>The sum. </dd></dl>
+
+</div>
+</div>
+<a id="a005cb76793b70941963f6480b8a38e8c" name="a005cb76793b70941963f6480b8a38e8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a005cb76793b70941963f6480b8a38e8c">&#9670;&#160;</a></span>steps_first_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void steps_first_read </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>data</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The first read of the hourly buckets, once the face is up. </p>
+<p>Launching is the one time the buckets have a whole day to catch up on, which is several blocking scans even batched. Doing that inside init leaves the old screen frozen until it finishes.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>The timer context (unused). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="health__step__history_8c.html">health_step_history.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

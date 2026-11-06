@@ -6,5 +6,6 @@ var searchData=
   ['migrate_3',['migrate',['../structSettingsSchema.html#a98dd2666626795edfc3593fd9880b495',1,'SettingsSchema']]],
   ['min_5fversioned_5fsize_4',['min_versioned_size',['../structSettingsSchema.html#a423877692a5620c67cc25c955455a635',1,'SettingsSchema']]],
   ['minute_5',['minute',['../structWeatherClock.html#a7562e2fafbe4bd092596ab24d60c1c21',1,'WeatherClock']]],
-  ['minute_5ftick_6',['minute_tick',['../structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20',1,'TimeConfig']]]
+  ['minute_5ftick_6',['minute_tick',['../structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20',1,'TimeConfig']]],
+  ['ms_7',['ms',['../structHrvBurst.html#a6df7af8a3ad719c38288e1fa90284cc7',1,'HrvBurst::ms'],['../structHrvLog.html#aa95148fd04e627a8fe481a0ddd983721',1,'HrvLog::ms']]]
 ];

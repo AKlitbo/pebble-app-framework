@@ -30,5 +30,6 @@ var searchData=
   ['btvibepolicy_27',['BtVibePolicy',['../group__lib__stores.html#ga96c4cb6d425115a65f787896786b232f',1,'system_store.h']]],
   ['build_28',['build',['../engine_8c.html#a79a6b7fc5a64b226b38077e891474536',1,'engine.c']]],
   ['build_5findex_29',['build_index',['../settings_8c.html#a06306d4021a430cb7838afe79711bc82',1,'settings.c']]],
-  ['bytes_5fle_2eh_30',['bytes_le.h',['../bytes__le_8h.html',1,'']]]
+  ['burst_5fstate_30',['burst_state',['../health__hrv_8c.html#ad1e68f4522e89cf530f16fc0b97b5794',1,'health_hrv.c']]],
+  ['bytes_5fle_2eh_31',['bytes_le.h',['../bytes__le_8h.html',1,'']]]
 ];

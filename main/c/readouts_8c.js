@@ -3,6 +3,7 @@ var readouts_8c =
     [ "readout_date", "group__lib__ui.html#ga27e66e5fb5efa50e5cd3a641ca95f3e1", null ],
     [ "readout_date_shows_beats", "group__lib__ui.html#gac815591cccd1783227eb1a656212c8c5", null ],
     [ "readout_hr", "group__lib__ui.html#gab74d674a3402d0c3ccb145f54ee4d5dc", null ],
+    [ "readout_hrv", "group__lib__ui.html#ga3323a26d3294679e221801278ed1b808", null ],
     [ "readout_lat", "group__lib__ui.html#gaa2fe71cbe1755aae8977cad2d17e71ed", null ],
     [ "readout_lon", "group__lib__ui.html#gacea2f8a4dcf1bff5344807e02a4842aa", null ],
     [ "readout_meridiem", "group__lib__ui.html#gad7314f0630f01d77249d12b3f5018d20", null ],

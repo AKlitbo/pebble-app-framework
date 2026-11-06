@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['tag_0',['tag',['../structWeatherState.html#ada60a92f0690b1a06bca06d42984ae7a',1,'WeatherState::tag'],['../structCalendarPersist.html#ae1a586fe7cef0f2f8c9bd272419823a1',1,'CalendarPersist::tag'],['../structHealthSaved.html#aebdb6f4702918a9ec02f00d43c665fda',1,'HealthSaved::tag'],['../struct_0fstruct_0e_8s__state.html#a6b42b043dd8aa439301e3ef7f088d97e',1,'[struct].s_state::tag'],['../struct_0fstruct_0e_8s__state.html#aa3436b4f53e574810565c9b29d0042d5',1,'[struct].s_state::tag']]],
+  ['tag_0',['tag',['../structWeatherState.html#ada60a92f0690b1a06bca06d42984ae7a',1,'WeatherState::tag'],['../structCalendarPersist.html#ae1a586fe7cef0f2f8c9bd272419823a1',1,'CalendarPersist::tag'],['../structHealthSaved.html#aebdb6f4702918a9ec02f00d43c665fda',1,'HealthSaved::tag'],['../structHrvSaved.html#ad558b727e15dd18b15f8a0edad9af7a8',1,'HrvSaved::tag'],['../struct_0fstruct_0e_8s__state.html#a6b42b043dd8aa439301e3ef7f088d97e',1,'[struct].s_state::tag'],['../struct_0fstruct_0e_8s__state.html#aa3436b4f53e574810565c9b29d0042d5',1,'[struct].s_state::tag']]],
   ['tags_1',['tags',['../structEngineSlot.html#a4587109d787749d3787c2521ec404314',1,'EngineSlot']]],
   ['tap_5fhandler_2',['tap_handler',['../dev__walk_8c.html#a562c18803644a3ae69effdc57b5ccf91',1,'dev_walk.c']]],
   ['temp_3',['temp',['../structWeatherMessage.html#a975df3054641eddb181006370fe704be',1,'WeatherMessage::temp'],['../structWeatherState.html#ae41f90ba55b0a7b7f53812816ee435d0',1,'WeatherState::temp'],['../structWeatherHourCol.html#a1775eddd69fb1c024595af53454d0e22',1,'WeatherHourCol::temp'],['../structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6',1,'WeatherSeed::temp'],['../structDevShot.html#ab2b6ce3f1accb9c6755384132c4e8249',1,'DevShot::temp']]],
@@ -54,10 +54,11 @@ var searchData=
   ['tinted_51',['tinted',['../structIconEntry.html#a7b9da71f47b947747679cd8eb52290bb',1,'IconEntry']]],
   ['title_52',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent']]],
   ['to_53',['to',['../structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7',1,'TimeBandSpan']]],
-  ['token_5fat_54',['token_at',['../beats_8c.html#af9f96a0956b8fe8f3c08e08739e8a28d',1,'beats.c']]],
-  ['tuple_5fint_5for_55',['tuple_int_or',['../group__lib__io.html#ga2efbc3a4f1c2f061db644fae33148a15',1,'tuple_int_or(const Tuple *tuple, int32_t fallback):&#160;tuple_read.c'],['../group__lib__io.html#ga2efbc3a4f1c2f061db644fae33148a15',1,'tuple_int_or(const Tuple *tuple, int32_t fallback):&#160;tuple_read.c']]],
-  ['tuple_5fread_2ec_56',['tuple_read.c',['../tuple__read_8c.html',1,'']]],
-  ['tuple_5fread_2eh_57',['tuple_read.h',['../tuple__read_8h.html',1,'']]],
-  ['tuple_5fstr_5for_58',['tuple_str_or',['../group__lib__io.html#ga86dd1adef099205e5eb8c1d52b03ce96',1,'tuple_str_or(const Tuple *tuple, const char *fallback):&#160;tuple_read.c'],['../group__lib__io.html#ga86dd1adef099205e5eb8c1d52b03ce96',1,'tuple_str_or(const Tuple *tuple, const char *fallback):&#160;tuple_read.c']]],
-  ['type_59',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField']]]
+  ['today_54',['today',['../structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7',1,'HrvLog']]],
+  ['token_5fat_55',['token_at',['../beats_8c.html#af9f96a0956b8fe8f3c08e08739e8a28d',1,'beats.c']]],
+  ['tuple_5fint_5for_56',['tuple_int_or',['../group__lib__io.html#ga2efbc3a4f1c2f061db644fae33148a15',1,'tuple_int_or(const Tuple *tuple, int32_t fallback):&#160;tuple_read.c'],['../group__lib__io.html#ga2efbc3a4f1c2f061db644fae33148a15',1,'tuple_int_or(const Tuple *tuple, int32_t fallback):&#160;tuple_read.c']]],
+  ['tuple_5fread_2ec_57',['tuple_read.c',['../tuple__read_8c.html',1,'']]],
+  ['tuple_5fread_2eh_58',['tuple_read.h',['../tuple__read_8h.html',1,'']]],
+  ['tuple_5fstr_5for_59',['tuple_str_or',['../group__lib__io.html#ga86dd1adef099205e5eb8c1d52b03ce96',1,'tuple_str_or(const Tuple *tuple, const char *fallback):&#160;tuple_read.c'],['../group__lib__io.html#ga86dd1adef099205e5eb8c1d52b03ce96',1,'tuple_str_or(const Tuple *tuple, const char *fallback):&#160;tuple_read.c']]],
+  ['type_60',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField']]]
 ];

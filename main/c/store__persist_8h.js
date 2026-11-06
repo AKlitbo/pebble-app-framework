@@ -2,6 +2,7 @@ var store__persist_8h =
 [
     [ "STORE_TAG_CALENDAR", "group__lib__stores.html#ga71057ac435b7b29a882b011053659d86", null ],
     [ "STORE_TAG_HEALTH", "group__lib__stores.html#ga31737569cb65fc760932f244727a568d", null ],
+    [ "STORE_TAG_HRV", "group__lib__stores.html#ga5dd549de392b92225c04280a50970e14", null ],
     [ "STORE_TAG_LOCATION", "group__lib__stores.html#gaa19bf75ee3cb87a3a31a97238f4dcf73", null ],
     [ "STORE_TAG_STOCK", "group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676", null ],
     [ "STORE_TAG_WEATHER", "group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867", null ],

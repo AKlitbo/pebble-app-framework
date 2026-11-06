@@ -7,5 +7,6 @@ var searchData=
   ['beats_5fms_5ffrom_5fhms_4',['beats_ms_from_hms',['../group__lib__core.html#ga60ea394a4edab1661bfdfcec61a49a73',1,'beats_ms_from_hms(int hour, int minute, int second, uint16_t ms):&#160;beats.c'],['../group__lib__core.html#ga60ea394a4edab1661bfdfcec61a49a73',1,'beats_ms_from_hms(int hour, int minute, int second, uint16_t ms):&#160;beats.c']]],
   ['boot_5ffire_5',['boot_fire',['../weather__store_8c.html#a57f5cd13bc80a504451172b29ed6e7de',1,'weather_store.c']]],
   ['build_6',['build',['../engine_8c.html#a79a6b7fc5a64b226b38077e891474536',1,'engine.c']]],
-  ['build_5findex_7',['build_index',['../settings_8c.html#a06306d4021a430cb7838afe79711bc82',1,'settings.c']]]
+  ['build_5findex_7',['build_index',['../settings_8c.html#a06306d4021a430cb7838afe79711bc82',1,'settings.c']]],
+  ['burst_5fstate_8',['burst_state',['../health__hrv_8c.html#ad1e68f4522e89cf530f16fc0b97b5794',1,'health_hrv.c']]]
 ];

@@ -8,5 +8,6 @@ var searchData=
   ['callback_5flist_2eh_5',['callback_list.h',['../callback__list_8h.html',1,'']]],
   ['coords_2ec_6',['coords.c',['../coords_8c.html',1,'']]],
   ['coords_2eh_7',['coords.h',['../coords_8h.html',1,'']]],
-  ['cstring_5ffit_2eh_8',['cstring_fit.h',['../cstring__fit_8h.html',1,'']]]
+  ['cstring_5ffit_2ec_8',['cstring_fit.c',['../cstring__fit_8c.html',1,'']]],
+  ['cstring_5ffit_2eh_9',['cstring_fit.h',['../cstring__fit_8h.html',1,'']]]
 ];

@@ -197,36 +197,6 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('struct_0fstruc
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a69dfa550f32ab21f5c6c5d378d8acd7f" name="a69dfa550f32ab21f5c6c5d378d8acd7f"></a>
-int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
-<tr class="memdesc:a69dfa550f32ab21f5c6c5d378d8acd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="aa1403b090a51b63b44fc26d18b223ecd" name="aa1403b090a51b63b44fc26d18b223ecd"></a>
-uint8_t&#160;</td><td class="memItemRight"><b>hr_history</b> [<a class="el" href="health__store_8c.html#a565e5d788d520b3a16db7c546e9ee7b3">HR_HISTORY_MINUTES</a>]</td></tr>
-<tr class="memdesc:aa1403b090a51b63b44fc26d18b223ecd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rolling heart rate window, one reading a minute. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a904cb62852ca7f16f0327e7cd4f42c28" name="a904cb62852ca7f16f0327e7cd4f42c28"></a>
-time_t&#160;</td><td class="memItemRight"><b>hr_last_min</b></td></tr>
-<tr class="memdesc:a904cb62852ca7f16f0327e7cd4f42c28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock minute of the last history write, so the window can slide. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="ae463a880e2607355d222974f60b31907" name="ae463a880e2607355d222974f60b31907"></a>
-int&#160;</td><td class="memItemRight"><b>steps</b></td></tr>
-<tr class="memdesc:ae463a880e2607355d222974f60b31907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step count. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a87fa654bed2286d1a29fa1d3815c44d2" name="a87fa654bed2286d1a29fa1d3815c44d2"></a>
-int&#160;</td><td class="memItemRight"><b>calories</b></td></tr>
-<tr class="memdesc:a87fa654bed2286d1a29fa1d3815c44d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calorie count. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a4ff82846014207e0597ba097ec0aa0c8" name="a4ff82846014207e0597ba097ec0aa0c8"></a>
-int&#160;</td><td class="memItemRight"><b>sleep_min</b></td></tr>
-<tr class="memdesc:a4ff82846014207e0597ba097ec0aa0c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes slept. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a11d0ef78d29da6a774cd888998da275f" name="a11d0ef78d29da6a774cd888998da275f"></a>
-int&#160;</td><td class="memItemRight"><b>active_min</b></td></tr>
-<tr class="memdesc:a11d0ef78d29da6a774cd888998da275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active minutes. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a6bae943d352d4ea4b1a3f3085e626110" name="a6bae943d352d4ea4b1a3f3085e626110"></a>
-int&#160;</td><td class="memItemRight"><b>distance_m</b></td></tr>
-<tr class="memdesc:a6bae943d352d4ea4b1a3f3085e626110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance walked, in metres. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a1a731941f4d99830ba17815282c90acd" name="a1a731941f4d99830ba17815282c90acd"></a>
-uint16_t&#160;</td><td class="memItemRight"><b>step_hourly</b> [HOURS_PER_DAY]</td></tr>
-<tr class="memdesc:a1a731941f4d99830ba17815282c90acd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Steps in each hour of today, midnight first. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="af28c994c7865eaf51cd5f3c2afdbc390" name="af28c994c7865eaf51cd5f3c2afdbc390"></a>
-int&#160;</td><td class="memItemRight"><b>step_hours</b></td></tr>
-<tr class="memdesc:af28c994c7865eaf51cd5f3c2afdbc390"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of those hours are real (0 to 24). <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a6b42b043dd8aa439301e3ef7f088d97e" name="a6b42b043dd8aa439301e3ef7f088d97e"></a>
 uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memdesc:a6b42b043dd8aa439301e3ef7f088d97e"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_LOCATION, so a restore can tell this blob from another shape. <br /></td></tr>
@@ -236,15 +206,6 @@ char&#160;</td><td class="memItemRight"><b>lat</b> [20]</td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="ab9a6be89c66daedb8c2c8cf463e543e9" name="ab9a6be89c66daedb8c2c8cf463e543e9"></a>
 char&#160;</td><td class="memItemRight"><b>lon</b> [20]</td></tr>
 <tr class="memdesc:ab9a6be89c66daedb8c2c8cf463e543e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Longitude as text, as the phone sent it. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a5342d9c4d055ae70b79f91132fa02d4b" name="a5342d9c4d055ae70b79f91132fa02d4b"></a>
-int&#160;</td><td class="memItemRight"><b>battery_level</b></td></tr>
-<tr class="memdesc:a5342d9c4d055ae70b79f91132fa02d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Battery charge, in percent. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="addc8e821b664e115fe20565aa835a42d" name="addc8e821b664e115fe20565aa835a42d"></a>
-bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
-<tr class="memdesc:addc8e821b664e115fe20565aa835a42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch is charging. <br /></td></tr>
-<tr class="memitem:"><td class="memItemLeft"><a id="a94f35b808bfbb716cfd01ef016aae882" name="a94f35b808bfbb716cfd01ef016aae882"></a>
-bool&#160;</td><td class="memItemRight"><b>bluetooth_connected</b></td></tr>
-<tr class="memdesc:a94f35b808bfbb716cfd01ef016aae882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone is connected. <br /></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a159cde20b06213ce3c284be791802f9d" name="a159cde20b06213ce3c284be791802f9d"></a>
 <a class="el" href="structCalendarStrip.html">CalendarStrip</a>&#160;</td><td class="memItemRight"><b>strip</b></td></tr>
 <tr class="memdesc:a159cde20b06213ce3c284be791802f9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The agenda as the phone last sent it. <br /></td></tr>
@@ -260,6 +221,33 @@ uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a71acacf736c0662ae8a364a757778e46" name="a71acacf736c0662ae8a364a757778e46"></a>
 time_t&#160;</td><td class="memItemRight"><b>last_sync</b></td></tr>
 <tr class="memdesc:a71acacf736c0662ae8a364a757778e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">When those quotes arrived. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a5342d9c4d055ae70b79f91132fa02d4b" name="a5342d9c4d055ae70b79f91132fa02d4b"></a>
+int&#160;</td><td class="memItemRight"><b>battery_level</b></td></tr>
+<tr class="memdesc:a5342d9c4d055ae70b79f91132fa02d4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Battery charge, in percent. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="addc8e821b664e115fe20565aa835a42d" name="addc8e821b664e115fe20565aa835a42d"></a>
+bool&#160;</td><td class="memItemRight"><b>charging</b></td></tr>
+<tr class="memdesc:addc8e821b664e115fe20565aa835a42d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch is charging. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a94f35b808bfbb716cfd01ef016aae882" name="a94f35b808bfbb716cfd01ef016aae882"></a>
+bool&#160;</td><td class="memItemRight"><b>bluetooth_connected</b></td></tr>
+<tr class="memdesc:a94f35b808bfbb716cfd01ef016aae882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the phone is connected. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a69dfa550f32ab21f5c6c5d378d8acd7f" name="a69dfa550f32ab21f5c6c5d378d8acd7f"></a>
+int&#160;</td><td class="memItemRight"><b>hr</b></td></tr>
+<tr class="memdesc:a69dfa550f32ab21f5c6c5d378d8acd7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest heart rate reading. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="ae463a880e2607355d222974f60b31907" name="ae463a880e2607355d222974f60b31907"></a>
+int&#160;</td><td class="memItemRight"><b>steps</b></td></tr>
+<tr class="memdesc:ae463a880e2607355d222974f60b31907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Step count. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a87fa654bed2286d1a29fa1d3815c44d2" name="a87fa654bed2286d1a29fa1d3815c44d2"></a>
+int&#160;</td><td class="memItemRight"><b>calories</b></td></tr>
+<tr class="memdesc:a87fa654bed2286d1a29fa1d3815c44d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calorie count. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a4ff82846014207e0597ba097ec0aa0c8" name="a4ff82846014207e0597ba097ec0aa0c8"></a>
+int&#160;</td><td class="memItemRight"><b>sleep_min</b></td></tr>
+<tr class="memdesc:a4ff82846014207e0597ba097ec0aa0c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minutes slept. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a11d0ef78d29da6a774cd888998da275f" name="a11d0ef78d29da6a774cd888998da275f"></a>
+int&#160;</td><td class="memItemRight"><b>active_min</b></td></tr>
+<tr class="memdesc:a11d0ef78d29da6a774cd888998da275f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active minutes. <br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft"><a id="a6bae943d352d4ea4b1a3f3085e626110" name="a6bae943d352d4ea4b1a3f3085e626110"></a>
+int&#160;</td><td class="memItemRight"><b>distance_m</b></td></tr>
+<tr class="memdesc:a6bae943d352d4ea4b1a3f3085e626110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance walked, in metres. <br /></td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following files:</div><!-- contents -->
 </div><!-- doc-content -->

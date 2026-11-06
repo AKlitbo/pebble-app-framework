@@ -39,7 +39,6 @@ var group__lib__ui =
       [ "rect_fallback2", "structZone.html#a896caa855cd84c0e6ef28c7c1856eafe", null ],
       [ "rect_fallback3", "structZone.html#a9991f1fe88fcf46da0b4e4e1fbdc8aab", null ]
     ] ],
-    [ "ENGINE_MAX_SLOTS", "group__lib__ui.html#ga36e1ce7a039108d509b546091b2f81ea", null ],
     [ "ENGINE_SLOTS_MAX", "group__lib__ui.html#ga60efc891e07d5be12f10e4c1dc7f43d9", null ],
     [ "FONT_SLOTS_MAX", "group__lib__ui.html#ga4ca1872518ba74eea31ab554588e7398", null ],
     [ "ICON_AUTOTRIM", "group__lib__ui.html#ga0218b6d868d6c02e798e1f43e04a8d28", null ],
@@ -65,6 +64,7 @@ var group__lib__ui =
     [ "readout_date", "group__lib__ui.html#ga27e66e5fb5efa50e5cd3a641ca95f3e1", null ],
     [ "readout_date_shows_beats", "group__lib__ui.html#gac815591cccd1783227eb1a656212c8c5", null ],
     [ "readout_hr", "group__lib__ui.html#gab74d674a3402d0c3ccb145f54ee4d5dc", null ],
+    [ "readout_hrv", "group__lib__ui.html#ga3323a26d3294679e221801278ed1b808", null ],
     [ "readout_lat", "group__lib__ui.html#gaa2fe71cbe1755aae8977cad2d17e71ed", null ],
     [ "readout_lon", "group__lib__ui.html#gacea2f8a4dcf1bff5344807e02a4842aa", null ],
     [ "readout_meridiem", "group__lib__ui.html#gad7314f0630f01d77249d12b3f5018d20", null ],

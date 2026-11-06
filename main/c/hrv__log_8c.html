@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: Related Pages</title>
+<title>Pebble App Framework: src/c/core/health/hrv_log.c File Reference</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('pages.html','',''); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('hrv__log_8c.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -191,20 +191,56 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('pages.html',''
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">Related Pages</div></div>
+  <div class="headertitle"><div class="title">hrv_log.c File Reference<div class="ingroups"><a class="el" href="group__lib__core.html">Core Helpers</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all related documentation pages:</div><div class="directory">
-<table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><span class="spacer">&#160;</span><a class="el" href="deprecated.html" target="_self">Deprecated List</a></td><td class="desc"></td></tr>
+
+<p>The heart rate variability readings kept for a face's panels.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="hrv__log_8h_source.html">health/hrv_log.h</a>&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ga50ef6e3a945c258e4fc83bb1929a83da" id="r_ga50ef6e3a945c258e4fc83bb1929a83da"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga50ef6e3a945c258e4fc83bb1929a83da">hrv_log_reset</a> (<a class="el" href="structHrvLog.html">HrvLog</a> *log)</td></tr>
+<tr class="memdesc:ga50ef6e3a945c258e4fc83bb1929a83da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Empties the log.  <br /></td></tr>
+<tr class="memitem:gaf48d364de1b0985d9d0206b1023922a7" id="r_gaf48d364de1b0985d9d0206b1023922a7"><td class="memItemLeft"><a class="el" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a>&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaf48d364de1b0985d9d0206b1023922a7">hrv_log_state_of</a> (int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</td></tr>
+<tr class="memdesc:gaf48d364de1b0985d9d0206b1023922a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Works out what a burst was from its steps and its movement score.  <br /></td></tr>
+<tr class="memitem:ga248f18e06ef62e0e1d10e772f767a5b9" id="r_ga248f18e06ef62e0e1d10e772f767a5b9"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga248f18e06ef62e0e1d10e772f767a5b9">hrv_log_counts</a> (<a class="el" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> state, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count)</td></tr>
+<tr class="memdesc:ga248f18e06ef62e0e1d10e772f767a5b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a burst in one state counts for the main reading.  <br /></td></tr>
+<tr class="memitem:ga9f583fc30f55e7e82457e3fef5bbeb7b" id="r_ga9f583fc30f55e7e82457e3fef5bbeb7b"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga9f583fc30f55e7e82457e3fef5bbeb7b">hrv_log_roll_day</a> (<a class="el" href="structHrvLog.html">HrvLog</a> *log, int32_t day)</td></tr>
+<tr class="memdesc:ga9f583fc30f55e7e82457e3fef5bbeb7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moves the hours on to a new day without a reading, so a day chart drawn after midnight does not show yesterday as today.  <br /></td></tr>
+<tr class="memitem:gae0bb96d786cefdddabe9708b30b409c5" id="r_gae0bb96d786cefdddabe9708b30b409c5"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gae0bb96d786cefdddabe9708b30b409c5">hrv_log_add</a> (<a class="el" href="structHrvLog.html">HrvLog</a> *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, <a class="el" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> state, bool asleep)</td></tr>
+<tr class="memdesc:gae0bb96d786cefdddabe9708b30b409c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Files one finished reading.  <br /></td></tr>
+<tr class="memitem:gaa5780e28f269349f66933da35d0ba821" id="r_gaa5780e28f269349f66933da35d0ba821"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaa5780e28f269349f66933da35d0ba821">hrv_log_count</a> (const <a class="el" href="structHrvLog.html">HrvLog</a> *log)</td></tr>
+<tr class="memdesc:gaa5780e28f269349f66933da35d0ba821"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many readings the history holds, up to HRV_LOG_SLOTS.  <br /></td></tr>
+<tr class="memitem:gac6bf1a23fcf5966f02387bc150c8a9fd" id="r_gac6bf1a23fcf5966f02387bc150c8a9fd"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gac6bf1a23fcf5966f02387bc150c8a9fd">hrv_log_get</a> (const <a class="el" href="structHrvLog.html">HrvLog</a> *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</td></tr>
+<tr class="memdesc:gac6bf1a23fcf5966f02387bc150c8a9fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">One reading from the history, newest first.  <br /></td></tr>
+<tr class="memitem:ga3f51dbfb1a7c497a93a39bf61faa7ee5" id="r_ga3f51dbfb1a7c497a93a39bf61faa7ee5"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3f51dbfb1a7c497a93a39bf61faa7ee5">hrv_log_hour_avg</a> (const <a class="el" href="structHrvLog.html">HrvLog</a> *log, int hour)</td></tr>
+<tr class="memdesc:ga3f51dbfb1a7c497a93a39bf61faa7ee5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's average of the resting readings in one hour.  <br /></td></tr>
+<tr class="memitem:ga2361e1061a377a432e5ef300f78e6b4c" id="r_ga2361e1061a377a432e5ef300f78e6b4c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga2361e1061a377a432e5ef300f78e6b4c">hrv_log_today</a> (const <a class="el" href="structHrvLog.html">HrvLog</a> *log, int *low_ms, int *avg_ms, int *high_ms)</td></tr>
+<tr class="memdesc:ga2361e1061a377a432e5ef300f78e6b4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Today's resting readings summed up.  <br /></td></tr>
+<tr class="memitem:ga0ea30c8342186116f4422246ff53b6ca" id="r_ga0ea30c8342186116f4422246ff53b6ca"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga0ea30c8342186116f4422246ff53b6ca">hrv_log_night_avg</a> (const <a class="el" href="structHrvLog.html">HrvLog</a> *log)</td></tr>
+<tr class="memdesc:ga0ea30c8342186116f4422246ff53b6ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">The average of the readings taken asleep in the latest night.  <br /></td></tr>
+<tr class="memitem:ga484d26e50432a4d931eb57316576def6" id="r_ga484d26e50432a4d931eb57316576def6"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga484d26e50432a4d931eb57316576def6">hrv_log_last</a> (const <a class="el" href="structHrvLog.html">HrvLog</a> *log, <a class="el" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a> state, int *ms, uint32_t *at_min)</td></tr>
+<tr class="memdesc:ga484d26e50432a4d931eb57316576def6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest reading of one kind.  <br /></td></tr>
 </table>
-</div><!-- directory -->
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The heart rate variability readings kept for a face's panels. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
 </div><!-- container -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>health</b></li><li class="navelem"><a href="hrv__log_8c.html">hrv_log.c</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('structHealthSe
 </div><!--header-->
 <div class="contents">
 
-<p>Optional prefill, or pinned readings when live = false.  
+<p>Optional prefill, or pinned readings when live = false. A part's seed is only taken when the face named the part in its <a class="el" href="structHealthConfig.html" title="The rules a face hands the store.">HealthConfig</a>.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="health__store_8h_source.html">health_store.h</a>&gt;</code></p>
@@ -229,9 +229,18 @@ const uint16_t *&#160;</td><td class="memItemRight"><b>step_hourly</b></td></tr>
 <tr class="memitem:ae8ed84681436e54cc8f65a3270cea4e1" id="r_ae8ed84681436e54cc8f65a3270cea4e1"><td class="memItemLeft"><a id="ae8ed84681436e54cc8f65a3270cea4e1" name="ae8ed84681436e54cc8f65a3270cea4e1"></a>
 int&#160;</td><td class="memItemRight"><b>step_hours</b></td></tr>
 <tr class="memdesc:ae8ed84681436e54cc8f65a3270cea4e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many of those hourly buckets are real (0 to 24). <br /></td></tr>
+<tr class="memitem:ab2c79c328b5052d7f80c63c19554fb0a" id="r_ab2c79c328b5052d7f80c63c19554fb0a"><td class="memItemLeft"><a id="ab2c79c328b5052d7f80c63c19554fb0a" name="ab2c79c328b5052d7f80c63c19554fb0a"></a>
+int&#160;</td><td class="memItemRight"><b>hrv_ms</b></td></tr>
+<tr class="memdesc:ab2c79c328b5052d7f80c63c19554fb0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Heart rate variability as RMSSD in ms, or 0 for none. <br /></td></tr>
+<tr class="memitem:a9db1153f7855a60da1c483835e617b34" id="r_a9db1153f7855a60da1c483835e617b34"><td class="memItemLeft"><a id="a9db1153f7855a60da1c483835e617b34" name="a9db1153f7855a60da1c483835e617b34"></a>
+const <a class="el" href="structHrvLog.html">HrvLog</a> *&#160;</td><td class="memItemRight"><b>hrv_log</b></td></tr>
+<tr class="memdesc:a9db1153f7855a60da1c483835e617b34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional HRV readings for the panels that show the log, or NULL. <br /></td></tr>
+<tr class="memitem:afbd19a428a976ca092968a28be9b55bb" id="r_afbd19a428a976ca092968a28be9b55bb"><td class="memItemLeft"><a id="afbd19a428a976ca092968a28be9b55bb" name="afbd19a428a976ca092968a28be9b55bb"></a>
+const <a class="el" href="structHrDay.html">HrDay</a> *&#160;</td><td class="memItemRight"><b>hr_day</b></td></tr>
+<tr class="memdesc:afbd19a428a976ca092968a28be9b55bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional heart rate by the hour for today, or NULL. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Optional prefill, or pinned readings when live = false. </p>
+<div class="textblock"><p>Optional prefill, or pinned readings when live = false. A part's seed is only taken when the face named the part in its <a class="el" href="structHealthConfig.html" title="The rules a face hands the store.">HealthConfig</a>. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/c/pebble/io/stores/<a class="el" href="health__store_8h_source.html">health_store.h</a></li>
 </ul>

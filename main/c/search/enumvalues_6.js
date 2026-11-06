@@ -1,9 +1,25 @@
 var searchData=
 [
-  ['time_5fformat_5f12h_0',['TIME_FORMAT_12H',['../group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763',1,'setting_values.h']]],
-  ['time_5fformat_5f12h_5fno_5flead_1',['TIME_FORMAT_12H_NO_LEAD',['../group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468',1,'setting_values.h']]],
-  ['time_5fformat_5f24h_2',['TIME_FORMAT_24H',['../group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79',1,'setting_values.h']]],
-  ['time_5fformat_5fbeats_3',['TIME_FORMAT_BEATS',['../group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5',1,'setting_values.h']]],
-  ['time_5fformat_5fcount_4',['TIME_FORMAT_COUNT',['../group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f',1,'setting_values.h']]],
-  ['time_5fformat_5fsystem_5',['TIME_FORMAT_SYSTEM',['../group__lib__settings.html#gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485',1,'setting_values.h']]]
+  ['setting_5fbattery_5fdisplay_0',['SETTING_BATTERY_DISPLAY',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276',1,'settings.h']]],
+  ['setting_5fbluetooth_5ficon_1',['SETTING_BLUETOOTH_ICON',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315',1,'settings.h']]],
+  ['setting_5fbluetooth_5fvibe_5fconnect_2',['SETTING_BLUETOOTH_VIBE_CONNECT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548',1,'settings.h']]],
+  ['setting_5fbluetooth_5fvibe_5fdisconnect_3',['SETTING_BLUETOOTH_VIBE_DISCONNECT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0',1,'settings.h']]],
+  ['setting_5fbool_4',['SETTING_BOOL',['../group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be',1,'settings.h']]],
+  ['setting_5fcolor_5',['SETTING_COLOR',['../group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3',1,'settings.h']]],
+  ['setting_5fcount_6',['SETTING_COUNT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33',1,'settings.h']]],
+  ['setting_5fcstring_7',['SETTING_CSTRING',['../group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345',1,'settings.h']]],
+  ['setting_5fdate_5fformat_8',['SETTING_DATE_FORMAT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75',1,'settings.h']]],
+  ['setting_5fdistance_5funit_9',['SETTING_DISTANCE_UNIT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19',1,'settings.h']]],
+  ['setting_5fenum_5fu8_10',['SETTING_ENUM_U8',['../group__lib__settings.html#gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066',1,'settings.h']]],
+  ['setting_5fheader_5ffont_11',['SETTING_HEADER_FONT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9',1,'settings.h']]],
+  ['setting_5fhourly_5fvibe_12',['SETTING_HOURLY_VIBE',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895',1,'settings.h']]],
+  ['setting_5fquiet_5ftime_5ficon_13',['SETTING_QUIET_TIME_ICON',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd',1,'settings.h']]],
+  ['setting_5fsteps_5fmode_14',['SETTING_STEPS_MODE',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4',1,'settings.h']]],
+  ['setting_5ftemperature_5funit_15',['SETTING_TEMPERATURE_UNIT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188',1,'settings.h']]],
+  ['setting_5ftheme_16',['SETTING_THEME',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2',1,'settings.h']]],
+  ['setting_5ftime_5fformat_17',['SETTING_TIME_FORMAT',['../group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf',1,'settings.h']]],
+  ['steps_5fmode_5fcount_18',['STEPS_MODE_COUNT',['../group__lib__settings.html#gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928',1,'setting_values.h']]],
+  ['steps_5fmode_5fkm_19',['STEPS_MODE_KM',['../group__lib__settings.html#gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf',1,'setting_values.h']]],
+  ['steps_5fmode_5fmiles_20',['STEPS_MODE_MILES',['../group__lib__settings.html#gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe',1,'setting_values.h']]],
+  ['steps_5fmode_5fsteps_21',['STEPS_MODE_STEPS',['../group__lib__settings.html#gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa',1,'setting_values.h']]]
 ];

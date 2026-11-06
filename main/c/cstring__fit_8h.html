@@ -195,10 +195,11 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('cstring__fit_8
 </div><!--header-->
 <div class="contents">
 
-<p>Comparing a string against a fixed buffer it is about to be copied into.  
+<p>Copying text into a fixed buffer, and checking what a buffer holds before it is used.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
 <code>#include &lt;stddef.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 </div>
 <p><a href="cstring__fit_8h_source.html">Go to the source code of this file.</a></p>
@@ -209,9 +210,15 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga48dcd72e49fa122dc562f64605efdc75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy a string into a fixed buffer, keeping only what fits and always terminating it.  <br /></td></tr>
 <tr class="memitem:ga13d8bf38f7877df6836f074354b4bcb9" id="r_ga13d8bf38f7877df6836f074354b4bcb9"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga13d8bf38f7877df6836f074354b4bcb9">cstring_fit_same</a> (const char *current, const char *value, size_t size)</td></tr>
 <tr class="memdesc:ga13d8bf38f7877df6836f074354b4bcb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether copying <code class="param">value</code> into a buffer would leave it reading exactly as it does now.  <br /></td></tr>
+<tr class="memitem:ga2d2900400e9b136d9d176de8838c52a4" id="r_ga2d2900400e9b136d9d176de8838c52a4"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga2d2900400e9b136d9d176de8838c52a4">copy_bounded</a> (char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</td></tr>
+<tr class="memdesc:ga2d2900400e9b136d9d176de8838c52a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy bytes into a fixed buffer, taking what fits and terminating it.  <br /></td></tr>
+<tr class="memitem:ga6334eca7eb0a33cdf25b1bb9060afa35" id="r_ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga6334eca7eb0a33cdf25b1bb9060afa35">cstring_is_clean</a> (const char *s, uint16_t size)</td></tr>
+<tr class="memdesc:ga6334eca7eb0a33cdf25b1bb9060afa35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a byte range holds a string worth keeping.  <br /></td></tr>
+<tr class="memitem:ga58af7628a1a740a9fb7a220b3a472c22" id="r_ga58af7628a1a740a9fb7a220b3a472c22"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga58af7628a1a740a9fb7a220b3a472c22">cstring_setting_is_clean</a> (const char *s, uint16_t size, const char *default_str)</td></tr>
+<tr class="memdesc:ga58af7628a1a740a9fb7a220b3a472c22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a saved text setting reads as one, where an empty setting can be the real value.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Comparing a string against a fixed buffer it is about to be copied into. </p>
+<div class="textblock"><p>Copying text into a fixed buffer, and checking what a buffer holds before it is used. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

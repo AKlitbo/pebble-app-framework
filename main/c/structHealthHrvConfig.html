@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.18.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Pebble App Framework: src/c/core/layout/layout_role.h Source File</title>
+<title>Pebble App Framework: HealthHrvConfig Struct Reference</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="codefolding.js"></script>
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', codefold.init);
   </div>
 </div>
 <script type="text/javascript">
-document.addEventListener('DOMContentLoaded',() => { initNavTree('layout__role_8h_source.html','',''); });
+document.addEventListener('DOMContentLoaded',() => { initNavTree('structHealthHrvConfig.html','',''); });
 </script>
 <div id="container">
 <div id="doc-content">
@@ -191,34 +191,61 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('layout__role_8
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">layout_role.h</div></div>
+  <div class="headertitle"><div class="title">HealthHrvConfig Struct Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
 </div><!--header-->
 <div class="contents">
-<a href="layout__role_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="role_8h.html">role/role.h</a>&quot;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff">   20</a></span><span class="keyword">typedef</span> <a class="code hl_enumeration" href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a> <a class="code hl_typedef" href="group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff">LayoutRole</a>;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga3dc49de3b843fe808d5bf5112994550a">   23</a></span><span class="preprocessor">#define LAYOUT_ROLE_DAY ROLE_DAY</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="group__lib__core.html#gabb959b5a5b52510b68c39b3e64bc751f">   25</a></span><span class="preprocessor">#define LAYOUT_ROLE_NIGHT ROLE_NIGHT</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="group__lib__core.html#gae6ae052785561853f23b2384151f3962">   27</a></span><span class="preprocessor">#define LAYOUT_ROLE_QUIET ROLE_QUIET</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga949da367e692cdac11c761d3327ff620">   29</a></span><span class="preprocessor">#define LAYOUT_ROLE_COUNT ROLE_COUNT</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><a class="code hl_typedef" href="group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff">LayoutRole</a> <a class="code hl_function" href="group__lib__core.html#ga483c460c27f1f46834ac736434668598">layout_role_pick</a>(<span class="keywordtype">bool</span> quiet_on, <span class="keywordtype">bool</span> quiet_set, <span class="keywordtype">bool</span> night_on, <span class="keywordtype">bool</span> night_set);</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span></div>
-<div class="ttc" id="agroup__lib__core_html_ga483c460c27f1f46834ac736434668598"><div class="ttname"><a href="group__lib__core.html#ga483c460c27f1f46834ac736434668598">layout_role_pick</a></div><div class="ttdeci">LayoutRole layout_role_pick(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</div><div class="ttdoc">Which layout wins. Forwards to role_pick.</div><div class="ttdef"><b>Definition</b> layout_role.c:9</div></div>
-<div class="ttc" id="agroup__lib__core_html_ga4fc6414086f7b94d66f865e4b92091ff"><div class="ttname"><a href="group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff">LayoutRole</a></div><div class="ttdeci">Role LayoutRole</div><div class="ttdef"><b>Definition</b> layout_role.h:20</div></div>
-<div class="ttc" id="agroup__lib__core_html_gacdd79a1a4f81dd6ee5cddcb21149b951"><div class="ttname"><a href="group__lib__core.html#gacdd79a1a4f81dd6ee5cddcb21149b951">Role</a></div><div class="ttdeci">Role</div><div class="ttdoc">Which of the three is showing. The caller&#39;s own storage should line up with these.</div><div class="ttdef"><b>Definition</b> role.h:26</div></div>
-<div class="ttc" id="arole_8h_html"><div class="ttname"><a href="role_8h.html">role.h</a></div><div class="ttdoc">Which of day, night, and Quiet Time should be on screen right now.</div></div>
-</div><!-- fragment --></div><!-- contents -->
+
+<p>The HRV rules the health store passes on from its own config.  
+ <a href="#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="health__hrv_8h_source.html">health_hrv.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Data Fields</h2></td></tr>
+<tr class="memitem:a581da6804d052936dc3e6dbdbbe8d0ce" id="r_a581da6804d052936dc3e6dbdbbe8d0ce"><td class="memItemLeft"><a id="a581da6804d052936dc3e6dbdbbe8d0ce" name="a581da6804d052936dc3e6dbdbbe8d0ce"></a>
+bool&#160;</td><td class="memItemRight"><b>live</b></td></tr>
+<tr class="memdesc:a581da6804d052936dc3e6dbdbbe8d0ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">True asks the watch for beat gaps, and false just keeps the seed. <br /></td></tr>
+<tr class="memitem:a75deb2b8f8899dbbb62b936ab5c52f26" id="r_a75deb2b8f8899dbbb62b936ab5c52f26"><td class="memItemLeft"><a id="a75deb2b8f8899dbbb62b936ab5c52f26" name="a75deb2b8f8899dbbb62b936ab5c52f26"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>period_sec</b></td></tr>
+<tr class="memdesc:a75deb2b8f8899dbbb62b936ab5c52f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">How often the watch takes a burst, in seconds, or 0 for not at all. <br /></td></tr>
+<tr class="memitem:ae51ccd02a82b1544b151d29f59605603" id="r_ae51ccd02a82b1544b151d29f59605603"><td class="memItemLeft"><a id="ae51ccd02a82b1544b151d29f59605603" name="ae51ccd02a82b1544b151d29f59605603"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>still_mg</b></td></tr>
+<tr class="memdesc:ae51ccd02a82b1544b151d29f59605603"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT. <br /></td></tr>
+<tr class="memitem:a6ee174215aaaf176978fe25a5af47d03" id="r_a6ee174215aaaf176978fe25a5af47d03"><td class="memItemLeft"><a id="a6ee174215aaaf176978fe25a5af47d03" name="a6ee174215aaaf176978fe25a5af47d03"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>walk_steps</b></td></tr>
+<tr class="memdesc:a6ee174215aaaf176978fe25a5af47d03"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT. <br /></td></tr>
+<tr class="memitem:aa23c616a682cecedddf36b6569275652" id="r_aa23c616a682cecedddf36b6569275652"><td class="memItemLeft"><a id="aa23c616a682cecedddf36b6569275652" name="aa23c616a682cecedddf36b6569275652"></a>
+<a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a>&#160;</td><td class="memItemRight"><b>count</b></td></tr>
+<tr class="memdesc:aa23c616a682cecedddf36b6569275652"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which bursts count for the main reading. <br /></td></tr>
+<tr class="memitem:a8d5344dcfe1a958c87e8cfe469d36e13" id="r_a8d5344dcfe1a958c87e8cfe469d36e13"><td class="memItemLeft"><a id="a8d5344dcfe1a958c87e8cfe469d36e13" name="a8d5344dcfe1a958c87e8cfe469d36e13"></a>
+bool&#160;</td><td class="memItemRight"><b>keep_all</b></td></tr>
+<tr class="memdesc:a8d5344dcfe1a958c87e8cfe469d36e13"><td class="mdescLeft">&#160;</td><td class="mdescRight">Measure a burst that cannot count rather than drop it, for a panel that shows it. <br /></td></tr>
+<tr class="memitem:ac7610afd71927b65c5544bc3e264762f" id="r_ac7610afd71927b65c5544bc3e264762f"><td class="memItemLeft"><a id="ac7610afd71927b65c5544bc3e264762f" name="ac7610afd71927b65c5544bc3e264762f"></a>
+bool&#160;</td><td class="memItemRight"><b>live_redraw</b></td></tr>
+<tr class="memdesc:ac7610afd71927b65c5544bc3e264762f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Redraw the face once a second while a burst is held, for a tuning panel. <br /></td></tr>
+<tr class="memitem:afbb9c1c8fbd170998832acf2a1654c08" id="r_afbb9c1c8fbd170998832acf2a1654c08"><td class="memItemLeft"><a id="afbb9c1c8fbd170998832acf2a1654c08" name="afbb9c1c8fbd170998832acf2a1654c08"></a>
+uint32_t&#160;</td><td class="memItemRight"><b>persist_key</b></td></tr>
+<tr class="memdesc:afbb9c1c8fbd170998832acf2a1654c08"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist slot for the log, or 0 to keep it in memory only. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The HRV rules the health store passes on from its own config. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/c/pebble/io/stores/<a class="el" href="health__hrv_8h_source.html">health_hrv.h</a></li>
+</ul>
+</div><!-- contents -->
 </div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
 </div><!-- container -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>layout</b></li><li class="navelem"><a href="layout__role_8h.html">layout_role.h</a></li>
+    <li class="navelem"><a href="structHealthHrvConfig.html">HealthHrvConfig</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
   </ul>
 </div>

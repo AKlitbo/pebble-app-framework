@@ -64,16 +64,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">52.57% </span>
+                <span class="strong">52.04% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>51/97</span>
+                <span class='fraction'>51/98</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.12% </span>
+                <span class="strong">67.69% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>41/62</span>
+                <span class='fraction'>44/65</span>
             </div>
         
             
@@ -85,9 +85,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">52.74% </span>
+                <span class="strong">52.17% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>48/91</span>
+                <span class='fraction'>48/92</span>
             </div>
         
             
@@ -546,7 +546,22 @@
 <a name='L440'></a><a href='#L440'>440</a>
 <a name='L441'></a><a href='#L441'>441</a>
 <a name='L442'></a><a href='#L442'>442</a>
-<a name='L443'></a><a href='#L443'>443</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L443'></a><a href='#L443'>443</a>
+<a name='L444'></a><a href='#L444'>444</a>
+<a name='L445'></a><a href='#L445'>445</a>
+<a name='L446'></a><a href='#L446'>446</a>
+<a name='L447'></a><a href='#L447'>447</a>
+<a name='L448'></a><a href='#L448'>448</a>
+<a name='L449'></a><a href='#L449'>449</a>
+<a name='L450'></a><a href='#L450'>450</a>
+<a name='L451'></a><a href='#L451'>451</a>
+<a name='L452'></a><a href='#L452'>452</a>
+<a name='L453'></a><a href='#L453'>453</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -580,6 +595,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -718,9 +734,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
@@ -730,7 +746,7 @@
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -743,7 +759,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -827,6 +846,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1006,6 +1026,9 @@
  * A face can also set C defines for its own build, such as a raised ENGINE_SLOTS_MAX. They are checked
  * here and carried into the manifest, where the waf build turns each one into a -D flag.
  *
+ * The manifest also lists the sites and phone features the face's phone-side script uses, as
+ * usesPermissions. permissions.ts works them out from the face's message keys.
+ *
  * Usage: node tools/manifest/build-manifests.ts [--targets] &lt;face&gt;
  */
 import fs from 'node:fs';
@@ -1015,6 +1038,8 @@ import { writeIfChanged } from '../shared/files.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE } from '../shared/paths.ts';
 import { ToolError, reportFailure } from '../shared/tool-error.ts';
 import { isMainScript } from '../shared/entry.ts';
+import { permissionsFor } from './permissions.ts';
+import type { Permission } from './permissions.ts';
 &nbsp;
 const ROOT = WORKSPACE;
 const ROOT_PKG = path.join(ROOT, 'package.json');
@@ -1053,6 +1078,7 @@ export type SharedAppinfo = {
   messageKeys: unknown;
   resources: { media: MediaEntry[] };
   defines?: unknown;
+  usesPermissions?: unknown;
 };
 &nbsp;
 /**
@@ -1182,9 +1208,10 @@ export function buildMedia(config: SharedAppinfo, target: Target): MediaEntry[] 
  * @param rootPkg The author and version to copy in from the root package.json.
  * @param target The build target this manifest is for.
  * @param defines The C defines the face sets for its own build.
+ * @param permissions The usesPermissions list, from permissionsFor.
  * @return The finished manifest, ready to write out as package.json.
  */
-export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target, defines: Defines = {}) {
+export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: Target, defines: Defines = {}, permissions: Permission[] = []) {
   return {
     name: target.name,
     author: rootPkg.author,
@@ -1202,6 +1229,8 @@ export function buildManifest(config: SharedAppinfo, rootPkg: RootPkg, target: T
       capabilities: config.capabilities,
       messageKeys: config.messageKeys,
       resources: { media: buildMedia(config, target) },
+      // left out when there are none, so a face with no phone-side fetches gets no empty list
+      ...(permissions.length &gt; 0 ? { usesPermissions: permissions } : {}),
     },
     // outside the pebble block, which the SDK reads. left out when there are none, so a face that
     // sets none gets a manifest with no defines key
@@ -1270,7 +1299,8 @@ export function <span class="fstat-no" title="function not covered" >faceVersion
 function <span class="fstat-no" title="function not covered" >writeTarget(f</span>ace: string, config: Appinfo, rootPkg: RootPkg, target: Target): string {
   // the root package.json still owns the author
   const version = <span class="cstat-no" title="statement not covered" >faceVersion(config, rootPkg) as string;</span>
-  const manifest = <span class="cstat-no" title="statement not covered" >buildManifest(config, { author: rootPkg.author, version }, target, readDefines(config, face));</span>
+  const permissions = <span class="cstat-no" title="statement not covered" >permissionsFor(config.messageKeys, config.usesPermissions, face);</span>
+  const manifest = <span class="cstat-no" title="statement not covered" >buildManifest(config, { author: rootPkg.author, version }, target, readDefines(config, face), permissions);</span>
 &nbsp;
   const outDir = <span class="cstat-no" title="statement not covered" >path.join(ROOT, 'targets', target.name);</span>
 &nbsp;
@@ -1437,7 +1467,7 @@ function <span class="fstat-no" title="function not covered" >main() {</span>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-10-27T03:09:50.221Z
+                at 2026-11-06T03:44:35.209Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -993,6 +993,666 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>hr_day.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hr__day_8c.html</filename>
+    <includes id="hr__day_8h" name="hr_day.h" local="yes" import="no" module="no" objc="no">hr_day.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_clear</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10a8d6b3da25bae2446917c4d2926172</anchor>
+      <arglist>(HrDay *day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3d58235334983237da2d42be7603056a</anchor>
+      <arglist>(HrDay *day, int hour, int bpm)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hr_day_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9e6cbd7e421ca0ebd91abd4389a09e0c</anchor>
+      <arglist>(const HrDay *day, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_stats</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga66d1f37711cadadbbcc9d15f90fef1cf</anchor>
+      <arglist>(const HrDay *day, int *low, int *avg, int *high)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hr_day.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hr__day_8h.html</filename>
+    <class kind="struct">HrHour</class>
+    <class kind="struct">HrDay</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HR_DAY_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae3dd69cb6828ef994edacf5f710a0707</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_clear</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10a8d6b3da25bae2446917c4d2926172</anchor>
+      <arglist>(HrDay *day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3d58235334983237da2d42be7603056a</anchor>
+      <arglist>(HrDay *day, int hour, int bpm)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hr_day_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9e6cbd7e421ca0ebd91abd4389a09e0c</anchor>
+      <arglist>(const HrDay *day, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_stats</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga66d1f37711cadadbbcc9d15f90fef1cf</anchor>
+      <arglist>(const HrDay *day, int *low, int *avg, int *high)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_log.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__log_8c.html</filename>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga50ef6e3a945c258e4fc83bb1929a83da</anchor>
+      <arglist>(HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>HrvState</type>
+      <name>hrv_log_state_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf48d364de1b0985d9d0206b1023922a7</anchor>
+      <arglist>(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_counts</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga248f18e06ef62e0e1d10e772f767a5b9</anchor>
+      <arglist>(HrvState state, HrvCount count)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_roll_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f583fc30f55e7e82457e3fef5bbeb7b</anchor>
+      <arglist>(HrvLog *log, int32_t day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae0bb96d786cefdddabe9708b30b409c5</anchor>
+      <arglist>(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_count</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa5780e28f269349f66933da35d0ba821</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_get</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac6bf1a23fcf5966f02387bc150c8a9fd</anchor>
+      <arglist>(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3f51dbfb1a7c497a93a39bf61faa7ee5</anchor>
+      <arglist>(const HrvLog *log, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_today</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2361e1061a377a432e5ef300f78e6b4c</anchor>
+      <arglist>(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_night_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0ea30c8342186116f4422246ff53b6ca</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_last</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga484d26e50432a4d931eb57316576def6</anchor>
+      <arglist>(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_log.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__log_8h.html</filename>
+    <class kind="struct">HrvBurst</class>
+    <class kind="struct">HrvLog</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_SLOTS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef8d372067c4fa13a781401cef30d6dd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24d8afb395355e1268c709cbcb6ac136</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_MS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae62e193a45f5e99b5c7f083ae69f3079</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NIGHT_GAP_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46a85f845d87d94530bb5f06187f2458</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_FROM_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga300b215938ab954e0d365a5a447ba108</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_UNTIL_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c96ec630f977cb0eab583f999c74c29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_WALK_STEPS_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad46f32990b5080141609508a2f406f7c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_RECENT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga29d5cfdac8f3395b7cb700ab9408c1d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_ASLEEP</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63f3ed0e45cc4da29578aad101c2c414</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_STATE_MASK</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24a559688bccfd57843cf956f5b5766b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae63b8153c70e7611881a2e05bec214a7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_BUSY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvCount</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7e84a97be9f69040bef94b003e32be1a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_NOT_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_ANY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga50ef6e3a945c258e4fc83bb1929a83da</anchor>
+      <arglist>(HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>HrvState</type>
+      <name>hrv_log_state_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf48d364de1b0985d9d0206b1023922a7</anchor>
+      <arglist>(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_counts</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga248f18e06ef62e0e1d10e772f767a5b9</anchor>
+      <arglist>(HrvState state, HrvCount count)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae0bb96d786cefdddabe9708b30b409c5</anchor>
+      <arglist>(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_roll_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f583fc30f55e7e82457e3fef5bbeb7b</anchor>
+      <arglist>(HrvLog *log, int32_t day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_count</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa5780e28f269349f66933da35d0ba821</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_get</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac6bf1a23fcf5966f02387bc150c8a9fd</anchor>
+      <arglist>(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3f51dbfb1a7c497a93a39bf61faa7ee5</anchor>
+      <arglist>(const HrvLog *log, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_today</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2361e1061a377a432e5ef300f78e6b4c</anchor>
+      <arglist>(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_night_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0ea30c8342186116f4422246ff53b6ca</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_last</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga484d26e50432a4d931eb57316576def6</anchor>
+      <arglist>(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_motion.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__motion_8c.html</filename>
+    <includes id="hrv__motion_8h" name="hrv_motion.h" local="yes" import="no" module="no" objc="no">health/hrv_motion.h</includes>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>moved</name>
+      <anchorfile>hrv__motion_8c.html</anchorfile>
+      <anchor>a6b2127d8d7ed143a139f14f414ce2f55</anchor>
+      <arglist>(int16_t now, int16_t before)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90849b5fc07cff2b120dc7dfc1785796</anchor>
+      <arglist>(HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d089c1610381c0c18606831554fae28</anchor>
+      <arglist>(HrvMotion *motion, int16_t x_mg, int16_t y_mg, int16_t z_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_motion_score</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b2736ae74a9625bc123d925774616fb</anchor>
+      <arglist>(const HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae09067019afb5ff7d2af7ffad13e7ab2</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_cannot_pass</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga926738e9460f83ceedca4e1075a3595e</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg, uint32_t max_samples)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_motion.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__motion_8h.html</filename>
+    <class kind="struct">HrvMotion</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_STILL_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga13618435dba1bc51f20f014a2de937bd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_MIN_SAMPLES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1a2153b6e909b367d89943775c4c76e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90849b5fc07cff2b120dc7dfc1785796</anchor>
+      <arglist>(HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d089c1610381c0c18606831554fae28</anchor>
+      <arglist>(HrvMotion *motion, int16_t x_mg, int16_t y_mg, int16_t z_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_motion_score</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b2736ae74a9625bc123d925774616fb</anchor>
+      <arglist>(const HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae09067019afb5ff7d2af7ffad13e7ab2</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_cannot_pass</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga926738e9460f83ceedca4e1075a3595e</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg, uint32_t max_samples)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_run.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__run_8c.html</filename>
+    <includes id="hrv__run_8h" name="hrv_run.h" local="yes" import="no" module="no" objc="no">health/hrv_run.h</includes>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>root_floor</name>
+      <anchorfile>hrv__run_8c.html</anchorfile>
+      <anchor>a583fd1918a62e97638ff34787f0155ad</anchor>
+      <arglist>(uint32_t value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_run_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga820f7ded1182d953adac970b65798571</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_finish</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f4bc4b0a4b9727d00dbd5a5a4571a81</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_run_quiet</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5a9fade553546533a99efde079418e37</anchor>
+      <arglist>(const HrvRun *run, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74b9acde0c1bb0a850ee1b2f8763e58</anchor>
+      <arglist>(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_reading_stale</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga694e9c38004c250485939cbf5c33ea1f</anchor>
+      <arglist>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_should_ask</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63af7759a1aab1ce49fad20c956816f2</anchor>
+      <arglist>(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_hold_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
+      <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_run.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__run_8h.html</filename>
+    <class kind="struct">HrvRun</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MIN_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaefdc36c44d4b4bb7d75b49971dafa75</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MAX_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga25c5320ce0b3cb8d6318006c39554d9c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_JUMP_PCT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaefbe63307314a051f668d64f02af5d87</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_QUIET_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga59b2e0772453c9dc6f043dccff16db65</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf327b41b60f9c86f55e411ee317d2545</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_FULL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga524644e6318004787bb4db9ecf847255</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_PERIODS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9506f432151279855933339ae78cfb91</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_MIN_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga606ade592998e531ca1b4ee8336c1d51</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_PERIOD_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae821813667772afcba017bb0a1765c89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_MAX_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5cce8c8e009bc553503dee841fa01bc3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga353a8f23c99dd39c3dbfa02708208d29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_run_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga820f7ded1182d953adac970b65798571</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74b9acde0c1bb0a850ee1b2f8763e58</anchor>
+      <arglist>(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_run_quiet</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5a9fade553546533a99efde079418e37</anchor>
+      <arglist>(const HrvRun *run, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_finish</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f4bc4b0a4b9727d00dbd5a5a4571a81</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_reading_stale</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga694e9c38004c250485939cbf5c33ea1f</anchor>
+      <arglist>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_should_ask</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63af7759a1aab1ce49fad20c956816f2</anchor>
+      <arglist>(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_hold_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
+      <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>minute_window.c</name>
     <path>src/c/core/health/</path>
     <filename>minute__window_8c.html</filename>
@@ -1113,67 +1773,6 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
       <arglist>(const CallbackList *list)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>layout_role.c</name>
-    <path>src/c/core/layout/</path>
-    <filename>layout__role_8c.html</filename>
-    <includes id="layout__role_8h" name="layout_role.h" local="yes" import="no" module="no" objc="no">layout_role.h</includes>
-    <member kind="function">
-      <type>LayoutRole</type>
-      <name>layout_role_pick</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga483c460c27f1f46834ac736434668598</anchor>
-      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>layout_role.h</name>
-    <path>src/c/core/layout/</path>
-    <filename>layout__role_8h.html</filename>
-    <includes id="role_8h" name="role.h" local="yes" import="no" module="no" objc="no">role/role.h</includes>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_DAY</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga3dc49de3b843fe808d5bf5112994550a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_NIGHT</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>gabb959b5a5b52510b68c39b3e64bc751f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_QUIET</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>gae6ae052785561853f23b2384151f3962</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_COUNT</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga949da367e692cdac11c761d3327ff620</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Role</type>
-      <name>LayoutRole</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga4fc6414086f7b94d66f865e4b92091ff</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>LayoutRole</type>
-      <name>layout_role_pick</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga483c460c27f1f46834ac736434668598</anchor>
-      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -1418,6 +2017,33 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>cstring_fit.c</name>
+    <path>src/c/core/text/</path>
+    <filename>cstring__fit_8c.html</filename>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>copy_bounded</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
+      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
+      <arglist>(const char *s, uint16_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_setting_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
+      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>cstring_fit.h</name>
     <path>src/c/core/text/</path>
     <filename>cstring__fit_8h.html</filename>
@@ -1434,6 +2060,27 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga13d8bf38f7877df6836f074354b4bcb9</anchor>
       <arglist>(const char *current, const char *value, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>copy_bounded</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
+      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
+      <arglist>(const char *s, uint16_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_setting_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
+      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -1477,27 +2124,6 @@
       <anchor>gad8460f42bd55675f97ac3b2feae4fde0</anchor>
       <arglist>(char *buffer, size_t size, int value)</arglist>
     </member>
-    <member kind="function">
-      <type>void</type>
-      <name>copy_bounded</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
-      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>cstring_is_clean</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
-      <arglist>(const char *s, uint16_t size)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>cstring_setting_is_clean</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
-      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>number_format.h</name>
@@ -1530,27 +2156,6 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gad8460f42bd55675f97ac3b2feae4fde0</anchor>
       <arglist>(char *buffer, size_t size, int value)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>copy_bounded</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
-      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>cstring_is_clean</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
-      <arglist>(const char *s, uint16_t size)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>cstring_setting_is_clean</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
-      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -2001,7 +2606,7 @@
     <filename>calendar__wire_8c.html</filename>
     <includes id="calendar__wire_8h" name="calendar_wire.h" local="yes" import="no" module="no" objc="no">wire/calendar_wire.h</includes>
     <includes id="bytes__le_8h" name="bytes_le.h" local="yes" import="no" module="no" objc="no">io/bytes_le.h</includes>
-    <includes id="number__format_8h" name="number_format.h" local="yes" import="no" module="no" objc="no">text/number_format.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
     <member kind="function">
       <type>bool</type>
       <name>calendar_wire_decode</name>
@@ -2063,7 +2668,7 @@
     <filename>stock__wire_8c.html</filename>
     <includes id="stock__wire_8h" name="stock_wire.h" local="yes" import="no" module="no" objc="no">wire/stock_wire.h</includes>
     <includes id="bytes__le_8h" name="bytes_le.h" local="yes" import="no" module="no" objc="no">io/bytes_le.h</includes>
-    <includes id="number__format_8h" name="number_format.h" local="yes" import="no" module="no" objc="no">text/number_format.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
     <member kind="function">
       <type>bool</type>
       <name>stock_wire_decode</name>
@@ -2145,13 +2750,6 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>STOCK_MAX_SLOTS</name>
-      <anchorfile>wire__caps_8g_8h.html</anchorfile>
-      <anchor>aa30008256f21f16b5c000b4f358a1709</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
       <name>STOCK_SYMBOL_LEN</name>
       <anchorfile>wire__caps_8g_8h.html</anchorfile>
       <anchor>a12ebf366686d792fba83b752e39cb3f9</anchor>
@@ -2162,13 +2760,6 @@
       <name>CALENDAR_SLOTS_MAX</name>
       <anchorfile>wire__caps_8g_8h.html</anchorfile>
       <anchor>afe3312551e2f2441936844dd431c42b8</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>CALENDAR_MAX_SLOTS</name>
-      <anchorfile>wire__caps_8g_8h.html</anchorfile>
-      <anchor>abce35d4e05b918ebdb339cfbf8c87be2</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -3002,22 +3593,907 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>health_hr_day.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hr__day_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_roll</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a9d8da02696f28e5400fc6edb7b6e7bc6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>add_record_hr</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>af161a06c28e6fcaef55b01b2e08d1fe0</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>read_hr_day</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a609b81fd914cb0e3fb55f6958077a55a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_first_read</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a3083e45022ac37f47439277d8b78ec74</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_start</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a948fb5e0ac39e379ab5ea8244405fc64</anchor>
+      <arglist>(const HealthConfig *cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_heart_rate</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a60130fe502016c220e3e9bf645e7df61</anchor>
+      <arglist>(int hr, bool from_event)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_poll</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a192123c01290bc19ee65310b57597030</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>hr_day_sum</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>abd07b42daafec72c85e9afdf5ded77bd</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrDay *</type>
+      <name>health_store_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa83227ebe779ce764a7ce57df3311f77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrDay</type>
+      <name>s_day</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a8d174e6ec36fac03d6fe809d28854796</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga41c920e1c1687197b86fcae1bd17c5aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_day_start</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>ac33dd9862e573600e675c24ddc6ae894</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_from_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a66e299376bc633cef478aefa25e9e265</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_last_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a8edbb611e8d38fd3296c3cdc8e3c21e3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_pending</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a92320ccd45668277bda8c95946d10c01</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_day_start</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>ac33dd9862e573600e675c24ddc6ae894</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_from_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a66e299376bc633cef478aefa25e9e265</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_last_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a8edbb611e8d38fd3296c3cdc8e3c21e3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_pending</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a92320ccd45668277bda8c95946d10c01</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hr_history.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hr__history_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <includes id="minute__window_8h" name="minute_window.h" local="yes" import="no" module="no" objc="no">health/minute_window.h</includes>
+    <class kind="struct">HealthSaved</class>
+    <class kind="struct">[struct].s_window</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HR_HISTORY_MINUTES</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a565e5d788d520b3a16db7c546e9ee7b3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>read_hr_history</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>ae75b734a66f178f0637203c5db0fecf1</anchor>
+      <arglist>(time_t now_min)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>persist_save</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_history_advance</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>abec475d019d9d8e7a8f2b899624e41bb</anchor>
+      <arglist>(time_t now_min)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_history_start</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>ac79f49d2a9ea2683c20afefe11c19f68</anchor>
+      <arglist>(const HealthConfig *cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_history_heart_rate</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a6c566426a31bca1a22dab9207831e9ce</anchor>
+      <arglist>(int hr, bool from_event)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>hr_history_sum</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>aea3fe99399ab8e8006eb9838f5b1d218</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
+      <name>health_store_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab42f7ec6f1b3c4b0403d76027e1a856e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @057071061146157263371363233006106142166035206323</type>
+      <name>s_window</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>aa5f9a2880b003e432c66f242c07f2f70</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3c6bccf52afd82d7b55d77836e6ae39</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hrv.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hrv_8c.html</filename>
+    <includes id="health__hrv_8h" name="health_hrv.h" local="yes" import="no" module="no" objc="no">io/stores/health_hrv.h</includes>
+    <includes id="hrv__run_8h" name="hrv_run.h" local="yes" import="no" module="no" objc="no">health/hrv_run.h</includes>
+    <includes id="hrv__motion_8h" name="hrv_motion.h" local="yes" import="no" module="no" objc="no">health/hrv_motion.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <class kind="struct">HrvSaved</class>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>steps_now</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>af42559c7602ff70bb8e7f95df9f61c29</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>steps_through</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a124963a78e7a449ee0fc362e0368814e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static HrvState</type>
+      <name>burst_state</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad1e68f4522e89cf530f16fc0b97b5794</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>cannot_count</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad7194780c79904ef6f09ddc26dd1c27c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>note_burst</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa5502a859e4315cf11b57e1dbf94a892</anchor>
+      <arglist>(int ms, uint32_t now_sec, bool counted)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>show</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a0471acb230fbd6e0a6823a71a4c51849</anchor>
+      <arglist>(int ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>save_log</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a6972b5bfe6d44f0c3afb9030852e10be</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>local_day</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a5a3a8615b64a1e549d90fd2bb4349a45</anchor>
+      <arglist>(uint32_t now_sec, int32_t *day, int *minute_of_day)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>record</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a1eec8cf29190373ee37ae2e9f1e6c501</anchor>
+      <arglist>(int ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>request</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad69029585e2bff65f98182904a9704e2</anchor>
+      <arglist>(uint16_t period_sec, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_accel</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ac4213a7f97913295407406ce98253dc7</anchor>
+      <arglist>(AccelData *data, uint32_t num_samples)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>accel_start</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aef7990c4ff7e2751ac00c521ca69e9c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>accel_stop</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aff955dd46087bcc8cf70260712acfd28</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hold_drop</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a049a8ab3d3768f47b07b5fbaa51b6c1e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hold_start</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a42875a5f566a2b6a83f9d1919c327b8e</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hold_end</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a50a51e28dd5c0c6eb1e1c5a0856ed882</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>end_quiet_burst</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a4a4b4d4148f1efa19b86b8ef9c2f9087</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_on_gap</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga223234c2f0122059fd1706b2ff12e987</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_poll</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga364caae9b733dea62975ada41d355328</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>show_latest_logged</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ac7ba8f136e68f64501250125318c7839</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga302a123979f2732edb6738c61c8d0650</anchor>
+      <arglist>(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *seed_log, void(*changed)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3de2b90ca51ac9d5544c9cebf2eb7239</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabc78d1ab551531851c68847138ad5f16</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaeb21c567d464de358f3f62a99315af26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ac4ace78fa451b80f418f1c9dbe1ada</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga37582149cbe5836b28881faff2fd5705</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga372e93534744b6e53b18de37df9001f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga72d9d6bfe8bca402429ac3e0c09845ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4d9e68b5550cc8cf8ca340322883a01b</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab389960f3a525c0eaf80a93a62171c5f</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga07a3890b8ec14d604f9c33f3882885fb</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvRun</type>
+      <name>s_run</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa3c21f0ec1e161155b8b2fe7cb2e5291</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_ms</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aca152a3645dcb8c3933853ab8af41c95</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_measured_at</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a3120fa28716868a7c09e026ffc878775</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_period_sec</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a96eedd3090f06d509f7d7f0a2ca7e989</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_sampling</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a8d4a86d5635c31a11d143e4fd123c9e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_asked_at</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a77c41e71b2b50e50f053d76bb07b1ea5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_gap_at</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a06dbba63ed53d5f1029e282767549193</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_holding</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa86bece94dffaa772eb12a852ea724e9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_settle</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad1eb2596701315dc1d2bb7d7a1422c54</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_still_mg</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a31272f777c51281c6bb31af57950b97a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_walk_steps</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>adbf964a3b7eabb1f38369e58b2d2d14e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvCount</type>
+      <name>s_count</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>acf1886a7de20037aa5be621859c81bfd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_accel_on</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a8f66f63f31c07291b181e5bae3bf9669</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvMotion</type>
+      <name>s_motion</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa05f21e513a6673438d6f61ff3f84152</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_held_since</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a3cf690cf6816b9f2893a1e2c572cf094</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_changed</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a469c36d4178c807f64b7d5d2e077c717</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_keep_all</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a3a2392ea513225daa7078cdb71928cbd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live_redraw</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a6c33dbe33460784c1fab01e4cbfe9070</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int32_t</type>
+      <name>s_steps_start</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a99dc978dbb9ca13788c701c4143b0893</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_hold_gaps</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a7eb962c39b492de944d2b3484dd3b8e6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvBurst</type>
+      <name>s_recent</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a84f02e0024684d850d01e63ed2e54c8c</anchor>
+      <arglist>[HRV_RECENT]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_recent_head</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aae56ad3fcfd0ab68a634d6709ee6a043</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvLog</type>
+      <name>s_log</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a5ef77755d7fa4a69b8bbf13431d29220</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hrv.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hrv_8h.html</filename>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <class kind="struct">HealthHrvConfig</class>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga302a123979f2732edb6738c61c8d0650</anchor>
+      <arglist>(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *seed_log, void(*changed)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3de2b90ca51ac9d5544c9cebf2eb7239</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabc78d1ab551531851c68847138ad5f16</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_on_gap</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga223234c2f0122059fd1706b2ff12e987</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_poll</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga364caae9b733dea62975ada41d355328</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaeb21c567d464de358f3f62a99315af26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ac4ace78fa451b80f418f1c9dbe1ada</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga37582149cbe5836b28881faff2fd5705</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga372e93534744b6e53b18de37df9001f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga72d9d6bfe8bca402429ac3e0c09845ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4d9e68b5550cc8cf8ca340322883a01b</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab389960f3a525c0eaf80a93a62171c5f</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga07a3890b8ec14d604f9c33f3882885fb</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_step_history.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__step__history_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <includes id="step__hours_8h" name="step_hours.h" local="yes" import="no" module="no" objc="no">health/step_hours.h</includes>
+    <class kind="struct">[struct].s_hours</class>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>add_record_steps</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a3fb4ed9255723df69b4c5e0238be8b26</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>read_step_hourly</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>ac5d29c457db49f5400731bc15fcb9c32</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>steps_first_read</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a005cb76793b70941963f6480b8a38e8c</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>step_history_start</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>abe5b14e24afd654ebb1424945e9c7d85</anchor>
+      <arglist>(const HealthConfig *cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>step_history_steps</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>acfce0af54967cea4c7432f55b04c265a</anchor>
+      <arglist>(int steps)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>step_history_sum</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>ad0ec27b23c098487914dec579cfe2951</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint16_t *</type>
+      <name>health_store_step_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga34ce959b4e7f9802230c7e1319b3bf28</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_step_hours</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7f6eb32c1ad9a2a9ffa41d13dc507204</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @210355151357034220336236057327220076034261254104</type>
+      <name>s_hours</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a2e906b2b92f6ee4e2395c0b2387f4b3c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_pending</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a92320ccd45668277bda8c95946d10c01</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_no_timer</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a658ff262f3d2e7fd0d12e963b290f7f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_steps</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a5f833cb8ed2204402eca026a668fb9e8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_step_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81bcfdc1cea1875ac0c3a5140dc8d80d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_cached_day</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>aded462fa2005d5b78ddcc2ec22a3c224</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_settled_hours</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a368b1a1c575f22bb1bcd8da8f13d0523</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_cached_day</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>aded462fa2005d5b78ddcc2ec22a3c224</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_settled_hours</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a368b1a1c575f22bb1bcd8da8f13d0523</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>health_store.c</name>
     <path>src/c/pebble/io/stores/</path>
     <filename>health__store_8c.html</filename>
     <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
-    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
     <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
-    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
-    <includes id="minute__window_8h" name="minute_window.h" local="yes" import="no" module="no" objc="no">health/minute_window.h</includes>
-    <includes id="step__hours_8h" name="step_hours.h" local="yes" import="no" module="no" objc="no">health/step_hours.h</includes>
-    <class kind="struct">HealthSaved</class>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <includes id="health__hrv_8h" name="health_hrv.h" local="yes" import="no" module="no" objc="no">io/stores/health_hrv.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
     <class kind="struct">[struct].s_state</class>
     <member kind="define">
       <type>#define</type>
-      <name>HR_HISTORY_MINUTES</name>
+      <name>HRV_BUILT</name>
       <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a565e5d788d520b3a16db7c546e9ee7b3</anchor>
+      <anchor>aaf317adbbde86f789a9ab27e98beeab7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_PART_COUNT</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a7c28568717007967741130ef80d37059</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -3027,11 +4503,11 @@
       <anchor>ae8aeac449ddb0996fbb979993bc46de9</anchor>
       <arglist></arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static bool</type>
-      <name>metric_available</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a8edd24692a36fc2f549a011218dbc45c</anchor>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_metric_available</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3d46e137f1e65f3e36baf89f1557b87</anchor>
       <arglist>(HealthMetric metric, time_t start, time_t end)</arglist>
     </member>
     <member kind="function" static="yes">
@@ -3048,54 +4524,33 @@
       <anchor>a78f21309c4be5fcdb65ba548b2024d0c</anchor>
       <arglist>(HealthMetric metric, int fallback)</arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static HealthMinuteData *</type>
-      <name>scratch_take</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>ae01790c8e757012f0597ca4d625fb387</anchor>
+    <member kind="function">
+      <type>HealthMinuteData *</type>
+      <name>health_scratch_take</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac028dda967096a1c36f3deff186a846c</anchor>
       <arglist>(int records)</arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>read_hr_history</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>ae75b734a66f178f0637203c5db0fecf1</anchor>
-      <arglist>(time_t now_min)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static time_t</type>
-      <name>hour_start</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>ad1ca88dd2fcfe3e52bc1a2d1589ab3e7</anchor>
+    <member kind="function">
+      <type>time_t</type>
+      <name>health_hour_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ea9c8677cce316fa3d469d08faafc52</anchor>
       <arglist>(const struct tm *today, int hour)</arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>read_step_hourly</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>ac5d29c457db49f5400731bc15fcb9c32</anchor>
-      <arglist>(void)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>persist_save</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
-      <arglist>(void)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>hr_history_advance</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>abec475d019d9d8e7a8f2b899624e41bb</anchor>
-      <arglist>(time_t now_min)</arglist>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_walk_minute_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf18cc0c1c6259577a616c734457c2f40</anchor>
+      <arglist>(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each, void *context)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
       <name>refresh_hr</name>
       <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a621aad019cd81f1ec9165baaf42524c5</anchor>
-      <arglist>(void)</arglist>
+      <anchor>a1198d2e95d57cb493cbfcf02ca2c498a</anchor>
+      <arglist>(bool from_event)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -3105,11 +4560,11 @@
       <arglist>(bool force)</arglist>
     </member>
     <member kind="function" static="yes">
-      <type>static void</type>
-      <name>steps_first_read</name>
+      <type>static uint32_t</type>
+      <name>state_sum</name>
       <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a005cb76793b70941963f6480b8a38e8c</anchor>
-      <arglist>(void *data)</arglist>
+      <anchor>a00147e6b69266575007151b658718ee9</anchor>
+      <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -3141,31 +4596,38 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>health_store_redraw</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga91ad7f45647093a68eb19f67e6605c26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0e1f4e480b7ae883e73cc7270bbf7ffc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad4831647379f8aee421bde9e18cf09b9</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae4ed9e0080bd4d0d9147692a3ba2539f</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>health_store_init</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gadb98993f8a5d2ea3ac0b99effab8b393</anchor>
       <arglist>(HealthConfig cfg, const HealthSeed *seed)</arglist>
-    </member>
-    <member kind="function">
-      <type>uint8_t *</type>
-      <name>health_store_hr_history</name>
-      <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>ga2db6e554fac24c95cdb2823cdb18bef0</anchor>
-      <arglist>(void)</arglist>
-    </member>
-    <member kind="function">
-      <type>const uint16_t *</type>
-      <name>health_store_step_hourly</name>
-      <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>ga34ce959b4e7f9802230c7e1319b3bf28</anchor>
-      <arglist>(void)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>health_store_step_hours</name>
-      <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>ga7f6eb32c1ad9a2a9ffa41d13dc507204</anchor>
-      <arglist>(void)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -3207,6 +4669,62 @@
       <name>health_store_distance_m</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga82d8e5fff446bf3a7e20228c8cb49df9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga46bf291eab60978c19fcd948808a0196</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab79c3a58fb2df070dbd4e0abcce41a22</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga847895390fe76e993bc34ea4f2202a59</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4acc41f26f8a766529d223582a98cf01</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga651a1038499ef99c95416e64e71242d5</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga27882c04c06b01103dabf8fdc8069a61</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_store_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ae6d44d0ab68b09306d57bae82eae77</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="variable" static="yes">
@@ -3231,32 +4749,11 @@
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_steps_pending</name>
+      <type>static const HealthPart *</type>
+      <name>s_parts</name>
       <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>ae18e4c4a49e72e6e74a3ca38a0c4f0a6</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static uint32_t</type>
-      <name>s_persist_key</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_hr_history</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a0570e28604a87591fea07b1d00bea341</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_step_history</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a020edc6544e87babbf91c8698f05fe05</anchor>
-      <arglist></arglist>
+      <anchor>a2df5ab1454cc36e44a2fb0ac05c77164</anchor>
+      <arglist>[HEALTH_PART_COUNT]</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static bool</type>
@@ -3287,34 +4784,6 @@
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
-      <type>static time_t</type>
-      <name>s_cached_day</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>aded462fa2005d5b78ddcc2ec22a3c224</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static int</type>
-      <name>s_settled_hours</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a368b1a1c575f22bb1bcd8da8f13d0523</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_hr_history</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a0570e28604a87591fea07b1d00bea341</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_step_history</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a020edc6544e87babbf91c8698f05fe05</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
       <type>static bool</type>
       <name>s_sleep</name>
       <anchorfile>health__store_8c.html</anchorfile>
@@ -3340,20 +4809,6 @@
       <name>s_distance</name>
       <anchorfile>health__store_8c.html</anchorfile>
       <anchor>a09c973a046d205986bf3f25f8cdf198e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static time_t</type>
-      <name>s_cached_day</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>aded462fa2005d5b78ddcc2ec22a3c224</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static int</type>
-      <name>s_settled_hours</name>
-      <anchorfile>health__store_8c.html</anchorfile>
-      <anchor>a368b1a1c575f22bb1bcd8da8f13d0523</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -3361,8 +4816,54 @@
     <name>health_store.h</name>
     <path>src/c/pebble/io/stores/</path>
     <filename>health__store_8h.html</filename>
+    <includes id="hrv__motion_8h" name="hrv_motion.h" local="yes" import="no" module="no" objc="no">health/hrv_motion.h</includes>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <includes id="hr__day_8h" name="hr_day.h" local="yes" import="no" module="no" objc="no">health/hr_day.h</includes>
+    <class kind="struct">HealthPart</class>
     <class kind="struct">HealthConfig</class>
     <class kind="struct">HealthSeed</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf58a7b0cae4bb710b1c4834cd90df0ba</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_STEP_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf48ed118c83053074b953aa994ace230</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_DAY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f959c79f659728bb1df249db66cefaf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthPart</type>
+      <name>HealthPart</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga23f35f535d443dacbf52ac58dde0b22c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthConfig</type>
+      <name>HealthConfig</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga70156b27716f66602b46ccb5449a0e84</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthSeed</type>
+      <name>HealthSeed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae837bb856deb22a451dd505b6c72e844</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type>void</type>
       <name>health_store_init</name>
@@ -3378,10 +4879,38 @@
       <arglist>(void(*cb)(void))</arglist>
     </member>
     <member kind="function">
-      <type>uint8_t *</type>
+      <type>void</type>
+      <name>health_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0e1f4e480b7ae883e73cc7270bbf7ffc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad4831647379f8aee421bde9e18cf09b9</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae4ed9e0080bd4d0d9147692a3ba2539f</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
       <name>health_store_hr_history</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>ga2db6e554fac24c95cdb2823cdb18bef0</anchor>
+      <anchor>gab42f7ec6f1b3c4b0403d76027e1a856e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrDay *</type>
+      <name>health_store_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa83227ebe779ce764a7ce57df3311f77</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -3439,6 +4968,130 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga82d8e5fff446bf3a7e20228c8cb49df9</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga46bf291eab60978c19fcd948808a0196</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab79c3a58fb2df070dbd4e0abcce41a22</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga847895390fe76e993bc34ea4f2202a59</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_store_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ae6d44d0ab68b09306d57bae82eae77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4acc41f26f8a766529d223582a98cf01</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga651a1038499ef99c95416e64e71242d5</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga27882c04c06b01103dabf8fdc8069a61</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3c6bccf52afd82d7b55d77836e6ae39</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_step_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81bcfdc1cea1875ac0c3a5140dc8d80d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga41c920e1c1687197b86fcae1bd17c5aa</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_store_parts.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__store__parts_8h.html</filename>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MinuteRecordFn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga67ca3e59cfbc387a8cc491a82a19a3a5</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_redraw</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga91ad7f45647093a68eb19f67e6605c26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>health_hour_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ea9c8677cce316fa3d469d08faafc52</anchor>
+      <arglist>(const struct tm *today, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_metric_available</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3d46e137f1e65f3e36baf89f1557b87</anchor>
+      <arglist>(HealthMetric metric, time_t start, time_t end)</arglist>
+    </member>
+    <member kind="function">
+      <type>HealthMinuteData *</type>
+      <name>health_scratch_take</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac028dda967096a1c36f3deff186a846c</anchor>
+      <arglist>(int records)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_walk_minute_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf18cc0c1c6259577a616c734457c2f40</anchor>
+      <arglist>(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each, void *context)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -3969,6 +5622,13 @@
       <anchor>gaa19bf75ee3cb87a3a31a97238f4dcf73</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HRV</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5dd549de392b92225c04280a50970e14</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static bool</type>
       <name>store_restore</name>
@@ -4030,6 +5690,13 @@
       <name>STORE_TAG_LOCATION</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gaa19bf75ee3cb87a3a31a97238f4dcf73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HRV</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5dd549de392b92225c04280a50970e14</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -5192,7 +6859,6 @@
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="tuple__read_8h" name="tuple_read.h" local="yes" import="no" module="no" objc="no">io/tuple_read.h</includes>
     <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
-    <includes id="number__format_8h" name="number_format.h" local="yes" import="no" module="no" objc="no">text/number_format.h</includes>
     <member kind="function" static="yes">
       <type>static void *</type>
       <name>field_ptr</name>
@@ -6067,13 +7733,6 @@
       <anchor>ga60efc891e07d5be12f10e4c1dc7f43d9</anchor>
       <arglist></arglist>
     </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>ENGINE_MAX_SLOTS</name>
-      <anchorfile>group__lib__ui.html</anchorfile>
-      <anchor>ga36e1ce7a039108d509b546091b2f81ea</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="typedef">
       <type>uint8_t(*)</type>
       <name>EngineBuild</name>
@@ -6431,6 +8090,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>readout_hrv</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3323a26d3294679e221801278ed1b808</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>readout_steps</name>
       <anchorfile>group__lib__ui.html</anchorfile>
       <anchor>ga46b62b70722c1a8885049b5dd237aa7e</anchor>
@@ -6502,6 +8168,13 @@
       <name>readout_hr</name>
       <anchorfile>group__lib__ui.html</anchorfile>
       <anchor>gab74d674a3402d0c3ccb145f54ee4d5dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hrv</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3323a26d3294679e221801278ed1b808</anchor>
       <arglist>(char *out, size_t n)</arglist>
     </member>
     <member kind="function">
@@ -6878,27 +8551,108 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>[struct].s_hours</name>
+    <filename>struct_0fstruct_0e_8s__hours.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>step_hourly</name>
+      <anchorfile>struct_0fstruct_0e_8s__hours.html</anchorfile>
+      <anchor>abd059fa328e9264564b60957fb56696f</anchor>
+      <arglist>[HOURS_PER_DAY]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>step_hours</name>
+      <anchorfile>struct_0fstruct_0e_8s__hours.html</anchorfile>
+      <anchor>a848ed5523b067bf05dd5907529261202</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>[struct].s_state</name>
     <filename>struct_0fstruct_0e_8s__state.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lat</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lon</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>aa3436b4f53e574810565c9b29d0042d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>StockStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a67444768cf8bf88bd0e079bfc6f9378a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a71acacf736c0662ae8a364a757778e46</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>battery_level</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a5342d9c4d055ae70b79f91132fa02d4b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>charging</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>addc8e821b664e115fe20565aa835a42d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>bluetooth_connected</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a94f35b808bfbb716cfd01ef016aae882</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="variable">
       <type>int</type>
       <name>hr</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
       <anchor>a69dfa550f32ab21f5c6c5d378d8acd7f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint8_t</type>
-      <name>hr_history</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>aa1403b090a51b63b44fc26d18b223ecd</anchor>
-      <arglist>[HR_HISTORY_MINUTES]</arglist>
-    </member>
-    <member kind="variable">
-      <type>time_t</type>
-      <name>hr_last_min</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a904cb62852ca7f16f0327e7cd4f42c28</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -6936,95 +8690,22 @@
       <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
       <arglist></arglist>
     </member>
-    <member kind="variable">
-      <type>uint16_t</type>
-      <name>step_hourly</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a1a731941f4d99830ba17815282c90acd</anchor>
-      <arglist>[HOURS_PER_DAY]</arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>step_hours</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>af28c994c7865eaf51cd5f3c2afdbc390</anchor>
-      <arglist></arglist>
-    </member>
+  </compound>
+  <compound kind="struct">
+    <name>[struct].s_window</name>
+    <filename>struct_0fstruct_0e_8s__window.html</filename>
     <member kind="variable">
       <type>uint8_t</type>
-      <name>tag</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>char</type>
-      <name>lat</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>char</type>
-      <name>lon</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
-      <arglist>[20]</arglist>
-    </member>
-    <member kind="variable">
-      <type>int</type>
-      <name>battery_level</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a5342d9c4d055ae70b79f91132fa02d4b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>bool</type>
-      <name>charging</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>addc8e821b664e115fe20565aa835a42d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>bool</type>
-      <name>bluetooth_connected</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a94f35b808bfbb716cfd01ef016aae882</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>CalendarStrip</type>
-      <name>strip</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
-      <arglist></arglist>
+      <name>hr_history</name>
+      <anchorfile>struct_0fstruct_0e_8s__window.html</anchorfile>
+      <anchor>a4d76d9a5f88589d6d9c83fab6cb4be15</anchor>
+      <arglist>[HR_HISTORY_MINUTES]</arglist>
     </member>
     <member kind="variable">
       <type>time_t</type>
-      <name>last_sync</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>uint8_t</type>
-      <name>tag</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>aa3436b4f53e574810565c9b29d0042d5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>StockStrip</type>
-      <name>strip</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a67444768cf8bf88bd0e079bfc6f9378a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>time_t</type>
-      <name>last_sync</name>
-      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a71acacf736c0662ae8a364a757778e46</anchor>
+      <name>hr_last_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__window.html</anchorfile>
+      <anchor>a9b95b17d3bad6b5c13592bb635aab58f</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -7288,17 +8969,24 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>bool</type>
+      <type>const HealthPart *</type>
       <name>hr_history</name>
       <anchorfile>structHealthConfig.html</anchorfile>
-      <anchor>ab51a8038aeefea6ecc2daa83c85c54d0</anchor>
+      <anchor>a96796ce0373e3d8bf3a20f4b92ee562a</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>bool</type>
+      <type>const HealthPart *</type>
       <name>step_history</name>
       <anchorfile>structHealthConfig.html</anchorfile>
-      <anchor>a9cb4f23e6be6dec63f49cb4707a8421b</anchor>
+      <anchor>a2b0766458c8fcb62af6708785123522e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart *</type>
+      <name>hr_day</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ac21b65af356c6ae70fa024719aeb5f1e</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -7330,11 +9018,159 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_period_sec</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a8e637a9018d8e8c9d8e295a20e1bde3e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_still_mg</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>acfebb54de2a823338599ea012e461f7e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_walk_steps</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a72ae3b5cbca33403651ac580b74a73bc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvCount</type>
+      <name>hrv_count</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ada15ad269a3134ff2ebb721a1c2aeef1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>hrv_keep_all</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ada28d8d02cd0dfb04fc8852e9707aa34</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>hrv_live_redraw</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a061a4b722de6578616ce05af73b2a9a5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>hrv_persist_key</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>aab37c71e8400eb25e7187131ca40bf20</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
       <type>uint32_t</type>
       <name>persist_key</name>
       <anchorfile>structHealthConfig.html</anchorfile>
       <anchor>a162f07256f08bd8dada6c12f6178cce0</anchor>
       <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthHrvConfig</name>
+    <filename>structHealthHrvConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a581da6804d052936dc3e6dbdbbe8d0ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>period_sec</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a75deb2b8f8899dbbb62b936ab5c52f26</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>still_mg</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>ae51ccd02a82b1544b151d29f59605603</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>walk_steps</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a6ee174215aaaf176978fe25a5af47d03</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvCount</type>
+      <name>count</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>aa23c616a682cecedddf36b6569275652</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>keep_all</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a8d5344dcfe1a958c87e8cfe469d36e13</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live_redraw</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>ac7610afd71927b65c5544bc3e264762f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>afbb9c1c8fbd170998832acf2a1654c08</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthPart</name>
+    <filename>structHealthPart.html</filename>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>start</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a12a4aadf15fcf1f24673a41edf301c31</anchor>
+      <arglist>(const struct HealthConfig *cfg, const struct HealthSeed *seed)</arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>heart_rate</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a915f5979b635dc500a0c39e012dd206e</anchor>
+      <arglist>(int hr, bool from_event)</arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>steps</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a9ff2638dccc449a741d6bd4f51436811</anchor>
+      <arglist>(int steps)</arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>poll</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>adee53ec3450d3777577cfcc64641ddee</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t(*)</type>
+      <name>sum</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a6a8afb5813844f4108eeac487ef069fd</anchor>
+      <arglist>(void)</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -7428,6 +9264,27 @@
       <anchor>ae8ed84681436e54cc8f65a3270cea4e1</anchor>
       <arglist></arglist>
     </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>hrv_ms</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>ab2c79c328b5052d7f80c63c19554fb0a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HrvLog *</type>
+      <name>hrv_log</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a9db1153f7855a60da1c483835e617b34</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HrDay *</type>
+      <name>hr_day</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>afbd19a428a976ca092968a28be9b55bb</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>HourLatch</name>
@@ -7437,6 +9294,307 @@
       <name>last_start</name>
       <anchorfile>structHourLatch.html</anchorfile>
       <anchor>af42cb17bd6a6dfea7d7c95e87eb8f37a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrDay</name>
+    <filename>structHrDay.html</filename>
+    <member kind="variable">
+      <type>HrHour</type>
+      <name>hours</name>
+      <anchorfile>structHrDay.html</anchorfile>
+      <anchor>a76dfd4ae93e2e8456f39ff3e4696a551</anchor>
+      <arglist>[HR_DAY_HOURS]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrHour</name>
+    <filename>structHrHour.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>sum</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>ae7c30238cdf33fbe7bd2a71e969073d4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>a79afcfd92db39ce28cd2403870d003c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>low</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>acc0ce007509ea40c9fe818e314e29a82</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>high</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>a480f4555048bcc612e1fa22e6e15bd25</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvBurst</name>
+    <filename>structHrvBurst.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>at_sec</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a0b575b957833471898c947e909993977</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>ms</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a6df7af8a3ad719c38288e1fa90284cc7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>score</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a7f41783d828f1c3a38b165b18d9359a3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>steps</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a5348549429b22c79d0609ea689c271a3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>state</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a58ee6dd37207c2516a9f4d30b907c13a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>kept</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>ad59f10883d3d332aef745fcf2436ddb8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>gaps</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a85f277ac10b1ac6c9ee0b90907759f15</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>counted</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a4d29b6ad9315ce792bb2c02fc5ca8c2d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvLog</name>
+    <filename>structHrvLog.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>at_min</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a898e4d69bd130a381d7e5b2a27704d93</anchor>
+      <arglist>[HRV_LOG_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>state_at_min</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a132744d928d35ad4e74aff4a8c128ce1</anchor>
+      <arglist>[HRV_STATE_COUNT]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>night_last_min</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a3d1963f976288c425e3091b7ea680ae1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>today</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a55a17799c1b88a50a3c0ae498d46bbe7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hour_sum</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a6c4b08a197ab3fa859726fbce53e9e32</anchor>
+      <arglist>[HRV_LOG_HOURS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>night_sum</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a8358c0a25ef95a20bb12a3c777f632bf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>ms</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>aa95148fd04e627a8fe481a0ddd983721</anchor>
+      <arglist>[HRV_LOG_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>flags</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a9f7a5f58d53427cce901584c8e4ae8af</anchor>
+      <arglist>[HRV_LOG_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>hour_count</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a9997f5a57d71177899bb1d516cbf3bc9</anchor>
+      <arglist>[HRV_LOG_HOURS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>state_ms</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a9988535882d653682cec76de29ac25e5</anchor>
+      <arglist>[HRV_STATE_COUNT]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>night_count</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a7b458c2b7c1198060bdee317fc595b8e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>head</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>aa75f1f8b1b62fa4fa8255bcd675a84ca</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvMotion</name>
+    <filename>structHrvMotion.html</filename>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>last_x</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a41c7172c7306a847903028be8a6c1fea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>last_y</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a6e5f5c3c8c361ee8cf0f65cdc3d19be3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>last_z</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>af87e0721177b9e093cc6c190baabec62</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>primed</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>ad8bc1316b2adb8e66b7c078b6911737f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>sum</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a81caf58201cd5b6e599cbb3b628e12ae</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>samples</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a96262039c2c01aaf5903a94e72eebed8</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvRun</name>
+    <filename>structHrvRun.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>last_ms</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>ab97d22d055ef0b60e635d6dc9b4054ec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>diffs</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>abecaa11823f37d0a00f94eb998531779</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>sum_sq</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>a28c5a2fd3af6e8aa44b548948457e89a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>last_at</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>ad9b69963930bf29a2ee1ba9aaacb171d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>finished_diffs</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>ac6cfd6e43f145c2428061b7ed8141d9e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvSaved</name>
+    <filename>structHrvSaved.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>structHrvSaved.html</anchorfile>
+      <anchor>ad558b727e15dd18b15f8a0edad9af7a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>pad</name>
+      <anchorfile>structHrvSaved.html</anchorfile>
+      <anchor>a5e1ed03113c7b90fb66b52e22318925d</anchor>
+      <arglist>[3]</arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvLog</type>
+      <name>log</name>
+      <anchorfile>structHrvSaved.html</anchorfile>
+      <anchor>a0724c369de7401a1acd54d5d05f67e52</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -8759,6 +10917,13 @@
     <file path="src/c/core/clock/">weekday.h</file>
     <file path="src/c/core/clock/">zone_setting.c</file>
     <file path="src/c/core/clock/">zone_setting.h</file>
+    <file path="src/c/core/health/">hr_day.h</file>
+    <file path="src/c/core/health/">hrv_log.c</file>
+    <file path="src/c/core/health/">hrv_log.h</file>
+    <file path="src/c/core/health/">hrv_motion.c</file>
+    <file path="src/c/core/health/">hrv_motion.h</file>
+    <file path="src/c/core/health/">hrv_run.c</file>
+    <file path="src/c/core/health/">hrv_run.h</file>
     <file path="src/c/core/health/">minute_window.c</file>
     <file path="src/c/core/health/">minute_window.h</file>
     <file path="src/c/core/health/">step_hours.c</file>
@@ -8766,8 +10931,6 @@
     <file path="src/c/core/io/">bytes_le.h</file>
     <file path="src/c/core/io/">callback_list.c</file>
     <file path="src/c/core/io/">callback_list.h</file>
-    <file path="src/c/core/layout/">layout_role.c</file>
-    <file path="src/c/core/layout/">layout_role.h</file>
     <file path="src/c/core/layout/">layout_string.c</file>
     <file path="src/c/core/layout/">layout_string.h</file>
     <file path="src/c/core/math/">pct.c</file>
@@ -8778,6 +10941,7 @@
     <file path="src/c/core/math/">series.h</file>
     <file path="src/c/core/role/">role.c</file>
     <file path="src/c/core/role/">role.h</file>
+    <file path="src/c/core/text/">cstring_fit.c</file>
     <file path="src/c/core/text/">cstring_fit.h</file>
     <file path="src/c/core/text/">number_format.c</file>
     <file path="src/c/core/text/">number_format.h</file>
@@ -8808,6 +10972,12 @@
     <class kind="struct">HourLatch</class>
     <class kind="struct">TimeBand</class>
     <class kind="struct">TimeBandSpan</class>
+    <class kind="struct">HrHour</class>
+    <class kind="struct">HrDay</class>
+    <class kind="struct">HrvBurst</class>
+    <class kind="struct">HrvLog</class>
+    <class kind="struct">HrvMotion</class>
+    <class kind="struct">HrvRun</class>
     <class kind="struct">CallbackList</class>
     <class kind="struct">WeatherMessage</class>
     <class kind="struct">WeatherState</class>
@@ -8857,37 +11027,177 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>HR_DAY_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae3dd69cb6828ef994edacf5f710a0707</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_SLOTS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef8d372067c4fa13a781401cef30d6dd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24d8afb395355e1268c709cbcb6ac136</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_MS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae62e193a45f5e99b5c7f083ae69f3079</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NIGHT_GAP_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46a85f845d87d94530bb5f06187f2458</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_FROM_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga300b215938ab954e0d365a5a447ba108</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_UNTIL_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c96ec630f977cb0eab583f999c74c29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_WALK_STEPS_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad46f32990b5080141609508a2f406f7c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_RECENT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga29d5cfdac8f3395b7cb700ab9408c1d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_ASLEEP</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63f3ed0e45cc4da29578aad101c2c414</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_STATE_MASK</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24a559688bccfd57843cf956f5b5766b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_STILL_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga13618435dba1bc51f20f014a2de937bd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_MIN_SAMPLES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1a2153b6e909b367d89943775c4c76e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MIN_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaefdc36c44d4b4bb7d75b49971dafa75</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MAX_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga25c5320ce0b3cb8d6318006c39554d9c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_JUMP_PCT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaefbe63307314a051f668d64f02af5d87</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_QUIET_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga59b2e0772453c9dc6f043dccff16db65</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf327b41b60f9c86f55e411ee317d2545</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_FULL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga524644e6318004787bb4db9ecf847255</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_PERIODS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9506f432151279855933339ae78cfb91</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_MIN_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga606ade592998e531ca1b4ee8336c1d51</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_PERIOD_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae821813667772afcba017bb0a1765c89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_MAX_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5cce8c8e009bc553503dee841fa01bc3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga353a8f23c99dd39c3dbfa02708208d29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>STEP_HOURS_PER_DAY</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gab582a8ca15586973977cd7f48de42fa2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_DAY</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga3dc49de3b843fe808d5bf5112994550a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_NIGHT</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>gabb959b5a5b52510b68c39b3e64bc751f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_QUIET</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>gae6ae052785561853f23b2384151f3962</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>LAYOUT_ROLE_COUNT</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga949da367e692cdac11c761d3327ff620</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -8932,13 +11242,6 @@
       <anchor>gace9c32cbf32397ccc0a34a750ce3ea68</anchor>
       <arglist>(void)</arglist>
     </member>
-    <member kind="typedef">
-      <type>Role</type>
-      <name>LayoutRole</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga4fc6414086f7b94d66f865e4b92091ff</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="enumeration">
       <type></type>
       <name>NightSchedMode</name>
@@ -8962,6 +11265,56 @@
       <name>NIGHT_SCHED_FIXED</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae63b8153c70e7611881a2e05bec214a7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_BUSY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvCount</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7e84a97be9f69040bef94b003e32be1a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_NOT_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_ANY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -9335,6 +11688,195 @@
       <arglist>(const char *value)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>hr_day_clear</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10a8d6b3da25bae2446917c4d2926172</anchor>
+      <arglist>(HrDay *day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3d58235334983237da2d42be7603056a</anchor>
+      <arglist>(HrDay *day, int hour, int bpm)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hr_day_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9e6cbd7e421ca0ebd91abd4389a09e0c</anchor>
+      <arglist>(const HrDay *day, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_stats</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga66d1f37711cadadbbcc9d15f90fef1cf</anchor>
+      <arglist>(const HrDay *day, int *low, int *avg, int *high)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga50ef6e3a945c258e4fc83bb1929a83da</anchor>
+      <arglist>(HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>HrvState</type>
+      <name>hrv_log_state_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf48d364de1b0985d9d0206b1023922a7</anchor>
+      <arglist>(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_counts</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga248f18e06ef62e0e1d10e772f767a5b9</anchor>
+      <arglist>(HrvState state, HrvCount count)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae0bb96d786cefdddabe9708b30b409c5</anchor>
+      <arglist>(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_roll_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f583fc30f55e7e82457e3fef5bbeb7b</anchor>
+      <arglist>(HrvLog *log, int32_t day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_count</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa5780e28f269349f66933da35d0ba821</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_get</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac6bf1a23fcf5966f02387bc150c8a9fd</anchor>
+      <arglist>(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3f51dbfb1a7c497a93a39bf61faa7ee5</anchor>
+      <arglist>(const HrvLog *log, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_today</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2361e1061a377a432e5ef300f78e6b4c</anchor>
+      <arglist>(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_night_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0ea30c8342186116f4422246ff53b6ca</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_last</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga484d26e50432a4d931eb57316576def6</anchor>
+      <arglist>(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90849b5fc07cff2b120dc7dfc1785796</anchor>
+      <arglist>(HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d089c1610381c0c18606831554fae28</anchor>
+      <arglist>(HrvMotion *motion, int16_t x_mg, int16_t y_mg, int16_t z_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_motion_score</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b2736ae74a9625bc123d925774616fb</anchor>
+      <arglist>(const HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae09067019afb5ff7d2af7ffad13e7ab2</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_cannot_pass</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga926738e9460f83ceedca4e1075a3595e</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg, uint32_t max_samples)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_run_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga820f7ded1182d953adac970b65798571</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74b9acde0c1bb0a850ee1b2f8763e58</anchor>
+      <arglist>(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_run_quiet</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5a9fade553546533a99efde079418e37</anchor>
+      <arglist>(const HrvRun *run, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_finish</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f4bc4b0a4b9727d00dbd5a5a4571a81</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_reading_stale</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga694e9c38004c250485939cbf5c33ea1f</anchor>
+      <arglist>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_should_ask</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63af7759a1aab1ce49fad20c956816f2</anchor>
+      <arglist>(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_hold_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
+      <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
       <type>int</type>
       <name>minute_window_first_slot</name>
       <anchorfile>group__lib__core.html</anchorfile>
@@ -9375,13 +11917,6 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
       <arglist>(const CallbackList *list)</arglist>
-    </member>
-    <member kind="function">
-      <type>LayoutRole</type>
-      <name>layout_role_pick</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga483c460c27f1f46834ac736434668598</anchor>
-      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -9476,6 +12011,27 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>copy_bounded</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
+      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
+      <arglist>(const char *s, uint16_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_setting_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
+      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>number_group</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga3633a279bf5254234b2a8549d98e80de</anchor>
@@ -9501,27 +12057,6 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gad8460f42bd55675f97ac3b2feae4fde0</anchor>
       <arglist>(char *buffer, size_t size, int value)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>copy_bounded</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
-      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>cstring_is_clean</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
-      <arglist>(const char *s, uint16_t size)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>cstring_setting_is_clean</name>
-      <anchorfile>group__lib__core.html</anchorfile>
-      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
-      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -9972,8 +12507,14 @@
     <filename>group__lib__stores.html</filename>
     <file path="src/c/pebble/io/stores/">calendar_store.c</file>
     <file path="src/c/pebble/io/stores/">calendar_store.h</file>
+    <file path="src/c/pebble/io/stores/">health_hr_day.c</file>
+    <file path="src/c/pebble/io/stores/">health_hr_history.c</file>
+    <file path="src/c/pebble/io/stores/">health_hrv.c</file>
+    <file path="src/c/pebble/io/stores/">health_hrv.h</file>
+    <file path="src/c/pebble/io/stores/">health_step_history.c</file>
     <file path="src/c/pebble/io/stores/">health_store.c</file>
     <file path="src/c/pebble/io/stores/">health_store.h</file>
+    <file path="src/c/pebble/io/stores/">health_store_parts.h</file>
     <file path="src/c/pebble/io/stores/">location_store.c</file>
     <file path="src/c/pebble/io/stores/">location_store.h</file>
     <file path="src/c/pebble/io/stores/">stock_store.c</file>
@@ -9996,6 +12537,8 @@
     <file path="src/c/pebble/io/stores/">weather_store.h</file>
     <class kind="struct">CalendarConfig</class>
     <class kind="struct">CalendarSeed</class>
+    <class kind="struct">HealthHrvConfig</class>
+    <class kind="struct">HealthPart</class>
     <class kind="struct">HealthConfig</class>
     <class kind="struct">HealthSeed</class>
     <class kind="struct">LocationConfig</class>
@@ -10009,7 +12552,30 @@
     <class kind="struct">TimeConfig</class>
     <class kind="struct">WeatherConfig</class>
     <class kind="struct">WeatherSeed</class>
+    <class kind="struct">[struct].s_hours</class>
     <class kind="struct">[struct].s_state</class>
+    <class kind="struct">[struct].s_window</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf58a7b0cae4bb710b1c4834cd90df0ba</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_STEP_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf48ed118c83053074b953aa994ace230</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_DAY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f959c79f659728bb1df249db66cefaf</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>STORE_CADENCE_MAX</name>
@@ -10030,6 +12596,34 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gae0d84f2727ec304e5376009e5f7dcd18</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthPart</type>
+      <name>HealthPart</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga23f35f535d443dacbf52ac58dde0b22c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthConfig</type>
+      <name>HealthConfig</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga70156b27716f66602b46ccb5449a0e84</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthSeed</type>
+      <name>HealthSeed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae837bb856deb22a451dd505b6c72e844</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MinuteRecordFn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga67ca3e59cfbc387a8cc491a82a19a3a5</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*)</type>
@@ -10082,6 +12676,104 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>health_hrv_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga302a123979f2732edb6738c61c8d0650</anchor>
+      <arglist>(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *seed_log, void(*changed)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3de2b90ca51ac9d5544c9cebf2eb7239</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabc78d1ab551531851c68847138ad5f16</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_on_gap</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga223234c2f0122059fd1706b2ff12e987</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_poll</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga364caae9b733dea62975ada41d355328</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaeb21c567d464de358f3f62a99315af26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ac4ace78fa451b80f418f1c9dbe1ada</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga37582149cbe5836b28881faff2fd5705</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga372e93534744b6e53b18de37df9001f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga72d9d6bfe8bca402429ac3e0c09845ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4d9e68b5550cc8cf8ca340322883a01b</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab389960f3a525c0eaf80a93a62171c5f</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga07a3890b8ec14d604f9c33f3882885fb</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>health_store_init</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gadb98993f8a5d2ea3ac0b99effab8b393</anchor>
@@ -10095,10 +12787,38 @@
       <arglist>(void(*cb)(void))</arglist>
     </member>
     <member kind="function">
-      <type>uint8_t *</type>
+      <type>void</type>
+      <name>health_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0e1f4e480b7ae883e73cc7270bbf7ffc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad4831647379f8aee421bde9e18cf09b9</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae4ed9e0080bd4d0d9147692a3ba2539f</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
       <name>health_store_hr_history</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>ga2db6e554fac24c95cdb2823cdb18bef0</anchor>
+      <anchor>gab42f7ec6f1b3c4b0403d76027e1a856e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrDay *</type>
+      <name>health_store_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa83227ebe779ce764a7ce57df3311f77</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -10156,6 +12876,97 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga82d8e5fff446bf3a7e20228c8cb49df9</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga46bf291eab60978c19fcd948808a0196</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab79c3a58fb2df070dbd4e0abcce41a22</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga847895390fe76e993bc34ea4f2202a59</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_store_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ae6d44d0ab68b09306d57bae82eae77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4acc41f26f8a766529d223582a98cf01</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga651a1038499ef99c95416e64e71242d5</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga27882c04c06b01103dabf8fdc8069a61</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_redraw</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga91ad7f45647093a68eb19f67e6605c26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>health_hour_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ea9c8677cce316fa3d469d08faafc52</anchor>
+      <arglist>(const struct tm *today, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_metric_available</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3d46e137f1e65f3e36baf89f1557b87</anchor>
+      <arglist>(HealthMetric metric, time_t start, time_t end)</arglist>
+    </member>
+    <member kind="function">
+      <type>HealthMinuteData *</type>
+      <name>health_scratch_take</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac028dda967096a1c36f3deff186a846c</anchor>
+      <arglist>(int records)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_walk_minute_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf18cc0c1c6259577a616c734457c2f40</anchor>
+      <arglist>(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each, void *context)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -10584,6 +13395,27 @@
       <anchor>ga7856768b2bde2cf55422b2c3b5ea3b4e</anchor>
       <arglist>(void)</arglist>
     </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3c6bccf52afd82d7b55d77836e6ae39</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_step_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81bcfdc1cea1875ac0c3a5140dc8d80d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga41c920e1c1687197b86fcae1bd17c5aa</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>STORE_TAG_WEATHER</name>
@@ -10617,6 +13449,13 @@
       <name>STORE_TAG_LOCATION</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gaa19bf75ee3cb87a3a31a97238f4dcf73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HRV</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5dd549de392b92225c04280a50970e14</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -11236,13 +14075,6 @@
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>ENGINE_MAX_SLOTS</name>
-      <anchorfile>group__lib__ui.html</anchorfile>
-      <anchor>ga36e1ce7a039108d509b546091b2f81ea</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
       <name>FONT_SLOTS_MAX</name>
       <anchorfile>group__lib__ui.html</anchorfile>
       <anchor>ga4ca1872518ba74eea31ab554588e7398</anchor>
@@ -11421,6 +14253,13 @@
       <name>readout_hr</name>
       <anchorfile>group__lib__ui.html</anchorfile>
       <anchor>gab74d674a3402d0c3ccb145f54ee4d5dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hrv</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3323a26d3294679e221801278ed1b808</anchor>
       <arglist>(char *out, size_t n)</arglist>
     </member>
     <member kind="function">

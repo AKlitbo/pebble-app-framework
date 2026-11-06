@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('structHealthSa
 </div><!--header-->
 <div class="contents">
 
-<p>The only part worth keeping across a relaunch.  
+<p>The window as it goes to flash.  
  <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
@@ -204,17 +204,17 @@ Data Fields</h2></td></tr>
 uint8_t&#160;</td><td class="memItemRight"><b>tag</b></td></tr>
 <tr class="memdesc:aebdb6f4702918a9ec02f00d43c665fda"><td class="mdescLeft">&#160;</td><td class="mdescRight">STORE_TAG_HEALTH, so a restore can tell this blob from another shape. <br /></td></tr>
 <tr class="memitem:a328aae865b39d96d9b4b1a3f812fd77a" id="r_a328aae865b39d96d9b4b1a3f812fd77a"><td class="memItemLeft"><a id="a328aae865b39d96d9b4b1a3f812fd77a" name="a328aae865b39d96d9b4b1a3f812fd77a"></a>
-uint8_t&#160;</td><td class="memItemRight"><b>hr_history</b> [<a class="el" href="health__store_8c.html#a565e5d788d520b3a16db7c546e9ee7b3">HR_HISTORY_MINUTES</a>]</td></tr>
+uint8_t&#160;</td><td class="memItemRight"><b>hr_history</b> [<a class="el" href="health__hr__history_8c.html#a565e5d788d520b3a16db7c546e9ee7b3">HR_HISTORY_MINUTES</a>]</td></tr>
 <tr class="memdesc:a328aae865b39d96d9b4b1a3f812fd77a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The saved rolling heart rate window. <br /></td></tr>
 <tr class="memitem:a0c08244c197ab8cfa9544f175fdf7011" id="r_a0c08244c197ab8cfa9544f175fdf7011"><td class="memItemLeft"><a id="a0c08244c197ab8cfa9544f175fdf7011" name="a0c08244c197ab8cfa9544f175fdf7011"></a>
 time_t&#160;</td><td class="memItemRight"><b>hr_last_min</b></td></tr>
 <tr class="memdesc:a0c08244c197ab8cfa9544f175fdf7011"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wall-clock minute the window last slid to. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The only part worth keeping across a relaunch. </p>
+<div class="textblock"><p>The window as it goes to flash. </p>
 <p>Every other number is read back off the health service before the first paint, but the watch logs heart rate too rarely to rebuild the graph, so the rolling window is saved instead. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/c/pebble/io/stores/<a class="el" href="health__store_8c.html">health_store.c</a></li>
+<li>src/c/pebble/io/stores/<a class="el" href="health__hr__history_8c.html">health_hr_history.c</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

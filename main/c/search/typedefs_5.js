@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['layoutrole_0',['LayoutRole',['../group__lib__core.html#ga4fc6414086f7b94d66f865e4b92091ff',1,'layout_role.h']]]
+  ['inboxcompletehandler_0',['InboxCompleteHandler',['../group__lib__io.html#gaae586b1981cefa58e0284ec05e167205',1,'appmessage.h']]]
 ];

@@ -125,7 +125,7 @@
           <h1>Layout Strings</h1>
           
           <div class="readme"><p>Some faces let the wearer build their own screen on the settings page, placing panels on a grid, and can hold more than one grid: one for the day, one for after dark, and one for while Quiet Time is on. The layout code is the part of that every such face needs the same way. It reads the numbers out of a grid sent as text without ever overflowing on a damaged one, tells a grid with real panels in it from an empty or broken one, and picks which of the three grids belongs on the screen right now. A face that adds a night or Quiet Time grid gets the fallbacks for free, so a trigger with no grid behind it never leaves the wearer looking at a blank screen.</p>
-<p>It lives in <a href="../../c/layout__string_8h.html"><code>layout_string.h</code></a>, <a href="../../c/layout__string_8c.html"><code>layout_string.c</code></a>, <a href="../../c/layout__role_8h.html"><code>layout_role.h</code></a>, and <a href="../../c/layout__role_8c.html"><code>layout_role.c</code></a> under <code>src/c/core/layout/</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>). The face reads Quiet Time, the clock, and its own settings, and passes in plain answers and strings.</p>
+<p>It lives in <a href="../../c/layout__string_8h.html"><code>layout_string.h</code></a> and <a href="../../c/layout__string_8c.html"><code>layout_string.c</code></a> under <code>src/c/core/layout/</code>, with the grid picker in <a href="../../c/role_8h.html"><code>role.h</code></a> and <a href="../../c/role_8c.html"><code>role.c</code></a> under <code>src/c/core/role/</code> (see <a href="../../how/#where-the-code-lives">Where the Code Lives</a>). The face reads Quiet Time, the clock, and its own settings, and passes in plain answers and strings.</p>
 <h2 id="a-grid-as-text">A Grid as Text</h2>
 <p>A grid reaches the watch as one text setting, a run of records separated by semicolons. The Mosaic faces, for example, write each record as five numbers, the panel and then its row, column, width, and height:</p>
 <pre><code>3,0,0,2,1;7,1,0,4,2;12,3,2,2,1</code></pre>
@@ -149,20 +149,20 @@
 <p>One test covers every way a grid can be nothing: the <code>0</code> of a cleared grid, an empty string, a NULL, and whatever a damaged copy left behind. A panel number past the end of the catalogue does not count either. The settings page&#39;s grid builder is shared by a family of faces, and a grid made for a face with more panels can name ones this face does not have.</p>
 <p>The answer is what decides whether a night or Quiet Time grid counts as set. A night schedule over an empty night grid, or Quiet Time with an empty Quiet Time grid, leaves the day grid up.</p>
 <h2 id="which-grid-is-showing">Which Grid Is Showing</h2>
-<p><code>layout_role_pick</code> takes four answers and returns the grid that wins:</p>
-<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">LayoutRole </span><span style="color:var(--code-token-function)">layout_role_pick</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> quiet_on</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> quiet_set</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> night_on</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> night_set)</span></span>
+<p><code>role_pick</code> takes four answers and returns the grid that wins:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">Role </span><span style="color:var(--code-token-function)">role_pick</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> quiet_on</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> quiet_set</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> night_on</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> bool</span><span style="color:var(--code-foreground)"> night_set)</span></span>
 <span class="line"><span style="color:var(--code-foreground)">{</span></span>
 <span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (quiet_on </span><span style="color:var(--code-token-keyword)">&#x26;&#x26;</span><span style="color:var(--code-foreground)"> quiet_set)</span></span>
 <span class="line"><span style="color:var(--code-foreground)">    {</span></span>
-<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)"> LAYOUT_ROLE_QUIET;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)"> ROLE_QUIET;</span></span>
 <span class="line"><span style="color:var(--code-foreground)">    }</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:var(--code-token-keyword)">    if</span><span style="color:var(--code-foreground)"> (night_on </span><span style="color:var(--code-token-keyword)">&#x26;&#x26;</span><span style="color:var(--code-foreground)"> night_set)</span></span>
 <span class="line"><span style="color:var(--code-foreground)">    {</span></span>
-<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)"> LAYOUT_ROLE_NIGHT;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">        return</span><span style="color:var(--code-foreground)"> ROLE_NIGHT;</span></span>
 <span class="line"><span style="color:var(--code-foreground)">    }</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)"> LAYOUT_ROLE_DAY;</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">    return</span><span style="color:var(--code-foreground)"> ROLE_DAY;</span></span>
 <span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
 <p><strong>Quiet Time Comes First.</strong> Someone who set both a Quiet Time grid and a night grid is asking for a quieter screen while the watch is quiet, and that holds whether it is dark out or not.</p>
 <p><strong>A Trigger with No Grid Is Skipped.</strong> Each trigger arrives as a pair, whether it is on and whether it has a grid. One that is on with nothing behind it passes to the next, and the day grid catches everything else. So a wearer can set up only a night grid and Quiet Time changes nothing, or only a Quiet Time grid and the night schedule changes nothing.</p>
@@ -177,7 +177,7 @@
   Time-&gt;&gt;Face: the minute tick
   Face-&gt;&gt;Face: read Quiet Time and the night schedule
   Face-&gt;&gt;Layout: layout_has_any_block, for the night and Quiet Time grids
-  Face-&gt;&gt;Layout: layout_role_pick
+  Face-&gt;&gt;Layout: role_pick
   Layout--&gt;&gt;Face: day, night, or quiet
   alt the grid changed
     Face-&gt;&gt;Engine: engine_rebuild

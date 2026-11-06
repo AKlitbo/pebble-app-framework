@@ -240,9 +240,6 @@ Data Structures</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:ga60efc891e07d5be12f10e4c1dc7f43d9" id="r_ga60efc891e07d5be12f10e4c1dc7f43d9"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a>&#160;&#160;&#160;10</td></tr>
-<tr class="memitem:ga36e1ce7a039108d509b546091b2f81ea" id="r_ga36e1ce7a039108d509b546091b2f81ea"><td class="memItemLeft"><a id="ga36e1ce7a039108d509b546091b2f81ea" name="ga36e1ce7a039108d509b546091b2f81ea"></a>
-#define&#160;</td><td class="memItemRight"><b>ENGINE_MAX_SLOTS</b>&#160;&#160;&#160;<a class="el" href="#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a></td></tr>
-<tr class="memdesc:ga36e1ce7a039108d509b546091b2f81ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">The old name for <span class="tt"><a class="el" href="#ga60efc891e07d5be12f10e4c1dc7f43d9">ENGINE_SLOTS_MAX</a></span>, deprecated. A face that sets it or reads it gets the same cap. <br /></td></tr>
 <tr class="memitem:ga4ca1872518ba74eea31ab554588e7398" id="r_ga4ca1872518ba74eea31ab554588e7398"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga4ca1872518ba74eea31ab554588e7398">FONT_SLOTS_MAX</a>&#160;&#160;&#160;24</td></tr>
 <tr class="memitem:ga0218b6d868d6c02e798e1f43e04a8d28" id="r_ga0218b6d868d6c02e798e1f43e04a8d28"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0218b6d868d6c02e798e1f43e04a8d28">ICON_AUTOTRIM</a>&#160;&#160;&#160;1</td></tr>
 <tr class="memitem:gacd235799baa707d5f8b99169732c0625" id="r_gacd235799baa707d5f8b99169732c0625"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gacd235799baa707d5f8b99169732c0625">ICON_TRIM_LOG</a>&#160;&#160;&#160;0</td></tr>
@@ -303,6 +300,8 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
 <tr class="memdesc:gac815591cccd1783227eb1a656212c8c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the chosen date format ends in a .beats reading.  <br /></td></tr>
 <tr class="memitem:gab74d674a3402d0c3ccb145f54ee4d5dc" id="r_gab74d674a3402d0c3ccb145f54ee4d5dc"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gab74d674a3402d0c3ccb145f54ee4d5dc">readout_hr</a> (char *out, size_t n)</td></tr>
 <tr class="memdesc:gab74d674a3402d0c3ccb145f54ee4d5dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the heart rate, or "--" when there is no reading.  <br /></td></tr>
+<tr class="memitem:ga3323a26d3294679e221801278ed1b808" id="r_ga3323a26d3294679e221801278ed1b808"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3323a26d3294679e221801278ed1b808">readout_hrv</a> (char *out, size_t n)</td></tr>
+<tr class="memdesc:ga3323a26d3294679e221801278ed1b808"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format heart rate variability in ms, or "--" with no reading.  <br /></td></tr>
 <tr class="memitem:ga46b62b70722c1a8885049b5dd237aa7e" id="r_ga46b62b70722c1a8885049b5dd237aa7e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga46b62b70722c1a8885049b5dd237aa7e">readout_steps</a> (char *out, size_t n)</td></tr>
 <tr class="memdesc:ga46b62b70722c1a8885049b5dd237aa7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format the step count, or the distance walked per the Steps Mode setting.  <br /></td></tr>
 <tr class="memitem:gaee4e7d275341c91bdbae7a5adc7ddc09" id="r_gaee4e7d275341c91bdbae7a5adc7ddc09"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaee4e7d275341c91bdbae7a5adc7ddc09">readout_weather_temp</a> (char *out, size_t n)</td></tr>
@@ -827,6 +826,37 @@ void&#160;</td><td class="memItemRight"><b>icons_cleanup</b> (void)</td></tr>
 </div><div class="memdoc">
 
 <p>Format the heart rate, or "--" when there is no reading. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Buffer size. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga3323a26d3294679e221801278ed1b808" name="ga3323a26d3294679e221801278ed1b808"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3323a26d3294679e221801278ed1b808">&#9670;&#160;</a></span>readout_hrv()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void readout_hrv </td>
+          <td>(</td>
+          <td class="paramtype">char *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>n</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format heart rate variability in ms, or "--" with no reading. </p>
+<p>A face built without HEALTH_HRV always gets "--".</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[out]</td><td class="paramname">out</td><td>Output buffer. </td></tr>
