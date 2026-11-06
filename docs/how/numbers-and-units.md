@@ -57,7 +57,7 @@ km:    (5000 + 50) / 100             = 5050 / 100       = 50   reads 5.0
 
 The rounding carries across the point, so 4,960 metres reads `5.0` km rather than `4.9`. A negative distance reads `0.0`.
 
-**How Far It Reaches.** The miles sum multiplies before it divides, and the product stays inside a 32-bit `int` up to about 3,400 km. Reducing the fraction is what makes that room. Multiplying by the unreduced 10000 would overflow past about 215 km.
+**How Far It Reaches.** The miles sum multiplies before it divides, and the product stays inside a 32-bit `int` up to about 3,400 km. Reducing the fraction makes that room. Multiplying by the unreduced 10000 would overflow past about 215 km.
 
 ## Wind Speed
 

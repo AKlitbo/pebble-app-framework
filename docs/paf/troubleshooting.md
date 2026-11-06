@@ -10,7 +10,7 @@ Every message below is quoted as `paf` prints it, with the unit and face names f
 watchfaces/mosaic: v4.0.0 now points at <new commit>, but mosaic/paf.config.json recorded <old commit>. If the move is expected, run paf pin mosaic v4.0.0 to take it
 ```
 
-The framework tag the unit pins was moved to another commit after the unit recorded it. `paf` stops rather than quietly build against a framework nobody chose. If the move is expected, run the `paf pin` it names, which records the new commit. Then commit `paf.config.json`.
+The framework tag the unit pins was moved to another commit after the unit recorded it. `paf` stops instead of building against a framework nobody chose. If the move is expected, run the `paf pin` it names, which records the new commit. Then commit `paf.config.json`.
 
 ## A Framework 3 Pin
 

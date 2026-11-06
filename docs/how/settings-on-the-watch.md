@@ -23,7 +23,7 @@ static const SettingField s_fields[] = {
 
 **The Shared Entries.** The `KNOWN_*` macros fill in a common setting whole, with its message key, type, limits, default, and side effects. A face gives the offset, and a list also takes how many choices the face offers. The lists in `setting_values.h` each end in a count, such as `TIME_FORMAT_COUNT`, so a face that passes it stays in step if the list grows. A theme count is the face's own number, since only the face knows how many themes it ships. So is a header font count, since the font table is the face's own.
 
-The payoff for using a shared entry is that the framework's own code can find the setting. The date and time readouts read the formats, the steps readout reads its mode, and the Bluetooth vibration reads the pattern the wearer picked, all with no plumbing from the face:
+A shared entry lets the framework's own code find the setting. The date and time readouts read the formats, the steps readout reads its mode, and the Bluetooth vibration reads the pattern the wearer picked, all with no plumbing from the face:
 
 ```c
 uint8_t time_format = settings_u8(SETTING_TIME_FORMAT);
@@ -57,7 +57,7 @@ flowchart TD
 
 **The Smallest Blob.** `min_versioned_size` is the size of the struct when it first shipped, and it never changes after that. A blob smaller than it cannot be a saved copy of this face's settings, because every field past its end would be read from the wrong place.
 
-**Going Back to an Older Build.** A blob bigger than today's struct was written by a newer build, and this one cannot read it. The same goes for a version byte of 0 or one from the future. The settings fall back to defaults and the key is deleted rather than written, so the watch counts as fresh and the phone puts its settings back (see [The Fresh State](#the-fresh-state)). Deleting the key rather than saving the defaults means a relaunch before the phone answers still boots fresh and asks again.
+**Going Back to an Older Build.** A blob bigger than today's struct was written by a newer build, and this one cannot read it. The same goes for a version byte of 0 or one from the future. The settings fall back to defaults and the loader deletes the key rather than writing it, so the watch counts as fresh and the phone puts its settings back (see [The Fresh State](#the-fresh-state)). Deleting the key rather than saving the defaults means a relaunch before the phone answers still boots fresh and asks again.
 
 ## Cleaning Each Value
 
@@ -78,7 +78,7 @@ A persist key holds at most 256 bytes, and the watch saves only the first 256 by
 
 `settings_apply_inbox` walks the face's table and looks each key up in the incoming message. It only decodes. It hands back what moved and leaves saving and redrawing to the AppMessage layer, which [Talking to the Phone](talking-to-the-phone.md#what-happens-to-a-message) covers. A key in the message that is not in the table is ignored. Each type has its own checks on the way in.
 
-**A Choice.** Clay sends a select as text, so a choice is normally read with `atoi`. Text that does not start with a digit leaves the setting as it was. A number past the end of the list, or below 0, becomes the default, so a theme of `"12"` on a face with 9 themes reads as theme 0. A choice that arrives as a number, such as from a custom component or a select set to `serializeValueAs: 'integer'`, is taken as it is, so a 0 there is the first choice whether or not it was meant. A text setting takes only text and leaves a number alone.
+**A Choice.** Clay sends a select as text, so the watch normally reads a choice with `atoi`. Text that does not start with a digit leaves the setting as it was. A number past the end of the list, or below 0, becomes the default, so a theme of `"12"` on a face with 9 themes reads as theme 0. A choice that arrives as a number, such as from a custom component or a select set to `serializeValueAs: 'integer'`, is taken as it is, so a 0 there is the first choice whether or not it was meant. A text setting takes only text and leaves a number alone.
 
 **A Toggle or a Colour.** A value of the wrong type leaves the setting as it was.
 

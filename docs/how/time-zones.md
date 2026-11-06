@@ -17,7 +17,7 @@ The watch gets one text setting: the minutes ahead of UTC, a comma, and the plac
 
 The minutes come first, so when a long name is cut to fit the space the face gave the setting, only the name gets shorter. The name keeps any commas of its own, and a face showing only the city cuts it at the next comma.
 
-The watch never sees the zone itself, only the minutes for now. It has no database of zone rules, and the Pebble SDK has no way to ask for another zone's time. The phone already has that database in its JavaScript runtime, kept current by the phone's own updates, so the zone stays on the phone and the phone keeps the minutes right.
+The watch never sees the zone itself, only the minutes for now. It has no database of zone rules, and the Pebble SDK has no way to ask for another zone's time. The phone already has that database in its JavaScript runtime, kept current by the phone's own updates, so the zone stays there and the phone keeps the minutes right.
 
 ## Picking a Place
 
@@ -25,7 +25,7 @@ A face asks for the picker with `clock: { timeZone: true }` in its `buildConfig`
 
 **Zones by Name.** The page's runtime lists the zones it knows, about four hundred, and the search matches the city on the end first, so `london` finds Europe/London. A query such as `pacific` matches anywhere in the name. UTC is offered for `utc`, `gmt`, `zulu`, and `greenwich`. Each row shows its offset now as a hint.
 
-**Typed Offsets.** `utc+5`, `+05:30`, `gmt-8`, and `-0330` all turn into a row. A whole hour is saved as its real zone, so UTC+5 becomes `Etc/GMT-5`, a name whose sign runs the other way round. Anything finer, such as UTC+05:30, has no zone behind it and is saved as the minutes alone, marked as a fixed offset. A fixed offset has no daylight saving to follow, so nothing is lost.
+**Typed Offsets.** `utc+5`, `+05:30`, `gmt-8`, and `-0330` all turn into a row. The page saves a whole hour as its real zone, so UTC+5 becomes `Etc/GMT-5`, a name whose sign runs the other way round. Anything finer, such as UTC+05:30, has no zone behind it and is saved as the minutes alone, marked as a fixed offset. A fixed offset has no daylight saving to follow, so nothing is lost.
 
 **Cities.** The same Open-Meteo geocoder as the weather location finds cities, and it names each city's zone. A second request to Open-Meteo fills in the minutes ahead of UTC for today, or the zone for a city the geocoder gave none.
 
@@ -42,9 +42,9 @@ const offset = live === null ? place.offset || 0 : live;
 return offset + ',' + wire.toAscii(place.label);
 ```
 
-**Reading a Zone's Offset.** `offsetMinutes` asks `Intl.DateTimeFormat` what the zone's wall clock reads now, builds that wall clock as if it were UTC, and subtracts the real UTC time. What is left is the offset, which comes out right for the half hour and three quarter hour zones too: 330 for Kolkata, 345 for Kathmandu, and -150 for St. John's in summer. Building a formatter is the slow part, so each zone keeps the one it built. A runtime with no locale data behind it, such as the one the emulator runs, runs out of memory building that formatter rather than throwing, and the process dies with it. So `Intl.DateTimeFormat.supportedLocalesOf` is asked first, and every zone comes back null when it answers empty.
+**Reading a Zone's Offset.** `offsetMinutes` asks `Intl.DateTimeFormat` what the zone's wall clock reads now, builds that wall clock as if it were UTC, and subtracts the real UTC time. What is left is the offset, which comes out right for the half hour and three quarter hour zones too: 330 for Kolkata, 345 for Kathmandu, and -150 for St. John's in summer. Building a formatter is the slow part, so each zone keeps the one it built. A runtime with no locale data behind it, such as the one the emulator runs, runs out of memory building that formatter rather than throwing, and the process dies with it. So the phone asks `Intl.DateTimeFormat.supportedLocalesOf` first, and every zone comes back null when that answers empty.
 
-**Plain Letters.** The name is flattened to ASCII on the way out, the same as every text the phone sends, as [The Message Formats](message-formats.md#text-on-the-way-over) covers. São Paulo goes over as Sao Paulo.
+**Plain Letters.** The phone flattens the name to ASCII on the way out, the same as every text it sends, as [The Message Formats](message-formats.md#text-on-the-way-over) covers. São Paulo goes over as Sao Paulo.
 
 **When There Is No Zone.** A runtime that cannot read the zone falls back to the offset saved at the pick, and so does a place with no zone saved. Either one stays on the offset it was picked with and goes an hour out when the clocks change. The picker shows a note under a place saved with no zone, asking the wearer to pick it again, which is the whole fix.
 
@@ -87,7 +87,7 @@ The setting is an ordinary text setting in the face's own schema, saved to flash
   .size = 32, .default_str = "" },
 ```
 
-The face also lists `CLOCK_TIMEZONE_1` under `messageKeys`. The string holds the minutes ahead of UTC and then the place's name, and `zone_setting_offset` and `zone_setting_label` read the two halves. An empty string means no place is picked, which is what the phone sends when the wearer clears the picker, so `zone_setting_is_set` reads it as no zone and a face shows dashes rather than a clock for a place nobody chose. `0,UTC` is a real zone and counts as set.
+The face also lists `CLOCK_TIMEZONE_1` under `messageKeys`. The string holds the minutes ahead of UTC and then the place's name, and `zone_setting_offset` and `zone_setting_label` read the two halves. An empty string means no place is picked, and it is what the phone sends when the wearer clears the picker. `zone_setting_is_set` reads it as no zone, so a face shows dashes rather than a clock for a place nobody chose. `0,UTC` is a real zone and counts as set.
 
 ## Showing a Second Clock
 

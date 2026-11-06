@@ -11,7 +11,7 @@ A unit is a folder with a `paf.config.json`. Each unit pins its own framework ta
 * the repo root, for a repo that is one face or one family
 * each folder straight under `watchfaces/` or `watchapps/`, for a family or a face of its own
 
-The two folders only sort faces from apps, and a unit in either is laid out the same. A unit at the root is named after the repo's folder. A unit under `watchfaces/` or `watchapps/` is named after its own folder, and two units with the same name are refused.
+The two folders only sort faces from apps, and a unit in either is laid out the same. A unit at the root is named after the repo's folder. A unit under `watchfaces/` or `watchapps/` is named after its own folder, and `paf` refuses two units with the same name.
 
 ## Finding the Faces
 
@@ -103,11 +103,11 @@ The unit's settings. `paf pin` writes `framework` and `commit` and leaves every 
 
 **`commit`:** the commit the tag pointed at when it was pinned. If the tag later points somewhere else, `paf sync` stops rather than build against a framework nobody chose. `paf pin` records it, and so does the first `paf sync` when it is missing.
 
-**`plugins`:** the framework plugins the unit uses, each with its settings, or `{}` for none. Only listed plugins are copied into `paf/plugins/`, and only their generators, checks, and tools run. The order matters, since `paf gen <face> all` runs the plugins' generators in the order they are listed.
+**`plugins`:** the framework plugins the unit uses, each with its settings, or `{}` for none. `paf` copies only the listed plugins into `paf/plugins/` and runs only their generators, checks, and tools. The order matters, since `paf gen <face> all` runs the plugins' generators in the order they are listed.
 
 **`gen`:** the unit's own generators. Each one has a `script`, a `.ts` file with its path from the unit, and can take an `after` naming the generator it runs straight after, and a `when` naming the file or folder a face needs for it to run. See [Generators](workflows.md#generators).
 
-A name made only of digits, a generator called `all`, and the name `__proto__` are refused.
+`paf` refuses a name made only of digits, a generator called `all`, and the name `__proto__`.
 
 ## The Framework's Plugins
 
@@ -142,7 +142,7 @@ Without the workspaces npm never installs the framework's packages or the plugin
 
 ## .gitignore
 
-Everything `paf` fills or writes is ignored:
+The unit's `.gitignore` leaves out everything `paf` fills or writes:
 
 ```
 /paf/

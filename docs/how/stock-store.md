@@ -2,7 +2,7 @@
 
 The stock store puts a watchlist of up to four quotes on the watch: each ticker, its last price, and the day's change in percent. The face never talks to a stock provider. The phone fetches the quotes, keeps each provider's daily quota in check, and sends one small packed strip. The watch keeps that strip, saves it to flash, and asks for a new one on a schedule. A face starts the store, hands it a redraw function, and reads the slots back.
 
-The watch side lives in [`stock_store.h`](../../src/c/pebble/io/stores/stock_store.h) and [`stock_store.c`](../../src/c/pebble/io/stores/stock_store.c), and the strip is unpacked by [`stock_wire.c`](../../src/c/core/wire/stock_wire.c). The phone side is under `src/ts/stock/`. The polling deadlines, the tag byte on the saved copy, and the save that skips an unchanged strip are shared with the other stores and covered in [How the Stores Work](stores.md).
+The watch side lives in [`stock_store.h`](../../src/c/pebble/io/stores/stock_store.h) and [`stock_store.c`](../../src/c/pebble/io/stores/stock_store.c), and [`stock_wire.c`](../../src/c/core/wire/stock_wire.c) unpacks the strip. The phone side is under `src/ts/stock/`. The polling deadlines, the tag byte on the saved copy, and the save that skips an unchanged strip are shared with the other stores and covered in [How the Stores Work](stores.md).
 
 ## Setting It Up
 
@@ -52,7 +52,7 @@ else
 
 `stock_store_slot` returns `NULL` past the filled count, so a panel never reads a slot that holds nothing.
 
-**Status Words in Place of a Ticker.** When a quote fails, the slot is sent with `ok` false and a short status in the label: `INVALID KEY`, `RATE LIMIT`, `NO ACCESS`, `NO SYMBOL`, `NO DATA`, `NO API KEY`, `NET ERROR`, or `ERR`. A panel that prints the label shows the wearer what went wrong, and the label width of 11 characters is set by the longest of these.
+**Status Words in Place of a Ticker.** When a quote fails, the phone sends the slot with `ok` false and a short status in the label: `INVALID KEY`, `RATE LIMIT`, `NO ACCESS`, `NO SYMBOL`, `NO DATA`, `NO API KEY`, `NET ERROR`, or `ERR`. A panel that prints the label shows the wearer what went wrong, and the longest of these sets the label width of 11 characters.
 
 **The Limits of the Numbers.** The change rides in 16 bits, so a move past 327.67 percent either way reads as exactly that rather than wrapping, as [The Message Formats](message-formats.md#the-watchlist) covers. Only the percent change is sent, not the change in dollars.
 
@@ -62,7 +62,7 @@ The phone packs the strip as a count byte and then each slot end to end, a layou
 
 **Labels Go over as Plain ASCII.** The phone flattens each label to the characters the watch fonts carry, as [The Message Formats](message-formats.md#text-on-the-way-over) covers, and cuts it to 11 characters. The settings page takes tickers up to 15 characters long, such as `BINANCE:BTCUSDT`, and the watch shows the first 11.
 
-**A Bad Strip Changes Nothing.** A message cut short is refused whole, and the store keeps the strip it had, so it never shows half a watchlist.
+**A Bad Strip Changes Nothing.** `stock_wire_decode` refuses the whole of a message cut short, and the store keeps the strip it had, so it never shows half a watchlist.
 
 **One Redraw per Strip.** A strip that reads clean replaces the whole watchlist at once, and the face redraws once for it.
 
@@ -75,7 +75,7 @@ The wearer picks the source on the settings page. Each answers one request per t
 * **Twelve Data** covers global markets on a free key that allows 800 calls a day.
 * **Alpha Vantage** has end of day prices only, on a free key that allows 25 calls a day.
 
-Every provider's reply is turned into the same quote shape, so the rest of the feature never knows which one answered. A provider that reports trouble in its body with a 200 status, as Alpha Vantage and Twelve Data do, is read for it, so a hit cap shows as `RATE LIMIT` rather than an empty quote.
+The phone turns every provider's reply into the same quote shape, so the rest of the feature never knows which provider answered. Some providers report trouble in the body of a reply with a 200 status, as Alpha Vantage and Twelve Data do, so the phone reads the body for it. A hit cap then shows as `RATE LIMIT` rather than an empty quote.
 
 ## Keeping Under the Quota
 
@@ -113,15 +113,15 @@ flowchart TD
 
 ## Surviving a Restart
 
-The phone kills its PebbleKit JS whenever it likes, and the gate above is only worth anything if it remembers when it last fetched. So the phone keeps a small cache in `localStorage`, under a key of its own: the time of the last fetch, the trading day of the last good quote, and the last strip with a real quote in it. Clay rewrites its own settings blob on every save, which is why the cache sits beside it rather than inside it. Each field is checked on its own when it is read back, so one damaged field costs only itself.
+The phone kills its PebbleKit JS whenever it likes, and the gate above is only worth anything if it remembers when it last fetched. So the phone keeps a small cache in `localStorage`, under a key of its own: the time of the last fetch, the trading day of the last good quote, and the last strip with a real quote in it. Clay rewrites its own settings blob on every save, so the cache sits beside it rather than inside it. Each field is checked on its own when it is read back, so one damaged field costs only itself.
 
-**Which Fetches Count.** A round with a good quote records the time and the trading day. A round where the provider answered with nothing good, such as `RATE LIMIT` or `NO SYMBOL`, still records the time, since that answer spent a call on a metered plan. A round the provider never answered, a network blip, records nothing, so the next ask tries again.
+**Which Fetches Count.** A round with a good quote records the time and the trading day. A round where the provider answered with nothing good, such as `RATE LIMIT` or `NO SYMBOL`, still records the time, since that answer spent a call on a metered plan. A round the provider never answered, such as a network blip, records nothing, so the next ask tries again.
 
 **What the Watch Is Sent.** A strip with a good quote goes to the watch and becomes the kept strip. A provider's error, such as `INVALID KEY`, goes too, since the wearer has to act on it. A round lost to the network sends the kept strip instead when there is one, so the watch never swaps good quotes for a row of `NET ERROR`.
 
 **A Held Fetch Still Answers.** When the watch asks and the gate holds, the phone sends the kept strip. That matters most for Alpha Vantage after the close: a watch that was just reset would otherwise sit blank until tomorrow's evening window. The same happens when the phone's code starts and the gate holds.
 
-**One Round at a Time.** Each ticker is a separate request, and the strip goes once the last one answers, in the order the wearer typed them. A second ask while a round is out is dropped, so the quota is never spent twice for one answer. A request gives up after 15 seconds and a whole round after 30, so a request that never answers cannot block every fetch after it.
+**One Round at a Time.** The phone makes a separate request for each ticker and sends the strip once the last one answers, with the tickers in the order the wearer typed them. It drops a second ask that arrives while a round is out, so the quota is never spent twice for one answer. A request gives up after 15 seconds and a whole round after 30, so a request that never answers cannot block every fetch after it.
 
 **When the Phone Asks on Its Own.** The watch's asks lead, and the phone's slow refresh only fetches when the watch has not asked since the last one, as [The Phone Side](phone-side.md#the-background-refresh) covers.
 
@@ -131,6 +131,6 @@ The phone kills its PebbleKit JS whenever it likes, and the gate above is only w
 
 **The First Ask.** A live store asks once shortly after launch, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) covers. It needs no retry loop like the weather store's, since the phone sends a strip on its own as soon as its code starts.
 
-**Saved to Flash.** The whole strip and the time it arrived are saved to the face's persist key, and a relaunch shows the last strip straight away. The restore pins a count above four to an empty list and gives every label a closing zero, so a damaged copy cannot send a panel past the end of the slots. A failed write waits for the next strip that differs, for the reason in [How the Stores Work](stores.md#skipping-unchanged-writes).
+**Saved to Flash.** The store saves the whole strip and the time it arrived to the face's persist key, and a relaunch shows the last strip straight away. The restore pins a count above four to an empty list and gives every label a closing zero, so a damaged copy cannot send a panel past the end of the slots. A failed write waits for the next strip that differs, for the reason in [How the Stores Work](stores.md#skipping-unchanged-writes).
 
 **How Old It Is.** `stock_store_age_s` gives the seconds since the last strip arrived, or -1 for none. A face can pass it to `store_poll_reconnect_due` to catch up after the phone reconnects, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) shows.

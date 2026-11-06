@@ -2,7 +2,7 @@
 
 The `thumbnails` plugin puts real pictures on a face's settings page as base64 data URLs. It does two jobs, each with its own generator and check. The first puts a picture of each panel on a face with a layout editor, so a drag and drop grid or a slot editor shows each panel the way it looks on the watch rather than as an emoji on a coloured tile. The second puts a picture of each theme beside the theme picker, so a wearer sees the palette before they choose it. Neither draws the pictures. They are made outside the framework and committed with the face.
 
-The panel generator is [`embed-thumbnails.ts`](../../src/plugins/thumbnails/embed-thumbnails.ts) with the check [`check-thumbnails.ts`](../../src/plugins/thumbnails/check-thumbnails.ts), and the theme-preview generator is [`embed-theme-previews.ts`](../../src/plugins/thumbnails/embed-theme-previews.ts) with the check [`check-theme-previews.ts`](../../src/plugins/thumbnails/check-theme-previews.ts), all registered in the plugin's [`package.json`](../../src/plugins/thumbnails/package.json). Both encode through [`data-url.ts`](../../src/plugins/thumbnails/data-url.ts). The lookup an editor runs for a panel picture is [`thumbs.ts`](../../src/ts/clay/builder/ts/shared/thumbs.ts). How the editors themselves are written and bundled is on [The Settings Page](settings-page.md#a-faces-own-builder).
+The panel generator is [`embed-thumbnails.ts`](../../src/plugins/thumbnails/embed-thumbnails.ts) with the check [`check-thumbnails.ts`](../../src/plugins/thumbnails/check-thumbnails.ts), and the theme-preview generator is [`embed-theme-previews.ts`](../../src/plugins/thumbnails/embed-theme-previews.ts) with the check [`check-theme-previews.ts`](../../src/plugins/thumbnails/check-theme-previews.ts), all registered in the plugin's [`package.json`](../../src/plugins/thumbnails/package.json). Both encode through [`data-url.ts`](../../src/plugins/thumbnails/data-url.ts). The lookup an editor runs for a panel picture is [`thumbs.ts`](../../src/ts/clay/builder/ts/shared/thumbs.ts). [The Settings Page](settings-page.md#a-faces-own-builder) covers how the editors themselves are written and bundled.
 
 Most of this page is about the panel pictures. [Theme Previews](#theme-previews) at the end covers the second job, which is simpler.
 
@@ -22,7 +22,7 @@ The plugin's `paf` key offers a `thumbnails` generator, with `resources/thumbnai
 
 ## What a Face Provides
 
-**The Pictures.** Each PNG is named `<slug>-<size>.png`. The name is split on its last dash, so a slug can hold dashes of its own and `weekday-dots-1x2.png` is the `weekday-dots` panel at `1x2`. A size cannot hold a dash. A panel that fits several sizes has one picture for each, so a Battery panel at two sizes comes as `battery-1x2.png` and `battery-2x2.png`. The pictures are drawn at the size the editor shows them, so they stay small.
+**The Pictures.** Each PNG is named `<slug>-<size>.png`. The generator splits the name on its last dash, so a slug can hold dashes of its own and `weekday-dots-1x2.png` is the `weekday-dots` panel at `1x2`. A size cannot hold a dash. A panel that fits several sizes has one picture for each, so a Battery panel at two sizes comes as `battery-1x2.png` and `battery-2x2.png`. The pictures are drawn at the size the editor shows them, so they stay small.
 
 **The Module List.** The face's `src/pkjs/clay/module-meta.ts` is the label-keyed list its editors already read for each panel's emoji and tint. Each row's `slug` is the file name stem its pictures use, so the list of panels lives in one place. The same file exports `thumbnailSizes`, the sizes a picture may come in:
 
@@ -82,7 +82,7 @@ The editor reads `this.config.moduleThumbnails` when it starts and looks a panel
 
 ## Theme Previews
 
-A face whose settings page has a theme picker can show a picture of each theme under it. The picker keeps its dropdown, and the chosen theme's picture is drawn beneath it. A theme with more than one picture, such as a day and a night shot, gets them all, side by side. This is the second generator in the plugin, and it is simpler than the panel pictures because a theme has no sizes and no module list to match: it is a map from a theme's value to its pictures.
+A face whose settings page has a theme picker can show a picture of each theme under it. The picker keeps its dropdown, and the chosen theme's picture is drawn beneath it. A theme with more than one picture, such as a day and a night shot, gets them all, side by side. A theme has no sizes and no module list to match, so this generator only maps a theme's value to its pictures.
 
 **The Manifest.** The face keeps a `resources/theme-previews.json` mapping each theme's option value to a picture path, or a list of paths, relative to the face folder. A path may climb out of the face with `..`, since the whole repo is checked out when the generator runs:
 

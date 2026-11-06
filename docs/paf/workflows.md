@@ -39,7 +39,7 @@ paf use <unit> local ../pebble-app-framework
 paf build <face>
 ```
 
-The path defaults to `../pebble-app-framework` beside the repo, so it can be left out when the clone sits there. Edit the framework, then build again. Every command that readies the unit copies the clone's working tree in first, uncommitted edits included. `paf status` shows the unit as `local`, and `paf doctor` notes it.
+The path defaults to `../pebble-app-framework` beside the repo, so you can leave it out when the clone sits there. Edit the framework, then build again. Every command that readies the unit copies the clone's working tree in first, uncommitted edits included. `paf status` shows the unit as `local`, and `paf doctor` notes it.
 
 When the change is tagged, move back:
 
@@ -74,7 +74,7 @@ Dropping a plugin is the same in reverse. Its folder leaves `paf/plugins/` on th
 
 `paf gen <face> all` runs the framework's generators first, then each listed plugin's in the order `paf.config.json` lists them, then the unit's own.
 
-A unit's own generator with an `after` runs straight after the generator it names. One without `after` runs last. A generator naming one nobody offers, or a ring of `after`s, is refused with the names involved.
+A unit's own generator with an `after` runs straight after the generator it names. One without `after` runs last. `paf` refuses a generator naming one nobody offers, or a ring of `after`s, and prints the names involved.
 
 A generator only runs under `all` on a face that holds the file or folder its `when` names, such as `frame/frame.config.json` for `background`. For a `when` under `src/pkjs/`, a face in a family also counts its core's matching folder under `core/pkjs/`, where a family keeps its shared Clay builder. A unit generator placed after `clay` still runs on a face with no Clay page, unless it has a `when` of its own.
 

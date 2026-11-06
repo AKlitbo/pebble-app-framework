@@ -83,7 +83,7 @@ A release tag is shaped `<face>-v<version>`. `prepare-release` splits it at the 
 
 **Finding Its Unit.** The action looks at the repo root and every folder under `watchfaces/` and `watchapps/` for a face of that name, which also tells it the unit the face builds from. Then it lists the faces with [`faces.ts`](../../src/tools/shared/faces.ts) from that unit's own `paf/`, the same lookup the face's build uses, even when the action comes from a newer tag. A name that matches no face stops the release there.
 
-**One Name, One Face.** A face's name is its release tag, so two faces with the same name anywhere in the repo stop the lookup with both paths, rather than one being picked. Picking one would publish the wrong face's build and notes under the tag.
+**One Name, One Face.** A face's name is its release tag, so two faces with the same name anywhere in the repo stop the lookup with both paths. Picking one would publish the wrong face's build and notes under the tag.
 
 ## What prepare-release Checks
 
@@ -91,7 +91,7 @@ Every check that can stop a release runs here, before the SDK install and the bu
 
 **The Framework.** The unit's `paf/` has to hold a framework, and its `package.json` has to carry a version shaped like a release. That version is the framework tag the release builds on, and it goes on the summary. A `paf/` copied from a release candidate or a local clone carries the release's version too, so this check cannot tell them apart. The `--locked` sync in the same workflow already refused a local clone, and candidate tags are not released from.
 
-**The Version.** The face's version is read from the same place the build reads it, which is the appinfo's `version`, or the unit's `package.json` version when the appinfo has none. It has to match the version in the tag, since a tag that disagrees with the face is a typo, and a published release cannot be cleanly taken back. It also has to be shaped `X.Y.Z` or `X.Y.Z-label`, such as `1.11.0` or `1.11.0-rc.1`. A version with build metadata, such as `1.11.0+2`, is refused, since `publish-release` could not read a label from it and would publish it as the latest release.
+**The Version.** The action reads the face's version from the same place the build does, which is the appinfo's `version`, or the unit's `package.json` version when the appinfo has none. It has to match the version in the tag, since a tag that disagrees with the face is a typo, and a published release cannot be cleanly taken back. It also has to be shaped `X.Y.Z` or `X.Y.Z-label`, such as `1.11.0` or `1.11.0-rc.1`. A version with build metadata, such as `1.11.0+2`, is refused, since `publish-release` could not read a label from it and would publish it as the latest release.
 
 **Target Platforms.** The appinfo has to list `targetPlatforms`, since each `.pbw` on the release is named after the platforms it installs on. Finding that out after the SDK install and the whole build would waste both.
 
@@ -125,7 +125,7 @@ Released 2026-09-27.
 
 **Every Target.** It asks the face's own [`build-manifests.ts`](../../src/tools/manifest/build-manifests.ts) for the face's targets, the same list the build worked from. A face can build more than one target from one source, such as a watchface and a watchapp, and each target's `.pbw` is attached.
 
-**Named for What It Installs On.** The build names each `.pbw` after its target with no version, which is fine in a build folder and no help on a release page where several versions sit side by side. So each one is copied under a release name read from its target's manifest:
+**Named for What It Installs On.** The build names each `.pbw` after its target with no version, which is fine in a build folder and no help on a release page where several versions sit side by side. So the action copies each one under a release name read from its target's manifest:
 
 | Target Builds For | Asset Name | Example |
 | :-- | :-- | :-- |

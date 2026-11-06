@@ -32,9 +32,9 @@ A reading left out of a group that did arrive means the provider had none this t
 
 **A Failed Fetch.** The flag has to read exactly 1 for the current group to count, and a missing or malformed flag counts as a failure. On a failure the phone sends a status in place of the condition, which the watch only logs. The face keeps the last good temperature and condition rather than going blank. Any other group in the same message still applies.
 
-**Values That Cannot Be Right.** The current temperature, the high and low, the feels-like, and the dew point are each held to -99 to 199. So a corrupt value cannot overflow the 16-bit field the current one is kept in or draw as a five-digit number. One that arrives as the no-data value itself stays no data rather than becoming a real -99. The forecast strips' temperatures are kept as they arrive, since Open-Meteo, the one provider that sends strips, holds each column to that range on the phone. A change of unit holds them to it on the watch as well. Sunrise and sunset arrive as minutes past local midnight, and anything outside 0 to 1439 becomes -1, since no clock can show it. Text is cut to fit its field rather than run past it.
+**Values That Cannot Be Right.** The current temperature, the high and low, the feels-like, and the dew point are each held to -99 to 199. So a corrupt value cannot overflow the 16-bit field the current one is kept in or draw as a five-digit number. One that arrives as the no-data value itself stays no data rather than becoming a real -99. The forecast strips' temperatures are kept as they arrive, since Open-Meteo, the one provider that sends strips, holds each column to that range on the phone. A change of unit holds them to it on the watch as well. Sunrise and sunset arrive as minutes past local midnight, and anything outside 0 to 1439 becomes -1, since no clock can show it. Text is cut to fit its field.
 
-**What the Return Value Means.** `weather_reading_apply` returns whether it kept anything, and stamps the time as the last sync only then. That return is what the store uses to decide on a redraw and a save, so a message that brought nothing usable costs neither.
+**What the Return Value Means.** `weather_reading_apply` returns whether it kept anything, and stamps the time as the last sync only then. The store uses that return to decide on a redraw and a save, so a message that brought nothing usable costs neither.
 
 ## Placing the Forecast Strips
 
@@ -90,7 +90,7 @@ A fifth or a ninth never lands on exactly a half, so no value ties and the round
 
 ## Wind Direction
 
-The phone sends the direction the wind comes from as one of the sixteen compass points, such as `NW` or `SSE`. The wind speed and its units are on [Numbers and Units](numbers-and-units.md#wind-speed). That prints fine but cannot be used for drawing, so `wind_bearing` turns it into degrees, 22.5 a point, kept in whole degrees. `NNE` is 22 and `NW` is 315. It ignores case, and anything that is not one of the sixteen points reads -1 rather than north.
+The phone sends the direction the wind comes from as one of the sixteen compass points, such as `NW` or `SSE`. That prints fine but cannot be used for drawing, so `wind_bearing` turns it into degrees, 22.5 a point, kept in whole degrees. `NNE` is 22 and `NW` is 315. It ignores case, and anything that is not one of the sixteen points reads -1 rather than north. The wind speed and its units are on [Numbers and Units](numbers-and-units.md#wind-speed).
 
 `wind_lean` turns a bearing into the part of the wind blowing across a scene drawn from the side, such as trees bending or smoke drifting, from -100 blowing west to 100 blowing east:
 

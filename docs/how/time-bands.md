@@ -1,6 +1,6 @@
 # Time Bands and Night Hours
 
-A face that draws the day as a line or a ring has to place times along it: the hour hand on a 24 hour dial, the daylight shaded behind it, the meetings on a strip of the next few hours. The line can start at any hour and run past midnight, and that is the normal case, not the odd one. A window that opens in the evening and runs into the next afternoon puts 01:00 near the middle, not before the start. The time band code does that wrapping once, so nothing that draws on the line ever sees a midnight.
+A face that draws the day as a line or a ring has to place times along it: the hour hand on a 24 hour dial, the daylight shaded behind it, the meetings on a strip of the next few hours. The line can start at any hour and run past midnight, and that is the normal case. A window that opens in the evening and runs into the next afternoon puts 01:00 near the middle, not before the start. The time band code does that wrapping once, so nothing that draws on the line ever sees a midnight.
 
 The night schedule answers the other question such a face asks every minute: is it night, so the night look should be showing?
 
@@ -68,7 +68,7 @@ The first piece says it was cut at the start and the second says it was cut at t
 
 A face that swaps its look after dark asks every minute whether it is night. `clock_window_contains` answers it by asking whether now is inside the night window, not by watching for the moment it crosses into it.
 
-That choice matters more than it looks. A check that waits for the crossing misses it when the clocks jump an hour over the start, when the face was not running at the moment, or when a tick is dropped, and then stays wrong until the next crossing comes round the next day. Asking whether now is inside is right again on the very next minute, whatever happened before.
+A check that waits for the crossing misses it when the clocks jump an hour over the start, when the face was not running at the moment, or when a tick is dropped, and then stays wrong until the next crossing comes round the next day. Asking whether now is inside is right again on the very next minute, whatever happened before.
 
 The window works like a band's. It holds its start and not its end, and one with its start later in the day than its end runs past midnight. A window that starts and ends on the same minute is empty rather than all day, which is what someone who set both times the same by accident expects. A missing reading gives false.
 
@@ -88,9 +88,9 @@ flowchart TD
   mode -- fixed --> fixed
 ```
 
-**The Fallback.** Following the sun needs a sunrise and a sunset. A watch that has never had weather still switches at the wearer's own times rather than never, so those two times do a job in both modes.
+**The Fallback.** Following the sun needs a sunrise and a sunset. A watch that has never had weather still switches at the wearer's own times, so those two times do a job in both modes.
 
-**Old Sun Times Count.** A sunset from an old reading is used, not treated as missing. Near the solstices it barely moves from day to day. Near the equinoxes it moves up to a couple of minutes a day at middle latitudes, so a reading a few weeks old can switch the look noticeably early or late. The weather store replaces the times with each poll, so this only shows when the weather has stopped arriving.
+**Old Sun Times Count.** The schedule still uses a sunset from an old reading. Near the solstices it barely moves from day to day. Near the equinoxes it moves up to a couple of minutes a day at middle latitudes, so a reading a few weeks old can switch the look noticeably early or late. The weather store replaces the times with each poll, so this only shows when the weather has stopped arriving.
 
 **Sunrise and Sunset on the Same Minute.** Both times are there, so the solar mode uses them, and the window they make is empty. The night look stays off all day, and the wearer's times are not used. That suits a midnight sun. Under a polar night it is off too.
 

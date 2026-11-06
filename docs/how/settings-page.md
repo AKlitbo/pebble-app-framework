@@ -2,7 +2,7 @@
 
 The framework builds a face's settings page from a short description of what the face shows. `buildConfig` lays out the standard sections in a fixed order, from the theme picker to the stock tickers, and a face with a layout of its own builds the page from the same sections and a few row helpers. Beside the plain controls it gives every face a location search for weather and second clocks, a hidden store for a component's scratch state, and a generator that bundles a face's own editor, such as a drag and drop grid, into one Clay component file. The page is built with Clay and runs in the phone app's web view.
 
-The sections are in [`config-builder.ts`](../../src/ts/pkjs/config-builder.ts) and the row helpers in [`config-rows.ts`](../../src/ts/pkjs/config-rows.ts). The components are under `src/ts/clay/`, in [`location-component.ts`](../../src/ts/clay/location-component.ts) and [`hidden-store-component.ts`](../../src/ts/clay/hidden-store-component.ts), with the shared types in [`types.ts`](../../src/ts/clay/types.ts). The generator is [`generate-components.ts`](../../src/tools/clay-components/generate-components.ts) and its check is [`check-components.ts`](../../src/tools/clay-components/check-components.ts). What happens once the wearer presses Save is on [The Life of a Setting](life-of-a-setting.md), [The Phone Side](phone-side.md), and [Settings on the Watch](settings-on-the-watch.md).
+The sections are in [`config-builder.ts`](../../src/ts/pkjs/config-builder.ts) and the row helpers in [`config-rows.ts`](../../src/ts/pkjs/config-rows.ts). The components are under `src/ts/clay/`, in [`location-component.ts`](../../src/ts/clay/location-component.ts) and [`hidden-store-component.ts`](../../src/ts/clay/hidden-store-component.ts), with the shared types in [`types.ts`](../../src/ts/clay/types.ts). The generator is [`generate-components.ts`](../../src/tools/clay-components/generate-components.ts) and its check is [`check-components.ts`](../../src/tools/clay-components/check-components.ts). [The Life of a Setting](life-of-a-setting.md), [The Phone Side](phone-side.md), and [Settings on the Watch](settings-on-the-watch.md) cover what happens once the wearer presses Save.
 
 ## Building the Page from Sections
 
@@ -43,13 +43,13 @@ export default buildConfig({
 | Calendar Preferences | `calendar` | the iCal link, then the face's own `items` |
 | Stock Preferences | `stocks` | the provider, its key, and the tickers, then the face's own `items` |
 
-**Each Section Brings Its Keys.** Every message key a section uses has to be declared in the face's `pebble.appinfo.json`, and each one adds to the inbox the face sizes, as [Opening the Connection](talking-to-the-phone.md#opening-the-connection) covers. Bluetooth and Clock are always on the page, so their keys are always needed. An optional section that is left out brings no keys, which is why Health returns nothing at all for a face that shows neither steps nor battery, rather than a heading over nothing.
+**Each Section Brings Its Keys.** Every message key a section uses has to be declared in the face's `pebble.appinfo.json`, and each one adds to the inbox the face sizes, as [Opening the Connection](talking-to-the-phone.md#opening-the-connection) covers. Bluetooth and Clock are always on the page, so their keys are always needed. An optional section that is left out brings no keys, which is why Health returns nothing at all, not even a heading, for a face that shows neither steps nor battery.
 
 **The .beat Formats.** `date.beats` adds the .beat formats to the end of the date list. Their `{B}` marker is not a `strftime` token, and only `readout_date` swaps it for the time in .beats, so a face asks for them only when its date line runs through `readout_date`. [.beats](beats.md) covers the reading.
 
 **Controls Clay Filters by Watch.** `steps.capabilities` is Clay's own filter, checked against the watch the page was opened from, so `['NOT_PLATFORM_GABBRO']` drops the steps control on a round watch and keeps it everywhere else. When steps is alone in the Health section, its heading takes the same filter, so a round watch never shows a section title with nothing under it.
 
-**Selects Send Text by Default.** A select's value comes from an HTML option, and an option's value is always text. So an option written as `{ label: 'Day', value: 1 }` comes back from the page as `"1"`, and Clay sends it to the watch that way. The framework's sections leave Clay's `serializeValueAs` alone, so every select travels the same way, including the ones whose values really are text, such as the date format `%Y.%m%d` or the weather provider `openmeteo`. A face's own select can set `serializeValueAs: 'integer'`, which `ClayConfigItem` allows, when every option's value is a number and the select fills a choice setting, since the watch reads a choice sent either way. Clay sends any value that is not a number as 0, which the watch takes as the first choice, and a text setting on the watch drops a number, so a select with text values keeps the default. [Settings on the Watch](settings-on-the-watch.md#taking-values-from-the-phone) covers how the watch reads a choice.
+**Selects Send Text by Default.** A select's value comes from an HTML option, and an option's value is always text. So an option written as `{ label: 'Day', value: 1 }` comes back from the page as `"1"`, and Clay sends it to the watch that way. The framework's sections leave Clay's `serializeValueAs` alone, so every select travels the same way, including the ones whose values really are text, such as the date format `%Y.%m%d` or the weather provider `openmeteo`. A face's own select can set `serializeValueAs: 'integer'`, which `ClayConfigItem` allows, when every option's value is a number and the select fills a choice setting, since the watch reads a choice sent either way. Clay sends any value that is not a number as 0, which the watch takes as the first choice. A text setting on the watch drops a number, so a select with text values keeps the default. [Settings on the Watch](settings-on-the-watch.md#taking-values-from-the-phone) covers how the watch reads a choice.
 
 **The Stock Providers Are Written Out.** The Stock section lists its data sources by hand rather than reading them from the stock feature. The section builder is in every face's phone bundle, and importing the feature would carry the stock providers into faces that show no stocks.
 
@@ -98,7 +98,7 @@ app.startPebbleApp({
 });
 ```
 
-`startPebbleApp` registers them before the page is built. The location search is registered for every face, so a page can use `locationsearch` without listing it.
+`startPebbleApp` registers them before the page is built. It also registers the location search for every face, so a page can use `locationsearch` without listing it.
 
 **How Clay Builds a Row.** For each item in page order, Clay calls `initialize` with the row as `this`, so `this.$element` is the row's HTML and `this.config` is the page item, then sets the saved value and adds the row to the page. A row higher on the page is already there while a component initializes, and a row below it is not.
 
@@ -135,7 +135,7 @@ export default {
 
 ### Scratch State in a Hidden Store
 
-The web view gives the page no `localStorage` of its own, so a component cannot remember anything there between visits. The `hiddenStore` component is a hidden input on Clay's `val` manipulator. It shows nothing, and its value is saved with the other settings and handed back the next time the page opens.
+The web view gives the page no `localStorage` of its own, so a component cannot remember anything there between visits. The `hiddenStore` component is a hidden input on Clay's `val` manipulator. It shows nothing, and Clay saves its value with the other settings and hands it back the next time the page opens.
 
 ```ts
 { type: 'hiddenStore', messageKey: 'GRID_LIBRARY', storeClass: 'grid-library', defaultValue: '' },
@@ -158,7 +158,7 @@ The web view gives the page no `localStorage` of its own, so a component cannot 
 {"lat":51.5,"lon":-0.13,"label":"London, England, United Kingdom","offset":60,"tz":"Europe/London"}
 ```
 
-Typing clears the saved place, so a name typed but never picked from the list saves as nothing, and a note under the box says so. A geocoder answer that lands after a newer query is dropped, so a slow reply cannot replace the list for what the wearer has typed since.
+Typing clears the saved place, so a name typed but never picked from the list saves as nothing, and a note under the box says so. The search drops a geocoder answer that lands after a newer query, so a slow reply cannot replace the list for what the wearer has typed since.
 
 **GPS and the Manual Place.** The Location Settings section puts **Enable Phone GPS** and **Fallback to Manual Location** beside the search. GPS starts off unless the face passes `location: { gpsDefault: true }`, and the fallback starts on. [Where the Location Comes From](fetching-the-weather.md#where-the-location-comes-from) covers how a fetch picks between them.
 
@@ -166,7 +166,7 @@ Typing clears the saved place, so a name typed but never picked from the list sa
 
 ## The Theme Picker with Pictures
 
-The theme picker is a dropdown by default. A face can give it a picture of each theme by passing `previews` in the `theme` section, a map from a theme's option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme's pictures under it, a theme with a day and a night shot getting both side by side:
+The theme picker is a dropdown by default. A face can give it a picture of each theme by passing `previews` in the `theme` section, a map from a theme's option value to a list of data URLs. The picker then keeps the dropdown and draws the chosen theme's pictures under it. A theme with a day and a night shot gets both side by side:
 
 ```ts
 import themePreviews from './clay/theme-previews.g';
@@ -184,9 +184,9 @@ A theme's value can instead carry a set of pictures per platform, so a face buil
 
 The pictures come from the `thumbnails` plugin's `theme-previews` generator, which base64-encodes a face's screenshots into the `theme-previews.g.js` the `previews` import reads. [The Thumbnails Plugin](thumbnails-plugin.md#theme-previews) covers the manifest, the per-platform map, and the generator.
 
-The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework's `themePreview` component is registered only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker. It borrows the dropdown's look from Clay's own select styling, which Clay only adds to a page that holds a plain `select`, so a hand-built page wants one of those somewhere too. A `buildConfig` page always has them in its other sections.
+The picker saves under `APPEARANCE_THEME` exactly as the plain select, so nothing on the watch changes. The framework registers its `themePreview` component only when a page holds one, so a face that passes no `previews` carries none of its code. On a hand-built page, an item of `type: 'themePreview'` with `options` and `previews` builds the same picker. It borrows the dropdown's look from Clay's own select styling, which Clay only adds to a page that holds a plain `select`, so a hand-built page needs one of those somewhere too. A `buildConfig` page always has them in its other sections.
 
-A hand-built `themePreview` item can also set `previewsByKey`, the `messageKey` of another control on the page. Its `previews` then nest, keyed first by that control's value and then by the option's value, so the shots under the picker follow a second choice elsewhere on the page, such as a scene or a mode. The picker still owns `APPEARANCE_THEME` on its own, so the value saves the usual way. Clay lists the page's controls only once it is built, so the named control is read then and the preview redraws whenever it changes.
+A hand-built `themePreview` item can also set `previewsByKey`, the `messageKey` of another control on the page. Its `previews` then nest, keyed first by that control's value and then by the option's value, so the shots under the picker follow a second choice elsewhere on the page, such as a scene or a mode. The picker still owns `APPEARANCE_THEME` on its own, so the value saves the usual way. Clay lists the page's controls only once the page is built, so the picker reads the named control then and redraws the preview whenever it changes.
 
 ## Showing Rows Only When They Apply
 
@@ -213,7 +213,7 @@ visibleWhen: [
 ]
 ```
 
-**How It Works.** When a page has any `visibleWhen` row, the framework runs its own custom function to do the showing and hiding, set once as the page opens and again whenever a named control changes. A hidden row keeps its saved value, so a control turning a section back on brings the earlier choices back. A face that passes its own `customClay` owns the whole page, so it wires the showing itself rather than getting the framework's. The rows ride on the page as plain config, so a hand-built page uses `visibleWhen` the same way.
+**How It Works.** When a page has any `visibleWhen` row, the framework runs its own custom function to show and hide the rows, once as the page opens and again whenever a named control changes. A hidden row keeps its saved value, so a control turning a section back on brings the earlier choices back. A face that passes its own `customClay` owns the whole page, so it wires the showing itself rather than getting the framework's. The rows ride on the page as plain config, so a hand-built page uses `visibleWhen` the same way.
 
 Put `visibleWhen` on a control, not a `section`, since Clay gives a section no row to hide. A row whose named control is dropped from a watch by its own `capabilities` is hidden along with it on that watch, since the value it waits on is not there to read.
 
@@ -225,7 +225,7 @@ A face keeps its pieces under `src/pkjs/clay/builder/`, and a family keeps the o
 
 **Where a Piece Comes From.** A piece is looked up in the face first, then in its family's core, then in the framework's `src/ts/clay/builder/`, by the same path under each. A face's copy wins even when a shared piece is the one importing it. So one manifest in a family's core can build a different editor for each face: the drag handling and the popup panels come from the framework, and each face supplies its own grid geometry, the code that reads and writes its layout string, its starter layouts, and its template. Manifests shadow each other the same way, by file name.
 
-**Committed, and Checked.** The build never runs the generator. It compiles the face's phone code, leaves the builder pieces out of the compile so they do not ship a second time as loose modules, and copies every committed `*.g.js` beside the result. The committed file is therefore all the page ever sees, and a piece edited without a fresh `paf gen` ships the old editor. `paf check` builds every component again in memory and compares it with the committed file, and a stale one is reported with the `paf gen` line that fixes it. It also reports a committed component no manifest writes any more, since the build would still copy it into the face.
+**Committed, and Checked.** The build never runs the generator. It compiles the face's phone code, leaves the builder pieces out of the compile so they do not ship a second time as loose modules, and copies every committed `*.g.js` beside the result. The committed file is therefore all the page ever sees, and a piece edited without a fresh `paf gen` ships the old editor. `paf check` builds every component again in memory, compares it with the committed file, and reports a stale one with the `paf gen` line that fixes it. It also reports a committed component no manifest writes any more, since the build would still copy it into the face.
 
 ## Previewing the Page
 

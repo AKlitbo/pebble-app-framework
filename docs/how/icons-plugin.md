@@ -71,15 +71,15 @@ flowchart LR
   get --> tint["icon_tint repaints the table"]
 ```
 
-The PNG sharp writes is full colour, but that is not what reaches the watch. The Pebble SDK packs a picture with 16 or fewer colours as a colour table, as [What a Background Costs](frame-plugin.md#what-a-background-costs) covers. A white glyph with soft edges comes out with four entries, clear and white at three levels of see-through, and packs at two bits a pixel.
+The PNG sharp writes is full colour, and the Pebble SDK packs it before it reaches the watch. A picture with 16 or fewer colours becomes a colour table, as [What a Background Costs](frame-plugin.md#what-a-background-costs) covers. A white glyph with soft edges comes out with four entries, clear and white at three levels of see-through, and packs at two bits a pixel.
 
-That table is what `icon_tint` repaints on the watch, so one white PNG serves every theme and any colour the wearer picks, as [Painting an Icon a Colour](icons.md#painting-an-icon-a-colour) covers. Forcing every glyph to one colour is what keeps its table down to those few shades of white. An SVG that kept a second colour would pack more entries and still tint to one flat colour, and past 16 colours it would have no table to tint at all. White is also what the icon shows on a face that draws it without a tint.
+`icon_tint` repaints that table on the watch, so one white PNG serves every theme and any colour the wearer picks, as [Painting an Icon a Colour](icons.md#painting-an-icon-a-colour) covers. Forcing every glyph to one colour keeps its table down to those few shades of white. An SVG that kept a second colour would pack more entries and still tint to one flat colour, and past 16 colours it would have no table to tint at all. White is also what the icon shows on a face that draws it without a tint.
 
 ## When a Source Is Missing
 
 An icon whose SVG is not in the sources folder keeps the PNG it already has, with a warning, so a machine missing one set still regenerates the rest. That only holds when the PNG is the size `icons.json` asks for. A PNG of another size was drawn before the size changed, and keeping it would draw the old size in the new spot, so the run stops. It also stops when there is no PNG to keep, since the build would fail on the missing resource.
 
-The cost is that a mistyped SVG name on an icon that already has a PNG only warns, and the old PNG ships. The folder checks before any icon is drawn catch the common mistake, a `sources` setting that points at the wrong folder, so the warning is worth keeping a partial set working.
+The cost is that a mistyped SVG name on an icon that already has a PNG only warns, and the old PNG ships. The folder checks before any icon is drawn catch the common mistake, a `sources` setting that points at the wrong folder, so a warning is a fair price for keeping a partial set working.
 
 ## The Media List
 
@@ -99,4 +99,4 @@ Once the PNGs are drawn, the generator writes one bitmap entry per icon into the
 
 It then reads the width and height out of each committed PNG's header and compares them with the size `icons.json` asks for. The generator draws every icon at exactly its size, so a PNG of another size was drawn before `icons.json` changed, and it would ship the old icon at the old size inside a box laid out for the new one. A missing PNG and a file that is not a PNG are reported too, each on its own line with the `paf gen <face> icons` line that fixes it. A stale media list is reported alone, since the same `paf gen` fixes the PNGs with it. The check reads only JSON and the PNG headers, so it needs no sources folder and no image library, and runs anywhere the unit does, CI included.
 
-It cannot see an icon pointed at a different SVG or a changed `trim`, since both keep the PNG's size and the sources are not in the repo. Running `paf gen <face> icons` after any edit to `icons.json` is what keeps the two in step. [Commands](../paf/commands.md#paf-check) covers `paf check` itself.
+It cannot see an icon pointed at a different SVG or a changed `trim`, since both keep the PNG's size and the sources are not in the repo. Run `paf gen <face> icons` after any edit to `icons.json` to keep the two in step. [Commands](../paf/commands.md#paf-check) covers `paf check` itself.

@@ -18,7 +18,7 @@ The watch does not work sunrise and sunset out for itself. The weather provider 
 
 ## Measuring Forward from Sunrise
 
-Every sum here measures forward round the clock from sunrise. Going from one time to another, a negative answer gets a day added:
+Every sum here measures forward round the clock from sunrise. Going from one time to another, `forward` adds a day to a negative answer:
 
 ```c
 static int forward(int from, int to)
@@ -56,7 +56,7 @@ On the minute of sunset the day reads 100 and the night -1, and the night starts
 
 ## Polar Day and Night
 
-When the sun stays up all day or never comes up, there is no sunrise or sunset to send. Depending on the provider, the times are left out, which reaches the watch as -1, or both arrive as the same minute. A sun that never sets and one that never rises can arrive looking exactly alike, so the sums read a sunrise and sunset on the same minute as no data rather than guess which it is. The face shows what it shows with no weather.
+When the sun stays up all day or never comes up, there is no sunrise or sunset to send. Some providers leave the times out, which reaches the watch as -1, and others send both as the same minute. A sun that never sets and one that never rises can arrive looking exactly alike, so the sums read a sunrise and sunset on the same minute as no data rather than guess which it is. The face shows what it shows with no weather.
 
 [Time Bands and Night Hours](time-bands.md#spans-that-repeat-every-day) reads the same pair its own way, since a span and a night window each need an answer.
 
@@ -81,4 +81,4 @@ if (minutes >= 0)
 }
 ```
 
-`duration_hm_compact` is covered in [Dates and Durations](dates-and-durations.md).
+[Dates and Durations](dates-and-durations.md) covers `duration_hm_compact`.

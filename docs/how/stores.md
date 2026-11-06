@@ -34,7 +34,7 @@ weather_store_subscribe(engine_mark_dirty);
 
 **Subscribe.** Each store holds one function to call when its reading changes, and a second subscribe replaces the first. The store calls it after the new reading is in place, so the redraw always reads the new values. A face subscribes after init, so the seed and the restore redraw nothing, and the face's first paint reads every store anyway.
 
-**Getters with No-Data Values.** Each reading has its own getter, and a reading that can be missing has a value that says so: -1 for a count or a percent, `WEATHER_NO_TEMP` for a temperature, since a temperature can be negative and 0 is a real one, and an empty string for text. A panel checks for it and draws dashes, so a watch that has not heard from the phone yet never shows a 0 that looks real.
+**Getters with No-Data Values.** Each reading has its own getter, and a reading that can be missing has a value that says so: -1 for a count or a percent, `WEATHER_NO_TEMP` for a temperature, and an empty string for text. A temperature needs its own value, since it can be negative and 0 is a real one. A panel checks for it and draws dashes, so a watch that has not heard from the phone yet never shows a 0 that looks real.
 
 **Reconfigure.** The time, weather, stock, and calendar stores take new rules after launch through their `_reconfigure` call, which a face runs from its settings handler. It swaps the time store's ticker, or changes how often a store polls, without losing the reading it holds. The other stores take nothing from settings once they start. The system store's buzz on a connection change reads its settings at the moment it buzzes, so it needs no reconfigure either.
 
@@ -67,9 +67,9 @@ sequenceDiagram
   Face->>Face: redraw
 ```
 
-The polling stores use their turn to check whether a poll is due. The health store uses it to read the step count and heart rate, since the health service sends events too rarely to draw a heart rate graph and stops sending steps the moment the wearer sits still. Running the stores before the face is told means the redraw that follows already shows this minute's steps.
+The polling stores use their turn to check whether a poll is due. The health store uses it to read the step count and heart rate, since the health service sends events too rarely to draw a heart rate graph and stops sending steps the moment the wearer sits still. The time store runs them before it tells the face, so the redraw that follows already shows this minute's steps.
 
-**One Wake for Everything.** A timer per store would wake the watch once for each store. Riding one ticker wakes it once a minute however many stores a face runs, and the watch's battery pays for every wake.
+**One Wake for Everything.** A timer per store would wake the watch once for each store, and every wake costs battery. Riding one ticker wakes it once a minute however many stores a face runs.
 
 **The Cost.** The cadence is whichever ticker the face runs. On the minute tick a poll goes out on the minute it falls due. A face that runs only the .beats timer turns the stores every 86.4 seconds, so a poll can go out up to that long after its deadline. A face that runs neither ticker never turns the stores at all, so nothing polls. Only a seeded face runs that way, and it does not poll anyway.
 
@@ -149,7 +149,7 @@ The cost is that the saved sync time stays at the last real change. A relaunch r
 
 **Seeded from the Restore.** A restore records the sum of what it read, so the first reply after a relaunch that brings the same reading writes nothing.
 
-**A Failed Write.** The sum only moves when a write lands, so a failed write leaves flash and the sum out of step, and the next reply that reaches a save writes again. The weather store also keeps itself marked as changed, so its very next message tries again whatever it brings. The stock and calendar stores leave that out. A failed write there almost always means the watch's storage is full, which an early retry would not change, and the mark would cost bytes on every face.
+**A Failed Write.** The sum only moves when a write lands. A failed write leaves flash and the sum out of step, so the next reply that reaches a save writes again. The weather store also keeps itself marked as changed, so it tries again on its very next message, whatever that brings. The stock and calendar stores leave that out. A failed write there almost always means the watch's storage is full, which an early retry would not change, and the mark would cost bytes on every face.
 
 **Two Readings Can Share a Sum.** The chance is about one in four billion, and the cost would be one skipped save that the next different reading puts right.
 

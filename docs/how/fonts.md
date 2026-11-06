@@ -82,7 +82,7 @@ The new font is in the slot straight away, and anything that looks the slot up w
 
 **Custom Fonts.** A custom font starts as a TrueType file listed in the face's resources at one pixel size. The SDK turns it into a bitmap font at build time, so every size a face uses is its own resource, and a face that shows a clock at four sizes ships four fonts. Each one takes room in the app's resources, and loading it takes room on the heap the face shares with its pictures and layers.
 
-**Only the Characters It Names.** A font resource can carry a `characterRegex` that lists the characters to build, and only those are put in the font:
+**Only the Characters It Names.** A font resource can carry a `characterRegex` that lists the characters to build, and the SDK leaves every other character out of the font:
 
 ```json
 {

@@ -41,7 +41,7 @@ A readout holds no state and keeps no copy. It reads the store each time it is c
 
 **.beats.** The clock becomes a Swatch Internet Time reading such as `@672`, always three digits after the `@`. [.beats](beats.md) covers the maths and the timer that redraws on each beat.
 
-`readout_meridiem` writes `AM` or `PM` on either 12 hour choice, and on System when the watch is in 12 hour mode. On a 24 hour or .beats clock it writes an empty string, so a face can leave its AM/PM slot in place on every layout and it shows nothing when there is nothing to show.
+`readout_meridiem` writes `AM` or `PM` on either 12 hour choice, and on System when the watch is in 12 hour mode. On a 24 hour or .beats clock it writes an empty string, so a face can leave its AM/PM slot in place on every layout and the slot shows nothing when there is nothing to show.
 
 ## The Date
 
@@ -53,7 +53,7 @@ A readout holds no state and keeps no copy. It reads the store each time it is c
 
 ## Health
 
-**Heart Rate.** `readout_hr` writes the beats per minute, or `--`. Only a rate above 0 is printed, so a reading of 0 shows `--` as well.
+**Heart Rate.** `readout_hr` writes the beats per minute, or `--`. It prints only a rate above 0, so a reading of 0 shows `--` as well.
 
 **Steps.** `readout_steps` follows the Steps Mode setting. In steps mode it writes the count. In miles or kilometres mode it writes the distance walked to one decimal place with its unit, such as `2.4 KM` or `1.5 MI`. The conversion stays in whole numbers by counting tenths of a unit, so no floating point code is linked into the face.
 

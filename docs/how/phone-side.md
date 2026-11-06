@@ -18,7 +18,7 @@ app.startPebbleApp({
 
 **`clayConfig`.** The settings page, normally built with `buildConfig`. Besides building the page from it, the app reads each setting's default, which fields are second clocks, and each slider's precision.
 
-**`components`.** Any Clay components of the face's own, such as a layout editor. They are registered before the page is built. The location search that the weather location and second clocks use is registered for every face.
+**`components`.** Any Clay components of the face's own, such as a layout editor. The app registers them before it builds the page, and it registers the location search that the weather location and second clocks use for every face.
 
 **`features`.** The parts of the phone code only some faces need. Each one fetches its own data and sends it to the watch, and the app tells it when anything happens.
 
@@ -48,11 +48,11 @@ A pbw built as `manifestVersion` 2, the default from SDK 4.42.0 on, gets only th
 
 **The List Comes from the Keys.** The manifest builder writes `usesPermissions` into each target's `package.json`, in [`permissions.ts`](../../src/tools/manifest/permissions.ts). `WEATHER_REQUEST` adds `Location` and the weather providers' sites. The GPS switch is a setting, so `Location` goes in for every weather face, and the phone only asks the wearer once the face looks the position up. `STOCK_STRIP` adds the stock providers' sites. `CALENDAR_STRIP` asks for the whole web instead of a list, since a calendar feed can sit on any site. A face with none of these keys gets no list. Each site covers its subdomains, so `open-meteo.com` takes in `api.open-meteo.com`. Every weather face lists Open-Meteo, since OpenWeatherMap and WeatherAPI borrow the readings they lack from it.
 
-**A Face's Own Entries.** A face that fetches from somewhere of its own lists it in its appinfo's `usesPermissions`, in the form the Pebble app reads, as in `"usesPermissions": [{ "name": "Internet", "parameters": { "domains": ["example.com"] } }]`. Its sites join the one `Internet` entry the keys made, a bare `Internet` opens that entry to every site, and a name already on the list, such as `Location`, is not added twice. An entry with no name, parameters that are not each a list of text, or a `plugin` that is not text stops the build.
+**A Face's Own Entries.** A face that fetches from somewhere of its own lists it in its appinfo's `usesPermissions`, in the form the Pebble app reads, as in `"usesPermissions": [{ "name": "Internet", "parameters": { "domains": ["example.com"] } }]`. Its sites join the one `Internet` entry the keys made, and a bare `Internet` opens that entry to every site. A name already on the list, such as `Location`, is not added twice. An entry with no name, parameters that are not each a list of text, or a `plugin` that is not text stops the build.
 
-**A Blocked Request.** A site the wearer has not allowed fails at once. iOS reports status 0 and Android a 403 with an empty body. Neither carries a provider's error, so weather reads it as `NET ERROR` and tries again, and a stock provider reads it as `NET ERROR`, apart from Finnhub, which reads any 403 as `NO ACCESS`. None of them reads it as a bad key.
+**A Blocked Request.** A site the wearer has not allowed fails at once. iOS reports status 0 and Android a 403 with an empty body. Neither carries a provider's error, so weather reads it as `NET ERROR` and tries again. A stock provider reads it as `NET ERROR` too, apart from Finnhub, which reads any 403 as `NO ACCESS`. None of them reads it as a bad key.
 
-**An Older SDK.** An SDK before 4.42.0 builds a pbw the Pebble app reads as a legacy app, which ignores the list. The build stops at configure on one and names the SDK to install, and SDK 4.44 is the oldest the framework supports.
+**An Older SDK.** An SDK before 4.42.0 builds a pbw the Pebble app reads as a legacy app, which ignores the list. The build stops at configure on one and names the SDK to install. SDK 4.44 is the oldest the framework supports.
 
 ## When the Phone Code Starts
 
@@ -72,7 +72,7 @@ sequenceDiagram
   App->>App: start the refresh timer
 ```
 
-**The Settings Request.** It goes out first. A face that declares `SETTINGS_FRESH` and already has settings on the phone only asks whether the watch booted empty. Any other face asks for the watch's whole copy. The watch turns away anything that arrives before the face has opened its connection, which can be a moment into a launch, and the queue gives up after three quick tries. So when the watch turns the request away, the app waits a second and sends it again, up to 8 more times. The app never asks again for a request the watch took, since the watch queues its reply before it acks, and the first reply ends the run. A repeat of the reply is ignored. What happens with the answer is on [The Life of a Setting](life-of-a-setting.md#after-a-reinstall).
+**The Settings Request.** It goes out first. A face that declares `SETTINGS_FRESH` and already has settings on the phone only asks whether the watch booted empty. Any other face asks for the watch's whole copy. The watch turns away anything that arrives before the face has opened its connection, which can be a moment into a launch. The queue gives up after three quick tries, so when the watch turns the request away, the app waits a second and sends it again, up to 8 more times. The app never asks again for a request the watch took, since the watch queues its reply before it acks, and the first reply ends the run. A repeat of the reply is ignored. What happens with the answer is on [The Life of a Setting](life-of-a-setting.md#after-a-reinstall).
 
 **Every Second Clock Again.** A watch that has just been reset holds no zones, so the app forgets what it last sent and sends every second clock again. [Time Zones](time-zones.md#following-daylight-saving) covers what it sends. A push the watch turned away because the face was not listening yet goes again when the watch's settings reply lands.
 
@@ -82,9 +82,9 @@ sequenceDiagram
 
 ## Messages from the Watch
 
-The Pebble phone app hands over each message from the watch keyed by message key name rather than by number. The emulator keys each one both ways, under the number and again under the name, so a run there never sees the name-only form a phone sends. The app fills in the number for every key the face declares before anything reads the message, so the settings reply and every feature see it however the phone keyed it. Every message from the watch then goes to every feature's `message` hook, and each one looks for its own request key. A request starts a fetch, unless one is already out, and forgets the copy the watch last took so the answer goes out even when nothing changed.
+The Pebble phone app hands over each message from the watch keyed by message key name rather than by number. The emulator keys each one both ways, under the number and again under the name, so a run there never sees the name-only form a phone sends. The app fills in the number for every key the face declares before anything reads the message, so the settings reply and every feature see it however the phone keyed it. Every message from the watch then goes to every feature's `message` hook, and each one looks for its own request key. On its request, a feature starts a fetch unless one is already out, and forgets the copy the watch last took, so the answer goes out even when nothing changed.
 
-The watch's reply to the settings request is handled by the app itself. Depending on which side has settings, it restores the watch from the phone or fills the phone's saved settings from the watch. When it fills an empty phone, each feature gets `configOpened` and `configSaved` around the fill, the same as for a save on the page. A feature whose settings moved then fetches again, so a watch set to Fahrenheit does not keep a Celsius reading fetched on the defaults.
+The app handles the watch's reply to the settings request itself. Depending on which side has settings, it restores the watch from the phone or fills the phone's saved settings from the watch. When it fills an empty phone, each feature gets `configOpened` and `configSaved` around the fill, the same as for a save on the page. A feature whose settings moved then fetches again, so a watch set to Fahrenheit does not keep a Celsius reading fetched on the defaults.
 
 ## The Background Refresh
 
@@ -92,7 +92,7 @@ While the phone code runs, a timer ticks every 5 minutes. Each tick sends any se
 
 Weather, stocks, and the calendar act only on the slow ticks. The watch asks for each on the interval the wearer picked, so the watch leads. The slow tick only fetches when nothing has asked since the last one. A watch ask, or the phone code starting, marks the feature as asked, so a feature the watch is polling never fetches on the tick as well.
 
-**The Same Answer Is Not Sent Twice.** Each feature keeps the last message the watch took from it, and a refresh that brings back exactly the same one sends nothing. Every send wakes the watch's radio whether or not the reading moved. A send that fails every retry forgets what it kept, so the next one goes out. A watch ask and the phone code starting both forget it too, so the watch always gets an answer when it asks.
+**The Same Answer Is Not Sent Twice.** Each feature keeps the last message the watch took from it, and a refresh that brings back exactly the same one sends nothing. Every send wakes the watch's radio whether or not the reading moved. When a send fails every retry, the feature forgets what it kept, so the next one goes out. A watch ask and the phone code starting both forget it too, so the watch always gets an answer when it asks.
 
 ## After a Save
 
@@ -102,7 +102,7 @@ Each feature keeps its own list of the settings it cares about. Weather watches 
 
 **A Fetch Only When Its Settings Moved.** When the page closes, the app sends the save to the watch first, since that is the step that saves the new values. Then each feature compares its settings with its snapshot. One whose settings changed fetches again 250 ms later, forced past any quota rule. A save that only touches a colour fetches nothing. The watch may also ask for weather after the same save, and an ask that lands in those 250 ms is folded into the forced fetch rather than starting a second one.
 
-**One Fetch at a Time.** A feature keeps one fetch out at a time. An ask that arrives while one is running is dropped, so the watch asking again does not spend a provider call twice. The forced fetch after a save takes over from one still running, and the older one's answer is thrown away when it lands, so a reading for the old city or the old unit never reaches the watch after the new one. A watchdog closes a fetch that never answers, so it cannot hold off every later one. Weather also tries a failed fetch again after 5 and then 15 seconds, unless the failure waits on the wearer, such as a bad key or a used-up quota.
+**One Fetch at a Time.** A feature keeps one fetch out at a time. An ask that arrives while one is running is dropped, so the watch asking again does not spend a provider call twice. The forced fetch after a save replaces one still running, and the older one's answer is thrown away when it lands, so a reading for the old city or the old unit never reaches the watch after the new one. A watchdog closes a fetch that never answers, so a stuck fetch cannot hold off every later one. Weather also tries a failed fetch again after 5 and then 15 seconds, unless the failure waits on the wearer, such as a bad key or a used-up quota.
 
 ## The Send Queue
 

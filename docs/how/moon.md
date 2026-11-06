@@ -21,9 +21,9 @@ if (age < 0)
 
 The remainder after dividing is how far into the current cycle the time falls. For any time after the epoch that is all it takes.
 
-**Before the Epoch.** C's `%` keeps the sign of the number it divides, so a time before 2000 gives a negative remainder. Adding one cycle turns it into the same point counted forward. Only a watch whose clock is set wrong ever reads a time that early, and the step keeps every reading in range there too, rather than a picture number or a percent below 0.
+**Before the Epoch.** C's `%` keeps the sign of the number it divides, so a time before 2000 gives a negative remainder. Adding one cycle turns it into the same point counted forward. Only a watch whose clock is set wrong ever reads a time that early, and the step keeps every reading in range there too, so no picture number or percent drops below 0.
 
-**Staying in 32 Bits.** The time since the epoch is cut down to a 32-bit number before the division. A 32-bit count of seconds lasts about 68 years, so it holds until 2068, well past the life of the watch. Dividing a 64-bit number on the watch's processor needs extra helper code that the compiler adds to the app, and keeping the maths in 32 bits leaves that code out of every face that shows the moon.
+**Staying in 32 Bits.** The time since the epoch is cut down to a 32-bit number before the division. A 32-bit count of seconds lasts about 68 years, so it holds until 2068, well past the life of the watch. Dividing a 64-bit number on the watch's processor needs extra helper code that the compiler adds to the app. Keeping the maths in 32 bits leaves that code out of every face that shows the moon.
 
 **How Close It Gets.** Real moon cycles are not all the same length, so the real new moon can land more than half a day either side of the one this counts, though it is usually closer. A face that changes its moon picture every few days barely shows the difference.
 
@@ -86,9 +86,9 @@ int32_t until = target - moon_age_sec(utc);
 
 The countdown reads 0 for the whole night of the full moon, from half a day before it to half a day after, and it never reads 30. A full moon six hours ago is still tonight's full moon to anyone looking up.
 
-**Rounded to Whole Days.** Half a day is added before dividing by a day, so the count rounds to the nearest day rather than down. At the new moon the full moon is 14.77 days away, which reads 15, and half a day before the full moon the rounding already gives 0.
+**Rounded to Whole Days.** `moon_days_to_phase` adds half a day before dividing by a day, so the count rounds to the nearest day rather than down. At the new moon the full moon is 14.77 days away, which reads 15, and half a day before the full moon the rounding already gives 0.
 
-**Just after the Moon.** A full moon that has passed leaves `until` negative, so a whole cycle is added to point at the next one. For the first half day that leaves it nearly a whole cycle away, which would read 29 or round up to 30, so anything that close to a whole cycle reads 0 instead. Right on the new moon the age is 0, which puts a new moon target a whole cycle out, so that case takes the cycle back off and reads 0 as well.
+**Just after the Moon.** A full moon that has passed leaves `until` negative, so the function adds a whole cycle to point at the next one. For the first half day that leaves it nearly a whole cycle away, which would read 29 or round up to 30, so anything that close to a whole cycle reads 0 instead. Right on the new moon the age is 0, which puts a new moon target a whole cycle out, so that case takes the cycle back off and reads 0 as well.
 
 ## Using It in a Face
 
@@ -105,4 +105,4 @@ int days = moon_days_to_phase(now, true);  // days to the next full moon
 
 The LCARS face's moon slots work this way. Its table of eight moon images is indexed straight by `moon_glyph_index(now, 8)`, so the picture and the `moon_phase_name` text always agree.
 
-Nothing here repaints on its own. A moon panel reads these when the face redraws, and the minute tick is far more often than the moon changes.
+Nothing here repaints on its own. A moon panel reads these when the face redraws, and the minute tick comes far more often than the moon changes.

@@ -17,9 +17,9 @@ app.startPebbleApp({
 
 A face that leaves the feature out of `features` carries none of the weather code in its phone bundle and fetches nothing, as [Features](phone-side.md#features) covers.
 
-**The Keys.** A face with weather declares `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK`. Without any one of them the feature fetches nothing and logs the keys that are missing. Everything else is chosen by key. The phone only sends a reading such as the humidity when the face declares its key, and only fetches the forecast when the face declares `WEATHER_FORECAST_HOURLY` or `WEATHER_FORECAST_DAILY`. `WEATHER_CONDITION_LABEL` also brings the condition's long name, such as `Partly Cloudy`, since the watch has no table of names of its own.
+**The Keys.** A face with weather declares `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK`. Without any one of them the feature fetches nothing and logs the keys that are missing. The face picks everything else by key. The phone only sends a reading such as the humidity when the face declares its key, and only fetches the forecast when the face declares `WEATHER_FORECAST_HOURLY` or `WEATHER_FORECAST_DAILY`. `WEATHER_CONDITION_LABEL` also brings the condition's long name, such as `Partly Cloudy`, since the watch has no table of names of its own.
 
-**The Settings.** `buildConfig` adds the provider, the API key, the temperature unit, the GPS toggle, the fallback toggle, and the saved place to the settings page when the face passes `location`, `weather`, and `temperature`. A change to any of these after a save fetches again.
+**The Settings.** `buildConfig` adds the provider, the API key, the temperature unit, the GPS toggle, the fallback toggle, and the saved place to the settings page when the face passes `location`, `weather`, and `temperature`. Saving a change to any of them starts a new fetch.
 
 **Coordinates.** A face that shows where the wearer is passes `weather.withCoords(formatCoords)` in place of `weather`, and its formatter adds the coordinate keys to every weather message. [The Location Store](location-store.md) covers the formatter and the watch side.
 
@@ -31,9 +31,9 @@ The wearer picks the source on the settings page:
 * **OpenWeatherMap** needs a key. Its free current weather endpoint has no UV index, dew point, day's high and low, chance of rain, or forecast, so the phone asks Open-Meteo for those at the same moment. A face that shows none of them skips the Open-Meteo call.
 * **WeatherAPI.com** needs a key. Its two day forecast covers every reading, but it has no strips in the shape the watch takes, so when the face shows a strip the phone borrows it from Open-Meteo at the same moment.
 
-The paired requests run side by side, and the result goes to the watch once both have answered. When only the Open-Meteo half fails, the reading still goes without the borrowed parts rather than not at all, and [The Weather Store](weather-store.md) covers how the watch keeps today's high and low from going stale then.
+The phone runs the paired requests side by side and sends the result to the watch once both have answered. When only the Open-Meteo half fails, it still sends the reading, just without the borrowed parts. [The Weather Store](weather-store.md) covers how the watch keeps today's high and low from going stale when that happens.
 
-**The Key.** It is trimmed and cut to 64 characters, the most the settings page takes. With OpenWeatherMap or WeatherAPI chosen and no key saved, the phone sends a `NO API KEY` status without making a request.
+**The Key.** The phone trims it and cuts it to 64 characters, the most the settings page takes. With OpenWeatherMap or WeatherAPI chosen and no key saved, the phone sends a `NO API KEY` status without making a request.
 
 ## Where the Location Comes From
 
@@ -56,19 +56,19 @@ flowchart TD
 
 **The GPS Fix.** The phone accepts a fix up to 10 minutes old, since a cold start has no fresh one, and the weather barely moves in that time. The Pebble app does not reliably honour the location request's own timeout, so the phone gives up after 10 seconds on a timer of its own and takes the fallback. A phone with no location service counts as a failed fix. With GPS off, the saved place is used whatever the fallback toggle says.
 
-**Coordinates on the Way to the Watch.** The result carries the coordinates the reading was for, or for WeatherAPI the coordinates of the place it matched them to. A failed fetch carries none, and the face's formatter runs on it anyway, so a face can show its own text for no fix rather than keep the last place.
+**Coordinates on the Way to the Watch.** The result carries the coordinates the reading was for, or for WeatherAPI the coordinates of the place it matched them to. A failed fetch carries none. The phone still runs the face's formatter on it, so a face can show its own text when there is no fix instead of keeping the last place.
 
 ## A Fetch Round
 
 Each fetch is a round, and weather keeps to the rules every fetching feature shares. A round starts when the phone code starts, when the watch asks, on the slow tick when nothing has asked since the last one, and 250 ms after a save that changed a weather setting, as [The Background Refresh](phone-side.md#the-background-refresh) and [After a Save](phone-side.md#after-a-save) cover.
 
-Until its first reading lands, the watch asks again every few seconds, as [The Weather Store](weather-store.md) covers, and an ask while a round is out is dropped, so it never starts a second GPS fix or spends a second provider call. A save shuts out a round still running, so a reading in the old unit or for the old city never reaches the watch after it. [The Phone Side](phone-side.md#after-a-save) covers both.
+Until its first reading lands, the watch asks again every few seconds, as [The Weather Store](weather-store.md) covers. The phone drops an ask that arrives while a round is out, so it never starts a second GPS fix or spends a second provider call. A save shuts out a round that is still running, so a reading in the old unit or for the old city cannot reach the watch after it. [The Phone Side](phone-side.md#after-a-save) covers both.
 
-**Timeouts.** Every request gives up after 15 seconds on a timer of the phone's own, so every fetch answers, and a round has a 60 second cap on each try as a last guard. A round that hits the cap is closed and sends nothing, so it cannot hold off every later ask.
+**Timeouts.** The phone gives up on a request after 15 seconds on its own timer, so every fetch gets an answer. Each try in a round also has a 60 second cap as a last guard. A round that hits it is closed and sends nothing, so a stuck round cannot block every later ask.
 
-**Retries.** A failed fetch is tried again 5 seconds later, and once more 15 seconds after that, so a cold launch with the GPS still warming or the network not up yet recovers rather than sitting blank until the next poll. `NO LOCATION`, `NO API KEY`, `INVALID KEY`, `RATE LIMIT`, and `LOC NOT FOUND` are never tried again, since each waits on the wearer or on the provider's quota, and another try would fail the same way and spend another call.
+**Retries.** The phone tries a failed fetch again 5 seconds later, and once more 15 seconds after that, so a cold launch with the GPS still warming or the network not up yet recovers instead of sitting blank until the next poll. `NO LOCATION`, `NO API KEY`, `INVALID KEY`, `RATE LIMIT`, and `LOC NOT FOUND` are never tried again. Each of those waits on the wearer or on the provider's quota, so another try would fail the same way and spend another call.
 
-**What a Failed Fetch Sends.** Each failed try goes to the watch with the ok flag at 0, a temperature of 0, and a status word in place of the condition:
+**What a Failed Fetch Sends.** The phone sends each failed try to the watch with the ok flag at 0, a temperature of 0, and a status word in place of the condition:
 
 | Status | Means |
 | :-- | :-- |
@@ -87,9 +87,9 @@ The message carries no extras and no strips, so the watch keeps those as they we
 
 ## Turning an Answer into a Reading
 
-Every provider's answer becomes the same reading, so nothing after the provider knows which one answered.
+The phone turns every provider's answer into the same reading, so nothing after that step knows which provider answered.
 
-**The Condition Catalogue.** [`conditions.ts`](../../src/ts/weather/conditions.ts) lists every condition the watch knows, each with the short label that goes over the wire, such as `PCLDY`, and its long name. The watch's icon table is generated from the same list, as [Icons](icons.md#weather-icons) covers. A condition the catalogue does not know goes over as `UNKNOWN`.
+**The Condition Catalogue.** [`conditions.ts`](../../src/ts/weather/conditions.ts) lists every condition the watch knows, each with the short label that goes over the wire, such as `PCLDY`, and its long name. The watch's icon table is generated from the same list, as [Icons](icons.md#weather-icons) covers. The phone sends a condition the catalogue does not know as `UNKNOWN`.
 
 **From Each Provider.** Open-Meteo's WMO codes map to the catalogue by range, and a null or unknown code reads as `UNKNOWN` rather than landing on fog. OpenWeatherMap sends a word such as `Rain` or `Mist`, which goes through a short table of provider words to the nearest condition, and its icon code splits its one `Clouds` word into partly cloudy and cloudy. WeatherAPI's numeric code is the same in every language it answers in, so it maps straight to a condition, and an unlisted code falls back to the text through the same word table.
 
@@ -103,30 +103,30 @@ The strips always come from Open-Meteo, from the provider's own request or the b
 
 **Daily.** Eight days starting on the phone's today, each with the condition and the day's high and low. The daily strip never sets the night bit, since a whole day has no night of its own.
 
-**Columns with Gaps.** A column's temperature is rounded and held to -99 to 199, and a missing one goes over as the no-data value rather than a 0 that would read as a real temperature. A strip whose first hour or first date cannot be read is dropped whole rather than sent with every column labelled wrong.
+**Columns with Gaps.** The phone rounds a column's temperature and holds it to -99 to 199. A missing one goes over as the no-data value, since a 0 would read as a real temperature. A strip whose first hour or first date cannot be read is dropped whole, because every column in it would be labelled wrong.
 
 ## Units and Values
 
 **Units.** The phone asks every provider for the wearer's temperature unit, so the reading arrives ready to show. When the wearer switches unit, the watch converts what it holds until the new fetch lands, as [Weather Readings](weather-readings.md) covers. Wind is always in km/h, and pressure is in hPa at sea level. Open-Meteo's ground level pressure would read about 170 hPa low in Denver, so the phone asks it for the sea level figure the other providers send.
 
-**Whole Numbers.** Every number is rounded before it goes. The feels like temperature, the dew point, and the day's high and low are held to -99 to 199, so a provider glitch cannot overflow a three digit label. A value the provider sent as null or left out is not sent at all, so the watch shows its no-data value rather than 0% rain or a UV index of 0.
+**Whole Numbers.** The phone rounds every number before it goes. The feels like temperature, the dew point, and the day's high and low are held to -99 to 199, so a provider glitch cannot overflow a three digit label. A value the provider sent as null or left out is not sent at all, so the watch shows its no-data value rather than 0% rain or a UV index of 0.
 
-**Today's High and Low.** The high, the low, and the chance of rain are for the phone's today, since the watch keeps them as today's. A city on another date may not have the phone's today in its reply, and then they are left out rather than taken from the wrong day.
+**Today's High and Low.** The high, the low, and the chance of rain are for the phone's today, since the watch keeps them as today's. A city on another date may not have the phone's today in its reply, and then the phone leaves all three out rather than taking them from the wrong day.
 
 ## Times on the Watch's Clock
 
 The watch keeps the phone's clock, so every time the phone sends has to be on that clock, even for a weather location in another zone. [Sunrise and Sunset](sunrise-and-sunset.md) covers what that means on the face.
 
-**Open-Meteo.** The phone sends its own time zone name with the request, and Open-Meteo answers with every time on the phone's clock. The name is only sent when its offset now matches the phone's clock, since a wrong name would put every time off. Without a name, or when Open-Meteo refuses it, the phone asks in the location's own zone and moves each time by the gap between the two clocks, and the refusal costs a second request.
+**Open-Meteo.** The phone sends its own time zone name with the request, and Open-Meteo answers with every time on the phone's clock. The phone only sends the name when that zone's offset matches its own clock right now, since a wrong name would put every time off. Without a name, or when Open-Meteo refuses it, the phone asks in the location's own zone and moves each time by the gap between the two clocks. A refusal costs a second request.
 
 **OpenWeatherMap.** Its sun times come as UTC seconds, which the phone reads on its own clock.
 
 **WeatherAPI.** Its sun times are on the location's own clock, and the phone moves them by the offset between the local time and the UTC seconds it sends beside them.
 
-**The Strips.** The hourly strip's first hour and the daily strip's first weekday are on the phone's clock too. When Open-Meteo answered in the location's zone and the gap between the two clocks is not a whole number of hours, the hour label rounds down, so a column can read up to 45 minutes early but never behind the watch's own hour. A city behind the phone's date has its days before the phone's today taken off the front, so the watch never shows a finished day as one six days ahead.
+**The Strips.** The hourly strip's first hour and the daily strip's first weekday are on the phone's clock too. When Open-Meteo answered in the location's zone and the gap between the two clocks is not a whole number of hours, the hour label rounds down, so a column can read up to 45 minutes early but never behind the watch's own hour. For a city behind the phone's date, the phone takes the days before its own today off the front of the strip, so the watch never shows a finished day as one six days ahead.
 
 ## Sending It to the Watch
 
 The finished reading goes to the watch as one message, with each extra and strip the face declares and the coordinates from the face's formatter. [The Message Formats](message-formats.md) covers how the strips and coordinates are packed.
 
-It goes through the send queue every message to the watch shares, and a message identical to the last one the watch took is skipped, a failed retry's included, since every send wakes the watch's radio. [The Phone Side](phone-side.md#the-background-refresh) covers the skip, and [The Weather Store](weather-store.md) picks the message up from there.
+It goes through the send queue that every message to the watch shares. The phone skips a message identical to the last one the watch took, even one from a failed retry, since every send wakes the watch's radio. [The Phone Side](phone-side.md#the-background-refresh) covers the skip, and [The Weather Store](weather-store.md) picks the message up from there.

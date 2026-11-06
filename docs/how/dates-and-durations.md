@@ -25,7 +25,7 @@ int total = date_iso_weeks_in_year(date_iso_week_year(year, t->tm_yday, t->tm_wd
 snprintf(out, n, "%d/%d", week, total);   // "53/53" on the 1st of January 2027
 ```
 
-**Finding the Week.** The sum moves to the Thursday of the same week, since that day decides which year the week belongs to, and counts sevens. An answer below 1 means the day belongs to last year's final week, and one past this year's total means it is already next year's week 1.
+**Finding the Week.** `date_iso_week` moves to the Thursday of the same week, since that day decides which year the week belongs to, and counts sevens. An answer below 1 means the day belongs to last year's final week, and one past this year's total means it is already next year's week 1.
 
 **52 or 53 Weeks.** A year has 53 ISO weeks when it ends on a Thursday or starts on one. The weekday of the 31st of December is one sum, counting the years and the leap days from a year 0 that ended on a Sunday:
 

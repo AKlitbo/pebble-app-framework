@@ -85,4 +85,4 @@ SystemSeed seed = {.battery = 64, .charging = false, .bluetooth = true, .next_al
 system_store_init((SystemConfig){.live = false}, &seed);
 ```
 
-The next alarm reads back the seeded time, with 0 for none. The seed is written straight into the store, so seeding a disconnected phone never runs the buzz policy. A store that is not live and has no seed reads 0 percent and disconnected, so a screenshot build sets the battery and the connection it shows. A seed with `live` true lasts no time at all, since init reads both services straight after it. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+The next alarm reads back the seeded time, with 0 for none. Init writes the seed straight into the store, so seeding a disconnected phone never runs the buzz policy. A store that is not live and has no seed reads 0 percent and disconnected, so a screenshot build sets the battery and the connection it shows. A seed with `live` true lasts no time at all, since init reads both services straight after it. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.

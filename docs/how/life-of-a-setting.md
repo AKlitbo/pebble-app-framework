@@ -59,9 +59,9 @@ So the theme reaches the watch as the text `"3"`, not the number 3.
 
 **A Second Clock.** A city chosen for a second clock is rewritten as `"offset,label"`, with the offset worked out for the current date, as [Time Zones](time-zones.md#from-the-saved-place-to-the-setting) covers.
 
-**The Fresh Flag.** When the face declares `SETTINGS_FRESH`, the message carries it as `0`, which tells the watch this came from a save on the page. That flag matters after a reinstall, below.
+**The Fresh Flag.** When the face declares `SETTINGS_FRESH`, the message carries it as `0`, which tells the watch this came from a save on the page. The watch uses that flag after a reinstall, covered below.
 
-**Through the Send Queue.** The framework sends the save itself rather than letting Clay do it, so it waits its turn in the one queue every message to the watch goes through. [The Phone Side](phone-side.md#the-send-queue) covers the queue and its retries.
+**Through the Send Queue.** The framework sends the save itself rather than letting Clay do it, so the save waits its turn in the one queue every message to the watch goes through. [The Phone Side](phone-side.md#the-send-queue) covers the queue and its retries.
 
 **Fetching Again.** Once the save is on its way, each feature compares its settings with its snapshot and fetches again only when one of them changed. A theme change touches none of them, so it fetches nothing. [The Phone Side](phone-side.md#after-a-save) covers the rules.
 
@@ -75,9 +75,9 @@ KNOWN_THEME(offsetof(LcarsSettings, theme), 9),
 
 A key in the message that is not on the list is ignored. It still takes up room in the message, though.
 
-**Checked on the Way In.** Each value is checked for its type and range, and one that already matches what the watch holds is skipped, so an unchanged save does not count as a change. [Settings on the Watch](settings-on-the-watch.md#taking-values-from-the-phone) has the rules. A theme past the end of the list reads as the default, so a face adding a theme raises the count in its `KNOWN_THEME` line too.
+**Checked on the Way In.** `settings_apply_inbox` checks each value for its type and range and skips one that already matches what the watch holds, so an unchanged save does not count as a change. [Settings on the Watch](settings-on-the-watch.md#taking-values-from-the-phone) has the rules. A theme past the end of the list reads as the default, so a face adding a theme raises the count in its `KNOWN_THEME` line too.
 
-**Saved to Flash.** When anything changed, `settings_save` writes the whole block of settings to the face's persist key in one write, and the block is read back and checked again at every launch, as [Settings on the Watch](settings-on-the-watch.md#loading-at-launch) covers.
+**Saved to Flash.** When anything changed, `settings_save` writes the whole block of settings to the face's persist key in one write, and the watch reads the block back and checks it again at every launch, as [Settings on the Watch](settings-on-the-watch.md#loading-at-launch) covers.
 
 **The Face Is Told.** The watch calls the face's `on_settings_changed`, and the face redraws from the new values. Its flag says whether the time or date layout changed, for a face that can skip work when it did not:
 
@@ -115,4 +115,4 @@ sequenceDiagram
   end
 ```
 
-The phone is the one that keeps settings for good. Until the restore lands, the watch saves nothing to flash, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains. A restore also skips the unit conversion, since the reading on the watch was fetched in the restored unit already.
+The phone keeps the settings for good. Until the restore lands, the watch saves nothing to flash, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains. A restore also skips the unit conversion, since the reading on the watch was fetched in the restored unit already.

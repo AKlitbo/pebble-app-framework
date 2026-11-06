@@ -20,7 +20,7 @@ A unit lists the plugin under `plugins` in its `paf.config.json`, as `"dev": {}`
 
 **Everything Else Reads as Missing.** The weather seed starts from `WEATHER_SEED_EMPTY` and sets only the temperature and the condition. Humidity, wind, UV, sunrise, sunset, the high and low, and the forecast all keep their no-data values, so a panel showing one draws dashes rather than a 0 that looks real. A face whose screenshots need those readings writes its own walk with a fuller fixture, as below.
 
-**Only What the Face Declares.** The weather and location stores are only filled for a face that declares their message keys. [`appmessage_features.h`](../../src/c/pebble/io/appmessage/appmessage_features.h) defines `APPMESSAGE_HAS_WEATHER` when the face declares all four weather keys and `APPMESSAGE_HAS_LOCATION` when it declares both coordinate keys, which [Talking to the Phone](talking-to-the-phone.md) explains. Without them the store is still started, empty and not live. A face without weather can still link a readout that reads the weather store, and an untouched store would hold zeros where a started one holds its no-data values.
+**Only What the Face Declares.** The harness only fills the weather and location stores for a face that declares their message keys. [`appmessage_features.h`](../../src/c/pebble/io/appmessage/appmessage_features.h) defines `APPMESSAGE_HAS_WEATHER` when the face declares all four weather keys and `APPMESSAGE_HAS_LOCATION` when it declares both coordinate keys, which [Talking to the Phone](talking-to-the-phone.md) explains. Without them the harness still starts the store, empty and not live. A face without weather can still link a readout that reads the weather store, and an untouched store would hold zeros where a started one holds its no-data values.
 
 **The Coordinates Are Text.** The location store keeps whatever text the face's phone code formats, as [The Location Store](location-store.md#how-a-fix-arrives) covers. The fixture's coordinates are the text `33-44` and `-112-07`, so a face that formats its coordinates as decimals or with hemisphere letters shows the fixture in a style its real readings never take.
 
@@ -42,9 +42,9 @@ flowchart LR
 
 **The Number of Themes.** The walk asks the settings layer how many values the theme setting allows, which is the same count that caps a theme sent from the phone. Every theme the watch accepts is in the walk, without the walk being told how many there are. A face with no theme setting gets a count of 0, so every tap redraws the first theme and the walk never moves.
 
-**Nothing Is Saved.** The theme and the Quiet Time mark are written with `settings_set_u8`, which changes the value in memory and never touches flash. A walk on the emulator leaves the theme the face had saved there as it was. On a face that has no Quiet Time setting, the write does nothing.
+**Nothing Is Saved.** The harness writes the theme and the Quiet Time mark with `settings_set_u8`, which changes the value in memory and never touches flash. A walk on the emulator leaves the theme the face had saved there as it was. On a face that has no Quiet Time setting, the write does nothing.
 
-**A Face's Own Walks.** A walk is a tap handler that changes one thing and rebuilds, so a face can write its own beside the plugin's. The LCARS face steps its readout slots through every readout it offers, with a fuller weather fixture so no slot shows dashes and a different clock on each step, and has a second walk that steps the weather condition through every icon, day and night. Both live in the face's own `src/c/dev/` and seed the stores the same way, and `tap-walk` drives them like the theme walk.
+**A Face's Own Walks.** A walk is a tap handler that changes one thing and rebuilds, so a face can write its own beside the plugin's. The LCARS face steps its readout slots through every readout it offers, with a fuller weather fixture so no slot shows dashes and a different clock on each step. It has a second walk that steps the weather condition through every icon, day and night. Both live in the face's own `src/c/dev/` and seed the stores the same way, and `tap-walk` drives them like the theme walk.
 
 ## Turning It On for a Dev Build
 
@@ -108,7 +108,7 @@ dev_start(apply_theme);
 
 **Out of a Release.** With the switch at 0, `dev_seed_stores` returns false, the live inits run, and the face never includes the harness's header. `dev_walk.c` is still compiled for every face in a unit that lists the plugin. The Pebble SDK puts each function in its own section and has the linker drop any section nothing calls, so a face that never calls the harness ships none of it. Nothing checks the switch at build time, so it is up to the face to commit it at 0.
 
-**A Settings Save Unpins the Stores.** A store stays seeded until something starts it live, and a face's settings handler normally reconfigures its stores with `live` true. So a save from the settings page on the emulator's phone starts the time store's ticker, which puts the real time back at the next minute, and turns on the weather, stock, and calendar stores, which then fetch real readings and spend the provider's quota. Seeding the time store again on a tap puts the pinned time back but leaves the ticker running. A face keeps a dev build pinned by skipping those reconfigures in its settings handler while its dev switch is on.
+**A Settings Save Unpins the Stores.** A store stays seeded until something starts it live, and a face's settings handler normally reconfigures its stores with `live` true. So a save from the settings page on the emulator's phone starts the time store's ticker, which puts the real time back at the next minute. It also turns on the weather, stock, and calendar stores, which then fetch real readings and spend the provider's quota. Seeding the time store again on a tap puts the pinned time back but leaves the ticker running. A face keeps a dev build pinned by skipping those reconfigures in its settings handler while its dev switch is on.
 
 ## Previewing the Settings Page
 
@@ -120,7 +120,7 @@ dev_start(apply_theme);
 paf tool <face> clay-preview --watch
 ```
 
-The value it adds over the phone is the console. A page whose script fails to parse, such as one with a component method written in shorthand, shows its error in the browser's console, where on the phone the settings screen just never opens. [The Settings Page](settings-page.md#the-serialization-trap) covers the mistakes that cause it.
+The preview has a console, which the phone does not. A page whose script fails to parse, such as one with a component method written in shorthand, shows its error there, where on the phone the settings screen just never opens. [The Settings Page](settings-page.md#the-serialization-trap) covers the mistakes that cause it.
 
 **Stand-Ins for the Phone.** Clay expects to run inside PebbleKit JS, so the preview gives it a `Pebble` object that reports the chosen platform on firmware 4.3, a `localStorage`, and a map of the face's message keys built from its `pebble.appinfo.json`. The ids in the map are made up, since rendering only needs the names. With `Pebble` defined, Clay's `generateUrl` returns the page as one data URL, which [The Serialization Trap](settings-page.md#the-serialization-trap) covers, and the preview decodes it into the file. Clay notes which watch opened the page when PebbleKit JS reports it is ready, which never happens under Node, so the preview fills that in itself. Without it, Clay has no watch to check an item's capabilities against, and stops on the first item that names any.
 
@@ -136,7 +136,7 @@ A select's value is text, as it is on the phone. A path that names no file stops
 
 **Flags.** The face comes first, and the flags can follow in any order. Any argument the tool does not know stops it with a line naming the argument, so a typo, or `--settings saved.json` with a space in place of the `=`, never previews a fresh install by mistake. `-h` or `--help` prints the usage.
 
-**A Round Watch.** `--platform=<name>` opens the page as if from that watch, `emery` by default. With `--platform=gabbro` the items a face filters by capability drop out the way they would there, as [The Settings Page](settings-page.md#building-the-page-from-sections) covers. The name goes to Clay as typed and is not checked against the watches that exist.
+**A Round Watch.** `--platform=<name>` opens the page as if from that watch, `emery` by default. With `--platform=gabbro` the items a face filters by capability drop out the way they would there, as [The Settings Page](settings-page.md#building-the-page-from-sections) covers. The tool passes the name to Clay as typed and does not check it against the watches that exist.
 
 ### What the Preview Leaves Out
 
@@ -177,7 +177,7 @@ paf build my-face
 paf tool my-face tap-walk --install
 ```
 
-**Telling Screens Apart.** Each screenshot's PNG bytes are hashed with SHA-256. The clock is pinned, so the same step of a walk always draws the same bytes, and a match with the start means the walk has come round. A screenshot that matches an earlier one is skipped without using up a number, so the saved files run `shot_000.png`, `shot_001.png`, and on with no gaps. Two themes that happen to draw the same screen save once.
+**Telling Screens Apart.** The tool hashes each screenshot's PNG bytes with SHA-256. The clock is pinned, so the same step of a walk always draws the same bytes, and a match with the start means the walk has come round. A screenshot that matches an earlier one is skipped without using up a number, so the saved files run `shot_000.png`, `shot_001.png`, and on with no gaps. Two themes that happen to draw the same screen save once.
 
 **When the Taps Change Nothing.** A walk has at least two screens, so a first tap that draws the start again stops the tool with a hint to check the switches. That catches a face built with `DEV_MODE` off, with no walk switched on, or with no theme setting to walk. Anything that changes the screen outside the walk, such as a clock left live after a settings save, keeps the start from ever coming back. The tool gives up after 200 taps and names the folder holding what it saved so far.
 
@@ -185,4 +185,4 @@ paf tool my-face tap-walk --install
 
 **A Stuck Emulator.** Each screenshot or tap gets 30 seconds before the tool stops, since both normally finish in well under one. The install and the first screenshot can boot the emulator, which on WSL can take a minute or more, so they get three minutes. `pebble` prints its own progress on stderr, and the tool holds that back and shows it only when a step fails, where it says why.
 
-**The Out Folder.** `--out=<folder>` names where the screenshots go, `.tmp/tap-walk-shots` in the unit by default. The folder is emptied at the start of each walk, once the install has worked, so it only ever holds one walk's screenshots. Because it is emptied, the tool refuses a folder outside the unit, the unit itself, or one holding anything other than earlier screenshots and the files an operating system leaves when someone opens a folder, such as `Thumbs.db`. The default sits under `.tmp/`, so a repo that gitignores `.tmp/` keeps the screenshots out of its commits. Each screenshot lands in a temporary file first and only moves into the folder once it is kept, so a step that fails partway never leaves a half-written screenshot among the others.
+**The Out Folder.** `--out=<folder>` names where the screenshots go, `.tmp/tap-walk-shots` in the unit by default. The tool empties the folder at the start of each walk, once the install has worked, so it only ever holds one walk's screenshots. That is also why the tool refuses a folder outside the unit, the unit itself, or one holding anything other than earlier screenshots and the files an operating system leaves when someone opens a folder, such as `Thumbs.db`. The default sits under `.tmp/`, so a repo that gitignores `.tmp/` keeps the screenshots out of its commits. Each screenshot lands in a temporary file first and only moves into the folder once it is kept, so a step that fails partway never leaves a half-written screenshot among the others.

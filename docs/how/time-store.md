@@ -30,7 +30,7 @@ time_store_subscribe(on_time_changed);
 
 Init takes the current time straight away, so the face's first paint has a time to draw before any tick arrives. It redraws nothing, since the face subscribes afterwards.
 
-`time_store_tm()` returns the store's own copy of the time. The SDK's `localtime` hands back one shared buffer that the next call overwrites, so a face reading the store's copy never sees it change under it because some other code broke a time apart.
+`time_store_tm()` returns the store's own copy of the time. The SDK's `localtime` hands back one shared buffer that the next call overwrites, so a face reading the store's copy never sees the time change under it because some other code broke a time apart.
 
 ## Picking the Tickers
 
@@ -46,7 +46,7 @@ The minute tick and the .beats timer are independent, so a face can run either o
 
 **Neither.** The time never moves and the other stores never get their turn, so nothing polls. Only a seeded face runs this way.
 
-The face's callback runs on every tick from any ticker. A face that does something on the hour checks `tm_min == 0` and needs the minute tick or `hourly` on. For an hourly buzz, `vibe_hourly` does the check and buzzes each hour once, as [Vibrations](vibrations.md#on-the-hour) shows. On the .beats timer alone it can miss the hour, as [Vibrations](vibrations.md#on-the-hour) explains.
+The face's callback runs on every tick from any ticker. A face that does something on the hour checks `tm_min == 0` and needs the minute tick or `hourly` on. For an hourly buzz, `vibe_hourly` does the check and buzzes each hour once. On the .beats timer alone it can miss the hour. [Vibrations](vibrations.md#on-the-hour) covers both.
 
 ## Each Tick, in Order
 
@@ -109,6 +109,6 @@ static void on_settings_changed(bool time_or_date_changed)
 }
 ```
 
-The minute tick is turned on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With `live` false both tickers stop and the time stays at the last tick.
+Reconfigure turns the minute tick on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With `live` false both tickers stop and the time stays at the last tick.
 
 Reconfigure never touches the time the store holds and never redraws. The settings handler rebuilds the screen anyway, and the next tick brings the time up to date.

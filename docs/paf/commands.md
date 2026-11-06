@@ -54,7 +54,7 @@ paf: paf status has no flag --verbose
 
 `build`, `gen`, `run`, and `tool` pass every argument on to what they run.
 
-**Readying a Unit.** `build`, `gen`, `check`, `tool`, `run`, `test`, `typecheck`, `lint`, and `format` sync the unit before they run anything, so a fresh clone or a pin a teammate moved is taken care of. They only fetch the framework when the cache lacks the pinned commit, so they work offline once a unit has synced. `sync`, `pin`, and `use <unit> pinned` always fetch. `status` and `doctor` never do.
+**Readying a Unit.** `build`, `gen`, `check`, `tool`, `run`, `test`, `typecheck`, `lint`, and `format` sync the unit before they run anything, so they take care of a fresh clone or a pin a teammate moved. They only fetch the framework when the cache lacks the pinned commit, so they work offline once a unit has synced. `sync`, `pin`, and `use <unit> pinned` always fetch. `status` and `doctor` never do.
 
 **Node.** `build`, `gen`, `check`, `tool`, `lint`, and `format` run the framework's own scripts, and refuse a Node outside the range in `paf/package.json`.
 
@@ -82,7 +82,7 @@ added 216 packages in 2s
 
 **`--force`** reinstalls a `node_modules` installed from the other system, such as from WSL when running on Windows. Without it `paf` stops rather than replace it.
 
-Every unit is checked before the fetch, so a pin `paf` cannot fill or a unit it would refuse is reported even offline.
+`paf` checks every unit before the fetch, so it reports a pin it cannot fill, or a unit it would refuse, even offline.
 
 ## paf status
 
@@ -242,7 +242,7 @@ icons: every face is current
 thumbnails: every face is current
 ```
 
-A stale face means its generator has to run again with `paf gen <face> all`.
+For a stale face, run its generators again with `paf gen <face> all`.
 
 ## paf tool
 

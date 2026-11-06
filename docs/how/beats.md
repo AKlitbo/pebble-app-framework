@@ -18,7 +18,7 @@ return (((secs + BMT_UTC_OFFSET_S) % SECS_PER_DAY) * MS_PER_SEC) + ms;
 
 So 23:00 UTC is midnight in Biel and starts beat 0. The largest value is the last millisecond of the day, 86,399,999, which still fits a 32-bit number.
 
-It takes the clock already broken apart rather than a `time_t`, since the maths is in `c/core` and calling `gmtime` is left to the watch side (see [Where the Code Lives](index.md#where-the-code-lives)). [`units.h`](../../src/c/pebble/system/units/units.h) reads the clock with its milliseconds, breaks it apart, and hands the pieces over, and reads `@000` rather than crashing if the clock cannot be broken apart.
+It takes the clock already broken apart rather than a `time_t`, since the maths is in `c/core` and calling `gmtime` is left to the watch side (see [Where the Code Lives](index.md#where-the-code-lives)). [`units.c`](../../src/c/pebble/system/units/units.c) reads the clock with its milliseconds, breaks it apart, and hands the pieces over. When the clock cannot be broken apart, it reads `@000` instead of crashing.
 
 **Milliseconds, Not Seconds.** A beat is 86.4 seconds, so most beats start partway through a second. Counting in whole seconds would read the old beat for up to a second after the new one began, which is exactly the moment the face redraws to show it. The watch side reads the clock with `time_ms`, which gives the milliseconds too.
 
@@ -60,6 +60,6 @@ flowchart LR
   dated -- beats_expand_token --> filled["0618.672"]
 ```
 
-**Three Characters for Three Digits.** A reading is always three digits, and the token is three characters, so `beats_expand_token` writes the digits straight over the token. The string never grows, so it can never run past the buffer it is in, and nothing after the token has to move. A reading outside 0 to 999 is clamped first, since a fourth digit or a minus sign would break that promise. Every token in the string is filled, so a format with two never shows a stray brace.
+**Three Characters for Three Digits.** A reading is always three digits, and the token is three characters, so `beats_expand_token` writes the digits straight over the token. The string never grows, so it can never run past the buffer it is in, and nothing after the token has to move. A reading outside 0 to 999 is clamped first, since a fourth digit or a minus sign would not fit in the token's three characters. Every token in the string is filled, so a format with two never shows a stray brace.
 
 **Only When It Is There.** `readout_date` checks `beats_has_token` before reading the beat, so a date format without one never breaks the clock apart a second time on every redraw.

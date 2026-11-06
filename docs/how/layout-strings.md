@@ -16,7 +16,7 @@ Each family of faces has its own catalogue of panels, so the panel number means 
 
 Text takes more bytes than packed numbers would, but it rides in a settings message like any other text setting, with no message format of its own between the page and the watch.
 
-**What an Empty Grid Looks Like.** A grid the wearer cleared is sent as `0`, a single empty spot, rather than as an empty string. The watch keeps a text setting's old value when an empty one arrives for a field whose default is not empty (see [Settings on the Watch](settings-on-the-watch.md)), so an empty string would leave the old grid in place.
+**What an Empty Grid Looks Like.** The settings page sends a grid the wearer cleared as `0`, a single empty spot, rather than as an empty string. The watch keeps a text setting's old value when an empty one arrives for a field whose default is not empty (see [Settings on the Watch](settings-on-the-watch.md)), so an empty string would leave the old grid in place.
 
 ## Reading a Number
 
@@ -44,7 +44,7 @@ int row = layout_parse_int(&cursor);
 
 One test covers every way a grid can be nothing: the `0` of a cleared grid, an empty string, a NULL, and whatever a damaged copy left behind. A panel number past the end of the catalogue does not count either. The settings page's grid builder is shared by a family of faces, and a grid made for a face with more panels can name ones this face does not have.
 
-The answer is what decides whether a night or Quiet Time grid counts as set. A night schedule over an empty night grid, or Quiet Time with an empty Quiet Time grid, leaves the day grid up.
+The answer decides whether a night or Quiet Time grid counts as set. A night schedule over an empty night grid, or Quiet Time with an empty Quiet Time grid, leaves the day grid up.
 
 ## Which Grid Is Showing
 

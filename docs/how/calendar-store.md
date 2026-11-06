@@ -42,15 +42,15 @@ A download gives up after 15 seconds. When the wearer changes the link, the phon
 
 ## Which Events Make the Strip
 
-The feed is read by [ical.js](https://github.com/kewisch/ical.js), which handles the iCal rules. The framework's part is choosing what the watch shows.
+[ical.js](https://github.com/kewisch/ical.js) reads the feed and handles the iCal rules. The framework chooses what the watch shows.
 
 **The Window.** An event makes the list when it has not finished yet and it starts before the end of the sixth day after today, on the phone's clock. That is today and the next six days, so a two-letter weekday code never appears twice in the list. The last day runs to its midnight rather than to six days from the moment of the fetch, so an evening event on it is not dropped while a morning one is kept. A meeting already under way still counts, since it is judged by its end.
 
-**Soonest First.** The events are sorted by start, and the first six go to the watch. An all-day event starts at midnight, so it leads its day.
+**Soonest First.** The phone sorts the events by start and sends the first six to the watch. An all-day event starts at midnight, so it leads its day.
 
-**Lengths the Feed Leaves Out.** A timed event with no end and no duration is given an hour, so a free and busy panel has a block to shade. An all-day event ends at the midnight after its last day, counted in calendar days rather than 24 hour steps, so it still ends at midnight on a day the clocks change.
+**Lengths the Feed Leaves Out.** The phone gives a timed event with no end and no duration an hour, so a free and busy panel has a block to shade. An all-day event ends at the midnight after its last day, counted in calendar days rather than 24 hour steps, so it still ends at midnight on a day the clocks change.
 
-**Cancelled Events.** Outlook keeps a cancelled meeting in the feed and marks it cancelled rather than taking it out. Those are left off, and a single cancelled occurrence of a series leaves a gap on that day.
+**Cancelled Events.** Outlook keeps a cancelled meeting in the feed and marks it cancelled rather than taking it out. The phone leaves those off, and a single cancelled occurrence of a series leaves a gap on that day.
 
 **Repeating Events.** The phone walks each repeating event from its first occurrence and keeps the ones inside the window. Days the feed excludes are skipped. An occurrence the feed moved or renamed is read from its own entry, with its own time and title, and it is judged by where it landed, so a meeting moved into this week from next month still shows. Moved occurrences are matched to their series by its ID. Left to itself, ical.js applies every moved occurrence in the calendar to every series, so one moved meeting would replace an occurrence in every other series that met at the same time. A moved occurrence whose series is not in the feed shows as a plain event.
 

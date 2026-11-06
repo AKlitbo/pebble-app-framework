@@ -18,9 +18,9 @@ appmessage_open(4096);
 
 `settings_init` has to come first, because the outbox is sized from the settings table.
 
-**The Outbox Sizes Itself.** The biggest message the watch ever sends is its copy of the settings: a marker saying it is a settings reply, every setting, the fresh flag, and the custom colours on a face that has them. `appmessage_open` adds those up with every text setting counted at its full buffer and every choice at four bytes, the three digits of 255 and a terminator, so no later change to a setting can outgrow the outbox. Each value costs 7 bytes of header on top of itself, so a face with fifteen settings, two of them text fields of 16 and 32 bytes, needs a little over 200 bytes. A table too big for the platform's largest outbox is logged at open, and a reply that would not fit goes out empty, as [Sending, One at a Time](#sending-one-at-a-time) explains.
+**The Outbox Sizes Itself.** The biggest message the watch ever sends is its copy of the settings: a marker saying it is a settings reply, every setting, the fresh flag, and the custom colours on a face that has them. `appmessage_open` adds those up with every text setting counted at its full buffer and every choice at four bytes, the three digits of 255 and a terminator, so no later change to a setting can outgrow the outbox. Each value costs 7 bytes of header on top of itself, so a face with fifteen settings, two of them text fields of 16 and 32 bytes, needs a little over 200 bytes. At open, the layer logs a table too big for the platform's largest outbox, and a reply that would not fit goes out empty, as [Sending, One at a Time](#sending-one-at-a-time) explains.
 
-**The Inbox Is the Face's to Size.** The biggest message in is a save from the settings page, and Clay puts every key on the page in it, including keys the watch never reads. Only the face knows what its page holds, so it passes the number. Both buffers come off the app's heap, which is why the inbox is not simply opened at the platform's largest: every byte of inbox the face does not need is heap it cannot use for anything else. The number is pinned between the SDK's smallest and largest inbox. Each key on the page costs 7 bytes of header plus its longest value, and the sum is the number to pass. A save bigger than the inbox is dropped whole, and the watch only logs `Message dropped`, so a face adding settings keeps the number in step.
+**The Inbox Is the Face's to Size.** The biggest message in is a save from the settings page, and Clay puts every key on the page in it, including keys the watch never reads. Only the face knows what its page holds, so it passes the number. Both buffers come off the app's heap, so the inbox is not opened at the platform's largest. Every byte of inbox the face does not need is heap it cannot use for anything else. The number is pinned between the SDK's smallest and largest inbox. Each key on the page costs 7 bytes of header plus its longest value, and the sum is the number to pass. A save bigger than the inbox is dropped whole, and the watch only logs `Message dropped`, so a face adding settings keeps the number in step.
 
 ## What Happens to a Message
 
@@ -52,7 +52,7 @@ sequenceDiagram
 
 **The Readings Go First.** Weather, the stock and calendar strips, and the coordinates each go to the store that registered for them. A part nobody registered for is skipped.
 
-**Settings Are Looked For in Every Message.** `settings_apply_inbox` runs on every message, a weather reply included. Most carry no settings keys, and it finds nothing. When something did move, the settings are saved, except while the watch is waiting to be restored after a wipe, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains.
+**Settings Are Looked For in Every Message.** `settings_apply_inbox` runs on every message, a weather reply included. Most carry no settings keys, and it finds nothing. When something did move, the layer saves the settings, except while the watch is waiting to be restored after a wipe, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains.
 
 **Then the Reactions.** The face's `on_settings_changed` runs when any setting moved. A change of temperature unit made by the wearer tells the weather store, which converts the reading it holds. A restore does not, since the reading on the watch was already fetched in the restored unit. A change that affects the weather also queues a weather request.
 
@@ -85,21 +85,21 @@ flowchart TD
   held -- "5 s after the queue empties" --> queued
 ```
 
-**One of Each Kind.** A request is only added when the same kind is not already in flight, queued, or held after a failure. A store whose poll comes round again while its last request is still waiting keeps the one already there, so a fast cadence or a flapping connection can never stack up copies. The queue has room for one more job than there are kinds, so it never fills.
+**One of Each Kind.** The queue only adds a request when the same kind is not already in flight, queued, or held after a failure. A store whose poll comes round again while its last request is still waiting keeps the one already there, so a fast cadence or a flapping connection can never stack up copies. The queue has room for one more job than there are kinds, so it never fills.
 
-**Retries Wait for the Phone to Wake.** A nack usually means the phone's PebbleKit JS was asleep or busy, and the send it turned away is often what woke it. A retry a moment later would hit the same sleeping code. So a failed job waits with the others that failed until the queue has drained, then the whole set goes back in after 5 seconds. Each job gets its first send and three retries, so a request turned away by a phone that is starting up keeps trying for at least fifteen seconds before it is given up. The phone's own queue retries after 250 ms instead, for the reason on [The Phone Side](phone-side.md#the-send-queue).
+**Retries Wait for the Phone to Wake.** A nack usually means the phone's PebbleKit JS was asleep or busy, and the send it turned away is often what woke it. A retry a moment later would hit the same sleeping code. So a failed job waits with the others that failed until the queue has drained, and then the whole set goes back in after 5 seconds. Each job gets its first send and three retries, so a request turned away by a phone that is starting up keeps trying for at least fifteen seconds before the queue gives up on it. The phone's own queue retries after 250 ms instead, for the reason on [The Phone Side](phone-side.md#the-send-queue).
 
-**A Refused Send Is a Failed Send.** If the SDK will not even start a send while the phone is there, the job is held for a retry the same way and the queue moves on, so one stuck job can never block the rest.
+**A Refused Send Is a Failed Send.** If the SDK will not even start a send while the phone is there, the queue holds the job for a retry the same way and moves on, so one stuck job can never block the rest.
 
 **The Settings Reply Is Built as It Goes Out.** The reply is written when it is sent, not when it is queued, so a retry carries the settings as they are at that moment rather than as they were at the first try.
 
-**A Reply That Does Not Fit Goes Out Empty.** When the settings run out of room partway, the message is emptied and still sent. An outbox that was started and never sent leaves every later send failing, so it has to go. The phone only reads a reply that carries the settings marker, so it ignores the empty one rather than filling its page from half the settings.
+**A Reply That Does Not Fit Goes Out Empty.** When the settings run out of room partway, the layer empties the message and still sends it. An outbox that was started and never sent leaves every later send failing, so it has to go. The phone only reads a reply that carries the settings marker, so it ignores the empty one rather than filling its page from half the settings.
 
 **A Lost Connection Empties the Queue.** Each time the queue goes to send and finds no phone, it forgets everything waiting and cancels the retry timer. What is already in flight still waits for its answer. A request saved up while the phone was away would only fetch old news, and each store asks again on its next poll or when the phone comes back.
 
 ## Reading Values Safely
 
-Every value in an incoming message is read through two helpers, `tuple_int_or` and `tuple_str_or`. Each takes the value and a fallback, and returns the fallback whenever the value is missing or is not what it should be:
+The watch reads every value in an incoming message through two helpers, `tuple_int_or` and `tuple_str_or`. Each takes the value and a fallback, and returns the fallback whenever the value is missing or is not what it should be:
 
 ```c
 int32_t humidity = tuple_int_or(dict_find(iter, MESSAGE_KEY_WEATHER_HUMIDITY), INT_MIN);
@@ -125,6 +125,6 @@ The SDK packs each value as a small header followed by the value, all back to ba
 
 A face lists its message keys in its appinfo, and the build defines a `HAS_MESSAGE_KEY_` switch for each one. `appmessage_features.h` turns those into one switch per feature, so every file asking whether the face has weather gets the same answer.
 
-**A Face Only Pays for What It Declares.** The code that reads, requests, and hands on each feature is left out of the build when its keys are missing. A face with no calendar carries no calendar code in its message handling, and a face with no weather sends no weather requests. A face that starts the weather store live without declaring the weather keys logs a warning the first time it asks, rather than polling a phone that never answers.
+**A Face Only Pays for What It Declares.** The build leaves out the code that reads, requests, and hands on each feature when its keys are missing. A face with no calendar carries no calendar code in its message handling, and a face with no weather sends no weather requests. A face that starts the weather store live without declaring the weather keys logs a warning the first time it asks, rather than polling a phone that never answers.
 
 **Groups of Keys Come Together or Not at All.** Some keys only make sense as a set. Weather needs `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK`, and the last one is what tells a failed fetch from a reading. Without it a failed fetch's status text would show as a live 0 degrees. A face that declares part of a set fails to build, with each missing key named in the error. A typo in a key name would otherwise build cleanly and leave those panels on dashes with nothing to say why.

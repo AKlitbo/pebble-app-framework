@@ -35,7 +35,7 @@ jobs:
         uses: AKlitbo/pebble-app-framework/.github/actions/render-memory@v4.0.0
 ```
 
-The split follows from the matrix. Each face builds in a job of its own, and a job's summary belongs to that job alone, but the question worth answering is which face is closest to the edge, and that needs every face in one place. So each build job uploads its figures as an artifact, and one later job collects them.
+The split follows from the matrix. Each face builds in a job of its own, and a job's summary belongs to that job alone. Finding the face closest to the edge needs every face in one place, so each build job uploads its figures as an artifact and one later job collects them.
 
 **Both Run after a Failure.** `if: always()` on the step lets `report-memory` run after a build that failed. A build that linked some targets before it failed still reports those, and one that never linked has no figures, so its step fails with a message saying so and the face is missing from the table. `if: always()` on the memory job lets `render-memory` run when some build jobs failed, so the faces that did build still get their table.
 
@@ -50,11 +50,11 @@ Total footprint in RAM:         27635 bytes / 128.0KB
 Free RAM available (heap):      103437 bytes
 ```
 
-It prints it only while linking, so the log of a build that linked is the only place the free heap figure exists, which is why the build step pipes its output through `tee`. A build with nothing to relink prints no block, and CI's first build of a face is always clean, so it always links.
+The block only appears while linking, so the log of a build that linked is the only place the free heap figure exists. That is why the build step pipes its output through `tee`. A build with nothing to relink prints no block, and CI's first build of a face is always clean, so it always links.
 
 **Which Target a Block Belongs To.** The block names its platform but not its target. The target only shows on the `Waf: Leaving directory` line that closes each sandbox's build, as `.../targets/<target>/build`. A target built for two platforms prints both blocks before that one line, so the action holds each block until the line arrives and then files them all under that target. A block missing any of its figures is dropped with a warning naming the target and the platform, rather than leaving a hole in the table without a word. A block that no sandbox line ever closes is left out.
 
-**The Binaries.** For each target and platform, the action opens the build's `pebble-app.bin` under `targets/<target>/build/<platform>/` in the face's unit. The app image is the file's size, which is the load size plus the relocation table. The static size is the `virtual_size` field in the app's header, which the SDK fills with `.text` plus `.data` plus `.bss`. A missing binary reads as 0 with a warning, and its row is kept, so the gap shows in the table rather than the row quietly going.
+**The Binaries.** For each target and platform, the action opens the build's `pebble-app.bin` under `targets/<target>/build/<platform>/` in the face's unit. The app image is the file's size, which is the load size plus the relocation table. The static size is the `virtual_size` field in the app's header, which the SDK fills with `.text` plus `.data` plus `.bss`. A missing binary reads as 0 with a warning, and its row is kept, so the gap shows in the table instead of the row vanishing.
 
 **What Stops It.** The step fails when no `log` was passed, when there is no file at that path, when the log holds no memory report at all, or when it holds one and none of the figures can be read. The last message says the SDK may have changed how it prints them, since the figures are only ever read from the SDK's own wording.
 
@@ -78,7 +78,7 @@ A platform the table does not know is measured against 64 KB for both.
 
 **The Heap Is Shown, Not Ranked.** The free heap is what is left of the app memory after the app, the system's own allocations, and the resources. The table shows it, and the resources, but neither plays any part in the ranking or the warnings, since no face is near the heap.
 
-**Reports Only.** Neither action fails a build for size, since the SDK already fails a build that passes either limit. A face at 95% still builds and still ships, and the table is there to show how much room is left before a change, not to stop one.
+**Reports Only.** Neither action fails a build for size, since the SDK already fails a build that passes either limit. A face at 95% still builds and still ships. The table shows how much room is left before a change.
 
 ## The Table
 
@@ -88,6 +88,6 @@ A platform the table does not know is measured against 64 KB for both.
 
 **Marks and Warnings.** A row at 80% or more of a limit gets a warning mark, and one at 90% or more an alarm mark. The mark goes on whichever column is closer to its limit, so it points at the size to cut. Every row at 80% or more also raises a GitHub warning naming the target, the platform, the percentage, and the limit, as in `<target> on emery is at 82% of its static size limit.`, so it shows on the run page and in a pull request's checks, not only in the summary.
 
-**Rows Not Measured.** A row whose binary was missing reads an app image of 0, which no real app has, and one whose binary was too short to hold a header reads a static size of 0. Ranked as they are, either would sit at the bottom as the safest face when it may be the closest to a limit. So both are marked **not measured** in the size columns and listed first, above every measured row.
+**Rows Not Measured.** A row whose binary was missing reads an app image of 0, which no real app has, and one whose binary was too short to hold a header reads a static size of 0. Ranked as they are, either would sit at the bottom as the safest face when it may be the closest to a limit. So `render-memory` marks both **not measured** in the size columns and lists them first, above every measured row.
 
-**No Rows at All.** When every build job failed before it reported, there is nothing to rank. `render-memory` puts a short note on the summary and raises a warning, and passes. The build jobs already failed and carry the reason, and failing here too would add a red job that points away from it.
+**No Rows at All.** When every build job failed before it reported, there is nothing to rank. `render-memory` puts a short note on the summary, raises a warning, and passes. The build jobs already failed and carry the reason, and failing here too would add a red job that points away from it.

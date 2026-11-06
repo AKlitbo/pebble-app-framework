@@ -61,9 +61,9 @@ static const Zone s_city = {
 
 **Leaving a Size Out.** A zone uses fewer sizes by leaving an area zero-sized, which is how an unset field in a C struct reads anyway, so a face only fills in the sizes it has. The search stops at the first zero-sized area.
 
-**When Nothing Fits.** Text too wide even for the smallest size uses that size anyway, and the text layer cuts it short with an ellipsis. The text is still shown rather than dropped.
+**When Nothing Fits.** Text too wide even for the smallest size uses that size anyway, and the text layer cuts it short with an ellipsis.
 
-The fonts are named by slot rather than held as loaded fonts, which is what lets a zone be a `static const` table, as [Fonts](fonts.md) covers.
+The fonts are named by slot rather than held as loaded fonts, which lets a zone be a `static const` table, as [Fonts](fonts.md) covers.
 
 ## From a Slot List to Layers
 
@@ -91,7 +91,7 @@ weather_store_subscribe(engine_mark_dirty);
 health_store_subscribe(engine_mark_dirty);
 ```
 
-**Marking a Draw Slot.** Its layer is marked dirty, and Pebble calls its paint function on the next frame.
+**Marking a Draw Slot.** The engine marks its layer dirty, and Pebble calls its paint function on the next frame.
 
 **Refreshing a Text Slot.** The engine runs its text function into a scratch buffer and compares the result with what the slot showed last. Most of the time it is the same, since the date reads the same all day and a new weather reading leaves the clock alone. An unchanged string stops there. Only a changed one is copied into the slot's own buffer and fitted to the zone, which measures the text in up to four fonts to find the largest that fits (see [Text That Fits Its Slot](#text-that-fits-its-slot)). A `TextLayer` keeps a pointer to its text rather than a copy, which is why each slot holds its string in a buffer that outlives the repaint.
 

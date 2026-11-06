@@ -99,7 +99,7 @@ paf gen my-themed-face background --theme dusk # one theme
 paf gen my-themed-face background --theme all  # every theme
 ```
 
-`--frame` also takes the page's file name, so `night~emery.html` picks `night`. The platform tag is dropped and picks nothing, since every platform the face targets is baked whichever page is named. A frame or theme the face does not have is refused with the names it has, and so is a word given without its flag, so a stray name never bakes the default frame over its background.
+`--frame` also takes the page's file name, so `night~emery.html` picks `night`. The platform tag is dropped and picks nothing, since every platform the face targets is baked whichever page is named. The generator refuses a frame or theme the face does not have and lists the names it has. It refuses a word given without its flag too, so a stray name never bakes the default frame over its background.
 
 **What Each Kind of Face Takes.** A face without themes takes `--theme all` and bakes each frame as it stands, and refuses a named theme. A face with themes has to be told which, since a bake with no theme writes a file no theme loads. It also bakes one frame per run, since a themed background is named after its theme alone and a second frame would be written over the first. So a face with themes and more than one frame refuses `--frame all`, and `paf gen <face> all` stops on it. A frame page or theme sheet called `all` is refused wherever it comes from, since the word already means every one.
 
@@ -129,7 +129,7 @@ A colour Pebble shows 64 colours. Each of red, green, and blue is one of four le
 
 A fill set this way lands on a colour the watch has, with nothing to round. The variable's name is also the constant the C side passes, so a readout the watch draws over a panel can match it exactly.
 
-**The Edges Are off the Palette.** Fills are exact, but every edge between two fills is anti-aliased by the browser and again by the shrink, which leaves in-between colours the watch does not have. The PNG keeps them as they are. When the face builds, the SDK rounds each channel to the nearest of the four levels, so an edge pixel lands on whichever palette colour is closest. What decides the memory the background costs is how many palette colours the whole picture lands on after that rounding, not how many colours the PNG holds.
+**The Edges Are off the Palette.** Fills are exact, but every edge between two fills is anti-aliased by the browser and again by the shrink, which leaves in-between colours the watch does not have. The PNG keeps them as they are. When the face builds, the SDK rounds each channel to the nearest of the four levels, so an edge pixel lands on whichever palette colour is closest. The memory the background costs depends on how many palette colours the whole picture lands on after that rounding, not on how many colours the PNG holds.
 
 ## What a Background Costs
 
@@ -170,7 +170,7 @@ Every PNG carries its platform as a `~<platform>` tag, and its name comes from w
 | the `bareBackgroundBase` frame | `background~<platform>.png` |
 | any other frame | `background-<frame>~<platform>.png` |
 
-`--out` writes somewhere else, with its path from the unit's root. The platform tag is added to the name, and a run that bakes several frames or several themes adds the frame or theme to each name, so they land beside each other rather than over each other or over the committed backgrounds.
+`--out` writes somewhere else, with its path from the unit's root. The platform tag is added to the name. A run that bakes several frames or several themes also adds the frame or theme to each name, so they land beside each other rather than over each other or over the committed backgrounds.
 
 **How the Build Finds Them.** The face lists each background in its appinfo without the tag, and the SDK picks the file tagged for the platform it is building:
 
@@ -179,7 +179,7 @@ Every PNG carries its platform as a `~<platform>` tag, and its name comes from w
 { "type": "bitmap", "name": "IMAGE_BG_NIGHT", "file": "images/background-night.png" }
 ```
 
-The face then picks the resource id for the wearer's theme and loads it, usually onto a `BitmapLayer` at the bottom of the window. A face that frees the old background before it loads the next one when the theme changes only ever holds one:
+The face then picks the resource id for the wearer's theme and loads it, usually onto a `BitmapLayer` at the bottom of the window. When the theme changes, a face that frees the old background before it loads the next one only ever holds one:
 
 ```c
 gbitmap_destroy(s_frame_bitmap);

@@ -61,7 +61,7 @@ bool coords_look_real(const char *lat, const char *lon)
 }
 ```
 
-A real coordinate in any format carries digits, and the ways a phone says it has nothing, an empty string or a word like `NO FIX`, never do. The store cannot parse the coordinates, since their format belongs to the face, so this is the whole test.
+A real coordinate in any format carries digits. The ways a phone says it has nothing, such as an empty string or a word like `NO FIX`, never do. The store cannot parse the coordinates, since their format belongs to the face, so this is the whole test.
 
 **Half a Fix Is No Fix.** A pair with one good half and one empty half fails the check. Saving it would leave the saved copy with a coordinate missing, and it would stay missing after every relaunch until a full fix arrived.
 

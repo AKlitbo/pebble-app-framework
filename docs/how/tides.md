@@ -2,7 +2,7 @@
 
 The tide code gives a face water that rises and falls like a real sea. It comes in for a little over six hours and goes out for a little over six, stands nearly still at the turns, runs fastest in between, and arrives about 50 minutes later each day. The Shoreline face uses it to float a boat up and down the sand.
 
-It is a rhythm, not a tide table. It knows nothing about any port, so it cannot tell a wearer when high water is on their beach. What it gives is water that moves at the right speed and in the right shape, with no phone, no location, and no network.
+It is a rhythm, not a tide table. It knows nothing about any port, so it cannot tell a wearer when high water is on their beach. It gives water that moves at the right speed and in the right shape, with no phone, no location, and no network.
 
 It lives in [`tide.h`](../../src/c/core/clock/tide.h) and [`tide.c`](../../src/c/core/clock/tide.c) under `src/c/core/clock/`.
 
@@ -12,7 +12,7 @@ It lives in [`tide.h`](../../src/c/core/clock/tide.h) and [`tide.c`](../../src/c
 
 **The Cycle.** One cycle is 745 minutes, 12 hours 25 minutes. That is the moon's main tide, which comes round twice in the 24 hours 50 minutes it takes the moon to come back overhead. Two cycles run 50 minutes past a day, so each low water comes 50 minutes later than the day before, and the times of low and high water come round to where they started in about a fortnight.
 
-**Counts before 0.** A count before the epoch gives a negative remainder in C, and one cycle is added to it, the same as for [the moon](moon.md).
+**Counts before 0.** A count before the epoch gives a negative remainder in C, and the code adds one cycle to it, the same as for [the moon](moon.md).
 
 ## The Shape of the Water
 
@@ -23,7 +23,7 @@ int64_t twice = (int64_t)phase(minutes) * 2;
 int64_t climb = twice < TIDE_PERIOD_MIN ? twice : 2 * TIDE_PERIOD_MIN - twice;
 ```
 
-Then the triangle is eased so the water slows into each turn:
+Then the code eases the triangle so the water slows into each turn:
 
 ```c
 int64_t cube = (int64_t)TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN;
@@ -31,7 +31,7 @@ int64_t cube = (int64_t)TIDE_PERIOD_MIN * TIDE_PERIOD_MIN * TIDE_PERIOD_MIN;
 return (int)((100 * climb * climb * (3 * TIDE_PERIOD_MIN - 2 * climb) + cube / 2) / cube);
 ```
 
-That is the smoothstep curve, 3t² − 2t³, with t as `climb` over the length of the cycle, scaled to run from 0 to 100. It is exact at 0, 50, and 100, so low and high water really do reach the ends. In between it flattens both turns and steepens the middle. The whole curve is worked out in one go and rounded once at the end, so the level moves at most one point a minute, and it holds at 0 for 31 minutes a cycle and at 100 for 30, centred on each turn. The product on top runs past 40 billion, which is why it is done in 64 bits. The chart shows a cycle hour by hour. The pointed line is the triangle, `climb` as a share of the cycle out of 100, and the rounder one is the level the code returns:
+That is the smoothstep curve, 3t² − 2t³, with t as `climb` over the length of the cycle, scaled to run from 0 to 100. It is exact at 0, 50, and 100, so low and high water really do reach the ends. In between it flattens both turns and steepens the middle. The code works the whole curve out in one go and rounds once at the end, so the level moves at most one point a minute, and it holds at 0 for 31 minutes a cycle and at 100 for 30, centred on each turn. The product on top runs past 40 billion, which is why it is done in 64 bits. The chart shows a cycle hour by hour. The pointed line is the triangle, `climb` as a share of the cycle out of 100, and the rounder one is the level the code returns:
 
 ```mermaid
 xychart-beta

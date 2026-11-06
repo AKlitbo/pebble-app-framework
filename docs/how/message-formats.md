@@ -38,7 +38,7 @@ The daily strip is the same idea with a weekday in place of the hour, and two te
 
 Each column's condition goes over as one byte, the sky code, which is the condition's place in the shared list of conditions, so 0 is clear and 6 is rain. 255 means the phone did not recognize the condition, and the watch draws its fallback icon. On the hourly strip the top bit marks a column after dark, so the watch picks the night icon. The daily strip never sets it, since a whole day has no night of its own.
 
-A temperature the phone does not have goes over as -1000, well outside any real reading. 0 could not do the job, since 0 degrees is a real reading.
+The phone sends a temperature it does not have as -1000, well outside any real reading. 0 could not do the job, since 0 degrees is a real reading.
 
 Two hourly columns starting at 21:00, three hours apart, with a clear night at 12 degrees and then rain with no temperature:
 
@@ -52,9 +52,9 @@ Two hourly columns starting at 21:00, three hours apart, with a clear night at 1
 18 FC      -1000, no reading
 ```
 
-**One Check Settles the Whole Strip.** Every column is the same width, so the length the message needs is known from the count before anything is read: three header bytes and three per column for the hourly strip, two and five for the daily. A message shorter than that is refused, and the strip already on the watch stays. Bytes left over after the last column are ignored.
+**One Check Settles the Whole Strip.** Every column is the same width, so the length the message needs is known from the count before anything is read: three header bytes and three per column for the hourly strip, two and five for the daily. The reader refuses a message shorter than that, and the strip already on the watch stays. Bytes left over after the last column are ignored.
 
-Since nothing can fail after that check, the reader writes straight into the strip the caller holds. The watchlist and the agenda work differently, below, and keeping a second copy of each forecast strip to guard against a failure that cannot happen would cost memory for nothing. What the watch does with the first column's hour, such as dropping the columns that have gone by, is on [Weather Readings](weather-readings.md).
+Since nothing can fail after that check, the reader writes straight into the strip the caller holds. The watchlist and the agenda work differently, as below. Keeping a second copy of each forecast strip, to guard against a failure that cannot happen, would cost memory for nothing. [Weather Readings](weather-readings.md) covers what the watch does with the first column's hour, such as dropping the columns that have gone by.
 
 ## The Watchlist
 
@@ -88,7 +88,7 @@ A4 3A 00 00    15012 cents
 
 **Built Aside, Kept Only When Whole.** The reader fills a fresh watchlist of its own, and copies it to the caller only once the whole message has read cleanly. So a message that fails at the third quote leaves the caller's watchlist exactly as it was, rather than two new quotes beside two old ones. The store then keeps showing its last good watchlist and does not save anything.
 
-**A Long Label Is Stepped Over Whole.** A label longer than the 11 characters the watch holds is cut to fit, and the reader still steps past every byte of it. Stopping at the cut would leave the next quote being read from the middle of this one's label.
+**A Long Label Is Stepped Over Whole.** The reader cuts a label longer than the 11 characters the watch holds, and still steps past every byte of it. Stopping at the cut would leave the next quote being read from the middle of this one's label.
 
 **Empty Is Different from Missing.** An empty watchlist packs as a count of 0, which clears the watchlist on the watch. When the phone has no list at all, it sends nothing, and the watch keeps what it has. A gap in the phone's list packs as a failed quote rather than being skipped, since a skipped one would leave the count promising more quotes than follow, and the watch would refuse the lot.
 
@@ -119,10 +119,10 @@ The watch's fonts only carry the printable ASCII characters, so the phone flatte
 
 **An Emoji Costs One Character.** The flattening walks the text by Unicode code point rather than by JavaScript's two-byte units, and drops the pieces that only change the character before them, such as skin tones and the joiners between people. An emoji is one question mark rather than two, and so is a family emoji built from several people, or a flag. A title only has 24 characters on the watch, and each extra mark would cost it a real letter.
 
-**Cut before Packing.** The text is cut to the watch's length on the phone, so the length byte never promises more than the watch keeps. The watch still copies only what fits, so a phone that sent more would lose the end of the text and nothing else.
+**Cut before Packing.** The phone cuts the text to the watch's length, so the length byte never promises more than the watch keeps. The watch still copies only what fits, so a phone that sent more would lose the end of the text and nothing else.
 
 ## Single Values and Coordinates
 
-Everything that is not a list goes over as an ordinary AppMessage value: the temperature, the humidity, the sunrise time, each setting. Those are read through the checked readers on [Talking to the Phone](talking-to-the-phone.md#reading-values-safely), which read a number at the width the phone sent it and refuse text with no terminator. The reading itself is in [`wire_read.h`](../../src/c/core/wire/wire_read.h), next to the list readers here.
+Everything that is not a list goes over as an ordinary AppMessage value: the temperature, the humidity, the sunrise time, each setting. The watch reads those through the checked readers on [Talking to the Phone](talking-to-the-phone.md#reading-values-safely), which read a number at the width the phone sent it and refuse text with no terminator. The reading itself is in [`wire_read.h`](../../src/c/core/wire/wire_read.h), next to the list readers here.
 
-Coordinates arrive as two pieces of text, in whatever form the face's formatter on the phone writes them, such as `33-44` and `-112-07`. When the phone has no fix, it sends something that is not a coordinate, an empty string or a word. [`coords.h`](../../src/c/core/wire/coords.h) tells the two apart with one test: a real coordinate always holds a digit, and the phone's ways of saying "no fix" never do. Both halves have to pass. The location store shows whatever arrived, but it only saves a pair that passes, so losing the fix for a while never overwrites the last good one in flash. [The Location Store](location-store.md) covers the rest.
+Coordinates arrive as two pieces of text, in whatever form the face's formatter on the phone writes them, such as `33-44` and `-112-07`. When the phone has no fix, it sends something that is not a coordinate: an empty string or a word. [`coords.h`](../../src/c/core/wire/coords.h) tells the two apart with one test: a real coordinate always holds a digit, and the phone's ways of saying "no fix" never do. Both halves have to pass. The location store shows whatever arrived, but it only saves a pair that passes, so losing the fix for a while never overwrites the last good one in flash. [The Location Store](location-store.md) covers the rest.
