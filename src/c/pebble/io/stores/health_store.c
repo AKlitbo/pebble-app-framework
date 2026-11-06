@@ -15,8 +15,12 @@
 #include <string.h>
 #include <time.h>
 
-// heart rate variability is built in only for a face that sets HEALTH_HRV in its appinfo's defines.
-// with it off nothing here calls into health_hrv.c, so the linker leaves that out of the face
+/**
+ * @brief 1 when the face builds heart rate variability in, 0 when it leaves it out.
+ *
+ * It is built in only for a face that sets HEALTH_HRV in its appinfo's defines. With it off nothing
+ * here calls into health_hrv.c, so the linker leaves that out of the face.
+ */
 #if defined(HEALTH_HRV) && HEALTH_HRV
 #define HRV_BUILT 1
 #else
@@ -40,11 +44,12 @@ static struct
 static void (*s_cb)(void); ///< Called whenever a reading changes, so the face can redraw
 static bool s_live;        ///< True once subscribed to the live health service, so the minute poll does nothing in seed mode
 
+#define HEALTH_PART_COUNT 3 ///< How many parts a face can name
+
 /**
  * @brief The parts the face named, the heart rate graph, the hourly steps, and the heart rate day,
  * with NULL for one it left out.
  */
-#define HEALTH_PART_COUNT 3
 static const HealthPart *s_parts[HEALTH_PART_COUNT];
 
 /**

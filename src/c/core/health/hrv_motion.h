@@ -31,9 +31,9 @@
  */
 typedef struct
 {
-    int16_t last_x;   ///< The sample before, on each axis, in milli-g
-    int16_t last_y;
-    int16_t last_z;
+    int16_t last_x;   ///< The sample before on the x axis, in milli-g
+    int16_t last_y;   ///< The sample before on the y axis, in milli-g
+    int16_t last_z;   ///< The sample before on the z axis, in milli-g
     bool primed;      ///< Whether there is a sample before to measure from
     uint32_t sum;     ///< The movement from one sample to the next, added up
     uint16_t samples; ///< How many moves are added up
