@@ -54,6 +54,16 @@ export function heading(text: string): ClayConfigItem {
 }
 
 /**
+ * A smaller heading for a group of rows inside a section, such as Heart under Health.
+ *
+ * @param text The heading to show.
+ * @return The row, ready to drop into a section.
+ */
+export function subheading(text: string): ClayConfigItem {
+  return { type: 'heading', defaultValue: text, size: 5 };
+}
+
+/**
  * A Clay on/off toggle row.
  *
  * @param messageKey The key the page sends the watch.

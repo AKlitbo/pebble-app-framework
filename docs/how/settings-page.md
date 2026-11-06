@@ -57,11 +57,11 @@ export default buildConfig({
 
 `buildConfig` is the section builders in their usual order. Each one is exported on its own and takes the same description: `appearanceSection`, `bluetoothSection`, `clockSection`, `healthSection`, `locationSection`, `weatherSection`, `calendarSection`, and `stocksSection`. The optional ones return `null` when the description leaves them out. `appearanceSection` always returns its section, so a face with nothing for it gets the heading alone, and `hasAppearance` says whether to include it. A face whose page needs its own sections between the standard ones calls the builders it needs and puts them in its own order.
 
-For the rows inside its own sections, [`config-rows.ts`](../../src/ts/pkjs/config-rows.ts) has `select`, `heading`, and `toggle`, plus `VIBE_OPTIONS`, the plain buzz picker whose values line up with the watch's own vibration choices:
+For the rows inside its own sections, [`config-rows.ts`](../../src/ts/pkjs/config-rows.ts) has `select`, `heading`, `subheading`, and `toggle`, plus `VIBE_OPTIONS`, the plain buzz picker whose values line up with the watch's own vibration choices:
 
 ```ts
 import { bluetoothSection, clockSection } from '../../paf/ts/pkjs/config-builder';
-import { heading, select, toggle, VIBE_OPTIONS } from '../../paf/ts/pkjs/config-rows';
+import { heading, select, subheading, toggle, VIBE_OPTIONS } from '../../paf/ts/pkjs/config-rows';
 
 const options = { hourlyVibe: {} };
 
@@ -70,6 +70,7 @@ export default [
     type: 'section',
     items: [
       heading('Goals'),
+      subheading('Steps'),
       select('GOAL_STEPS', 'Step Goal', [{ label: '5,000', value: 0 }, { label: '10,000', value: 1 }], 1),
       toggle('GOAL_BUZZ', 'Buzz at Goal', 'Buzz once when the goal is met.', true),
       select('GOAL_BUZZ_KIND', 'Goal Buzz', VIBE_OPTIONS, 1),

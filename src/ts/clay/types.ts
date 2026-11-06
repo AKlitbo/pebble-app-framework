@@ -34,6 +34,8 @@ export interface ClayConfigItem {
   description?: string;
   defaultValue?: string | number | boolean;
   options?: ClayOption[];
+  /** heading only: how big the heading is, from 1 to 6. Clay draws 4 when none is given. */
+  size?: number;
   /** input, select, and radiogroup only: how Clay sends the value to the watch. 'string', the
    * default, sends it as it is. 'integer' sends a whole number, and Clay turns any value that is not
    * one into 0, so it only suits a select whose option values are all numbers and that fills a choice
