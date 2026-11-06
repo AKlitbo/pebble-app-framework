@@ -1,0 +1,882 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/pebble/io/stores/health_hrv.c File Reference</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v5.0.0" selected>v5.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('health__hrv_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">health_hrv.c File Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>The heart rate variability half of the health store.  
+<a href="#details">More...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="health__hrv_8h_source.html">io/stores/health_hrv.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hrv__run_8h_source.html">health/hrv_run.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="hrv__motion_8h_source.html">health/hrv_motion.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+<code>#include &lt;time.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:HrvSaved" id="r_HrvSaved"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structHrvSaved.html">HrvSaved</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The log as it goes to flash, with the tag store_restore checks in front.  <a href="structHrvSaved.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:af42559c7602ff70bb8e7f95df9f61c29" id="r_af42559c7602ff70bb8e7f95df9f61c29"><td class="memItemLeft"><a id="af42559c7602ff70bb8e7f95df9f61c29" name="af42559c7602ff70bb8e7f95df9f61c29"></a>
+static int32_t&#160;</td><td class="memItemRight"><b>steps_now</b> (void)</td></tr>
+<tr class="memdesc:af42559c7602ff70bb8e7f95df9f61c29"><td class="mdescLeft">&#160;</td><td class="mdescRight">The day's step count so far, or -1 when the watch cannot say. <br /></td></tr>
+<tr class="memitem:a124963a78e7a449ee0fc362e0368814e" id="r_a124963a78e7a449ee0fc362e0368814e"><td class="memItemLeft">static int&#160;</td><td class="memItemRight"><a class="el" href="#a124963a78e7a449ee0fc362e0368814e">steps_through</a> (void)</td></tr>
+<tr class="memdesc:a124963a78e7a449ee0fc362e0368814e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps taken since the hold started.  <br /></td></tr>
+<tr class="memitem:ad1e68f4522e89cf530f16fc0b97b5794" id="r_ad1e68f4522e89cf530f16fc0b97b5794"><td class="memItemLeft"><a id="ad1e68f4522e89cf530f16fc0b97b5794" name="ad1e68f4522e89cf530f16fc0b97b5794"></a>
+static <a class="el" href="group__lib__core.html#gae63b8153c70e7611881a2e05bec214a7">HrvState</a>&#160;</td><td class="memItemRight"><b>burst_state</b> (void)</td></tr>
+<tr class="memdesc:ad1e68f4522e89cf530f16fc0b97b5794"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the wearer is doing through the burst so far, from its steps and its movement. <br /></td></tr>
+<tr class="memitem:ad7194780c79904ef6f09ddc26dd1c27c" id="r_ad7194780c79904ef6f09ddc26dd1c27c"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ad7194780c79904ef6f09ddc26dd1c27c">cannot_count</a> (void)</td></tr>
+<tr class="memdesc:ad7194780c79904ef6f09ddc26dd1c27c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the burst being held can no longer count for the main reading.  <br /></td></tr>
+<tr class="memitem:aa5502a859e4315cf11b57e1dbf94a892" id="r_aa5502a859e4315cf11b57e1dbf94a892"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aa5502a859e4315cf11b57e1dbf94a892">note_burst</a> (int ms, uint32_t now_sec, bool counted)</td></tr>
+<tr class="memdesc:aa5502a859e4315cf11b57e1dbf94a892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps a finished or dropped burst in the tuning ring.  <br /></td></tr>
+<tr class="memitem:a0471acb230fbd6e0a6823a71a4c51849" id="r_a0471acb230fbd6e0a6823a71a4c51849"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0471acb230fbd6e0a6823a71a4c51849">show</a> (int ms, uint32_t now_sec)</td></tr>
+<tr class="memdesc:a0471acb230fbd6e0a6823a71a4c51849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts a new reading up, or takes one down with -1, and redraws only when it moved.  <br /></td></tr>
+<tr class="memitem:a6972b5bfe6d44f0c3afb9030852e10be" id="r_a6972b5bfe6d44f0c3afb9030852e10be"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a6972b5bfe6d44f0c3afb9030852e10be">save_log</a> (void)</td></tr>
+<tr class="memdesc:a6972b5bfe6d44f0c3afb9030852e10be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the log to flash, when the face gave it a slot.  <br /></td></tr>
+<tr class="memitem:a5a3a8615b64a1e549d90fd2bb4349a45" id="r_a5a3a8615b64a1e549d90fd2bb4349a45"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a5a3a8615b64a1e549d90fd2bb4349a45">local_day</a> (uint32_t now_sec, int32_t *day, int *minute_of_day)</td></tr>
+<tr class="memdesc:a5a3a8615b64a1e549d90fd2bb4349a45"><td class="mdescLeft">&#160;</td><td class="mdescRight">The day and the minute of the day on the watch's own clock.  <br /></td></tr>
+<tr class="memitem:a1eec8cf29190373ee37ae2e9f1e6c501" id="r_a1eec8cf29190373ee37ae2e9f1e6c501"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a1eec8cf29190373ee37ae2e9f1e6c501">record</a> (int ms, uint32_t now_sec)</td></tr>
+<tr class="memdesc:a1eec8cf29190373ee37ae2e9f1e6c501"><td class="mdescLeft">&#160;</td><td class="mdescRight">Files a finished reading and shows it, when it counts.  <br /></td></tr>
+<tr class="memitem:ad69029585e2bff65f98182904a9704e2" id="r_ad69029585e2bff65f98182904a9704e2"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ad69029585e2bff65f98182904a9704e2">request</a> (uint16_t period_sec, uint32_t now_sec)</td></tr>
+<tr class="memdesc:ad69029585e2bff65f98182904a9704e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the watch for beat gaps at a period, or tells it to stop with a period of 0.  <br /></td></tr>
+<tr class="memitem:ac4213a7f97913295407406ce98253dc7" id="r_ac4213a7f97913295407406ce98253dc7"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ac4213a7f97913295407406ce98253dc7">on_accel</a> (AccelData *data, uint32_t num_samples)</td></tr>
+<tr class="memdesc:ac4213a7f97913295407406ce98253dc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds each accelerometer sample to the burst's movement, leaving out ones taken while the watch was vibrating, since the motor shakes it as hard as a step.  <br /></td></tr>
+<tr class="memitem:aef7990c4ff7e2751ac00c521ca69e9c5" id="r_aef7990c4ff7e2751ac00c521ca69e9c5"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#aef7990c4ff7e2751ac00c521ca69e9c5">accel_start</a> (void)</td></tr>
+<tr class="memdesc:aef7990c4ff7e2751ac00c521ca69e9c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts reading the accelerometer for a burst.  <br /></td></tr>
+<tr class="memitem:aff955dd46087bcc8cf70260712acfd28" id="r_aff955dd46087bcc8cf70260712acfd28"><td class="memItemLeft"><a id="aff955dd46087bcc8cf70260712acfd28" name="aff955dd46087bcc8cf70260712acfd28"></a>
+static void&#160;</td><td class="memItemRight"><b>accel_stop</b> (void)</td></tr>
+<tr class="memdesc:aff955dd46087bcc8cf70260712acfd28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops reading the accelerometer once a burst is over. <br /></td></tr>
+<tr class="memitem:a049a8ab3d3768f47b07b5fbaa51b6c1e" id="r_a049a8ab3d3768f47b07b5fbaa51b6c1e"><td class="memItemLeft"><a id="a049a8ab3d3768f47b07b5fbaa51b6c1e" name="a049a8ab3d3768f47b07b5fbaa51b6c1e"></a>
+static void&#160;</td><td class="memItemRight"><b>hold_drop</b> (void)</td></tr>
+<tr class="memdesc:a049a8ab3d3768f47b07b5fbaa51b6c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drops a hold without asking the watch for anything, for a caller about to ask for a period of its own. <br /></td></tr>
+<tr class="memitem:a42875a5f566a2b6a83f9d1919c327b8e" id="r_a42875a5f566a2b6a83f9d1919c327b8e"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a42875a5f566a2b6a83f9d1919c327b8e">hold_start</a> (uint32_t now_sec)</td></tr>
+<tr class="memdesc:a42875a5f566a2b6a83f9d1919c327b8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Holds the sensor on for the burst that just started, so its run can fill.  <br /></td></tr>
+<tr class="memitem:a50a51e28dd5c0c6eb1e1c5a0856ed882" id="r_a50a51e28dd5c0c6eb1e1c5a0856ed882"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a50a51e28dd5c0c6eb1e1c5a0856ed882">hold_end</a> (uint32_t now_sec)</td></tr>
+<tr class="memdesc:a50a51e28dd5c0c6eb1e1c5a0856ed882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lets the sensor go back to the face's period once a burst is measured.  <br /></td></tr>
+<tr class="memitem:a4a4b4d4148f1efa19b86b8ef9c2f9087" id="r_a4a4b4d4148f1efa19b86b8ef9c2f9087"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a4a4b4d4148f1efa19b86b8ef9c2f9087">end_quiet_burst</a> (uint32_t now_sec)</td></tr>
+<tr class="memdesc:a4a4b4d4148f1efa19b86b8ef9c2f9087"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ends a burst whose beats went quiet: files what it measured, or notes it as dropped on a tuning panel, and lets the sensor go.  <br /></td></tr>
+<tr class="memitem:ga223234c2f0122059fd1706b2ff12e987" id="r_ga223234c2f0122059fd1706b2ff12e987"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>health_hrv_on_gap</b> (void)</td></tr>
+<tr class="memdesc:ga223234c2f0122059fd1706b2ff12e987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one beat gap from the watch. The health store calls it for each HRV event. <br /></td></tr>
+<tr class="memitem:ga364caae9b733dea62975ada41d355328" id="r_ga364caae9b733dea62975ada41d355328"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>health_hrv_poll</b> (void)</td></tr>
+<tr class="memdesc:ga364caae9b733dea62975ada41d355328"><td class="mdescLeft">&#160;</td><td class="mdescRight">The HRV turn on the face's cadence, which the health store passes on while it is live. <br /></td></tr>
+<tr class="memitem:ac7ba8f136e68f64501250125318c7839" id="r_ac7ba8f136e68f64501250125318c7839"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ac7ba8f136e68f64501250125318c7839">show_latest_logged</a> (uint32_t now_sec)</td></tr>
+<tr class="memdesc:ac7ba8f136e68f64501250125318c7839"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts the log's newest reading that counted back up, when it is not stale yet.  <br /></td></tr>
+<tr class="memitem:ga302a123979f2732edb6738c61c8d0650" id="r_ga302a123979f2732edb6738c61c8d0650"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga302a123979f2732edb6738c61c8d0650">health_hrv_start</a> (const <a class="el" href="structHealthHrvConfig.html">HealthHrvConfig</a> *cfg, int seed_ms, const <a class="el" href="structHrvLog.html">HrvLog</a> *seed_log, void(*changed)(void))</td></tr>
+<tr class="memdesc:ga302a123979f2732edb6738c61c8d0650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts HRV with the health store's rules, or starts it again with new ones.  <br /></td></tr>
+<tr class="memitem:ga3de2b90ca51ac9d5544c9cebf2eb7239" id="r_ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga3de2b90ca51ac9d5544c9cebf2eb7239">health_hrv_set_period</a> (uint16_t period_sec)</td></tr>
+<tr class="memdesc:ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes how often the watch takes a burst. A period of 0 stops the sampling and puts the reading back to none on a live store, and a seeded store keeps its seed.  <br /></td></tr>
+<tr class="memitem:gabc78d1ab551531851c68847138ad5f16" id="r_gabc78d1ab551531851c68847138ad5f16"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gabc78d1ab551531851c68847138ad5f16">health_hrv_set_rules</a> (uint16_t still_mg, uint16_t walk_steps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
+<tr class="memdesc:gabc78d1ab551531851c68847138ad5f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
+<tr class="memitem:gaeb21c567d464de358f3f62a99315af26" id="r_gaeb21c567d464de358f3f62a99315af26"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>health_hrv_stop</b> (void)</td></tr>
+<tr class="memdesc:gaeb21c567d464de358f3f62a99315af26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the sampling, since the watch keeps an app's request going for an hour after it closes. <br /></td></tr>
+<tr class="memitem:ga0ac4ace78fa451b80f418f1c9dbe1ada" id="r_ga0ac4ace78fa451b80f418f1c9dbe1ada"><td class="memItemLeft">
+int&#160;</td><td class="memItemRight"><b>health_hrv_ms</b> (void)</td></tr>
+<tr class="memdesc:ga0ac4ace78fa451b80f418f1c9dbe1ada"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest reading as RMSSD in ms, or -1 if there is none or it went stale. <br /></td></tr>
+<tr class="memitem:ga37582149cbe5836b28881faff2fd5705" id="r_ga37582149cbe5836b28881faff2fd5705"><td class="memItemLeft">
+bool&#160;</td><td class="memItemRight"><b>health_hrv_sampling</b> (void)</td></tr>
+<tr class="memdesc:ga37582149cbe5836b28881faff2fd5705"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch took the last request for beat gaps. <br /></td></tr>
+<tr class="memitem:ga372e93534744b6e53b18de37df9001f9" id="r_ga372e93534744b6e53b18de37df9001f9"><td class="memItemLeft">
+bool&#160;</td><td class="memItemRight"><b>health_hrv_measuring</b> (void)</td></tr>
+<tr class="memdesc:ga372e93534744b6e53b18de37df9001f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a burst is being measured right now, with the sensor held on. <br /></td></tr>
+<tr class="memitem:ga72d9d6bfe8bca402429ac3e0c09845ae" id="r_ga72d9d6bfe8bca402429ac3e0c09845ae"><td class="memItemLeft">
+const <a class="el" href="structHrvLog.html">HrvLog</a> *&#160;</td><td class="memItemRight"><b>health_hrv_log</b> (void)</td></tr>
+<tr class="memdesc:ga72d9d6bfe8bca402429ac3e0c09845ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings kept for the face's panels. Never NULL. <br /></td></tr>
+<tr class="memitem:ga4d9e68b5550cc8cf8ca340322883a01b" id="r_ga4d9e68b5550cc8cf8ca340322883a01b"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga4d9e68b5550cc8cf8ca340322883a01b">health_hrv_recent</a> (int back, <a class="el" href="structHrvBurst.html">HrvBurst</a> *out)</td></tr>
+<tr class="memdesc:ga4d9e68b5550cc8cf8ca340322883a01b"><td class="mdescLeft">&#160;</td><td class="mdescRight">One of the latest bursts, dropped ones included, newest first.  <br /></td></tr>
+<tr class="memitem:gab389960f3a525c0eaf80a93a62171c5f" id="r_gab389960f3a525c0eaf80a93a62171c5f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gab389960f3a525c0eaf80a93a62171c5f">health_hrv_live</a> (int *score, int *steps, int *held_sec)</td></tr>
+<tr class="memdesc:gab389960f3a525c0eaf80a93a62171c5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The burst being held right now.  <br /></td></tr>
+<tr class="memitem:ga07a3890b8ec14d604f9c33f3882885fb" id="r_ga07a3890b8ec14d604f9c33f3882885fb"><td class="memItemLeft">
+uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_still_mg</b> (void)</td></tr>
+<tr class="memdesc:ga07a3890b8ec14d604f9c33f3882885fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The still limit in use, in milli-g a sample. <br /></td></tr>
+<tr class="memitem:ga3681a65febb8fb93ba84f3413ffac786" id="r_ga3681a65febb8fb93ba84f3413ffac786"><td class="memItemLeft">
+uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_walk_steps</b> (void)</td></tr>
+<tr class="memdesc:ga3681a65febb8fb93ba84f3413ffac786"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk. <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aa3c21f0ec1e161155b8b2fe7cb2e5291" id="r_aa3c21f0ec1e161155b8b2fe7cb2e5291"><td class="memItemLeft"><a id="aa3c21f0ec1e161155b8b2fe7cb2e5291" name="aa3c21f0ec1e161155b8b2fe7cb2e5291"></a>
+static <a class="el" href="structHrvRun.html">HrvRun</a>&#160;</td><td class="memItemRight"><b>s_run</b></td></tr>
+<tr class="memdesc:aa3c21f0ec1e161155b8b2fe7cb2e5291"><td class="mdescLeft">&#160;</td><td class="mdescRight">The run of beats being added up. It is kept apart from the reading, since a gap lands about once a beat and only a finished run changes what the face shows. <br /></td></tr>
+<tr class="memitem:aca152a3645dcb8c3933853ab8af41c95" id="r_aca152a3645dcb8c3933853ab8af41c95"><td class="memItemLeft"><a id="aca152a3645dcb8c3933853ab8af41c95" name="aca152a3645dcb8c3933853ab8af41c95"></a>
+static int&#160;</td><td class="memItemRight"><b>s_ms</b> = -1</td></tr>
+<tr class="memdesc:aca152a3645dcb8c3933853ab8af41c95"><td class="mdescLeft">&#160;</td><td class="mdescRight">The reading shown, or -1 for none. <br /></td></tr>
+<tr class="memitem:a3120fa28716868a7c09e026ffc878775" id="r_a3120fa28716868a7c09e026ffc878775"><td class="memItemLeft"><a id="a3120fa28716868a7c09e026ffc878775" name="a3120fa28716868a7c09e026ffc878775"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_measured_at</b></td></tr>
+<tr class="memdesc:a3120fa28716868a7c09e026ffc878775"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the reading shown was taken, in seconds. <br /></td></tr>
+<tr class="memitem:a96eedd3090f06d509f7d7f0a2ca7e989" id="r_a96eedd3090f06d509f7d7f0a2ca7e989"><td class="memItemLeft"><a id="a96eedd3090f06d509f7d7f0a2ca7e989" name="a96eedd3090f06d509f7d7f0a2ca7e989"></a>
+static uint16_t&#160;</td><td class="memItemRight"><b>s_period_sec</b></td></tr>
+<tr class="memdesc:a96eedd3090f06d509f7d7f0a2ca7e989"><td class="mdescLeft">&#160;</td><td class="mdescRight">How often the watch takes a burst, or 0 for not at all. <br /></td></tr>
+<tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
+<tr class="memdesc:a86591675781beec649ac9e8db3485c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">True once HRV asks the watch, so seed mode never does. <br /></td></tr>
+<tr class="memitem:a8d4a86d5635c31a11d143e4fd123c9e7" id="r_a8d4a86d5635c31a11d143e4fd123c9e7"><td class="memItemLeft"><a id="a8d4a86d5635c31a11d143e4fd123c9e7" name="a8d4a86d5635c31a11d143e4fd123c9e7"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_sampling</b></td></tr>
+<tr class="memdesc:a8d4a86d5635c31a11d143e4fd123c9e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the watch took the last request. <br /></td></tr>
+<tr class="memitem:a77c41e71b2b50e50f053d76bb07b1ea5" id="r_a77c41e71b2b50e50f053d76bb07b1ea5"><td class="memItemLeft"><a id="a77c41e71b2b50e50f053d76bb07b1ea5" name="a77c41e71b2b50e50f053d76bb07b1ea5"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_asked_at</b></td></tr>
+<tr class="memdesc:a77c41e71b2b50e50f053d76bb07b1ea5"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the watch was last asked, in seconds. <br /></td></tr>
+<tr class="memitem:a06dbba63ed53d5f1029e282767549193" id="r_a06dbba63ed53d5f1029e282767549193"><td class="memItemLeft"><a id="a06dbba63ed53d5f1029e282767549193" name="a06dbba63ed53d5f1029e282767549193"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_gap_at</b></td></tr>
+<tr class="memdesc:a06dbba63ed53d5f1029e282767549193"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the last gap arrived, or the watch took a request, in seconds. <br /></td></tr>
+<tr class="memitem:aa86bece94dffaa772eb12a852ea724e9" id="r_aa86bece94dffaa772eb12a852ea724e9"><td class="memItemLeft"><a id="aa86bece94dffaa772eb12a852ea724e9" name="aa86bece94dffaa772eb12a852ea724e9"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_holding</b></td></tr>
+<tr class="memdesc:aa86bece94dffaa772eb12a852ea724e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while a burst is held on with HRV_HOLD_PERIOD_SEC. <br /></td></tr>
+<tr class="memitem:ad1eb2596701315dc1d2bb7d7a1422c54" id="r_ad1eb2596701315dc1d2bb7d7a1422c54"><td class="memItemLeft"><a id="ad1eb2596701315dc1d2bb7d7a1422c54" name="ad1eb2596701315dc1d2bb7d7a1422c54"></a>
+static uint8_t&#160;</td><td class="memItemRight"><b>s_settle</b></td></tr>
+<tr class="memdesc:ad1eb2596701315dc1d2bb7d7a1422c54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaps still to leave out at the start of this burst. <br /></td></tr>
+<tr class="memitem:a31272f777c51281c6bb31af57950b97a" id="r_a31272f777c51281c6bb31af57950b97a"><td class="memItemLeft"><a id="a31272f777c51281c6bb31af57950b97a" name="a31272f777c51281c6bb31af57950b97a"></a>
+static uint16_t&#160;</td><td class="memItemRight"><b>s_still_mg</b></td></tr>
+<tr class="memdesc:a31272f777c51281c6bb31af57950b97a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most the wrist may move for a burst to be still. <br /></td></tr>
+<tr class="memitem:adbf964a3b7eabb1f38369e58b2d2d14e" id="r_adbf964a3b7eabb1f38369e58b2d2d14e"><td class="memItemLeft"><a id="adbf964a3b7eabb1f38369e58b2d2d14e" name="adbf964a3b7eabb1f38369e58b2d2d14e"></a>
+static uint16_t&#160;</td><td class="memItemRight"><b>s_walk_steps</b></td></tr>
+<tr class="memdesc:adbf964a3b7eabb1f38369e58b2d2d14e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk. <br /></td></tr>
+<tr class="memitem:acf1886a7de20037aa5be621859c81bfd" id="r_acf1886a7de20037aa5be621859c81bfd"><td class="memItemLeft"><a id="acf1886a7de20037aa5be621859c81bfd" name="acf1886a7de20037aa5be621859c81bfd"></a>
+static <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a>&#160;</td><td class="memItemRight"><b>s_count</b></td></tr>
+<tr class="memdesc:acf1886a7de20037aa5be621859c81bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which bursts count for the main reading. <br /></td></tr>
+<tr class="memitem:a8f66f63f31c07291b181e5bae3bf9669" id="r_a8f66f63f31c07291b181e5bae3bf9669"><td class="memItemLeft"><a id="a8f66f63f31c07291b181e5bae3bf9669" name="a8f66f63f31c07291b181e5bae3bf9669"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_accel_on</b></td></tr>
+<tr class="memdesc:a8f66f63f31c07291b181e5bae3bf9669"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the accelerometer is being read for the burst. <br /></td></tr>
+<tr class="memitem:aa05f21e513a6673438d6f61ff3f84152" id="r_aa05f21e513a6673438d6f61ff3f84152"><td class="memItemLeft"><a id="aa05f21e513a6673438d6f61ff3f84152" name="aa05f21e513a6673438d6f61ff3f84152"></a>
+static <a class="el" href="structHrvMotion.html">HrvMotion</a>&#160;</td><td class="memItemRight"><b>s_motion</b></td></tr>
+<tr class="memdesc:aa05f21e513a6673438d6f61ff3f84152"><td class="mdescLeft">&#160;</td><td class="mdescRight">The movement seen through the burst being held. <br /></td></tr>
+<tr class="memitem:a3cf690cf6816b9f2893a1e2c572cf094" id="r_a3cf690cf6816b9f2893a1e2c572cf094"><td class="memItemLeft"><a id="a3cf690cf6816b9f2893a1e2c572cf094" name="a3cf690cf6816b9f2893a1e2c572cf094"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_held_since</b></td></tr>
+<tr class="memdesc:a3cf690cf6816b9f2893a1e2c572cf094"><td class="mdescLeft">&#160;</td><td class="mdescRight">When the hold started, in seconds. <br /></td></tr>
+<tr class="memitem:a469c36d4178c807f64b7d5d2e077c717" id="r_a469c36d4178c807f64b7d5d2e077c717"><td class="memItemLeft"><a id="a469c36d4178c807f64b7d5d2e077c717" name="a469c36d4178c807f64b7d5d2e077c717"></a>
+static void(*)&#160;</td><td class="memItemRight"><b>s_changed</b> (void)</td></tr>
+<tr class="memdesc:a469c36d4178c807f64b7d5d2e077c717"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called whenever the reading changes, so the face can redraw. <br /></td></tr>
+<tr class="memitem:a3a2392ea513225daa7078cdb71928cbd" id="r_a3a2392ea513225daa7078cdb71928cbd"><td class="memItemLeft"><a id="a3a2392ea513225daa7078cdb71928cbd" name="a3a2392ea513225daa7078cdb71928cbd"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_keep_all</b></td></tr>
+<tr class="memdesc:a3a2392ea513225daa7078cdb71928cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a burst that cannot count is measured anyway, for a panel that shows it. <br /></td></tr>
+<tr class="memitem:a6c33dbe33460784c1fab01e4cbfe9070" id="r_a6c33dbe33460784c1fab01e4cbfe9070"><td class="memItemLeft"><a id="a6c33dbe33460784c1fab01e4cbfe9070" name="a6c33dbe33460784c1fab01e4cbfe9070"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_live_redraw</b></td></tr>
+<tr class="memdesc:a6c33dbe33460784c1fab01e4cbfe9070"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the face is redrawn once a second while a burst is held, for a tuning panel. <br /></td></tr>
+<tr class="memitem:a99dc978dbb9ca13788c701c4143b0893" id="r_a99dc978dbb9ca13788c701c4143b0893"><td class="memItemLeft"><a id="a99dc978dbb9ca13788c701c4143b0893" name="a99dc978dbb9ca13788c701c4143b0893"></a>
+static int32_t&#160;</td><td class="memItemRight"><b>s_steps_start</b> = -1</td></tr>
+<tr class="memdesc:a99dc978dbb9ca13788c701c4143b0893"><td class="mdescLeft">&#160;</td><td class="mdescRight">The day's step count when the hold started, or -1 when not known. <br /></td></tr>
+<tr class="memitem:a7eb962c39b492de944d2b3484dd3b8e6" id="r_a7eb962c39b492de944d2b3484dd3b8e6"><td class="memItemLeft"><a id="a7eb962c39b492de944d2b3484dd3b8e6" name="a7eb962c39b492de944d2b3484dd3b8e6"></a>
+static uint8_t&#160;</td><td class="memItemRight"><b>s_hold_gaps</b></td></tr>
+<tr class="memdesc:a7eb962c39b492de944d2b3484dd3b8e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaps added to the run since the hold started. <br /></td></tr>
+<tr class="memitem:a84f02e0024684d850d01e63ed2e54c8c" id="r_a84f02e0024684d850d01e63ed2e54c8c"><td class="memItemLeft"><a id="a84f02e0024684d850d01e63ed2e54c8c" name="a84f02e0024684d850d01e63ed2e54c8c"></a>
+static <a class="el" href="structHrvBurst.html">HrvBurst</a>&#160;</td><td class="memItemRight"><b>s_recent</b> [<a class="el" href="group__lib__core.html#ga29d5cfdac8f3395b7cb700ab9408c1d6">HRV_RECENT</a>]</td></tr>
+<tr class="memdesc:a84f02e0024684d850d01e63ed2e54c8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The latest bursts, for a tuning panel, kept in memory only. <br /></td></tr>
+<tr class="memitem:aae56ad3fcfd0ab68a634d6709ee6a043" id="r_aae56ad3fcfd0ab68a634d6709ee6a043"><td class="memItemLeft"><a id="aae56ad3fcfd0ab68a634d6709ee6a043" name="aae56ad3fcfd0ab68a634d6709ee6a043"></a>
+static uint8_t&#160;</td><td class="memItemRight"><b>s_recent_head</b></td></tr>
+<tr class="memdesc:aae56ad3fcfd0ab68a634d6709ee6a043"><td class="mdescLeft">&#160;</td><td class="mdescRight">The slot the next burst goes in. <br /></td></tr>
+<tr class="memitem:afc1e32c72630b62007536cb95f77bb07" id="r_afc1e32c72630b62007536cb95f77bb07"><td class="memItemLeft"><a id="afc1e32c72630b62007536cb95f77bb07" name="afc1e32c72630b62007536cb95f77bb07"></a>
+static uint32_t&#160;</td><td class="memItemRight"><b>s_persist_key</b></td></tr>
+<tr class="memdesc:afc1e32c72630b62007536cb95f77bb07"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist slot the log is saved in, or 0 for none. <br /></td></tr>
+<tr class="memitem:a5ef77755d7fa4a69b8bbf13431d29220" id="r_a5ef77755d7fa4a69b8bbf13431d29220"><td class="memItemLeft"><a id="a5ef77755d7fa4a69b8bbf13431d29220" name="a5ef77755d7fa4a69b8bbf13431d29220"></a>
+static <a class="el" href="structHrvLog.html">HrvLog</a>&#160;</td><td class="memItemRight"><b>s_log</b></td></tr>
+<tr class="memdesc:a5ef77755d7fa4a69b8bbf13431d29220"><td class="mdescLeft">&#160;</td><td class="mdescRight">The readings kept for the face's panels. <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>The heart rate variability half of the health store. </p>
+<p>The watch reports one gap between two heartbeats at a time, as a health event. The health store holds the app's one health subscription, so it hands each of those events here, along with its turn on the face's cadence. The arithmetic, which beats count and how a run adds up to RMSSD, is in <a class="el" href="hrv__run_8c.html" title="Turns the beat gaps the watch reports into heart rate variability, as RMSSD in ms.">core/health/hrv_run.c</a>, and the movement score is in <a class="el" href="hrv__motion_8c.html" title="Tells whether the wearer kept still while a burst of beat gaps was measured.">core/health/hrv_motion.c</a>. </p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="aef7990c4ff7e2751ac00c521ca69e9c5" name="aef7990c4ff7e2751ac00c521ca69e9c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef7990c4ff7e2751ac00c521ca69e9c5">&#9670;&#160;</a></span>accel_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void accel_start </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Starts reading the accelerometer for a burst. </p>
+<p>Every held burst is scored, since the log tags each reading still or busy and an unscored one would go in as still whatever the wrist did. </p>
+
+</div>
+</div>
+<a id="ad7194780c79904ef6f09ddc26dd1c27c" name="ad7194780c79904ef6f09ddc26dd1c27c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7194780c79904ef6f09ddc26dd1c27c">&#9670;&#160;</a></span>cannot_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cannot_count </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether the burst being held can no longer count for the main reading. </p>
+<p>Steps never come back off within a burst, so a walk decides it at once. The still level also gives up once the wrist has moved more than a whole burst at the limit could hold, rather than as soon as the average crosses it, since a scratch early on does not mean the burst will not pass. </p>
+
+</div>
+</div>
+<a id="a4a4b4d4148f1efa19b86b8ef9c2f9087" name="a4a4b4d4148f1efa19b86b8ef9c2f9087"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a4b4d4148f1efa19b86b8ef9c2f9087">&#9670;&#160;</a></span>end_quiet_burst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void end_quiet_burst </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Ends a burst whose beats went quiet: files what it measured, or notes it as dropped on a tuning panel, and lets the sensor go. </p>
+<p>Beats that came outside a hold have no score and never make a reading, so their run is only emptied.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a50a51e28dd5c0c6eb1e1c5a0856ed882" name="a50a51e28dd5c0c6eb1e1c5a0856ed882"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50a51e28dd5c0c6eb1e1c5a0856ed882">&#9670;&#160;</a></span>hold_end()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hold_end </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Lets the sensor go back to the face's period once a burst is measured. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a42875a5f566a2b6a83f9d1919c327b8e" name="a42875a5f566a2b6a83f9d1919c327b8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42875a5f566a2b6a83f9d1919c327b8e">&#9670;&#160;</a></span>hold_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hold_start </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Holds the sensor on for the burst that just started, so its run can fill. </p>
+<p>The watch turns the sensor off on its first good heart rate, which is only a handful of beats in. A period shorter than the sensor's warm up keeps it on, so the burst is asked for at HRV_HOLD_PERIOD_SEC until its run is done. That costs up to HRV_HOLD_MAX_SEC of sensor time a burst, and is what gives a run its 20 beats at all.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5a3a8615b64a1e549d90fd2bb4349a45" name="a5a3a8615b64a1e549d90fd2bb4349a45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a3a8615b64a1e549d90fd2bb4349a45">&#9670;&#160;</a></span>local_day()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void local_day </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *</td>          <td class="paramname"><span class="paramname"><em>day</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>minute_of_day</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The day and the minute of the day on the watch's own clock. </p>
+<p>The log only needs a day that changes at local midnight, so the year and the day of the year make one without any date sums.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">day</td><td>The day. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">minute_of_day</td><td>The minute of the day, 0 to 1439. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa5502a859e4315cf11b57e1dbf94a892" name="aa5502a859e4315cf11b57e1dbf94a892"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5502a859e4315cf11b57e1dbf94a892">&#9670;&#160;</a></span>note_burst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void note_burst </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ms</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>counted</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Keeps a finished or dropped burst in the tuning ring. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ms</td><td>Its reading, or -1 when it was dropped or gave none. </td></tr>
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+    <tr><td class="paramname">counted</td><td>Whether it became the main reading. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac4213a7f97913295407406ce98253dc7" name="ac4213a7f97913295407406ce98253dc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4213a7f97913295407406ce98253dc7">&#9670;&#160;</a></span>on_accel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void on_accel </td>
+          <td>(</td>
+          <td class="paramtype">AccelData *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>num_samples</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Adds each accelerometer sample to the burst's movement, leaving out ones taken while the watch was vibrating, since the motor shakes it as hard as a step. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>The samples. </td></tr>
+    <tr><td class="paramname">num_samples</td><td>How many there are. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1eec8cf29190373ee37ae2e9f1e6c501" name="a1eec8cf29190373ee37ae2e9f1e6c501"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eec8cf29190373ee37ae2e9f1e6c501">&#9670;&#160;</a></span>record()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void record </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ms</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Files a finished reading and shows it, when it counts. </p>
+<p>Every reading goes into the log with what the wearer was doing. One the face's count level leaves out, such as a walking one, is logged but does not replace the main reading, which stays a resting one.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ms</td><td>The reading in ms. </td></tr>
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ad69029585e2bff65f98182904a9704e2" name="ad69029585e2bff65f98182904a9704e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad69029585e2bff65f98182904a9704e2">&#9670;&#160;</a></span>request()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void request </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>period_sec</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Asks the watch for beat gaps at a period, or tells it to stop with a period of 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">period_sec</td><td>How often the watch takes a burst, or 0 to stop. </td></tr>
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds, which the next ask is spaced from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6972b5bfe6d44f0c3afb9030852e10be" name="a6972b5bfe6d44f0c3afb9030852e10be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6972b5bfe6d44f0c3afb9030852e10be">&#9670;&#160;</a></span>save_log()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void save_log </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Saves the log to flash, when the face gave it a slot. </p>
+<p>It runs once a reading, which at a five minute period is a few hundred writes of a quarter of a kilobyte a day. The CPU is already awake for the burst, and a log saved only when the face closes would lose the day whenever the watch resets. </p>
+
+</div>
+</div>
+<a id="a0471acb230fbd6e0a6823a71a4c51849" name="a0471acb230fbd6e0a6823a71a4c51849"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0471acb230fbd6e0a6823a71a4c51849">&#9670;&#160;</a></span>show()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void show </td>
+          <td>(</td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>ms</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Puts a new reading up, or takes one down with -1, and redraws only when it moved. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ms</td><td>The reading in ms, or -1 for none. </td></tr>
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds, which the staleness check counts from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac7ba8f136e68f64501250125318c7839" name="ac7ba8f136e68f64501250125318c7839"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7ba8f136e68f64501250125318c7839">&#9670;&#160;</a></span>show_latest_logged()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void show_latest_logged </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>now_sec</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Puts the log's newest reading that counted back up, when it is not stale yet. </p>
+<p>Without it the readout shows dashes after every relaunch until the next burst finishes, which is up to a sample period plus the hold, while the panels that read the log still show it.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">now_sec</td><td>The time now, in seconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a124963a78e7a449ee0fc362e0368814e" name="a124963a78e7a449ee0fc362e0368814e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a124963a78e7a449ee0fc362e0368814e">&#9670;&#160;</a></span>steps_through()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int steps_through </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The steps taken since the hold started. </p>
+<p>The day's count starts over at midnight, and the sleep tracker can take steps back off minutes it later judges asleep, so a count that went down says nothing and reads as not known.</p>
+<dl class="section return"><dt>Returns</dt><dd>The steps, or -1 when not known. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>pebble</b></li><li class="navelem"><b>io</b></li><li class="navelem"><b>stores</b></li><li class="navelem"><a href="health__hrv_8c.html">health_hrv.c</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>

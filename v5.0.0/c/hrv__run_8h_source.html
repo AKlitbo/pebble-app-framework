@@ -1,0 +1,264 @@
+<!-- HTML header for doxygen 1.18.0 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.18.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Pebble App Framework: src/c/core/health/hrv_run.h Source File</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="codefolding.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="pebble.css" rel="stylesheet" type="text/css"/>
+<!-- the site's light and dark rules, which the shared bar's toggle switches -->
+<script type="text/javascript" src="../theme.js"></script>
+<script type="text/javascript" src="../versions.js"></script>
+<script type="text/javascript">
+  // doxygen 1.18.0 builds the outline panel on the right by running each name through its own
+  // escapeHtml and then setting the result as plain text, so a path reads c&#x2F;core&#x2F;clock on
+  // the page. this waits for the panel, then watches only the panel and puts the real characters back
+  // in each link, once each. the rest of the page changing never runs it
+  // TODO: remove once Doxygen stops double escaping names in navtree.js
+  (function () {
+    var entities = {
+      '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&#39;': "'", '&#x2F;': '/', '&#x60;': '`', '&#x3D;': '='
+    };
+    function unescapeOutline(panel) {
+      panel.querySelectorAll('a:not([data-unescaped])').forEach(function (link) {
+        // mark before changing the text, so the change cannot trigger this again
+        link.setAttribute('data-unescaped', '');
+        link.textContent = link.textContent.replace(
+          /&(?:amp|lt|gt|quot|#39|#x2F|#x60|#x3D);/g,
+          function (entity) {
+            return entities[entity];
+          }
+        );
+      });
+    }
+    function watchPanel(panel) {
+      unescapeOutline(panel);
+      new MutationObserver(function () {
+        unescapeOutline(panel);
+      }).observe(panel, { childList: true, subtree: true });
+    }
+    var panel = document.getElementById('page-nav-contents');
+    if (panel) {
+      watchPanel(panel);
+      return;
+    }
+    // the panel is not built yet, so wait for it and stop looking once it is there. a page with no outline
+    // never builds one, so the looking stops once the page has loaded either way
+    var finder = new MutationObserver(function () {
+      var found = document.getElementById('page-nav-contents');
+      if (found) {
+        finder.disconnect();
+        watchPanel(found);
+      }
+    });
+    finder.observe(document.documentElement, { childList: true, subtree: true });
+    window.addEventListener('load', function () {
+      finder.disconnect();
+    });
+  })();
+</script>
+<!-- site-bar head -->
+<link rel="stylesheet" href="../site-bar.css">
+<!-- /site-bar head -->
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../index.html">
+    <img src="../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../" disabled>
+    <option value="v5.0.0" selected>v5.0.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" href="../how/index.html">How It Works</a>
+    <a data-section="paf" href="../paf/index.html">CLI</a>
+    <a data-section="c" aria-current="location" href="../c/index.html">Device API</a>
+    <a data-section="ts" href="../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+<div id="titlearea">
+<div id="projectname"><a href="index.html">Pebble App Framework: Device API</a></div>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.18.0 -->
+<script type="text/javascript">
+let searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', codefold.init);
+</script>
+<script type="application/json" id="doxygen-config">
+{
+  "relPath": "",
+  "generateTreeView": true,
+  "searchEngine": true,
+  "serverBasedSearch": false,
+  "disableIndex": false,
+  "dynamicMenus": true,
+  "fullSidebar": false
+}
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<div id="main-nav-mobile">
+<div class="sm sm-dox"><input id="main-menu-state" type="checkbox"/>
+<label class="main-menu-btn" for="main-menu-state">
+<span class="main-menu-btn-icon"></span> Toggle main menu visibility</label>
+<span id="searchBoxPos1"></span>
+</div>
+</div><!-- main-nav-mobile -->
+<div id="main-nav">
+  <ul class="sm sm-dox" id="main-menu">
+    <li id="searchBoxPos2">
+        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect" class="search-icon"><span class="search-icon-dropdown"></span></span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><div id="MSearchCloseImg" class="close-icon"></div></a>
+          </span>
+        </div>
+    </li>
+  </ul>
+</div><!-- main-nav -->
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded',() => { initNavTree('hrv__run_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Loading...</div>
+<div class="SRStatus" id="Searching">Searching...</div>
+<div class="SRStatus" id="NoMatches">No Matches</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">hrv_run.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="hrv__run_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="group__lib__core.html#gaaefdc36c44d4b4bb7d75b49971dafa75">   27</a></span><span class="preprocessor">#define HRV_PPI_MIN_MS 300   </span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga25c5320ce0b3cb8d6318006c39554d9c">   28</a></span><span class="preprocessor">#define HRV_PPI_MAX_MS 2000  </span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="group__lib__core.html#gaefbe63307314a051f668d64f02af5d87">   29</a></span><span class="preprocessor">#define HRV_JUMP_PCT 20      </span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga59b2e0772453c9dc6f043dccff16db65">   30</a></span><span class="preprocessor">#define HRV_QUIET_SEC 15     </span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="group__lib__core.html#gaf327b41b60f9c86f55e411ee317d2545">   31</a></span><span class="preprocessor">#define HRV_DIFFS_MIN 20     </span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga524644e6318004787bb4db9ecf847255">   32</a></span><span class="preprocessor">#define HRV_DIFFS_FULL 60    </span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga9506f432151279855933339ae78cfb91">   33</a></span><span class="preprocessor">#define HRV_STALE_PERIODS 3  </span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga606ade592998e531ca1b4ee8336c1d51">   34</a></span><span class="preprocessor">#define HRV_STALE_MIN_SEC 1800 </span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="group__lib__core.html#gae821813667772afcba017bb0a1765c89">   35</a></span><span class="preprocessor">#define HRV_HOLD_PERIOD_SEC 1  </span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga5cce8c8e009bc553503dee841fa01bc3">   36</a></span><span class="preprocessor">#define HRV_HOLD_MAX_SEC 90    </span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="group__lib__core.html#ga353a8f23c99dd39c3dbfa02708208d29">   37</a></span><span class="preprocessor">#define HRV_SETTLE_GAPS 10     </span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span></div>
+<div class="foldopen" id="foldopen00042" data-start="{" data-end="};">
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structHrvRun.html">   42</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>{</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structHrvRun.html#ab97d22d055ef0b60e635d6dc9b4054ec">   44</a></span>    uint16_t <a class="code hl_variable" href="structHrvRun.html#ab97d22d055ef0b60e635d6dc9b4054ec">last_ms</a>;  </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="structHrvRun.html#abecaa11823f37d0a00f94eb998531779">   45</a></span>    uint16_t <a class="code hl_variable" href="structHrvRun.html#abecaa11823f37d0a00f94eb998531779">diffs</a>;    </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="structHrvRun.html#a28c5a2fd3af6e8aa44b548948457e89a">   46</a></span>    uint32_t <a class="code hl_variable" href="structHrvRun.html#a28c5a2fd3af6e8aa44b548948457e89a">sum_sq</a>;   </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="structHrvRun.html#ad9b69963930bf29a2ee1ba9aaacb171d">   47</a></span>    uint32_t <a class="code hl_variable" href="structHrvRun.html#ad9b69963930bf29a2ee1ba9aaacb171d">last_at</a>;  </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structHrvRun.html#ac6cfd6e43f145c2428061b7ed8141d9e">   48</a></span>    uint16_t <a class="code hl_variable" href="structHrvRun.html#ac6cfd6e43f145c2428061b7ed8141d9e">finished_diffs</a>; </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>} <a class="code hl_struct" href="structHrvRun.html">HrvRun</a>;</div>
+</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keywordtype">void</span> <a class="code hl_function" href="group__lib__core.html#ga820f7ded1182d953adac970b65798571">hrv_run_reset</a>(<a class="code hl_struct" href="structHrvRun.html">HrvRun</a> *run);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__core.html#gae74b9acde0c1bb0a850ee1b2f8763e58">hrv_run_push</a>(<a class="code hl_struct" href="structHrvRun.html">HrvRun</a> *run, uint16_t ppi_ms, uint32_t now_sec);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span></div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga5a9fade553546533a99efde079418e37">hrv_run_quiet</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structHrvRun.html">HrvRun</a> *run, uint32_t now_sec);</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span><span class="keywordtype">int</span> <a class="code hl_function" href="group__lib__core.html#ga2f4bc4b0a4b9727d00dbd5a5a4571a81">hrv_run_finish</a>(<a class="code hl_struct" href="structHrvRun.html">HrvRun</a> *run);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span></div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga694e9c38004c250485939cbf5c33ea1f">hrv_reading_stale</a>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga63af7759a1aab1ce49fad20c956816f2">hrv_should_ask</a>(<span class="keywordtype">bool</span> sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec);</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span></div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span><span class="keywordtype">bool</span> <a class="code hl_function" href="group__lib__core.html#ga10fae5233f760fb6787caa3e0876836c">hrv_hold_over</a>(uint32_t held_since, uint32_t now_sec);</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span></div>
+<div class="ttc" id="agroup__lib__core_html_ga10fae5233f760fb6787caa3e0876836c"><div class="ttname"><a href="group__lib__core.html#ga10fae5233f760fb6787caa3e0876836c">hrv_hold_over</a></div><div class="ttdeci">bool hrv_hold_over(uint32_t held_since, uint32_t now_sec)</div><div class="ttdoc">Whether the sensor has been held on for a burst as long as it may be.</div><div class="ttdef"><b>Definition</b> hrv_run.c:159</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga2f4bc4b0a4b9727d00dbd5a5a4571a81"><div class="ttname"><a href="group__lib__core.html#ga2f4bc4b0a4b9727d00dbd5a5a4571a81">hrv_run_finish</a></div><div class="ttdeci">int hrv_run_finish(HrvRun *run)</div><div class="ttdoc">Ends a run and empties it. How many differences it held stays in finished_diffs, so a caller can say ...</div><div class="ttdef"><b>Definition</b> hrv_run.c:52</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga5a9fade553546533a99efde079418e37"><div class="ttname"><a href="group__lib__core.html#ga5a9fade553546533a99efde079418e37">hrv_run_quiet</a></div><div class="ttdeci">bool hrv_run_quiet(const HrvRun *run, uint32_t now_sec)</div><div class="ttdoc">Whether a run has gone quiet, so it is finished and waiting to be read.</div><div class="ttdef"><b>Definition</b> hrv_run.c:78</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga63af7759a1aab1ce49fad20c956816f2"><div class="ttname"><a href="group__lib__core.html#ga63af7759a1aab1ce49fad20c956816f2">hrv_should_ask</a></div><div class="ttdeci">bool hrv_should_ask(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</div><div class="ttdoc">Whether to ask the watch for beat gaps again.</div><div class="ttdef"><b>Definition</b> hrv_run.c:152</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga694e9c38004c250485939cbf5c33ea1f"><div class="ttname"><a href="group__lib__core.html#ga694e9c38004c250485939cbf5c33ea1f">hrv_reading_stale</a></div><div class="ttdeci">bool hrv_reading_stale(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</div><div class="ttdoc">Whether a reading is too old to show.</div><div class="ttdef"><b>Definition</b> hrv_run.c:140</div></div>
+<div class="ttc" id="agroup__lib__core_html_ga820f7ded1182d953adac970b65798571"><div class="ttname"><a href="group__lib__core.html#ga820f7ded1182d953adac970b65798571">hrv_run_reset</a></div><div class="ttdeci">void hrv_run_reset(HrvRun *run)</div><div class="ttdoc">Empties a run, so the next gap starts it.</div><div class="ttdef"><b>Definition</b> hrv_run.c:47</div></div>
+<div class="ttc" id="agroup__lib__core_html_gae74b9acde0c1bb0a850ee1b2f8763e58"><div class="ttname"><a href="group__lib__core.html#gae74b9acde0c1bb0a850ee1b2f8763e58">hrv_run_push</a></div><div class="ttdeci">int hrv_run_push(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</div><div class="ttdoc">Adds one gap from the watch.</div><div class="ttdef"><b>Definition</b> hrv_run.c:85</div></div>
+<div class="ttc" id="astructHrvRun_html"><div class="ttname"><a href="structHrvRun.html">HrvRun</a></div><div class="ttdoc">One run of beats being added up. Start it with hrv_run_reset.</div><div class="ttdef"><b>Definition</b> hrv_run.h:43</div></div>
+<div class="ttc" id="astructHrvRun_html_a28c5a2fd3af6e8aa44b548948457e89a"><div class="ttname"><a href="structHrvRun.html#a28c5a2fd3af6e8aa44b548948457e89a">HrvRun::sum_sq</a></div><div class="ttdeci">uint32_t sum_sq</div><div class="ttdoc">The squared differences added up.</div><div class="ttdef"><b>Definition</b> hrv_run.h:46</div></div>
+<div class="ttc" id="astructHrvRun_html_ab97d22d055ef0b60e635d6dc9b4054ec"><div class="ttname"><a href="structHrvRun.html#ab97d22d055ef0b60e635d6dc9b4054ec">HrvRun::last_ms</a></div><div class="ttdeci">uint16_t last_ms</div><div class="ttdoc">The gap before, or 0 when the next gap starts the chain over.</div><div class="ttdef"><b>Definition</b> hrv_run.h:44</div></div>
+<div class="ttc" id="astructHrvRun_html_abecaa11823f37d0a00f94eb998531779"><div class="ttname"><a href="structHrvRun.html#abecaa11823f37d0a00f94eb998531779">HrvRun::diffs</a></div><div class="ttdeci">uint16_t diffs</div><div class="ttdoc">How many differences are summed.</div><div class="ttdef"><b>Definition</b> hrv_run.h:45</div></div>
+<div class="ttc" id="astructHrvRun_html_ac6cfd6e43f145c2428061b7ed8141d9e"><div class="ttname"><a href="structHrvRun.html#ac6cfd6e43f145c2428061b7ed8141d9e">HrvRun::finished_diffs</a></div><div class="ttdeci">uint16_t finished_diffs</div><div class="ttdoc">How many differences the last finished run held, kept across the reset.</div><div class="ttdef"><b>Definition</b> hrv_run.h:48</div></div>
+<div class="ttc" id="astructHrvRun_html_ad9b69963930bf29a2ee1ba9aaacb171d"><div class="ttname"><a href="structHrvRun.html#ad9b69963930bf29a2ee1ba9aaacb171d">HrvRun::last_at</a></div><div class="ttdeci">uint32_t last_at</div><div class="ttdoc">When the last gap arrived, in seconds, or 0 before the first.</div><div class="ttdef"><b>Definition</b> hrv_run.h:47</div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>src</b></li><li class="navelem"><b>c</b></li><li class="navelem"><b>core</b></li><li class="navelem"><b>health</b></li><li class="navelem"><a href="hrv__run_8h.html">hrv_run.h</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.18.0 </li>
+  </ul>
+</div>
+</body>
+</html>
