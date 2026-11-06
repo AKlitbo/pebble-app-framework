@@ -71,7 +71,7 @@
 <p>Every message below is quoted as <code>paf</code> prints it, with the unit and face names from an example repo. A command that stops prints its message after <code>paf:</code>. One that runs over several units prints each unit&#39;s problem after the unit&#39;s name, then a closing line such as <code>sync failed in watchfaces/mosaic</code>.</p>
 <h2 id="the-tag-moved">The Tag Moved</h2>
 <pre><code>watchfaces/mosaic: v4.0.0 now points at &lt;new commit&gt;, but mosaic/paf.config.json recorded &lt;old commit&gt;. If the move is expected, run paf pin mosaic v4.0.0 to take it</code></pre>
-<p>The framework tag the unit pins was moved to another commit after the unit recorded it. <code>paf</code> stops rather than quietly build against a framework nobody chose. If the move is expected, run the <code>paf pin</code> it names, which records the new commit. Then commit <code>paf.config.json</code>.</p>
+<p>The framework tag the unit pins was moved to another commit after the unit recorded it. <code>paf</code> stops instead of building against a framework nobody chose. If the move is expected, run the <code>paf pin</code> it names, which records the new commit. Then commit <code>paf.config.json</code>.</p>
 <h2 id="a-framework-3-pin">A Framework 3 Pin</h2>
 <pre><code>watchfaces/mosaic: mosaic/paf.config.json pins v3.0.0, which is framework 3 and needs paf 1.0.0. This paf fills framework 4 and later, so move the unit to one of those tags with paf pin</code></pre>
 <p><code>paf</code> 2.0.0 and later fill framework 4 and up, not framework 3. Move the unit with <code>paf pin mosaic latest</code> once its faces are ready, or keep <code>paf</code> 1.0.0 for it until then.</p>

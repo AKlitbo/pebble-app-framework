@@ -164,8 +164,8 @@
 <p><strong>Its Own Area for Each Size.</strong> Each smaller font gets its own rectangle, so a face can move a smaller line down to stay on the same baseline as the larger one, rather than having it float to the top of the space.</p>
 <p><strong>A Little Room Spare.</strong> The text has to fit 2 pixels inside the area&#39;s width, so a string that just touches the edge steps down rather than sitting against it.</p>
 <p><strong>Leaving a Size Out.</strong> A zone uses fewer sizes by leaving an area zero-sized, which is how an unset field in a C struct reads anyway, so a face only fills in the sizes it has. The search stops at the first zero-sized area.</p>
-<p><strong>When Nothing Fits.</strong> Text too wide even for the smallest size uses that size anyway, and the text layer cuts it short with an ellipsis. The text is still shown rather than dropped.</p>
-<p>The fonts are named by slot rather than held as loaded fonts, which is what lets a zone be a <code>static const</code> table, as <a href="../../how/fonts/">Fonts</a> covers.</p>
+<p><strong>When Nothing Fits.</strong> Text too wide even for the smallest size uses that size anyway, and the text layer cuts it short with an ellipsis.</p>
+<p>The fonts are named by slot rather than held as loaded fonts, which lets a zone be a <code>static const</code> table, as <a href="../../how/fonts/">Fonts</a> covers.</p>
 <h2 id="from-a-slot-list-to-layers">From a Slot List to Layers</h2>
 <p><code>engine_init</code> takes the window and the build function, runs the build, and makes the layers in the order the slots came back.</p>
 <p><strong>Making a Text Slot.</strong> It becomes a <code>TextLayer</code> with a clear background, set up with the zone&#39;s main font, alignment, and colour.</p>
@@ -180,7 +180,7 @@
 <span class="line"><span style="color:var(--code-token-function)">time_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
 <span class="line"><span style="color:var(--code-token-function)">weather_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span>
 <span class="line"><span style="color:var(--code-token-function)">health_store_subscribe</span><span style="color:var(--code-foreground)">(engine_mark_dirty);</span></span></code></pre>
-<p><strong>Marking a Draw Slot.</strong> Its layer is marked dirty, and Pebble calls its paint function on the next frame.</p>
+<p><strong>Marking a Draw Slot.</strong> The engine marks its layer dirty, and Pebble calls its paint function on the next frame.</p>
 <p><strong>Refreshing a Text Slot.</strong> The engine runs its text function into a scratch buffer and compares the result with what the slot showed last. Most of the time it is the same, since the date reads the same all day and a new weather reading leaves the clock alone. An unchanged string stops there. Only a changed one is copied into the slot&#39;s own buffer and fitted to the zone, which measures the text in up to four fonts to find the largest that fits (see <a href="#text-that-fits-its-slot">Text That Fits Its Slot</a>). A <code>TextLayer</code> keeps a pointer to its text rather than a copy, which is why each slot holds its string in a buffer that outlives the repaint.</p>
 <p><strong>24 Characters, Terminator Included.</strong> Each slot&#39;s buffer holds 23 characters of text. A longer string is cut to fit before it reaches the layer.</p>
 <p><strong>Repainting Only What Changed.</strong> A face with many slots can give each one a set of tags, a bit for each store it reads, and call <code>engine_mark_dirty_tags</code> with the bits that changed. A slot repaints when its tags share a bit with the change. A slot with no tags repaints on every change, which is why the plain <code>engine_mark_dirty</code> passes every bit at once. A store&#39;s subscriber takes no arguments, so the face writes a small function per store:</p>

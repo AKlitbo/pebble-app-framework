@@ -105,7 +105,7 @@ paf: paf sync takes one unit and was given 2: a, b. Run it once for each, or wit
 <pre><code>$ paf status --verbose
 paf: paf status has no flag --verbose</code></pre>
 <p><code>build</code>, <code>gen</code>, <code>run</code>, and <code>tool</code> pass every argument on to what they run.</p>
-<p><strong>Readying a Unit.</strong> <code>build</code>, <code>gen</code>, <code>check</code>, <code>tool</code>, <code>run</code>, <code>test</code>, <code>typecheck</code>, <code>lint</code>, and <code>format</code> sync the unit before they run anything, so a fresh clone or a pin a teammate moved is taken care of. They only fetch the framework when the cache lacks the pinned commit, so they work offline once a unit has synced. <code>sync</code>, <code>pin</code>, and <code>use &lt;unit&gt; pinned</code> always fetch. <code>status</code> and <code>doctor</code> never do.</p>
+<p><strong>Readying a Unit.</strong> <code>build</code>, <code>gen</code>, <code>check</code>, <code>tool</code>, <code>run</code>, <code>test</code>, <code>typecheck</code>, <code>lint</code>, and <code>format</code> sync the unit before they run anything, so they take care of a fresh clone or a pin a teammate moved. They only fetch the framework when the cache lacks the pinned commit, so they work offline once a unit has synced. <code>sync</code>, <code>pin</code>, and <code>use &lt;unit&gt; pinned</code> always fetch. <code>status</code> and <code>doctor</code> never do.</p>
 <p><strong>Node.</strong> <code>build</code>, <code>gen</code>, <code>check</code>, <code>tool</code>, <code>lint</code>, and <code>format</code> run the framework&#39;s own scripts, and refuse a Node outside the range in <code>paf/package.json</code>.</p>
 <p><strong>Exit Codes.</strong> <code>0</code> when everything passed, <code>1</code> when anything failed. <code>gen</code> and <code>tool</code> exit with the code of the script they ran. A command that runs over every unit carries on past a failing one, then names each that failed, such as <code>sync failed in watchfaces/mosaic</code>. An error <code>paf</code> stops on is printed to stderr, starting <code>paf:</code>.</p>
 <h2 id="paf-sync">paf sync</h2>
@@ -119,7 +119,7 @@ pebble-watchface-lcars: installing node_modules, which brings the lock up to dat
 added 216 packages in 2s</code></pre>
 <p><strong><code>--locked</code></strong> is for CI. It installs with <code>npm ci</code> from the lock and never writes <code>paf.config.json</code> or the lock. It stops when a unit has no <code>package-lock.json</code>, when <code>paf.config.json</code> records no commit, or when a unit is on a local framework.</p>
 <p><strong><code>--force</code></strong> reinstalls a <code>node_modules</code> installed from the other system, such as from WSL when running on Windows. Without it <code>paf</code> stops rather than replace it.</p>
-<p>Every unit is checked before the fetch, so a pin <code>paf</code> cannot fill or a unit it would refuse is reported even offline.</p>
+<p><code>paf</code> checks every unit before the fetch, so it reports a pin it cannot fill, or a unit it would refuse, even offline.</p>
 <h2 id="paf-status">paf status</h2>
 <pre><code>paf status</code></pre>
 <p>Shows each unit, its faces, the tag it pins, the newest framework tag paf fills, and whether it is ready to build. It changes nothing and never fetches, so <code>LATEST</code> is as of the last fetch.</p>
@@ -206,7 +206,7 @@ paf: no generator called nope. What the unit lists offers clay, icons, thumbnail
 Clay components: every face is current
 icons: every face is current
 thumbnails: every face is current</code></pre>
-<p>A stale face means its generator has to run again with <code>paf gen &lt;face&gt; all</code>.</p>
+<p>For a stale face, run its generators again with <code>paf gen &lt;face&gt; all</code>.</p>
 <h2 id="paf-tool">paf tool</h2>
 <pre><code>paf tool &lt;face&gt; &lt;name&gt; [args]</code></pre>
 <p>Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, <code>-h</code> and <code>--</code> included. The <code>dev</code> plugin offers <code>clay-preview</code> and <code>tap-walk</code>:</p>
