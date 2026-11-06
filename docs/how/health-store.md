@@ -122,3 +122,66 @@ The two buffers are part of the store on every face, 60 bytes for the heart rate
 ## Reading It Back
 
 Each reading has its own getter, such as `health_store_hr` or `health_store_steps`, and each returns its no-data value until there is something to show. The framework's `readout_hr` and `readout_steps` already turn those into text with dashes for no data, as covered in [Readouts](readouts.md). The store reads every number it was asked for once during init, before the face first paints, so a face shows real numbers from its first frame rather than dashes until the first event.
+
+## Heart Rate Variability
+
+Heart rate variability is how much the gap between one heartbeat and the next changes from beat to beat. The watch's sensor reports each gap, and the store adds a run of them up into RMSSD, the figure fitness trackers show, in milliseconds. A higher number generally means a rested body, and a lower one stress, tiredness, or illness. `health_store_hrv_ms` hands back the reading, and `readout_hrv` writes it or dashes.
+
+The sampling, the holds, and the movement check are in [`health_hrv.c`](../../src/c/pebble/io/stores/health_hrv.c), which only the store calls. The arithmetic, which beats count and how a run adds up, is [`hrv_run.c`](../../src/c/core/health/hrv_run.c), and the movement score is [`hrv_motion.c`](../../src/c/core/health/hrv_motion.c), both under `src/c/core/health/` with specs that run on a PC. A reading a few ms out still looks right on the wrist, so the arithmetic is pinned there.
+
+**Turning It On.** HRV is built in only for a face that sets it in its appinfo's `defines`, as `"HEALTH_HRV": 1`. Without it the HRV fields are ignored, the getters answer none, and the linker leaves the code out. A face with it asks for a period in its config:
+
+```c
+health_store_init((HealthConfig){.live = true, .hrv_period_sec = 300,
+                                 .hrv_persist_key = PERSIST_HRV,
+                                 .persist_key = PERSIST_HEALTH}, NULL);
+
+// when the wearer changes a setting, or places or removes a panel
+health_store_set_hrv_period(period);
+health_store_set_hrv_rules(still_mg, walk_steps, HRV_COUNT_NOT_WALKING, keep_all, live_redraw);
+
+// and in the face's deinit
+health_store_deinit();
+```
+
+`hrv_period_sec` is how often the watch takes a burst of beat gaps, and 0 turns HRV off. A face that only shows HRV in one panel can pass 0 until the panel is on a layout, since every burst costs battery. `HealthSeed.hrv_ms` gives a seeded store its reading for screenshots. The emulator never sends heart rate readings, so a seed is the only way to see the readout there.
+
+**Stop It in Deinit.** The watch keeps an app's request for beat gaps going for an hour after the app closes. A face that leaves out `health_store_deinit` has the sensor sampling for that hour whenever the wearer opens an app from it.
+
+**Which Watches Give a Reading.** Only a sensor that reports beat gaps gives readings, and today that is the Pebble Time 2, on emery. Gabbro and flint have no heart rate sensor, and the watch turns the request down. So does a Time 2 with heart rate turned off in its Health settings. `health_store_hrv_sampling` says whether the watch took the request. The store asks again on the face's cadence when the watch turned it down, or when no gap has come for as long as a reading takes to go stale. The asks are spaced by that same wait, three sample periods and never less than half an hour, so a wearer who turns heart rate back on gets readings again without restarting the face, and a watch with no sensor is asked about twice an hour.
+
+### Holding a Burst
+
+The watch turns the sensor off as soon as it has a good heart rate, which on a Time 2 is about six beats in, and a run needs 20 differences. So on the first gap of a burst the store asks for a period of one second, shorter than the sensor's warm up, which keeps it on. It goes back to the face's period once the run fills at 60 differences, goes quiet, or reaches 90 seconds. On a Time 2 a held burst took 40 to 90 seconds, longer when the heart beats slower.
+
+**The First Gaps Are Left Out.** For its first few seconds the sensor can swap between two gaps, 730 and 620 ms on a Time 2, close enough to pass the jump rule below. Left in, those lifted one reading from 35 ms to 50. So the first 10 gaps of each burst are dropped.
+
+### What the Wearer Was Doing
+
+HRV only means something at rest. Walking raises the heart rate and shakes the sensor, and on a Time 2 a reading taken walking around came out at 54 ms against 27 sitting still. So each burst is marked still, busy, or walking, as an `HrvState`.
+
+**Steps Decide Walking.** Pebble's step counter only counts a stepping rhythm, so a burst with `hrv_walk_steps` steps or more through it is a walk, 10 when the face passes 0. A wrist can move as much without walking. On a Time 2 a mouse and keyboard scored 267 with no steps, where a slow walk started at 270.
+
+**The Wrist Splits Still from Busy.** While a burst is held the store reads the accelerometer at 10 Hz and scores the burst as the average change from one sample to the next, in milli-g, added across the three axes. A burst scoring `hrv_still_mg` or under is still, 60 when the face passes 0. On a Time 2 sitting still scored 23 to 60, and eating, gaming, and stirring a pot scored 90 to 267.
+
+**Which Bursts Count.** `hrv_count` decides which bursts become the main reading. `HRV_COUNT_NOT_WALKING`, the default, takes still and busy ones, `HRV_COUNT_STILL` only still ones, and `HRV_COUNT_ANY` every burst. The two limits are meant to be settings, since one wearer's still is another's fidget. A burst that cannot count is dropped as soon as that is clear, which lets the sensor go early, unless `hrv_keep_all` is set. A face with a panel that shows walking or busy readings sets it, at the cost of up to 90 more seconds of sensor per burst.
+
+**The Accelerometer Is Shared.** Its data service takes one subscriber an app, and the store holds it for each burst, so a face that reads raw accelerometer data itself cannot use HRV. Tap detection is a separate service and is not touched.
+
+### What the Store Keeps
+
+Every finished reading goes into an [`HrvLog`](../../src/c/core/health/hrv_log.h), read with `health_store_hrv_log` and the `hrv_log` functions. It holds the latest 24 readings with what the wearer was doing and whether Pebble said they were asleep, today's readings averaged by the hour, the night's average, and the latest reading of each state. A walking reading shows in the history and as the latest walking one, but stays out of the hours and the night. A reading taken asleep between noon and 21:00 is a nap's and stays out of the night too, since those are the hours the watch calls a sleep a nap. The log is saved under `hrv_persist_key` each time a reading lands, so a face opened again after an app still has its day. With no key it lives in memory only. `HealthSeed.hrv_log` pins one for screenshots, and a seeded log is never saved.
+
+For a panel that helps the wearer pick the two limits, `health_store_hrv_recent` gives the last six bursts, dropped ones included, with each one's score, steps, state, how many beats it kept, and whether it counted. `health_store_hrv_live` gives the burst being held right now, and `hrv_live_redraw` redraws the face once a second while one is. `health_store_hrv_still_mg` and `health_store_hrv_walk_steps` give the limits in use, so a panel shows the same numbers as the settings. The recent bursts live in memory only, since they are for watching the numbers while moving.
+
+### How a Reading Is Worked Out
+
+One gap on its own is just the heart rate said another way. What changes with rest and stress is the difference between each gap and the one before it, so a run's reading is the square root of the mean of those differences squared, rounded to the nearest ms.
+
+**Which Beats Count.** Apps never see the sensor's own quality grade, so the store decides. A gap outside a heart rate of 30 to 200 is dropped, and so is a gap of 0, which the watch gives when it has none for a beat. So is a gap more than 20 percent away from the one before it, which is what a missed beat or a doubled one looks like. Left in, one missed beat would add two differences of about a second and swamp the real variation. A dropped gap also breaks the chain, since the good gaps either side of it are not neighbours, so the next difference is taken between the two good gaps after it. That is also how a heart rate that really moved carries on: it costs one dropped gap, then the new pace is measured against itself.
+
+**When a Run Ends.** A run needs 20 differences before its answer means anything, and finishes at 60. The gap that fills it starts the next, so a long burst loses nothing between runs. A run also ends when 15 seconds pass with no gap, which is how a burst ends and how taking the watch off shows up. That is checked on the cadence, so a burst's last run shows within a minute. A run short of 20 differences gives no reading, and the one before it stays up.
+
+**A Reading Goes Stale.** With the watch off the wrist no run finishes, and the last reading would sit on screen for good. So a reading goes back to none once three sample periods pass without a new one, and never sooner than half an hour. A clock the phone sets back counts as no time passed, both here and for the 15 second pause.
+
+**What It Costs.** A held burst keeps the sensor on for up to 90 seconds, and asking for beat gaps also has the watch read the heart rate, so the heart rate readout and graph get fresher as a side effect. The gaps arrive about once a beat, but only a finished run changes the reading, so the face redraws when the number moves and not on every beat. With a persist key the log is written to flash once a reading, which is once a sample period at most. A face built without `HEALTH_HRV` carries none of the code.

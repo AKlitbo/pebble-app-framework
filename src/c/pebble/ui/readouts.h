@@ -64,6 +64,16 @@ bool readout_date_shows_beats(void);
 void readout_hr(char *out, size_t n);
 
 /**
+ * @brief Format heart rate variability in ms, or "--" with no reading.
+ *
+ * A face built without HEALTH_HRV always gets "--".
+ *
+ * @param[out] out Output buffer.
+ * @param n Buffer size.
+ */
+void readout_hrv(char *out, size_t n);
+
+/**
  * @brief Format the step count, or the distance walked per the Steps Mode setting.
  *
  * @param[out] out Output buffer.

@@ -31,6 +31,7 @@
 #define STORE_TAG_CALENDAR 0x31 ///< The calendar store's snapshot
 #define STORE_TAG_HEALTH   0x42 ///< The health store's saved heart rate window
 #define STORE_TAG_LOCATION 0x51 ///< The location store's last fix
+#define STORE_TAG_HRV      0x61 ///< The health store's saved HRV readings
 /** @} */
 
 /**

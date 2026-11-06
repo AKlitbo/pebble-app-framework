@@ -108,6 +108,19 @@ void readout_hr(char *out, size_t n)
     }
 }
 
+void readout_hrv(char *out, size_t n)
+{
+    int hrv = health_store_hrv_ms();
+    if (hrv >= 0)
+    {
+        snprintf(out, n, "%d", hrv);
+    }
+    else
+    {
+        snprintf(out, n, "--");
+    }
+}
+
 void readout_steps(char *out, size_t n)
 {
     // no reading yet, or Health is off. the distance falls back to 0 rather than -1, so the steps

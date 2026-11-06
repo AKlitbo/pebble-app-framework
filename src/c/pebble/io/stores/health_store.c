@@ -9,6 +9,7 @@
 #include "math/scale.h"
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
+#include "io/stores/health_hrv.h"
 
 #include "health/minute_window.h"
 #include "health/step_hours.h"
@@ -16,6 +17,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+// heart rate variability is built in only for a face that sets HEALTH_HRV in its appinfo's defines.
+// with it off nothing here calls into health_hrv.c, so the linker leaves that out of the face
+#if defined(HEALTH_HRV) && HEALTH_HRV
+#define HRV_BUILT 1
+#else
+#define HRV_BUILT 0
+#endif
 
 /**
  * @brief How many minutes of heart rate the graph shows.
@@ -610,25 +619,50 @@ static void notify_if_moved(uint32_t before)
  */
 static void on_health_event(HealthEventType event, void *context)
 {
+#if HRV_BUILT
+    // a beat gap comes about once a beat while HRV samples, and reads nothing else here
+    if (event == HealthEventHRVUpdate)
+    {
+        health_hrv_on_gap();
+        return;
+    }
+#endif
+
+    // the switch only decides what to read. an event the store does not read leaves through the
+    // default before the sum
+    bool hr = false;
+    bool activity = false;
+    bool force = false;
+
+    switch (event)
+    {
+        case HealthEventHeartRateUpdate:
+            hr = true;
+            break;
+        case HealthEventMovementUpdate:
+            activity = true;
+            break;
+        case HealthEventSignificantUpdate:
+            hr = true;
+            activity = true;
+            force = true;
+            break;
+        default:
+            return;
+    }
+
     // the state is summed before and after even when the minute gate reads nothing. that is two
     // passes over a couple of hundred bytes on an event that comes about once a minute, which costs
     // less than the bytes a gate that reports back would add
     uint32_t before = store_sum(&s_state, sizeof(s_state));
 
-    switch (event)
+    if (hr)
     {
-        case HealthEventHeartRateUpdate:
-            refresh_hr();
-            break;
-        case HealthEventMovementUpdate:
-            refresh_activity(false);
-            break;
-        case HealthEventSignificantUpdate:
-            refresh_hr();
-            refresh_activity(true);
-            break;
-        default:
-            return;
+        refresh_hr();
+    }
+    if (activity)
+    {
+        refresh_activity(force);
     }
 
     notify_if_moved(before);
@@ -648,6 +682,10 @@ static void cadence_poll(void)
         return;
     }
 
+#if HRV_BUILT
+    health_hrv_poll();
+#endif
+
     uint32_t before = store_sum(&s_state, sizeof(s_state));
 
     refresh_hr();
@@ -656,11 +694,51 @@ static void cadence_poll(void)
     notify_if_moved(before);
 }
 
+#if HRV_BUILT
+/** @brief A new HRV reading redraws the face the same way any other reading does. */
+static void hrv_changed(void)
+{
+    if (s_cb)
+    {
+        s_cb();
+    }
+}
+#endif
+
 // --- public API ---
 
 void health_store_subscribe(void (*cb)(void))
 {
     s_cb = cb;
+}
+
+void health_store_deinit(void)
+{
+#if HRV_BUILT
+    health_hrv_stop();
+#endif
+}
+
+void health_store_set_hrv_period(uint16_t period_sec)
+{
+#if HRV_BUILT
+    health_hrv_set_period(period_sec);
+#else
+    (void)period_sec;
+#endif
+}
+
+void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)
+{
+#if HRV_BUILT
+    health_hrv_set_rules(still_mg, walk_steps, count, keep_all, live_redraw);
+#else
+    (void)still_mg;
+    (void)walk_steps;
+    (void)count;
+    (void)keep_all;
+    (void)live_redraw;
+#endif
 }
 
 void health_store_init(HealthConfig cfg, const HealthSeed *seed)
@@ -777,6 +855,21 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
             s_steps_pending = false;
         }
     }
+
+#if HRV_BUILT
+    // HRV takes the same live and seed as the rest, so a seeded store never asks the watch for beat gaps
+    HealthHrvConfig hrv = {
+        .live = cfg.live,
+        .period_sec = cfg.hrv_period_sec,
+        .still_mg = cfg.hrv_still_mg,
+        .walk_steps = cfg.hrv_walk_steps,
+        .count = cfg.hrv_count,
+        .keep_all = cfg.hrv_keep_all,
+        .live_redraw = cfg.hrv_live_redraw,
+        .persist_key = cfg.hrv_persist_key,
+    };
+    health_hrv_start(&hrv, seed ? seed->hrv_ms : 0, seed ? seed->hrv_log : NULL, hrv_changed);
+#endif
 }
 
 const uint8_t *health_store_hr_history(void) { return s_state.hr_history; }
@@ -790,3 +883,82 @@ int health_store_calories(void)   { return s_state.calories; }
 int health_store_sleep_min(void)  { return s_state.sleep_min; }
 int health_store_active_min(void) { return s_state.active_min; }
 int health_store_distance_m(void) { return s_state.distance_m; }
+
+int health_store_hrv_ms(void)
+{
+#if HRV_BUILT
+    return health_hrv_ms();
+#else
+    return -1;
+#endif
+}
+
+bool health_store_hrv_sampling(void)
+{
+#if HRV_BUILT
+    return health_hrv_sampling();
+#else
+    return false;
+#endif
+}
+
+bool health_store_hrv_measuring(void)
+{
+#if HRV_BUILT
+    return health_hrv_measuring();
+#else
+    return false;
+#endif
+}
+
+bool health_store_hrv_recent(int back, HrvBurst *out)
+{
+#if HRV_BUILT
+    return health_hrv_recent(back, out);
+#else
+    (void)back;
+    (void)out;
+    return false;
+#endif
+}
+
+bool health_store_hrv_live(int *score, int *steps, int *held_sec)
+{
+#if HRV_BUILT
+    return health_hrv_live(score, steps, held_sec);
+#else
+    (void)score;
+    (void)steps;
+    (void)held_sec;
+    return false;
+#endif
+}
+
+uint16_t health_store_hrv_still_mg(void)
+{
+#if HRV_BUILT
+    return health_hrv_still_mg();
+#else
+    return HRV_MOTION_STILL_DEFAULT;
+#endif
+}
+
+uint16_t health_store_hrv_walk_steps(void)
+{
+#if HRV_BUILT
+    return health_hrv_walk_steps();
+#else
+    return HRV_WALK_STEPS_DEFAULT;
+#endif
+}
+
+const HrvLog *health_store_hrv_log(void)
+{
+#if HRV_BUILT
+    return health_hrv_log();
+#else
+    // a face without HRV still links panels that read the log, so they get one that is empty
+    static const HrvLog empty;
+    return &empty;
+#endif
+}
