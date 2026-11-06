@@ -28,6 +28,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** Removed the limit names with `MAX` in the middle. In C, use `ENGINE_SLOTS_MAX` for `ENGINE_MAX_SLOTS`, `STOCK_SLOTS_MAX` for `STOCK_MAX_SLOTS`, and `CALENDAR_SLOTS_MAX` for `CALENDAR_MAX_SLOTS`. In TypeScript, `WIRE_CAPS.FORECAST_MAX_COLS`, `WIRE_CAPS.STOCK_MAX_SLOTS`, and `WIRE_CAPS.CALENDAR_MAX_SLOTS` become `FORECAST_COLS_MAX`, `STOCK_SLOTS_MAX`, and `CALENDAR_SLOTS_MAX`, and the wire module's default export drops `STOCK_MAX_SLOTS`. A face that still defines `ENGINE_MAX_SLOTS`, in its appinfo's `defines` or in its own C, stops the build with a message naming `ENGINE_SLOTS_MAX`.
 - The face actions no longer point out an appinfo still in `config/`, where framework 3 kept it. A face they cannot find now stops with only its name.
 
+#### Fixed
+
+- Fixed a health store started again with `live` false still taking health events. The next heart rate or movement event replaced its seed with a live reading, so a face switching to its screenshot fixture could show real numbers. `health_store_init` now unsubscribes when it goes from live to seeded, and the first read of the hourly steps queued by a live start no longer lands on the seed.
+
 ## [4.6.0] - 2026-10-16
 
 ### Framework Changes

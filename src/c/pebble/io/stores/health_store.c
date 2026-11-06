@@ -566,6 +566,13 @@ static void refresh_activity(bool force)
  */
 static void steps_first_read(void *data)
 {
+    // a store started again since this was queued is seeded, so it keeps its fixture, or live, so
+    // its own read is queued behind this one and one read is enough
+    if (!s_steps_pending)
+    {
+        return;
+    }
+
     // cleared first so nothing below can leave the reader switched off for good
     s_steps_pending = false;
 
@@ -658,6 +665,14 @@ void health_store_subscribe(void (*cb)(void))
 
 void health_store_init(HealthConfig cfg, const HealthSeed *seed)
 {
+#if defined(PBL_HEALTH)
+    // a face starting the store again on its seed, such as for screenshots, would otherwise keep
+    // getting events, and the next one would put a live reading over the seed
+    if (s_live && !cfg.live)
+    {
+        health_service_events_unsubscribe();
+    }
+#endif
     s_live = false;
     s_hr_history = cfg.hr_history;
     s_step_history = cfg.step_history;
