@@ -75,7 +75,7 @@
 <li>the repo root, for a repo that is one face or one family</li>
 <li>each folder straight under <code>watchfaces/</code> or <code>watchapps/</code>, for a family or a face of its own</li>
 </ul>
-<p>The two folders only sort faces from apps, and a unit in either is laid out the same. A unit at the root is named after the repo&#39;s folder. A unit under <code>watchfaces/</code> or <code>watchapps/</code> is named after its own folder, and two units with the same name are refused.</p>
+<p>The two folders only sort faces from apps, and a unit in either is laid out the same. A unit at the root is named after the repo&#39;s folder. A unit under <code>watchfaces/</code> or <code>watchapps/</code> is named after its own folder, and <code>paf</code> refuses two units with the same name.</p>
 <h2 id="finding-the-faces">Finding the Faces</h2>
 <p>A face is a folder holding a <code>pebble.appinfo.json</code> at its own root.</p>
 <ul>
@@ -142,9 +142,9 @@
 <span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
 <p><strong><code>framework</code>:</strong> the framework tag the unit builds against. It has to be a framework 4 version tag, such as <code>v4.0.0</code>.</p>
 <p><strong><code>commit</code>:</strong> the commit the tag pointed at when it was pinned. If the tag later points somewhere else, <code>paf sync</code> stops rather than build against a framework nobody chose. <code>paf pin</code> records it, and so does the first <code>paf sync</code> when it is missing.</p>
-<p><strong><code>plugins</code>:</strong> the framework plugins the unit uses, each with its settings, or <code>{}</code> for none. Only listed plugins are copied into <code>paf/plugins/</code>, and only their generators, checks, and tools run. The order matters, since <code>paf gen &lt;face&gt; all</code> runs the plugins&#39; generators in the order they are listed.</p>
+<p><strong><code>plugins</code>:</strong> the framework plugins the unit uses, each with its settings, or <code>{}</code> for none. <code>paf</code> copies only the listed plugins into <code>paf/plugins/</code> and runs only their generators, checks, and tools. The order matters, since <code>paf gen &lt;face&gt; all</code> runs the plugins&#39; generators in the order they are listed.</p>
 <p><strong><code>gen</code>:</strong> the unit&#39;s own generators. Each one has a <code>script</code>, a <code>.ts</code> file with its path from the unit, and can take an <code>after</code> naming the generator it runs straight after, and a <code>when</code> naming the file or folder a face needs for it to run. See <a href="../../paf/workflows/#generators">Generators</a>.</p>
-<p>A name made only of digits, a generator called <code>all</code>, and the name <code>__proto__</code> are refused.</p>
+<p><code>paf</code> refuses a name made only of digits, a generator called <code>all</code>, and the name <code>__proto__</code>.</p>
 <h2 id="the-frameworks-plugins">The Framework&#39;s Plugins</h2>
 <p>Framework 4 ships these. List one under <code>plugins</code> to use it.</p>
 <table>
@@ -188,7 +188,7 @@
 <span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
 <p>Without the workspaces npm never installs the framework&#39;s packages or the plugins&#39;, and every command that readies the unit stops and says what to add. <code>paf test</code> runs the unit&#39;s own <code>test</code> script, so a unit with specs keeps its own <code>vitest.config.ts</code>.</p>
 <h2 id="gitignore">.gitignore</h2>
-<p>Everything <code>paf</code> fills or writes is ignored:</p>
+<p>The unit&#39;s <code>.gitignore</code> leaves out everything <code>paf</code> fills or writes:</p>
 <pre><code>/paf/
 /paf.paf-*/
 /node_modules/
