@@ -73,9 +73,9 @@
 <pre><code>watchfaces/mosaic: v4.0.0 now points at &lt;new commit&gt;, but mosaic/paf.config.json recorded &lt;old commit&gt;. If the move is expected, run paf pin mosaic v4.0.0 to take it</code></pre>
 <p>The framework tag the unit pins was moved to another commit after the unit recorded it. <code>paf</code> stops rather than quietly build against a framework nobody chose. If the move is expected, run the <code>paf pin</code> it names, which records the new commit. Then commit <code>paf.config.json</code>.</p>
 <h2 id="a-framework-3-pin">A Framework 3 Pin</h2>
-<pre><code>watchfaces/mosaic: mosaic/paf.config.json pins v3.0.0, which is framework 3 and needs paf 1.0.0. This paf fills framework 4, so move the unit to a framework 4 tag with paf pin</code></pre>
-<p><code>paf</code> 2.0.0 only fills framework 4. Move the unit with <code>paf pin mosaic latest</code> once its faces are ready for framework 4, or keep <code>paf</code> 1.0.0 for it until then.</p>
-<p><code>paf pin</code> refuses a framework 3 tag the same way, and lists the framework 4 tags it would take.</p>
+<pre><code>watchfaces/mosaic: mosaic/paf.config.json pins v3.0.0, which is framework 3 and needs paf 1.0.0. This paf fills framework 4 and later, so move the unit to one of those tags with paf pin</code></pre>
+<p><code>paf</code> 2.0.0 and later fill framework 4 and up, not framework 3. Move the unit with <code>paf pin mosaic latest</code> once its faces are ready, or keep <code>paf</code> 1.0.0 for it until then.</p>
+<p><code>paf pin</code> refuses a framework 3 tag the same way, and lists the tags it would take.</p>
 <h2 id="node_modules-from-the-other-system">node_modules from the Other System</h2>
 <pre><code>paf: watchfaces/mosaic/node_modules was installed from linux, and its native packages only run there. Run paf sync --force to reinstall it for win32, which breaks it for the other one</code></pre>
 <p>The unit was installed from WSL and this command ran on Windows, or the other way round. Run <code>paf sync --force</code> on the system you want to use. See <a href="../../paf/workflows/#switching-between-wsl-and-windows">Switching between WSL and Windows</a>.</p>
@@ -110,7 +110,7 @@
 <pre><code>paf: watchfaces/mosaic still has a paf.json, which paf 1.0.0 reads. This paf reads paf.config.json. Move each unit by hand, then delete its paf.json</code></pre>
 <p><code>paf</code> 2.0.0 reads <code>paf.config.json</code> instead. Move the settings across by hand, then delete <code>paf.json</code>. Every command stops until each one is gone, so a repo half moved never syncs some units and not others.</p>
 <p><code>paf doctor</code> also finds a <code>lib/</code> that <code>paf</code> 1.0.0 filled:</p>
-<pre><code>problem  watchfaces/mosaic/lib is left from paf 1.0.0, which filled it. Delete it, since paf 2.0.0 fills paf/</code></pre>
+<pre><code>problem  watchfaces/mosaic/lib is left from paf 1.0.0, which filled it. Delete it, since paf 2.0.0 and later fill paf/</code></pre>
 <h2 id="workflows-on-an-older-framework">Workflows on an Older Framework</h2>
 <pre><code>problem  .github/workflows/ci.yml loads the framework&#39;s actions at v3.0.0, older than v4.0.0. Move them to @v4.0.0</code></pre>
 <p>A workflow loads the framework&#39;s actions, such as <code>setup-pebble</code>, at a tag older than the newest one a unit pins. Move each <code>@</code> to the tag <code>paf doctor</code> names.</p>

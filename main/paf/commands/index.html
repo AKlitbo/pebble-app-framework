@@ -74,7 +74,7 @@ usage: paf &lt;command&gt; [args]
 
   sync [unit] [--locked] [--force]
                                fill each unit&#39;s paf/ from its pinned tag and install its node_modules
-  status                       each unit&#39;s faces, tag, the newest framework 4 tag, and whether it is ready
+  status                       each unit&#39;s faces, tag, the newest framework tag, and whether it is ready
   pin &lt;unit&gt; &lt;tag|latest&gt;
                                move a unit to another tag, showing the changelog between them first
   use &lt;unit&gt; local [path]      point a unit&#39;s paf/ at a local framework clone, builds included
@@ -122,14 +122,14 @@ added 216 packages in 2s</code></pre>
 <p>Every unit is checked before the fetch, so a pin <code>paf</code> cannot fill or a unit it would refuse is reported even offline.</p>
 <h2 id="paf-status">paf status</h2>
 <pre><code>paf status</code></pre>
-<p>Shows each unit, its faces, the tag it pins, the newest framework 4 tag, and whether it is ready to build. It changes nothing and never fetches, so <code>LATEST</code> is as of the last fetch.</p>
+<p>Shows each unit, its faces, the tag it pins, the newest framework tag paf fills, and whether it is ready to build. It changes nothing and never fetches, so <code>LATEST</code> is as of the last fetch.</p>
 <pre><code>$ paf status
 UNIT                    FACES                           TAG     LATEST  STATE
 watchfaces/ide-vscode   ide-vscode                      v4.0.0  v4.0.0  ready
 watchfaces/mosaic       gridlock, sidereel              v4.0.0  v4.0.0  ready
 watchfaces/radar-array  radar-array                     v4.0.0  v4.0.0  ready
 watchfaces/sketchbook   ridgeline, shoreline, treeline  v4.0.0  v4.0.0  ready
-LATEST is the newest framework 4 tag as of the last fetch, a release when there is one, and paf sync fetches again.
+LATEST is the newest framework tag paf fills as of the last fetch, a release when there is one, and paf sync fetches again.
 
 toolchain: SDK 4.33.1 active. v4.0.0 was built with 4.33.1</code></pre>
 <p><strong><code>STATE</code></strong> is one of:</p>
@@ -144,8 +144,8 @@ toolchain: SDK 4.33.1 active. v4.0.0 was built with 4.33.1</code></pre>
 <p>The <code>toolchain</code> line compares the SDK <code>pebble --version</code> reports with the SDK each framework tag was built with.</p>
 <h2 id="paf-pin">paf pin</h2>
 <pre><code>paf pin &lt;unit&gt; &lt;tag|latest&gt;</code></pre>
-<p>Moves one unit to another framework tag, fills its <code>paf/</code>, and installs. Naming a face moves the whole family it belongs to. <code>latest</code> is the newest framework 4 release, or the newest release candidate when there is no release yet.</p>
-<p>Before it writes anything it checks that the tag is a framework 4 version tag, that the framework has it, and that it has every plugin the unit lists. Then it prints what changed between the two tags in the framework changelog: every breaking entry in full, and a count of the rest. It ends with the generators to run, since a new framework can change what they write.</p>
+<p>Moves one unit to another framework tag, fills its <code>paf/</code>, and installs. Naming a face moves the whole family it belongs to. <code>latest</code> is the newest release of framework 4 or later, or the newest release candidate when there is no release yet.</p>
+<p>Before it writes anything it checks that the tag is a version tag of framework 4 or later, that the framework has it, and that it has every plugin the unit lists. Then it prints what changed between the two tags in the framework changelog: every breaking entry in full, and a count of the rest. It ends with the generators to run, since a new framework can change what they write.</p>
 <p>Moving <code>mosaic</code> to a newer tag prints this, with the parts in angle brackets filled in:</p>
 <pre><code>$ paf pin mosaic latest
 mosaic: v4.0.0 to &lt;new tag&gt;
@@ -167,7 +167,7 @@ paf use &lt;unit&gt; pinned</code></pre>
 <pre><code>$ paf use lcars-stardate local /home/me/src/pebble-app-framework
 pebble-watchface-lcars: paf/ is on 8b45d9e from /home/me/src/pebble-app-framework, working tree included, 214 files
 paf sync --locked refuses until paf use pebble-watchface-lcars pinned</code></pre>
-<p>The clone has to be framework 4, with a <code>src/package.json</code> named <code>pebble-app-framework</code>. Its specs, fixtures, and the plugins the unit does not list are left out, the same as from a tag.</p>
+<p>The clone has to be framework 4 or later, with a <code>src/package.json</code> named <code>pebble-app-framework</code>. Its specs, fixtures, and the plugins the unit does not list are left out, the same as from a tag.</p>
 <p><strong><code>pinned</code></strong> puts the unit back on its tag. If the sync refuses, the local copy stays in place.</p>
 <pre><code>$ paf use lcars-stardate pinned
 pebble-watchface-lcars: paf/ is on v4.0.0 (4002539), 214 files</code></pre>
