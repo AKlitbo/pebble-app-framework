@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['vibechoice_0',['VibeChoice',['../group__lib__settings.html#ga7b8aec224cacf74446d899e5eaab0819',1,'setting_values.h']]],
-  ['vibepulse_1',['VibePulse',['../group__lib__system.html#gabbe12c91a0e3541c91618e6765204e19',1,'vibe.h']]]
+  ['settingid_0',['SettingId',['../group__lib__settings.html#ga5b6861430c47031f602e2af972953f53',1,'settings.h']]],
+  ['settingtype_1',['SettingType',['../group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338',1,'settings.h']]],
+  ['stepsmode_2',['StepsMode',['../group__lib__settings.html#ga6e6066815d52058ba7571050020ca960',1,'setting_values.h']]]
 ];

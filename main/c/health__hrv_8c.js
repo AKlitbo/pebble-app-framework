@@ -15,7 +15,8 @@ var health__hrv_8c =
     [ "health_hrv_recent", "group__lib__stores.html#ga4d9e68b5550cc8cf8ca340322883a01b", null ],
     [ "health_hrv_sampling", "group__lib__stores.html#ga37582149cbe5836b28881faff2fd5705", null ],
     [ "health_hrv_set_period", "group__lib__stores.html#ga3de2b90ca51ac9d5544c9cebf2eb7239", null ],
-    [ "health_hrv_set_rules", "group__lib__stores.html#gabc78d1ab551531851c68847138ad5f16", null ],
+    [ "health_hrv_set_rules", "group__lib__stores.html#gaca781624ec8eabf5d4916cfd2a731d57", null ],
+    [ "health_hrv_settle_gaps", "group__lib__stores.html#gaa0582954b31101fd5c9649ac6a4c3b19", null ],
     [ "health_hrv_start", "group__lib__stores.html#ga302a123979f2732edb6738c61c8d0650", null ],
     [ "health_hrv_still_mg", "group__lib__stores.html#ga07a3890b8ec14d604f9c33f3882885fb", null ],
     [ "health_hrv_stop", "group__lib__stores.html#gaeb21c567d464de358f3f62a99315af26", null ],
@@ -55,6 +56,7 @@ var health__hrv_8c =
     [ "s_run", "health__hrv_8c.html#aa3c21f0ec1e161155b8b2fe7cb2e5291", null ],
     [ "s_sampling", "health__hrv_8c.html#a8d4a86d5635c31a11d143e4fd123c9e7", null ],
     [ "s_settle", "health__hrv_8c.html#ad1eb2596701315dc1d2bb7d7a1422c54", null ],
+    [ "s_settle_gaps", "health__hrv_8c.html#abcfb4d77f0fc22dd2a8325e8dc1313a5", null ],
     [ "s_steps_start", "health__hrv_8c.html#a99dc978dbb9ca13788c701c4143b0893", null ],
     [ "s_still_mg", "health__hrv_8c.html#a31272f777c51281c6bb31af57950b97a", null ],
     [ "s_walk_steps", "health__hrv_8c.html#adbf964a3b7eabb1f38369e58b2d2d14e", null ]

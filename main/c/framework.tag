@@ -740,6 +740,89 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>time_config.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>time__config_8c.html</filename>
+    <includes id="time__config_8h" name="time_config.h" local="yes" import="no" module="no" objc="no">clock/time_config.h</includes>
+    <includes id="store__live_8h" name="store_live.h" local="yes" import="no" module="no" objc="no">io/store_live.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>TICKER_MINUTE</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>a6a7b0f60a670761ef50432d850a63bb9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TICKER_HOUR</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>a1a60795ae79f732fcb635dfe31758d7c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TICKER_BEATS</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>a7b9f8c1a80d131db21863fc95b3a0c21</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>tickers</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>aa4bf40dd2ef63cd10ed333016824e1d1</anchor>
+      <arglist>(TimeConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_same_tickers</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafdebf69530ed918eaeb2fb2e00b7e154</anchor>
+      <arglist>(TimeConfig a, TimeConfig b)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeConfig</type>
+      <name>time_config_reconfigured</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga97a3a19c7df73172fc1ef49f4784a479</anchor>
+      <arglist>(TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga23e87de26014fa5fd1b5644213852011</anchor>
+      <arglist>(TimeConfig *running, TimeConfig cfg, bool pinned)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>time_config.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>time__config_8h.html</filename>
+    <class kind="struct">TimeConfig</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_same_tickers</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafdebf69530ed918eaeb2fb2e00b7e154</anchor>
+      <arglist>(TimeConfig a, TimeConfig b)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeConfig</type>
+      <name>time_config_reconfigured</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga97a3a19c7df73172fc1ef49f4784a479</anchor>
+      <arglist>(TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga23e87de26014fa5fd1b5644213852011</anchor>
+      <arglist>(TimeConfig *running, TimeConfig cfg, bool pinned)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>timeband.c</name>
     <path>src/c/core/clock/</path>
     <filename>timeband_8c.html</filename>
@@ -1519,6 +1602,13 @@
       <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
       <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
     </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3ec53ad7f3196535760825f02dc2611f</anchor>
+      <arglist>(uint16_t asked)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>hrv_run.h</name>
@@ -1602,6 +1692,13 @@
       <anchor>ga353a8f23c99dd39c3dbfa02708208d29</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacd7ae320dd9f133f840d906727165648</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type>void</type>
       <name>hrv_run_reset</name>
@@ -1650,6 +1747,13 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
       <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3ec53ad7f3196535760825f02dc2611f</anchor>
+      <arglist>(uint16_t asked)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -1742,6 +1846,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>callback_list_remove</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa1d38a3ffb6ab6b59cb850fbef1bbc60</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>callback_list_fire</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
@@ -1769,10 +1880,67 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>callback_list_remove</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa1d38a3ffb6ab6b59cb850fbef1bbc60</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>callback_list_fire</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
       <arglist>(const CallbackList *list)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>link_change.h</name>
+    <path>src/c/core/io/</path>
+    <filename>link__change_8h.html</filename>
+    <class kind="struct">LinkState</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>LinkChange</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74178abed5fae945e1364010e009448</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_SAME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a432b1d29bb1f587e2c7bbc80f36164aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_DROPPED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a8d4fd3f7d66697a5ec2983845f66e644</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_RECONNECTED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a26d88e62a7d3a8a7278e8825d95f56b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static LinkChange</type>
+      <name>link_change_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac9b21726fd911bc2a4498ef0472e0b02</anchor>
+      <arglist>(LinkState *state, bool connected)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_live.h</name>
+    <path>src/c/core/io/</path>
+    <filename>store__live_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_live_after_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga827da9e4ea26a5bb3d4d3847921d2271</anchor>
+      <arglist>(bool live, bool pinned)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -2184,6 +2352,127 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>font_slots.c</name>
+    <path>src/c/core/ui/</path>
+    <filename>font__slots_8c.html</filename>
+    <includes id="font__slots_8h" name="font_slots.h" local="yes" import="no" module="no" objc="no">ui/font_slots.h</includes>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>slot_in_range</name>
+      <anchorfile>font__slots_8c.html</anchorfile>
+      <anchor>aaba2760c52c953a22311190466860124</anchor>
+      <arglist>(const FontSlots *slots, int id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_put</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae543e3b227da62b3b310c4c08d6190da</anchor>
+      <arglist>(const FontSlots *slots, int id, void *handle, bool owned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_load</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gada066b8fbc1e5c66d9251183dddc6d33</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>let_go</name>
+      <anchorfile>font__slots_8c.html</anchorfile>
+      <anchor>aed7f12130741ae328292a038e272f9ff</anchor>
+      <arglist>(const FontSlots *slots, int id, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_swap</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8675d6c21e94528034c37ff0d7a3f667</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_unload_all</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46e2dae0d43b28c2a98befa1aa8cb299</anchor>
+      <arglist>(const FontSlots *slots, FontSlotUnload unload)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>font_slots.h</name>
+    <path>src/c/core/ui/</path>
+    <filename>font__slots_8h.html</filename>
+    <class kind="struct">FontSlots</class>
+    <member kind="typedef">
+      <type>void *(*)</type>
+      <name>FontSlotLoad</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c9edfdde131dda8d1f2cfcd8d5414c6</anchor>
+      <arglist>(uint32_t resource)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>FontSlotUnload</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga82fc7dd46c44db9ab4043cc891631c8f</anchor>
+      <arglist>(void *handle)</arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>FontSlotState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabd8aa4927cda7d0e7c6d41f16b59773c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_UNOWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca6ed032047afedb5d59c723e1eebe67d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_OWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_LOADED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_put</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae543e3b227da62b3b310c4c08d6190da</anchor>
+      <arglist>(const FontSlots *slots, int id, void *handle, bool owned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_load</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gada066b8fbc1e5c66d9251183dddc6d33</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_swap</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8675d6c21e94528034c37ff0d7a3f667</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_unload_all</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46e2dae0d43b28c2a98befa1aa8cb299</anchor>
+      <arglist>(const FontSlots *slots, FontSlotUnload unload)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>distance.c</name>
     <path>src/c/core/units/</path>
     <filename>distance_8c.html</filename>
@@ -2356,6 +2645,116 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga2f750b53c34d89db9ce79a2a252ebf02</anchor>
       <arglist>(int days_since_first, uint8_t count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>uv_band.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>uv__band_8c.html</filename>
+    <includes id="uv__band_8h" name="uv_band.h" local="yes" import="no" module="no" objc="no">weather/uv_band.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>UV_BAND_COUNT</name>
+      <anchorfile>uv__band_8c.html</anchorfile>
+      <anchor>ac3a06e125ff838b49a15a3bbc608a90d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>UvBand</type>
+      <name>uv_band</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad6f91a09bcfc296da7c32fe552d9999b</anchor>
+      <arglist>(int uv)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const char *</type>
+      <name>band_lookup</name>
+      <anchorfile>uv__band_8c.html</anchorfile>
+      <anchor>a76823038667399c54d0e8bbd4c508c87</anchor>
+      <arglist>(const char *const names[UV_BAND_COUNT], UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga807386d3788e5e0b340cc8dc8b361115</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_short_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga794ee07e02945524a05f36a787b60717</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>uv_band.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>uv__band_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>UvBand</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5ca55b9e69235c86280b6f126493cf8a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_NONE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aad74569e2ebfe131e5a25d81ba63a5910</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_LOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa135ff7d88afa2c549ca23f517af21dc2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_MODERATE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aaa221336e627a94321ccc46da7da5a739</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa31059fa1666a62bfd849ed84082bb9b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_VERY_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa0f2765a9b60dbfca65ca374e6adaa239</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_EXTREME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aada94409ee138b768a63162746bce87df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>UvBand</type>
+      <name>uv_band</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad6f91a09bcfc296da7c32fe552d9999b</anchor>
+      <arglist>(int uv)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga807386d3788e5e0b340cc8dc8b361115</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_short_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga794ee07e02945524a05f36a787b60717</anchor>
+      <arglist>(UvBand band)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -2562,24 +2961,175 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>wx_cond.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__cond_8c.html</filename>
+    <includes id="wx__cond_8h" name="wx_cond.h" local="yes" import="no" module="no" objc="no">weather/wx_cond.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>TOKEN_ROW</name>
+      <anchorfile>wx__cond_8c.html</anchorfile>
+      <anchor>a38e8519bb5d4dd403429252c1993223b</anchor>
+      <arglist>(name)</arglist>
+    </member>
+    <member kind="function">
+      <type>WxCond</type>
+      <name>wx_cond_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga05e157aa912339869db64fa7a0f4af98</anchor>
+      <arglist>(const char *token, bool *night)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const char</type>
+      <name>s_tokens</name>
+      <anchorfile>wx__cond_8c.html</anchorfile>
+      <anchor>a6bddb651b56fc10b448c2f9dcbf8f40d</anchor>
+      <arglist>[WX_COND_COUNT][WX_COND_TOKEN_LEN]</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_cond.g.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__cond_8g_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_EACH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga710ccc7ecaa09946b618d027925b0c2a</anchor>
+      <arglist>(X)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_TOKEN_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf4575f238d81aa1bf9b2c36693401cb0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_ENDING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab9a04b425ab74065b8c3c6b849594c40</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae204af4aba228d010c1299270dc0a7d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>WxCond</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9421de4c15783a83fa65e156b89c355f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLEAR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fab715353cef1077a4f81bf3022d7ff1b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_PCLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fac70ab838717568275ae531dd04313b0f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fad8df7a26e7019b059a665529b925a1a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FOGGY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa449e280c8168731280d7cd25cf8d2ee0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_DRZL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa497b0ea7e083043fa33361b05c2a933f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZDZ</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa2bd9ef49b035063b5d4c5d1f90c654b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_RAIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa37a4645d62ffb97e6e5f5911281319d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZRN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa7457a58717005e93765d76a649d80428</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa87f5b81c4f0572ae827f093f3e055b90</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SHWR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa4019d928980d25431663c7dba6ec1266</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNSH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa1d9077d97bc0b0e07fdbd1169aede0b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_STRM</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9313c6631d59f675046fc9da15aff092</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9d358fbc807306dd0ef5ad8a31fea111</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_UNKNOWN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fabc721de38ea50fb8b77d72c75fac52ec</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_cond.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__cond_8h.html</filename>
+    <includes id="wx__cond_8g_8h" name="wx_cond.g.h" local="yes" import="no" module="no" objc="no">weather/wx_cond.g.h</includes>
+    <member kind="function">
+      <type>WxCond</type>
+      <name>wx_cond_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga05e157aa912339869db64fa7a0f4af98</anchor>
+      <arglist>(const char *token, bool *night)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>wx_label.c</name>
     <path>src/c/core/weather/</path>
     <filename>wx__label_8c.html</filename>
     <includes id="wx__label_8h" name="wx_label.h" local="yes" import="no" module="no" objc="no">weather/wx_label.h</includes>
-    <member kind="define">
-      <type>#define</type>
-      <name>NIGHT_SUFFIX</name>
-      <anchorfile>wx__label_8c.html</anchorfile>
-      <anchor>a142623ea8af52221e0a4fe4308628e27</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="define">
-      <type>#define</type>
-      <name>NIGHT_SUFFIX_LEN</name>
-      <anchorfile>wx__label_8c.html</anchorfile>
-      <anchor>af1abbd67514bbd585d16b07b69a02eb7</anchor>
-      <arglist></arglist>
-    </member>
+    <includes id="wx__cond_8g_8h" name="wx_cond.g.h" local="yes" import="no" module="no" objc="no">weather/wx_cond.g.h</includes>
     <member kind="function">
       <type>void</type>
       <name>wx_label_short</name>
@@ -2660,6 +3210,67 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga11b6bfbd1863803faf31b81bdea9ef1f</anchor>
       <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_track.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>music__track_8c.html</filename>
+    <includes id="music__track_8h" name="music_track.h" local="yes" import="no" module="no" objc="no">wire/music_track.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacfcf657cc8e3fec58597ccf478164315</anchor>
+      <arglist>(MusicTrack *track, const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_has</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga742467746b72e45dfda1d5862875bf76</anchor>
+      <arglist>(const MusicTrack *track)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_track.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>music__track_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">MusicTrack</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacfcf657cc8e3fec58597ccf478164315</anchor>
+      <arglist>(MusicTrack *track, const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_has</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga742467746b72e45dfda1d5862875bf76</anchor>
+      <arglist>(const MusicTrack *track)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>phone_level.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>phone__level_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>PHONE_NO_LEVEL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga605dd03e235d86fb34bc9fae7d950149</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>phone_level_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga77ee9672eb59f523d0871ebda12fd0a3</anchor>
+      <arglist>(int32_t sent)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -2778,6 +3389,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>MUSIC_TEXT_LEN</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a0445da8de1c72fc7e895abc5ce5cfb00</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>WEATHER_FORECAST_COLS</name>
       <anchorfile>wire__caps_8g_8h.html</anchorfile>
       <anchor>a102929a83f0e748a60db5079d778b530</anchor>
@@ -2831,6 +3449,13 @@
       <anchor>ga700d7a3380b25b5472c1b580502b9b3e</anchor>
       <arglist>(const char *s, uint16_t length)</arglist>
     </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>wire_digits_or</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed7baf2dfca7dd9ada03434d0777b788</anchor>
+      <arglist>(const char *text, int32_t fallback)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>appmessage.c</name>
@@ -2842,6 +3467,7 @@
     <includes id="outbox__queue_8h" name="outbox_queue.h" local="yes" import="no" module="no" objc="no">io/outbox_queue.h</includes>
     <includes id="tuple__read_8h" name="tuple_read.h" local="yes" import="no" module="no" objc="no">io/tuple_read.h</includes>
     <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <includes id="phone__level_8h" name="phone_level.h" local="yes" import="no" module="no" objc="no">wire/phone_level.h</includes>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
     <class kind="struct">[struct].s_handlers</class>
@@ -2917,6 +3543,20 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_on_phone_battery</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
+      <arglist>(PhoneBatteryHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga757a519d948bf39e5414b62761c20593</anchor>
+      <arglist>(MusicHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_set_custom_colors_provider</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
@@ -2942,13 +3582,6 @@
       <anchorfile>appmessage_8c.html</anchorfile>
       <anchor>abb7f7e97f2dd93df0449b3f9bdc9c96a</anchor>
       <arglist>(void)</arglist>
-    </member>
-    <member kind="function" static="yes">
-      <type>static bool</type>
-      <name>write_settings</name>
-      <anchorfile>appmessage_8c.html</anchorfile>
-      <anchor>afd8b8f5d619f4689a2891358d52737cc</anchor>
-      <arglist>(DictionaryIterator *iter)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static bool</type>
@@ -2999,11 +3632,18 @@
       <anchor>gac18380f0c5fdc613452b569ef4d88c35</anchor>
       <arglist>(void)</arglist>
     </member>
-    <member kind="function" static="yes">
-      <type>static void</type>
-      <name>send_settings</name>
-      <anchorfile>appmessage_8c.html</anchorfile>
-      <anchor>a7537892c98316590da6b643bbbba37cc</anchor>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga65ada3fd289956eb8297c91927fad985</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
@@ -3154,6 +3794,20 @@
     </member>
     <member kind="typedef">
       <type>void(*)</type>
+      <name>PhoneBatteryHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab43d16e4f4337a52a7e9d4befa90b848</anchor>
+      <arglist>(int level)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MusicHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga91efba350e00e340bfd106ee9aff0238</anchor>
+      <arglist>(const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
       <name>CustomColorsHandler</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
@@ -3217,6 +3871,20 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>appmessage_on_phone_battery</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
+      <arglist>(PhoneBatteryHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga757a519d948bf39e5414b62761c20593</anchor>
+      <arglist>(MusicHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>appmessage_on_custom_colors</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
@@ -3264,11 +3932,26 @@
       <anchor>gac18380f0c5fdc613452b569ef4d88c35</anchor>
       <arglist>(void)</arglist>
     </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga65ada3fd289956eb8297c91927fad985</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>appmessage_features.h</name>
     <path>src/c/pebble/io/appmessage/</path>
     <filename>appmessage__features_8h.html</filename>
+    <includes id="plugin__source_8h" name="plugin_source.h" local="yes" import="no" module="no" objc="no">system/settings/plugin_source.h</includes>
     <member kind="define">
       <type>#define</type>
       <name>APPMESSAGE_HAS_WEATHER</name>
@@ -3288,8 +3971,23 @@
     <name>outbox_queue.h</name>
     <path>src/c/pebble/io/</path>
     <filename>outbox__queue_8h.html</filename>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
     <class kind="struct">OutboxJob</class>
     <class kind="struct">OutboxQueue</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_PHONE_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gadaf079e1656e97a39ec7774e22eb9703</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_MUSIC_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga96bed56e5b3532f2e5e466e3270c88c3</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>OUTBOX_QUEUE_MAX</name>
@@ -3338,6 +4036,18 @@
       <name>OUTBOX_CALENDAR</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_PHONE</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_MUSIC</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f</anchor>
       <arglist></arglist>
     </member>
     <member kind="function" static="yes">
@@ -3413,6 +4123,7 @@
     <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
     <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
     <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
     <class kind="struct">CalendarPersist</class>
     <class kind="struct">[struct].s_state</class>
     <member kind="define">
@@ -3995,8 +4706,8 @@
       <type>void</type>
       <name>health_hrv_set_rules</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>gabc78d1ab551531851c68847138ad5f16</anchor>
-      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+      <anchor>gaca781624ec8eabf5d4916cfd2a731d57</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4059,6 +4770,13 @@
       <name>health_hrv_walk_steps</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa0582954b31101fd5c9649ac6a4c3b19</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="variable" static="yes">
@@ -4143,6 +4861,13 @@
       <name>s_walk_steps</name>
       <anchorfile>health__hrv_8c.html</anchorfile>
       <anchor>adbf964a3b7eabb1f38369e58b2d2d14e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_settle_gaps</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>abcfb4d77f0fc22dd2a8325e8dc1313a5</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
@@ -4261,8 +4986,8 @@
       <type>void</type>
       <name>health_hrv_set_rules</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>gabc78d1ab551531851c68847138ad5f16</anchor>
-      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+      <anchor>gaca781624ec8eabf5d4916cfd2a731d57</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4339,6 +5064,13 @@
       <name>health_hrv_walk_steps</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa0582954b31101fd5c9649ac6a4c3b19</anchor>
       <arglist>(void)</arglist>
     </member>
   </compound>
@@ -4481,6 +5213,7 @@
     <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
     <includes id="health__hrv_8h" name="health_hrv.h" local="yes" import="no" module="no" objc="no">io/stores/health_hrv.h</includes>
     <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="hrv__run_8h" name="hrv_run.h" local="yes" import="no" module="no" objc="no">health/hrv_run.h</includes>
     <class kind="struct">[struct].s_state</class>
     <member kind="define">
       <type>#define</type>
@@ -4619,8 +5352,8 @@
       <type>void</type>
       <name>health_store_set_hrv_rules</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>gae4ed9e0080bd4d0d9147692a3ba2539f</anchor>
-      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+      <anchor>ga4e877491cc83ecdeacdb4cf786979cd6</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4628,6 +5361,13 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gadb98993f8a5d2ea3ac0b99effab8b393</anchor>
       <arglist>(HealthConfig cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_has_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga562ecf251588c9e48d0397eda3f69325</anchor>
+      <arglist>(void)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -4718,6 +5458,13 @@
       <name>health_store_hrv_walk_steps</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2d8d7e527bf6f1348312fe2079772ce6</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -4824,6 +5571,13 @@
     <class kind="struct">HealthSeed</class>
     <member kind="define">
       <type>#define</type>
+      <name>HEALTH_HR_SENSOR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0736746982e40115c0c7a4185694247d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>HEALTH_HR_HISTORY</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gaf58a7b0cae4bb710b1c4834cd90df0ba</anchor>
@@ -4896,8 +5650,8 @@
       <type>void</type>
       <name>health_store_set_hrv_rules</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>gae4ed9e0080bd4d0d9147692a3ba2539f</anchor>
-      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+      <anchor>ga4e877491cc83ecdeacdb4cf786979cd6</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
     </member>
     <member kind="function">
       <type>const uint8_t *</type>
@@ -4932,6 +5686,13 @@
       <name>health_store_hr</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gaebe919776f17167171641aeae6310796</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_has_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga562ecf251588c9e48d0397eda3f69325</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -5023,6 +5784,13 @@
       <name>health_store_hrv_walk_steps</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2d8d7e527bf6f1348312fe2079772ce6</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="variable">
@@ -5225,6 +5993,166 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>music_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>music__store_8c.html</filename>
+    <includes id="music__store_8h" name="music_store.h" local="yes" import="no" module="no" objc="no">io/stores/music_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="music__track_8h" name="music_track.h" local="yes" import="no" module="no" objc="no">wire/music_track.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b54671a652a83acb2d78e058340bf38</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad97ad3d36947dc02e52d750cbe25af50</anchor>
+      <arglist>(MusicConfig cfg, const MusicSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_title</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga08e7dbd7f6e711074c87b072b80a89fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_artist</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae7f812e0a0d418107f257c99733aacb2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_playing</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad2b234359cbfa7449cab2a1b25de11e6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_has_track</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>music__store_8h.html</filename>
+    <class kind="struct">MusicConfig</class>
+    <class kind="struct">MusicSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad97ad3d36947dc02e52d750cbe25af50</anchor>
+      <arglist>(MusicConfig cfg, const MusicSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b54671a652a83acb2d78e058340bf38</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_title</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga08e7dbd7f6e711074c87b072b80a89fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_artist</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae7f812e0a0d418107f257c99733aacb2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_playing</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad2b234359cbfa7449cab2a1b25de11e6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_has_track</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>phone_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>phone__store_8c.html</filename>
+    <includes id="phone__store_8h" name="phone_store.h" local="yes" import="no" module="no" objc="no">io/stores/phone_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9782ad57861fed3323134ef011ea1826</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadd2ca01419697d7f37ae4fe64ac8efb7</anchor>
+      <arglist>(PhoneConfig cfg, const PhoneSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>phone_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>phone_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>phone__store_8h.html</filename>
+    <includes id="phone__level_8h" name="phone_level.h" local="yes" import="no" module="no" objc="no">wire/phone_level.h</includes>
+    <class kind="struct">PhoneConfig</class>
+    <class kind="struct">PhoneSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadd2ca01419697d7f37ae4fe64ac8efb7</anchor>
+      <arglist>(PhoneConfig cfg, const PhoneSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9782ad57861fed3323134ef011ea1826</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>phone_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>stock_store.c</name>
     <path>src/c/pebble/io/stores/</path>
     <filename>stock__store_8c.html</filename>
@@ -5233,6 +6161,7 @@
     <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
     <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
     <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
     <class kind="struct">[struct].s_state</class>
     <member kind="define">
       <type>#define</type>
@@ -5470,6 +6399,7 @@
     <path>src/c/pebble/io/stores/</path>
     <filename>store__fetch_8c.html</filename>
     <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
     <member kind="function">
       <type>void</type>
       <name>store_fetch_fire</name>
@@ -5497,6 +6427,13 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gae24dbc83a69a2c585fc08c07f2d27091</anchor>
       <arglist>(StoreFetch *fetch, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_on_link</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga48da19573724dbed49fc5c04f7508bb0</anchor>
+      <arglist>(StoreFetch *fetch, int age_s)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5546,6 +6483,13 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gae24dbc83a69a2c585fc08c07f2d27091</anchor>
       <arglist>(StoreFetch *fetch, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_on_link</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga48da19573724dbed49fc5c04f7508bb0</anchor>
+      <arglist>(StoreFetch *fetch, int age_s)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5705,6 +6649,14 @@
     <path>src/c/pebble/io/stores/</path>
     <filename>store__poll_8c.html</filename>
     <includes id="store__poll_8h" name="store_poll.h" local="yes" import="no" module="no" objc="no">io/stores/store_poll.h</includes>
+    <includes id="store__live_8h" name="store_live.h" local="yes" import="no" module="no" objc="no">io/store_live.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9d6ab580b20298f18c6243bcff7dbfb1</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
     <member kind="function">
       <type>bool</type>
       <name>store_poll_set</name>
@@ -5718,6 +6670,13 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga576c21d8f643934d22918c3fb2cbeeef</anchor>
       <arglist>(StorePoll *poll, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9bd6e2af60e688844a31c8f9fb4cdae2</anchor>
+      <arglist>(const StorePoll *poll, int age_s)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -5748,6 +6707,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>store_poll_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9d6ab580b20298f18c6243bcff7dbfb1</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>store_poll_set</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga30b8b33c3204c012230afe0eb9e8d594</anchor>
@@ -5759,6 +6725,13 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga576c21d8f643934d22918c3fb2cbeeef</anchor>
       <arglist>(StorePoll *poll, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9bd6e2af60e688844a31c8f9fb4cdae2</anchor>
+      <arglist>(const StorePoll *poll, int age_s)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -5798,6 +6771,7 @@
     <path>src/c/pebble/io/stores/</path>
     <filename>system__store_8c.html</filename>
     <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="link__change_8h" name="link_change.h" local="yes" import="no" module="no" objc="no">io/link_change.h</includes>
     <class kind="struct">[struct].s_state</class>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -5892,13 +6866,6 @@
     </member>
     <member kind="variable" static="yes">
       <type>static bool</type>
-      <name>s_bt_initialized</name>
-      <anchorfile>system__store_8c.html</anchorfile>
-      <anchor>a79e1d87e0fc4fcc34ecaab711a8c9b20</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static bool</type>
       <name>s_live</name>
       <anchorfile>system__store_8c.html</anchorfile>
       <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
@@ -5939,6 +6906,55 @@
     <filename>system__store_8h.html</filename>
     <class kind="struct">SystemConfig</class>
     <class kind="struct">SystemSeed</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_PHONE</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81426744fd8e4b25e4b1e746e01a86cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_MUSIC</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gafb83e889fc10f054eb75c665b53d6de1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gace98b5387157ba1fff930f53eb50f64a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga672425a165fced37d075b3139367469f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5bc539bc0d11cc025e1a2af0b1c950b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_COUNT</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b630fdde16d8d25ef3e24c50021837d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_SLOTS</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga6289cea1d412d1482a2e5f5dff987a58</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>void(*)</type>
       <name>BtVibePolicy</name>
@@ -6095,24 +7111,17 @@
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_minute</name>
+      <type>static TimeConfig</type>
+      <name>s_cfg</name>
       <anchorfile>time__store_8c.html</anchorfile>
-      <anchor>a8d97f148044f6486b6f7880444989530</anchor>
+      <anchor>a5ed38d916996be3c73c6622ffc54a846</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static bool</type>
-      <name>s_beats</name>
+      <name>s_started_live</name>
       <anchorfile>time__store_8c.html</anchorfile>
-      <anchor>a3d9299acd4b3e475b07567a74035c95c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_hourly</name>
-      <anchorfile>time__store_8c.html</anchorfile>
-      <anchor>abd6c3228e1087f58110eea09b52dbbe4</anchor>
+      <anchor>a6e2284b49afe24146fe3b58cce5128c9</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -6120,7 +7129,7 @@
     <name>time_store.h</name>
     <path>src/c/pebble/io/stores/</path>
     <filename>time__store_8h.html</filename>
-    <class kind="struct">TimeConfig</class>
+    <includes id="time__config_8h" name="time_config.h" local="yes" import="no" module="no" objc="no">clock/time_config.h</includes>
     <member kind="function">
       <type>void</type>
       <name>time_store_init</name>
@@ -6159,6 +7168,7 @@
     <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
     <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
     <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
     <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
     <includes id="forecast__age_8h" name="forecast_age.h" local="yes" import="no" module="no" objc="no">weather/forecast_age.h</includes>
     <includes id="weather__reading_8h" name="weather_reading.h" local="yes" import="no" module="no" objc="no">weather/weather_reading.h</includes>
@@ -6244,6 +7254,13 @@
       <name>cadence_poll</name>
       <anchorfile>weather__store_8c.html</anchorfile>
       <anchor>ac219f20bf18466869ec6ecc7820e97a6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_link</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a5446f3b1dc816160ec26d98e2b69785f</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -6660,6 +7677,13 @@
       <anchor>ga86dd1adef099205e5eb8c1d52b03ce96</anchor>
       <arglist>(const Tuple *tuple, const char *fallback)</arglist>
     </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_number_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3d6f1eecd7cf908b32fe3f73a2b428a7</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>tuple_read.h</name>
@@ -6679,11 +7703,103 @@
       <anchor>ga86dd1adef099205e5eb8c1d52b03ce96</anchor>
       <arglist>(const Tuple *tuple, const char *fallback)</arglist>
     </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_number_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3d6f1eecd7cf908b32fe3f73a2b428a7</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>plugin_source.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>plugin__source_8h.html</filename>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <class kind="struct">PluginSourceSettings</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_WEATHER</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7519f9e335dac1caa4af7e098ba595df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_CALENDAR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54d7afa30c1599cabdaefe00ebe5e667</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_ANY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga256177eefe8ca85558ab1950faeb5d0b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga990cbb3116efef955c98d6f789302b35</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab2dda1ab7a5b7a83f3f2923e285d2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_VERSION</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga2443bbd036bbbdda30abfa06a473bdd0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIRST_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaf0cade985b8b365b66441618bc5085a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadefc10b23da283a35b2957a7e6e6082c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaed0d9a6d4a3165af7fd1c790795ca7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIELDS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga172fb13323b731d043aefa0d66a751ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>plugin_source_write_needed</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54bef5368ed91eec6a9cfef4521c6e02</anchor>
+      <arglist>(const PluginSourceSettings *now, const PluginSourceSettings *on_flash, bool on_flash_known)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>setting_values.h</name>
     <path>src/c/pebble/system/settings/</path>
     <filename>setting__values_8h.html</filename>
+    <includes id="wind_8h" name="wind.h" local="yes" import="no" module="no" objc="no">units/wind.h</includes>
     <member kind="enumeration">
       <type></type>
       <name>TimeFormat</name>
@@ -6857,8 +7973,24 @@
     <path>src/c/pebble/system/settings/</path>
     <filename>settings_8c.html</filename>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="plugin__source_8h" name="plugin_source.h" local="yes" import="no" module="no" objc="no">system/settings/plugin_source.h</includes>
+    <includes id="settings__chain_8h" name="settings_chain.h" local="yes" import="no" module="no" objc="no">system/settings/settings_chain.h</includes>
     <includes id="tuple__read_8h" name="tuple_read.h" local="yes" import="no" module="no" objc="no">io/tuple_read.h</includes>
     <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SCHEMA_TAIL</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a94cecdf0ca24c34090b67ae74219410d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>EACH_SCHEMA</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>af5a0ec4c8af6087521e6c57d66a398ab</anchor>
+      <arglist>(schema)</arglist>
+    </member>
     <member kind="function" static="yes">
       <type>static void *</type>
       <name>field_ptr</name>
@@ -7072,10 +8204,31 @@
     <class kind="struct">SettingsInbound</class>
     <member kind="define">
       <type>#define</type>
+      <name>SETTINGS_PLUGIN_SOURCE_KEY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga23404e19f790c5308f720b0237438e4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>SETTINGS_BLOB_SIZE</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga9f418302396c6aa0b9d2bc9a2e75a9b0</anchor>
       <arglist>(blob)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3af4893cdd074306b3fcc30df1cb8a00</anchor>
+      <arglist>(settings, first)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_FIRST_SIZE_</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8db432ced131d3416a56b8de4dd53bc2</anchor>
+      <arglist>(first, settings)</arglist>
     </member>
     <member kind="typedef">
       <type>struct SettingsSchema</type>
@@ -7167,6 +8320,12 @@
       <name>SETTING_HEADER_FONT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
@@ -7289,6 +8448,28 @@
     <path>src/c/pebble/system/settings/</path>
     <filename>settings__catalog_8h.html</filename>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gae38319f1a2067a1c9f6b2652bb41b226</anchor>
+      <arglist>(key)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT_CHECKED</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga60da601435a75b4d496364449dd1060a</anchor>
+      <arglist>(key, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_DEFAULT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gacefbc55594446448ad80ff74406626a7</anchor>
+      <arglist>(key)</arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_TEMPERATURE_UNIT</name>
@@ -7300,43 +8481,43 @@
       <type>#define</type>
       <name>KNOWN_DATE_FORMAT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga25c13546f27ddad133d5d8cbe348d84a</anchor>
-      <arglist>(off, dflt)</arglist>
+      <anchor>gaf2a01fb04cac500bbbd57bdd6666a897</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_THEME</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga0d7b14fdb5d548d8571799ed3b9f2325</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gad2d575c6e87c1859cd11cd814560f708</anchor>
+      <arglist>(off, table_count)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_HEADER_FONT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga4f0896ebba24b4f1ca8b02f5229986af</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga779ccdfaac16f2eeba42f85f6ce894b9</anchor>
+      <arglist>(off, table_count)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_STEPS_MODE</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga019f574fbd717df373aa4f6a2fa623f7</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga53d6cc56389abbc368788db97d0d747e</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_DISTANCE_UNIT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>gace7412b22cb2958264322350c07c65cd</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gaba0654c3c38a9186e4ecc9732c481e4a</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_TIME_FORMAT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga51c9800159631adbf77eafe13eeb3d34</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gab20b6970a9c594d7d09fa91fb2f5d24b</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -7356,29 +8537,77 @@
       <type>#define</type>
       <name>KNOWN_BLUETOOTH_VIBE_CONNECT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga3b7c73968d189a076bb660a5e654471b</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gae7d8e8aee5d1d672fbb7931627cf170c</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_BLUETOOTH_VIBE_DISCONNECT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga1f3cdcddc8652b8560d494e04b4f4ae7</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga8603b3236f69557a9e021326e5396ce7</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_HOURLY_VIBE</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga841203aee583d7a932bc02a1f4517847</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gadc1a8ba6bbe41444b7ba1906e5a7f536</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_BATTERY_DISPLAY</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga8060d99e4e1951c1e98e0e3c49e77db3</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga826e14901547c30cb46f62ebc9582a71</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga270513f4a67f8533c0b8d28e53cb6e52</anchor>
+      <arglist>(off)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>settings_chain.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>settings__chain_8h.html</filename>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_CHAIN_EACH</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac06564560a442b796c3ae56c1be2f4a9</anchor>
+      <arglist>(schema, head, tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_first</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab3b5e81aea94a408da290199d66c0800</anchor>
+      <arglist>(const SettingsSchema *head, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_next</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac722dd54f21bc2a4d1a44dd7b95f7571</anchor>
+      <arglist>(const SettingsSchema *schema, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_field</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga501156d20707f95fbf16d066f4120fd4</anchor>
+      <arglist>(const SettingsSchema *head, const uint32_t *message_key)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_key</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9b68a17d307380fb0db49597095cb9fa</anchor>
+      <arglist>(const SettingsSchema *head, uint32_t key)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -7781,6 +9010,21 @@
     <path>src/c/pebble/ui/</path>
     <filename>fonts_8c.html</filename>
     <includes id="fonts_8h" name="fonts.h" local="yes" import="no" module="no" objc="no">ui/fonts.h</includes>
+    <includes id="font__slots_8h" name="font_slots.h" local="yes" import="no" module="no" objc="no">ui/font_slots.h</includes>
+    <member kind="function" static="yes">
+      <type>static void *</type>
+      <name>load_font</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a3a29718b94e247c9ed0deb5016329b7b</anchor>
+      <arglist>(uint32_t resource)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>unload_font</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a82bf9753020d031688b7e8bcd073fb8f</anchor>
+      <arglist>(void *handle)</arglist>
+    </member>
     <member kind="function">
       <type>void</type>
       <name>fonts_register</name>
@@ -7809,19 +9053,47 @@
       <anchor>gab7fb11d15d23d2ef37c4baa9db129ee1</anchor>
       <arglist>(void)</arglist>
     </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_load</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5dd98d76023121d74003ec12118e65b2</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_swap</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8ad877e9d1ef455a6f28358671f32602</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
     <member kind="variable" static="yes">
-      <type>static GFont</type>
+      <type>static void *</type>
       <name>s_fonts</name>
       <anchorfile>fonts_8c.html</anchorfile>
-      <anchor>ae4b5b3aaed5630b21c309b7ba50e6298</anchor>
+      <anchor>a96e88a98eb7541bf26bd8e95f5fe33a8</anchor>
       <arglist>[FONT_SLOTS_MAX]</arglist>
     </member>
     <member kind="variable" static="yes">
-      <type>static bool</type>
-      <name>s_owned</name>
+      <type>static uint8_t</type>
+      <name>s_states</name>
       <anchorfile>fonts_8c.html</anchorfile>
-      <anchor>a3d76776bb273826e38fd579317266275</anchor>
+      <anchor>a2432dfac9ba36284dd7b0fc32b077d01</anchor>
       <arglist>[FONT_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_resources</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a47aabf2b33ad683b29143f2ff7d8b72e</anchor>
+      <arglist>[FONT_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const FontSlots</type>
+      <name>s_slots</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a2f1b45eaa59b3a595fb8fc1eae4db075</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -7848,6 +9120,20 @@
       <anchorfile>group__lib__ui.html</anchorfile>
       <anchor>gad49c536818ff15a0e7535e258fbdd59b</anchor>
       <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_load</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5dd98d76023121d74003ec12118e65b2</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_swap</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8ad877e9d1ef455a6f28358671f32602</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -8048,6 +9334,7 @@
     <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
     <includes id="weather__store_8h" name="weather_store.h" local="yes" import="no" module="no" objc="no">io/stores/weather_store.h</includes>
     <includes id="location__store_8h" name="location_store.h" local="yes" import="no" module="no" objc="no">io/stores/location_store.h</includes>
+    <includes id="phone__store_8h" name="phone_store.h" local="yes" import="no" module="no" objc="no">io/stores/phone_store.h</includes>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
     <includes id="units_8h" name="units.h" local="yes" import="no" module="no" objc="no">system/units/units.h</includes>
@@ -8128,6 +9415,13 @@
       <name>readout_lon</name>
       <anchorfile>group__lib__ui.html</anchorfile>
       <anchor>gacea2f8a4dcf1bff5344807e02a4842aa</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_phone_battery</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga89ae84ee592aa9854c2e5047545b145d</anchor>
       <arglist>(char *out, size_t n)</arglist>
     </member>
   </compound>
@@ -8212,6 +9506,13 @@
       <anchor>gacea2f8a4dcf1bff5344807e02a4842aa</anchor>
       <arglist>(char *out, size_t n)</arglist>
     </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_phone_battery</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga89ae84ee592aa9854c2e5047545b145d</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>icons.c</name>
@@ -8293,6 +9594,39 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>dev_hooks.h</name>
+    <path>src/plugins/dev/c/dev/</path>
+    <filename>dev__hooks_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gadf53283b086362bedf9d7b445e457ea4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_start</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga51d93254270b5de85c1a52d484bc4f74</anchor>
+      <arglist>(void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_stop</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gabefedd1cbff9a29f82f78f8bf92352f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_force_time</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga0fc1db4f8d84b98e40c608c63b2395af</anchor>
+      <arglist>(struct tm *when)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>dev_walk.c</name>
     <path>src/plugins/dev/c/dev/</path>
     <filename>dev__walk_8c.html</filename>
@@ -8302,6 +9636,10 @@
     <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
     <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
     <includes id="location__store_8h" name="location_store.h" local="yes" import="no" module="no" objc="no">io/stores/location_store.h</includes>
+    <includes id="stock__store_8h" name="stock_store.h" local="yes" import="no" module="no" objc="no">io/stores/stock_store.h</includes>
+    <includes id="calendar__store_8h" name="calendar_store.h" local="yes" import="no" module="no" objc="no">io/stores/calendar_store.h</includes>
+    <includes id="phone__store_8h" name="phone_store.h" local="yes" import="no" module="no" objc="no">io/stores/phone_store.h</includes>
+    <includes id="music__store_8h" name="music_store.h" local="yes" import="no" module="no" objc="no">io/stores/music_store.h</includes>
     <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
     <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
     <includes id="engine_8h" name="engine.h" local="yes" import="no" module="no" objc="no">ui/engine/engine.h</includes>
@@ -8642,10 +9980,10 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>bool</type>
-      <name>bluetooth_connected</name>
+      <type>LinkState</type>
+      <name>link</name>
       <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
-      <anchor>a94f35b808bfbb716cfd01ef016aae882</anchor>
+      <anchor>a21ac9c99ae8ee34bcc3bc028d7e10495</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -8959,6 +10297,31 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>FontSlots</name>
+    <filename>structFontSlots.html</filename>
+    <member kind="variable">
+      <type>void **</type>
+      <name>handles</name>
+      <anchorfile>structFontSlots.html</anchorfile>
+      <anchor>afac089c41cbf3630803b0196b642c052</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t *</type>
+      <name>states</name>
+      <anchorfile>structFontSlots.html</anchorfile>
+      <anchor>a108607742ea5763b94a195e067184c5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>count</name>
+      <anchorfile>structFontSlots.html</anchorfile>
+      <anchor>ac8b4c11c8402208fa0c24b6f25e9c29a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>HealthConfig</name>
     <filename>structHealthConfig.html</filename>
     <member kind="variable">
@@ -9039,6 +10402,13 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a0731ff79f359c3332e041cdad2a567c9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
       <type>HrvCount</type>
       <name>hrv_count</name>
       <anchorfile>structHealthConfig.html</anchorfile>
@@ -9103,6 +10473,13 @@
       <name>walk_steps</name>
       <anchorfile>structHealthHrvConfig.html</anchorfile>
       <anchor>a6ee174215aaaf176978fe25a5af47d03</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>settle_gaps</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>aa95836d24b5b59e300ce09786aa14aa4</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -9677,6 +11054,24 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>LinkState</name>
+    <filename>structLinkState.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>connected</name>
+      <anchorfile>structLinkState.html</anchorfile>
+      <anchor>a1e23f35e88c771bf6c15b7af729f4997</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>seeded</name>
+      <anchorfile>structLinkState.html</anchorfile>
+      <anchor>a1897bf6317866c03d247834e9826dbee</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>LocationConfig</name>
     <filename>structLocationConfig.html</filename>
     <member kind="variable">
@@ -9709,6 +11104,67 @@
       <name>lon</name>
       <anchorfile>structLocationSeed.html</anchorfile>
       <anchor>a525f72325d8cad6c0317e6b0d4ce469f</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicConfig</name>
+    <filename>structMusicConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structMusicConfig.html</anchorfile>
+      <anchor>a636a310038ea4387959c0dd3be233cc8</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicSeed</name>
+    <filename>structMusicSeed.html</filename>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>title</name>
+      <anchorfile>structMusicSeed.html</anchorfile>
+      <anchor>a3af3b5747a6be4137b9539836a1ee61a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>artist</name>
+      <anchorfile>structMusicSeed.html</anchorfile>
+      <anchor>a4723f047d981cabde8f045172453d66b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>playing</name>
+      <anchorfile>structMusicSeed.html</anchorfile>
+      <anchor>a1ea9e553344167fdd6541de050a2400c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicTrack</name>
+    <filename>structMusicTrack.html</filename>
+    <member kind="variable">
+      <type>char</type>
+      <name>title</name>
+      <anchorfile>structMusicTrack.html</anchorfile>
+      <anchor>a583668c50deecc86873ee1e656d27055</anchor>
+      <arglist>[MUSIC_TEXT_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>artist</name>
+      <anchorfile>structMusicTrack.html</anchorfile>
+      <anchor>a29074906d638e30c2c9d76034e9d2fa4</anchor>
+      <arglist>[MUSIC_TEXT_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>playing</name>
+      <anchorfile>structMusicTrack.html</anchorfile>
+      <anchor>aac9bdcbbd4c48e417f15e08049eb211d</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -9767,6 +11223,53 @@
       <anchorfile>structOutboxQueue.html</anchorfile>
       <anchor>a862c21cc48afbee03d844a6d56a404f0</anchor>
       <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>PhoneConfig</name>
+    <filename>structPhoneConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structPhoneConfig.html</anchorfile>
+      <anchor>adb4652349b381a696e385de7d05928c9</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>PhoneSeed</name>
+    <filename>structPhoneSeed.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>battery</name>
+      <anchorfile>structPhoneSeed.html</anchorfile>
+      <anchor>a89def13debe62b82f2e4843a1b3cf63e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>PluginSourceSettings</name>
+    <filename>structPluginSourceSettings.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>version</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a409a10e68ff84095c7161fca52377e1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>weather</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a2b47841bbff1c8c327755fcc07dc4fd4</anchor>
+      <arglist>[PLUGIN_SOURCE_WEATHER_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>calendar</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a75f039697f416740c7eac0c5653862da</anchor>
+      <arglist>[PLUGIN_SOURCE_CALENDAR_LEN]</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -9887,9 +11390,9 @@
     </member>
     <member kind="variable">
       <type>uint16_t</type>
-      <name>min_versioned_size</name>
+      <name>first_size</name>
       <anchorfile>structSettingsSchema.html</anchorfile>
-      <anchor>a423877692a5620c67cc25c955455a635</anchor>
+      <anchor>a631fe9764dad73ab2e4042366932ff3e</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -10075,6 +11578,13 @@
       <name>live</name>
       <anchorfile>structStorePoll.html</anchorfile>
       <anchor>ad96becb58ae977574a0b761caa011cb8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>pinned</name>
+      <anchorfile>structStorePoll.html</anchorfile>
+      <anchor>aba76cc6762ace5d4c5ceddfa7b919de1</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -10911,6 +12421,8 @@
     <file path="src/c/core/clock/">solar.h</file>
     <file path="src/c/core/clock/">tide.c</file>
     <file path="src/c/core/clock/">tide.h</file>
+    <file path="src/c/core/clock/">time_config.c</file>
+    <file path="src/c/core/clock/">time_config.h</file>
     <file path="src/c/core/clock/">timeband.c</file>
     <file path="src/c/core/clock/">timeband.h</file>
     <file path="src/c/core/clock/">weekday.c</file>
@@ -10931,6 +12443,8 @@
     <file path="src/c/core/io/">bytes_le.h</file>
     <file path="src/c/core/io/">callback_list.c</file>
     <file path="src/c/core/io/">callback_list.h</file>
+    <file path="src/c/core/io/">link_change.h</file>
+    <file path="src/c/core/io/">store_live.h</file>
     <file path="src/c/core/layout/">layout_string.c</file>
     <file path="src/c/core/layout/">layout_string.h</file>
     <file path="src/c/core/math/">pct.c</file>
@@ -10947,22 +12461,32 @@
     <file path="src/c/core/text/">number_format.h</file>
     <file path="src/c/core/text/">text_case.c</file>
     <file path="src/c/core/text/">text_case.h</file>
+    <file path="src/c/core/ui/">font_slots.c</file>
+    <file path="src/c/core/ui/">font_slots.h</file>
     <file path="src/c/core/units/">distance.c</file>
     <file path="src/c/core/units/">distance.h</file>
     <file path="src/c/core/units/">wind.c</file>
     <file path="src/c/core/units/">wind.h</file>
     <file path="src/c/core/weather/">forecast_age.c</file>
     <file path="src/c/core/weather/">forecast_age.h</file>
+    <file path="src/c/core/weather/">uv_band.c</file>
+    <file path="src/c/core/weather/">uv_band.h</file>
     <file path="src/c/core/weather/">weather_reading.c</file>
     <file path="src/c/core/weather/">weather_reading.h</file>
     <file path="src/c/core/weather/">wind_dir.c</file>
     <file path="src/c/core/weather/">wind_dir.h</file>
+    <file path="src/c/core/weather/">wx_cond.c</file>
+    <file path="src/c/core/weather/">wx_cond.g.h</file>
+    <file path="src/c/core/weather/">wx_cond.h</file>
     <file path="src/c/core/weather/">wx_label.c</file>
     <file path="src/c/core/weather/">wx_label.h</file>
     <file path="src/c/core/wire/">calendar_wire.c</file>
     <file path="src/c/core/wire/">calendar_wire.h</file>
     <file path="src/c/core/wire/">coords.c</file>
     <file path="src/c/core/wire/">coords.h</file>
+    <file path="src/c/core/wire/">music_track.c</file>
+    <file path="src/c/core/wire/">music_track.h</file>
+    <file path="src/c/core/wire/">phone_level.h</file>
     <file path="src/c/core/wire/">stock_wire.c</file>
     <file path="src/c/core/wire/">stock_wire.h</file>
     <file path="src/c/core/wire/">weather_wire.c</file>
@@ -10970,6 +12494,7 @@
     <file path="src/c/core/wire/">wire_caps.g.h</file>
     <file path="src/c/core/wire/">wire_read.h</file>
     <class kind="struct">HourLatch</class>
+    <class kind="struct">TimeConfig</class>
     <class kind="struct">TimeBand</class>
     <class kind="struct">TimeBandSpan</class>
     <class kind="struct">HrHour</class>
@@ -10979,11 +12504,14 @@
     <class kind="struct">HrvMotion</class>
     <class kind="struct">HrvRun</class>
     <class kind="struct">CallbackList</class>
+    <class kind="struct">LinkState</class>
+    <class kind="struct">FontSlots</class>
     <class kind="struct">WeatherMessage</class>
     <class kind="struct">WeatherState</class>
     <class kind="struct">WeatherClock</class>
     <class kind="struct">CalendarEvent</class>
     <class kind="struct">CalendarStrip</class>
+    <class kind="struct">MusicTrack</class>
     <class kind="struct">StockSlot</class>
     <class kind="struct">StockStrip</class>
     <class kind="struct">WeatherHourCol</class>
@@ -11195,6 +12723,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>HRV_SETTLE_GAPS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacd7ae320dd9f133f840d906727165648</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>STEP_HOURS_PER_DAY</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gab582a8ca15586973977cd7f48de42fa2</anchor>
@@ -11235,12 +12770,61 @@
       <anchor>ga49eb8281314392449d74706359777576</anchor>
       <arglist></arglist>
     </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_EACH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga710ccc7ecaa09946b618d027925b0c2a</anchor>
+      <arglist>(X)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_TOKEN_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf4575f238d81aa1bf9b2c36693401cb0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_ENDING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab9a04b425ab74065b8c3c6b849594c40</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae204af4aba228d010c1299270dc0a7d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PHONE_NO_LEVEL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga605dd03e235d86fb34bc9fae7d950149</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="typedef">
       <type>void(*)</type>
       <name>CallbackListFn</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gace9c32cbf32397ccc0a34a750ce3ea68</anchor>
       <arglist>(void)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void *(*)</type>
+      <name>FontSlotLoad</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c9edfdde131dda8d1f2cfcd8d5414c6</anchor>
+      <arglist>(uint32_t resource)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>FontSlotUnload</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga82fc7dd46c44db9ab4043cc891631c8f</anchor>
+      <arglist>(void *handle)</arglist>
     </member>
     <member kind="enumeration">
       <type></type>
@@ -11319,6 +12903,31 @@
     </member>
     <member kind="enumeration">
       <type></type>
+      <name>LinkChange</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74178abed5fae945e1364010e009448</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_SAME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a432b1d29bb1f587e2c7bbc80f36164aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_DROPPED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a8d4fd3f7d66697a5ec2983845f66e644</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_RECONNECTED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a26d88e62a7d3a8a7278e8825d95f56b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
       <name>Role</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gacdd79a1a4f81dd6ee5cddcb21149b951</anchor>
@@ -11340,6 +12949,31 @@
       <name>ROLE_QUIET</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>FontSlotState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabd8aa4927cda7d0e7c6d41f16b59773c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_UNOWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca6ed032047afedb5d59c723e1eebe67d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_OWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_LOADED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -11377,6 +13011,140 @@
       <name>WIND_UNIT_COUNT</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>UvBand</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5ca55b9e69235c86280b6f126493cf8a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_NONE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aad74569e2ebfe131e5a25d81ba63a5910</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_LOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa135ff7d88afa2c549ca23f517af21dc2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_MODERATE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aaa221336e627a94321ccc46da7da5a739</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa31059fa1666a62bfd849ed84082bb9b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_VERY_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa0f2765a9b60dbfca65ca374e6adaa239</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_EXTREME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aada94409ee138b768a63162746bce87df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>WxCond</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9421de4c15783a83fa65e156b89c355f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLEAR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fab715353cef1077a4f81bf3022d7ff1b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_PCLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fac70ab838717568275ae531dd04313b0f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fad8df7a26e7019b059a665529b925a1a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FOGGY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa449e280c8168731280d7cd25cf8d2ee0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_DRZL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa497b0ea7e083043fa33361b05c2a933f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZDZ</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa2bd9ef49b035063b5d4c5d1f90c654b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_RAIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa37a4645d62ffb97e6e5f5911281319d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZRN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa7457a58717005e93765d76a649d80428</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa87f5b81c4f0572ae827f093f3e055b90</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SHWR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa4019d928980d25431663c7dba6ec1266</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNSH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa1d9077d97bc0b0e07fdbd1169aede0b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_STRM</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9313c6631d59f675046fc9da15aff092</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9d358fbc807306dd0ef5ad8a31fea111</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_UNKNOWN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fabc721de38ea50fb8b77d72c75fac52ec</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -11595,6 +13363,27 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga910d5986818e759ad59e4e50cefdbe8f</anchor>
       <arglist>(int32_t minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_same_tickers</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafdebf69530ed918eaeb2fb2e00b7e154</anchor>
+      <arglist>(TimeConfig a, TimeConfig b)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeConfig</type>
+      <name>time_config_reconfigured</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga97a3a19c7df73172fc1ef49f4784a479</anchor>
+      <arglist>(TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga23e87de26014fa5fd1b5644213852011</anchor>
+      <arglist>(TimeConfig *running, TimeConfig cfg, bool pinned)</arglist>
     </member>
     <member kind="function">
       <type>TimeBand</type>
@@ -11877,6 +13666,13 @@
       <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
     </member>
     <member kind="function">
+      <type>uint8_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3ec53ad7f3196535760825f02dc2611f</anchor>
+      <arglist>(uint16_t asked)</arglist>
+    </member>
+    <member kind="function">
       <type>int</type>
       <name>minute_window_first_slot</name>
       <anchorfile>group__lib__core.html</anchorfile>
@@ -11913,10 +13709,31 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>callback_list_remove</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa1d38a3ffb6ab6b59cb850fbef1bbc60</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>callback_list_fire</name>
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
       <arglist>(const CallbackList *list)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static LinkChange</type>
+      <name>link_change_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac9b21726fd911bc2a4498ef0472e0b02</anchor>
+      <arglist>(LinkState *state, bool connected)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_live_after_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga827da9e4ea26a5bb3d4d3847921d2271</anchor>
+      <arglist>(bool live, bool pinned)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
@@ -12066,6 +13883,34 @@
       <arglist>(char *s)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>font_slots_put</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae543e3b227da62b3b310c4c08d6190da</anchor>
+      <arglist>(const FontSlots *slots, int id, void *handle, bool owned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_load</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gada066b8fbc1e5c66d9251183dddc6d33</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_swap</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8675d6c21e94528034c37ff0d7a3f667</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_unload_all</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46e2dae0d43b28c2a98befa1aa8cb299</anchor>
+      <arglist>(const FontSlots *slots, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
       <type>const char *</type>
       <name>distance_unit</name>
       <anchorfile>group__lib__core.html</anchorfile>
@@ -12115,6 +13960,27 @@
       <arglist>(int days_since_first, uint8_t count)</arglist>
     </member>
     <member kind="function">
+      <type>UvBand</type>
+      <name>uv_band</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad6f91a09bcfc296da7c32fe552d9999b</anchor>
+      <arglist>(int uv)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga807386d3788e5e0b340cc8dc8b361115</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_short_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga794ee07e02945524a05f36a787b60717</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
       <type>bool</type>
       <name>weather_reading_apply</name>
       <anchorfile>group__lib__core.html</anchorfile>
@@ -12143,6 +14009,13 @@
       <arglist>(int bearing)</arglist>
     </member>
     <member kind="function">
+      <type>WxCond</type>
+      <name>wx_cond_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga05e157aa912339869db64fa7a0f4af98</anchor>
+      <arglist>(const char *token, bool *night)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>wx_label_short</name>
       <anchorfile>group__lib__core.html</anchorfile>
@@ -12162,6 +14035,27 @@
       <anchorfile>group__lib__core.html</anchorfile>
       <anchor>ga11b6bfbd1863803faf31b81bdea9ef1f</anchor>
       <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacfcf657cc8e3fec58597ccf478164315</anchor>
+      <arglist>(MusicTrack *track, const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_has</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga742467746b72e45dfda1d5862875bf76</anchor>
+      <arglist>(const MusicTrack *track)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>phone_level_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga77ee9672eb59f523d0871ebda12fd0a3</anchor>
+      <arglist>(int32_t sent)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -12198,6 +14092,13 @@
       <anchor>ga700d7a3380b25b5472c1b580502b9b3e</anchor>
       <arglist>(const char *s, uint16_t length)</arglist>
     </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>wire_digits_or</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed7baf2dfca7dd9ada03434d0777b788</anchor>
+      <arglist>(const char *text, int32_t fallback)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>lib_io</name>
@@ -12217,6 +14118,20 @@
       <name>APPMESSAGE_CUSTOM_COLORS_MAX</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga8bfcc8d396856901aeea684974fdb15c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_PHONE_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gadaf079e1656e97a39ec7774e22eb9703</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_MUSIC_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga96bed56e5b3532f2e5e466e3270c88c3</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -12267,6 +14182,20 @@
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gaea56a19672a4978e838e9d0a8753405b</anchor>
       <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>PhoneBatteryHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab43d16e4f4337a52a7e9d4befa90b848</anchor>
+      <arglist>(int level)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MusicHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga91efba350e00e340bfd106ee9aff0238</anchor>
+      <arglist>(const char *title, const char *artist, bool playing)</arglist>
     </member>
     <member kind="typedef">
       <type>void(*)</type>
@@ -12332,6 +14261,18 @@
       <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345</anchor>
       <arglist></arglist>
     </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_PHONE</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_MUSIC</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type>void</type>
       <name>appmessage_on_weather</name>
@@ -12373,6 +14314,20 @@
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>ga1ab2899a032be1fe4ab307e70f8bf3cd</anchor>
       <arglist>(CalendarStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_phone_battery</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
+      <arglist>(PhoneBatteryHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga757a519d948bf39e5414b62761c20593</anchor>
+      <arglist>(MusicHandler cb)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -12421,6 +14376,20 @@
       <name>appmessage_request_calendar</name>
       <anchorfile>group__lib__io.html</anchorfile>
       <anchor>gac18380f0c5fdc613452b569ef4d88c35</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga65ada3fd289956eb8297c91927fad985</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function" static="yes">
@@ -12500,6 +14469,13 @@
       <anchor>ga86dd1adef099205e5eb8c1d52b03ce96</anchor>
       <arglist>(const Tuple *tuple, const char *fallback)</arglist>
     </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_number_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3d6f1eecd7cf908b32fe3f73a2b428a7</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
   </compound>
   <compound kind="group">
     <name>lib_stores</name>
@@ -12517,6 +14493,10 @@
     <file path="src/c/pebble/io/stores/">health_store_parts.h</file>
     <file path="src/c/pebble/io/stores/">location_store.c</file>
     <file path="src/c/pebble/io/stores/">location_store.h</file>
+    <file path="src/c/pebble/io/stores/">music_store.c</file>
+    <file path="src/c/pebble/io/stores/">music_store.h</file>
+    <file path="src/c/pebble/io/stores/">phone_store.c</file>
+    <file path="src/c/pebble/io/stores/">phone_store.h</file>
     <file path="src/c/pebble/io/stores/">stock_store.c</file>
     <file path="src/c/pebble/io/stores/">stock_store.h</file>
     <file path="src/c/pebble/io/stores/">store_cadence.c</file>
@@ -12543,18 +14523,28 @@
     <class kind="struct">HealthSeed</class>
     <class kind="struct">LocationConfig</class>
     <class kind="struct">LocationSeed</class>
+    <class kind="struct">MusicConfig</class>
+    <class kind="struct">MusicSeed</class>
+    <class kind="struct">PhoneConfig</class>
+    <class kind="struct">PhoneSeed</class>
     <class kind="struct">StockConfig</class>
     <class kind="struct">StockSeed</class>
     <class kind="struct">StoreFetch</class>
     <class kind="struct">StorePoll</class>
     <class kind="struct">SystemConfig</class>
     <class kind="struct">SystemSeed</class>
-    <class kind="struct">TimeConfig</class>
     <class kind="struct">WeatherConfig</class>
     <class kind="struct">WeatherSeed</class>
     <class kind="struct">[struct].s_hours</class>
     <class kind="struct">[struct].s_state</class>
     <class kind="struct">[struct].s_window</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_SENSOR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0736746982e40115c0c7a4185694247d</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>HEALTH_HR_HISTORY</name>
@@ -12589,6 +14579,55 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga50fd63663c9be7ae50341d6862e04150</anchor>
       <arglist>(state, stamp)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_PHONE</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81426744fd8e4b25e4b1e746e01a86cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_MUSIC</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gafb83e889fc10f054eb75c665b53d6de1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gace98b5387157ba1fff930f53eb50f64a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga672425a165fced37d075b3139367469f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5bc539bc0d11cc025e1a2af0b1c950b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_COUNT</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b630fdde16d8d25ef3e24c50021837d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_SLOTS</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga6289cea1d412d1482a2e5f5dff987a58</anchor>
+      <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -12692,8 +14731,8 @@
       <type>void</type>
       <name>health_hrv_set_rules</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>gabc78d1ab551531851c68847138ad5f16</anchor>
-      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+      <anchor>gaca781624ec8eabf5d4916cfd2a731d57</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -12773,6 +14812,13 @@
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa0582954b31101fd5c9649ac6a4c3b19</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>health_store_init</name>
       <anchorfile>group__lib__stores.html</anchorfile>
@@ -12804,8 +14850,8 @@
       <type>void</type>
       <name>health_store_set_hrv_rules</name>
       <anchorfile>group__lib__stores.html</anchorfile>
-      <anchor>gae4ed9e0080bd4d0d9147692a3ba2539f</anchor>
-      <arglist>(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+      <anchor>ga4e877491cc83ecdeacdb4cf786979cd6</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
     </member>
     <member kind="function">
       <type>const uint8_t *</type>
@@ -12840,6 +14886,13 @@
       <name>health_store_hr</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gaebe919776f17167171641aeae6310796</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_has_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga562ecf251588c9e48d0397eda3f69325</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -12934,6 +14987,13 @@
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2d8d7e527bf6f1348312fe2079772ce6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>health_store_redraw</name>
       <anchorfile>group__lib__stores.html</anchorfile>
@@ -12994,6 +15054,69 @@
       <name>location_store_lon</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga84432464d20d131431730d966053fc52</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad97ad3d36947dc02e52d750cbe25af50</anchor>
+      <arglist>(MusicConfig cfg, const MusicSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b54671a652a83acb2d78e058340bf38</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_title</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga08e7dbd7f6e711074c87b072b80a89fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_artist</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae7f812e0a0d418107f257c99733aacb2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_playing</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad2b234359cbfa7449cab2a1b25de11e6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_has_track</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadd2ca01419697d7f37ae4fe64ac8efb7</anchor>
+      <arglist>(PhoneConfig cfg, const PhoneSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9782ad57861fed3323134ef011ea1826</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>phone_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
       <arglist>(void)</arglist>
     </member>
     <member kind="function">
@@ -13082,6 +15205,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>store_fetch_on_link</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga48da19573724dbed49fc5c04f7508bb0</anchor>
+      <arglist>(StoreFetch *fetch, int age_s)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>store_fetch_start</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>gab0e39f35c438d27685e759973a271790</anchor>
@@ -13145,6 +15275,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>store_poll_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9d6ab580b20298f18c6243bcff7dbfb1</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>store_poll_set</name>
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga30b8b33c3204c012230afe0eb9e8d594</anchor>
@@ -13156,6 +15293,13 @@
       <anchorfile>group__lib__stores.html</anchorfile>
       <anchor>ga576c21d8f643934d22918c3fb2cbeeef</anchor>
       <arglist>(StorePoll *poll, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9bd6e2af60e688844a31c8f9fb4cdae2</anchor>
+      <arglist>(const StorePoll *poll, int age_s)</arglist>
     </member>
     <member kind="function">
       <type>uint32_t</type>
@@ -13463,19 +15607,134 @@
     <name>lib_settings</name>
     <title>Settings</title>
     <filename>group__lib__settings.html</filename>
+    <file path="src/c/pebble/system/settings/">plugin_source.h</file>
     <file path="src/c/pebble/system/settings/">setting_values.h</file>
     <file path="src/c/pebble/system/settings/">settings.c</file>
     <file path="src/c/pebble/system/settings/">settings.h</file>
     <file path="src/c/pebble/system/settings/">settings_catalog.h</file>
+    <file path="src/c/pebble/system/settings/">settings_chain.h</file>
+    <class kind="struct">PluginSourceSettings</class>
     <class kind="struct">SettingField</class>
     <class kind="struct">SettingsSchema</class>
     <class kind="struct">SettingsInbound</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_WEATHER</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7519f9e335dac1caa4af7e098ba595df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_CALENDAR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54d7afa30c1599cabdaefe00ebe5e667</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_ANY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga256177eefe8ca85558ab1950faeb5d0b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga990cbb3116efef955c98d6f789302b35</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab2dda1ab7a5b7a83f3f2923e285d2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_VERSION</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga2443bbd036bbbdda30abfa06a473bdd0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIRST_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaf0cade985b8b365b66441618bc5085a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadefc10b23da283a35b2957a7e6e6082c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaed0d9a6d4a3165af7fd1c790795ca7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIELDS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga172fb13323b731d043aefa0d66a751ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_PLUGIN_SOURCE_KEY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga23404e19f790c5308f720b0237438e4f</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="define">
       <type>#define</type>
       <name>SETTINGS_BLOB_SIZE</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga9f418302396c6aa0b9d2bc9a2e75a9b0</anchor>
       <arglist>(blob)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3af4893cdd074306b3fcc30df1cb8a00</anchor>
+      <arglist>(settings, first)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_FIRST_SIZE_</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8db432ced131d3416a56b8de4dd53bc2</anchor>
+      <arglist>(first, settings)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gae38319f1a2067a1c9f6b2652bb41b226</anchor>
+      <arglist>(key)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT_CHECKED</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga60da601435a75b4d496364449dd1060a</anchor>
+      <arglist>(key, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_DEFAULT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gacefbc55594446448ad80ff74406626a7</anchor>
+      <arglist>(key)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -13488,43 +15747,43 @@
       <type>#define</type>
       <name>KNOWN_DATE_FORMAT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga25c13546f27ddad133d5d8cbe348d84a</anchor>
-      <arglist>(off, dflt)</arglist>
+      <anchor>gaf2a01fb04cac500bbbd57bdd6666a897</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_THEME</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga0d7b14fdb5d548d8571799ed3b9f2325</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gad2d575c6e87c1859cd11cd814560f708</anchor>
+      <arglist>(off, table_count)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_HEADER_FONT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga4f0896ebba24b4f1ca8b02f5229986af</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga779ccdfaac16f2eeba42f85f6ce894b9</anchor>
+      <arglist>(off, table_count)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_STEPS_MODE</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga019f574fbd717df373aa4f6a2fa623f7</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga53d6cc56389abbc368788db97d0d747e</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_DISTANCE_UNIT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>gace7412b22cb2958264322350c07c65cd</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gaba0654c3c38a9186e4ecc9732c481e4a</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_TIME_FORMAT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga51c9800159631adbf77eafe13eeb3d34</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gab20b6970a9c594d7d09fa91fb2f5d24b</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
@@ -13544,29 +15803,43 @@
       <type>#define</type>
       <name>KNOWN_BLUETOOTH_VIBE_CONNECT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga3b7c73968d189a076bb660a5e654471b</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gae7d8e8aee5d1d672fbb7931627cf170c</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_BLUETOOTH_VIBE_DISCONNECT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga1f3cdcddc8652b8560d494e04b4f4ae7</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga8603b3236f69557a9e021326e5396ce7</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_HOURLY_VIBE</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga841203aee583d7a932bc02a1f4517847</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>gadc1a8ba6bbe41444b7ba1906e5a7f536</anchor>
+      <arglist>(off)</arglist>
     </member>
     <member kind="define">
       <type>#define</type>
       <name>KNOWN_BATTERY_DISPLAY</name>
       <anchorfile>group__lib__settings.html</anchorfile>
-      <anchor>ga8060d99e4e1951c1e98e0e3c49e77db3</anchor>
-      <arglist>(off, count)</arglist>
+      <anchor>ga826e14901547c30cb46f62ebc9582a71</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga270513f4a67f8533c0b8d28e53cb6e52</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_CHAIN_EACH</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac06564560a442b796c3ae56c1be2f4a9</anchor>
+      <arglist>(schema, head, tail)</arglist>
     </member>
     <member kind="typedef">
       <type>struct SettingsSchema</type>
@@ -13828,6 +16101,12 @@
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
+      <name>SETTING_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
       <name>SETTING_COUNT</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33</anchor>
@@ -13863,6 +16142,13 @@
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>plugin_source_write_needed</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54bef5368ed91eec6a9cfef4521c6e02</anchor>
+      <arglist>(const PluginSourceSettings *now, const PluginSourceSettings *on_flash, bool on_flash_known)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -13940,6 +16226,34 @@
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga226c66180fb376a5888b279eca034417</anchor>
       <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_first</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab3b5e81aea94a408da290199d66c0800</anchor>
+      <arglist>(const SettingsSchema *head, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_next</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac722dd54f21bc2a4d1a44dd7b95f7571</anchor>
+      <arglist>(const SettingsSchema *schema, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_field</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga501156d20707f95fbf16d066f4120fd4</anchor>
+      <arglist>(const SettingsSchema *head, const uint32_t *message_key)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_key</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9b68a17d307380fb0db49597095cb9fa</anchor>
+      <arglist>(const SettingsSchema *head, uint32_t key)</arglist>
     </member>
   </compound>
   <compound kind="group">
@@ -14151,6 +16465,20 @@
       <arglist>(FontId id, GFont handle)</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>fonts_load</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5dd98d76023121d74003ec12118e65b2</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_swap</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8ad877e9d1ef455a6f28358671f32602</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>fonts_register_system</name>
       <anchorfile>group__lib__ui.html</anchorfile>
@@ -14298,6 +16626,13 @@
       <arglist>(char *out, size_t n)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>readout_phone_battery</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga89ae84ee592aa9854c2e5047545b145d</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
       <type>uint32_t</type>
       <name>wx_resource_for</name>
       <anchorfile>group__lib__ui.html</anchorfile>
@@ -14336,6 +16671,7 @@
     <name>lib_dev</name>
     <title>Dev Harness</title>
     <filename>group__lib__dev.html</filename>
+    <file path="src/plugins/dev/c/dev/">dev_hooks.h</file>
     <file path="src/plugins/dev/c/dev/">dev_walk.c</file>
     <file path="src/plugins/dev/c/dev/">dev_walk.h</file>
     <class kind="struct">[struct].s_fixed</class>
@@ -14357,6 +16693,34 @@
       <anchorfile>group__lib__dev.html</anchorfile>
       <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d</anchor>
       <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gadf53283b086362bedf9d7b445e457ea4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_start</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga51d93254270b5de85c1a52d484bc4f74</anchor>
+      <arglist>(void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_stop</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gabefedd1cbff9a29f82f78f8bf92352f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_force_time</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga0fc1db4f8d84b98e40c608c63b2395af</anchor>
+      <arglist>(struct tm *when)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

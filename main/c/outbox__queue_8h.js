@@ -1,5 +1,7 @@
 var outbox__queue_8h =
 [
+    [ "OUTBOX_MUSIC_SLOTS", "group__lib__io.html#ga96bed56e5b3532f2e5e466e3270c88c3", null ],
+    [ "OUTBOX_PHONE_SLOTS", "group__lib__io.html#gadaf079e1656e97a39ec7774e22eb9703", null ],
     [ "OUTBOX_QUEUE_MAX", "group__lib__io.html#gacb075235dabec7bf871cfc5698a42526", null ],
     [ "OutboxKind", "group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17", [
       [ "OUTBOX_NONE", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8", null ],
@@ -7,7 +9,9 @@ var outbox__queue_8h =
       [ "OUTBOX_SETTINGS", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c", null ],
       [ "OUTBOX_FRESH", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010", null ],
       [ "OUTBOX_STOCK", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14", null ],
-      [ "OUTBOX_CALENDAR", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345", null ]
+      [ "OUTBOX_CALENDAR", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345", null ],
+      [ "OUTBOX_PHONE", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2", null ],
+      [ "OUTBOX_MUSIC", "group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f", null ]
     ] ],
     [ "outbox_busy", "group__lib__io.html#ga2c94fc09107a6527a82ec145fd784a9d", null ],
     [ "outbox_clear", "group__lib__io.html#ga7a65d4b95956b231936a0de61759fca9", null ],

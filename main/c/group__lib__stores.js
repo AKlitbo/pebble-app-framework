@@ -12,6 +12,10 @@ var group__lib__stores =
     [ "health_store_parts.h", "health__store__parts_8h.html", null ],
     [ "location_store.c", "location__store_8c.html", null ],
     [ "location_store.h", "location__store_8h.html", null ],
+    [ "music_store.c", "music__store_8c.html", null ],
+    [ "music_store.h", "music__store_8h.html", null ],
+    [ "phone_store.c", "phone__store_8c.html", null ],
+    [ "phone_store.h", "phone__store_8h.html", null ],
     [ "stock_store.c", "stock__store_8c.html", null ],
     [ "stock_store.h", "stock__store_8h.html", null ],
     [ "store_cadence.c", "store__cadence_8c.html", null ],
@@ -45,6 +49,7 @@ var group__lib__stores =
       [ "live_redraw", "structHealthHrvConfig.html#ac7610afd71927b65c5544bc3e264762f", null ],
       [ "period_sec", "structHealthHrvConfig.html#a75deb2b8f8899dbbb62b936ab5c52f26", null ],
       [ "persist_key", "structHealthHrvConfig.html#afbb9c1c8fbd170998832acf2a1654c08", null ],
+      [ "settle_gaps", "structHealthHrvConfig.html#aa95836d24b5b59e300ce09786aa14aa4", null ],
       [ "still_mg", "structHealthHrvConfig.html#ae51ccd02a82b1544b151d29f59605603", null ],
       [ "walk_steps", "structHealthHrvConfig.html#a6ee174215aaaf176978fe25a5af47d03", null ]
     ] ],
@@ -66,6 +71,7 @@ var group__lib__stores =
       [ "hrv_live_redraw", "structHealthConfig.html#a061a4b722de6578616ce05af73b2a9a5", null ],
       [ "hrv_period_sec", "structHealthConfig.html#a8e637a9018d8e8c9d8e295a20e1bde3e", null ],
       [ "hrv_persist_key", "structHealthConfig.html#aab37c71e8400eb25e7187131ca40bf20", null ],
+      [ "hrv_settle_gaps", "structHealthConfig.html#a0731ff79f359c3332e041cdad2a567c9", null ],
       [ "hrv_still_mg", "structHealthConfig.html#acfebb54de2a823338599ea012e461f7e", null ],
       [ "hrv_walk_steps", "structHealthConfig.html#a72ae3b5cbca33403651ac580b74a73bc", null ],
       [ "live", "structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14", null ],
@@ -95,6 +101,20 @@ var group__lib__stores =
       [ "lat", "structLocationSeed.html#a58307502423dcd0ab844df491022d3a5", null ],
       [ "lon", "structLocationSeed.html#a525f72325d8cad6c0317e6b0d4ce469f", null ]
     ] ],
+    [ "MusicConfig", "structMusicConfig.html", [
+      [ "live", "structMusicConfig.html#a636a310038ea4387959c0dd3be233cc8", null ]
+    ] ],
+    [ "MusicSeed", "structMusicSeed.html", [
+      [ "artist", "structMusicSeed.html#a4723f047d981cabde8f045172453d66b", null ],
+      [ "playing", "structMusicSeed.html#a1ea9e553344167fdd6541de050a2400c", null ],
+      [ "title", "structMusicSeed.html#a3af3b5747a6be4137b9539836a1ee61a", null ]
+    ] ],
+    [ "PhoneConfig", "structPhoneConfig.html", [
+      [ "live", "structPhoneConfig.html#adb4652349b381a696e385de7d05928c9", null ]
+    ] ],
+    [ "PhoneSeed", "structPhoneSeed.html", [
+      [ "battery", "structPhoneSeed.html#a89def13debe62b82f2e4843a1b3cf63e", null ]
+    ] ],
     [ "StockConfig", "structStockConfig.html", [
       [ "live", "structStockConfig.html#ae0699f32855948ce685614e570317f38", null ],
       [ "persist_key", "structStockConfig.html#a35aea9539901a173b4dc1343054dff80", null ],
@@ -112,6 +132,7 @@ var group__lib__stores =
     [ "StorePoll", "structStorePoll.html", [
       [ "live", "structStorePoll.html#ad96becb58ae977574a0b761caa011cb8", null ],
       [ "next", "structStorePoll.html#a324f51d57d9b85613a6ea5ab1c6411e7", null ],
+      [ "pinned", "structStorePoll.html#aba76cc6762ace5d4c5ceddfa7b919de1", null ],
       [ "poll_min", "structStorePoll.html#a8ddb0db53f8ee2769ef42460bbd94303", null ]
     ] ],
     [ "SystemConfig", "structSystemConfig.html", [
@@ -123,12 +144,6 @@ var group__lib__stores =
       [ "bluetooth", "structSystemSeed.html#aace126b5167d9b3e1b8b6caa82717dee", null ],
       [ "charging", "structSystemSeed.html#a709c393ec6012a6fccd8bfba55c21594", null ],
       [ "next_alarm", "structSystemSeed.html#ab5d79666596362e29fc16f637bb07ae7", null ]
-    ] ],
-    [ "TimeConfig", "structTimeConfig.html", [
-      [ "beats", "structTimeConfig.html#a9f051ec76f4f1a95058f5ec52506aabc", null ],
-      [ "hourly", "structTimeConfig.html#ab302b6ad83ef9a9f1a26f0bcab293e16", null ],
-      [ "live", "structTimeConfig.html#af951cac1e7733963949ff707dcfe650e", null ],
-      [ "minute_tick", "structTimeConfig.html#a2c93b890d0d369c7e4b82648bac39d20", null ]
     ] ],
     [ "WeatherConfig", "structWeatherConfig.html", [
       [ "live", "structWeatherConfig.html#ad002199ba6f3a4b7af38924a8bb640e7", null ],
@@ -161,7 +176,6 @@ var group__lib__stores =
     [ "[struct].s_state", "struct_0fstruct_0e_8s__state.html", [
       [ "active_min", "struct_0fstruct_0e_8s__state.html#a11d0ef78d29da6a774cd888998da275f", null ],
       [ "battery_level", "struct_0fstruct_0e_8s__state.html#a5342d9c4d055ae70b79f91132fa02d4b", null ],
-      [ "bluetooth_connected", "struct_0fstruct_0e_8s__state.html#a94f35b808bfbb716cfd01ef016aae882", null ],
       [ "calories", "struct_0fstruct_0e_8s__state.html#a87fa654bed2286d1a29fa1d3815c44d2", null ],
       [ "charging", "struct_0fstruct_0e_8s__state.html#addc8e821b664e115fe20565aa835a42d", null ],
       [ "distance_m", "struct_0fstruct_0e_8s__state.html#a6bae943d352d4ea4b1a3f3085e626110", null ],
@@ -169,6 +183,7 @@ var group__lib__stores =
       [ "last_sync", "struct_0fstruct_0e_8s__state.html#a76fab064443fccad957cca54b5bf2c27", null ],
       [ "last_sync", "struct_0fstruct_0e_8s__state.html#a71acacf736c0662ae8a364a757778e46", null ],
       [ "lat", "struct_0fstruct_0e_8s__state.html#a49d22b97f22f8f3b5f52e9c3f5320abd", null ],
+      [ "link", "struct_0fstruct_0e_8s__state.html#a21ac9c99ae8ee34bcc3bc028d7e10495", null ],
       [ "lon", "struct_0fstruct_0e_8s__state.html#ab9a6be89c66daedb8c2c8cf463e543e9", null ],
       [ "sleep_min", "struct_0fstruct_0e_8s__state.html#a4ff82846014207e0597ba097ec0aa0c8", null ],
       [ "steps", "struct_0fstruct_0e_8s__state.html#ae463a880e2607355d222974f60b31907", null ],
@@ -183,6 +198,7 @@ var group__lib__stores =
     ] ],
     [ "HEALTH_HR_DAY", "group__lib__stores.html#ga5f959c79f659728bb1df249db66cefaf", null ],
     [ "HEALTH_HR_HISTORY", "group__lib__stores.html#gaf58a7b0cae4bb710b1c4834cd90df0ba", null ],
+    [ "HEALTH_HR_SENSOR", "group__lib__stores.html#ga0736746982e40115c0c7a4185694247d", null ],
     [ "HEALTH_STEP_HISTORY", "group__lib__stores.html#gaf48ed118c83053074b953aa994ace230", null ],
     [ "STORE_CADENCE_MAX", "group__lib__stores.html#ga60f6d598b8ff59f299aa4ded2e48b695", null ],
     [ "STORE_READING_SIZE", "group__lib__stores.html#ga50fd63663c9be7ae50341d6862e04150", null ],
@@ -192,6 +208,13 @@ var group__lib__stores =
     [ "STORE_TAG_LOCATION", "group__lib__stores.html#gaa19bf75ee3cb87a3a31a97238f4dcf73", null ],
     [ "STORE_TAG_STOCK", "group__lib__stores.html#ga5b35a6941ad6bb200a944b38ae9fa676", null ],
     [ "STORE_TAG_WEATHER", "group__lib__stores.html#gaf7f92da5799b3fc95c172f84287e6867", null ],
+    [ "SYSTEM_STORE_LINK_LISTENER_COUNT", "group__lib__stores.html#ga3b630fdde16d8d25ef3e24c50021837d", null ],
+    [ "SYSTEM_STORE_LINK_LISTENER_SLOTS", "group__lib__stores.html#ga6289cea1d412d1482a2e5f5dff987a58", null ],
+    [ "SYSTEM_STORE_LISTENS_CALENDAR", "group__lib__stores.html#ga5bc539bc0d11cc025e1a2af0b1c950b1", null ],
+    [ "SYSTEM_STORE_LISTENS_MUSIC", "group__lib__stores.html#gafb83e889fc10f054eb75c665b53d6de1", null ],
+    [ "SYSTEM_STORE_LISTENS_PHONE", "group__lib__stores.html#ga81426744fd8e4b25e4b1e746e01a86cd", null ],
+    [ "SYSTEM_STORE_LISTENS_STOCK", "group__lib__stores.html#ga672425a165fced37d075b3139367469f", null ],
+    [ "SYSTEM_STORE_LISTENS_WEATHER", "group__lib__stores.html#gace98b5387157ba1fff930f53eb50f64a", null ],
     [ "WEATHER_SEED_EMPTY", "group__lib__stores.html#gae0d84f2727ec304e5376009e5f7dcd18", null ],
     [ "BtVibePolicy", "group__lib__stores.html#ga96c4cb6d425115a65f787896786b232f", null ],
     [ "HealthConfig", "group__lib__stores.html#ga70156b27716f66602b46ccb5449a0e84", null ],
@@ -214,7 +237,8 @@ var group__lib__stores =
     [ "health_hrv_recent", "group__lib__stores.html#ga4d9e68b5550cc8cf8ca340322883a01b", null ],
     [ "health_hrv_sampling", "group__lib__stores.html#ga37582149cbe5836b28881faff2fd5705", null ],
     [ "health_hrv_set_period", "group__lib__stores.html#ga3de2b90ca51ac9d5544c9cebf2eb7239", null ],
-    [ "health_hrv_set_rules", "group__lib__stores.html#gabc78d1ab551531851c68847138ad5f16", null ],
+    [ "health_hrv_set_rules", "group__lib__stores.html#gaca781624ec8eabf5d4916cfd2a731d57", null ],
+    [ "health_hrv_settle_gaps", "group__lib__stores.html#gaa0582954b31101fd5c9649ac6a4c3b19", null ],
     [ "health_hrv_start", "group__lib__stores.html#ga302a123979f2732edb6738c61c8d0650", null ],
     [ "health_hrv_still_mg", "group__lib__stores.html#ga07a3890b8ec14d604f9c33f3882885fb", null ],
     [ "health_hrv_stop", "group__lib__stores.html#gaeb21c567d464de358f3f62a99315af26", null ],
@@ -225,6 +249,7 @@ var group__lib__stores =
     [ "health_store_calories", "group__lib__stores.html#gabe7efc42c8679e55ecb7804fb17895ec", null ],
     [ "health_store_deinit", "group__lib__stores.html#ga0e1f4e480b7ae883e73cc7270bbf7ffc", null ],
     [ "health_store_distance_m", "group__lib__stores.html#ga82d8e5fff446bf3a7e20228c8cb49df9", null ],
+    [ "health_store_has_hr", "group__lib__stores.html#ga562ecf251588c9e48d0397eda3f69325", null ],
     [ "health_store_hr", "group__lib__stores.html#gaebe919776f17167171641aeae6310796", null ],
     [ "health_store_hr_day", "group__lib__stores.html#gaa83227ebe779ce764a7ce57df3311f77", null ],
     [ "health_store_hr_history", "group__lib__stores.html#gab42f7ec6f1b3c4b0403d76027e1a856e", null ],
@@ -234,12 +259,13 @@ var group__lib__stores =
     [ "health_store_hrv_ms", "group__lib__stores.html#ga46bf291eab60978c19fcd948808a0196", null ],
     [ "health_store_hrv_recent", "group__lib__stores.html#ga4acc41f26f8a766529d223582a98cf01", null ],
     [ "health_store_hrv_sampling", "group__lib__stores.html#gab79c3a58fb2df070dbd4e0abcce41a22", null ],
+    [ "health_store_hrv_settle_gaps", "group__lib__stores.html#ga2d8d7e527bf6f1348312fe2079772ce6", null ],
     [ "health_store_hrv_still_mg", "group__lib__stores.html#ga27882c04c06b01103dabf8fdc8069a61", null ],
     [ "health_store_hrv_walk_steps", "group__lib__stores.html#ga3e2d5278051f5cb8fc972614b3b6054f", null ],
     [ "health_store_init", "group__lib__stores.html#gadb98993f8a5d2ea3ac0b99effab8b393", null ],
     [ "health_store_redraw", "group__lib__stores.html#ga91ad7f45647093a68eb19f67e6605c26", null ],
     [ "health_store_set_hrv_period", "group__lib__stores.html#gad4831647379f8aee421bde9e18cf09b9", null ],
-    [ "health_store_set_hrv_rules", "group__lib__stores.html#gae4ed9e0080bd4d0d9147692a3ba2539f", null ],
+    [ "health_store_set_hrv_rules", "group__lib__stores.html#ga4e877491cc83ecdeacdb4cf786979cd6", null ],
     [ "health_store_sleep_min", "group__lib__stores.html#gaae218db51d5633570091919ba1e07ab4", null ],
     [ "health_store_step_hourly", "group__lib__stores.html#ga34ce959b4e7f9802230c7e1319b3bf28", null ],
     [ "health_store_step_hours", "group__lib__stores.html#ga7f6eb32c1ad9a2a9ffa41d13dc507204", null ],
@@ -250,6 +276,15 @@ var group__lib__stores =
     [ "location_store_lat", "group__lib__stores.html#gaca52fe40f16b8699445cc2a3d3df0bf9", null ],
     [ "location_store_lon", "group__lib__stores.html#ga84432464d20d131431730d966053fc52", null ],
     [ "location_store_subscribe", "group__lib__stores.html#ga59425f07e9de612bbcaae2dd0bcf266f", null ],
+    [ "music_store_artist", "group__lib__stores.html#gae7f812e0a0d418107f257c99733aacb2", null ],
+    [ "music_store_has_track", "group__lib__stores.html#gad7118955d71e3c934fd9d7f87114ae5f", null ],
+    [ "music_store_init", "group__lib__stores.html#gad97ad3d36947dc02e52d750cbe25af50", null ],
+    [ "music_store_playing", "group__lib__stores.html#gad2b234359cbfa7449cab2a1b25de11e6", null ],
+    [ "music_store_subscribe", "group__lib__stores.html#ga3b54671a652a83acb2d78e058340bf38", null ],
+    [ "music_store_title", "group__lib__stores.html#ga08e7dbd7f6e711074c87b072b80a89fa", null ],
+    [ "phone_store_battery", "group__lib__stores.html#ga939563949a26e3d5c4a9d3990e60d518", null ],
+    [ "phone_store_init", "group__lib__stores.html#gadd2ca01419697d7f37ae4fe64ac8efb7", null ],
+    [ "phone_store_subscribe", "group__lib__stores.html#ga9782ad57861fed3323134ef011ea1826", null ],
     [ "stock_store_age_s", "group__lib__stores.html#ga5074e747148193546c869652ea01584d", null ],
     [ "stock_store_init", "group__lib__stores.html#gaec0631f8c075d9a6c76e2f6f386f3970", null ],
     [ "stock_store_reconfigure", "group__lib__stores.html#gaf5880da69fee6e18843b989032e67836", null ],
@@ -260,14 +295,17 @@ var group__lib__stores =
     [ "store_cadence_register", "group__lib__stores.html#gadc0f8176e42cbe69fd30b1a363ca4794", null ],
     [ "store_fetch_arm", "group__lib__stores.html#gad33c4412c02b7068286958a4ff9d39c0", null ],
     [ "store_fetch_fire", "group__lib__stores.html#ga5f892bf9d70a4f44dbdd186ce95eaf12", null ],
+    [ "store_fetch_on_link", "group__lib__stores.html#ga48da19573724dbed49fc5c04f7508bb0", null ],
     [ "store_fetch_reconfigure", "group__lib__stores.html#ga3baeb7249495a37edb88ef463ba8d904", null ],
     [ "store_fetch_start", "group__lib__stores.html#gab0e39f35c438d27685e759973a271790", null ],
     [ "store_fetch_stop", "group__lib__stores.html#ga01742f5fe91b9b4c089f9540e5c6a10f", null ],
     [ "store_fetch_turn", "group__lib__stores.html#gae24dbc83a69a2c585fc08c07f2d27091", null ],
     [ "store_poll_due", "group__lib__stores.html#ga997e6ccf70b96c79e2500b83af6e54dc", null ],
     [ "store_poll_next", "group__lib__stores.html#gaee79556bd3009dd1478b61913e5368d4", null ],
+    [ "store_poll_reconnect", "group__lib__stores.html#ga9bd6e2af60e688844a31c8f9fb4cdae2", null ],
     [ "store_poll_reconnect_due", "group__lib__stores.html#ga8bf76bddf8844add6cd6e7c0684b8ee0", null ],
     [ "store_poll_set", "group__lib__stores.html#ga30b8b33c3204c012230afe0eb9e8d594", null ],
+    [ "store_poll_start", "group__lib__stores.html#ga9d6ab580b20298f18c6243bcff7dbfb1", null ],
     [ "store_poll_turn", "group__lib__stores.html#ga576c21d8f643934d22918c3fb2cbeeef", null ],
     [ "store_restore", "group__lib__stores.html#ga286178630dd827b7d2e677742541e280", null ],
     [ "store_restore_reading", "group__lib__stores.html#gacfb278bcfc9c6dbc28c5728a3b68e277", null ],

@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('calendar__stor
 <code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -238,7 +239,7 @@ void&#160;</td><td class="memItemRight"><b>calendar_store_subscribe</b> (void(*c
 <tr class="memitem:gad9d0b53b9a4f189dd3a591801401ec35" id="r_gad9d0b53b9a4f189dd3a591801401ec35"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gad9d0b53b9a4f189dd3a591801401ec35">calendar_store_init</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg, const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *seed)</td></tr>
 <tr class="memdesc:gad9d0b53b9a4f189dd3a591801401ec35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:gade1a2a8d19355c64e027ed3b89479f0e" id="r_gade1a2a8d19355c64e027ed3b89479f0e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gade1a2a8d19355c64e027ed3b89479f0e">calendar_store_reconfigure</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg)</td></tr>
-<tr class="memdesc:gade1a2a8d19355c64e027ed3b89479f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memdesc:gade1a2a8d19355c64e027ed3b89479f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call.  <br /></td></tr>
 <tr class="memitem:gabbe75636f8fd3bbc25e5907b8b703478" id="r_gabbe75636f8fd3bbc25e5907b8b703478"><td class="memItemLeft">
 const <a class="el" href="structCalendarStrip.html">CalendarStrip</a> *&#160;</td><td class="memItemRight"><b>calendar_store_strip</b> (void)</td></tr>
 <tr class="memdesc:gabbe75636f8fd3bbc25e5907b8b703478"><td class="mdescLeft">&#160;</td><td class="mdescRight">The whole agenda strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>

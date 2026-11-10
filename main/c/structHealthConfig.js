@@ -10,6 +10,7 @@ var structHealthConfig =
     [ "hrv_live_redraw", "structHealthConfig.html#a061a4b722de6578616ce05af73b2a9a5", null ],
     [ "hrv_period_sec", "structHealthConfig.html#a8e637a9018d8e8c9d8e295a20e1bde3e", null ],
     [ "hrv_persist_key", "structHealthConfig.html#aab37c71e8400eb25e7187131ca40bf20", null ],
+    [ "hrv_settle_gaps", "structHealthConfig.html#a0731ff79f359c3332e041cdad2a567c9", null ],
     [ "hrv_still_mg", "structHealthConfig.html#acfebb54de2a823338599ea012e461f7e", null ],
     [ "hrv_walk_steps", "structHealthConfig.html#a72ae3b5cbca33403651ac580b74a73bc", null ],
     [ "live", "structHealthConfig.html#a0d2006e2992c6532c1fab3102c8fda14", null ],

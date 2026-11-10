@@ -31,10 +31,11 @@ var searchData=
   ['wind_5flean_28',['wind_lean',['../group__lib__core.html#ga357ae2f2cfb0a32380b717e9a8ac6ce8',1,'wind_lean(int bearing):&#160;wind_dir.c'],['../group__lib__core.html#ga357ae2f2cfb0a32380b717e9a8ac6ce8',1,'wind_lean(int bearing):&#160;wind_dir.c']]],
   ['wind_5funit_5flabel_29',['wind_unit_label',['../group__lib__core.html#gafd0dc1755ed3d4dd661c56e5c498e84d',1,'wind_unit_label(WindUnit unit):&#160;wind.c'],['../group__lib__core.html#gafd0dc1755ed3d4dd661c56e5c498e84d',1,'wind_unit_label(WindUnit unit):&#160;wind.c']]],
   ['wire_5fcstring_5fterminated_30',['wire_cstring_terminated',['../group__lib__core.html#ga700d7a3380b25b5472c1b580502b9b3e',1,'wire_read.h']]],
-  ['wire_5fint_5for_31',['wire_int_or',['../group__lib__core.html#gaac313f9ba01fb8da75be8388287f9a7a',1,'wire_read.h']]],
-  ['wrap_5fday_32',['wrap_day',['../timeband_8c.html#a53741af02acdd92c6c86ff7ec2e9656b',1,'timeband.c']]],
-  ['write_5fsettings_33',['write_settings',['../appmessage_8c.html#afd8b8f5d619f4689a2891358d52737cc',1,'appmessage.c']]],
-  ['wx_5flabel_5fshort_34',['wx_label_short',['../group__lib__core.html#ga174ee20c1de042aac051cdc44dc9847a',1,'wx_label_short(char *out, size_t n, const char *condition):&#160;wx_label.c'],['../group__lib__core.html#ga174ee20c1de042aac051cdc44dc9847a',1,'wx_label_short(char *out, size_t n, const char *condition):&#160;wx_label.c']]],
-  ['wx_5fresource_5ffor_35',['wx_resource_for',['../group__lib__ui.html#ga9a50b66845b71a795a1739d45b510875',1,'icons.h']]],
-  ['wx_5fresource_5ffor_5ftable_36',['wx_resource_for_table',['../group__lib__ui.html#ga7bdf911d493eb75876b96a13b80a6e41',1,'icons_table.g.h']]]
+  ['wire_5fdigits_5for_31',['wire_digits_or',['../group__lib__core.html#gaed7baf2dfca7dd9ada03434d0777b788',1,'wire_read.h']]],
+  ['wire_5fint_5for_32',['wire_int_or',['../group__lib__core.html#gaac313f9ba01fb8da75be8388287f9a7a',1,'wire_read.h']]],
+  ['wrap_5fday_33',['wrap_day',['../timeband_8c.html#a53741af02acdd92c6c86ff7ec2e9656b',1,'timeband.c']]],
+  ['wx_5fcond_5fparse_34',['wx_cond_parse',['../group__lib__core.html#ga05e157aa912339869db64fa7a0f4af98',1,'wx_cond_parse(const char *token, bool *night):&#160;wx_cond.c'],['../group__lib__core.html#ga05e157aa912339869db64fa7a0f4af98',1,'wx_cond_parse(const char *token, bool *night):&#160;wx_cond.c']]],
+  ['wx_5flabel_5fshort_35',['wx_label_short',['../group__lib__core.html#ga174ee20c1de042aac051cdc44dc9847a',1,'wx_label_short(char *out, size_t n, const char *condition):&#160;wx_label.c'],['../group__lib__core.html#ga174ee20c1de042aac051cdc44dc9847a',1,'wx_label_short(char *out, size_t n, const char *condition):&#160;wx_label.c']]],
+  ['wx_5fresource_5ffor_36',['wx_resource_for',['../group__lib__ui.html#ga9a50b66845b71a795a1739d45b510875',1,'icons.h']]],
+  ['wx_5fresource_5ffor_5ftable_37',['wx_resource_for_table',['../group__lib__ui.html#ga7bdf911d493eb75876b96a13b80a6e41',1,'icons_table.g.h']]]
 ];

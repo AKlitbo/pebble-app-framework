@@ -198,12 +198,21 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('settings_8c.ht
 <p>The persist API implementation.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="plugin__source_8h_source.html">system/settings/plugin_source.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="settings__chain_8h_source.html">system/settings/settings_chain.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tuple__read_8h_source.html">io/tuple_read.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &lt;stdlib.h&gt;</code><br />
 <code>#include &lt;string.h&gt;</code><br />
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a94cecdf0ca24c34090b67ae74219410d" id="r_a94cecdf0ca24c34090b67ae74219410d"><td class="memItemLeft"><a id="a94cecdf0ca24c34090b67ae74219410d" name="a94cecdf0ca24c34090b67ae74219410d"></a>
+#define&#160;</td><td class="memItemRight"><b>SCHEMA_TAIL</b>&#160;&#160;&#160;NULL</td></tr>
+<tr class="memdesc:a94cecdf0ca24c34090b67ae74219410d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The framework's schema for the walk, or NULL on a face that keeps no source choice. <br /></td></tr>
+<tr class="memitem:af5a0ec4c8af6087521e6c57d66a398ab" id="r_af5a0ec4c8af6087521e6c57d66a398ab"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#af5a0ec4c8af6087521e6c57d66a398ab">EACH_SCHEMA</a>(schema)</td></tr>
+<tr class="memdesc:af5a0ec4c8af6087521e6c57d66a398ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Walks the face's schemas and then the framework's, for a <span class="tt">for</span> loop's header.  <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a9c02c31794700bb68b55537aba182399" id="r_a9c02c31794700bb68b55537aba182399"><td class="memItemLeft">static void *&#160;</td><td class="memItemRight"><a class="el" href="#a9c02c31794700bb68b55537aba182399">field_ptr</a> (const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *schema, const <a class="el" href="structSettingField.html">SettingField</a> *field)</td></tr>
@@ -261,7 +270,7 @@ Functions</h2></td></tr>
 Variables</h2></td></tr>
 <tr class="memitem:a103a9efc5cd332137f9d11dca75ae011" id="r_a103a9efc5cd332137f9d11dca75ae011"><td class="memItemLeft"><a id="a103a9efc5cd332137f9d11dca75ae011" name="a103a9efc5cd332137f9d11dca75ae011"></a>
 static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *&#160;</td><td class="memItemRight"><b>s_primary</b></td></tr>
-<tr class="memdesc:a103a9efc5cd332137f9d11dca75ae011"><td class="mdescLeft">&#160;</td><td class="mdescRight">Head of the schema chain registered by settings_init, the primary plus any companions. <br /></td></tr>
+<tr class="memdesc:a103a9efc5cd332137f9d11dca75ae011"><td class="mdescLeft">&#160;</td><td class="mdescRight">The face's first schema, registered by settings_init. The walk goes through its companions and then the framework's schema. <br /></td></tr>
 <tr class="memitem:aa467d3462915f91a8ef7e224cba65b46" id="r_aa467d3462915f91a8ef7e224cba65b46"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#aa467d3462915f91a8ef7e224cba65b46">s_was_fresh</a></td></tr>
 <tr class="memdesc:aa467d3462915f91a8ef7e224cba65b46"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when any schema in the chain had no saved blob at init, or one was reset for a blob it could not read, and no settings page message has landed since.  <br /></td></tr>
 <tr class="memitem:adcdaae53b13f19b99ab529c1fcf20f70" id="r_adcdaae53b13f19b99ab529c1fcf20f70"><td class="memItemLeft"><a id="adcdaae53b13f19b99ab529c1fcf20f70" name="adcdaae53b13f19b99ab529c1fcf20f70"></a>
@@ -273,7 +282,31 @@ static const <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The persist API implementation. </p>
-</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="af5a0ec4c8af6087521e6c57d66a398ab" name="af5a0ec4c8af6087521e6c57d66a398ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5a0ec4c8af6087521e6c57d66a398ab">&#9670;&#160;</a></span>EACH_SCHEMA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define EACH_SCHEMA</td>
+          <td>(</td>
+          <td class="paramtype"></td>          <td class="paramname"><span class="paramname"><em>schema</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line"><a class="code hl_define" href="group__lib__settings.html#gac06564560a442b796c3ae56c1be2f4a9">SETTINGS_CHAIN_EACH</a>(schema, <a class="code hl_variable" href="#a103a9efc5cd332137f9d11dca75ae011">s_primary</a>, <a class="code hl_define" href="#a94cecdf0ca24c34090b67ae74219410d">SCHEMA_TAIL</a>)</div>
+<div class="ttc" id="agroup__lib__settings_html_gac06564560a442b796c3ae56c1be2f4a9"><div class="ttname"><a href="group__lib__settings.html#gac06564560a442b796c3ae56c1be2f4a9">SETTINGS_CHAIN_EACH</a></div><div class="ttdeci">#define SETTINGS_CHAIN_EACH(schema, head, tail)</div><div class="ttdoc">Walks the face&#39;s schemas and then the framework&#39;s, for a for loop&#39;s header.</div><div class="ttdef"><b>Definition</b> settings_chain.h:58</div></div>
+<div class="ttc" id="asettings_8c_html_a103a9efc5cd332137f9d11dca75ae011"><div class="ttname"><a href="#a103a9efc5cd332137f9d11dca75ae011">s_primary</a></div><div class="ttdeci">static const SettingsSchema * s_primary</div><div class="ttdoc">The face&#39;s first schema, registered by settings_init. The walk goes through its companions and then t...</div><div class="ttdef"><b>Definition</b> settings.c:18</div></div>
+<div class="ttc" id="asettings_8c_html_a94cecdf0ca24c34090b67ae74219410d"><div class="ttname"><a href="#a94cecdf0ca24c34090b67ae74219410d">SCHEMA_TAIL</a></div><div class="ttdeci">#define SCHEMA_TAIL</div><div class="ttdoc">The framework&#39;s schema for the walk, or NULL on a face that keeps no source choice.</div><div class="ttdef"><b>Definition</b> settings.c:61</div></div>
+</div><!-- fragment -->
+<p>Walks the face's schemas and then the framework's, for a <span class="tt">for</span> loop's header. </p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
 <a id="a8fd085e0bf9151d4771683129cb2964c" name="a8fd085e0bf9151d4771683129cb2964c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8fd085e0bf9151d4771683129cb2964c">&#9670;&#160;</a></span>apply_defaults()</h2>
 

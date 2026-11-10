@@ -123,14 +123,14 @@
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l26">store_poll_next (src/c/pebble/io/stores/store_poll.h:26)</a>    </div>
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="15">called 15 times</div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="26">called 26 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">-%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l77">store_poll_reconnect_due (src/c/pebble/io/stores/store_poll.h:77)</a>    </div>
-    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="4">called 4 times</div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="9">called 9 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
@@ -342,7 +342,7 @@
         <td class="lineno"><a id="l26" href="#l26">26</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">15</td>
+        <td class="linecount coveredLine show_coveredLine">26</td>
         <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="nf">store_poll_next</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">poll_min</span><span class="p">,</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="n">now</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
@@ -356,14 +356,14 @@
         <td class="lineno"><a id="l28" href="#l28">28</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">15</td>
+        <td class="linecount coveredLine show_coveredLine">26</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">time_t</span><span class="p">)</span><span class="n">poll_min</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">SECONDS_PER_MINUTE</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l29" href="#l29">29</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">15</td>
+        <td class="linecount coveredLine show_coveredLine">26</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">now</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">interval</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">interval</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
@@ -720,7 +720,7 @@
         <td class="lineno"><a id="l77" href="#l77">77</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">4</td>
+        <td class="linecount coveredLine show_coveredLine">9</td>
         <td class="src  coveredLine show_coveredLine"><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_reconnect_due</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">age_s</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">poll_min</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
@@ -736,12 +736,12 @@
           <details class="linebranchDetails">
             <summary class="linebranchSummary">2/2</summary>
             <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 2 &rightarrow; 3 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 2 &rightarrow; 4 taken 3 times.</div>
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 3 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 4 taken 7 times.</div>
             </div>
           </details>
         </td>
-        <td class="linecount coveredLine show_coveredLine">4</td>
+        <td class="linecount coveredLine show_coveredLine">9</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">poll_min</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
       </tr>
       <tr class="source-line">
@@ -755,7 +755,7 @@
         <td class="lineno"><a id="l81" href="#l81">81</a></td>
         <td class="linebranch">
         </td>
-        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="linecount coveredLine show_coveredLine">2</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
@@ -799,14 +799,14 @@
           <details class="linebranchDetails">
             <summary class="linebranchSummary">4/4</summary>
             <div class="linebranchContents">
-              <div class="takenBranch">&check; Branch 4 &rightarrow; 5 taken 2 times.</div>
+              <div class="takenBranch">&check; Branch 4 &rightarrow; 5 taken 6 times.</div>
               <div class="takenBranch">&check; Branch 4 &rightarrow; 6 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 5 &rightarrow; 6 taken 1 time.</div>
-              <div class="takenBranch">&check; Branch 5 &rightarrow; 7 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 5 &rightarrow; 6 taken 3 times.</div>
+              <div class="takenBranch">&check; Branch 5 &rightarrow; 7 taken 3 times.</div>
             </div>
           </details>
         </td>
-        <td class="linecount coveredLine show_coveredLine">3</td>
+        <td class="linecount coveredLine show_coveredLine">7</td>
         <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">age_s</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">age_s</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">poll_min</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">SECONDS_PER_MINUTE</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
@@ -828,234 +828,535 @@
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm">/** @brief One store's polling: its interval, whether it polls at all, and when it is next due. */</span></td>
+        <td class="src "><span class="cm">/**</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l91" href="#l91">91</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span></td>
+        <td class="src "><span class="cm"> * @brief One store's polling: its interval, whether it polls at all, and when it is next due.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l92" href="#l92">92</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="p">{</span></td>
+        <td class="src "><span class="cm"> *</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l93" href="#l93">93</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">next</span><span class="p">;</span><span class="w">     </span><span class="c1">///&lt; Wall-clock second the next recurring poll is due</span></td>
+        <td class="src "><span class="cm"> * A StorePoll has to begin zeroed, as a static one does, or go through store_poll_start before</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l94" href="#l94">94</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">    </span><span class="kt">int</span><span class="w">    </span><span class="n">poll_min</span><span class="p">;</span><span class="w"> </span><span class="c1">///&lt; Minutes between polls. 0 or less means no recurring poll</span></td>
+        <td class="src "><span class="cm"> * anything else reads it. Zero one on the stack or the heap before its first store_poll_set, or a</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l95" href="#l95">95</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w">   </span><span class="n">live</span><span class="p">;</span><span class="w">     </span><span class="c1">///&lt; True on a live face. A store seeded with fixtures never polls</span></td>
+        <td class="src "><span class="cm"> * stray `pinned` keeps it off for good.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l96" href="#l96">96</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="p">}</span><span class="w"> </span><span class="n">StorePoll</span><span class="p">;</span></td>
+        <td class="src "><span class="cm"> */</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l97" href="#l97">97</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "></td>
+        <td class="src "><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l98" href="#l98">98</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm">/**</span></td>
+        <td class="src "><span class="p">{</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l99" href="#l99">99</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @brief Take a store's interval and whether it is live, as its init and its reconfigure both do.</span></td>
+        <td class="src "><span class="w">    </span><span class="kt">time_t</span><span class="w"> </span><span class="n">next</span><span class="p">;</span><span class="w">         </span><span class="c1">///&lt; Wall-clock second the next recurring poll is due</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l100" href="#l100">100</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> *</span></td>
+        <td class="src "><span class="w">    </span><span class="kt">int</span><span class="w">    </span><span class="n">poll_min</span><span class="p">;</span><span class="w">     </span><span class="c1">///&lt; Minutes between polls. 0 or less means no recurring poll</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l101" href="#l101">101</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * Both are always recorded. The deadline only moves when polling is on, and then to the next</span></td>
+        <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w">   </span><span class="n">live</span><span class="p">;</span><span class="w">         </span><span class="c1">///&lt; True on a live face. A store seeded with fixtures never polls</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l102" href="#l102">102</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * interval boundary, so a save can bring a poll nearer but never make one come faster than the</span></td>
+        <td class="src "><span class="w">    </span><span class="kt">bool</span><span class="w">   </span><span class="n">pinned</span><span class="p">;</span><span class="w">       </span><span class="c1">///&lt; True when init started the store not live, so no reconfigure turns it live</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l103" href="#l103">103</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * interval allows.</span></td>
+        <td class="src "><span class="p">}</span><span class="w"> </span><span class="n">StorePoll</span><span class="p">;</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l104" href="#l104">104</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> *</span></td>
+        <td class="src "></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l105" href="#l105">105</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param[in,out] poll The store's polling state.</span></td>
+        <td class="src "><span class="cm">/**</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l106" href="#l106">106</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param poll_min Minutes between polls. 0 or less turns polling off.</span></td>
+        <td class="src "><span class="cm"> * @brief Take a store's interval and whether it is live, as its init does.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l107" href="#l107">107</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param live Whether the store is live.</span></td>
+        <td class="src "><span class="cm"> *</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l108" href="#l108">108</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param now The current wall-clock time.</span></td>
+        <td class="src "><span class="cm"> * Init is the one place that decides whether the store is live at all. A store it starts with</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l109" href="#l109">109</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @return Whether polling is on, which is when a store may arm its first or catch-up fetch.</span></td>
+        <td class="src "><span class="cm"> * `live` false is pinned, and stays not live through every reconfigure, as store_poll_set covers.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l110" href="#l110">110</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> */</span></td>
+        <td class="src "><span class="cm"> * A store whose init calls store_poll_set instead is never pinned, so a reconfigure can turn it</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l111" href="#l111">111</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_set</span><span class="p">(</span><span class="n">StorePoll</span><span class="w"> </span><span class="o">*</span><span class="n">poll</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">poll_min</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">live</span><span class="p">,</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
+        <td class="src "><span class="cm"> * live.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l112" href="#l112">112</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "></td>
+        <td class="src "><span class="cm"> *</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l113" href="#l113">113</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm">/**</span></td>
+        <td class="src "><span class="cm"> * The pin only covers asking the phone. A store that also takes pushes or listens for the link</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l114" href="#l114">114</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @brief A store's turn on the face's cadence: whether a poll should go out now.</span></td>
+        <td class="src "><span class="cm"> * registers its handler and its listener only when init starts it live. An init that starts it with</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l115" href="#l115">115</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> *</span></td>
+        <td class="src "><span class="cm"> * `live` false clears the handler and removes the listener, so a store started live and then pinned</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l116" href="#l116">116</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param[in,out] poll The store's polling state. The deadline moves on when a poll is due.</span></td>
+        <td class="src "><span class="cm"> * takes no push over its seed.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l117" href="#l117">117</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @param now The current wall-clock time.</span></td>
+        <td class="src "><span class="cm"> *</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l118" href="#l118">118</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> * @return Whether to ask the phone now.</span></td>
+        <td class="src "><span class="cm"> * @param[in,out] poll The store's polling state.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l119" href="#l119">119</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm"> */</span></td>
+        <td class="src "><span class="cm"> * @param poll_min Minutes between polls. 0 or less turns polling off.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l120" href="#l120">120</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_turn</span><span class="p">(</span><span class="n">StorePoll</span><span class="w"> </span><span class="o">*</span><span class="n">poll</span><span class="p">,</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
+        <td class="src "><span class="cm"> * @param live Whether the store is live.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l121" href="#l121">121</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "></td>
+        <td class="src "><span class="cm"> * @param now The current wall-clock time.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l122" href="#l122">122</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
-        <td class="src "><span class="cm">/** @} */</span></td>
+        <td class="src "><span class="cm"> * @return Whether polling is on, which is when a store may arm its first fetch.</span></td>
       </tr>
       <tr class="source-line">
         <td class="lineno"><a id="l123" href="#l123">123</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l124" href="#l124">124</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_start</span><span class="p">(</span><span class="n">StorePoll</span><span class="w"> </span><span class="o">*</span><span class="n">poll</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">poll_min</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">live</span><span class="p">,</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l125" href="#l125">125</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l126" href="#l126">126</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l127" href="#l127">127</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief Take a store's interval and whether it is live, as its reconfigure does.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l128" href="#l128">128</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l129" href="#l129">129</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * Both are always recorded. A store that store_poll_start pinned stays not live whatever @p live</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l130" href="#l130">130</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * says, so a settings save in a build seeded for screenshots never starts it fetching over its</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l131" href="#l131">131</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * fixture. A live store can still be switched off here and back on again. The deadline only moves</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l132" href="#l132">132</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * when polling is on, and then to the next interval boundary, so a save can bring a poll nearer but</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l133" href="#l133">133</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * never make one come faster than the interval allows.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l134" href="#l134">134</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l135" href="#l135">135</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param[in,out] poll The store's polling state.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l136" href="#l136">136</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param poll_min Minutes between polls. 0 or less turns polling off.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l137" href="#l137">137</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param live Whether the store should be live.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l138" href="#l138">138</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param now The current wall-clock time.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l139" href="#l139">139</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return Whether polling is on, which is when a store may arm its catch-up fetch.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l140" href="#l140">140</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l141" href="#l141">141</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_set</span><span class="p">(</span><span class="n">StorePoll</span><span class="w"> </span><span class="o">*</span><span class="n">poll</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">poll_min</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">live</span><span class="p">,</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l142" href="#l142">142</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l143" href="#l143">143</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l144" href="#l144">144</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief A store's turn on the face's cadence: whether a poll should go out now.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l145" href="#l145">145</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l146" href="#l146">146</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param[in,out] poll The store's polling state. The deadline moves on when a poll is due.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l147" href="#l147">147</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param now The current wall-clock time.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l148" href="#l148">148</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return Whether to ask the phone now.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l149" href="#l149">149</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l150" href="#l150">150</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_turn</span><span class="p">(</span><span class="n">StorePoll</span><span class="w"> </span><span class="o">*</span><span class="n">poll</span><span class="p">,</span><span class="w"> </span><span class="kt">time_t</span><span class="w"> </span><span class="n">now</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l151" href="#l151">151</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l152" href="#l152">152</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/**</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l153" href="#l153">153</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @brief A store's catch-up when the phone comes back: whether to ask for its reading again.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l154" href="#l154">154</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l155" href="#l155">155</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * Only a live store asks, so a store seeded for screenshots keeps its fixture through a reconnect.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l156" href="#l156">156</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * The age and the interval decide the rest, the same as store_poll_reconnect_due. The deadline is</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l157" href="#l157">157</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * left alone, so a catch-up never pushes the next recurring poll further away.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l158" href="#l158">158</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> *</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l159" href="#l159">159</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param poll The store's polling state.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l160" href="#l160">160</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @param age_s Seconds since the reading arrived, or below 0 when it never has.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l161" href="#l161">161</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> * @return Whether to ask the phone now.</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l162" href="#l162">162</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm"> */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l163" href="#l163">163</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="kt">bool</span><span class="w"> </span><span class="nf">store_poll_reconnect</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StorePoll</span><span class="w"> </span><span class="o">*</span><span class="n">poll</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">age_s</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l164" href="#l164">164</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l165" href="#l165">165</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="cm">/** @} */</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l166" href="#l166">166</a></td>
         <td class="linebranch">
         </td>
         <td class="linecount"></td>
@@ -1068,7 +1369,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-11-06 23:13:49
+          at 2026-11-10 23:56:13
         </footer>
       </div>
     </div>

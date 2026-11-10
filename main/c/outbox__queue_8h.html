@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('outbox__queue_
 <p>The outbox's work queue, its failed set, and the slot holding whatever is in flight.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="appmessage__features_8h_source.html">io/appmessage/appmessage_features.h</a>&quot;</code><br />
 </div>
 <p><a href="outbox__queue_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -210,8 +211,14 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:gadaf079e1656e97a39ec7774e22eb9703" id="r_gadaf079e1656e97a39ec7774e22eb9703"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_PHONE_SLOTS</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:gadaf079e1656e97a39ec7774e22eb9703"><td class="mdescLeft">&#160;</td><td class="mdescRight">no phone battery request on this face <br /></td></tr>
+<tr class="memitem:ga96bed56e5b3532f2e5e466e3270c88c3" id="r_ga96bed56e5b3532f2e5e466e3270c88c3"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_MUSIC_SLOTS</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga96bed56e5b3532f2e5e466e3270c88c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">no now playing request on this face <br /></td></tr>
 <tr class="memitem:gacb075235dabec7bf871cfc5698a42526" id="r_gacb075235dabec7bf871cfc5698a42526"><td class="memItemLeft">
-#define&#160;</td><td class="memItemRight"><b>OUTBOX_QUEUE_MAX</b>&#160;&#160;&#160;6</td></tr>
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_QUEUE_MAX</b>&#160;&#160;&#160;(6 + <a class="el" href="group__lib__io.html#gadaf079e1656e97a39ec7774e22eb9703">OUTBOX_PHONE_SLOTS</a> + <a class="el" href="group__lib__io.html#ga96bed56e5b3532f2e5e466e3270c88c3">OUTBOX_MUSIC_SLOTS</a>)</td></tr>
 <tr class="memdesc:gacb075235dabec7bf871cfc5698a42526"><td class="mdescLeft">&#160;</td><td class="mdescRight">Most jobs the work queue or the failed set holds at once. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -224,6 +231,8 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a>
 , <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2">OUTBOX_PHONE</a>
+, <a class="el" href="group__lib__io.html#gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f">OUTBOX_MUSIC</a>
 <br />
  }</td></tr>
 <tr class="memdesc:ga247b62ae1a0fa87cef6e3e8b7f738f17"><td class="mdescLeft">&#160;</td><td class="mdescRight">What an outbox job sends.  <a href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">More...</a><br /></td></tr>

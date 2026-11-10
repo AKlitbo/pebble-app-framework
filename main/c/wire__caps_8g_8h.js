@@ -3,6 +3,7 @@ var wire__caps_8g_8h =
     [ "CAL_LOC_LEN", "wire__caps_8g_8h.html#a2fce7543ff5feb8ce5149d89adbd38d8", null ],
     [ "CAL_TITLE_LEN", "wire__caps_8g_8h.html#aa8d4ff63a367c308464fcb26b8cadd02", null ],
     [ "CALENDAR_SLOTS_MAX", "wire__caps_8g_8h.html#afe3312551e2f2441936844dd431c42b8", null ],
+    [ "MUSIC_TEXT_LEN", "wire__caps_8g_8h.html#a0445da8de1c72fc7e895abc5ce5cfb00", null ],
     [ "SETTINGS_REQUEST_FRESH", "wire__caps_8g_8h.html#af3f7cd976bebfe18d94f7bd7ba7f0c6c", null ],
     [ "SETTINGS_REQUEST_FULL", "wire__caps_8g_8h.html#a64a4a567320a2aa7601c97c663e9a399", null ],
     [ "STOCK_SLOTS_MAX", "wire__caps_8g_8h.html#acbdbc38584ba08e982342b3f916cdb6b", null ],

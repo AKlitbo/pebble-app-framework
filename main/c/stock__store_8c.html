@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('stock__store_8
 <code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -234,7 +235,7 @@ void&#160;</td><td class="memItemRight"><b>stock_store_subscribe</b> (void(*cb)(
 <tr class="memitem:gaec0631f8c075d9a6c76e2f6f386f3970" id="r_gaec0631f8c075d9a6c76e2f6f386f3970"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaec0631f8c075d9a6c76e2f6f386f3970">stock_store_init</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg, const <a class="el" href="structStockSeed.html">StockSeed</a> *seed)</td></tr>
 <tr class="memdesc:gaec0631f8c075d9a6c76e2f6f386f3970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:gaf5880da69fee6e18843b989032e67836" id="r_gaf5880da69fee6e18843b989032e67836"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaf5880da69fee6e18843b989032e67836">stock_store_reconfigure</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg)</td></tr>
-<tr class="memdesc:gaf5880da69fee6e18843b989032e67836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memdesc:gaf5880da69fee6e18843b989032e67836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call.  <br /></td></tr>
 <tr class="memitem:ga4b56f050715401cfdd8a57bd1063cbe7" id="r_ga4b56f050715401cfdd8a57bd1063cbe7"><td class="memItemLeft">
 const <a class="el" href="structStockStrip.html">StockStrip</a> *&#160;</td><td class="memItemRight"><b>stock_store_strip</b> (void)</td></tr>
 <tr class="memdesc:ga4b56f050715401cfdd8a57bd1063cbe7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The whole watchlist strip. <span class="tt">count</span> is 0 until a reading lands. <br /></td></tr>

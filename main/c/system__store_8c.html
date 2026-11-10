@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('system__store_
 <p>The active system store: holds the battery + bluetooth state and subscribes to the battery and connection services itself. The alarm is read through on demand.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="link__change_8h_source.html">io/link_change.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -216,9 +217,8 @@ Functions</h2></td></tr>
 <tr class="memitem:gaa56e12f48eddf86b1533059128765d2e" id="r_gaa56e12f48eddf86b1533059128765d2e"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>system_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:gaa56e12f48eddf86b1533059128765d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when something changes (the screen redraw). <br /></td></tr>
-<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>system_store_on_reconnect</b> (void(*cb)(void))</td></tr>
-<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop. <br /></td></tr>
+<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaa29b6900ac64eda8dfb6dd8918ef531b">system_store_on_reconnect</a> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop.  <br /></td></tr>
 <tr class="memitem:ga98c417e24d8488baa2bb33e39155a3e7" id="r_ga98c417e24d8488baa2bb33e39155a3e7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga98c417e24d8488baa2bb33e39155a3e7">system_store_init</a> (<a class="el" href="structSystemConfig.html">SystemConfig</a> cfg, const <a class="el" href="structSystemSeed.html">SystemSeed</a> *seed)</td></tr>
 <tr class="memdesc:ga98c417e24d8488baa2bb33e39155a3e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:ga8d12e20cd8e402fc7c7abbfcd7454f3c" id="r_ga8d12e20cd8e402fc7c7abbfcd7454f3c"><td class="memItemLeft">
@@ -241,9 +241,6 @@ Variables</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft"><a id="a6ecec114912b30fcb280cd55636369b6" name="a6ecec114912b30fcb280cd55636369b6"></a>
 <a class="el" href="struct_0fstruct_0e_8s__state.html">static struct </a>&#160;</td><td class="memItemRight"><b>s_state</b></td></tr>
 <tr class="memdesc:a6ecec114912b30fcb280cd55636369b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The battery and bluetooth readings the store holds. <br /></td></tr>
-<tr class="memitem:a79e1d87e0fc4fcc34ecaab711a8c9b20" id="r_a79e1d87e0fc4fcc34ecaab711a8c9b20"><td class="memItemLeft"><a id="a79e1d87e0fc4fcc34ecaab711a8c9b20" name="a79e1d87e0fc4fcc34ecaab711a8c9b20"></a>
-static bool&#160;</td><td class="memItemRight"><b>s_bt_initialized</b></td></tr>
-<tr class="memdesc:a79e1d87e0fc4fcc34ecaab711a8c9b20"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first bluetooth reading only seeds. Later changes can buzz. <br /></td></tr>
 <tr class="memitem:a86591675781beec649ac9e8db3485c4f" id="r_a86591675781beec649ac9e8db3485c4f"><td class="memItemLeft"><a id="a86591675781beec649ac9e8db3485c4f" name="a86591675781beec649ac9e8db3485c4f"></a>
 static bool&#160;</td><td class="memItemRight"><b>s_live</b></td></tr>
 <tr class="memdesc:a86591675781beec649ac9e8db3485c4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">False pins the seeded values so screenshots stay put. <br /></td></tr>

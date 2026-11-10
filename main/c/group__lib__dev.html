@@ -200,10 +200,12 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__de
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
+<tr class="memitem:src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fhooks_2Eh" id="r_src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fhooks_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__hooks_8h.html">src/plugins/dev/c/dev/dev_hooks.h</a></td></tr>
+<tr class="memdesc:dev__hooks_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The calls a face makes to run the dev harness, and the switches they read. The build sets the switches from <span class="tt">paf build &lt;face&gt; --dev</span> and the unit's paf.dev.config.json, beside its paf.config.json, so a face writes none of them and <span class="tt">main.c</span> calls the hooks without any <span class="tt">#if</span> of its own. <br /></td></tr>
 <tr class="memitem:src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Ec" id="r_src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8c.html">src/plugins/dev/c/dev/dev_walk.c</a></td></tr>
 <tr class="memdesc:dev__walk_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shared dev harness. It seeds the stores from a fixed fixture and drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops it from any face that never calls it, which is every release build. <br /></td></tr>
 <tr class="memitem:src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Eh" id="r_src_2Fplugins_2Fdev_2Fc_2Fdev_2Fdev_5Fwalk_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="dev__walk_8h.html">src/plugins/dev/c/dev/dev_walk.h</a></td></tr>
-<tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for screenshots. It seeds the clock, weather, health, system, and location stores with a fixed fixture, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk". Each tap steps to the next theme and the next fixed set of readings, on the same fixed clock. <br /></td></tr>
+<tr class="memdesc:dev__walk_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared dev harness for screenshots. It seeds the clock, weather, health, system, and location stores with a fixed fixture, and the stock and calendar stores empty, using the store seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk". Each tap steps to the next theme and the next fixed set of readings, on the same fixed clock. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Data Structures</h2></td></tr>
@@ -214,12 +216,21 @@ Enumerations</h2></td></tr>
 <tr class="memitem:gabd7169bdf3c69ae6ffe751b975f1fadd" id="r_gabd7169bdf3c69ae6ffe751b975f1fadd"><td class="memItemLeft">enum &#160;</td><td class="memItemRight"><a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> { <a class="el" href="#ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca">DEV_WALK_NONE</a>
 , <a class="el" href="#ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d">DEV_WALK_THEMES</a>
  }</td></tr>
-<tr class="memdesc:gabd7169bdf3c69ae6ffe751b975f1fadd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which walk a tap advances. The face works this out from its own toggles.  <a href="#gabd7169bdf3c69ae6ffe751b975f1fadd">More...</a><br /></td></tr>
+<tr class="memdesc:gabd7169bdf3c69ae6ffe751b975f1fadd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which walk a tap advances. <span class="tt">dev_start</span> picks it from the walk the dev switches name.  <a href="#gabd7169bdf3c69ae6ffe751b975f1fadd">More...</a><br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:gadf53283b086362bedf9d7b445e457ea4" id="r_gadf53283b086362bedf9d7b445e457ea4"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#gadf53283b086362bedf9d7b445e457ea4">dev_seed_stores</a> (void)</td></tr>
+<tr class="memdesc:gadf53283b086362bedf9d7b445e457ea4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Seeds the stores from the dev fixture on the pinned clock when dev mode is on. Call it in place of the live store inits, and skip them when it returns true.  <br /></td></tr>
+<tr class="memitem:ga51d93254270b5de85c1a52d484bc4f74" id="r_ga51d93254270b5de85c1a52d484bc4f74"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ga51d93254270b5de85c1a52d484bc4f74">dev_start</a> (void(*apply_theme)(void))</td></tr>
+<tr class="memdesc:ga51d93254270b5de85c1a52d484bc4f74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk when dev mode is on. With the theme walk picked it forces the first theme and steps to the next on each tap. Any other walk, or none, just paints the fixture once and leaves the taps to the face. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
+<tr class="memitem:gabefedd1cbff9a29f82f78f8bf92352f9" id="r_gabefedd1cbff9a29f82f78f8bf92352f9"><td class="memItemLeft"><a id="gabefedd1cbff9a29f82f78f8bf92352f9" name="gabefedd1cbff9a29f82f78f8bf92352f9"></a>
+static void&#160;</td><td class="memItemRight"><b>dev_stop</b> (void)</td></tr>
+<tr class="memdesc:gabefedd1cbff9a29f82f78f8bf92352f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drops the walk's tap subscription when dev mode is on. Call from deinit. <br /></td></tr>
+<tr class="memitem:ga0fc1db4f8d84b98e40c608c63b2395af" id="r_ga0fc1db4f8d84b98e40c608c63b2395af"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#ga0fc1db4f8d84b98e40c608c63b2395af">dev_force_time</a> (struct tm *when)</td></tr>
+<tr class="memdesc:ga0fc1db4f8d84b98e40c608c63b2395af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a time's hour and minute to the pinned clock when dev mode is on. A panel that builds its own time, such as a second time zone, calls it so a screenshot shows the same time in every panel.  <br /></td></tr>
 <tr class="memitem:gad7d36031f9102cac1d91f9d66079d9ed" id="r_gad7d36031f9102cac1d91f9d66079d9ed"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad7d36031f9102cac1d91f9d66079d9ed">dev_walk_seed_stores</a> (int hour, int min)</td></tr>
-<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. Call in place of those stores' live inits.  <br /></td></tr>
+<tr class="memdesc:gad7d36031f9102cac1d91f9d66079d9ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. The stock and calendar stores start empty with <span class="tt">live</span> false for a face that declares <span class="tt">STOCK_STRIP</span> or <span class="tt">CALENDAR_STRIP</span>, so a settings save cannot start them fetching. The phone battery and now playing stores start empty with <span class="tt">live</span> false for a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after <span class="tt"><a class="el" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from their saved blobs, applying defaults first.">settings_init</a></span>, so the weather seed takes the wearer's temperature unit, in place of those stores' live inits, and before any store init of the face's own, then seed the face's own data after it.  <br /></td></tr>
 <tr class="memitem:ga881065800617954a0fd094063774f0d9" id="r_ga881065800617954a0fd094063774f0d9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga881065800617954a0fd094063774f0d9">dev_walk_init</a> (<a class="el" href="#gabd7169bdf3c69ae6ffe751b975f1fadd">DevWalkMode</a> mode, void(*apply_theme)(void))</td></tr>
 <tr class="memdesc:ga881065800617954a0fd094063774f0d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the walk. A theme walk forces the first theme and subscribes the accelerometer tap. Either mode then paints. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>.  <br /></td></tr>
 <tr class="memitem:ga1ff4ca8046b48b20d4d60258901384c1" id="r_ga1ff4ca8046b48b20d4d60258901384c1"><td class="memItemLeft"><a id="ga1ff4ca8046b48b20d4d60258901384c1" name="ga1ff4ca8046b48b20d4d60258901384c1"></a>
@@ -242,7 +253,7 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Which walk a tap advances. The face works this out from its own toggles. </p>
+<p>Which walk a tap advances. <span class="tt">dev_start</span> picks it from the walk the dev switches name. </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca" name="ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca"></a>DEV_WALK_NONE&#160;</td><td class="fielddoc"><p>Just pin the fixture, no tap handler. </p>
 </td></tr>
@@ -253,6 +264,100 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
 </div>
 </div>
 <a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Function Documentation</h2>
+<a id="ga0fc1db4f8d84b98e40c608c63b2395af" name="ga0fc1db4f8d84b98e40c608c63b2395af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0fc1db4f8d84b98e40c608c63b2395af">&#9670;&#160;</a></span>dev_force_time()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dev_force_time </td>
+          <td>(</td>
+          <td class="paramtype">struct tm *</td>          <td class="paramname"><span class="paramname"><em>when</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Sets a time's hour and minute to the pinned clock when dev mode is on. A panel that builds its own time, such as a second time zone, calls it so a screenshot shows the same time in every panel. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">when</td><td>The time to set, changed in place. Left alone with dev mode off. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gadf53283b086362bedf9d7b445e457ea4" name="gadf53283b086362bedf9d7b445e457ea4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadf53283b086362bedf9d7b445e457ea4">&#9670;&#160;</a></span>dev_seed_stores()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dev_seed_stores </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Seeds the stores from the dev fixture on the pinned clock when dev mode is on. Call it in place of the live store inits, and skip them when it returns true. </p>
+<dl class="section return"><dt>Returns</dt><dd>True when it seeded the stores, so the face skips its live inits. False with dev mode off. </dd></dl>
+
+</div>
+</div>
+<a id="ga51d93254270b5de85c1a52d484bc4f74" name="ga51d93254270b5de85c1a52d484bc4f74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga51d93254270b5de85c1a52d484bc4f74">&#9670;&#160;</a></span>dev_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dev_start </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>apply_theme&#160;</em></span>)(void)</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Starts the walk when dev mode is on. With the theme walk picked it forces the first theme and steps to the next on each tap. Any other walk, or none, just paints the fixture once and leaves the taps to the face. Call after <span class="tt"><a class="el" href="group__lib__ui.html#ga80e9c91268f57dc6bd9233afc9d7a19f" title="Build the slot layers for a face and paint them once.">engine_init</a></span>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">apply_theme</td><td>The face's own theme-apply hook, or NULL for none. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga881065800617954a0fd094063774f0d9" name="ga881065800617954a0fd094063774f0d9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga881065800617954a0fd094063774f0d9">&#9670;&#160;</a></span>dev_walk_init()</h2>
 
@@ -302,7 +407,7 @@ void&#160;</td><td class="memItemRight"><b>dev_walk_deinit</b> (void)</td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. Call in place of those stores' live inits. </p>
+<p>Inits the clock, weather, health, system, and location stores from the default fixture, with <span class="tt">live</span> set to false and a pinned clock, so the face shows fixed data that no live reading can stomp. Weather and location are only filled for a face that declares their keys, and left empty otherwise. The stock and calendar stores start empty with <span class="tt">live</span> false for a face that declares <span class="tt">STOCK_STRIP</span> or <span class="tt">CALENDAR_STRIP</span>, so a settings save cannot start them fetching. The phone battery and now playing stores start empty with <span class="tt">live</span> false for a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after <span class="tt"><a class="el" href="group__lib__settings.html#gabf78fb93dcb30f9c8f17cc2eaa9a934e" title="Load a face&#39;s settings from their saved blobs, applying defaults first.">settings_init</a></span>, so the weather seed takes the wearer's temperature unit, in place of those stores' live inits, and before any store init of the face's own, then seed the face's own data after it. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hour</td><td>The pinned clock hour (0-23). </td></tr>

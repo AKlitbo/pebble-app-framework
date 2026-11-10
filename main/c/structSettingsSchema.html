@@ -208,15 +208,15 @@ uint32_t&#160;</td><td class="memItemRight"><b>key</b></td></tr>
 <tr class="memitem:a1ba82ee7252bbf6eac986e2e8cfcc10d" id="r_a1ba82ee7252bbf6eac986e2e8cfcc10d"><td class="memItemLeft"><a id="a1ba82ee7252bbf6eac986e2e8cfcc10d" name="a1ba82ee7252bbf6eac986e2e8cfcc10d"></a>
 uint8_t&#160;</td><td class="memItemRight"><b>version</b></td></tr>
 <tr class="memdesc:a1ba82ee7252bbf6eac986e2e8cfcc10d"><td class="mdescLeft">&#160;</td><td class="mdescRight">This face's current schema version. <br /></td></tr>
-<tr class="memitem:a423877692a5620c67cc25c955455a635" id="r_a423877692a5620c67cc25c955455a635"><td class="memItemLeft"><a id="a423877692a5620c67cc25c955455a635" name="a423877692a5620c67cc25c955455a635"></a>
-uint16_t&#160;</td><td class="memItemRight"><b>min_versioned_size</b></td></tr>
-<tr class="memdesc:a423877692a5620c67cc25c955455a635"><td class="mdescLeft">&#160;</td><td class="mdescRight">Smallest versioned blob accepted, the frozen v1 size. <br /></td></tr>
+<tr class="memitem:a631fe9764dad73ab2e4042366932ff3e" id="r_a631fe9764dad73ab2e4042366932ff3e"><td class="memItemLeft"><a id="a631fe9764dad73ab2e4042366932ff3e" name="a631fe9764dad73ab2e4042366932ff3e"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>first_size</b></td></tr>
+<tr class="memdesc:a631fe9764dad73ab2e4042366932ff3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The struct's size in its first release, the smallest blob accepted. Set with SETTINGS_BLOB. <br /></td></tr>
 <tr class="memitem:a438d6811d84f07c545ee4446c8fa9c5b" id="r_a438d6811d84f07c545ee4446c8fa9c5b"><td class="memItemLeft"><a id="a438d6811d84f07c545ee4446c8fa9c5b" name="a438d6811d84f07c545ee4446c8fa9c5b"></a>
 void *&#160;</td><td class="memItemRight"><b>blob</b></td></tr>
-<tr class="memdesc:a438d6811d84f07c545ee4446c8fa9c5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The face's settings struct, version byte first. <br /></td></tr>
+<tr class="memdesc:a438d6811d84f07c545ee4446c8fa9c5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The face's settings struct, version byte first. Set with SETTINGS_BLOB. <br /></td></tr>
 <tr class="memitem:a596fbeb3c05f172304792c0479cea8cb" id="r_a596fbeb3c05f172304792c0479cea8cb"><td class="memItemLeft"><a id="a596fbeb3c05f172304792c0479cea8cb" name="a596fbeb3c05f172304792c0479cea8cb"></a>
 uint16_t&#160;</td><td class="memItemRight"><b>blob_size</b></td></tr>
-<tr class="memdesc:a596fbeb3c05f172304792c0479cea8cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of that struct, best set with SETTINGS_BLOB_SIZE. <br /></td></tr>
+<tr class="memdesc:a596fbeb3c05f172304792c0479cea8cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of that struct. Set with SETTINGS_BLOB. <br /></td></tr>
 <tr class="memitem:a0c8a65bed4b4810a0d8b5aa38b7ea2ed" id="r_a0c8a65bed4b4810a0d8b5aa38b7ea2ed"><td class="memItemLeft"><a id="a0c8a65bed4b4810a0d8b5aa38b7ea2ed" name="a0c8a65bed4b4810a0d8b5aa38b7ea2ed"></a>
 const <a class="el" href="structSettingField.html">SettingField</a> *&#160;</td><td class="memItemRight"><b>fields</b></td></tr>
 <tr class="memdesc:a0c8a65bed4b4810a0d8b5aa38b7ea2ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">The face's field table. <br /></td></tr>
@@ -232,8 +232,8 @@ const struct <a class="el" href="structSettingsSchema.html">SettingsSchema</a> *
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A face's persistence identity. </p>
-<p>Its storage key, current schema version, frozen v1 blob size, the face struct to load into (its first byte must be the uint8_t version), that struct's size, the field table that drives defaults/sanitize/serialization, and an optional migration hook to rescue pre-versioned data.</p>
-<p>A face can persist more than one struct by chaining schemas through companion: each schema points to the next and the last one is NULL. settings_init walks the chain so load, save, serialize, and inbox decode all cover every schema. Each link owns its own key, version, and blob, so a domain (e.g. weather or a colour table) can sit in its own key instead of bloating the main one. The typed reads (settings_u8/str) index the whole chain and remember each field's owning schema, so a shared field (id &lt; SETTING_COUNT) can live in any link. </p>
+<p>Its storage key, current schema version, the face struct to load into (its first byte must be the uint8_t version), that struct's size and the size it first shipped at, the field table that drives defaults/sanitize/serialization, and an optional migration hook to rescue pre-versioned data. SETTINGS_BLOB fills in the struct and both sizes.</p>
+<p>A face can persist more than one struct by chaining schemas through companion: each schema points to the next and the last one is NULL. settings_init walks the chain so load, save, serialize, and inbox decode all cover every schema. Each link owns its own key, version, and blob, so a domain (e.g. weather or a colour table) can sit in its own key instead of bloating the main one. The typed reads (settings_u8/str) index the whole chain and remember each field's owning schema, so a shared field (id &lt; SETTING_COUNT) can live in any link. A face built with a plugin define also gets the framework's own schema, on SETTINGS_PLUGIN_SOURCE_KEY. It is never linked onto the face's chain. The walk in <a class="el" href="settings__chain_8h.html" title="The walk over a face&#39;s settings schemas, and the checks a launch makes over them.">settings_chain.h</a> visits it after the face's last schema. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/c/pebble/system/settings/<a class="el" href="settings_8h_source.html">settings.h</a></li>
 </ul>

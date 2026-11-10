@@ -9,10 +9,9 @@ var time__store_8c =
     [ "time_store_reconfigure", "group__lib__stores.html#ga9c2eacc43d552852d63185bd4ca16379", null ],
     [ "time_store_subscribe", "group__lib__stores.html#ga03d7e9b1823247fa9d5a6ead85797571", null ],
     [ "time_store_tm", "group__lib__stores.html#gadc9650a7506ac75294df48a7a8deadcd", null ],
-    [ "s_beats", "time__store_8c.html#a3d9299acd4b3e475b07567a74035c95c", null ],
     [ "s_beats_timer", "time__store_8c.html#a25cfc5c232d6d20427553ac3cd954060", null ],
     [ "s_cb", "time__store_8c.html#a0d75601f9ac1a6725c17065d338a664a", null ],
-    [ "s_hourly", "time__store_8c.html#abd6c3228e1087f58110eea09b52dbbe4", null ],
-    [ "s_minute", "time__store_8c.html#a8d97f148044f6486b6f7880444989530", null ],
+    [ "s_cfg", "time__store_8c.html#a5ed38d916996be3c73c6622ffc54a846", null ],
+    [ "s_started_live", "time__store_8c.html#a6e2284b49afe24146fe3b58cce5128c9", null ],
     [ "s_tm", "time__store_8c.html#ac91dab61b991b18d0b6f0632cb71a458", null ]
 ];

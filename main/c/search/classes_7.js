@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['outboxjob_0',['OutboxJob',['../structOutboxJob.html',1,'']]],
-  ['outboxqueue_1',['OutboxQueue',['../structOutboxQueue.html',1,'']]]
+  ['linkstate_0',['LinkState',['../structLinkState.html',1,'']]],
+  ['locationconfig_1',['LocationConfig',['../structLocationConfig.html',1,'']]],
+  ['locationseed_2',['LocationSeed',['../structLocationSeed.html',1,'']]]
 ];

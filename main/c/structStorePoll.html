@@ -211,9 +211,13 @@ int&#160;</td><td class="memItemRight"><b>poll_min</b></td></tr>
 <tr class="memitem:ad96becb58ae977574a0b761caa011cb8" id="r_ad96becb58ae977574a0b761caa011cb8"><td class="memItemLeft"><a id="ad96becb58ae977574a0b761caa011cb8" name="ad96becb58ae977574a0b761caa011cb8"></a>
 bool&#160;</td><td class="memItemRight"><b>live</b></td></tr>
 <tr class="memdesc:ad96becb58ae977574a0b761caa011cb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">True on a live face. A store seeded with fixtures never polls. <br /></td></tr>
+<tr class="memitem:aba76cc6762ace5d4c5ceddfa7b919de1" id="r_aba76cc6762ace5d4c5ceddfa7b919de1"><td class="memItemLeft"><a id="aba76cc6762ace5d4c5ceddfa7b919de1" name="aba76cc6762ace5d4c5ceddfa7b919de1"></a>
+bool&#160;</td><td class="memItemRight"><b>pinned</b></td></tr>
+<tr class="memdesc:aba76cc6762ace5d4c5ceddfa7b919de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when init started the store not live, so no reconfigure turns it live. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>One store's polling: its interval, whether it polls at all, and when it is next due. </p>
+<p>A <a class="el" href="structStorePoll.html" title="One store&#39;s polling: its interval, whether it polls at all, and when it is next due.">StorePoll</a> has to begin zeroed, as a static one does, or go through store_poll_start before anything else reads it. Zero one on the stack or the heap before its first store_poll_set, or a stray <span class="tt"><a class="el" href="#aba76cc6762ace5d4c5ceddfa7b919de1" title="True when init started the store not live, so no reconfigure turns it live.">pinned</a></span> keeps it off for good. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/c/pebble/io/stores/<a class="el" href="store__poll_8h_source.html">store_poll.h</a></li>
 </ul>

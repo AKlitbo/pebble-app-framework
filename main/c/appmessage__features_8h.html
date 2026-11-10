@@ -197,7 +197,8 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage__fe
 
 <p>Which of the phone's optional features a face has, worked out from the message keys it declares. The waf build defines a HAS_MESSAGE_KEY_* for every key in the face's messageKeys, and this turns those into one switch per feature, so every file asking the same question gets the same answer.  
 <a href="#details">More...</a></p>
-
+<div class="textblock"><code>#include &quot;<a class="el" href="plugin__source_8h_source.html">system/settings/plugin_source.h</a>&quot;</code><br />
+</div>
 <p><a href="appmessage__features_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
@@ -211,7 +212,9 @@ Macros</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Which of the phone's optional features a face has, worked out from the message keys it declares. The waf build defines a HAS_MESSAGE_KEY_* for every key in the face's messageKeys, and this turns those into one switch per feature, so every file asking the same question gets the same answer. </p>
-<p>APPMESSAGE_HAS_WEATHER is defined when the face has weather, and APPMESSAGE_HAS_LOCATION when it gets coordinates. </p>
+<p>APPMESSAGE_HAS_SETTINGS is defined when the face declares both settings keys, so the phone can ask for its settings and put them back after a wipe. APPMESSAGE_HAS_WEATHER is defined when the face has weather, and APPMESSAGE_HAS_LOCATION when it gets coordinates. APPMESSAGE_HAS_WEATHER_EXTRAS, APPMESSAGE_HAS_WEATHER_FORECAST, and APPMESSAGE_HAS_WEATHER_AIR are defined for each weather group the face declares whole. APPMESSAGE_HAS_PHONE is defined when it shows the phone's battery, and APPMESSAGE_HAS_MUSIC when it shows what the phone is playing.</p>
+<p>A face that declares part of a set stops the build here, with each missing key named. The manifest build refuses the same sets before it writes any sandbox, naming the face, so these are what still stops a build run some other way.</p>
+<p>A face that keeps a plugin source choice without both settings keys stops the build here too. The manifest build adds both for it, so this is what still stops a build run some other way. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

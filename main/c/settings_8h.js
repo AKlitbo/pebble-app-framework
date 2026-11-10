@@ -1,6 +1,9 @@
 var settings_8h =
 [
+    [ "SETTINGS_BLOB", "group__lib__settings.html#ga3af4893cdd074306b3fcc30df1cb8a00", null ],
     [ "SETTINGS_BLOB_SIZE", "group__lib__settings.html#ga9f418302396c6aa0b9d2bc9a2e75a9b0", null ],
+    [ "SETTINGS_FIRST_SIZE_", "group__lib__settings.html#ga8db432ced131d3416a56b8de4dd53bc2", null ],
+    [ "SETTINGS_PLUGIN_SOURCE_KEY", "group__lib__settings.html#ga23404e19f790c5308f720b0237438e4f", null ],
     [ "SettingsSchema", "group__lib__settings.html#ga4c71229864f5dc765a8b70c2c971fb99", null ],
     [ "SettingId", "group__lib__settings.html#ga5b6861430c47031f602e2af972953f53", [
       [ "SETTING_TEMPERATURE_UNIT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188", null ],
@@ -16,6 +19,7 @@ var settings_8h =
       [ "SETTING_HOURLY_VIBE", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895", null ],
       [ "SETTING_BATTERY_DISPLAY", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276", null ],
       [ "SETTING_HEADER_FONT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9", null ],
+      [ "SETTING_WIND_UNIT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e", null ],
       [ "SETTING_COUNT", "group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33", null ]
     ] ],
     [ "SettingType", "group__lib__settings.html#ga8dfa1a122b59a38c38cc2824be723338", [

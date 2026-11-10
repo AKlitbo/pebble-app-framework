@@ -6,6 +6,7 @@ var searchData=
   ['affects_5fweather_3',['affects_weather',['../structSettingField.html#a5b5aa3e72da7efea998a16f6c833e4e3',1,'SettingField']]],
   ['align_4',['align',['../structZone.html#ad4476b64011cab9f23f617932288e4f6',1,'Zone']]],
   ['all_5fday_5',['all_day',['../structCalendarEvent.html#a169531a172f31f86d98b773c59209a04',1,'CalendarEvent']]],
-  ['at_5fmin_6',['at_min',['../structHrvLog.html#a898e4d69bd130a381d7e5b2a27704d93',1,'HrvLog']]],
-  ['at_5fsec_7',['at_sec',['../structHrvBurst.html#a0b575b957833471898c947e909993977',1,'HrvBurst']]]
+  ['artist_6',['artist',['../structMusicTrack.html#a29074906d638e30c2c9d76034e9d2fa4',1,'MusicTrack::artist'],['../structMusicSeed.html#a4723f047d981cabde8f045172453d66b',1,'MusicSeed::artist']]],
+  ['at_5fmin_7',['at_min',['../structHrvLog.html#a898e4d69bd130a381d7e5b2a27704d93',1,'HrvLog']]],
+  ['at_5fsec_8',['at_sec',['../structHrvBurst.html#a0b575b957833471898c947e909993977',1,'HrvBurst']]]
 ];

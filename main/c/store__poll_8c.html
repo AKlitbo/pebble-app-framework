@@ -198,13 +198,18 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('store__poll_8c
 <p>The polling decisions the weather, stock, and calendar stores share.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="store__poll_8h_source.html">io/stores/store_poll.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="store__live_8h_source.html">io/store_live.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ga9d6ab580b20298f18c6243bcff7dbfb1" id="r_ga9d6ab580b20298f18c6243bcff7dbfb1"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga9d6ab580b20298f18c6243bcff7dbfb1">store_poll_start</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, int poll_min, bool live, time_t now)</td></tr>
+<tr class="memdesc:ga9d6ab580b20298f18c6243bcff7dbfb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its init does.  <br /></td></tr>
 <tr class="memitem:ga30b8b33c3204c012230afe0eb9e8d594" id="r_ga30b8b33c3204c012230afe0eb9e8d594"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga30b8b33c3204c012230afe0eb9e8d594">store_poll_set</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, int poll_min, bool live, time_t now)</td></tr>
-<tr class="memdesc:ga30b8b33c3204c012230afe0eb9e8d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its init and its reconfigure both do.  <br /></td></tr>
+<tr class="memdesc:ga30b8b33c3204c012230afe0eb9e8d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its reconfigure does.  <br /></td></tr>
 <tr class="memitem:ga576c21d8f643934d22918c3fb2cbeeef" id="r_ga576c21d8f643934d22918c3fb2cbeeef"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga576c21d8f643934d22918c3fb2cbeeef">store_poll_turn</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, time_t now)</td></tr>
 <tr class="memdesc:ga576c21d8f643934d22918c3fb2cbeeef"><td class="mdescLeft">&#160;</td><td class="mdescRight">A store's turn on the face's cadence: whether a poll should go out now.  <br /></td></tr>
+<tr class="memitem:ga9bd6e2af60e688844a31c8f9fb4cdae2" id="r_ga9bd6e2af60e688844a31c8f9fb4cdae2"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga9bd6e2af60e688844a31c8f9fb4cdae2">store_poll_reconnect</a> (const <a class="el" href="structStorePoll.html">StorePoll</a> *poll, int age_s)</td></tr>
+<tr class="memdesc:ga9bd6e2af60e688844a31c8f9fb4cdae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">A store's catch-up when the phone comes back: whether to ask for its reading again.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The polling decisions the weather, stock, and calendar stores share. </p>

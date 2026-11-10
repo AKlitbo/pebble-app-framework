@@ -746,7 +746,23 @@
 <a name='L640'></a><a href='#L640'>640</a>
 <a name='L641'></a><a href='#L641'>641</a>
 <a name='L642'></a><a href='#L642'>642</a>
-<a name='L643'></a><a href='#L643'>643</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L643'></a><a href='#L643'>643</a>
+<a name='L644'></a><a href='#L644'>644</a>
+<a name='L645'></a><a href='#L645'>645</a>
+<a name='L646'></a><a href='#L646'>646</a>
+<a name='L647'></a><a href='#L647'>647</a>
+<a name='L648'></a><a href='#L648'>648</a>
+<a name='L649'></a><a href='#L649'>649</a>
+<a name='L650'></a><a href='#L650'>650</a>
+<a name='L651'></a><a href='#L651'>651</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1415,6 +1431,9 @@
  * undefined in the webview and will throw. Keep such values inline.
  */
 &nbsp;
+import { CALLOUT_BADGE, CALLOUT_BOX } from './callout-style';
+import { FOCUS_RING, LIST, LIST_ROW, LIST_ROW_PRESSED } from './control-style';
+&nbsp;
 /** The Clay component context the manipulator and initialize bind to. */
 export interface ClayComponentContext {
   $element: HTMLElement[];
@@ -1451,34 +1470,39 @@ export default {
   /** The component type name, matched by a Clay config item's own `type: 'locationsearch'`. */
   name: 'locationsearch',
 &nbsp;
-  /** The markup this component renders for its config row. */
+  /**
+   * The markup this component renders for its config row. It carries the classes of Clay's text box
+   * and takes that component's look, and createClay registers Clay's text box on every page holding a
+   * location search so the look is there on a page with no text box of its own.
+   */
   template: [
-    '&lt;div class="component component-input loc-search"&gt;',
+    '&lt;div class="component component-input pf-loc-search"&gt;',
     '  &lt;label class="tap-highlight"&gt;',
-    '    &lt;span class="label loc-label"&gt;&lt;/span&gt;',
+    '    &lt;span class="label pf-loc-label"&gt;&lt;/span&gt;',
     '    &lt;span class="input"&gt;',
-    '      &lt;input type="text" class="loc-query" autocomplete="off" autocorrect="off" autocapitalize="words"&gt;',
-    '      &lt;ul class="loc-list"&gt;&lt;/ul&gt;',
+    '      &lt;input type="text" class="pf-loc-query" autocomplete="off" autocorrect="off" autocapitalize="words"&gt;',
+    '      &lt;ul class="pf-loc-list"&gt;&lt;/ul&gt;',
     '    &lt;/span&gt;',
     '  &lt;/label&gt;',
     '  &lt;div class="description" style="display:none;"&gt;&lt;/div&gt;',
-    '  &lt;div class="loc-note" style="display:none;"&gt;Pick this city again so its clock follows daylight saving.&lt;/div&gt;',
-    '  &lt;div class="loc-note loc-unpicked" style="display:none;"&gt;Pick a place from the list to save it.&lt;/div&gt;',
-    '  &lt;input type="hidden" class="loc-value"&gt;',
+    '  &lt;div class="pf-loc-note" style="display:none;"&gt;Pick this city again so its clock follows daylight saving.&lt;/div&gt;',
+    '  &lt;div class="pf-loc-note pf-loc-unpicked" style="display:none;"&gt;Pick a place from the list to save it.&lt;/div&gt;',
+    '  &lt;input type="hidden" class="pf-loc-value"&gt;',
     '&lt;/div&gt;',
   ].join(''),
 &nbsp;
   /** The CSS this component needs, scoped to its own class names. */
   style: [
-    '.loc-search .input { position: relative; }',
-    '.loc-search .loc-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 10; list-style: none; margin: 0; padding: 0; background: #fff; color: #000; border: 1px solid #ccc; border-radius: 0 0 4px 4px; max-height: 180px; overflow-y: auto; }',
-    '.loc-search .loc-list:not(.show) { display: none; }',
-    '.loc-search .loc-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; }',
-    '.loc-search .loc-item:last-child { border-bottom: none; }',
-    '.loc-search .loc-item:hover, .loc-search .loc-item:active { background: #ff4700; color: #fff; }',
-    '.loc-search .loc-hint { float: right; opacity: 0.55; }',
-    '.loc-search .loc-note { position: relative; margin: 0.7rem 0 0.15rem; padding: 0.5rem 0.6rem 0.5rem 2.1rem; background: rgba(255, 71, 0, 0.1); border-left: 3px solid #ff4700; font-size: 0.85em; line-height: 1.4; }',
-    '.loc-search .loc-note:before { content: "!"; position: absolute; left: 0.6rem; top: 0.65rem; width: 1.15em; height: 1.15em; border: 1px solid #ff4700; border-radius: 50%; color: #ff4700; font-size: 0.95em; font-weight: 700; line-height: 1.1em; text-align: center; }',
+    '.pf-loc-search .input { position: relative; }',
+    '.pf-loc-search .pf-loc-query:focus-visible { ' + FOCUS_RING + ' }',
+    '.pf-loc-search .pf-loc-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 10; list-style: none; margin: 0; padding: 0; ' + LIST + ' border-radius: 0 0 4px 4px; max-height: 180px; overflow-y: auto; }',
+    '.pf-loc-search .pf-loc-list:not(.show) { display: none; }',
+    '.pf-loc-search .pf-loc-item { ' + LIST_ROW + ' }',
+    '.pf-loc-search .pf-loc-item:last-child { border-bottom: none; }',
+    '.pf-loc-search .pf-loc-item:hover, .pf-loc-search .pf-loc-item:active { ' + LIST_ROW_PRESSED + ' }',
+    '.pf-loc-search .pf-loc-hint { float: right; opacity: 0.55; }',
+    '.pf-loc-search .pf-loc-note { ' + CALLOUT_BOX + ' }',
+    '.pf-loc-search .pf-loc-note:before { ' + CALLOUT_BADGE + ' }',
   ].join(''),
 &nbsp;
   manipulator: {
@@ -1497,7 +1521,7 @@ export default {
       let zone = '';
       let fixed = false;
 &nbsp;
-      (root.querySelector('.loc-value') as HTMLInputElement).value = value || '';
+      (root.querySelector('.pf-loc-value') as HTMLInputElement).value = value || '';
 &nbsp;
       if (value) {
         try {
@@ -1527,14 +1551,14 @@ export default {
         }
       }
 &nbsp;
-      (root.querySelector('.loc-query') as HTMLInputElement).value = label;
+      (root.querySelector('.pf-loc-query') as HTMLInputElement).value = label;
 &nbsp;
       // a timezone field reads its offset off the zone, so a place saved without one is stuck on
       // whatever the offset was the day it was picked and goes an hour out when the clocks change.
       // picking the place again is the whole fix, and it happens right here. a plain offset has no
       // zone on purpose and no daylight saving to follow, so it is left alone
       const wantsZone = Boolean(this.config.timeZone);
-      const noteEl = root.querySelector('.loc-note') as HTMLElement;
+      const noteEl = root.querySelector('.pf-loc-note') as HTMLElement;
 &nbsp;
       noteEl.style.display = (wantsZone &amp;&amp; label &amp;&amp; !zone &amp;&amp; !fixed) ? 'block' : 'none';
     },
@@ -1549,7 +1573,7 @@ export default {
      * @return The string Clay should persist, or an empty string when nothing is picked yet.
      */
     get: function(this: ClayComponentContext) {
-      return (this.$element[0].querySelector('.loc-value') as HTMLInputElement).value || <span class="branch-1 cbranch-no" title="branch not covered" >'';</span>
+      return (this.$element[0].querySelector('.pf-loc-value') as HTMLInputElement).value || <span class="branch-1 cbranch-no" title="branch not covered" >'';</span>
     },
   },
 &nbsp;
@@ -1565,11 +1589,11 @@ export default {
     const self = this;
     const root = self.$element[0];
 &nbsp;
-    const queryEl = root.querySelector('.loc-query') as HTMLInputElement;
-    const hiddenEl = root.querySelector('.loc-value') as HTMLInputElement;
-    const listEl = root.querySelector('.loc-list') as HTMLElement;
-    const noteEl = root.querySelector('.loc-note') as HTMLElement;
-    const unpickedEl = root.querySelector('.loc-unpicked') as HTMLElement;
+    const queryEl = root.querySelector('.pf-loc-query') as HTMLInputElement;
+    const hiddenEl = root.querySelector('.pf-loc-value') as HTMLInputElement;
+    const listEl = root.querySelector('.pf-loc-list') as HTMLElement;
+    const noteEl = root.querySelector('.pf-loc-note') as HTMLElement;
+    const unpickedEl = root.querySelector('.pf-loc-unpicked') as HTMLElement;
     let timer: ReturnType&lt;typeof setTimeout&gt; | null = null;
     let seq = 0;
     // counts every pick and edit, so a zone lookup that answers after the user moved on leaves
@@ -1605,7 +1629,7 @@ export default {
     // the answer it gave. it is only ever read for a dropdown row so a stale minute is harmless
     const offsets: Record&lt;string, number&gt; = {};
 &nbsp;
-    (root.querySelector('.loc-label') as HTMLElement).textContent = self.config.label || 'Location';
+    (root.querySelector('.pf-loc-label') as HTMLElement).textContent = self.config.label || 'Location';
 &nbsp;
     <span class="missing-if-branch" title="if path not taken" >I</span>if (self.config.attributes &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >self.config.attributes.placeholder) {</span>
 <span class="cstat-no" title="statement not covered" >      queryEl.placeholder = self.config.attributes.placeholder;</span>
@@ -1871,7 +1895,7 @@ export default {
       zones.forEach(function(choice: ZoneChoice) {
         const item = document.createElement('li');
 &nbsp;
-        item.className = 'loc-item loc-item-zone';
+        item.className = 'pf-loc-item pf-loc-item-zone';
         // the full zone name, since Adelaide on its own does not say which one. a typed offset reads
         // its UTC label instead, since its Etc/GMT-5 name carries the sign the other way round
         const offsetRow = choice.label.indexOf('UTC') === 0;
@@ -1882,7 +1906,7 @@ export default {
         if (!offsetRow) {
           const hint = document.createElement('span');
 &nbsp;
-          hint.className = 'loc-hint';
+          hint.className = 'pf-loc-hint';
           hint.textContent = offsetText(choice.offset);
           item.appendChild(hint);
         }
@@ -1912,7 +1936,7 @@ export default {
       (results || <span class="branch-1 cbranch-no" title="branch not covered" >[])</span>.forEach(function(place: GeoPlace) {
         const item = document.createElement('li');
 &nbsp;
-        item.className = 'loc-item';
+        item.className = 'pf-loc-item';
         item.textContent = labelFor(place);
         item.addEventListener('click', function(event) {
           event.stopPropagation();
@@ -2037,7 +2061,7 @@ export default {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-06T23:13:02.255Z
+                at 2026-11-10T23:55:11.522Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

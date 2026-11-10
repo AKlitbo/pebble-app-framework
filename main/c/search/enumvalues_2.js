@@ -1,9 +1,6 @@
 var searchData=
 [
-  ['hrv_5fcount_5fany_0',['HRV_COUNT_ANY',['../group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f',1,'hrv_log.h']]],
-  ['hrv_5fcount_5fnot_5fwalking_1',['HRV_COUNT_NOT_WALKING',['../group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc',1,'hrv_log.h']]],
-  ['hrv_5fcount_5fstill_2',['HRV_COUNT_STILL',['../group__lib__core.html#gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8',1,'hrv_log.h']]],
-  ['hrv_5fstate_5fbusy_3',['HRV_STATE_BUSY',['../group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f',1,'hrv_log.h']]],
-  ['hrv_5fstate_5fstill_4',['HRV_STATE_STILL',['../group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b',1,'hrv_log.h']]],
-  ['hrv_5fstate_5fwalking_5',['HRV_STATE_WALKING',['../group__lib__core.html#ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c',1,'hrv_log.h']]]
+  ['font_5fslot_5floaded_0',['FONT_SLOT_LOADED',['../group__lib__core.html#ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e',1,'font_slots.h']]],
+  ['font_5fslot_5fowned_1',['FONT_SLOT_OWNED',['../group__lib__core.html#ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef',1,'font_slots.h']]],
+  ['font_5fslot_5funowned_2',['FONT_SLOT_UNOWNED',['../group__lib__core.html#ggabd8aa4927cda7d0e7c6d41f16b59773ca6ed032047afedb5d59c723e1eebe67d1',1,'font_slots.h']]]
 ];

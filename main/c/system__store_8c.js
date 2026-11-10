@@ -12,7 +12,6 @@ var system__store_8c =
     [ "system_store_next_alarm", "group__lib__stores.html#ga323c6c5d1989296b9618d94e94f92daa", null ],
     [ "system_store_on_reconnect", "group__lib__stores.html#gaa29b6900ac64eda8dfb6dd8918ef531b", null ],
     [ "system_store_subscribe", "group__lib__stores.html#gaa56e12f48eddf86b1533059128765d2e", null ],
-    [ "s_bt_initialized", "system__store_8c.html#a79e1d87e0fc4fcc34ecaab711a8c9b20", null ],
     [ "s_cb", "system__store_8c.html#a0d75601f9ac1a6725c17065d338a664a", null ],
     [ "s_live", "system__store_8c.html#a86591675781beec649ac9e8db3485c4f", null ],
     [ "s_reconnect", "system__store_8c.html#aa5f439ff5804491818cbb8d665f2b0f4", null ],

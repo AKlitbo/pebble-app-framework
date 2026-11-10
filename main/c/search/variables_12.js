@@ -9,7 +9,7 @@ var searchData=
   ['timer_6',['timer',['../structStoreFetch.html#a4850747c6e69fbb4bfbd859aa8ca8d14',1,'StoreFetch']]],
   ['tint_7',['tint',['../structIconEntry.html#aff9ed05ce2b092a889acb2cfdb5a3149',1,'IconEntry']]],
   ['tinted_8',['tinted',['../structIconEntry.html#a7b9da71f47b947747679cd8eb52290bb',1,'IconEntry']]],
-  ['title_9',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent']]],
+  ['title_9',['title',['../structCalendarEvent.html#a6fc555791791a4a6738122267e7891fa',1,'CalendarEvent::title'],['../structMusicTrack.html#a583668c50deecc86873ee1e656d27055',1,'MusicTrack::title'],['../structMusicSeed.html#a3af3b5747a6be4137b9539836a1ee61a',1,'MusicSeed::title']]],
   ['to_10',['to',['../structTimeBandSpan.html#a0520d74d4aa34d60477daf1e2845e6e7',1,'TimeBandSpan']]],
   ['today_11',['today',['../structHrvLog.html#a55a17799c1b88a50a3c0ae498d46bbe7',1,'HrvLog']]],
   ['type_12',['type',['../structSettingField.html#ae67eb62444a3ef84ce77260694c533c1',1,'SettingField']]]

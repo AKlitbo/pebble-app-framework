@@ -208,6 +208,29 @@ Data Structures</h2></td></tr>
 <tr class="memitem:SystemSeed" id="r_SystemSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSystemSeed.html">SystemSeed</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned state when live = false.  <a href="structSystemSeed.html#details">More...</a><br /></td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ga81426744fd8e4b25e4b1e746e01a86cd" id="r_ga81426744fd8e4b25e4b1e746e01a86cd"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_PHONE</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga81426744fd8e4b25e4b1e746e01a86cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare PHONE_REQUEST <br /></td></tr>
+<tr class="memitem:gafb83e889fc10f054eb75c665b53d6de1" id="r_gafb83e889fc10f054eb75c665b53d6de1"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_MUSIC</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:gafb83e889fc10f054eb75c665b53d6de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare MUSIC_REQUEST <br /></td></tr>
+<tr class="memitem:gace98b5387157ba1fff930f53eb50f64a" id="r_gace98b5387157ba1fff930f53eb50f64a"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_WEATHER</b>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gace98b5387157ba1fff930f53eb50f64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face declares WEATHER_REQUEST, so that store listens <br /></td></tr>
+<tr class="memitem:ga672425a165fced37d075b3139367469f" id="r_ga672425a165fced37d075b3139367469f"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_STOCK</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga672425a165fced37d075b3139367469f"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare STOCK_REQUEST <br /></td></tr>
+<tr class="memitem:ga5bc539bc0d11cc025e1a2af0b1c950b1" id="r_ga5bc539bc0d11cc025e1a2af0b1c950b1"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_CALENDAR</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga5bc539bc0d11cc025e1a2af0b1c950b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare CALENDAR_REQUEST <br /></td></tr>
+<tr class="memitem:ga3b630fdde16d8d25ef3e24c50021837d" id="r_ga3b630fdde16d8d25ef3e24c50021837d"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga3b630fdde16d8d25ef3e24c50021837d">SYSTEM_STORE_LINK_LISTENER_COUNT</a></td></tr>
+<tr class="memdesc:ga3b630fdde16d8d25ef3e24c50021837d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many stores this face has that listen for the link.  <br /></td></tr>
+<tr class="memitem:ga6289cea1d412d1482a2e5f5dff987a58" id="r_ga6289cea1d412d1482a2e5f5dff987a58"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LINK_LISTENER_SLOTS</b>&#160;&#160;&#160;(<a class="el" href="group__lib__stores.html#ga3b630fdde16d8d25ef3e24c50021837d">SYSTEM_STORE_LINK_LISTENER_COUNT</a> + 1)</td></tr>
+<tr class="memdesc:ga6289cea1d412d1482a2e5f5dff987a58"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many slots the list holds, one for each store that listens and one spare for the face's own. <br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:ga96c4cb6d425115a65f787896786b232f" id="r_ga96c4cb6d425115a65f787896786b232f"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga96c4cb6d425115a65f787896786b232f">BtVibePolicy</a>(bool connected)</td></tr>
@@ -223,9 +246,8 @@ void&#160;</td><td class="memItemRight"><b>system_store_deinit</b> (void)</td></
 <tr class="memitem:gaa56e12f48eddf86b1533059128765d2e" id="r_gaa56e12f48eddf86b1533059128765d2e"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>system_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:gaa56e12f48eddf86b1533059128765d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when something changes (the screen redraw). <br /></td></tr>
-<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft">
-void&#160;</td><td class="memItemRight"><b>system_store_on_reconnect</b> (void(*cb)(void))</td></tr>
-<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop. <br /></td></tr>
+<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaa29b6900ac64eda8dfb6dd8918ef531b">system_store_on_reconnect</a> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop.  <br /></td></tr>
 <tr class="memitem:ga0a7b3e80e633a5f021929a1f3751260f" id="r_ga0a7b3e80e633a5f021929a1f3751260f"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>system_store_battery</b> (void)</td></tr>
 <tr class="memdesc:ga0a7b3e80e633a5f021929a1f3751260f"><td class="mdescLeft">&#160;</td><td class="mdescRight">How full the battery is from 0 to 100. <br /></td></tr>
@@ -240,7 +262,8 @@ bool&#160;</td><td class="memItemRight"><b>system_store_bluetooth</b> (void)</td
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Active system store: the watch's own battery, bluetooth and next-alarm state. It subscribes to the battery and connection services itself and buzzes on a bluetooth change through a policy the face installs (so the store never has to know about settings or buzzing). </p>
-<p>The alarm has no service to subscribe to, so it is read straight through on each call rather than mirrored here. </p>
+<p>The alarm has no service to subscribe to, so it is read straight through on each call rather than mirrored here.</p>
+<p>It holds the watch's one connection subscription. A Pebble app has a single connection handler, and a second subscribe replaces the first, so a store that needs to hear the link adds itself as a link listener here rather than subscribing on its own. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

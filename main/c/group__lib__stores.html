@@ -224,6 +224,14 @@ Files</h2></td></tr>
 <tr class="memdesc:location__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active location store: holds the phone's coordinates and owns the appmessage coords channel. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Flocation_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="location__store_8h.html">src/c/pebble/io/stores/location_store.h</a></td></tr>
 <tr class="memdesc:location__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active location store. It owns the appmessage coords channel (the same phone geolocation the weather rides on), so a face hands it the rules, optionally seeds it, then reads lat/lon back. There's no poll timer. Coords arrive alongside weather. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fmusic_5Fstore_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fmusic_5Fstore_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="music__store_8c.html">src/c/pebble/io/stores/music_store.c</a></td></tr>
+<tr class="memdesc:music__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active music store: holds what the phone is playing, owns the appmessage now playing channel, and asks the phone again at launch and whenever the link comes back. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fmusic_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fmusic_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="music__store_8h.html">src/c/pebble/io/stores/music_store.h</a></td></tr>
+<tr class="memdesc:music__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active music store: what the phone is playing, as a Pebble app music plugin reports it. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fphone_5Fstore_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fphone_5Fstore_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="phone__store_8c.html">src/c/pebble/io/stores/phone_store.c</a></td></tr>
+<tr class="memdesc:phone__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active phone store: holds the phone's battery level, owns the appmessage phone battery channel, and asks the phone again at launch and whenever the link comes back. <br /></td></tr>
+<tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fphone_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fphone_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="phone__store_8h.html">src/c/pebble/io/stores/phone_store.h</a></td></tr>
+<tr class="memdesc:phone__store_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active phone store: the phone's own battery, as a Pebble app plugin on the phone reports it. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fstock_5Fstore_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fstock_5Fstore_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="stock__store_8c.html">src/c/pebble/io/stores/stock_store.c</a></td></tr>
 <tr class="memdesc:stock__store_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The active stock store: holds the quotes, owns the appmessage stock channel, and asks the phone for more whenever its turn on the face's cadence finds a poll due. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fstock_5Fstore_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fstock_5Fstore_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="stock__store_8h.html">src/c/pebble/io/stores/stock_store.h</a></td></tr>
@@ -235,7 +243,7 @@ Files</h2></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Ffetch_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Ffetch_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__fetch_8c.html">src/c/pebble/io/stores/store_fetch.c</a></td></tr>
 <tr class="memdesc:store__fetch_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The fetch timing the polling stores share, in one copy every store links against. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Ffetch_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Ffetch_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__fetch_8h.html">src/c/pebble/io/stores/store_fetch.h</a></td></tr>
-<tr class="memdesc:store__fetch_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The fetch timing the polling stores share: the one-shot catch-up, the cadence turn, and what an init or a reconfigure does to them. <br /></td></tr>
+<tr class="memdesc:store__fetch_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The fetch timing the polling stores share: the one-shot catch-up, the cadence turn, the ask when the phone comes back, and what an init or a reconfigure does to them. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Fpersist_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Fpersist_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__persist_8c.html">src/c/pebble/io/stores/store_persist.c</a></td></tr>
 <tr class="memdesc:store__persist_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The save that skips an unchanged reading and the restore that feeds it, in one copy every store links against. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Fpersist_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fstores_2Fstore_5Fpersist_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="store__persist_8h.html">src/c/pebble/io/stores/store_persist.h</a></td></tr>
@@ -279,6 +287,14 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structLocationConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:LocationSeed" id="r_LocationSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structLocationSeed.html">LocationSeed</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned coords when live = false. On a live store a seed takes the place of restoring the last real fix, and shows until the phone sends coordinates. A seed is never saved, so the fix on flash stays as it was for the next launch without one.  <a href="structLocationSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:MusicConfig" id="r_MusicConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structMusicConfig.html">MusicConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structMusicConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:MusicSeed" id="r_MusicSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structMusicSeed.html">MusicSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned state when live = false.  <a href="structMusicSeed.html#details">More...</a><br /></td></tr>
+<tr class="memitem:PhoneConfig" id="r_PhoneConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structPhoneConfig.html">PhoneConfig</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structPhoneConfig.html#details">More...</a><br /></td></tr>
+<tr class="memitem:PhoneSeed" id="r_PhoneSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structPhoneSeed.html">PhoneSeed</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned state when live = false.  <a href="structPhoneSeed.html#details">More...</a><br /></td></tr>
 <tr class="memitem:StockConfig" id="r_StockConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structStockConfig.html">StockConfig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structStockConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:StockSeed" id="r_StockSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structStockSeed.html">StockSeed</a></td></tr>
@@ -291,8 +307,6 @@ Data Structures</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store.  <a href="structSystemConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:SystemSeed" id="r_SystemSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structSystemSeed.html">SystemSeed</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional prefill, or pinned state when live = false.  <a href="structSystemSeed.html#details">More...</a><br /></td></tr>
-<tr class="memitem:TimeConfig" id="r_TimeConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structTimeConfig.html">TimeConfig</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structTimeConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:WeatherConfig" id="r_WeatherConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structWeatherConfig.html">WeatherConfig</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structWeatherConfig.html#details">More...</a><br /></td></tr>
 <tr class="memitem:WeatherSeed" id="r_WeatherSeed"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structWeatherSeed.html">WeatherSeed</a></td></tr>
@@ -303,6 +317,8 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ga0736746982e40115c0c7a4185694247d" id="r_ga0736746982e40115c0c7a4185694247d"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga0736746982e40115c0c7a4185694247d">HEALTH_HR_SENSOR</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga0736746982e40115c0c7a4185694247d"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 on a platform where a watch model carries a heart rate sensor, 0 everywhere else.  <br /></td></tr>
 <tr class="memitem:gaf58a7b0cae4bb710b1c4834cd90df0ba" id="r_gaf58a7b0cae4bb710b1c4834cd90df0ba"><td class="memItemLeft"><a id="gaf58a7b0cae4bb710b1c4834cd90df0ba" name="gaf58a7b0cae4bb710b1c4834cd90df0ba"></a>
 #define&#160;</td><td class="memItemRight"><b>HEALTH_HR_HISTORY</b>&#160;&#160;&#160;(&amp;<a class="el" href="#gab3c6bccf52afd82d7b55d77836e6ae39">health_part_hr_history</a>)</td></tr>
 <tr class="memdesc:gaf58a7b0cae4bb710b1c4834cd90df0ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Keeps the last hour of heart rate, a reading a minute, and saves it under persist_key. <br /></td></tr>
@@ -317,6 +333,26 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga60f6d598b8ff59f299aa4ded2e48b695"><td class="mdescLeft">&#160;</td><td class="mdescRight">Room for one entry per store that wants the cadence. <br /></td></tr>
 <tr class="memitem:ga50fd63663c9be7ae50341d6862e04150" id="r_ga50fd63663c9be7ae50341d6862e04150"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga50fd63663c9be7ae50341d6862e04150">STORE_READING_SIZE</a>(state,  stamp)</td></tr>
 <tr class="memdesc:ga50fd63663c9be7ae50341d6862e04150"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many leading bytes of a store's blob are the reading, which is everything before its sync time.  <br /></td></tr>
+<tr class="memitem:ga81426744fd8e4b25e4b1e746e01a86cd" id="r_ga81426744fd8e4b25e4b1e746e01a86cd"><td class="memItemLeft"><a id="ga81426744fd8e4b25e4b1e746e01a86cd" name="ga81426744fd8e4b25e4b1e746e01a86cd"></a>
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_PHONE</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga81426744fd8e4b25e4b1e746e01a86cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare PHONE_REQUEST <br /></td></tr>
+<tr class="memitem:gafb83e889fc10f054eb75c665b53d6de1" id="r_gafb83e889fc10f054eb75c665b53d6de1"><td class="memItemLeft"><a id="gafb83e889fc10f054eb75c665b53d6de1" name="gafb83e889fc10f054eb75c665b53d6de1"></a>
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_MUSIC</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:gafb83e889fc10f054eb75c665b53d6de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare MUSIC_REQUEST <br /></td></tr>
+<tr class="memitem:gace98b5387157ba1fff930f53eb50f64a" id="r_gace98b5387157ba1fff930f53eb50f64a"><td class="memItemLeft"><a id="gace98b5387157ba1fff930f53eb50f64a" name="gace98b5387157ba1fff930f53eb50f64a"></a>
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_WEATHER</b>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:gace98b5387157ba1fff930f53eb50f64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face declares WEATHER_REQUEST, so that store listens <br /></td></tr>
+<tr class="memitem:ga672425a165fced37d075b3139367469f" id="r_ga672425a165fced37d075b3139367469f"><td class="memItemLeft"><a id="ga672425a165fced37d075b3139367469f" name="ga672425a165fced37d075b3139367469f"></a>
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_STOCK</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga672425a165fced37d075b3139367469f"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare STOCK_REQUEST <br /></td></tr>
+<tr class="memitem:ga5bc539bc0d11cc025e1a2af0b1c950b1" id="r_ga5bc539bc0d11cc025e1a2af0b1c950b1"><td class="memItemLeft"><a id="ga5bc539bc0d11cc025e1a2af0b1c950b1" name="ga5bc539bc0d11cc025e1a2af0b1c950b1"></a>
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LISTENS_CALENDAR</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga5bc539bc0d11cc025e1a2af0b1c950b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the face does not declare CALENDAR_REQUEST <br /></td></tr>
+<tr class="memitem:ga3b630fdde16d8d25ef3e24c50021837d" id="r_ga3b630fdde16d8d25ef3e24c50021837d"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga3b630fdde16d8d25ef3e24c50021837d">SYSTEM_STORE_LINK_LISTENER_COUNT</a></td></tr>
+<tr class="memdesc:ga3b630fdde16d8d25ef3e24c50021837d"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many stores this face has that listen for the link.  <br /></td></tr>
+<tr class="memitem:ga6289cea1d412d1482a2e5f5dff987a58" id="r_ga6289cea1d412d1482a2e5f5dff987a58"><td class="memItemLeft"><a id="ga6289cea1d412d1482a2e5f5dff987a58" name="ga6289cea1d412d1482a2e5f5dff987a58"></a>
+#define&#160;</td><td class="memItemRight"><b>SYSTEM_STORE_LINK_LISTENER_SLOTS</b>&#160;&#160;&#160;(<a class="el" href="#ga3b630fdde16d8d25ef3e24c50021837d">SYSTEM_STORE_LINK_LISTENER_COUNT</a> + 1)</td></tr>
+<tr class="memdesc:ga6289cea1d412d1482a2e5f5dff987a58"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many slots the list holds, one for each store that listens and one spare for the face's own. <br /></td></tr>
 <tr class="memitem:gae0d84f2727ec304e5376009e5f7dcd18" id="r_gae0d84f2727ec304e5376009e5f7dcd18"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -339,7 +375,7 @@ Functions</h2></td></tr>
 <tr class="memitem:gad9d0b53b9a4f189dd3a591801401ec35" id="r_gad9d0b53b9a4f189dd3a591801401ec35"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad9d0b53b9a4f189dd3a591801401ec35">calendar_store_init</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg, const <a class="el" href="structCalendarSeed.html">CalendarSeed</a> *seed)</td></tr>
 <tr class="memdesc:gad9d0b53b9a4f189dd3a591801401ec35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:gade1a2a8d19355c64e027ed3b89479f0e" id="r_gade1a2a8d19355c64e027ed3b89479f0e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gade1a2a8d19355c64e027ed3b89479f0e">calendar_store_reconfigure</a> (<a class="el" href="structCalendarConfig.html">CalendarConfig</a> cfg)</td></tr>
-<tr class="memdesc:gade1a2a8d19355c64e027ed3b89479f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memdesc:gade1a2a8d19355c64e027ed3b89479f0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call.  <br /></td></tr>
 <tr class="memitem:ga83e9c3f206ad5ced9e3d6c50cb0fa96b" id="r_ga83e9c3f206ad5ced9e3d6c50cb0fa96b"><td class="memItemLeft"><a id="ga83e9c3f206ad5ced9e3d6c50cb0fa96b" name="ga83e9c3f206ad5ced9e3d6c50cb0fa96b"></a>
 void&#160;</td><td class="memItemRight"><b>calendar_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga83e9c3f206ad5ced9e3d6c50cb0fa96b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the agenda changes (the screen redraw). <br /></td></tr>
@@ -355,8 +391,8 @@ int&#160;</td><td class="memItemRight"><b>calendar_store_age_s</b> (void)</td></
 <tr class="memdesc:ga302a123979f2732edb6738c61c8d0650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts HRV with the health store's rules, or starts it again with new ones.  <br /></td></tr>
 <tr class="memitem:ga3de2b90ca51ac9d5544c9cebf2eb7239" id="r_ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3de2b90ca51ac9d5544c9cebf2eb7239">health_hrv_set_period</a> (uint16_t period_sec)</td></tr>
 <tr class="memdesc:ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes how often the watch takes a burst. A period of 0 stops the sampling and puts the reading back to none on a live store, and a seeded store keeps its seed.  <br /></td></tr>
-<tr class="memitem:gabc78d1ab551531851c68847138ad5f16" id="r_gabc78d1ab551531851c68847138ad5f16"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gabc78d1ab551531851c68847138ad5f16">health_hrv_set_rules</a> (uint16_t still_mg, uint16_t walk_steps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
-<tr class="memdesc:gabc78d1ab551531851c68847138ad5f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
+<tr class="memitem:gaca781624ec8eabf5d4916cfd2a731d57" id="r_gaca781624ec8eabf5d4916cfd2a731d57"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaca781624ec8eabf5d4916cfd2a731d57">health_hrv_set_rules</a> (uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
+<tr class="memdesc:gaca781624ec8eabf5d4916cfd2a731d57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
 <tr class="memitem:ga223234c2f0122059fd1706b2ff12e987" id="r_ga223234c2f0122059fd1706b2ff12e987"><td class="memItemLeft"><a id="ga223234c2f0122059fd1706b2ff12e987" name="ga223234c2f0122059fd1706b2ff12e987"></a>
 void&#160;</td><td class="memItemRight"><b>health_hrv_on_gap</b> (void)</td></tr>
 <tr class="memdesc:ga223234c2f0122059fd1706b2ff12e987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads one beat gap from the watch. The health store calls it for each HRV event. <br /></td></tr>
@@ -388,6 +424,9 @@ uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_still_mg</b> (void)</t
 <tr class="memitem:ga3681a65febb8fb93ba84f3413ffac786" id="r_ga3681a65febb8fb93ba84f3413ffac786"><td class="memItemLeft"><a id="ga3681a65febb8fb93ba84f3413ffac786" name="ga3681a65febb8fb93ba84f3413ffac786"></a>
 uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_walk_steps</b> (void)</td></tr>
 <tr class="memdesc:ga3681a65febb8fb93ba84f3413ffac786"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk. <br /></td></tr>
+<tr class="memitem:gaa0582954b31101fd5c9649ac6a4c3b19" id="r_gaa0582954b31101fd5c9649ac6a4c3b19"><td class="memItemLeft"><a id="gaa0582954b31101fd5c9649ac6a4c3b19" name="gaa0582954b31101fd5c9649ac6a4c3b19"></a>
+uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_settle_gaps</b> (void)</td></tr>
+<tr class="memdesc:gaa0582954b31101fd5c9649ac6a4c3b19"><td class="mdescLeft">&#160;</td><td class="mdescRight">The gaps left out at the start of each burst. <br /></td></tr>
 <tr class="memitem:gadb98993f8a5d2ea3ac0b99effab8b393" id="r_gadb98993f8a5d2ea3ac0b99effab8b393"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gadb98993f8a5d2ea3ac0b99effab8b393">health_store_init</a> (<a class="el" href="structHealthConfig.html">HealthConfig</a> cfg, const <a class="el" href="structHealthSeed.html">HealthSeed</a> *seed)</td></tr>
 <tr class="memdesc:gadb98993f8a5d2ea3ac0b99effab8b393"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:ga3d23a155e70dad9fd2ac23f2ec39775c" id="r_ga3d23a155e70dad9fd2ac23f2ec39775c"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3d23a155e70dad9fd2ac23f2ec39775c">health_store_subscribe</a> (void(*cb)(void))</td></tr>
@@ -396,8 +435,8 @@ uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_walk_steps</b> (void)<
 <tr class="memdesc:ga0e1f4e480b7ae883e73cc7270bbf7ffc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops what the store asked of the watch. Call from the face's deinit.  <br /></td></tr>
 <tr class="memitem:gad4831647379f8aee421bde9e18cf09b9" id="r_gad4831647379f8aee421bde9e18cf09b9"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad4831647379f8aee421bde9e18cf09b9">health_store_set_hrv_period</a> (uint16_t period_sec)</td></tr>
 <tr class="memdesc:gad4831647379f8aee421bde9e18cf09b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes how often the watch takes a burst of beat gaps, such as when the wearer changes a setting or places a panel. A period of 0 stops the sampling and puts the reading back to none.  <br /></td></tr>
-<tr class="memitem:gae4ed9e0080bd4d0d9147692a3ba2539f" id="r_gae4ed9e0080bd4d0d9147692a3ba2539f"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gae4ed9e0080bd4d0d9147692a3ba2539f">health_store_set_hrv_rules</a> (uint16_t still_mg, uint16_t walk_steps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
-<tr class="memdesc:gae4ed9e0080bd4d0d9147692a3ba2539f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes which HRV bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
+<tr class="memitem:ga4e877491cc83ecdeacdb4cf786979cd6" id="r_ga4e877491cc83ecdeacdb4cf786979cd6"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga4e877491cc83ecdeacdb4cf786979cd6">health_store_set_hrv_rules</a> (uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
+<tr class="memdesc:ga4e877491cc83ecdeacdb4cf786979cd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes which HRV bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
 <tr class="memitem:gab42f7ec6f1b3c4b0403d76027e1a856e" id="r_gab42f7ec6f1b3c4b0403d76027e1a856e"><td class="memItemLeft"><a id="gab42f7ec6f1b3c4b0403d76027e1a856e" name="gab42f7ec6f1b3c4b0403d76027e1a856e"></a>
 const uint8_t *&#160;</td><td class="memItemRight"><b>health_store_hr_history</b> (void)</td></tr>
 <tr class="memdesc:gab42f7ec6f1b3c4b0403d76027e1a856e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The last hour of heart rate readings, one per minute (a 60 slot buffer), for a face that named HEALTH_HR_HISTORY. The little charts read it back out. Empty for a face that did not. <br /></td></tr>
@@ -412,6 +451,8 @@ int&#160;</td><td class="memItemRight"><b>health_store_step_hours</b> (void)</td
 <tr class="memitem:gaebe919776f17167171641aeae6310796" id="r_gaebe919776f17167171641aeae6310796"><td class="memItemLeft"><a id="gaebe919776f17167171641aeae6310796" name="gaebe919776f17167171641aeae6310796"></a>
 int&#160;</td><td class="memItemRight"><b>health_store_hr</b> (void)</td></tr>
 <tr class="memdesc:gaebe919776f17167171641aeae6310796"><td class="mdescLeft">&#160;</td><td class="mdescRight">The heart rate in beats per minute, or -1 if we have not got one yet. <br /></td></tr>
+<tr class="memitem:ga562ecf251588c9e48d0397eda3f69325" id="r_ga562ecf251588c9e48d0397eda3f69325"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga562ecf251588c9e48d0397eda3f69325">health_store_has_hr</a> (void)</td></tr>
+<tr class="memdesc:ga562ecf251588c9e48d0397eda3f69325"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this watch can give a heart rate at all, for a face that leaves its heart rate slot out rather than showing dashes forever.  <br /></td></tr>
 <tr class="memitem:ga38cd6bed400162ebab1a2284484c4445" id="r_ga38cd6bed400162ebab1a2284484c4445"><td class="memItemLeft"><a id="ga38cd6bed400162ebab1a2284484c4445" name="ga38cd6bed400162ebab1a2284484c4445"></a>
 int&#160;</td><td class="memItemRight"><b>health_store_steps</b> (void)</td></tr>
 <tr class="memdesc:ga38cd6bed400162ebab1a2284484c4445"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps taken so far today, or -1 if we have not got one yet. <br /></td></tr>
@@ -443,6 +484,8 @@ int&#160;</td><td class="memItemRight"><b>health_store_distance_m</b> (void)</td
 <tr class="memdesc:ga27882c04c06b01103dabf8fdc8069a61"><td class="mdescLeft">&#160;</td><td class="mdescRight">The still limit in use, in milli-g a sample, so a panel shows the same number as the setting.  <br /></td></tr>
 <tr class="memitem:ga3e2d5278051f5cb8fc972614b3b6054f" id="r_ga3e2d5278051f5cb8fc972614b3b6054f"><td class="memItemLeft">uint16_t&#160;</td><td class="memItemRight"><a class="el" href="#ga3e2d5278051f5cb8fc972614b3b6054f">health_store_hrv_walk_steps</a> (void)</td></tr>
 <tr class="memdesc:ga3e2d5278051f5cb8fc972614b3b6054f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk, so a panel shows the same number as the setting.  <br /></td></tr>
+<tr class="memitem:ga2d8d7e527bf6f1348312fe2079772ce6" id="r_ga2d8d7e527bf6f1348312fe2079772ce6"><td class="memItemLeft">uint16_t&#160;</td><td class="memItemRight"><a class="el" href="#ga2d8d7e527bf6f1348312fe2079772ce6">health_store_hrv_settle_gaps</a> (void)</td></tr>
+<tr class="memdesc:ga2d8d7e527bf6f1348312fe2079772ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The gaps left out at the start of each burst, after the hold to HRV_SETTLE_GAPS_MAX, so a panel shows the count in use rather than the one asked for.  <br /></td></tr>
 <tr class="memitem:ga91ad7f45647093a68eb19f67e6605c26" id="r_ga91ad7f45647093a68eb19f67e6605c26"><td class="memItemLeft"><a id="ga91ad7f45647093a68eb19f67e6605c26" name="ga91ad7f45647093a68eb19f67e6605c26"></a>
 void&#160;</td><td class="memItemRight"><b>health_store_redraw</b> (void)</td></tr>
 <tr class="memdesc:ga91ad7f45647093a68eb19f67e6605c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the face to redraw, for a part whose own timer changed what it holds. <br /></td></tr>
@@ -465,10 +508,33 @@ const char *&#160;</td><td class="memItemRight"><b>location_store_lat</b> (void)
 <tr class="memitem:ga84432464d20d131431730d966053fc52" id="r_ga84432464d20d131431730d966053fc52"><td class="memItemLeft"><a id="ga84432464d20d131431730d966053fc52" name="ga84432464d20d131431730d966053fc52"></a>
 const char *&#160;</td><td class="memItemRight"><b>location_store_lon</b> (void)</td></tr>
 <tr class="memdesc:ga84432464d20d131431730d966053fc52"><td class="mdescLeft">&#160;</td><td class="mdescRight">The longitude string, or empty if we have not got one yet. <br /></td></tr>
+<tr class="memitem:gad97ad3d36947dc02e52d750cbe25af50" id="r_gad97ad3d36947dc02e52d750cbe25af50"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gad97ad3d36947dc02e52d750cbe25af50">music_store_init</a> (<a class="el" href="structMusicConfig.html">MusicConfig</a> cfg, const <a class="el" href="structMusicSeed.html">MusicSeed</a> *seed)</td></tr>
+<tr class="memdesc:gad97ad3d36947dc02e52d750cbe25af50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga3b54671a652a83acb2d78e058340bf38" id="r_ga3b54671a652a83acb2d78e058340bf38"><td class="memItemLeft"><a id="ga3b54671a652a83acb2d78e058340bf38" name="ga3b54671a652a83acb2d78e058340bf38"></a>
+void&#160;</td><td class="memItemRight"><b>music_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga3b54671a652a83acb2d78e058340bf38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the track changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:ga08e7dbd7f6e711074c87b072b80a89fa" id="r_ga08e7dbd7f6e711074c87b072b80a89fa"><td class="memItemLeft"><a id="ga08e7dbd7f6e711074c87b072b80a89fa" name="ga08e7dbd7f6e711074c87b072b80a89fa"></a>
+const char *&#160;</td><td class="memItemRight"><b>music_store_title</b> (void)</td></tr>
+<tr class="memdesc:ga08e7dbd7f6e711074c87b072b80a89fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">The song's title, or an empty string for none. <br /></td></tr>
+<tr class="memitem:gae7f812e0a0d418107f257c99733aacb2" id="r_gae7f812e0a0d418107f257c99733aacb2"><td class="memItemLeft"><a id="gae7f812e0a0d418107f257c99733aacb2" name="gae7f812e0a0d418107f257c99733aacb2"></a>
+const char *&#160;</td><td class="memItemRight"><b>music_store_artist</b> (void)</td></tr>
+<tr class="memdesc:gae7f812e0a0d418107f257c99733aacb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Who it is by, or an empty string for none. <br /></td></tr>
+<tr class="memitem:gad2b234359cbfa7449cab2a1b25de11e6" id="r_gad2b234359cbfa7449cab2a1b25de11e6"><td class="memItemLeft"><a id="gad2b234359cbfa7449cab2a1b25de11e6" name="gad2b234359cbfa7449cab2a1b25de11e6"></a>
+bool&#160;</td><td class="memItemRight"><b>music_store_playing</b> (void)</td></tr>
+<tr class="memdesc:gad2b234359cbfa7449cab2a1b25de11e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">True while the track plays, and false while it is paused or nothing is playing. <br /></td></tr>
+<tr class="memitem:gad7118955d71e3c934fd9d7f87114ae5f" id="r_gad7118955d71e3c934fd9d7f87114ae5f"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#gad7118955d71e3c934fd9d7f87114ae5f">music_store_has_track</a> (void)</td></tr>
+<tr class="memdesc:gad7118955d71e3c934fd9d7f87114ae5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether there is a track to show, paused or playing.  <br /></td></tr>
+<tr class="memitem:gadd2ca01419697d7f37ae4fe64ac8efb7" id="r_gadd2ca01419697d7f37ae4fe64ac8efb7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gadd2ca01419697d7f37ae4fe64ac8efb7">phone_store_init</a> (<a class="el" href="structPhoneConfig.html">PhoneConfig</a> cfg, const <a class="el" href="structPhoneSeed.html">PhoneSeed</a> *seed)</td></tr>
+<tr class="memdesc:gadd2ca01419697d7f37ae4fe64ac8efb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
+<tr class="memitem:ga9782ad57861fed3323134ef011ea1826" id="r_ga9782ad57861fed3323134ef011ea1826"><td class="memItemLeft"><a id="ga9782ad57861fed3323134ef011ea1826" name="ga9782ad57861fed3323134ef011ea1826"></a>
+void&#160;</td><td class="memItemRight"><b>phone_store_subscribe</b> (void(*cb)(void))</td></tr>
+<tr class="memdesc:ga9782ad57861fed3323134ef011ea1826"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the level changes (the screen redraw). <br /></td></tr>
+<tr class="memitem:ga939563949a26e3d5c4a9d3990e60d518" id="r_ga939563949a26e3d5c4a9d3990e60d518"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ga939563949a26e3d5c4a9d3990e60d518">phone_store_battery</a> (void)</td></tr>
+<tr class="memdesc:ga939563949a26e3d5c4a9d3990e60d518"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone's battery level.  <br /></td></tr>
 <tr class="memitem:gaec0631f8c075d9a6c76e2f6f386f3970" id="r_gaec0631f8c075d9a6c76e2f6f386f3970"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaec0631f8c075d9a6c76e2f6f386f3970">stock_store_init</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg, const <a class="el" href="structStockSeed.html">StockSeed</a> *seed)</td></tr>
 <tr class="memdesc:gaec0631f8c075d9a6c76e2f6f386f3970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:gaf5880da69fee6e18843b989032e67836" id="r_gaf5880da69fee6e18843b989032e67836"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaf5880da69fee6e18843b989032e67836">stock_store_reconfigure</a> (<a class="el" href="structStockConfig.html">StockConfig</a> cfg)</td></tr>
-<tr class="memdesc:gaf5880da69fee6e18843b989032e67836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memdesc:gaf5880da69fee6e18843b989032e67836"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call.  <br /></td></tr>
 <tr class="memitem:ga286d1850c71a9b7e3e62be5b92ea916a" id="r_ga286d1850c71a9b7e3e62be5b92ea916a"><td class="memItemLeft"><a id="ga286d1850c71a9b7e3e62be5b92ea916a" name="ga286d1850c71a9b7e3e62be5b92ea916a"></a>
 void&#160;</td><td class="memItemRight"><b>stock_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga286d1850c71a9b7e3e62be5b92ea916a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when a quote changes (the screen redraw). <br /></td></tr>
@@ -493,6 +559,8 @@ void&#160;</td><td class="memItemRight"><b>store_cadence_fire</b> (void)</td></t
 <tr class="memdesc:gad33c4412c02b7068286958a4ff9d39c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arm the one-shot fetch after first_ms, unless one is already waiting.  <br /></td></tr>
 <tr class="memitem:gae24dbc83a69a2c585fc08c07f2d27091" id="r_gae24dbc83a69a2c585fc08c07f2d27091"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gae24dbc83a69a2c585fc08c07f2d27091">store_fetch_turn</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, time_t now)</td></tr>
 <tr class="memdesc:gae24dbc83a69a2c585fc08c07f2d27091"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence. Asks the phone when the deadline has come round.  <br /></td></tr>
+<tr class="memitem:ga48da19573724dbed49fc5c04f7508bb0" id="r_ga48da19573724dbed49fc5c04f7508bb0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga48da19573724dbed49fc5c04f7508bb0">store_fetch_on_link</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, int age_s)</td></tr>
+<tr class="memdesc:ga48da19573724dbed49fc5c04f7508bb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a store's link listener does. When the phone link has just come back, asks the phone if the reading is at least the store's own interval old, or never arrived. A drop does nothing, so the last reading stays on show.  <br /></td></tr>
 <tr class="memitem:gab0e39f35c438d27685e759973a271790" id="r_gab0e39f35c438d27685e759973a271790"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gab0e39f35c438d27685e759973a271790">store_fetch_start</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, int poll_min, bool live, time_t now)</td></tr>
 <tr class="memdesc:gab0e39f35c438d27685e759973a271790"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a store's init does with its polling. Takes the interval, then arms one fetch shortly after launch when polling is on, so the store is not blank while the first deadline is coming.  <br /></td></tr>
 <tr class="memitem:ga3baeb7249495a37edb88ef463ba8d904" id="r_ga3baeb7249495a37edb88ef463ba8d904"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga3baeb7249495a37edb88ef463ba8d904">store_fetch_reconfigure</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, int poll_min, bool live, time_t now, bool empty)</td></tr>
@@ -511,10 +579,14 @@ void&#160;</td><td class="memItemRight"><b>store_cadence_fire</b> (void)</td></t
 <tr class="memdesc:ga997e6ccf70b96c79e2500b83af6e54dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether <code class="param">next</code> has come round, moving it on to the following deadline when it has.  <br /></td></tr>
 <tr class="memitem:ga8bf76bddf8844add6cd6e7c0684b8ee0" id="r_ga8bf76bddf8844add6cd6e7c0684b8ee0"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga8bf76bddf8844add6cd6e7c0684b8ee0">store_poll_reconnect_due</a> (int age_s, int poll_min)</td></tr>
 <tr class="memdesc:ga8bf76bddf8844add6cd6e7c0684b8ee0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a reading is worth asking for again now that the phone is back.  <br /></td></tr>
+<tr class="memitem:ga9d6ab580b20298f18c6243bcff7dbfb1" id="r_ga9d6ab580b20298f18c6243bcff7dbfb1"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga9d6ab580b20298f18c6243bcff7dbfb1">store_poll_start</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, int poll_min, bool live, time_t now)</td></tr>
+<tr class="memdesc:ga9d6ab580b20298f18c6243bcff7dbfb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its init does.  <br /></td></tr>
 <tr class="memitem:ga30b8b33c3204c012230afe0eb9e8d594" id="r_ga30b8b33c3204c012230afe0eb9e8d594"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga30b8b33c3204c012230afe0eb9e8d594">store_poll_set</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, int poll_min, bool live, time_t now)</td></tr>
-<tr class="memdesc:ga30b8b33c3204c012230afe0eb9e8d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its init and its reconfigure both do.  <br /></td></tr>
+<tr class="memdesc:ga30b8b33c3204c012230afe0eb9e8d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a store's interval and whether it is live, as its reconfigure does.  <br /></td></tr>
 <tr class="memitem:ga576c21d8f643934d22918c3fb2cbeeef" id="r_ga576c21d8f643934d22918c3fb2cbeeef"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga576c21d8f643934d22918c3fb2cbeeef">store_poll_turn</a> (<a class="el" href="structStorePoll.html">StorePoll</a> *poll, time_t now)</td></tr>
 <tr class="memdesc:ga576c21d8f643934d22918c3fb2cbeeef"><td class="mdescLeft">&#160;</td><td class="mdescRight">A store's turn on the face's cadence: whether a poll should go out now.  <br /></td></tr>
+<tr class="memitem:ga9bd6e2af60e688844a31c8f9fb4cdae2" id="r_ga9bd6e2af60e688844a31c8f9fb4cdae2"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#ga9bd6e2af60e688844a31c8f9fb4cdae2">store_poll_reconnect</a> (const <a class="el" href="structStorePoll.html">StorePoll</a> *poll, int age_s)</td></tr>
+<tr class="memdesc:ga9bd6e2af60e688844a31c8f9fb4cdae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">A store's catch-up when the phone comes back: whether to ask for its reading again.  <br /></td></tr>
 <tr class="memitem:ga51f7004ec5d8471cdf108a9ee46bb77b" id="r_ga51f7004ec5d8471cdf108a9ee46bb77b"><td class="memItemLeft">uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga51f7004ec5d8471cdf108a9ee46bb77b">store_sum</a> (const void *bytes, size_t size)</td></tr>
 <tr class="memdesc:ga51f7004ec5d8471cdf108a9ee46bb77b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sums a run of bytes, so two readings can be compared without keeping both.  <br /></td></tr>
 <tr class="memitem:ga98c417e24d8488baa2bb33e39155a3e7" id="r_ga98c417e24d8488baa2bb33e39155a3e7"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga98c417e24d8488baa2bb33e39155a3e7">system_store_init</a> (<a class="el" href="structSystemConfig.html">SystemConfig</a> cfg, const <a class="el" href="structSystemSeed.html">SystemSeed</a> *seed)</td></tr>
@@ -525,9 +597,8 @@ void&#160;</td><td class="memItemRight"><b>system_store_deinit</b> (void)</td></
 <tr class="memitem:gaa56e12f48eddf86b1533059128765d2e" id="r_gaa56e12f48eddf86b1533059128765d2e"><td class="memItemLeft"><a id="gaa56e12f48eddf86b1533059128765d2e" name="gaa56e12f48eddf86b1533059128765d2e"></a>
 void&#160;</td><td class="memItemRight"><b>system_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:gaa56e12f48eddf86b1533059128765d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when something changes (the screen redraw). <br /></td></tr>
-<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft"><a id="gaa29b6900ac64eda8dfb6dd8918ef531b" name="gaa29b6900ac64eda8dfb6dd8918ef531b"></a>
-void&#160;</td><td class="memItemRight"><b>system_store_on_reconnect</b> (void(*cb)(void))</td></tr>
-<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop. <br /></td></tr>
+<tr class="memitem:gaa29b6900ac64eda8dfb6dd8918ef531b" id="r_gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#gaa29b6900ac64eda8dfb6dd8918ef531b">system_store_on_reconnect</a> (void(*cb)(void))</td></tr>
+<tr class="memdesc:gaa29b6900ac64eda8dfb6dd8918ef531b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the phone app link comes back after a drop.  <br /></td></tr>
 <tr class="memitem:ga0a7b3e80e633a5f021929a1f3751260f" id="r_ga0a7b3e80e633a5f021929a1f3751260f"><td class="memItemLeft"><a id="ga0a7b3e80e633a5f021929a1f3751260f" name="ga0a7b3e80e633a5f021929a1f3751260f"></a>
 int&#160;</td><td class="memItemRight"><b>system_store_battery</b> (void)</td></tr>
 <tr class="memdesc:ga0a7b3e80e633a5f021929a1f3751260f"><td class="mdescLeft">&#160;</td><td class="mdescRight">How full the battery is from 0 to 100. <br /></td></tr>
@@ -542,7 +613,7 @@ bool&#160;</td><td class="memItemRight"><b>system_store_bluetooth</b> (void)</td
 <tr class="memitem:ga000282fef3aa31a69a8038abb49fa576" id="r_ga000282fef3aa31a69a8038abb49fa576"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga000282fef3aa31a69a8038abb49fa576">time_store_init</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg, const struct tm *seed)</td></tr>
 <tr class="memdesc:ga000282fef3aa31a69a8038abb49fa576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL to start from the current time.  <br /></td></tr>
 <tr class="memitem:ga9c2eacc43d552852d63185bd4ca16379" id="r_ga9c2eacc43d552852d63185bd4ca16379"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga9c2eacc43d552852d63185bd4ca16379">time_store_reconfigure</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg)</td></tr>
-<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match.  <br /></td></tr>
+<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. Rules that run the same tickers as the ones running do nothing, so a face can call it on every settings save. Only init decides whether the store is live, so one init started with live = false keeps its pinned time whatever cfg says, and one never started ignores it. <a class="el" href="structTimeConfig.html" title="The rules a face hands the time store, built from its own settings so the store names no SETTING_*.">TimeConfig</a> and the decisions live in <a class="el" href="time__config_8h.html" title="The rules a face hands the time store, what a reconfigure runs of them, and the check for whether two...">clock/time_config.h</a>.  <br /></td></tr>
 <tr class="memitem:ga03d7e9b1823247fa9d5a6ead85797571" id="r_ga03d7e9b1823247fa9d5a6ead85797571"><td class="memItemLeft"><a id="ga03d7e9b1823247fa9d5a6ead85797571" name="ga03d7e9b1823247fa9d5a6ead85797571"></a>
 void&#160;</td><td class="memItemRight"><b>time_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga03d7e9b1823247fa9d5a6ead85797571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the time changes (the screen redraw). <br /></td></tr>
@@ -552,7 +623,7 @@ const struct tm *&#160;</td><td class="memItemRight"><b>time_store_tm</b> (void)
 <tr class="memitem:ga49a92d34f22c2bb81f54084b02215709" id="r_ga49a92d34f22c2bb81f54084b02215709"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga49a92d34f22c2bb81f54084b02215709">weather_store_init</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg, const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *seed)</td></tr>
 <tr class="memdesc:ga49a92d34f22c2bb81f54084b02215709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:ga2af1e0b42fd91db04b7bf0e358f80a85" id="r_ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store_reconfigure</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg)</td></tr>
-<tr class="memdesc:ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memdesc:ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call.  <br /></td></tr>
 <tr class="memitem:ga40fd78d1cab03532c37b131b1c2a9111" id="r_ga40fd78d1cab03532c37b131b1c2a9111"><td class="memItemLeft"><a id="ga40fd78d1cab03532c37b131b1c2a9111" name="ga40fd78d1cab03532c37b131b1c2a9111"></a>
 void&#160;</td><td class="memItemRight"><b>weather_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga40fd78d1cab03532c37b131b1c2a9111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the weather changes (the screen redraw). <br /></td></tr>
@@ -648,6 +719,25 @@ Store tags</h2></td></tr>
 <div class="textblock"><p>Weather, health, calendar, stocks, and the other readings a face shows. </p>
 <p>Each store keeps its reading fresh and nudges the screen when it changes.</p>
 </div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Macro Definition Documentation</h2>
+<a id="ga0736746982e40115c0c7a4185694247d" name="ga0736746982e40115c0c7a4185694247d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga0736746982e40115c0c7a4185694247d">&#9670;&#160;</a></span>HEALTH_HR_SENSOR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HEALTH_HR_SENSOR&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>1 on a platform where a watch model carries a heart rate sensor, 0 everywhere else. </p>
+<p>The platform is the only thing that tells. The health service never checks for the sensor itself, so <span class="tt">health_service_metric_accessible</span> for the heart rate gives a watch built without one the same answers as a watch with one. In PebbleOS, <span class="tt">fw/applib/health_service.c</span> returns NotSupported only for a time range or aggregation it cannot answer, and NoPermission only for the wearer's heart rate setting. The emulator's setting is always on (<span class="tt">fw/shell/sdk/prefs.c</span>), so it reports a heart rate as there on gabbro. The boards that build the sensor in, with <span class="tt">CONFIG_HRM</span> in their <span class="tt">defconfig</span>, are obelix, the Pebble Time 2 on emery, and qemu_emery. Asterix on flint and getafix on gabbro have none.</p>
+<p>Diorite is in because the Pebble 2 HR has a sensor. The Pebble 2 SE on the same platform has none, and the health service cannot tell the two apart, so its heart rate slot shows dashes.</p>
+<p>A new platform with a sensor joins the list here. </p>
+
+</div>
+</div>
 <a id="ga50fd63663c9be7ae50341d6862e04150" name="ga50fd63663c9be7ae50341d6862e04150"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga50fd63663c9be7ae50341d6862e04150">&#9670;&#160;</a></span>STORE_READING_SIZE</h2>
 
@@ -679,6 +769,29 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="ga3b630fdde16d8d25ef3e24c50021837d" name="ga3b630fdde16d8d25ef3e24c50021837d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3b630fdde16d8d25ef3e24c50021837d">&#9670;&#160;</a></span>SYSTEM_STORE_LINK_LISTENER_COUNT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SYSTEM_STORE_LINK_LISTENER_COUNT</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">(<a class="code hl_define" href="#ga81426744fd8e4b25e4b1e746e01a86cd">SYSTEM_STORE_LISTENS_PHONE</a> + <a class="code hl_define" href="#gafb83e889fc10f054eb75c665b53d6de1">SYSTEM_STORE_LISTENS_MUSIC</a> + <a class="code hl_define" href="#gace98b5387157ba1fff930f53eb50f64a">SYSTEM_STORE_LISTENS_WEATHER</a> +            \</div>
+<div class="line"> <a class="code hl_define" href="#ga672425a165fced37d075b3139367469f">SYSTEM_STORE_LISTENS_STOCK</a> + <a class="code hl_define" href="#ga5bc539bc0d11cc025e1a2af0b1c950b1">SYSTEM_STORE_LISTENS_CALENDAR</a>)</div>
+<div class="ttc" id="agroup__lib__stores_html_ga5bc539bc0d11cc025e1a2af0b1c950b1"><div class="ttname"><a href="#ga5bc539bc0d11cc025e1a2af0b1c950b1">SYSTEM_STORE_LISTENS_CALENDAR</a></div><div class="ttdeci">#define SYSTEM_STORE_LISTENS_CALENDAR</div><div class="ttdoc">the face does not declare CALENDAR_REQUEST</div><div class="ttdef"><b>Definition</b> system_store.h:50</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga672425a165fced37d075b3139367469f"><div class="ttname"><a href="#ga672425a165fced37d075b3139367469f">SYSTEM_STORE_LISTENS_STOCK</a></div><div class="ttdeci">#define SYSTEM_STORE_LISTENS_STOCK</div><div class="ttdoc">the face does not declare STOCK_REQUEST</div><div class="ttdef"><b>Definition</b> system_store.h:45</div></div>
+<div class="ttc" id="agroup__lib__stores_html_ga81426744fd8e4b25e4b1e746e01a86cd"><div class="ttname"><a href="#ga81426744fd8e4b25e4b1e746e01a86cd">SYSTEM_STORE_LISTENS_PHONE</a></div><div class="ttdeci">#define SYSTEM_STORE_LISTENS_PHONE</div><div class="ttdoc">the face does not declare PHONE_REQUEST</div><div class="ttdef"><b>Definition</b> system_store.h:30</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gace98b5387157ba1fff930f53eb50f64a"><div class="ttname"><a href="#gace98b5387157ba1fff930f53eb50f64a">SYSTEM_STORE_LISTENS_WEATHER</a></div><div class="ttdeci">#define SYSTEM_STORE_LISTENS_WEATHER</div><div class="ttdoc">the face declares WEATHER_REQUEST, so that store listens</div><div class="ttdef"><b>Definition</b> system_store.h:38</div></div>
+<div class="ttc" id="agroup__lib__stores_html_gafb83e889fc10f054eb75c665b53d6de1"><div class="ttname"><a href="#gafb83e889fc10f054eb75c665b53d6de1">SYSTEM_STORE_LISTENS_MUSIC</a></div><div class="ttdeci">#define SYSTEM_STORE_LISTENS_MUSIC</div><div class="ttdoc">the face does not declare MUSIC_REQUEST</div><div class="ttdef"><b>Definition</b> system_store.h:35</div></div>
+</div><!-- fragment -->
+<p>How many stores this face has that listen for the link. </p>
+
+</div>
+</div>
 <a id="gae0d84f2727ec304e5376009e5f7dcd18" name="gae0d84f2727ec304e5376009e5f7dcd18"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gae0d84f2727ec304e5376009e5f7dcd18">&#9670;&#160;</a></span>WEATHER_SEED_EMPTY</h2>
 
@@ -700,7 +813,7 @@ Store tags</h2></td></tr>
 <div class="line">.dew_point = <a class="code hl_define" href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a>,                                \</div>
 <div class="line">.forecast_hourly = NULL, .forecast_daily = NULL })</div>
 <div class="ttc" id="astructWeatherSeed_html"><div class="ttname"><a href="structWeatherSeed.html">WeatherSeed</a></div><div class="ttdoc">Optional prefill: shown until the first real reading lands, or pinned when live = false.</div><div class="ttdef"><b>Definition</b> weather_store.h:36</div></div>
-<div class="ttc" id="awire__caps_8g_8h_html_ad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A column with no reading, so the watch draws a placeholder.</div><div class="ttdef"><b>Definition</b> wire_caps.g.h:28</div></div>
+<div class="ttc" id="awire__caps_8g_8h_html_ad0b45ae6054fd351cb661c9732c85f49"><div class="ttname"><a href="wire__caps_8g_8h.html#ad0b45ae6054fd351cb661c9732c85f49">WEATHER_NO_TEMP</a></div><div class="ttdeci">#define WEATHER_NO_TEMP</div><div class="ttdoc">A column with no reading, so the watch draws a placeholder.</div><div class="ttdef"><b>Definition</b> wire_caps.g.h:30</div></div>
 </div><!-- fragment --><p>A <a class="el" href="structWeatherSeed.html" title="Optional prefill: shown until the first real reading lands, or pinned when live = false.">WeatherSeed</a> with every optional reading already set to its no-data value. Spread it and override only what you have, so a partial seed still reads as "--" instead of a bogus 0. Copy it from a named static const, which the linker drops with the dev code in a release build. Written straight into a local, it leaves an unnamed copy in .data that every build keeps. </p><div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> <a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> s_empty = <a class="code hl_define" href="#gae0d84f2727ec304e5376009e5f7dcd18">WEATHER_SEED_EMPTY</a>;</div>
 <div class="line"><a class="code hl_struct" href="structWeatherSeed.html">WeatherSeed</a> seed = s_empty;</div>
 <div class="line">seed.<a class="code hl_variable" href="structWeatherSeed.html#a800405640fdfe30f5f50c13c2ff784c6">temp</a> = 23;</div>
@@ -847,7 +960,7 @@ Store tags</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. </p>
+<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
@@ -982,8 +1095,8 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
-<a id="gabc78d1ab551531851c68847138ad5f16" name="gabc78d1ab551531851c68847138ad5f16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gabc78d1ab551531851c68847138ad5f16">&#9670;&#160;</a></span>health_hrv_set_rules()</h2>
+<a id="gaca781624ec8eabf5d4916cfd2a731d57" name="gaca781624ec8eabf5d4916cfd2a731d57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaca781624ec8eabf5d4916cfd2a731d57">&#9670;&#160;</a></span>health_hrv_set_rules()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -997,6 +1110,11 @@ Store tags</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>walk_steps</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>settle_gaps</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1021,6 +1139,7 @@ Store tags</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">still_mg</td><td>The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT. </td></tr>
     <tr><td class="paramname">walk_steps</td><td>The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT. </td></tr>
+    <tr><td class="paramname">settle_gaps</td><td>Gaps left out at the start of a burst, or 0 for HRV_SETTLE_GAPS. Held to HRV_SETTLE_GAPS_MAX, and a burst already settling keeps the count it started with. </td></tr>
     <tr><td class="paramname">count</td><td>Which bursts count for the main reading. </td></tr>
     <tr><td class="paramname">keep_all</td><td>Measure a burst that cannot count rather than drop it. </td></tr>
     <tr><td class="paramname">live_redraw</td><td>Redraw the face once a second while a burst is held. </td></tr>
@@ -1154,6 +1273,28 @@ Store tags</h2></td></tr>
 
 <p>Stops what the store asked of the watch. Call from the face's deinit. </p>
 <p>The watch keeps an app's request for heart rate variability going for an hour after the app closes, so a face with HRV that leaves this out has the sensor sampling for that hour whenever the wearer opens an app from it. Without HRV it does nothing. </p>
+
+</div>
+</div>
+<a id="ga562ecf251588c9e48d0397eda3f69325" name="ga562ecf251588c9e48d0397eda3f69325"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga562ecf251588c9e48d0397eda3f69325">&#9670;&#160;</a></span>health_store_has_hr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool health_store_has_hr </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether this watch can give a heart rate at all, for a face that leaves its heart rate slot out rather than showing dashes forever. </p>
+<p>It answers HEALTH_HR_SENSOR, which goes by the platform, since the health service cannot say whether a sensor is there (see HEALTH_HR_SENSOR). A watch off the wrist, one that has not taken its first reading yet, and one with heart rate turned off in Health all answer true, since the sensor is there and the slot fills once it reads.</p>
+<p>The answer never changes on a given watch, so a face can ask once, such as when it lays out its screen. It works before the store is started and in a seeded build alike.</p>
+<dl class="section return"><dt>Returns</dt><dd>true when the watch has a heart rate sensor. </dd></dl>
 
 </div>
 </div>
@@ -1327,6 +1468,26 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="ga2d8d7e527bf6f1348312fe2079772ce6" name="ga2d8d7e527bf6f1348312fe2079772ce6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2d8d7e527bf6f1348312fe2079772ce6">&#9670;&#160;</a></span>health_store_hrv_settle_gaps()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t health_store_hrv_settle_gaps </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The gaps left out at the start of each burst, after the hold to HRV_SETTLE_GAPS_MAX, so a panel shows the count in use rather than the one asked for. </p>
+<dl class="section return"><dt>Returns</dt><dd>The gap count. </dd></dl>
+
+</div>
+</div>
 <a id="ga27882c04c06b01103dabf8fdc8069a61" name="ga27882c04c06b01103dabf8fdc8069a61"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga27882c04c06b01103dabf8fdc8069a61">&#9670;&#160;</a></span>health_store_hrv_still_mg()</h2>
 
@@ -1422,8 +1583,8 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
-<a id="gae4ed9e0080bd4d0d9147692a3ba2539f" name="gae4ed9e0080bd4d0d9147692a3ba2539f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae4ed9e0080bd4d0d9147692a3ba2539f">&#9670;&#160;</a></span>health_store_set_hrv_rules()</h2>
+<a id="ga4e877491cc83ecdeacdb4cf786979cd6" name="ga4e877491cc83ecdeacdb4cf786979cd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4e877491cc83ecdeacdb4cf786979cd6">&#9670;&#160;</a></span>health_store_set_hrv_rules()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1437,6 +1598,11 @@ Store tags</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>walk_steps</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>settle_gaps</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1461,6 +1627,7 @@ Store tags</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">still_mg</td><td>The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT. </td></tr>
     <tr><td class="paramname">walk_steps</td><td>The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT. </td></tr>
+    <tr><td class="paramname">settle_gaps</td><td>Gaps left out at the start of each burst while the sensor settles, or 0 for HRV_SETTLE_GAPS. It is held to 1 to HRV_SETTLE_GAPS_MAX, and a burst already settling keeps the count it started with, so a new count applies from the next burst. </td></tr>
     <tr><td class="paramname">count</td><td>Which bursts count for the main reading. </td></tr>
     <tr><td class="paramname">keep_all</td><td>Measure a burst that cannot count rather than drop it. Holds the sensor on for up to 90 seconds more each. </td></tr>
     <tr><td class="paramname">live_redraw</td><td>Redraw once a second while a burst is held. </td></tr>
@@ -1581,6 +1748,108 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="gad7118955d71e3c934fd9d7f87114ae5f" name="gad7118955d71e3c934fd9d7f87114ae5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad7118955d71e3c934fd9d7f87114ae5f">&#9670;&#160;</a></span>music_store_has_track()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool music_store_has_track </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Whether there is a track to show, paused or playing. </p>
+<dl class="section return"><dt>Returns</dt><dd>False for nothing playing, with the phone away, with no plugin serving it, or on a face built without the music keys. </dd></dl>
+
+</div>
+</div>
+<a id="gad97ad3d36947dc02e52d750cbe25af50" name="gad97ad3d36947dc02e52d750cbe25af50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad97ad3d36947dc02e52d750cbe25af50">&#9670;&#160;</a></span>music_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void music_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structMusicConfig.html">MusicConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structMusicSeed.html">MusicSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<p>A live store listens for the phone link through the system store, so the face starts that one live too.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules. </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ga939563949a26e3d5c4a9d3990e60d518" name="ga939563949a26e3d5c4a9d3990e60d518"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga939563949a26e3d5c4a9d3990e60d518">&#9670;&#160;</a></span>phone_store_battery()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int phone_store_battery </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>The phone's battery level. </p>
+<dl class="section return"><dt>Returns</dt><dd>The level from 0 to 100, or -1 when there is none, such as with the phone away, no plugin serving it, or a face built without the phone keys. </dd></dl>
+
+</div>
+</div>
+<a id="gadd2ca01419697d7f37ae4fe64ac8efb7" name="gadd2ca01419697d7f37ae4fe64ac8efb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gadd2ca01419697d7f37ae4fe64ac8efb7">&#9670;&#160;</a></span>phone_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void phone_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structPhoneConfig.html">PhoneConfig</a></td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structPhoneSeed.html">PhoneSeed</a> *</td>          <td class="paramname"><span class="paramname"><em>seed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start the store with its rules. Pass seed = NULL for normal use. </p>
+<p>A live store listens for the phone link through the system store, so the face starts that one live too.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>The rules. </td></tr>
+    <tr><td class="paramname">seed</td><td>Optional prefill, or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="gaec0631f8c075d9a6c76e2f6f386f3970" name="gaec0631f8c075d9a6c76e2f6f386f3970"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gaec0631f8c075d9a6c76e2f6f386f3970">&#9670;&#160;</a></span>stock_store_init()</h2>
 
@@ -1626,7 +1895,7 @@ Store tags</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. </p>
+<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
@@ -1738,6 +2007,37 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="ga48da19573724dbed49fc5c04f7508bb0" name="ga48da19573724dbed49fc5c04f7508bb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga48da19573724dbed49fc5c04f7508bb0">&#9670;&#160;</a></span>store_fetch_on_link()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void store_fetch_on_link </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structStoreFetch.html">StoreFetch</a> *</td>          <td class="paramname"><span class="paramname"><em>fetch</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>age_s</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>What a store's link listener does. When the phone link has just come back, asks the phone if the reading is at least the store's own interval old, or never arrived. A drop does nothing, so the last reading stays on show. </p>
+<p>The phone side may have been closed the whole time the link was down, so a reading can go stale with nothing on the watch to notice. A store that is not live never asks, so a seeded store keeps its fixture. The deadline is left where it was.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fetch</td><td>The store's fetch state. </td></tr>
+    <tr><td class="paramname">age_s</td><td>Seconds since the reading arrived, or below 0 when it never has. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga3baeb7249495a37edb88ef463ba8d904" name="ga3baeb7249495a37edb88ef463ba8d904"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga3baeb7249495a37edb88ef463ba8d904">&#9670;&#160;</a></span>store_fetch_reconfigure()</h2>
 
@@ -1773,13 +2073,14 @@ Store tags</h2></td></tr>
 </div><div class="memdoc">
 
 <p>What a store's reconfigure does with its polling. </p>
-<p>Switching the store off clears the live flag, which stops the cadence turn too, and drops any fetch still waiting. A store that keeps polling keeps its launch fetch, since a settings push that lands in the first second would otherwise cancel it and leave a restored reading stale until the next deadline.</p>
+<p>Switching the store off clears the live flag, which stops the cadence turn too, and drops any fetch still waiting. A store that init started with <span class="tt">live</span> false stays off whatever <code class="param">live</code> says, so a settings save never starts a store seeded for screenshots fetching over its fixture. A store whose init never ran ignores the reconfigure altogether.</p>
+<p>A store that keeps polling keeps its launch fetch, since a settings push that lands in the first second would otherwise cancel it and leave a restored reading stale until the next deadline.</p>
 <p>An empty store has nothing to draw, so it catches up right away. One that already holds data waits for its deadline, so a save that only touched colours does not fetch on the spot and spend a metered provider's quota. That deadline is a wall-clock boundary, so a save can bring it nearer but never past the interval's rate.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">fetch</td><td>The store's fetch state. </td></tr>
     <tr><td class="paramname">poll_min</td><td>Minutes between polls. 0 or less means no polling. </td></tr>
-    <tr><td class="paramname">live</td><td>True on a live face. </td></tr>
+    <tr><td class="paramname">live</td><td>True on a live face. A store init started not live stays not live. </td></tr>
     <tr><td class="paramname">now</td><td>The current wall-clock time. </td></tr>
     <tr><td class="paramname">empty</td><td>True when the store holds nothing to show yet. </td></tr>
   </table>
@@ -1971,6 +2272,38 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="ga9bd6e2af60e688844a31c8f9fb4cdae2" name="ga9bd6e2af60e688844a31c8f9fb4cdae2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9bd6e2af60e688844a31c8f9fb4cdae2">&#9670;&#160;</a></span>store_poll_reconnect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool store_poll_reconnect </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structStorePoll.html">StorePoll</a> *</td>          <td class="paramname"><span class="paramname"><em>poll</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>age_s</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>A store's catch-up when the phone comes back: whether to ask for its reading again. </p>
+<p>Only a live store asks, so a store seeded for screenshots keeps its fixture through a reconnect. The age and the interval decide the rest, the same as store_poll_reconnect_due. The deadline is left alone, so a catch-up never pushes the next recurring poll further away.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">poll</td><td>The store's polling state. </td></tr>
+    <tr><td class="paramname">age_s</td><td>Seconds since the reading arrived, or below 0 when it never has. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether to ask the phone now. </dd></dl>
+
+</div>
+</div>
 <a id="ga8bf76bddf8844add6cd6e7c0684b8ee0" name="ga8bf76bddf8844add6cd6e7c0684b8ee0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga8bf76bddf8844add6cd6e7c0684b8ee0">&#9670;&#160;</a></span>store_poll_reconnect_due()</h2>
 
@@ -2040,8 +2373,53 @@ Store tags</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Take a store's interval and whether it is live, as its init and its reconfigure both do. </p>
-<p>Both are always recorded. The deadline only moves when polling is on, and then to the next interval boundary, so a save can bring a poll nearer but never make one come faster than the interval allows.</p>
+<p>Take a store's interval and whether it is live, as its reconfigure does. </p>
+<p>Both are always recorded. A store that store_poll_start pinned stays not live whatever <code class="param">live</code> says, so a settings save in a build seeded for screenshots never starts it fetching over its fixture. A live store can still be switched off here and back on again. The deadline only moves when polling is on, and then to the next interval boundary, so a save can bring a poll nearer but never make one come faster than the interval allows.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">poll</td><td>The store's polling state. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">poll_min</td><td>Minutes between polls. 0 or less turns polling off. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">live</td><td>Whether the store should be live. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">now</td><td>The current wall-clock time. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether polling is on, which is when a store may arm its catch-up fetch. </dd></dl>
+
+</div>
+</div>
+<a id="ga9d6ab580b20298f18c6243bcff7dbfb1" name="ga9d6ab580b20298f18c6243bcff7dbfb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9d6ab580b20298f18c6243bcff7dbfb1">&#9670;&#160;</a></span>store_poll_start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool store_poll_start </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structStorePoll.html">StorePoll</a> *</td>          <td class="paramname"><span class="paramname"><em>poll</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>poll_min</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>live</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">time_t</td>          <td class="paramname"><span class="paramname"><em>now</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Take a store's interval and whether it is live, as its init does. </p>
+<p>Init is the one place that decides whether the store is live at all. A store it starts with <span class="tt">live</span> false is pinned, and stays not live through every reconfigure, as store_poll_set covers. A store whose init calls store_poll_set instead is never pinned, so a reconfigure can turn it live.</p>
+<p>The pin only covers asking the phone. A store that also takes pushes or listens for the link registers its handler and its listener only when init starts it live. An init that starts it with <span class="tt">live</span> false clears the handler and removes the listener, so a store started live and then pinned takes no push over its seed.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">poll</td><td>The store's polling state. </td></tr>
@@ -2051,7 +2429,7 @@ Store tags</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether polling is on, which is when a store may arm its first or catch-up fetch. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether polling is on, which is when a store may arm its first fetch. </dd></dl>
 
 </div>
 </div>
@@ -2390,6 +2768,32 @@ Store tags</h2></td></tr>
 
 </div>
 </div>
+<a id="gaa29b6900ac64eda8dfb6dd8918ef531b" name="gaa29b6900ac64eda8dfb6dd8918ef531b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa29b6900ac64eda8dfb6dd8918ef531b">&#9670;&#160;</a></span>system_store_on_reconnect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void system_store_on_reconnect </td>
+          <td>(</td>
+          <td class="paramtype">void(*</td>          <td class="paramname"><span class="paramname"><em>cb&#160;</em></span>)(void)</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Hand it the function to call when the phone app link comes back after a drop. </p>
+<p>The weather, stock, and calendar stores already ask for a reading that went stale while the phone was away, so this is only for a face's own extra work. A callback that asks for one of those readings too sends nothing extra. It runs in the same moment as the store's own ask, and the outbox turns away a request whose kind is already out.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cb</td><td>The function to call, or NULL for none. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="ga000282fef3aa31a69a8038abb49fa576" name="ga000282fef3aa31a69a8038abb49fa576"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga000282fef3aa31a69a8038abb49fa576">&#9670;&#160;</a></span>time_store_init()</h2>
 
@@ -2435,7 +2839,7 @@ Store tags</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. </p>
+<p>Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. Rules that run the same tickers as the ones running do nothing, so a face can call it on every settings save. Only init decides whether the store is live, so one init started with live = false keeps its pinned time whatever cfg says, and one never started ignores it. <a class="el" href="structTimeConfig.html" title="The rules a face hands the time store, built from its own settings so the store names no SETTING_*.">TimeConfig</a> and the decisions live in <a class="el" href="time__config_8h.html" title="The rules a face hands the time store, what a reconfigure runs of them, and the check for whether two...">clock/time_config.h</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>
@@ -2552,7 +2956,7 @@ Store tags</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. </p>
+<p>Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cfg</td><td>The new rules. </td></tr>

@@ -203,7 +203,7 @@ Files</h2></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fappmessage_2Fappmessage_2Ec" id="r_src_2Fc_2Fpebble_2Fio_2Fappmessage_2Fappmessage_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="appmessage_8c.html">src/c/pebble/io/appmessage/appmessage.c</a></td></tr>
 <tr class="memdesc:appmessage_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">AppMessage transport: weather requests out, settings + readings in. Decodes the wire format and hands results to the app through handlers, so it never reaches into the UI itself. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fappmessage_2Fappmessage_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fappmessage_2Fappmessage_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="appmessage_8h.html">src/c/pebble/io/appmessage/appmessage.h</a></td></tr>
-<tr class="memdesc:appmessage_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">AppMessage transport. Decodes the inbox and notifies the app through per-channel handlers, and queues the outbound weather, stock, and calendar requests through one outbox. <br /></td></tr>
+<tr class="memdesc:appmessage_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">AppMessage transport. Decodes the inbox and notifies the app through per-channel handlers, and queues the outbound weather, stock, calendar, phone battery, and now playing requests through one outbox. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Fappmessage_2Fappmessage_5Ffeatures_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Fappmessage_2Fappmessage_5Ffeatures_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="appmessage__features_8h.html">src/c/pebble/io/appmessage/appmessage_features.h</a></td></tr>
 <tr class="memdesc:appmessage__features_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which of the phone's optional features a face has, worked out from the message keys it declares. The waf build defines a HAS_MESSAGE_KEY_* for every key in the face's messageKeys, and this turns those into one switch per feature, so every file asking the same question gets the same answer. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fio_2Foutbox_5Fqueue_2Eh" id="r_src_2Fc_2Fpebble_2Fio_2Foutbox_5Fqueue_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="outbox__queue_8h.html">src/c/pebble/io/outbox_queue.h</a></td></tr>
@@ -226,8 +226,14 @@ Macros</h2></td></tr>
 <tr class="memitem:ga8bfcc8d396856901aeea684974fdb15c" id="r_ga8bfcc8d396856901aeea684974fdb15c"><td class="memItemLeft"><a id="ga8bfcc8d396856901aeea684974fdb15c" name="ga8bfcc8d396856901aeea684974fdb15c"></a>
 #define&#160;</td><td class="memItemRight"><b>APPMESSAGE_CUSTOM_COLORS_MAX</b>&#160;&#160;&#160;502</td></tr>
 <tr class="memdesc:ga8bfcc8d396856901aeea684974fdb15c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Worst case combined custom-colours string. Two persist-key-sized halves plus the bar and the NUL. <br /></td></tr>
+<tr class="memitem:gadaf079e1656e97a39ec7774e22eb9703" id="r_gadaf079e1656e97a39ec7774e22eb9703"><td class="memItemLeft"><a id="gadaf079e1656e97a39ec7774e22eb9703" name="gadaf079e1656e97a39ec7774e22eb9703"></a>
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_PHONE_SLOTS</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:gadaf079e1656e97a39ec7774e22eb9703"><td class="mdescLeft">&#160;</td><td class="mdescRight">no phone battery request on this face <br /></td></tr>
+<tr class="memitem:ga96bed56e5b3532f2e5e466e3270c88c3" id="r_ga96bed56e5b3532f2e5e466e3270c88c3"><td class="memItemLeft"><a id="ga96bed56e5b3532f2e5e466e3270c88c3" name="ga96bed56e5b3532f2e5e466e3270c88c3"></a>
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_MUSIC_SLOTS</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga96bed56e5b3532f2e5e466e3270c88c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">no now playing request on this face <br /></td></tr>
 <tr class="memitem:gacb075235dabec7bf871cfc5698a42526" id="r_gacb075235dabec7bf871cfc5698a42526"><td class="memItemLeft"><a id="gacb075235dabec7bf871cfc5698a42526" name="gacb075235dabec7bf871cfc5698a42526"></a>
-#define&#160;</td><td class="memItemRight"><b>OUTBOX_QUEUE_MAX</b>&#160;&#160;&#160;6</td></tr>
+#define&#160;</td><td class="memItemRight"><b>OUTBOX_QUEUE_MAX</b>&#160;&#160;&#160;(6 + <a class="el" href="#gadaf079e1656e97a39ec7774e22eb9703">OUTBOX_PHONE_SLOTS</a> + <a class="el" href="#ga96bed56e5b3532f2e5e466e3270c88c3">OUTBOX_MUSIC_SLOTS</a>)</td></tr>
 <tr class="memdesc:gacb075235dabec7bf871cfc5698a42526"><td class="mdescLeft">&#160;</td><td class="mdescRight">Most jobs the work queue or the failed set holds at once. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -244,6 +250,10 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:gaad5cc31baad613ac137e95653cdab162"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with a packed watchlist strip. The handler owns the wire format.  <br /></td></tr>
 <tr class="memitem:gaea56a19672a4978e838e9d0a8753405b" id="r_gaea56a19672a4978e838e9d0a8753405b"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a>(const uint8_t *buf, uint16_t len)</td></tr>
 <tr class="memdesc:gaea56a19672a4978e838e9d0a8753405b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with a packed agenda strip. The store owns the wire format.  <br /></td></tr>
+<tr class="memitem:gab43d16e4f4337a52a7e9d4befa90b848" id="r_gab43d16e4f4337a52a7e9d4befa90b848"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#gab43d16e4f4337a52a7e9d4befa90b848">PhoneBatteryHandler</a>(int level)</td></tr>
+<tr class="memdesc:gab43d16e4f4337a52a7e9d4befa90b848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with the phone's battery level.  <br /></td></tr>
+<tr class="memitem:ga91efba350e00e340bfd106ee9aff0238" id="r_ga91efba350e00e340bfd106ee9aff0238"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a>(const char *title, const char *artist, bool playing)</td></tr>
+<tr class="memdesc:ga91efba350e00e340bfd106ee9aff0238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with what the phone is playing.  <br /></td></tr>
 <tr class="memitem:ga6daf051587a0083e33af5e4d0847f931" id="r_ga6daf051587a0083e33af5e4d0847f931"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a>(const char *combined)</td></tr>
 <tr class="memdesc:ga6daf051587a0083e33af5e4d0847f931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called inbound with the combined custom-colours string, for the face to split and store.  <br /></td></tr>
 <tr class="memitem:ga6efc27e8b660e10498f1678ddecc05dc" id="r_ga6efc27e8b660e10498f1678ddecc05dc"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a>(char *out, size_t n)</td></tr>
@@ -261,6 +271,8 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="#gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14">OUTBOX_STOCK</a>
 , <a class="el" href="#gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345">OUTBOX_CALENDAR</a>
+, <a class="el" href="#gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2">OUTBOX_PHONE</a>
+, <a class="el" href="#gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f">OUTBOX_MUSIC</a>
 <br />
  }</td></tr>
 <tr class="memdesc:ga247b62ae1a0fa87cef6e3e8b7f738f17"><td class="mdescLeft">&#160;</td><td class="mdescRight">What an outbox job sends.  <a href="#ga247b62ae1a0fa87cef6e3e8b7f738f17">More...</a><br /></td></tr>
@@ -285,6 +297,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_on_stock_strip</b> (<a cla
 <tr class="memitem:ga1ab2899a032be1fe4ab307e70f8bf3cd" id="r_ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="memItemLeft"><a id="ga1ab2899a032be1fe4ab307e70f8bf3cd" name="ga1ab2899a032be1fe4ab307e70f8bf3cd"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_on_calendar_strip</b> (<a class="el" href="#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a> cb)</td></tr>
 <tr class="memdesc:ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed agenda strip. <br /></td></tr>
+<tr class="memitem:ga067bf9e32b6a13413d5157b17e86147c" id="r_ga067bf9e32b6a13413d5157b17e86147c"><td class="memItemLeft"><a id="ga067bf9e32b6a13413d5157b17e86147c" name="ga067bf9e32b6a13413d5157b17e86147c"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_on_phone_battery</b> (<a class="el" href="#gab43d16e4f4337a52a7e9d4befa90b848">PhoneBatteryHandler</a> cb)</td></tr>
+<tr class="memdesc:ga067bf9e32b6a13413d5157b17e86147c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone's battery. Does nothing on a face without the phone keys. <br /></td></tr>
+<tr class="memitem:ga757a519d948bf39e5414b62761c20593" id="r_ga757a519d948bf39e5414b62761c20593"><td class="memItemLeft"><a id="ga757a519d948bf39e5414b62761c20593" name="ga757a519d948bf39e5414b62761c20593"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music</b> (<a class="el" href="#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a> cb)</td></tr>
+<tr class="memdesc:ga757a519d948bf39e5414b62761c20593"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the phone is playing. Does nothing on a face without the music keys. <br /></td></tr>
 <tr class="memitem:gacd479537bb794bc2cc1f07b4db3fb830" id="r_gacd479537bb794bc2cc1f07b4db3fb830"><td class="memItemLeft"><a id="gacd479537bb794bc2cc1f07b4db3fb830" name="gacd479537bb794bc2cc1f07b4db3fb830"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_on_custom_colors</b> (<a class="el" href="#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a> cb)</td></tr>
 <tr class="memdesc:gacd479537bb794bc2cc1f07b4db3fb830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inbound: splits and stores the combined string. <br /></td></tr>
@@ -304,6 +322,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_stock</b> (void)</
 <tr class="memitem:gac18380f0c5fdc613452b569ef4d88c35" id="r_gac18380f0c5fdc613452b569ef4d88c35"><td class="memItemLeft"><a id="gac18380f0c5fdc613452b569ef4d88c35" name="gac18380f0c5fdc613452b569ef4d88c35"></a>
 void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void)</td></tr>
 <tr class="memdesc:gac18380f0c5fdc613452b569ef4d88c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the calendar keys. <br /></td></tr>
+<tr class="memitem:ga65ada3fd289956eb8297c91927fad985" id="r_ga65ada3fd289956eb8297c91927fad985"><td class="memItemLeft"><a id="ga65ada3fd289956eb8297c91927fad985" name="ga65ada3fd289956eb8297c91927fad985"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_request_phone</b> (void)</td></tr>
+<tr class="memdesc:ga65ada3fd289956eb8297c91927fad985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for its battery level. The phone battery store calls this at launch and when the phone comes back. Does nothing on a face that does not declare PHONE_BATTERY and PHONE_REQUEST. <br /></td></tr>
+<tr class="memitem:ga9c7f2e2781d3b6f639b9ce19a5628a1f" id="r_ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="memItemLeft"><a id="ga9c7f2e2781d3b6f639b9ce19a5628a1f" name="ga9c7f2e2781d3b6f639b9ce19a5628a1f"></a>
+void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</td></tr>
+<tr class="memdesc:ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone what it is playing. The now playing store calls this at launch and when the phone comes back. Does nothing on a face that does not declare the four music keys. <br /></td></tr>
 <tr class="memitem:ga2c94fc09107a6527a82ec145fd784a9d" id="r_ga2c94fc09107a6527a82ec145fd784a9d"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga2c94fc09107a6527a82ec145fd784a9d">outbox_busy</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox)</td></tr>
 <tr class="memdesc:ga2c94fc09107a6527a82ec145fd784a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether anything is in flight, which is what says the outbox is busy.  <br /></td></tr>
 <tr class="memitem:ga6f6fa750435ac4704bb55298be9b7e27" id="r_ga6f6fa750435ac4704bb55298be9b7e27"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ga6f6fa750435ac4704bb55298be9b7e27">outbox_pending</a> (const <a class="el" href="structOutboxQueue.html">OutboxQueue</a> *outbox, <a class="el" href="#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
@@ -326,6 +350,8 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 <tr class="memdesc:ga2efbc3a4f1c2f061db644fae33148a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads an int tuple, whatever width the phone sent it at.  <br /></td></tr>
 <tr class="memitem:ga86dd1adef099205e5eb8c1d52b03ce96" id="r_ga86dd1adef099205e5eb8c1d52b03ce96"><td class="memItemLeft">const char *&#160;</td><td class="memItemRight"><a class="el" href="#ga86dd1adef099205e5eb8c1d52b03ce96">tuple_str_or</a> (const Tuple *tuple, const char *fallback)</td></tr>
 <tr class="memdesc:ga86dd1adef099205e5eb8c1d52b03ce96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a cstring tuple, or the fallback when it is not one that can be read.  <br /></td></tr>
+<tr class="memitem:ga3d6f1eecd7cf908b32fe3f73a2b428a7" id="r_ga3d6f1eecd7cf908b32fe3f73a2b428a7"><td class="memItemLeft">int32_t&#160;</td><td class="memItemRight"><a class="el" href="#ga3d6f1eecd7cf908b32fe3f73a2b428a7">tuple_number_or</a> (const Tuple *tuple, int32_t fallback)</td></tr>
+<tr class="memdesc:ga3d6f1eecd7cf908b32fe3f73a2b428a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a whole number whether the phone sent it as an int or as text holding only digits.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The AppMessage pipeline to the phone and the byte readers behind it. </p>
@@ -436,6 +462,53 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 
 <p>Called once after every inbox message is fully handled. </p>
 <p>Lets a store that took several channels in one push save them together in one write, rather than once per channel. </p>
+
+</div>
+</div>
+<a id="ga91efba350e00e340bfd106ee9aff0238" name="ga91efba350e00e340bfd106ee9aff0238"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga91efba350e00e340bfd106ee9aff0238">&#9670;&#160;</a></span>MusicHandler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) MusicHandler(const char *title, const char *artist, bool playing)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called with what the phone is playing. </p>
+<p>The text is read straight off the inbox, so it only lives for this call.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">title</td><td>The song's title, empty for none. </td></tr>
+    <tr><td class="paramname">artist</td><td>Who it is by, empty for none. </td></tr>
+    <tr><td class="paramname">playing</td><td>True while it plays. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="gab43d16e4f4337a52a7e9d4befa90b848" name="gab43d16e4f4337a52a7e9d4befa90b848"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab43d16e4f4337a52a7e9d4befa90b848">&#9670;&#160;</a></span>PhoneBatteryHandler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef void(*) PhoneBatteryHandler(int level)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Called with the phone's battery level. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">level</td><td>The level from 0 to 100, or -1 when the phone has no reading. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -556,6 +629,10 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
 <tr><td class="fieldname"><a id="gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14" name="gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14"></a>OUTBOX_STOCK&#160;</td><td class="fielddoc"><p>A stock request. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345" name="gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345"></a>OUTBOX_CALENDAR&#160;</td><td class="fielddoc"><p>A calendar request. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2" name="gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2"></a>OUTBOX_PHONE&#160;</td><td class="fielddoc"><p>A phone battery request. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f" name="gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f"></a>OUTBOX_MUSIC&#160;</td><td class="fielddoc"><p>A now playing request. </p>
 </td></tr>
 </table>
 
@@ -966,6 +1043,38 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void
   <table class="params">
     <tr><td class="paramname">tuple</td><td>The tuple, or NULL when the key was absent. </td></tr>
     <tr><td class="paramname">fallback</td><td>Returned when the tuple is absent, is not an int, or carries a width no sender may use. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value, or <code class="param">fallback</code>. </dd></dl>
+
+</div>
+</div>
+<a id="ga3d6f1eecd7cf908b32fe3f73a2b428a7" name="ga3d6f1eecd7cf908b32fe3f73a2b428a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3d6f1eecd7cf908b32fe3f73a2b428a7">&#9670;&#160;</a></span>tuple_number_or()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t tuple_number_or </td>
+          <td>(</td>
+          <td class="paramtype">const Tuple *</td>          <td class="paramname"><span class="paramname"><em>tuple</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t</td>          <td class="paramname"><span class="paramname"><em>fallback</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads a whole number whether the phone sent it as an int or as text holding only digits. </p>
+<p>Clay sends a select as text and a toggle as an int, and a face's own component can send either, so every toggle and choice reads through here and takes the value whichever way it came. An int reads as tuple_int_or reads it. Text reads through wire_digits_or, so a sign, a space, or anything after the digits gives the fallback, and digits too big for an int32_t read as INT32_MAX. A colour stays on tuple_int_or, since its text could be hex and this would read it as decimal.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tuple</td><td>The tuple, or NULL when the key was absent. </td></tr>
+    <tr><td class="paramname">fallback</td><td>Returned when the tuple is absent, or is neither an int nor digits. </td></tr>
   </table>
   </dd>
 </dl>

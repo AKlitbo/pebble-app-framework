@@ -53,7 +53,7 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="seedconfigfromwatch"><span class="tsd-kind-call-signature">seedConfigFromWatch</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">messageKeys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">payload</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">clayConfig</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#seedconfigfromwatch" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="seedconfigfromwatch"><span class="tsd-kind-call-signature">seedConfigFromWatch</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">messageKeys</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">payload</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">clayConfig</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">features</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/pkjs_feature.FeatureHooks.html" class="tsd-signature-type tsd-kind-interface">FeatureHooks</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#seedconfigfromwatch" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Seeds the Clay store from the watch's current settings so the config opens
 with the real values instead of defaults. The watch persist is the source of
@@ -62,6 +62,8 @@ truth, since the phone's clay-settings can be empty or stale after an update.</p
 item stores. A key with no item, such as the reply's own marker, is left out.</p>
 <p>A timezone field is the one exception. It only seeds when the phone has nothing
 saved for it, since the watch's copy has lost the zone the phone's still holds.</p>
+<p>Each feature's seeded hook then runs on the settings before they are saved, so what it sets is
+saved with the rest. One that throws is skipped and logged, and the settings are still saved.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -74,10 +76,13 @@ saved for it, since the watch's copy has lost the zone the phone's still holds.<
 </div></li>
 <li><span><span class="tsd-kind-parameter">clayConfig</span>: <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></span>
 <div class="tsd-comment tsd-typography"><p>The face's settings page, which says what each key holds.</p>
+</div></li>
+<li><span><span class="tsd-kind-parameter">features</span>: <a href="../interfaces/pkjs_feature.FeatureHooks.html" class="tsd-signature-type tsd-kind-interface">FeatureHooks</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></span>
+<div class="tsd-comment tsd-typography"><p>The started features, whose seeded hooks run before the save. Left out, none run.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/0009225105d5282515e7cabb68a0205c2f5d4b98/src/ts/pkjs/app.ts#L307">pkjs/app.ts:307</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L548">pkjs/app.ts:548</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

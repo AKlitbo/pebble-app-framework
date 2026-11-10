@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['role_5fday_0',['ROLE_DAY',['../group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb',1,'role.h']]],
-  ['role_5fnight_1',['ROLE_NIGHT',['../group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4',1,'role.h']]],
-  ['role_5fquiet_2',['ROLE_QUIET',['../group__lib__core.html#ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0',1,'role.h']]]
+  ['night_5fsched_5ffixed_0',['NIGHT_SCHED_FIXED',['../group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be',1,'nightsched.h']]],
+  ['night_5fsched_5foff_1',['NIGHT_SCHED_OFF',['../group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997',1,'nightsched.h']]],
+  ['night_5fsched_5fsolar_2',['NIGHT_SCHED_SOLAR',['../group__lib__core.html#gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73',1,'nightsched.h']]]
 ];

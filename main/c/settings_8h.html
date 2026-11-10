@@ -212,8 +212,14 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
+<tr class="memitem:ga23404e19f790c5308f720b0237438e4f" id="r_ga23404e19f790c5308f720b0237438e4f"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga23404e19f790c5308f720b0237438e4f">SETTINGS_PLUGIN_SOURCE_KEY</a>&#160;&#160;&#160;249</td></tr>
+<tr class="memdesc:ga23404e19f790c5308f720b0237438e4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist key the framework keeps the weather and calendar source choice on, so a face leaves it free.  <br /></td></tr>
 <tr class="memitem:ga9f418302396c6aa0b9d2bc9a2e75a9b0" id="r_ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga9f418302396c6aa0b9d2bc9a2e75a9b0">SETTINGS_BLOB_SIZE</a>(blob)</td></tr>
-<tr class="memdesc:ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of a settings struct, for a schema's <span class="tt">blob_size</span>, and a build that stops when the struct is too big to save.  <br /></td></tr>
+<tr class="memdesc:ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of a settings struct, and a build that stops when the struct is too big to save. SETTINGS_BLOB uses it for a schema's <span class="tt">blob_size</span>.  <br /></td></tr>
+<tr class="memitem:ga3af4893cdd074306b3fcc30df1cb8a00" id="r_ga3af4893cdd074306b3fcc30df1cb8a00"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga3af4893cdd074306b3fcc30df1cb8a00">SETTINGS_BLOB</a>(settings,  first)</td></tr>
+<tr class="memdesc:ga3af4893cdd074306b3fcc30df1cb8a00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a schema's settings struct, its size, and the size it first shipped at, for a schema's initializer.  <br /></td></tr>
+<tr class="memitem:ga8db432ced131d3416a56b8de4dd53bc2" id="r_ga8db432ced131d3416a56b8de4dd53bc2"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="group__lib__settings.html#ga8db432ced131d3416a56b8de4dd53bc2">SETTINGS_FIRST_SIZE_</a>(first,  settings)</td></tr>
+<tr class="memdesc:ga8db432ced131d3416a56b8de4dd53bc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The first size for SETTINGS_BLOB, and a build that stops when it is written as more than one token, or is 0 or past the struct's size.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-typedef-members" class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
@@ -239,6 +245,7 @@ Enumerations</h2></td></tr>
 , <a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276">SETTING_BATTERY_DISPLAY</a>
 , <br />
 &#160;&#160;<a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9">SETTING_HEADER_FONT</a>
+, <a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e">SETTING_WIND_UNIT</a>
 , <a class="el" href="group__lib__settings.html#gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33">SETTING_COUNT</a>
 <br />
  }</td></tr>

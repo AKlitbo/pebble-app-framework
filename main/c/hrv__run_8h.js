@@ -9,6 +9,7 @@ var hrv__run_8h =
     [ "HRV_PPI_MIN_MS", "group__lib__core.html#gaaefdc36c44d4b4bb7d75b49971dafa75", null ],
     [ "HRV_QUIET_SEC", "group__lib__core.html#ga59b2e0772453c9dc6f043dccff16db65", null ],
     [ "HRV_SETTLE_GAPS", "group__lib__core.html#ga353a8f23c99dd39c3dbfa02708208d29", null ],
+    [ "HRV_SETTLE_GAPS_MAX", "group__lib__core.html#gacd7ae320dd9f133f840d906727165648", null ],
     [ "HRV_STALE_MIN_SEC", "group__lib__core.html#ga606ade592998e531ca1b4ee8336c1d51", null ],
     [ "HRV_STALE_PERIODS", "group__lib__core.html#ga9506f432151279855933339ae78cfb91", null ],
     [ "hrv_hold_over", "group__lib__core.html#ga10fae5233f760fb6787caa3e0876836c", null ],
@@ -17,5 +18,6 @@ var hrv__run_8h =
     [ "hrv_run_push", "group__lib__core.html#gae74b9acde0c1bb0a850ee1b2f8763e58", null ],
     [ "hrv_run_quiet", "group__lib__core.html#ga5a9fade553546533a99efde079418e37", null ],
     [ "hrv_run_reset", "group__lib__core.html#ga820f7ded1182d953adac970b65798571", null ],
+    [ "hrv_settle_gaps", "group__lib__core.html#ga3ec53ad7f3196535760825f02dc2611f", null ],
     [ "hrv_should_ask", "group__lib__core.html#ga63af7759a1aab1ce49fad20c956816f2", null ]
 ];

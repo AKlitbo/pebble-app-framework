@@ -191,20 +191,18 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('structTimeConf
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">TimeConfig Struct Reference<div class="ingroups"><a class="el" href="group__lib__stores.html">Stores</a></div></div></div>
+  <div class="headertitle"><div class="title">TimeConfig Struct Reference<div class="ingroups"><a class="el" href="group__lib__core.html">Core Helpers</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>The rules a face hands the store, built from its own settings so the store names no SETTING_*.  
+<p>The rules a face hands the time store, built from its own settings so the store names no SETTING_*.  
  <a href="#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="time__store_8h_source.html">time_store.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="time__config_8h_source.html">time_config.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Data Fields</h2></td></tr>
-<tr class="memitem:af951cac1e7733963949ff707dcfe650e" id="r_af951cac1e7733963949ff707dcfe650e"><td class="memItemLeft"><a id="af951cac1e7733963949ff707dcfe650e" name="af951cac1e7733963949ff707dcfe650e"></a>
-bool&#160;</td><td class="memItemRight"><b>live</b></td></tr>
-<tr class="memdesc:af951cac1e7733963949ff707dcfe650e"><td class="mdescLeft">&#160;</td><td class="mdescRight">True runs the tickers and false freezes the clock for screenshots. <br /></td></tr>
+<tr class="memitem:af951cac1e7733963949ff707dcfe650e" id="r_af951cac1e7733963949ff707dcfe650e"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#af951cac1e7733963949ff707dcfe650e">live</a></td></tr>
 <tr class="memitem:a2c93b890d0d369c7e4b82648bac39d20" id="r_a2c93b890d0d369c7e4b82648bac39d20"><td class="memItemLeft"><a id="a2c93b890d0d369c7e4b82648bac39d20" name="a2c93b890d0d369c7e4b82648bac39d20"></a>
 bool&#160;</td><td class="memItemRight"><b>minute_tick</b></td></tr>
 <tr class="memdesc:a2c93b890d0d369c7e4b82648bac39d20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the minute tick (clock date and most readouts). <br /></td></tr>
@@ -216,10 +214,26 @@ bool&#160;</td><td class="memItemRight"><b>hourly</b></td></tr>
 <tr class="memdesc:ab302b6ad83ef9a9f1a26f0bcab293e16"><td class="mdescLeft">&#160;</td><td class="mdescRight">With the minute tick off, still wake at the top of each hour, such as for an hourly buzz. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The rules a face hands the store, built from its own settings so the store names no SETTING_*. </p>
+<div class="textblock"><p>The rules a face hands the time store, built from its own settings so the store names no SETTING_*. </p>
 <p>The minute tick and the beats timer are independent, so a face can run either or both. One face might run exactly one when its time format is a single exclusive choice. Another runs the minute tick always plus the beats timer whenever a live .beats module is on screen. With the minute tick off, hourly adds the SDK's hour tick, so a face still wakes at the top of the hour. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/c/pebble/io/stores/<a class="el" href="time__store_8h_source.html">time_store.h</a></li>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Field Documentation</h2>
+<a id="af951cac1e7733963949ff707dcfe650e" name="af951cac1e7733963949ff707dcfe650e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af951cac1e7733963949ff707dcfe650e">&#9670;&#160;</a></span>live</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TimeConfig::live</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>At init this decides whether the clock can ever run. False holds it on the time it was seeded with, for screenshots, and no later reconfigure starts it. In a reconfigure it only stops or restarts a clock that init started running. </p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/c/core/clock/<a class="el" href="time__config_8h_source.html">time_config.h</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['timeband_0',['TimeBand',['../structTimeBand.html',1,'']]],
-  ['timebandspan_1',['TimeBandSpan',['../structTimeBandSpan.html',1,'']]],
-  ['timeconfig_2',['TimeConfig',['../structTimeConfig.html',1,'']]]
+  ['outboxjob_0',['OutboxJob',['../structOutboxJob.html',1,'']]],
+  ['outboxqueue_1',['OutboxQueue',['../structOutboxQueue.html',1,'']]]
 ];

@@ -222,7 +222,7 @@ void&#160;</td><td class="memItemRight"><b>time_store_subscribe</b> (void(*cb)(v
 <tr class="memitem:ga000282fef3aa31a69a8038abb49fa576" id="r_ga000282fef3aa31a69a8038abb49fa576"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga000282fef3aa31a69a8038abb49fa576">time_store_init</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg, const struct tm *seed)</td></tr>
 <tr class="memdesc:ga000282fef3aa31a69a8038abb49fa576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL to start from the current time.  <br /></td></tr>
 <tr class="memitem:ga9c2eacc43d552852d63185bd4ca16379" id="r_ga9c2eacc43d552852d63185bd4ca16379"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga9c2eacc43d552852d63185bd4ca16379">time_store_reconfigure</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg)</td></tr>
-<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match.  <br /></td></tr>
+<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. Rules that run the same tickers as the ones running do nothing, so a face can call it on every settings save. Only init decides whether the store is live, so one init started with live = false keeps its pinned time whatever cfg says, and one never started ignores it. <a class="el" href="structTimeConfig.html" title="The rules a face hands the time store, built from its own settings so the store names no SETTING_*.">TimeConfig</a> and the decisions live in <a class="el" href="time__config_8h.html" title="The rules a face hands the time store, what a reconfigure runs of them, and the check for whether two...">clock/time_config.h</a>.  <br /></td></tr>
 <tr class="memitem:gadc9650a7506ac75294df48a7a8deadcd" id="r_gadc9650a7506ac75294df48a7a8deadcd"><td class="memItemLeft">
 const struct tm *&#160;</td><td class="memItemRight"><b>time_store_tm</b> (void)</td></tr>
 <tr class="memdesc:gadc9650a7506ac75294df48a7a8deadcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The time we hold right now. <br /></td></tr>
@@ -238,15 +238,12 @@ static void(*)&#160;</td><td class="memItemRight"><b>s_cb</b> (void)</td></tr>
 <tr class="memitem:a25cfc5c232d6d20427553ac3cd954060" id="r_a25cfc5c232d6d20427553ac3cd954060"><td class="memItemLeft"><a id="a25cfc5c232d6d20427553ac3cd954060" name="a25cfc5c232d6d20427553ac3cd954060"></a>
 static AppTimer *&#160;</td><td class="memItemRight"><b>s_beats_timer</b></td></tr>
 <tr class="memdesc:a25cfc5c232d6d20427553ac3cd954060"><td class="mdescLeft">&#160;</td><td class="mdescRight">The .beats ticker. NULL when it isn't running. <br /></td></tr>
-<tr class="memitem:a8d97f148044f6486b6f7880444989530" id="r_a8d97f148044f6486b6f7880444989530"><td class="memItemLeft"><a id="a8d97f148044f6486b6f7880444989530" name="a8d97f148044f6486b6f7880444989530"></a>
-static bool&#160;</td><td class="memItemRight"><b>s_minute</b></td></tr>
-<tr class="memdesc:a8d97f148044f6486b6f7880444989530"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the minute tick is on. <br /></td></tr>
-<tr class="memitem:a3d9299acd4b3e475b07567a74035c95c" id="r_a3d9299acd4b3e475b07567a74035c95c"><td class="memItemLeft"><a id="a3d9299acd4b3e475b07567a74035c95c" name="a3d9299acd4b3e475b07567a74035c95c"></a>
-static bool&#160;</td><td class="memItemRight"><b>s_beats</b></td></tr>
-<tr class="memdesc:a3d9299acd4b3e475b07567a74035c95c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the .beats timer is on. <br /></td></tr>
-<tr class="memitem:abd6c3228e1087f58110eea09b52dbbe4" id="r_abd6c3228e1087f58110eea09b52dbbe4"><td class="memItemLeft"><a id="abd6c3228e1087f58110eea09b52dbbe4" name="abd6c3228e1087f58110eea09b52dbbe4"></a>
-static bool&#160;</td><td class="memItemRight"><b>s_hourly</b></td></tr>
-<tr class="memdesc:abd6c3228e1087f58110eea09b52dbbe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to wake on the hour when the minute tick is off. <br /></td></tr>
+<tr class="memitem:a5ed38d916996be3c73c6622ffc54a846" id="r_a5ed38d916996be3c73c6622ffc54a846"><td class="memItemLeft"><a id="a5ed38d916996be3c73c6622ffc54a846" name="a5ed38d916996be3c73c6622ffc54a846"></a>
+static <a class="el" href="structTimeConfig.html">TimeConfig</a>&#160;</td><td class="memItemRight"><b>s_cfg</b></td></tr>
+<tr class="memdesc:a5ed38d916996be3c73c6622ffc54a846"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules running now, live included. <br /></td></tr>
+<tr class="memitem:a6e2284b49afe24146fe3b58cce5128c9" id="r_a6e2284b49afe24146fe3b58cce5128c9"><td class="memItemLeft"><a id="a6e2284b49afe24146fe3b58cce5128c9" name="a6e2284b49afe24146fe3b58cce5128c9"></a>
+static bool&#160;</td><td class="memItemRight"><b>s_started_live</b></td></tr>
+<tr class="memdesc:a6e2284b49afe24146fe3b58cce5128c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when init started it live, so a reconfigure may run it. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The active time store: holds the current time and owns the tickers that update it. </p>

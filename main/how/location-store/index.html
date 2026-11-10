@@ -64,6 +64,8 @@
 <li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
 <li><a href="../../how/phone-side/">The Phone Side</a></li>
 <li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
 <li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
 <li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
 <li><a href="../../how/message-formats/">The Message Formats</a></li>
@@ -80,6 +82,7 @@
 <li><a href="../../how/stock-store/">The Stock Store</a></li>
 <li><a href="../../how/calendar-store/">The Calendar Store</a></li>
 <li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
 </ul>
 <h3>Clock and Sky</h3>
 <ul>
@@ -169,7 +172,7 @@
 <h2 id="seeding">Seeding</h2>
 <pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">LocationSeed seed </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-foreground)"> {.lat </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "43.653"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> .lon </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-string-expression)"> "-79.383"</span><span style="color:var(--code-foreground)">};</span></span>
 <span class="line"><span style="color:var(--code-token-function)">location_store_init</span><span style="color:var(--code-foreground)">((LocationConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">seed);</span></span></code></pre>
-<p>The framework&#39;s dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. A live store takes a seed too. The seed then takes the place of restoring the last real fix, shows until the phone sends coordinates, and is never saved. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
+<p>The framework&#39;s dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. A store started with <code>live</code> false keeps its seed and takes no fix from the phone, even one the face started live before. A live store takes a seed too. The seed then takes the place of restoring the last real fix, shows until the phone sends coordinates, and is never saved. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
 </div>
           <nav class="page-steps" aria-label="Previous and next pages">
 <a class="page-step page-step-prev" rel="prev" href="../../how/system-store/"><span>Previous</span>The System Store</a>

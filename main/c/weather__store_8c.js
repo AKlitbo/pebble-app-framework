@@ -9,6 +9,7 @@ var weather__store_8c =
     [ "forecast_today", "weather__store_8c.html#a6338097c3aa566509557080e498f23a1", null ],
     [ "inbox_done", "weather__store_8c.html#a9733ae28f8c21e9ec18ae4251141d96b", null ],
     [ "mark_dirty", "weather__store_8c.html#a38798b6392bd528fd20169e49b63ff36", null ],
+    [ "on_link", "weather__store_8c.html#a5446f3b1dc816160ec26d98e2b69785f", null ],
     [ "on_unit_changed", "weather__store_8c.html#ab270d4f87c98123387d5599b915429b3", null ],
     [ "on_weather", "weather__store_8c.html#af5f33238881e8b25ccd2445b79ccb95a", null ],
     [ "persist_flush", "weather__store_8c.html#a91a226520846cd505005169ca4f9d754", null ],

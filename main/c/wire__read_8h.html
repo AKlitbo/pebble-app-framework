@@ -209,11 +209,13 @@ Functions</h2></td></tr>
 <tr class="memdesc:gaac313f9ba01fb8da75be8388287f9a7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a little-endian integer of exactly <code class="param">length</code> bytes.  <br /></td></tr>
 <tr class="memitem:ga700d7a3380b25b5472c1b580502b9b3e" id="r_ga700d7a3380b25b5472c1b580502b9b3e"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga700d7a3380b25b5472c1b580502b9b3e">wire_cstring_terminated</a> (const char *s, uint16_t length)</td></tr>
 <tr class="memdesc:ga700d7a3380b25b5472c1b580502b9b3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a string of <code class="param">length</code> bytes carries its terminator inside itself.  <br /></td></tr>
+<tr class="memitem:gaed7baf2dfca7dd9ada03434d0777b788" id="r_gaed7baf2dfca7dd9ada03434d0777b788"><td class="memItemLeft">static int32_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#gaed7baf2dfca7dd9ada03434d0777b788">wire_digits_or</a> (const char *text, int32_t fallback)</td></tr>
+<tr class="memdesc:gaed7baf2dfca7dd9ada03434d0777b788"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads text holding only digits as the whole number it spells, such as a select's "3".  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Reads the values the phone packs into a message. </p>
-<p>The phone is free to send an integer one, two, or four bytes wide, and it says which by the length it puts beside the value rather than by the type. The values sit back to back with nothing between them, so a reader that takes the type's word for the width and grabs four bytes off a one-byte value walks straight into whatever is packed behind it. That is what these are for: the width decides how many bytes get read, and anything else is refused.</p>
-<p>Header only on purpose. There is one caller on the watch (<a class="el" href="tuple__read_8c.html" title="Reads a value out of an inbound message tuple.">tuple_read.c</a>) and the bodies are smaller than a call would be, so they fold into it and nothing is spent on getting there. </p>
+<p>The phone is free to send an integer one, two, or four bytes wide, and it says which by the length it puts beside the value rather than by the type. The values sit back to back with nothing between them, so a reader that takes the type's word for the width and grabs four bytes off a one-byte value walks straight into whatever is packed behind it. That is what these are for: the width decides how many bytes get read, and anything else is refused. A number sent as text is read here too, so a setting takes it whichever way the phone sent it.</p>
+<p>Header only on purpose. There is one caller on the watch (<a class="el" href="tuple__read_8c.html" title="Reads a value out of an inbound message tuple.">tuple_read.c</a>), so each body folds into it and nothing is spent on getting there. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

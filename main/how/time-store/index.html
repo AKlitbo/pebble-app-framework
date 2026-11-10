@@ -64,6 +64,8 @@
 <li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
 <li><a href="../../how/phone-side/">The Phone Side</a></li>
 <li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
 <li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
 <li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
 <li><a href="../../how/message-formats/">The Message Formats</a></li>
@@ -80,6 +82,7 @@
 <li><a href="../../how/stock-store/">The Stock Store</a></li>
 <li><a href="../../how/calendar-store/">The Calendar Store</a></li>
 <li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
 </ul>
 <h3>Clock and Sky</h3>
 <ul>
@@ -182,7 +185,7 @@
 <span class="line"><span style="color:var(--code-foreground)">pinned.tm_sec </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">;</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:var(--code-token-function)">time_store_init</span><span style="color:var(--code-foreground)">((TimeConfig){.live </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> false</span><span style="color:var(--code-foreground)">}</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> &#x26;</span><span style="color:var(--code-foreground)">pinned);</span></span></code></pre>
-<p>With <code>live</code> false no ticker runs, whatever <code>minute_tick</code>, <code>beats</code>, and <code>hourly</code> say, so the face shows 10:08 for as long as it runs. Starting from today&#39;s date and changing only the hour and the minute keeps the date line real. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
+<p>With <code>live</code> false no ticker runs, whatever <code>minute_tick</code>, <code>beats</code>, and <code>hourly</code> say, so the face shows 10:08 for as long as it runs. An init with <code>live</code> false also stops any ticker an earlier live init started. Starting from today&#39;s date and changing only the hour and the minute keeps the date line real. <a href="../../how/stores/#seeded-for-screenshots">How the Stores Work</a> covers the rest of seeding.</p>
 <h2 id="changing-the-time-format">Changing the Time Format</h2>
 <p><code>time_store_reconfigure</code> takes new rules, and a face runs it from its settings handler, so switching between a clock and .beats swaps the ticker on the spot:</p>
 <pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">static</span><span style="color:var(--code-token-keyword)"> void</span><span style="color:var(--code-token-function)"> on_settings_changed</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-keyword)">bool</span><span style="color:var(--code-foreground)"> time_or_date_changed)</span></span>
@@ -190,8 +193,9 @@
 <span class="line"><span style="color:var(--code-token-comment)">    // rebuild the screen from the new settings first</span></span>
 <span class="line"><span style="color:var(--code-token-function)">    time_store_reconfigure(time_config())</span><span style="color:var(--code-foreground)">;</span></span>
 <span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
-<p>Reconfigure turns the minute tick on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With <code>live</code> false both tickers stop and the time stays at the last tick.</p>
-<p>Reconfigure never touches the time the store holds and never redraws. The settings handler rebuilds the screen anyway, and the next tick brings the time up to date.</p>
+<p>Reconfigure turns the minute tick on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With <code>live</code> false both tickers stop and the time stays at the last tick. A store its init started with <code>live</code> false stays on its pinned time whatever a reconfigure passes, so a settings save never brings the real time back. <code>time_config_reconfigured</code> in <a href="../../c/time__config_8h.html"><code>time_config.h</code></a> holds <code>live</code> off for it.</p>
+<p>Rules that run the same tickers as the ones running change nothing, and reconfigure returns straight away. It compares what would run, so with the minute tick on a change to <code>hourly</code> alone counts as no change, and with <code>live</code> false nothing runs whatever the rest say. Most saves leave the tickers alone, and subscribing the tick again would make PebbleOS send a first tick at once, which repaints the face and gives every store another poll check for nothing. A save still starts a .beats timer that should be running and is not. The timer sets itself again on each beat, so a set that fails for want of memory ends the chain until something starts it. <code>time_config_same_tickers</code> in <a href="../../c/time__config_8h.html"><code>time_config.h</code></a> makes the check, beside <code>TimeConfig</code> itself.</p>
+<p>Reconfigure never touches the time the store holds. The settings handler rebuilds the screen anyway, and the next tick brings the time up to date.</p>
 </div>
           <nav class="page-steps" aria-label="Previous and next pages">
 <a class="page-step page-step-prev" rel="prev" href="../../how/stores/"><span>Previous</span>How the Stores Work</a>

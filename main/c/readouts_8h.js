@@ -7,6 +7,7 @@ var readouts_8h =
     [ "readout_lat", "group__lib__ui.html#gaa2fe71cbe1755aae8977cad2d17e71ed", null ],
     [ "readout_lon", "group__lib__ui.html#gacea2f8a4dcf1bff5344807e02a4842aa", null ],
     [ "readout_meridiem", "group__lib__ui.html#gad7314f0630f01d77249d12b3f5018d20", null ],
+    [ "readout_phone_battery", "group__lib__ui.html#ga89ae84ee592aa9854c2e5047545b145d", null ],
     [ "readout_steps", "group__lib__ui.html#ga46b62b70722c1a8885049b5dd237aa7e", null ],
     [ "readout_time", "group__lib__ui.html#ga5f1ce126b5f8ddfb48e78d1077355883", null ],
     [ "readout_weather_cond", "group__lib__ui.html#ga5d4d51464278e6e297e35ecf92b88666", null ],

@@ -6,6 +6,7 @@ var hrv__run_8c =
     [ "hrv_run_push", "group__lib__core.html#gae74b9acde0c1bb0a850ee1b2f8763e58", null ],
     [ "hrv_run_quiet", "group__lib__core.html#ga5a9fade553546533a99efde079418e37", null ],
     [ "hrv_run_reset", "group__lib__core.html#ga820f7ded1182d953adac970b65798571", null ],
+    [ "hrv_settle_gaps", "group__lib__core.html#ga3ec53ad7f3196535760825f02dc2611f", null ],
     [ "hrv_should_ask", "group__lib__core.html#ga63af7759a1aab1ce49fad20c956816f2", null ],
     [ "root_floor", "hrv__run_8c.html#a583fd1918a62e97638ff34787f0155ad", null ]
 ];

@@ -76,10 +76,12 @@ usage: paf &lt;command&gt; [args]
                                fill each unit&#39;s paf/ from its pinned tag and install its node_modules
   status                       each unit&#39;s faces, tag, the newest framework tag, and whether it is ready
   pin &lt;unit&gt; &lt;tag|latest&gt;
-                               move a unit to another tag, showing the changelog between them first
+                               move a unit to another tag and fill its paf/, printing the breaking entries between them first
   use &lt;unit&gt; local [path]      point a unit&#39;s paf/ at a local framework clone, builds included
   use &lt;unit&gt; pinned            put it back on its tag
-  build &lt;face|all&gt; [--clean]   build a face in its unit (not on Windows itself), clean when message keys, dependencies, or the framework changed
+  build &lt;face|all&gt; [--clean] [--dev]
+                               build a face in its unit (not on Windows itself), clean when message keys, dependencies, or the framework changed,
+                               and in dev mode with --dev
   gen &lt;face&gt; &lt;kind|all&gt; [args]
                                run one generator the framework, a listed plugin, or the unit offers for a face,
                                or all it has inputs for
@@ -92,9 +94,9 @@ usage: paf &lt;command&gt; [args]
   format [unit] [--check]      format a unit&#39;s files the same way, or with --check say which would change
   doctor                       check git, node, the pins, the unit layout, the SDK, and the workflows
 
-A unit is a folder with a paf.config.json: a family or a face of its own under watchfaces/ or watchapps/,
-or the repo root for a repo that is one face or one family. PAF_HOME moves the cache. PAF_REPO fetches the framework from
-another URL or path.</code></pre>
+A unit is a folder with a paf.config.json: a family or a face of its own under watchfaces/, watchapps/, or
+plugins/, or the repo root for a repo that is one face or one family. PAF_HOME moves the cache. PAF_REPO
+fetches the framework from another URL or path.</code></pre>
 <p>The examples on this page come from two face repos. <code>pebble-watchface-lcars</code> is a single face, <code>lcars-stardate</code>, at its root. The other keeps several units under <code>watchfaces/</code>, among them the <code>mosaic</code> family with its <code>gridlock</code> and <code>sidereel</code> faces.</p>
 <h2 id="what-every-command-shares">What Every Command Shares</h2>
 <p><strong>Naming a Unit.</strong> Wherever a command takes <code>[unit]</code>, a face name works too and picks the unit that holds it. So <code>paf sync gridlock</code> syncs the whole <code>mosaic</code> family. Leaving the unit out runs every unit in the repo.</p>
@@ -172,9 +174,19 @@ paf sync --locked refuses until paf use pebble-watchface-lcars pinned</code></pr
 <pre><code>$ paf use lcars-stardate pinned
 pebble-watchface-lcars: paf/ is on v4.0.0 (4002539), 214 files</code></pre>
 <h2 id="paf-build">paf build</h2>
-<pre><code>paf build &lt;face|all&gt; [--clean] [args]</code></pre>
+<pre><code>paf build &lt;face|all&gt; [--clean] [--dev] [args]</code></pre>
 <p>Builds a face into a <code>.pbw</code> with the framework&#39;s build script. It runs on WSL, Linux, or macOS with the Pebble SDK, and refuses on Windows itself. <code>all</code> builds every face in the repo and carries on past a failing one.</p>
-<p><code>paf</code> keeps a record of what each face&#39;s last passing build was made from, in <code>targets/.paf-build.json</code>. The next build starts clean on its own when the face&#39;s message keys, the unit&#39;s lock, or the framework in <code>paf/</code> changed since then, or when there is no passing build to go on from, and it names the reason:</p>
+<p>For each face the script compiles the phone code into each target&#39;s sandbox, reads which features that code passes <code>startPebbleApp</code>, and writes each sandbox&#39;s manifest with the message keys those features and the face&#39;s plugin defines bring added after the face&#39;s own, as <a href="../../how/talking-to-the-phone/#the-keys-a-face-does-not-list">The Keys a Face Does Not List</a> covers. It then loads the face&#39;s settings page from that code, the way the phone builds it, once for each platform the face targets. It writes the page&#39;s choice counts and defaults into <code>targets/&lt;target&gt;/page/settings_page.h</code>, which the watch&#39;s settings take their counts and defaults from, as <a href="../../how/settings-on-the-watch/#counts-from-the-settings-page">Counts from the Settings Page</a> and <a href="../../how/settings-on-the-watch/#defaults-from-the-settings-page">Defaults from the Settings Page</a> cover, and says so in a line such as <code>read my-face&#39;s settings page and wrote 6 choice counts and 20 defaults into page/settings_page.h</code>. Then it runs <code>pebble build</code> in each sandbox. A face whose page script reaches for something the build&#39;s stand-in phone lacks as it loads stops the build there.</p>
+<p>The script checks the parts of the appinfo that need no features before it compiles anything, so a define, a providers list, a plugin&#39;s keys without its define, or a dev setting it refuses leaves the sandboxes as they were. It checks the keys once it has read the features, so a key group or a providers list the whole list cannot back stops it with the new phone code compiled into <code>emit/</code> and nothing else written.</p>
+<p>Before it writes the header, the script checks the page and stops with a line naming the face and the fix on any of these:</p>
+<ul>
+<li>a control whose <code>messageKey</code> the appinfo does not declare</li>
+<li>a <code>_REQUEST</code> key in <code>messageKeys</code> that no feature passed to <code>startPebbleApp</code> answers</li>
+<li>a <code>customClay</code> that is not written with the <code>function</code> keyword</li>
+<li>a choice whose default is not one of its options, a key that opens on two defaults, a default past its key&#39;s count, or a default for a shared <code>KNOWN_*</code> setting of the wrong kind or too long for its field</li>
+<li>a weather or calendar source default that the face&#39;s own picker does not offer, or that the page does not open on, matched without regard to case</li>
+</ul>
+<p><code>paf</code> keeps a record of what each face&#39;s last passing build was made from, in <code>targets/.paf-build.json</code>. The next build starts clean on its own when the face&#39;s message keys, the unit&#39;s lock, or the framework in <code>paf/</code> changed since then, or when there is no passing build to go on from, and it names the reason. The script also starts a sandbox clean when the keys it writes differ from the ones that sandbox&#39;s last passing build recorded, which covers a feature passed in code or a plugin define turned on:</p>
 <pre><code>$ paf build lcars-stardate
 == lcars-stardate: no passing build here to go on from, so this one is clean ==
 Sandbox targets/lcars-stardate is ready (source face lcars-stardate 1.13.0, watchface=true).
@@ -184,7 +196,9 @@ built emit/ for lcars-stardate and copied 2 generated components into targets/lc
 [177/177] Creating app_bundle:  -&gt; build/lcars-stardate.pbw
 &#39;build&#39; finished successfully (1.742s)</code></pre>
 <p>On a local framework, an edit to the framework only makes the build clean when it touches the <code>waf/</code> helpers, since waf tracks the rest itself.</p>
-<p><strong><code>--clean</code></strong> forces a clean build. Every other argument goes on to <code>pebble build</code>. The <code>.pbw</code> lands in <code>targets/&lt;face&gt;/build/</code>.</p>
+<p><strong><code>--clean</code></strong> forces a clean build.</p>
+<p><strong><code>--dev</code></strong> builds the face in dev mode, on framework 6.0.0 or later, on the <code>dev</code> plugin&#39;s fixture, with the walk and the clock the unit&#39;s <code>paf.dev.config.json</code> gives that face, as <a href="../../how/dev-plugin/#turning-it-on-for-a-dev-build">the dev plugin</a> covers. A unit that does not list the plugin stops the build, so <code>paf build all --dev</code> fails each face in such a unit and carries on past it. A plugin app has no watch code for dev mode to change, so <code>paf build all --dev</code> passes over one with a line saying so, and a plugin app named on its own with <code>--dev</code> stops the build. <code>paf</code> hands the flag on to the framework&#39;s build script with the rest. An older framework passes it on to <code>pebble build</code>, which refuses it. A switch between a dev build and a normal one needs no clean build.</p>
+<p>Every other argument goes on to <code>pebble build</code>. The <code>.pbw</code> lands in <code>targets/&lt;face&gt;/build/</code>.</p>
 <h2 id="paf-gen">paf gen</h2>
 <pre><code>paf gen &lt;face&gt; &lt;kind|all&gt; [args]</code></pre>
 <p>Runs a generator for a face. The framework, each listed plugin, and the unit itself can offer generators. <code>paf gen &lt;face&gt; &lt;kind&gt;</code> runs one, whatever the face holds, with any arguments typed after it.</p>

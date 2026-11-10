@@ -241,7 +241,10 @@ Macros</h2></td></tr>
 <tr class="memdesc:ga5cce8c8e009bc553503dee841fa01bc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The longest the sensor is held on for one burst. <br /></td></tr>
 <tr class="memitem:ga353a8f23c99dd39c3dbfa02708208d29" id="r_ga353a8f23c99dd39c3dbfa02708208d29"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>HRV_SETTLE_GAPS</b>&#160;&#160;&#160;10</td></tr>
-<tr class="memdesc:ga353a8f23c99dd39c3dbfa02708208d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaps left out at the start of each burst, while the sensor settles. <br /></td></tr>
+<tr class="memdesc:ga353a8f23c99dd39c3dbfa02708208d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gaps left out at the start of each burst while the sensor settles, when a face sets none. <br /></td></tr>
+<tr class="memitem:gacd7ae320dd9f133f840d906727165648" id="r_gacd7ae320dd9f133f840d906727165648"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>HRV_SETTLE_GAPS_MAX</b>&#160;&#160;&#160;20</td></tr>
+<tr class="memdesc:gacd7ae320dd9f133f840d906727165648"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most gaps a face can have left out, which still leaves a slow heart time for a run. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -259,6 +262,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga63af7759a1aab1ce49fad20c956816f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether to ask the watch for beat gaps again.  <br /></td></tr>
 <tr class="memitem:ga10fae5233f760fb6787caa3e0876836c" id="r_ga10fae5233f760fb6787caa3e0876836c"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga10fae5233f760fb6787caa3e0876836c">hrv_hold_over</a> (uint32_t held_since, uint32_t now_sec)</td></tr>
 <tr class="memdesc:ga10fae5233f760fb6787caa3e0876836c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether the sensor has been held on for a burst as long as it may be.  <br /></td></tr>
+<tr class="memitem:ga3ec53ad7f3196535760825f02dc2611f" id="r_ga3ec53ad7f3196535760825f02dc2611f"><td class="memItemLeft">uint8_t&#160;</td><td class="memItemRight"><a class="el" href="group__lib__core.html#ga3ec53ad7f3196535760825f02dc2611f">hrv_settle_gaps</a> (uint16_t asked)</td></tr>
+<tr class="memdesc:ga3ec53ad7f3196535760825f02dc2611f"><td class="mdescLeft">&#160;</td><td class="mdescRight">How many gaps to leave out at the start of a burst, from the count a face asked for.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Turns the beat gaps the watch reports into heart rate variability, as RMSSD in ms. </p>

@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage_8h.
 </div><!--header-->
 <div class="contents">
 
-<p>AppMessage transport. Decodes the inbox and notifies the app through per-channel handlers, and queues the outbound weather, stock, and calendar requests through one outbox.  
+<p>AppMessage transport. Decodes the inbox and notifies the app through per-channel handlers, and queues the outbound weather, stock, calendar, phone battery, and now playing requests through one outbox.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;pebble.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="weather__reading_8h_source.html">weather/weather_reading.h</a>&quot;</code><br />
@@ -222,6 +222,10 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:gaad5cc31baad613ac137e95653cdab162"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with a packed watchlist strip. The handler owns the wire format.  <br /></td></tr>
 <tr class="memitem:gaea56a19672a4978e838e9d0a8753405b" id="r_gaea56a19672a4978e838e9d0a8753405b"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a>(const uint8_t *buf, uint16_t len)</td></tr>
 <tr class="memdesc:gaea56a19672a4978e838e9d0a8753405b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with a packed agenda strip. The store owns the wire format.  <br /></td></tr>
+<tr class="memitem:gab43d16e4f4337a52a7e9d4befa90b848" id="r_gab43d16e4f4337a52a7e9d4befa90b848"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#gab43d16e4f4337a52a7e9d4befa90b848">PhoneBatteryHandler</a>(int level)</td></tr>
+<tr class="memdesc:gab43d16e4f4337a52a7e9d4befa90b848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with the phone's battery level.  <br /></td></tr>
+<tr class="memitem:ga91efba350e00e340bfd106ee9aff0238" id="r_ga91efba350e00e340bfd106ee9aff0238"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a>(const char *title, const char *artist, bool playing)</td></tr>
+<tr class="memdesc:ga91efba350e00e340bfd106ee9aff0238"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called with what the phone is playing.  <br /></td></tr>
 <tr class="memitem:ga6daf051587a0083e33af5e4d0847f931" id="r_ga6daf051587a0083e33af5e4d0847f931"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a>(const char *combined)</td></tr>
 <tr class="memdesc:ga6daf051587a0083e33af5e4d0847f931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Called inbound with the combined custom-colours string, for the face to split and store.  <br /></td></tr>
 <tr class="memitem:ga6efc27e8b660e10498f1678ddecc05dc" id="r_ga6efc27e8b660e10498f1678ddecc05dc"><td class="memItemLeft">typedef void(*)&#160;</td><td class="memItemRight"><a class="el" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a>(char *out, size_t n)</td></tr>
@@ -249,6 +253,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_on_stock_strip</b> (<a cla
 <tr class="memitem:ga1ab2899a032be1fe4ab307e70f8bf3cd" id="r_ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_calendar_strip</b> (<a class="el" href="group__lib__io.html#gaea56a19672a4978e838e9d0a8753405b">CalendarStripHandler</a> cb)</td></tr>
 <tr class="memdesc:ga1ab2899a032be1fe4ab307e70f8bf3cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed agenda strip. <br /></td></tr>
+<tr class="memitem:ga067bf9e32b6a13413d5157b17e86147c" id="r_ga067bf9e32b6a13413d5157b17e86147c"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_phone_battery</b> (<a class="el" href="group__lib__io.html#gab43d16e4f4337a52a7e9d4befa90b848">PhoneBatteryHandler</a> cb)</td></tr>
+<tr class="memdesc:ga067bf9e32b6a13413d5157b17e86147c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone's battery. Does nothing on a face without the phone keys. <br /></td></tr>
+<tr class="memitem:ga757a519d948bf39e5414b62761c20593" id="r_ga757a519d948bf39e5414b62761c20593"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music</b> (<a class="el" href="group__lib__io.html#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a> cb)</td></tr>
+<tr class="memdesc:ga757a519d948bf39e5414b62761c20593"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the phone is playing. Does nothing on a face without the music keys. <br /></td></tr>
 <tr class="memitem:gacd479537bb794bc2cc1f07b4db3fb830" id="r_gacd479537bb794bc2cc1f07b4db3fb830"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_custom_colors</b> (<a class="el" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a> cb)</td></tr>
 <tr class="memdesc:gacd479537bb794bc2cc1f07b4db3fb830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inbound: splits and stores the combined string. <br /></td></tr>
@@ -268,9 +278,15 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_stock</b> (void)</
 <tr class="memitem:gac18380f0c5fdc613452b569ef4d88c35" id="r_gac18380f0c5fdc613452b569ef4d88c35"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void)</td></tr>
 <tr class="memdesc:gac18380f0c5fdc613452b569ef4d88c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the calendar keys. <br /></td></tr>
+<tr class="memitem:ga65ada3fd289956eb8297c91927fad985" id="r_ga65ada3fd289956eb8297c91927fad985"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_phone</b> (void)</td></tr>
+<tr class="memdesc:ga65ada3fd289956eb8297c91927fad985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for its battery level. The phone battery store calls this at launch and when the phone comes back. Does nothing on a face that does not declare PHONE_BATTERY and PHONE_REQUEST. <br /></td></tr>
+<tr class="memitem:ga9c7f2e2781d3b6f639b9ce19a5628a1f" id="r_ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</td></tr>
+<tr class="memdesc:ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone what it is playing. The now playing store calls this at launch and when the phone comes back. Does nothing on a face that does not declare the four music keys. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>AppMessage transport. Decodes the inbox and notifies the app through per-channel handlers, and queues the outbound weather, stock, and calendar requests through one outbox. </p>
+<div class="textblock"><p>AppMessage transport. Decodes the inbox and notifies the app through per-channel handlers, and queues the outbound weather, stock, calendar, phone battery, and now playing requests through one outbox. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

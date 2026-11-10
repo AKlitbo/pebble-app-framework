@@ -203,6 +203,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('appmessage_8c.
 <code>#include &quot;<a class="el" href="outbox__queue_8h_source.html">io/outbox_queue.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="tuple__read_8h_source.html">io/tuple_read.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="scale_8h_source.html">math/scale.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="phone__level_8h_source.html">wire/phone_level.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="wire__caps_8g_8h_source.html">wire/wire_caps.g.h</a>&quot;</code><br />
 <code>#include &lt;limits.h&gt;</code><br />
@@ -250,6 +251,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_on_calendar_strip</b> (<a 
 <tr class="memitem:gacd479537bb794bc2cc1f07b4db3fb830" id="r_gacd479537bb794bc2cc1f07b4db3fb830"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_on_custom_colors</b> (<a class="el" href="group__lib__io.html#ga6daf051587a0083e33af5e4d0847f931">CustomColorsHandler</a> cb)</td></tr>
 <tr class="memdesc:gacd479537bb794bc2cc1f07b4db3fb830"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inbound: splits and stores the combined string. <br /></td></tr>
+<tr class="memitem:ga067bf9e32b6a13413d5157b17e86147c" id="r_ga067bf9e32b6a13413d5157b17e86147c"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_phone_battery</b> (<a class="el" href="group__lib__io.html#gab43d16e4f4337a52a7e9d4befa90b848">PhoneBatteryHandler</a> cb)</td></tr>
+<tr class="memdesc:ga067bf9e32b6a13413d5157b17e86147c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone's battery. Does nothing on a face without the phone keys. <br /></td></tr>
+<tr class="memitem:ga757a519d948bf39e5414b62761c20593" id="r_ga757a519d948bf39e5414b62761c20593"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_on_music</b> (<a class="el" href="group__lib__io.html#ga91efba350e00e340bfd106ee9aff0238">MusicHandler</a> cb)</td></tr>
+<tr class="memdesc:ga757a519d948bf39e5414b62761c20593"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the phone is playing. Does nothing on a face without the music keys. <br /></td></tr>
 <tr class="memitem:gaf7a398e20625029f2e376405e9132660" id="r_gaf7a398e20625029f2e376405e9132660"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_set_custom_colors_provider</b> (<a class="el" href="group__lib__io.html#ga6efc27e8b660e10498f1678ddecc05dc">CustomColorsProvider</a> cb)</td></tr>
 <tr class="memdesc:gaf7a398e20625029f2e376405e9132660"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outbound: rebuilds the combined string. <br /></td></tr>
@@ -260,8 +267,6 @@ static void&#160;</td><td class="memItemRight"><b>pump</b> (void)</td></tr>
 <tr class="memdesc:a5f7778c42828f5ddb907706658b382e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the head job when the outbox is free, once the phone is there. <br /></td></tr>
 <tr class="memitem:abb7f7e97f2dd93df0449b3f9bdc9c96a" id="r_abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="memItemLeft">static uint32_t&#160;</td><td class="memItemRight"><a class="el" href="#abb7f7e97f2dd93df0449b3f9bdc9c96a">settings_reply_size</a> (void)</td></tr>
 <tr class="memdesc:abb7f7e97f2dd93df0449b3f9bdc9c96a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The most outbox bytes the settings reply could take, counting everything write_settings writes. The outbox is opened at this, so no settings change can outgrow it later.  <br /></td></tr>
-<tr class="memitem:afd8b8f5d619f4689a2891358d52737cc" id="r_afd8b8f5d619f4689a2891358d52737cc"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#afd8b8f5d619f4689a2891358d52737cc">write_settings</a> (DictionaryIterator *iter)</td></tr>
-<tr class="memdesc:afd8b8f5d619f4689a2891358d52737cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the settings reply payload into the outbox iterator.  <br /></td></tr>
 <tr class="memitem:ab81a6739f4c1e01e98a42af4a9a83b96" id="r_ab81a6739f4c1e01e98a42af4a9a83b96"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#ab81a6739f4c1e01e98a42af4a9a83b96">kind_has_key</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
 <tr class="memdesc:ab81a6739f4c1e01e98a42af4a9a83b96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether this face declares the key a kind is sent under.  <br /></td></tr>
 <tr class="memitem:a8227736a721829bfecf2b2649e296d98" id="r_a8227736a721829bfecf2b2649e296d98"><td class="memItemLeft">static bool&#160;</td><td class="memItemRight"><a class="el" href="#a8227736a721829bfecf2b2649e296d98">send_job</a> (<a class="el" href="group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17">OutboxKind</a> kind)</td></tr>
@@ -279,9 +284,12 @@ void&#160;</td><td class="memItemRight"><b>appmessage_request_stock</b> (void)</
 <tr class="memitem:gac18380f0c5fdc613452b569ef4d88c35" id="r_gac18380f0c5fdc613452b569ef4d88c35"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>appmessage_request_calendar</b> (void)</td></tr>
 <tr class="memdesc:gac18380f0c5fdc613452b569ef4d88c35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for a fresh agenda. The calendar store calls this on its turn on the shared cadence. Does nothing on faces that do not declare the calendar keys. <br /></td></tr>
-<tr class="memitem:a7537892c98316590da6b643bbbba37cc" id="r_a7537892c98316590da6b643bbbba37cc"><td class="memItemLeft"><a id="a7537892c98316590da6b643bbbba37cc" name="a7537892c98316590da6b643bbbba37cc"></a>
-static void&#160;</td><td class="memItemRight"><b>send_settings</b> (void)</td></tr>
-<tr class="memdesc:a7537892c98316590da6b643bbbba37cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the settings reply so it serializes with the data requests through the one outbox. <br /></td></tr>
+<tr class="memitem:ga65ada3fd289956eb8297c91927fad985" id="r_ga65ada3fd289956eb8297c91927fad985"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_phone</b> (void)</td></tr>
+<tr class="memdesc:ga65ada3fd289956eb8297c91927fad985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone for its battery level. The phone battery store calls this at launch and when the phone comes back. Does nothing on a face that does not declare PHONE_BATTERY and PHONE_REQUEST. <br /></td></tr>
+<tr class="memitem:ga9c7f2e2781d3b6f639b9ce19a5628a1f" id="r_ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="memItemLeft">
+void&#160;</td><td class="memItemRight"><b>appmessage_request_music</b> (void)</td></tr>
+<tr class="memdesc:ga9c7f2e2781d3b6f639b9ce19a5628a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asks the phone what it is playing. The now playing store calls this at launch and when the phone comes back. Does nothing on a face that does not declare the four music keys. <br /></td></tr>
 <tr class="memitem:a0d534305af0a10edbc3c427bae3e975c" id="r_a0d534305af0a10edbc3c427bae3e975c"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a0d534305af0a10edbc3c427bae3e975c">inbox_received_callback</a> (DictionaryIterator *iterator, void *context)</td></tr>
 <tr class="memdesc:a0d534305af0a10edbc3c427bae3e975c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply an inbox message: weather, coords, and any changed settings.  <br /></td></tr>
 <tr class="memitem:a84466f8e93f6160cfe1de858608d07ce" id="r_a84466f8e93f6160cfe1de858608d07ce"><td class="memItemLeft">static void&#160;</td><td class="memItemRight"><a class="el" href="#a84466f8e93f6160cfe1de858608d07ce">inbox_dropped_callback</a> (AppMessageResult reason, void *context)</td></tr>
@@ -639,42 +647,7 @@ static uint32_t&#160;</td><td class="memItemRight"><b>s_outbox_size</b></td></tr
 </div><div class="memdoc">
 
 <p>The most outbox bytes the settings reply could take, counting everything write_settings writes. The outbox is opened at this, so no settings change can outgrow it later. </p>
-<dl class="section return"><dt>Returns</dt><dd>The whole message's size, the dictionary's own header included. </dd></dl>
-
-</div>
-</div>
-<a id="afd8b8f5d619f4689a2891358d52737cc" name="afd8b8f5d619f4689a2891358d52737cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd8b8f5d619f4689a2891358d52737cc">&#9670;&#160;</a></span>write_settings()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool write_settings </td>
-          <td>(</td>
-          <td class="paramtype">DictionaryIterator *</td>          <td class="paramname"><span class="paramname"><em>iter</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Write the settings reply payload into the outbox iterator. </p>
-<p>The watch persist is the source of truth so Clay can seed its store from it. Carries the request key as a marker, the current settings, a fresh flag, and the custom colours. settings_reply_size counts the same four things.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">iter</td><td>The outbox iterator to write into. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>True when all of it was written, false when the outbox ran out of room partway. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The whole message's size, the dictionary's own header included, or 0 for a face without the settings keys, which never sends it. </dd></dl>
 
 </div>
 </div>

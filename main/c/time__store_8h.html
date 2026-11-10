@@ -198,20 +198,16 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('time__store_8h
 <p>Active time store. It owns the tickers (the minute tick, the swatch .beats AppTimer, and the hour tick) and swaps between them for the current cadence, so a face just hands it the rules and reads the time back.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;pebble.h&gt;</code><br />
+<code>#include &quot;<a class="el" href="time__config_8h_source.html">clock/time_config.h</a>&quot;</code><br />
 </div>
 <p><a href="time__store_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Data Structures</h2></td></tr>
-<tr class="memitem:TimeConfig" id="r_TimeConfig"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structTimeConfig.html">TimeConfig</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The rules a face hands the store, built from its own settings so the store names no SETTING_*.  <a href="structTimeConfig.html#details">More...</a><br /></td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ga000282fef3aa31a69a8038abb49fa576" id="r_ga000282fef3aa31a69a8038abb49fa576"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga000282fef3aa31a69a8038abb49fa576">time_store_init</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg, const struct tm *seed)</td></tr>
 <tr class="memdesc:ga000282fef3aa31a69a8038abb49fa576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL to start from the current time.  <br /></td></tr>
 <tr class="memitem:ga9c2eacc43d552852d63185bd4ca16379" id="r_ga9c2eacc43d552852d63185bd4ca16379"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga9c2eacc43d552852d63185bd4ca16379">time_store_reconfigure</a> (<a class="el" href="structTimeConfig.html">TimeConfig</a> cfg)</td></tr>
-<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match.  <br /></td></tr>
+<tr class="memdesc:ga9c2eacc43d552852d63185bd4ca16379"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. Rules that run the same tickers as the ones running do nothing, so a face can call it on every settings save. Only init decides whether the store is live, so one init started with live = false keeps its pinned time whatever cfg says, and one never started ignores it. <a class="el" href="structTimeConfig.html" title="The rules a face hands the time store, built from its own settings so the store names no SETTING_*.">TimeConfig</a> and the decisions live in <a class="el" href="time__config_8h.html" title="The rules a face hands the time store, what a reconfigure runs of them, and the check for whether two...">clock/time_config.h</a>.  <br /></td></tr>
 <tr class="memitem:ga03d7e9b1823247fa9d5a6ead85797571" id="r_ga03d7e9b1823247fa9d5a6ead85797571"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>time_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga03d7e9b1823247fa9d5a6ead85797571"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the time changes (the screen redraw). <br /></td></tr>

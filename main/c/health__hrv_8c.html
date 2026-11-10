@@ -261,8 +261,8 @@ void&#160;</td><td class="memItemRight"><b>health_hrv_poll</b> (void)</td></tr>
 <tr class="memdesc:ga302a123979f2732edb6738c61c8d0650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts HRV with the health store's rules, or starts it again with new ones.  <br /></td></tr>
 <tr class="memitem:ga3de2b90ca51ac9d5544c9cebf2eb7239" id="r_ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga3de2b90ca51ac9d5544c9cebf2eb7239">health_hrv_set_period</a> (uint16_t period_sec)</td></tr>
 <tr class="memdesc:ga3de2b90ca51ac9d5544c9cebf2eb7239"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes how often the watch takes a burst. A period of 0 stops the sampling and puts the reading back to none on a live store, and a seeded store keeps its seed.  <br /></td></tr>
-<tr class="memitem:gabc78d1ab551531851c68847138ad5f16" id="r_gabc78d1ab551531851c68847138ad5f16"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gabc78d1ab551531851c68847138ad5f16">health_hrv_set_rules</a> (uint16_t still_mg, uint16_t walk_steps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
-<tr class="memdesc:gabc78d1ab551531851c68847138ad5f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
+<tr class="memitem:gaca781624ec8eabf5d4916cfd2a731d57" id="r_gaca781624ec8eabf5d4916cfd2a731d57"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gaca781624ec8eabf5d4916cfd2a731d57">health_hrv_set_rules</a> (uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a> count, bool keep_all, bool live_redraw)</td></tr>
+<tr class="memdesc:gaca781624ec8eabf5d4916cfd2a731d57"><td class="mdescLeft">&#160;</td><td class="mdescRight">Changes the rules for which bursts count and how they are measured, such as when the wearer changes a setting or places a panel.  <br /></td></tr>
 <tr class="memitem:gaeb21c567d464de358f3f62a99315af26" id="r_gaeb21c567d464de358f3f62a99315af26"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>health_hrv_stop</b> (void)</td></tr>
 <tr class="memdesc:gaeb21c567d464de358f3f62a99315af26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the sampling, since the watch keeps an app's request going for an hour after it closes. <br /></td></tr>
@@ -288,6 +288,9 @@ uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_still_mg</b> (void)</t
 <tr class="memitem:ga3681a65febb8fb93ba84f3413ffac786" id="r_ga3681a65febb8fb93ba84f3413ffac786"><td class="memItemLeft">
 uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_walk_steps</b> (void)</td></tr>
 <tr class="memdesc:ga3681a65febb8fb93ba84f3413ffac786"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk. <br /></td></tr>
+<tr class="memitem:gaa0582954b31101fd5c9649ac6a4c3b19" id="r_gaa0582954b31101fd5c9649ac6a4c3b19"><td class="memItemLeft">
+uint16_t&#160;</td><td class="memItemRight"><b>health_hrv_settle_gaps</b> (void)</td></tr>
+<tr class="memdesc:gaa0582954b31101fd5c9649ac6a4c3b19"><td class="mdescLeft">&#160;</td><td class="mdescRight">The gaps left out at the start of each burst. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -327,6 +330,9 @@ static uint16_t&#160;</td><td class="memItemRight"><b>s_still_mg</b></td></tr>
 <tr class="memitem:adbf964a3b7eabb1f38369e58b2d2d14e" id="r_adbf964a3b7eabb1f38369e58b2d2d14e"><td class="memItemLeft"><a id="adbf964a3b7eabb1f38369e58b2d2d14e" name="adbf964a3b7eabb1f38369e58b2d2d14e"></a>
 static uint16_t&#160;</td><td class="memItemRight"><b>s_walk_steps</b></td></tr>
 <tr class="memdesc:adbf964a3b7eabb1f38369e58b2d2d14e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The steps through a burst that make it a walk. <br /></td></tr>
+<tr class="memitem:abcfb4d77f0fc22dd2a8325e8dc1313a5" id="r_abcfb4d77f0fc22dd2a8325e8dc1313a5"><td class="memItemLeft"><a id="abcfb4d77f0fc22dd2a8325e8dc1313a5" name="abcfb4d77f0fc22dd2a8325e8dc1313a5"></a>
+static uint8_t&#160;</td><td class="memItemRight"><b>s_settle_gaps</b></td></tr>
+<tr class="memdesc:abcfb4d77f0fc22dd2a8325e8dc1313a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">The gaps a burst leaves out as it starts. <br /></td></tr>
 <tr class="memitem:acf1886a7de20037aa5be621859c81bfd" id="r_acf1886a7de20037aa5be621859c81bfd"><td class="memItemLeft"><a id="acf1886a7de20037aa5be621859c81bfd" name="acf1886a7de20037aa5be621859c81bfd"></a>
 static <a class="el" href="group__lib__core.html#ga7e84a97be9f69040bef94b003e32be1a">HrvCount</a>&#160;</td><td class="memItemRight"><b>s_count</b></td></tr>
 <tr class="memdesc:acf1886a7de20037aa5be621859c81bfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Which bursts count for the main reading. <br /></td></tr>

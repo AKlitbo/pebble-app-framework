@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['locationconfig_0',['LocationConfig',['../structLocationConfig.html',1,'']]],
-  ['locationseed_1',['LocationSeed',['../structLocationSeed.html',1,'']]]
+  ['iconentry_0',['IconEntry',['../structIconEntry.html',1,'']]],
+  ['iconmargins_1',['IconMargins',['../structIconMargins.html',1,'']]]
 ];

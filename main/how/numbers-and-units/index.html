@@ -64,6 +64,8 @@
 <li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
 <li><a href="../../how/phone-side/">The Phone Side</a></li>
 <li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
 <li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
 <li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
 <li><a href="../../how/message-formats/">The Message Formats</a></li>
@@ -80,6 +82,7 @@
 <li><a href="../../how/stock-store/">The Stock Store</a></li>
 <li><a href="../../how/calendar-store/">The Calendar Store</a></li>
 <li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
 </ul>
 <h3>Clock and Sky</h3>
 <ul>
@@ -161,7 +164,7 @@ km:    (5000 + 50) / 100             = 5050 / 100       = 50   reads 5.0</code><
 <span class="line"><span style="color:var(--code-foreground)">case WIND_UNIT_MS:  </span><span style="color:var(--code-token-keyword)">return</span><span style="color:var(--code-foreground)"> (kmh </span><span style="color:var(--code-token-keyword)">*</span><span style="color:var(--code-token-constant)"> 278</span><span style="color:var(--code-foreground)">) </span><span style="color:var(--code-token-keyword)">/</span><span style="color:var(--code-token-constant)"> 1000</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
 <p>The factors are the real ones to three places, and the result is cut to a whole number rather than rounded. 30 km/h is 18.6 mph and reads 18, 16.2 knots and reads 16, and 8.3 m/s and reads 8. So a converted speed can read one below the nearest whole number, which is small next to how much the wind gusts.</p>
 <p><strong>No Reading First.</strong> The store&#39;s marker for no wind reading is -1, and -1 km/h converts to 0 mph, since the division rounds toward zero. A face checks for no reading before it converts, or a missing wind shows as calm.</p>
-<p><strong>The Setting Is the Face&#39;s.</strong> The framework has no wind unit setting of its own. The units are numbered 0 for km/h, 1 for mph, 2 for knots, and 3 for m/s, so a face adds a four way select to its page with those values and passes the stored byte straight in. A number outside that range reads as km/h.</p>
+<p><strong>The Setting.</strong> The units are numbered 0 for km/h, 1 for mph, 2 for knots, and 3 for m/s. <code>wind: {}</code> on <code>buildConfig</code> adds the select on <code>WEATHER_WIND_UNIT</code>, and <code>KNOWN_WIND_UNIT</code> keeps it on the watch, so a face passes <code>settings_u8(SETTING_WIND_UNIT)</code> straight in. A number outside that range reads as km/h.</p>
 </div>
           <nav class="page-steps" aria-label="Previous and next pages">
 <a class="page-step page-step-prev" rel="prev" href="../../how/fitting-text/"><span>Previous</span>Fitting Text</a>

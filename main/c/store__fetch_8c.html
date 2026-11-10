@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('store__fetch_8
 <p>The fetch timing the polling stores share, in one copy every store links against.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -209,6 +210,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:gad33c4412c02b7068286958a4ff9d39c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Arm the one-shot fetch after first_ms, unless one is already waiting.  <br /></td></tr>
 <tr class="memitem:gae24dbc83a69a2c585fc08c07f2d27091" id="r_gae24dbc83a69a2c585fc08c07f2d27091"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gae24dbc83a69a2c585fc08c07f2d27091">store_fetch_turn</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, time_t now)</td></tr>
 <tr class="memdesc:gae24dbc83a69a2c585fc08c07f2d27091"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence. Asks the phone when the deadline has come round.  <br /></td></tr>
+<tr class="memitem:ga48da19573724dbed49fc5c04f7508bb0" id="r_ga48da19573724dbed49fc5c04f7508bb0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga48da19573724dbed49fc5c04f7508bb0">store_fetch_on_link</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, int age_s)</td></tr>
+<tr class="memdesc:ga48da19573724dbed49fc5c04f7508bb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a store's link listener does. When the phone link has just come back, asks the phone if the reading is at least the store's own interval old, or never arrived. A drop does nothing, so the last reading stays on show.  <br /></td></tr>
 <tr class="memitem:gab0e39f35c438d27685e759973a271790" id="r_gab0e39f35c438d27685e759973a271790"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#gab0e39f35c438d27685e759973a271790">store_fetch_start</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, int poll_min, bool live, time_t now)</td></tr>
 <tr class="memdesc:gab0e39f35c438d27685e759973a271790"><td class="mdescLeft">&#160;</td><td class="mdescRight">What a store's init does with its polling. Takes the interval, then arms one fetch shortly after launch when polling is on, so the store is not blank while the first deadline is coming.  <br /></td></tr>
 <tr class="memitem:ga3baeb7249495a37edb88ef463ba8d904" id="r_ga3baeb7249495a37edb88ef463ba8d904"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga3baeb7249495a37edb88ef463ba8d904">store_fetch_reconfigure</a> (<a class="el" href="structStoreFetch.html">StoreFetch</a> *fetch, int poll_min, bool live, time_t now, bool empty)</td></tr>

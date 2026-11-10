@@ -85,17 +85,17 @@
       <tr>
         <th scope="row">Lines:</th>
         <td class="coverage-high">100.0%</td>
-        <td class="coverage-high">64 / 0 / 64</td>
+        <td class="coverage-high">68 / 0 / 68</td>
       </tr>
       <tr>
         <th scope="row">Functions:</th>
         <td class="coverage-high">100.0%</td>
-        <td class="coverage-high">8 / 0 / 8</td>
+        <td class="coverage-high">9 / 0 / 9</td>
       </tr>
       <tr>
         <th scope="row">Branches:</th>
         <td class="coverage-high">100.0%</td>
-        <td class="coverage-high">48 / 0 / 48</td>
+        <td class="coverage-high">52 / 0 / 52</td>
       </tr>
     </table>
   </div>
@@ -157,6 +157,13 @@
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
   </div>
   <div class="Box-row Box-row--focus-gray py-2 d-flex">
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l173">hrv_settle_gaps (src/c/core/health/hrv_run.c:173)</a>    </div>
+    <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="5">called 5 times</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+    <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
+  </div>
+  <div class="Box-row Box-row--focus-gray py-2 d-flex">
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 col-md-2"><a href="#l152">hrv_should_ask (src/c/core/health/hrv_run.c:152)</a>    </div>
     <div role="gridcell" class="color-fg-muted flex-auto min-width-0 d-flex flex-justify-end flex-wrap flex-items-baseline" data-sort="4">called 4 times</div>
     <div role="gridcell" class="color-fg-muted d-flex flex-justify-end flex-wrap col-2">100.0%</div>
@@ -179,7 +186,7 @@
   <div class="Box-header d-flex flex-space-between sticky">
     core/health/hrv_run.c
     <div class="toggle-buttons">
-      <button type="button" class="button_toggle_coveredLine show_coveredLine" value="coveredLine" title="Toggle covered lines">64 covered</button>
+      <button type="button" class="button_toggle_coveredLine show_coveredLine" value="coveredLine" title="Toggle covered lines">68 covered</button>
       <button type="button" class="button_toggle_uncoveredLine show_uncoveredLine" value="uncoveredLine" title="Toggle uncovered lines">0 uncovered</button>
       <button type="button" class="button_toggle_partialCoveredLine show_partialCoveredLine" value="partialCoveredLine" title="Toggle partial covered lines">0 partial covered</button>
       <button type="button" class="button_toggle_excludedLine show_excludedLine" value="excludedLine" title="Toggle excluded lines">0 excluded</button>
@@ -1472,6 +1479,153 @@
         <td class="linecount"></td>
         <td class="src "></td>
       </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l164" href="#l164">164</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">// the settle is held to HRV_SETTLE_GAPS_MAX, so a face cannot leave out more than 20 gaps even for a</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l165" href="#l165">165</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">// sensor that settles slower. a burst is held for HRV_HOLD_MAX_SEC at most, and a run needs</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l166" href="#l166">166</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">// HRV_DIFFS_MIN differences, which takes that many gaps plus one after the settle. at the slowest heart</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l167" href="#l167">167</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">// rate kept, 30 a minute, a gap lands every 2 seconds, so a settle of 20 has the run's 20th difference</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l168" href="#l168">168</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">// in by 80 seconds with five beats spare. a longer settle would let a slow heart's hold run out before</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l169" href="#l169">169</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="c1">// its run gave a reading, so that wearer would never see one</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l170" href="#l170">170</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="k">_Static_assert</span><span class="p">((</span><span class="n">HRV_SETTLE_GAPS_MAX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">HRV_DIFFS_MIN</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">HRV_PPI_MAX_MS</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">HRV_HOLD_MAX_SEC</span><span class="p">,</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l171" href="#l171">171</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">               </span><span class="s">"the longest settle must leave a run at 30 bpm time to finish inside one hold"</span><span class="p">);</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l172" href="#l172">172</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l173" href="#l173">173</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">5</td>
+        <td class="src  coveredLine show_coveredLine"><span class="kt">uint8_t</span><span class="w"> </span><span class="nf">hrv_settle_gaps</span><span class="p">(</span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">asked</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l174" href="#l174">174</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l175" href="#l175">175</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 3 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 2 &rightarrow; 4 taken 4 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">5</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">asked</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l176" href="#l176">176</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">{</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l177" href="#l177">177</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount coveredLine show_coveredLine">1</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">HRV_SETTLE_GAPS</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l178" href="#l178">178</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="w">    </span><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l179" href="#l179">179</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l180" href="#l180">180</a></td>
+        <td class="linebranch">
+          <details class="linebranchDetails">
+            <summary class="linebranchSummary">2/2</summary>
+            <div class="linebranchContents">
+              <div class="takenBranch">&check; Branch 4 &rightarrow; 5 taken 1 time.</div>
+              <div class="takenBranch">&check; Branch 4 &rightarrow; 6 taken 3 times.</div>
+            </div>
+          </details>
+        </td>
+        <td class="linecount coveredLine show_coveredLine">4</td>
+        <td class="src  coveredLine show_coveredLine"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">asked</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">HRV_SETTLE_GAPS_MAX</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="kt">uint8_t</span><span class="p">)</span><span class="n">asked</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">HRV_SETTLE_GAPS_MAX</span><span class="p">;</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l181" href="#l181">181</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "><span class="p">}</span></td>
+      </tr>
+      <tr class="source-line">
+        <td class="lineno"><a id="l182" href="#l182">182</a></td>
+        <td class="linebranch">
+        </td>
+        <td class="linecount"></td>
+        <td class="src "></td>
+      </tr>
     </table>
   </div>
 </div>
@@ -1479,7 +1633,7 @@
         <hr class="block-separator"/>
         <footer class="text-center">
           Created using <a href="http://gcovr.com/en/8.6">GCOVR (Version 8.6)</a>
-          at 2026-11-06 23:13:49
+          at 2026-11-10 23:56:13
         </footer>
       </div>
     </div>

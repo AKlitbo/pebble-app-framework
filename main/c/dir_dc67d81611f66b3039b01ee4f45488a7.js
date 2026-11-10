@@ -20,6 +20,8 @@ var dir_dc67d81611f66b3039b01ee4f45488a7 =
     [ "solar.h", "solar_8h.html", "solar_8h" ],
     [ "tide.c", "tide_8c.html", "tide_8c" ],
     [ "tide.h", "tide_8h.html", "tide_8h" ],
+    [ "time_config.c", "time__config_8c.html", "time__config_8c" ],
+    [ "time_config.h", "time__config_8h.html", "time__config_8h" ],
     [ "timeband.c", "timeband_8c.html", "timeband_8c" ],
     [ "timeband.h", "timeband_8h.html", "timeband_8h" ],
     [ "weekday.c", "weekday_8c.html", "weekday_8c" ],

@@ -1,5 +1,7 @@
 var settings_8c =
 [
+    [ "EACH_SCHEMA", "settings_8c.html#af5a0ec4c8af6087521e6c57d66a398ab", null ],
+    [ "SCHEMA_TAIL", "settings_8c.html#a94cecdf0ca24c34090b67ae74219410d", null ],
     [ "apply_defaults", "settings_8c.html#a8fd085e0bf9151d4771683129cb2964c", null ],
     [ "build_index", "settings_8c.html#a06306d4021a430cb7838afe79711bc82", null ],
     [ "color_channel", "settings_8c.html#a6a4ffb328a62269e89060788a3940157", null ],

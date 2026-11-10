@@ -1,5 +1,6 @@
 var group__lib__dev =
 [
+    [ "dev_hooks.h", "dev__hooks_8h.html", null ],
     [ "dev_walk.c", "dev__walk_8c.html", null ],
     [ "dev_walk.h", "dev__walk_8h.html", null ],
     [ "[struct].s_fixed", "struct_0fstruct_0e_8s__fixed.html", [
@@ -14,6 +15,10 @@ var group__lib__dev =
       [ "DEV_WALK_NONE", "group__lib__dev.html#ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca", null ],
       [ "DEV_WALK_THEMES", "group__lib__dev.html#ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d", null ]
     ] ],
+    [ "dev_force_time", "group__lib__dev.html#ga0fc1db4f8d84b98e40c608c63b2395af", null ],
+    [ "dev_seed_stores", "group__lib__dev.html#gadf53283b086362bedf9d7b445e457ea4", null ],
+    [ "dev_start", "group__lib__dev.html#ga51d93254270b5de85c1a52d484bc4f74", null ],
+    [ "dev_stop", "group__lib__dev.html#gabefedd1cbff9a29f82f78f8bf92352f9", null ],
     [ "dev_walk_deinit", "group__lib__dev.html#ga1ff4ca8046b48b20d4d60258901384c1", null ],
     [ "dev_walk_init", "group__lib__dev.html#ga881065800617954a0fd094063774f0d9", null ],
     [ "dev_walk_seed_stores", "group__lib__dev.html#gad7d36031f9102cac1d91f9d66079d9ed", null ]

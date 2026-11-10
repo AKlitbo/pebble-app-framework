@@ -64,6 +64,8 @@
 <li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
 <li><a href="../../how/phone-side/">The Phone Side</a></li>
 <li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
 <li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
 <li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
 <li><a href="../../how/message-formats/">The Message Formats</a></li>
@@ -80,6 +82,7 @@
 <li><a href="../../how/stock-store/">The Stock Store</a></li>
 <li><a href="../../how/calendar-store/">The Calendar Store</a></li>
 <li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
 </ul>
 <h3>Clock and Sky</h3>
 <ul>
@@ -190,6 +193,12 @@
 <td align="left">nothing</td>
 <td align="left"><code>--</code></td>
 </tr>
+<tr>
+<td align="left"><code>readout_phone_battery</code></td>
+<td align="left">the phone store</td>
+<td align="left">nothing</td>
+<td align="left"><code>--</code></td>
+</tr>
 </tbody></table>
 <h2 id="the-clock">The Clock</h2>
 <p><code>readout_time</code> follows the Time Format setting.</p>
@@ -208,9 +217,23 @@
 <p>A step count of -1 means there is no reading, and the readout writes <code>--</code> in every mode, since the distance alone reads 0 with no data (see <a href="../../how/health-store/#what-each-read-costs">The Health Store</a>).</p>
 <h2 id="weather">Weather</h2>
 <p><strong>Temperature.</strong> <code>readout_weather_temp</code> writes the temperature with its unit letter, such as <code>23C</code> or <code>73F</code>. The weather store already holds it in the wearer&#39;s unit, so the readout only adds the letter. When the store has no temperature yet it writes <code>--</code>.</p>
+<p><strong>A Face with No Unit Setting.</strong> A face built with <code>PLUGIN_WEATHER</code> and no <code>WEATHER_TEMPERATURE_UNIT</code> key gets the number alone, such as <code>73</code>. The phone sends all of that face&#39;s weather, from the plugin or from a fetch, in the unit the wearer picked in the Pebble app, as <a href="../../how/fetching-the-weather/#units-and-values">Fetching the Weather</a> covers, and the watch never hears which unit that is. Every other face keeps its letter.</p>
 <p><strong>Condition.</strong> <code>readout_weather_cond</code> writes the condition&#39;s short label, such as <code>RAIN</code> or <code>PCLDY</code>. After dark the phone sends a night form such as <code>CLEAR_NIGHT</code>, which picks the night icon (see <a href="../../how/icons/">Icons</a>). The readout trims the <code>_NIGHT</code> off, so the text reads <code>CLEAR</code> by day or night. With no condition yet it writes <code>--</code>.</p>
+<p><strong>The UV Risk Band.</strong> There is no UV readout, since faces put the band in different places, but every face gets the band from the same place. <code>uv_band</code> in <a href="../../c/uv__band_8h.html"><code>uv_band.h</code></a> turns the weather store&#39;s UV index into its WHO risk band: 0 to 2 low, 3 to 5 moderate, 6 and 7 high, 8 to 10 very high, and 11 or more extreme. <code>uv_band_name</code> gives the full name, such as <code>VERY HIGH</code>, and <code>uv_band_short_name</code> gives at most six letters, such as <code>V.HIGH</code>, for a slot with the number in front of it. With no reading the store gives -1, the band is <code>UV_BAND_NONE</code>, and both names are empty, so a face that writes the name after its dashes adds nothing:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">int</span><span style="color:var(--code-foreground)"> uv </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> weather_store_uv</span><span style="color:var(--code-foreground)">();</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">if</span><span style="color:var(--code-foreground)"> (uv </span><span style="color:var(--code-token-keyword)">&#x3C;</span><span style="color:var(--code-token-constant)"> 0</span><span style="color:var(--code-foreground)">)</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    snprintf(out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> n</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "--"</span><span style="color:var(--code-token-function)">)</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">else</span></span>
+<span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-function)">    snprintf(out</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> n</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "</span><span style="color:var(--code-token-constant)">%d</span><span style="color:var(--code-token-constant)"> %s</span><span style="color:var(--code-token-string-expression)">"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> uv</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-function)"> uv_band_short_name(uv_band(uv)))</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The band is an enum, so a face can also colour the reading by it. The font has to carry the space and the full stop the names use.</p>
 <h2 id="location">Location</h2>
 <p><code>readout_lat</code> and <code>readout_lon</code> write the latitude and longitude as the phone formatted them, or <code>--</code> when the watch has no location yet. The location store keeps them as text, so the readout copies them as they are.</p>
+<h2 id="the-phones-battery">The Phone&#39;s Battery</h2>
+<p><code>readout_phone_battery</code> writes the phone&#39;s battery as a percent, such as <code>84%</code>, or <code>--</code> when the watch has no reading. It has none with the phone away, with plugins off in the Pebble app, and on a face built without the phone battery keys (see <a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a>).</p>
 </div>
           <nav class="page-steps" aria-label="Previous and next pages">
 <a class="page-step page-step-prev" rel="prev" href="../../how/engine/"><span>Previous</span>The Engine</a>

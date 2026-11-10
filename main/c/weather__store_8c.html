@@ -207,6 +207,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('weather__store
 <code>#include &quot;<a class="el" href="store__cadence_8h_source.html">io/stores/store_cadence.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__persist_8h_source.html">io/stores/store_persist.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="store__fetch_8h_source.html">io/stores/store_fetch.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="system__store_8h_source.html">io/stores/system_store.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="cstring__fit_8h_source.html">text/cstring_fit.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="forecast__age_8h_source.html">weather/forecast_age.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="weather__reading_8h_source.html">weather/weather_reading.h</a>&quot;</code><br />
@@ -247,13 +248,16 @@ static void&#160;</td><td class="memItemRight"><b>reset_state</b> (void)</td></t
 <tr class="memitem:ac219f20bf18466869ec6ecc7820e97a6" id="r_ac219f20bf18466869ec6ecc7820e97a6"><td class="memItemLeft"><a id="ac219f20bf18466869ec6ecc7820e97a6" name="ac219f20bf18466869ec6ecc7820e97a6"></a>
 static void&#160;</td><td class="memItemRight"><b>cadence_poll</b> (void)</td></tr>
 <tr class="memdesc:ac219f20bf18466869ec6ecc7820e97a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The store's turn on the face's cadence: poll when the deadline has come round. <br /></td></tr>
+<tr class="memitem:a5446f3b1dc816160ec26d98e2b69785f" id="r_a5446f3b1dc816160ec26d98e2b69785f"><td class="memItemLeft"><a id="a5446f3b1dc816160ec26d98e2b69785f" name="a5446f3b1dc816160ec26d98e2b69785f"></a>
+static void&#160;</td><td class="memItemRight"><b>on_link</b> (void)</td></tr>
+<tr class="memdesc:a5446f3b1dc816160ec26d98e2b69785f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The phone link really dropped or came back. A return catches the reading up if it went stale. <br /></td></tr>
 <tr class="memitem:ga40fd78d1cab03532c37b131b1c2a9111" id="r_ga40fd78d1cab03532c37b131b1c2a9111"><td class="memItemLeft">
 void&#160;</td><td class="memItemRight"><b>weather_store_subscribe</b> (void(*cb)(void))</td></tr>
 <tr class="memdesc:ga40fd78d1cab03532c37b131b1c2a9111"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hand it the function to call when the weather changes (the screen redraw). <br /></td></tr>
 <tr class="memitem:ga49a92d34f22c2bb81f54084b02215709" id="r_ga49a92d34f22c2bb81f54084b02215709"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga49a92d34f22c2bb81f54084b02215709">weather_store_init</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg, const <a class="el" href="structWeatherSeed.html">WeatherSeed</a> *seed)</td></tr>
 <tr class="memdesc:ga49a92d34f22c2bb81f54084b02215709"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start the store with its rules. Pass seed = NULL for normal use.  <br /></td></tr>
 <tr class="memitem:ga2af1e0b42fd91db04b7bf0e358f80a85" id="r_ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="group__lib__stores.html#ga2af1e0b42fd91db04b7bf0e358f80a85">weather_store_reconfigure</a> (<a class="el" href="structWeatherConfig.html">WeatherConfig</a> cfg)</td></tr>
-<tr class="memdesc:ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone.  <br /></td></tr>
+<tr class="memdesc:ga2af1e0b42fd91db04b7bf0e358f80a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new interval, and switching the store off here stops it asking the phone. Only init decides whether the store is live, so one init started with live = false stays on its seed whatever cfg says, and one never started ignores the call.  <br /></td></tr>
 <tr class="memitem:ga2cd48126740a404ee6893890c5abf288" id="r_ga2cd48126740a404ee6893890c5abf288"><td class="memItemLeft">
 int&#160;</td><td class="memItemRight"><b>weather_store_temp</b> (void)</td></tr>
 <tr class="memdesc:ga2cd48126740a404ee6893890c5abf288"><td class="mdescLeft">&#160;</td><td class="mdescRight">The temperature reading in the user's unit, or WEATHER_NO_TEMP if we have not got one yet. <br /></td></tr>

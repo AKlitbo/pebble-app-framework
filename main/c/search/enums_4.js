@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['outboxkind_0',['OutboxKind',['../group__lib__io.html#ga247b62ae1a0fa87cef6e3e8b7f738f17',1,'outbox_queue.h']]]
+  ['linkchange_0',['LinkChange',['../group__lib__core.html#gae74178abed5fae945e1364010e009448',1,'link_change.h']]]
 ];
