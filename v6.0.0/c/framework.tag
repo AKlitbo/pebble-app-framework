@@ -1,0 +1,16752 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<tagfile doxygen_version="1.18.0" doxygen_gitid="8e760943e5d9581a444cf327f43a0b4d20d29482">
+  <compound kind="file">
+    <name>astro.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>astro_8c.html</filename>
+    <includes id="astro_8h" name="astro.h" local="yes" import="no" module="no" objc="no">clock/astro.h</includes>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>astro_jd_centi</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8847a29aa0210773d90c83257417e30d</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>astro.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>astro_8h.html</filename>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>astro_jd_centi</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8847a29aa0210773d90c83257417e30d</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>beats.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>beats_8c.html</filename>
+    <includes id="beats_8h" name="beats.h" local="yes" import="no" module="no" objc="no">clock/beats.h</includes>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>beats_from_ms</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga748d1547c38334f1800f0d0bf0ddfb63</anchor>
+      <arglist>(int32_t ms_into_bmt_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>ms_until_next_beat</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b06de249c8214693fdf100d868f54f4</anchor>
+      <arglist>(int32_t ms_into_bmt_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>beats_ms_from_hms</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga60ea394a4edab1661bfdfcec61a49a73</anchor>
+      <arglist>(int hour, int minute, int second, uint16_t ms)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>token_at</name>
+      <anchorfile>beats_8c.html</anchorfile>
+      <anchor>af9f96a0956b8fe8f3c08e08739e8a28d</anchor>
+      <arglist>(const char *text)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>beats_has_token</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaed371b1b105688cc7ca824ba6ed0090</anchor>
+      <arglist>(const char *format)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>beats_expand_token</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2fdfec41ce1bb098586cf3d82c921cd5</anchor>
+      <arglist>(char *text, int beats)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>beats.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>beats_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>MS_PER_BEAT</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a0d6afbe4b8f974a909bafc6794fc6a55</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MS_PER_DAY</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a252dcc38a8013d69f8a9448187565604</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MS_PER_SEC</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a98c842b52ffe344288b6e38b12417baa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECS_PER_DAY</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>ae6bc10904b2b09a717f1fb81cce017de</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECS_PER_HOUR</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a11528d10d5838afd2d0ec2f5841167cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECS_PER_MIN</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a5e7d1008e5b26253223a67794b77a806</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>BMT_UTC_OFFSET_S</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a9351772e84923ba8b628942ab6b85161</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>BEATS_TOKEN</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>ade6bb8e23f719514ba1b95799c33ca50</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>BEATS_TOKEN_LEN</name>
+      <anchorfile>beats_8h.html</anchorfile>
+      <anchor>a57ea4ea833a212d20c37d466acf54a09</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>beats_from_ms</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga748d1547c38334f1800f0d0bf0ddfb63</anchor>
+      <arglist>(int32_t ms_into_bmt_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>ms_until_next_beat</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b06de249c8214693fdf100d868f54f4</anchor>
+      <arglist>(int32_t ms_into_bmt_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>beats_ms_from_hms</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga60ea394a4edab1661bfdfcec61a49a73</anchor>
+      <arglist>(int hour, int minute, int second, uint16_t ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>beats_has_token</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaed371b1b105688cc7ca824ba6ed0090</anchor>
+      <arglist>(const char *format)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>beats_expand_token</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2fdfec41ce1bb098586cf3d82c921cd5</anchor>
+      <arglist>(char *text, int beats)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>date.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>date_8c.html</filename>
+    <includes id="date_8h" name="date.h" local="yes" import="no" module="no" objc="no">clock/date.h</includes>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>is_leap</name>
+      <anchorfile>date_8c.html</anchorfile>
+      <anchor>a506f07c45946335c5ec3a88e78ca5e78</anchor>
+      <arglist>(int year)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>dec31_wday</name>
+      <anchorfile>date_8c.html</anchorfile>
+      <anchor>a1a6b972504fbe2691560543745c1f5ce</anchor>
+      <arglist>(int year)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_weeks_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga70f355976c89a7190d80f6d344631710</anchor>
+      <arglist>(int year)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>raw_week</name>
+      <anchorfile>date_8c.html</anchorfile>
+      <anchor>a2ec80a6baceb057022750ccc09a69ac5</anchor>
+      <arglist>(int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_week</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaee874b4db4f19a63aec92cf2c57defd2</anchor>
+      <arglist>(int year, int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_week_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0c190d7c5d5f7d46fc36c3f04bd3e56a</anchor>
+      <arglist>(int year, int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_day_of_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadde776e9b470fd4e9df1307415b09851</anchor>
+      <arglist>(int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_days_left_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c68f59a1602b5e27b1a05a0d63b499c</anchor>
+      <arglist>(int year, int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_days_in_month</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef88f0efc2274de9f1984658aea37f9b</anchor>
+      <arglist>(int year, int mon0)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_first_wday</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0b126160626de63678618d54227455ad</anchor>
+      <arglist>(int wday, int mday)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>date.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>date_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_week</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaee874b4db4f19a63aec92cf2c57defd2</anchor>
+      <arglist>(int year, int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_week_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0c190d7c5d5f7d46fc36c3f04bd3e56a</anchor>
+      <arglist>(int year, int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_weeks_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga70f355976c89a7190d80f6d344631710</anchor>
+      <arglist>(int year)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_day_of_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadde776e9b470fd4e9df1307415b09851</anchor>
+      <arglist>(int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_days_left_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c68f59a1602b5e27b1a05a0d63b499c</anchor>
+      <arglist>(int year, int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_days_in_month</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef88f0efc2274de9f1984658aea37f9b</anchor>
+      <arglist>(int year, int mon0)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_first_wday</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0b126160626de63678618d54227455ad</anchor>
+      <arglist>(int wday, int mday)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>duration.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>duration_8c.html</filename>
+    <includes id="duration_8h" name="duration.h" local="yes" import="no" module="no" objc="no">clock/duration.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>duration_hm</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4fe493c620f4247fb241b538db2aec72</anchor>
+      <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>duration_hm_compact</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0b34387761f2f9297553dcad5ac0f206</anchor>
+      <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>duration.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>duration_8h.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>duration_hm</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4fe493c620f4247fb241b538db2aec72</anchor>
+      <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>duration_hm_compact</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0b34387761f2f9297553dcad5ac0f206</anchor>
+      <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hour_latch.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>hour__latch_8c.html</filename>
+    <includes id="hour__latch_8h" name="hour_latch.h" local="yes" import="no" module="no" objc="no">clock/hour_latch.h</includes>
+    <member kind="function">
+      <type>time_t</type>
+      <name>hour_latch_start</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c35b1a9c0faafc665826130832ddf52</anchor>
+      <arglist>(time_t now, int tm_min, int tm_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hour_latch_take</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaafead0993ab7c57e2ae8a7b8fe65d6d7</anchor>
+      <arglist>(HourLatch *latch, int tick_min, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hour_latch_seed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3cbf613cf79116cd37b00238914036f8</anchor>
+      <arglist>(HourLatch *latch, time_t start)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hour_latch.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>hour__latch_8h.html</filename>
+    <class kind="struct">HourLatch</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HOUR_LATCH_EMPTY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9462df08933e714a6f14495ba12c19e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>hour_latch_start</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c35b1a9c0faafc665826130832ddf52</anchor>
+      <arglist>(time_t now, int tm_min, int tm_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hour_latch_take</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaafead0993ab7c57e2ae8a7b8fe65d6d7</anchor>
+      <arglist>(HourLatch *latch, int tick_min, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hour_latch_seed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3cbf613cf79116cd37b00238914036f8</anchor>
+      <arglist>(HourLatch *latch, time_t start)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>moon.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>moon_8c.html</filename>
+    <includes id="moon_8h" name="moon.h" local="yes" import="no" module="no" objc="no">clock/moon.h</includes>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>moon_age_sec</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf635be67f90fcbcc72361db3e1b899e0</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_glyph_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga83dfa9388ce19b76dd9f18ffc9135a67</anchor>
+      <arglist>(time_t utc, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_illumination_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa3fa4262c82f6312ffc7ac9a36ad08e1</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_days_to_phase</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c81c549c8dfe4c2751f023abfe727b7</anchor>
+      <arglist>(time_t utc, bool to_full)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>moon_phase_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6a99ed843383ec7d057306db91bb91fc</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>moon.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>moon_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>MOON_SYNODIC_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga550e4dc38f3305d3ad3dcd0dd394de94</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MOON_EPOCH_UTC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf586f63d0905b47c9548a10f0310bc81</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>moon_age_sec</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf635be67f90fcbcc72361db3e1b899e0</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_glyph_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga83dfa9388ce19b76dd9f18ffc9135a67</anchor>
+      <arglist>(time_t utc, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_illumination_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa3fa4262c82f6312ffc7ac9a36ad08e1</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>moon_phase_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6a99ed843383ec7d057306db91bb91fc</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_days_to_phase</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c81c549c8dfe4c2751f023abfe727b7</anchor>
+      <arglist>(time_t utc, bool to_full)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>nightsched.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>nightsched_8c.html</filename>
+    <includes id="nightsched_8h" name="nightsched.h" local="yes" import="no" module="no" objc="no">nightsched.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>DAY_MINUTES</name>
+      <anchorfile>nightsched_8c.html</anchorfile>
+      <anchor>a27eb45d73274b31b564ec5e27236b745</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>is_reading</name>
+      <anchorfile>nightsched_8c.html</anchorfile>
+      <anchor>a840b33a21a7d32f781afb123a040d488</anchor>
+      <arglist>(int minute)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>clock_window_contains</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga284e05094c9084b2fca021122f13488d</anchor>
+      <arglist>(int start, int end, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>night_schedule_active</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab655e624866f012b97621268f0038504</anchor>
+      <arglist>(int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>nightsched.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>nightsched_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>NightSchedMode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90cd678ac8db70a4a741a5ef04cd8793</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NIGHT_SCHED_OFF</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NIGHT_SCHED_SOLAR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NIGHT_SCHED_FIXED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>clock_window_contains</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga284e05094c9084b2fca021122f13488d</anchor>
+      <arglist>(int start, int end, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>night_schedule_active</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab655e624866f012b97621268f0038504</anchor>
+      <arglist>(int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>rotate.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>rotate_8c.html</filename>
+    <includes id="rotate_8h" name="rotate.h" local="yes" import="no" module="no" objc="no">rotate.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>rotate_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2c930ac9149442ad63c57a55927f6090</anchor>
+      <arglist>(int year, int yday, int hour, int minute, int interval_min, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>rotate.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>rotate_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>rotate_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2c930ac9149442ad63c57a55927f6090</anchor>
+      <arglist>(int year, int yday, int hour, int minute, int interval_min, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>solar.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>solar_8c.html</filename>
+    <includes id="solar_8h" name="solar.h" local="yes" import="no" module="no" objc="no">clock/solar.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>MINUTES_PER_DAY</name>
+      <anchorfile>solar_8c.html</anchorfile>
+      <anchor>ae0f73032b15f3188a50b86f793afb7ab</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>have_all</name>
+      <anchorfile>solar_8c.html</anchorfile>
+      <anchor>a854b4a35a11cda25892a46e24e0b8e0c</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>forward</name>
+      <anchorfile>solar_8c.html</anchorfile>
+      <anchor>abc2880e1e3accfcb789382afc39f0a78</anchor>
+      <arglist>(int from, int to)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_day_progress</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac982a31420ab76dbaa86ab1885c065ad</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_night_progress</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaee0b6058425e523d5393b77aceb34a54</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_next_event</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga974fb27e5854c3558a46a423c0e9e621</anchor>
+      <arglist>(int rise, int set, int now, bool *is_sunrise)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>solar.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>solar_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_day_progress</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac982a31420ab76dbaa86ab1885c065ad</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_night_progress</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaee0b6058425e523d5393b77aceb34a54</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_next_event</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga974fb27e5854c3558a46a423c0e9e621</anchor>
+      <arglist>(int rise, int set, int now, bool *is_sunrise)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>tide.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>tide_8c.html</filename>
+    <includes id="tide_8h" name="tide.h" local="yes" import="no" module="no" objc="no">clock/tide.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>TIDE_PERIOD_CUBE</name>
+      <anchorfile>tide_8c.html</anchorfile>
+      <anchor>addd7b1e7073eecf23e026be9c1ac3a89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>phase</name>
+      <anchorfile>tide_8c.html</anchorfile>
+      <anchor>a08bf10e5ba17a2c669e2cc0a45d7bfaa</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>tide_level</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9ca1c1d9a5df71a89fc61da050ca3b8d</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>tide_rising</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga910d5986818e759ad59e4e50cefdbe8f</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>tide.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>tide_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>TIDE_PERIOD_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa01e1adc5b81c1d2cc14f870a42e5f3f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>tide_level</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9ca1c1d9a5df71a89fc61da050ca3b8d</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>tide_rising</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga910d5986818e759ad59e4e50cefdbe8f</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>time_config.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>time__config_8c.html</filename>
+    <includes id="time__config_8h" name="time_config.h" local="yes" import="no" module="no" objc="no">clock/time_config.h</includes>
+    <includes id="store__live_8h" name="store_live.h" local="yes" import="no" module="no" objc="no">io/store_live.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>TICKER_MINUTE</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>a6a7b0f60a670761ef50432d850a63bb9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TICKER_HOUR</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>a1a60795ae79f732fcb635dfe31758d7c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TICKER_BEATS</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>a7b9f8c1a80d131db21863fc95b3a0c21</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>tickers</name>
+      <anchorfile>time__config_8c.html</anchorfile>
+      <anchor>aa4bf40dd2ef63cd10ed333016824e1d1</anchor>
+      <arglist>(TimeConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_same_tickers</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafdebf69530ed918eaeb2fb2e00b7e154</anchor>
+      <arglist>(TimeConfig a, TimeConfig b)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeConfig</type>
+      <name>time_config_reconfigured</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga97a3a19c7df73172fc1ef49f4784a479</anchor>
+      <arglist>(TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga23e87de26014fa5fd1b5644213852011</anchor>
+      <arglist>(TimeConfig *running, TimeConfig cfg, bool pinned)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>time_config.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>time__config_8h.html</filename>
+    <class kind="struct">TimeConfig</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_same_tickers</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafdebf69530ed918eaeb2fb2e00b7e154</anchor>
+      <arglist>(TimeConfig a, TimeConfig b)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeConfig</type>
+      <name>time_config_reconfigured</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga97a3a19c7df73172fc1ef49f4784a479</anchor>
+      <arglist>(TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga23e87de26014fa5fd1b5644213852011</anchor>
+      <arglist>(TimeConfig *running, TimeConfig cfg, bool pinned)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>timeband.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>timeband_8c.html</filename>
+    <includes id="timeband_8h" name="timeband.h" local="yes" import="no" module="no" objc="no">clock/timeband.h</includes>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECONDS_PER_MINUTE</name>
+      <anchorfile>timeband_8c.html</anchorfile>
+      <anchor>ae5e089b553f791f79d02046ff63f3cdb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>wrap_day</name>
+      <anchorfile>timeband_8c.html</anchorfile>
+      <anchor>a53741af02acdd92c6c86ff7ec2e9656b</anchor>
+      <arglist>(int minutes)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>floor_minutes</name>
+      <anchorfile>timeband_8c.html</anchorfile>
+      <anchor>a8e06291a2bccc7a786852acbf98622af</anchor>
+      <arglist>(int seconds)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>ceil_minutes</name>
+      <anchorfile>timeband_8c.html</anchorfile>
+      <anchor>a2d5083d8663f9050b440ca1e555a108c</anchor>
+      <arglist>(int seconds)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_full_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2e4ca30c1616284c941596b66bcc6158</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_rolling</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga17975bf89798eeb2baacffec94111b18</anchor>
+      <arglist>(int now_min, int span_min, int lead_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_from_hour</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1e2241cf9d353b6c48f57c9e49dbcbe9</anchor>
+      <arglist>(int base_hour, int span_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac788ab450b30bbb9e4c0c16e2a96d1de</anchor>
+      <arglist>(TimeBand band, int minute_of_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_pos</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4d0f6578d1e429d7c77be357109a6989</anchor>
+      <arglist>(TimeBand band, int length, int minute_of_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_pos_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga464dfe5bbece0af2f5539d0616fd7643</anchor>
+      <arglist>(TimeBand band, int length, int offset_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>timeband_clip</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0a00805862511df587e96edc9083c7da</anchor>
+      <arglist>(TimeBand band, time_t window_epoch, time_t start, time_t end, TimeBandSpan *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_clip_daily</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7ec5edf0ceeb305eed2d84da3130a0ba</anchor>
+      <arglist>(TimeBand band, int from_min, int to_min, TimeBandSpan *out, int max_out)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>timeband_window_epoch</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63e7a4d00b37b74522dc6eaab727b6f8</anchor>
+      <arglist>(TimeBand band, time_t now, int now_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>timeband.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>timeband_8h.html</filename>
+    <class kind="struct">TimeBand</class>
+    <class kind="struct">TimeBandSpan</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>TIMEBAND_DAY_MINUTES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad3c2b297779efc19aa0c02f2e8635917</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_full_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2e4ca30c1616284c941596b66bcc6158</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_rolling</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga17975bf89798eeb2baacffec94111b18</anchor>
+      <arglist>(int now_min, int span_min, int lead_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_from_hour</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1e2241cf9d353b6c48f57c9e49dbcbe9</anchor>
+      <arglist>(int base_hour, int span_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac788ab450b30bbb9e4c0c16e2a96d1de</anchor>
+      <arglist>(TimeBand band, int minute_of_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_pos</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4d0f6578d1e429d7c77be357109a6989</anchor>
+      <arglist>(TimeBand band, int length, int minute_of_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_pos_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga464dfe5bbece0af2f5539d0616fd7643</anchor>
+      <arglist>(TimeBand band, int length, int offset_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>timeband_clip</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0a00805862511df587e96edc9083c7da</anchor>
+      <arglist>(TimeBand band, time_t window_epoch, time_t start, time_t end, TimeBandSpan *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_clip_daily</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7ec5edf0ceeb305eed2d84da3130a0ba</anchor>
+      <arglist>(TimeBand band, int from_min, int to_min, TimeBandSpan *out, int max_out)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>timeband_window_epoch</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63e7a4d00b37b74522dc6eaab727b6f8</anchor>
+      <arglist>(TimeBand band, time_t now, int now_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weekday.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>weekday_8c.html</filename>
+    <includes id="weekday_8h" name="weekday.h" local="yes" import="no" module="no" objc="no">clock/weekday.h</includes>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weekday_short</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadccedafdeb6e437c664e8426bfd9812b</anchor>
+      <arglist>(int wday)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weekday.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>weekday_8h.html</filename>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weekday_short</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadccedafdeb6e437c664e8426bfd9812b</anchor>
+      <arglist>(int wday)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>zone_setting.c</name>
+    <path>src/c/core/clock/</path>
+    <filename>zone__setting_8c.html</filename>
+    <includes id="zone__setting_8h" name="zone_setting.h" local="yes" import="no" module="no" objc="no">clock/zone_setting.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>zone_setting_is_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga48a1bec6aa209e10ce939af6b9d53222</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>int16_t</type>
+      <name>zone_setting_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6654376c135443aa4f6756f406340f02</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>zone_setting_label</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f625161eafd8ce62405cce899c8ff80</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>zone_setting.h</name>
+    <path>src/c/core/clock/</path>
+    <filename>zone__setting_8h.html</filename>
+    <member kind="function">
+      <type>bool</type>
+      <name>zone_setting_is_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga48a1bec6aa209e10ce939af6b9d53222</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>int16_t</type>
+      <name>zone_setting_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6654376c135443aa4f6756f406340f02</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>zone_setting_label</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f625161eafd8ce62405cce899c8ff80</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hr_day.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hr__day_8c.html</filename>
+    <includes id="hr__day_8h" name="hr_day.h" local="yes" import="no" module="no" objc="no">hr_day.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_clear</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10a8d6b3da25bae2446917c4d2926172</anchor>
+      <arglist>(HrDay *day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3d58235334983237da2d42be7603056a</anchor>
+      <arglist>(HrDay *day, int hour, int bpm)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hr_day_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9e6cbd7e421ca0ebd91abd4389a09e0c</anchor>
+      <arglist>(const HrDay *day, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_stats</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga66d1f37711cadadbbcc9d15f90fef1cf</anchor>
+      <arglist>(const HrDay *day, int *low, int *avg, int *high)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hr_day.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hr__day_8h.html</filename>
+    <class kind="struct">HrHour</class>
+    <class kind="struct">HrDay</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HR_DAY_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae3dd69cb6828ef994edacf5f710a0707</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_clear</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10a8d6b3da25bae2446917c4d2926172</anchor>
+      <arglist>(HrDay *day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3d58235334983237da2d42be7603056a</anchor>
+      <arglist>(HrDay *day, int hour, int bpm)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hr_day_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9e6cbd7e421ca0ebd91abd4389a09e0c</anchor>
+      <arglist>(const HrDay *day, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_stats</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga66d1f37711cadadbbcc9d15f90fef1cf</anchor>
+      <arglist>(const HrDay *day, int *low, int *avg, int *high)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_log.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__log_8c.html</filename>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga50ef6e3a945c258e4fc83bb1929a83da</anchor>
+      <arglist>(HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>HrvState</type>
+      <name>hrv_log_state_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf48d364de1b0985d9d0206b1023922a7</anchor>
+      <arglist>(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_counts</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga248f18e06ef62e0e1d10e772f767a5b9</anchor>
+      <arglist>(HrvState state, HrvCount count)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_roll_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f583fc30f55e7e82457e3fef5bbeb7b</anchor>
+      <arglist>(HrvLog *log, int32_t day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae0bb96d786cefdddabe9708b30b409c5</anchor>
+      <arglist>(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_count</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa5780e28f269349f66933da35d0ba821</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_get</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac6bf1a23fcf5966f02387bc150c8a9fd</anchor>
+      <arglist>(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3f51dbfb1a7c497a93a39bf61faa7ee5</anchor>
+      <arglist>(const HrvLog *log, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_today</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2361e1061a377a432e5ef300f78e6b4c</anchor>
+      <arglist>(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_night_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0ea30c8342186116f4422246ff53b6ca</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_last</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga484d26e50432a4d931eb57316576def6</anchor>
+      <arglist>(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_log.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__log_8h.html</filename>
+    <class kind="struct">HrvBurst</class>
+    <class kind="struct">HrvLog</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_SLOTS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef8d372067c4fa13a781401cef30d6dd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24d8afb395355e1268c709cbcb6ac136</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_MS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae62e193a45f5e99b5c7f083ae69f3079</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NIGHT_GAP_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46a85f845d87d94530bb5f06187f2458</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_FROM_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga300b215938ab954e0d365a5a447ba108</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_UNTIL_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c96ec630f977cb0eab583f999c74c29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_WALK_STEPS_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad46f32990b5080141609508a2f406f7c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_RECENT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga29d5cfdac8f3395b7cb700ab9408c1d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_ASLEEP</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63f3ed0e45cc4da29578aad101c2c414</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_STATE_MASK</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24a559688bccfd57843cf956f5b5766b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae63b8153c70e7611881a2e05bec214a7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_BUSY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvCount</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7e84a97be9f69040bef94b003e32be1a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_NOT_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_ANY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga50ef6e3a945c258e4fc83bb1929a83da</anchor>
+      <arglist>(HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>HrvState</type>
+      <name>hrv_log_state_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf48d364de1b0985d9d0206b1023922a7</anchor>
+      <arglist>(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_counts</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga248f18e06ef62e0e1d10e772f767a5b9</anchor>
+      <arglist>(HrvState state, HrvCount count)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae0bb96d786cefdddabe9708b30b409c5</anchor>
+      <arglist>(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_roll_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f583fc30f55e7e82457e3fef5bbeb7b</anchor>
+      <arglist>(HrvLog *log, int32_t day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_count</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa5780e28f269349f66933da35d0ba821</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_get</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac6bf1a23fcf5966f02387bc150c8a9fd</anchor>
+      <arglist>(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3f51dbfb1a7c497a93a39bf61faa7ee5</anchor>
+      <arglist>(const HrvLog *log, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_today</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2361e1061a377a432e5ef300f78e6b4c</anchor>
+      <arglist>(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_night_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0ea30c8342186116f4422246ff53b6ca</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_last</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga484d26e50432a4d931eb57316576def6</anchor>
+      <arglist>(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_motion.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__motion_8c.html</filename>
+    <includes id="hrv__motion_8h" name="hrv_motion.h" local="yes" import="no" module="no" objc="no">health/hrv_motion.h</includes>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>moved</name>
+      <anchorfile>hrv__motion_8c.html</anchorfile>
+      <anchor>a6b2127d8d7ed143a139f14f414ce2f55</anchor>
+      <arglist>(int16_t now, int16_t before)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90849b5fc07cff2b120dc7dfc1785796</anchor>
+      <arglist>(HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d089c1610381c0c18606831554fae28</anchor>
+      <arglist>(HrvMotion *motion, int16_t x_mg, int16_t y_mg, int16_t z_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_motion_score</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b2736ae74a9625bc123d925774616fb</anchor>
+      <arglist>(const HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae09067019afb5ff7d2af7ffad13e7ab2</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_cannot_pass</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga926738e9460f83ceedca4e1075a3595e</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg, uint32_t max_samples)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_motion.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__motion_8h.html</filename>
+    <class kind="struct">HrvMotion</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_STILL_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga13618435dba1bc51f20f014a2de937bd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_MIN_SAMPLES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1a2153b6e909b367d89943775c4c76e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90849b5fc07cff2b120dc7dfc1785796</anchor>
+      <arglist>(HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d089c1610381c0c18606831554fae28</anchor>
+      <arglist>(HrvMotion *motion, int16_t x_mg, int16_t y_mg, int16_t z_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_motion_score</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b2736ae74a9625bc123d925774616fb</anchor>
+      <arglist>(const HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae09067019afb5ff7d2af7ffad13e7ab2</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_cannot_pass</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga926738e9460f83ceedca4e1075a3595e</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg, uint32_t max_samples)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_run.c</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__run_8c.html</filename>
+    <includes id="hrv__run_8h" name="hrv_run.h" local="yes" import="no" module="no" objc="no">health/hrv_run.h</includes>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>root_floor</name>
+      <anchorfile>hrv__run_8c.html</anchorfile>
+      <anchor>a583fd1918a62e97638ff34787f0155ad</anchor>
+      <arglist>(uint32_t value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_run_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga820f7ded1182d953adac970b65798571</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_finish</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f4bc4b0a4b9727d00dbd5a5a4571a81</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_run_quiet</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5a9fade553546533a99efde079418e37</anchor>
+      <arglist>(const HrvRun *run, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74b9acde0c1bb0a850ee1b2f8763e58</anchor>
+      <arglist>(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_reading_stale</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga694e9c38004c250485939cbf5c33ea1f</anchor>
+      <arglist>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_should_ask</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63af7759a1aab1ce49fad20c956816f2</anchor>
+      <arglist>(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_hold_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
+      <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3ec53ad7f3196535760825f02dc2611f</anchor>
+      <arglist>(uint16_t asked)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>hrv_run.h</name>
+    <path>src/c/core/health/</path>
+    <filename>hrv__run_8h.html</filename>
+    <class kind="struct">HrvRun</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MIN_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaefdc36c44d4b4bb7d75b49971dafa75</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MAX_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga25c5320ce0b3cb8d6318006c39554d9c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_JUMP_PCT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaefbe63307314a051f668d64f02af5d87</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_QUIET_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga59b2e0772453c9dc6f043dccff16db65</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf327b41b60f9c86f55e411ee317d2545</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_FULL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga524644e6318004787bb4db9ecf847255</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_PERIODS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9506f432151279855933339ae78cfb91</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_MIN_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga606ade592998e531ca1b4ee8336c1d51</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_PERIOD_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae821813667772afcba017bb0a1765c89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_MAX_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5cce8c8e009bc553503dee841fa01bc3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga353a8f23c99dd39c3dbfa02708208d29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacd7ae320dd9f133f840d906727165648</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_run_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga820f7ded1182d953adac970b65798571</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74b9acde0c1bb0a850ee1b2f8763e58</anchor>
+      <arglist>(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_run_quiet</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5a9fade553546533a99efde079418e37</anchor>
+      <arglist>(const HrvRun *run, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_finish</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f4bc4b0a4b9727d00dbd5a5a4571a81</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_reading_stale</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga694e9c38004c250485939cbf5c33ea1f</anchor>
+      <arglist>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_should_ask</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63af7759a1aab1ce49fad20c956816f2</anchor>
+      <arglist>(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_hold_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
+      <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3ec53ad7f3196535760825f02dc2611f</anchor>
+      <arglist>(uint16_t asked)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>minute_window.c</name>
+    <path>src/c/core/health/</path>
+    <filename>minute__window_8c.html</filename>
+    <includes id="minute__window_8h" name="minute_window.h" local="yes" import="no" module="no" objc="no">health/minute_window.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>minute_window_first_slot</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf7d993bee5b11fc9f9ea5918d9f7d991</anchor>
+      <arglist>(time_t first_min, time_t end_min, int minutes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>minute_window.h</name>
+    <path>src/c/core/health/</path>
+    <filename>minute__window_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>minute_window_first_slot</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf7d993bee5b11fc9f9ea5918d9f7d991</anchor>
+      <arglist>(time_t first_min, time_t end_min, int minutes)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>step_hours.c</name>
+    <path>src/c/core/health/</path>
+    <filename>step__hours_8c.html</filename>
+    <includes id="step__hours_8h" name="step_hours.h" local="yes" import="no" module="no" objc="no">health/step_hours.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>step_hours_settled</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga998d8f2fe2b302cdff2610abd009f245</anchor>
+      <arglist>(int cur_hour, int cur_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>step_hours.h</name>
+    <path>src/c/core/health/</path>
+    <filename>step__hours_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>STEP_HOURS_PER_DAY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab582a8ca15586973977cd7f48de42fa2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>step_hours_settled</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga998d8f2fe2b302cdff2610abd009f245</anchor>
+      <arglist>(int cur_hour, int cur_min)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>bytes_le.h</name>
+    <path>src/c/core/io/</path>
+    <filename>bytes__le_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static int16_t</type>
+      <name>read_i16_le</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3fd54f4514af9738e081706d21fd44bc</anchor>
+      <arglist>(const uint8_t *p)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>read_i32_le</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7ac2e494355ca66ce8ec8bbd881e90e9</anchor>
+      <arglist>(const uint8_t *p)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>callback_list.c</name>
+    <path>src/c/core/io/</path>
+    <filename>callback__list_8c.html</filename>
+    <includes id="callback__list_8h" name="callback_list.h" local="yes" import="no" module="no" objc="no">io/callback_list.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>callback_list_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed0238885522c47e90f7a547719983bc</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callback_list_remove</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa1d38a3ffb6ab6b59cb850fbef1bbc60</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callback_list_fire</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
+      <arglist>(const CallbackList *list)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>callback_list.h</name>
+    <path>src/c/core/io/</path>
+    <filename>callback__list_8h.html</filename>
+    <class kind="struct">CallbackList</class>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CallbackListFn</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gace9c32cbf32397ccc0a34a750ce3ea68</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>callback_list_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed0238885522c47e90f7a547719983bc</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callback_list_remove</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa1d38a3ffb6ab6b59cb850fbef1bbc60</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callback_list_fire</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
+      <arglist>(const CallbackList *list)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>link_change.h</name>
+    <path>src/c/core/io/</path>
+    <filename>link__change_8h.html</filename>
+    <class kind="struct">LinkState</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>LinkChange</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74178abed5fae945e1364010e009448</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_SAME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a432b1d29bb1f587e2c7bbc80f36164aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_DROPPED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a8d4fd3f7d66697a5ec2983845f66e644</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_RECONNECTED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a26d88e62a7d3a8a7278e8825d95f56b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static LinkChange</type>
+      <name>link_change_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac9b21726fd911bc2a4498ef0472e0b02</anchor>
+      <arglist>(LinkState *state, bool connected)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_live.h</name>
+    <path>src/c/core/io/</path>
+    <filename>store__live_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_live_after_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga827da9e4ea26a5bb3d4d3847921d2271</anchor>
+      <arglist>(bool live, bool pinned)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>layout_string.c</name>
+    <path>src/c/core/layout/</path>
+    <filename>layout__string_8c.html</filename>
+    <includes id="layout__string_8h" name="layout_string.h" local="yes" import="no" module="no" objc="no">layout_string.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>layout_parse_int</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6de1604c8d0aab3e3a3226dccb171cce</anchor>
+      <arglist>(const char **cursor)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>layout_has_any_block</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadb8a7e98c9c67c5167942ae96433c21f</anchor>
+      <arglist>(const char *layout, int type_count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>layout_string.h</name>
+    <path>src/c/core/layout/</path>
+    <filename>layout__string_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>LAYOUT_INT_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga19726e59e3c59c41210823d2d3dac836</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>layout_parse_int</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6de1604c8d0aab3e3a3226dccb171cce</anchor>
+      <arglist>(const char **cursor)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>layout_has_any_block</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadb8a7e98c9c67c5167942ae96433c21f</anchor>
+      <arglist>(const char *layout, int type_count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>pct.c</name>
+    <path>src/c/core/math/</path>
+    <filename>pct_8c.html</filename>
+    <includes id="pct_8h" name="pct.h" local="yes" import="no" module="no" objc="no">math/pct.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>pct_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0fa2f5ff0207c0179c689d0277bdfffd</anchor>
+      <arglist>(int value, int goal)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>pct.h</name>
+    <path>src/c/core/math/</path>
+    <filename>pct_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>pct_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0fa2f5ff0207c0179c689d0277bdfffd</anchor>
+      <arglist>(int value, int goal)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>scale.c</name>
+    <path>src/c/core/math/</path>
+    <filename>scale_8c.html</filename>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>clamp_int</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2a3f6820b74bffadc7d6f3b88eb4916d</anchor>
+      <arglist>(int value, int lo, int hi)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>segment_width</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac01ee128d72ea0af440967d27c4de224</anchor>
+      <arglist>(int total, int gap, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>fraction_px</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9ed357804da26e96f0ae19aa3d02873f</anchor>
+      <arglist>(int total, int num, int den)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>segments_filled</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5e3c99e7f2fade51632dd8aa3f3988f0</anchor>
+      <arglist>(int level, int segments)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>plot_y</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadc6c8c4764edd2d25babbc4689eaa73b</anchor>
+      <arglist>(int y0, int height, int lo, int hi, int value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>scale.h</name>
+    <path>src/c/core/math/</path>
+    <filename>scale_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>clamp_int</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2a3f6820b74bffadc7d6f3b88eb4916d</anchor>
+      <arglist>(int value, int lo, int hi)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>segment_width</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac01ee128d72ea0af440967d27c4de224</anchor>
+      <arglist>(int total, int gap, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>fraction_px</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9ed357804da26e96f0ae19aa3d02873f</anchor>
+      <arglist>(int total, int num, int den)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>segments_filled</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5e3c99e7f2fade51632dd8aa3f3988f0</anchor>
+      <arglist>(int level, int segments)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>plot_y</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadc6c8c4764edd2d25babbc4689eaa73b</anchor>
+      <arglist>(int y0, int height, int lo, int hi, int value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>series.c</name>
+    <path>src/c/core/math/</path>
+    <filename>series_8c.html</filename>
+    <includes id="series_8h" name="series.h" local="yes" import="no" module="no" objc="no">math/series.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>series_range</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4260de92aa2412a987a0d0ee799d5406</anchor>
+      <arglist>(const uint8_t *samples, int count, uint8_t no_sample, int *lo, int *hi, int *last)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>series_max_u16</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8cc817ecf16f05e721472b4f6714943a</anchor>
+      <arglist>(const uint16_t *values, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>series.h</name>
+    <path>src/c/core/math/</path>
+    <filename>series_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>series_range</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4260de92aa2412a987a0d0ee799d5406</anchor>
+      <arglist>(const uint8_t *samples, int count, uint8_t no_sample, int *lo, int *hi, int *last)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>series_max_u16</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8cc817ecf16f05e721472b4f6714943a</anchor>
+      <arglist>(const uint16_t *values, int count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>role.c</name>
+    <path>src/c/core/role/</path>
+    <filename>role_8c.html</filename>
+    <includes id="role_8h" name="role.h" local="yes" import="no" module="no" objc="no">role.h</includes>
+    <member kind="function">
+      <type>Role</type>
+      <name>role_pick</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga402c61aef6b17ca699ea0d42ebe1f1c8</anchor>
+      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>role.h</name>
+    <path>src/c/core/role/</path>
+    <filename>role_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>Role</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacdd79a1a4f81dd6ee5cddcb21149b951</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_DAY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_NIGHT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_QUIET</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>Role</type>
+      <name>role_pick</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga402c61aef6b17ca699ea0d42ebe1f1c8</anchor>
+      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>cstring_fit.c</name>
+    <path>src/c/core/text/</path>
+    <filename>cstring__fit_8c.html</filename>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>copy_bounded</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
+      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
+      <arglist>(const char *s, uint16_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_setting_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
+      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>cstring_fit.h</name>
+    <path>src/c/core/text/</path>
+    <filename>cstring__fit_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>cstring_fit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga48dcd72e49fa122dc562f64605efdc75</anchor>
+      <arglist>(char *dst, const char *src, size_t size)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>cstring_fit_same</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga13d8bf38f7877df6836f074354b4bcb9</anchor>
+      <arglist>(const char *current, const char *value, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>copy_bounded</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
+      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
+      <arglist>(const char *s, uint16_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_setting_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
+      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>number_format.c</name>
+    <path>src/c/core/text/</path>
+    <filename>number__format_8c.html</filename>
+    <includes id="number__format_8h" name="number_format.h" local="yes" import="no" module="no" objc="no">text/number_format.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function" static="yes">
+      <type>static unsigned int</type>
+      <name>magnitude_of</name>
+      <anchorfile>number__format_8c.html</anchorfile>
+      <anchor>a4adab5526b64c59384538f303559a94f</anchor>
+      <arglist>(int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>number_group</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3633a279bf5254234b2a8549d98e80de</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_int_or_dash</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga145e042f4414e0854e809ac7c7b086ca</anchor>
+      <arglist>(char *buffer, size_t size, int value, const char *fmt)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_hundredths</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafa9f63d99d2011c46da1397b798fc529</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_pct_signed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad8460f42bd55675f97ac3b2feae4fde0</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>number_format.h</name>
+    <path>src/c/core/text/</path>
+    <filename>number__format_8h.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>number_group</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3633a279bf5254234b2a8549d98e80de</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_int_or_dash</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga145e042f4414e0854e809ac7c7b086ca</anchor>
+      <arglist>(char *buffer, size_t size, int value, const char *fmt)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_hundredths</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafa9f63d99d2011c46da1397b798fc529</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_pct_signed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad8460f42bd55675f97ac3b2feae4fde0</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>text_case.c</name>
+    <path>src/c/core/text/</path>
+    <filename>text__case_8c.html</filename>
+    <includes id="text__case_8h" name="text_case.h" local="yes" import="no" module="no" objc="no">text/text_case.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>text_to_upper</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0f128dcb6dbe22caba62e2b47c1da00a</anchor>
+      <arglist>(char *s)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>text_case.h</name>
+    <path>src/c/core/text/</path>
+    <filename>text__case_8h.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>text_to_upper</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0f128dcb6dbe22caba62e2b47c1da00a</anchor>
+      <arglist>(char *s)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>font_slots.c</name>
+    <path>src/c/core/ui/</path>
+    <filename>font__slots_8c.html</filename>
+    <includes id="font__slots_8h" name="font_slots.h" local="yes" import="no" module="no" objc="no">ui/font_slots.h</includes>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>slot_in_range</name>
+      <anchorfile>font__slots_8c.html</anchorfile>
+      <anchor>aaba2760c52c953a22311190466860124</anchor>
+      <arglist>(const FontSlots *slots, int id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_put</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae543e3b227da62b3b310c4c08d6190da</anchor>
+      <arglist>(const FontSlots *slots, int id, void *handle, bool owned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_load</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gada066b8fbc1e5c66d9251183dddc6d33</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>let_go</name>
+      <anchorfile>font__slots_8c.html</anchorfile>
+      <anchor>aed7f12130741ae328292a038e272f9ff</anchor>
+      <arglist>(const FontSlots *slots, int id, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_swap</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8675d6c21e94528034c37ff0d7a3f667</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_unload_all</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46e2dae0d43b28c2a98befa1aa8cb299</anchor>
+      <arglist>(const FontSlots *slots, FontSlotUnload unload)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>font_slots.h</name>
+    <path>src/c/core/ui/</path>
+    <filename>font__slots_8h.html</filename>
+    <class kind="struct">FontSlots</class>
+    <member kind="typedef">
+      <type>void *(*)</type>
+      <name>FontSlotLoad</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c9edfdde131dda8d1f2cfcd8d5414c6</anchor>
+      <arglist>(uint32_t resource)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>FontSlotUnload</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga82fc7dd46c44db9ab4043cc891631c8f</anchor>
+      <arglist>(void *handle)</arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>FontSlotState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabd8aa4927cda7d0e7c6d41f16b59773c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_UNOWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca6ed032047afedb5d59c723e1eebe67d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_OWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_LOADED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_put</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae543e3b227da62b3b310c4c08d6190da</anchor>
+      <arglist>(const FontSlots *slots, int id, void *handle, bool owned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_load</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gada066b8fbc1e5c66d9251183dddc6d33</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_swap</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8675d6c21e94528034c37ff0d7a3f667</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_unload_all</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46e2dae0d43b28c2a98befa1aa8cb299</anchor>
+      <arglist>(const FontSlots *slots, FontSlotUnload unload)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>distance.c</name>
+    <path>src/c/core/units/</path>
+    <filename>distance_8c.html</filename>
+    <includes id="distance_8h" name="distance.h" local="yes" import="no" module="no" objc="no">units/distance.h</includes>
+    <member kind="function">
+      <type>const char *</type>
+      <name>distance_unit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadad9778fe90b71058c77ee83f2f26e2e</anchor>
+      <arglist>(bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>distance_format_value</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga93901c7cecf40133c250e13cf5cdb4bd</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>distance_format</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadf1a4e77db17b89d4d0e81dc25c9bcf2</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>distance.h</name>
+    <path>src/c/core/units/</path>
+    <filename>distance_8h.html</filename>
+    <member kind="function">
+      <type>const char *</type>
+      <name>distance_unit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadad9778fe90b71058c77ee83f2f26e2e</anchor>
+      <arglist>(bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>distance_format_value</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga93901c7cecf40133c250e13cf5cdb4bd</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>distance_format</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadf1a4e77db17b89d4d0e81dc25c9bcf2</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wind.c</name>
+    <path>src/c/core/units/</path>
+    <filename>wind_8c.html</filename>
+    <includes id="wind_8h" name="wind.h" local="yes" import="no" module="no" objc="no">units/wind.h</includes>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_from_kmh</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga56c983dede8e0be266f38d389a62c371</anchor>
+      <arglist>(int kmh, WindUnit unit)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>wind_unit_label</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafd0dc1755ed3d4dd661c56e5c498e84d</anchor>
+      <arglist>(WindUnit unit)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wind.h</name>
+    <path>src/c/core/units/</path>
+    <filename>wind_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>WindUnit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga81835140b8dd390d395cd5fcf7dee1b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_KMH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_MPH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a3d492848e908a0c4425a669ee67ee63b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_KTS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a60a6d323d0f94b93a78fc02d92b6545d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1ae2b15fe48410daeee405fc533127c566</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_from_kmh</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga56c983dede8e0be266f38d389a62c371</anchor>
+      <arglist>(int kmh, WindUnit unit)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>wind_unit_label</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafd0dc1755ed3d4dd661c56e5c498e84d</anchor>
+      <arglist>(WindUnit unit)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>forecast_age.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>forecast__age_8c.html</filename>
+    <includes id="forecast__age_8h" name="forecast_age.h" local="yes" import="no" module="no" objc="no">weather/forecast_age.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECONDS_PER_STRIP_HOUR</name>
+      <anchorfile>forecast__age_8c.html</anchorfile>
+      <anchor>a8a1220c950f394ac58e88c710867cee6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>forecast_hours_past</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga39e6efbba632aacf61875379354b1c38</anchor>
+      <arglist>(int32_t seconds_into_strip, uint8_t step_hours, uint8_t count)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>forecast_days_past</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f750b53c34d89db9ce79a2a252ebf02</anchor>
+      <arglist>(int days_since_first, uint8_t count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>forecast_age.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>forecast__age_8h.html</filename>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>forecast_hours_past</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga39e6efbba632aacf61875379354b1c38</anchor>
+      <arglist>(int32_t seconds_into_strip, uint8_t step_hours, uint8_t count)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>forecast_days_past</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f750b53c34d89db9ce79a2a252ebf02</anchor>
+      <arglist>(int days_since_first, uint8_t count)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>uv_band.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>uv__band_8c.html</filename>
+    <includes id="uv__band_8h" name="uv_band.h" local="yes" import="no" module="no" objc="no">weather/uv_band.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>UV_BAND_COUNT</name>
+      <anchorfile>uv__band_8c.html</anchorfile>
+      <anchor>ac3a06e125ff838b49a15a3bbc608a90d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>UvBand</type>
+      <name>uv_band</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad6f91a09bcfc296da7c32fe552d9999b</anchor>
+      <arglist>(int uv)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const char *</type>
+      <name>band_lookup</name>
+      <anchorfile>uv__band_8c.html</anchorfile>
+      <anchor>a76823038667399c54d0e8bbd4c508c87</anchor>
+      <arglist>(const char *const names[UV_BAND_COUNT], UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga807386d3788e5e0b340cc8dc8b361115</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_short_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga794ee07e02945524a05f36a787b60717</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>uv_band.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>uv__band_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>UvBand</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5ca55b9e69235c86280b6f126493cf8a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_NONE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aad74569e2ebfe131e5a25d81ba63a5910</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_LOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa135ff7d88afa2c549ca23f517af21dc2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_MODERATE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aaa221336e627a94321ccc46da7da5a739</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa31059fa1666a62bfd849ed84082bb9b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_VERY_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa0f2765a9b60dbfca65ca374e6adaa239</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_EXTREME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aada94409ee138b768a63162746bce87df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>UvBand</type>
+      <name>uv_band</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad6f91a09bcfc296da7c32fe552d9999b</anchor>
+      <arglist>(int uv)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga807386d3788e5e0b340cc8dc8b361115</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_short_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga794ee07e02945524a05f36a787b60717</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weather_reading.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>weather__reading_8c.html</filename>
+    <includes id="weather__reading_8h" name="weather_reading.h" local="yes" import="no" module="no" objc="no">weather/weather_reading.h</includes>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECONDS_PER_READING_HOUR</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a267f1d53840a807dc520f94916fc4a48</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SECONDS_PER_READING_DAY</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a2ccfb51424caf466f42400933fc530ae</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MINUTES_PER_READING_DAY</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a69b123c097f7af6d5901cefdaa36c6b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TEMP_LOWEST</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>aa7091b4d7d5f6ea887e278b9974335cc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TEMP_HIGHEST</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a75ef5ef2173a3350a52f59697c9335fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>or_none</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>aefa5e1e7ffa9129d5821b0d9f1fd1528</anchor>
+      <arglist>(int value, int none)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>temp_or_none</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>af4636375c66617c9a9bf6b7e28eed0f2</anchor>
+      <arglist>(int value)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int16_t</type>
+      <name>day_minute_or_none</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a1c25fcbdfd7f19ec1bea9883c94008a0</anchor>
+      <arglist>(int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_reading_apply</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2b36f0d71ccc983475ea5fa5e919e585</anchor>
+      <arglist>(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>div_nearest</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a9a52c6548cc6d6a82999ec4c65bef6ad</anchor>
+      <arglist>(int numerator, int denominator)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>convert_temp</name>
+      <anchorfile>weather__reading_8c.html</anchorfile>
+      <anchor>a330fe5a1f08af20a13441fb826bbb00b</anchor>
+      <arglist>(int value, bool to_fahrenheit)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_reading_convert</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6fcabd81132c73ba225beaf6f035fe5c</anchor>
+      <arglist>(WeatherState *state, bool to_fahrenheit)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weather_reading.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>weather__reading_8h.html</filename>
+    <includes id="weather__wire_8h" name="weather_wire.h" local="yes" import="no" module="no" objc="no">wire/weather_wire.h</includes>
+    <class kind="struct">WeatherMessage</class>
+    <class kind="struct">WeatherState</class>
+    <class kind="struct">WeatherClock</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_CURRENT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gace94f04d01ec6679143f9937fc0d7d35</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_EXTRA</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad2a50305c20a2dc3acf340c9837a065b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_FORECAST</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7eef9602c89fd58adb11e058618d1dd7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_AIR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga49eb8281314392449d74706359777576</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_reading_apply</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2b36f0d71ccc983475ea5fa5e919e585</anchor>
+      <arglist>(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_reading_convert</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6fcabd81132c73ba225beaf6f035fe5c</anchor>
+      <arglist>(WeatherState *state, bool to_fahrenheit)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wind_dir.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>wind__dir_8c.html</filename>
+    <includes id="wind__dir_8h" name="wind_dir.h" local="yes" import="no" module="no" objc="no">weather/wind_dir.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>POINT_COUNT</name>
+      <anchorfile>wind__dir_8c.html</anchorfile>
+      <anchor>ae4c22bd55836cfbafd815744656a35d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>same_point</name>
+      <anchorfile>wind__dir_8c.html</anchorfile>
+      <anchor>abc8fa95a19e620685d08ceb068af93da</anchor>
+      <arglist>(const char *a, const char *b)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>sin_milli</name>
+      <anchorfile>wind__dir_8c.html</anchorfile>
+      <anchor>aa7482b792506f560fb3194367a85ac91</anchor>
+      <arglist>(int degrees)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_bearing</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf6fadf25dfa1b520911598ccade94119</anchor>
+      <arglist>(const char *dir)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_lean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga357ae2f2cfb0a32380b717e9a8ac6ce8</anchor>
+      <arglist>(int bearing)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wind_dir.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>wind__dir_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_bearing</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf6fadf25dfa1b520911598ccade94119</anchor>
+      <arglist>(const char *dir)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_lean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga357ae2f2cfb0a32380b717e9a8ac6ce8</anchor>
+      <arglist>(int bearing)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_cond.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__cond_8c.html</filename>
+    <includes id="wx__cond_8h" name="wx_cond.h" local="yes" import="no" module="no" objc="no">weather/wx_cond.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>TOKEN_ROW</name>
+      <anchorfile>wx__cond_8c.html</anchorfile>
+      <anchor>a38e8519bb5d4dd403429252c1993223b</anchor>
+      <arglist>(name)</arglist>
+    </member>
+    <member kind="function">
+      <type>WxCond</type>
+      <name>wx_cond_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga05e157aa912339869db64fa7a0f4af98</anchor>
+      <arglist>(const char *token, bool *night)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const char</type>
+      <name>s_tokens</name>
+      <anchorfile>wx__cond_8c.html</anchorfile>
+      <anchor>a6bddb651b56fc10b448c2f9dcbf8f40d</anchor>
+      <arglist>[WX_COND_COUNT][WX_COND_TOKEN_LEN]</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_cond.g.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__cond_8g_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_EACH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga710ccc7ecaa09946b618d027925b0c2a</anchor>
+      <arglist>(X)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_TOKEN_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf4575f238d81aa1bf9b2c36693401cb0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_ENDING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab9a04b425ab74065b8c3c6b849594c40</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae204af4aba228d010c1299270dc0a7d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>WxCond</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9421de4c15783a83fa65e156b89c355f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLEAR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fab715353cef1077a4f81bf3022d7ff1b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_PCLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fac70ab838717568275ae531dd04313b0f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fad8df7a26e7019b059a665529b925a1a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FOGGY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa449e280c8168731280d7cd25cf8d2ee0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_DRZL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa497b0ea7e083043fa33361b05c2a933f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZDZ</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa2bd9ef49b035063b5d4c5d1f90c654b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_RAIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa37a4645d62ffb97e6e5f5911281319d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZRN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa7457a58717005e93765d76a649d80428</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa87f5b81c4f0572ae827f093f3e055b90</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SHWR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa4019d928980d25431663c7dba6ec1266</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNSH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa1d9077d97bc0b0e07fdbd1169aede0b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_STRM</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9313c6631d59f675046fc9da15aff092</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9d358fbc807306dd0ef5ad8a31fea111</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_UNKNOWN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fabc721de38ea50fb8b77d72c75fac52ec</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_cond.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__cond_8h.html</filename>
+    <includes id="wx__cond_8g_8h" name="wx_cond.g.h" local="yes" import="no" module="no" objc="no">weather/wx_cond.g.h</includes>
+    <member kind="function">
+      <type>WxCond</type>
+      <name>wx_cond_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga05e157aa912339869db64fa7a0f4af98</anchor>
+      <arglist>(const char *token, bool *night)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_label.c</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__label_8c.html</filename>
+    <includes id="wx__label_8h" name="wx_label.h" local="yes" import="no" module="no" objc="no">weather/wx_label.h</includes>
+    <includes id="wx__cond_8g_8h" name="wx_cond.g.h" local="yes" import="no" module="no" objc="no">weather/wx_cond.g.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>wx_label_short</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga174ee20c1de042aac051cdc44dc9847a</anchor>
+      <arglist>(char *out, size_t n, const char *condition)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wx_label.h</name>
+    <path>src/c/core/weather/</path>
+    <filename>wx__label_8h.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>wx_label_short</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga174ee20c1de042aac051cdc44dc9847a</anchor>
+      <arglist>(char *out, size_t n, const char *condition)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>calendar_wire.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>calendar__wire_8c.html</filename>
+    <includes id="calendar__wire_8h" name="calendar_wire.h" local="yes" import="no" module="no" objc="no">wire/calendar_wire.h</includes>
+    <includes id="bytes__le_8h" name="bytes_le.h" local="yes" import="no" module="no" objc="no">io/bytes_le.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>calendar_wire_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafd03d47d8eb87604abcd082423036833</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, CalendarStrip *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>calendar_wire.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>calendar__wire_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">CalendarEvent</class>
+    <class kind="struct">CalendarStrip</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>calendar_wire_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafd03d47d8eb87604abcd082423036833</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, CalendarStrip *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>coords.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>coords_8c.html</filename>
+    <includes id="coords_8h" name="coords.h" local="yes" import="no" module="no" objc="no">wire/coords.h</includes>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>has_digit</name>
+      <anchorfile>coords_8c.html</anchorfile>
+      <anchor>ac1e67c56d6798c13c193444920f5b4dd</anchor>
+      <arglist>(const char *s)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>coords_look_real</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga11b6bfbd1863803faf31b81bdea9ef1f</anchor>
+      <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>coords.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>coords_8h.html</filename>
+    <member kind="function">
+      <type>bool</type>
+      <name>coords_look_real</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga11b6bfbd1863803faf31b81bdea9ef1f</anchor>
+      <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_track.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>music__track_8c.html</filename>
+    <includes id="music__track_8h" name="music_track.h" local="yes" import="no" module="no" objc="no">wire/music_track.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacfcf657cc8e3fec58597ccf478164315</anchor>
+      <arglist>(MusicTrack *track, const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_has</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga742467746b72e45dfda1d5862875bf76</anchor>
+      <arglist>(const MusicTrack *track)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_track.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>music__track_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">MusicTrack</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacfcf657cc8e3fec58597ccf478164315</anchor>
+      <arglist>(MusicTrack *track, const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_has</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga742467746b72e45dfda1d5862875bf76</anchor>
+      <arglist>(const MusicTrack *track)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>phone_level.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>phone__level_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>PHONE_NO_LEVEL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga605dd03e235d86fb34bc9fae7d950149</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>phone_level_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga77ee9672eb59f523d0871ebda12fd0a3</anchor>
+      <arglist>(int32_t sent)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>stock_wire.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>stock__wire_8c.html</filename>
+    <includes id="stock__wire_8h" name="stock_wire.h" local="yes" import="no" module="no" objc="no">wire/stock_wire.h</includes>
+    <includes id="bytes__le_8h" name="bytes_le.h" local="yes" import="no" module="no" objc="no">io/bytes_le.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>stock_wire_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacaf9695fcec823203cf5c23309448d8f</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, StockStrip *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>stock_wire.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>stock__wire_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">StockSlot</class>
+    <class kind="struct">StockStrip</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>stock_wire_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacaf9695fcec823203cf5c23309448d8f</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, StockStrip *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weather_wire.c</name>
+    <path>src/c/core/wire/</path>
+    <filename>weather__wire_8c.html</filename>
+    <includes id="weather__wire_8h" name="weather_wire.h" local="yes" import="no" module="no" objc="no">wire/weather_wire.h</includes>
+    <includes id="bytes__le_8h" name="bytes_le.h" local="yes" import="no" module="no" objc="no">io/bytes_le.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_hourly_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa8a79a3914a591d37a2080d4a9c2dd86</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, WeatherHourly *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_daily_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac4fcf3a860dea22cf18924b3c4783405</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, WeatherDaily *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weather_wire.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>weather__wire_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">WeatherHourCol</class>
+    <class kind="struct">WeatherDayCol</class>
+    <class kind="struct">WeatherHourly</class>
+    <class kind="struct">WeatherDaily</class>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_hourly_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa8a79a3914a591d37a2080d4a9c2dd86</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, WeatherHourly *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_daily_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac4fcf3a860dea22cf18924b3c4783405</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, WeatherDaily *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wire_caps.g.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>wire__caps_8g_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>STOCK_SLOTS_MAX</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>acbdbc38584ba08e982342b3f916cdb6b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STOCK_SYMBOL_LEN</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a12ebf366686d792fba83b752e39cb3f9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>CALENDAR_SLOTS_MAX</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>afe3312551e2f2441936844dd431c42b8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>CAL_TITLE_LEN</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>aa8d4ff63a367c308464fcb26b8cadd02</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>CAL_LOC_LEN</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a2fce7543ff5feb8ce5149d89adbd38d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MUSIC_TEXT_LEN</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a0445da8de1c72fc7e895abc5ce5cfb00</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_FORECAST_COLS</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a102929a83f0e748a60db5079d778b530</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_NO_TEMP</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>ad0b45ae6054fd351cb661c9732c85f49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_FORECAST_NIGHT_BIT</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>abc4a5b3638a2e2195948cc82481cc705</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_REQUEST_FULL</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>a64a4a567320a2aa7601c97c663e9a399</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_REQUEST_FRESH</name>
+      <anchorfile>wire__caps_8g_8h.html</anchorfile>
+      <anchor>af3f7cd976bebfe18d94f7bd7ba7f0c6c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>wire_read.h</name>
+    <path>src/c/core/wire/</path>
+    <filename>wire__read_8h.html</filename>
+    <includes id="bytes__le_8h" name="bytes_le.h" local="yes" import="no" module="no" objc="no">io/bytes_le.h</includes>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>wire_int_or</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaac313f9ba01fb8da75be8388287f9a7a</anchor>
+      <arglist>(bool is_signed, uint16_t length, const uint8_t *value, int32_t fallback)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>wire_cstring_terminated</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga700d7a3380b25b5472c1b580502b9b3e</anchor>
+      <arglist>(const char *s, uint16_t length)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>wire_digits_or</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed7baf2dfca7dd9ada03434d0777b788</anchor>
+      <arglist>(const char *text, int32_t fallback)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>appmessage.c</name>
+    <path>src/c/pebble/io/appmessage/</path>
+    <filename>appmessage_8c.html</filename>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <includes id="callback__list_8h" name="callback_list.h" local="yes" import="no" module="no" objc="no">io/callback_list.h</includes>
+    <includes id="outbox__queue_8h" name="outbox_queue.h" local="yes" import="no" module="no" objc="no">io/outbox_queue.h</includes>
+    <includes id="tuple__read_8h" name="tuple_read.h" local="yes" import="no" module="no" objc="no">io/tuple_read.h</includes>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <includes id="phone__level_8h" name="phone_level.h" local="yes" import="no" module="no" objc="no">wire/phone_level.h</includes>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <class kind="struct">[struct].s_handlers</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>INBOX_COMPLETE_MAX</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>ac83cbad686c149f4be2c8eeac589ca97</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>REQUEST_RETRY_MAX</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a74e58c793ca8409dc757bf0059fff54d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>REQUEST_RETRY_DELAY_MS</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>aa5fb091797fee70e44b207aad9233dd7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_weather</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8760e9417f2f894915a0950dc1fdab07</anchor>
+      <arglist>(WeatherHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_coords</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7c64814ef2b8dcd4ee38743e31fb58d2</anchor>
+      <arglist>(CoordsHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_settings_changed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gad9d1d40d059728d240df1d07fd713323</anchor>
+      <arglist>(SettingsChangedHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_unit_changed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab58b5b73b9f4c46fa2b249e2378b71b3</anchor>
+      <arglist>(UnitChangedHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_stock_strip</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga45a5f177aabba862b779b38b5b4ed288</anchor>
+      <arglist>(StockStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_calendar_strip</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga1ab2899a032be1fe4ab307e70f8bf3cd</anchor>
+      <arglist>(CalendarStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_custom_colors</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
+      <arglist>(CustomColorsHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_phone_battery</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
+      <arglist>(PhoneBatteryHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga757a519d948bf39e5414b62761c20593</anchor>
+      <arglist>(MusicHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_set_custom_colors_provider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
+      <arglist>(CustomColorsProvider cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_add_inbox_complete</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga502ebf1b6d9c87b77f5f708cd7424f86</anchor>
+      <arglist>(InboxCompleteHandler cb)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>pump</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a5f7778c42828f5ddb907706658b382e8</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>settings_reply_size</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>abb7f7e97f2dd93df0449b3f9bdc9c96a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>kind_has_key</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>ab81a6739f4c1e01e98a42af4a9a83b96</anchor>
+      <arglist>(OutboxKind kind)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>send_job</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a8227736a721829bfecf2b2649e296d98</anchor>
+      <arglist>(OutboxKind kind)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>enqueue</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a4d5c99898dbd4b6c81ee21ab84e99965</anchor>
+      <arglist>(OutboxKind kind, int retries)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>retry_pass</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>aa69231abc10b6f39ee8277edc53f1e11</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_weather</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaf552756e4da1e1818775bb984bdd36c0</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_stock</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gac7dbcd76bf92e5bbf684d2c9849b5ebf</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_calendar</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gac18380f0c5fdc613452b569ef4d88c35</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga65ada3fd289956eb8297c91927fad985</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>inbox_received_callback</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a0d534305af0a10edbc3c427bae3e975c</anchor>
+      <arglist>(DictionaryIterator *iterator, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>inbox_dropped_callback</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a84466f8e93f6160cfe1de858608d07ce</anchor>
+      <arglist>(AppMessageResult reason, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_failed_callback</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a6b185c8da29188c8cae40cdca98e100b</anchor>
+      <arglist>(DictionaryIterator *iter, AppMessageResult reason, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_sent_callback</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a0369d40d54958ca96f392694cf507399</anchor>
+      <arglist>(DictionaryIterator *iter, void *context)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_open</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab954f122b1dd5b44dfd5bda314c53831</anchor>
+      <arglist>(uint32_t inbox_size)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @316142136073041314103207360313160174370277271221</type>
+      <name>s_handlers</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>af3ad3bd6e692d8ce103607ad70171a46</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static CallbackListFn</type>
+      <name>s_inbox_complete_entries</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a69c5d4c123fa7eb457ceaddd0a25358c</anchor>
+      <arglist>[INBOX_COMPLETE_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static CallbackList</type>
+      <name>s_inbox_complete</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a45764b077cf30a455153937be9f4684b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static OutboxQueue</type>
+      <name>s_outbox</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a1a96284017193cf901d1b43de9d74204</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static AppTimer *</type>
+      <name>s_retry_timer</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a1c284c34e48865d6cc11ec3e4f893a1e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_outbox_size</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a7c4c02490661b71985034c11410d24fa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>REQUEST_RETRY_MAX</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>a74e58c793ca8409dc757bf0059fff54d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>REQUEST_RETRY_DELAY_MS</name>
+      <anchorfile>appmessage_8c.html</anchorfile>
+      <anchor>aa5fb091797fee70e44b207aad9233dd7</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>appmessage.h</name>
+    <path>src/c/pebble/io/appmessage/</path>
+    <filename>appmessage_8h.html</filename>
+    <includes id="weather__reading_8h" name="weather_reading.h" local="yes" import="no" module="no" objc="no">weather/weather_reading.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>APPMESSAGE_CUSTOM_COLORS_MAX</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8bfcc8d396856901aeea684974fdb15c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>WeatherHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga5e383acfcc7c48eb2dd8caac176bf5cb</anchor>
+      <arglist>(const WeatherMessage *msg)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CoordsHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga59b6055d84a446d8b469ba7ef8883030</anchor>
+      <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>SettingsChangedHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaa75e1339172964d75887a1c2b7b464fe</anchor>
+      <arglist>(bool time_or_date_changed)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>UnitChangedHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6fb408316f6f72341bf67751cdbd36d9</anchor>
+      <arglist>(bool fahrenheit)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>StockStripHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaad5cc31baad613ac137e95653cdab162</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CalendarStripHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaea56a19672a4978e838e9d0a8753405b</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>PhoneBatteryHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab43d16e4f4337a52a7e9d4befa90b848</anchor>
+      <arglist>(int level)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MusicHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga91efba350e00e340bfd106ee9aff0238</anchor>
+      <arglist>(const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CustomColorsHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
+      <arglist>(const char *combined)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CustomColorsProvider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6efc27e8b660e10498f1678ddecc05dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>InboxCompleteHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaae586b1981cefa58e0284ec05e167205</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_weather</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8760e9417f2f894915a0950dc1fdab07</anchor>
+      <arglist>(WeatherHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_coords</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7c64814ef2b8dcd4ee38743e31fb58d2</anchor>
+      <arglist>(CoordsHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_settings_changed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gad9d1d40d059728d240df1d07fd713323</anchor>
+      <arglist>(SettingsChangedHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_unit_changed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab58b5b73b9f4c46fa2b249e2378b71b3</anchor>
+      <arglist>(UnitChangedHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_stock_strip</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga45a5f177aabba862b779b38b5b4ed288</anchor>
+      <arglist>(StockStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_calendar_strip</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga1ab2899a032be1fe4ab307e70f8bf3cd</anchor>
+      <arglist>(CalendarStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_phone_battery</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
+      <arglist>(PhoneBatteryHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga757a519d948bf39e5414b62761c20593</anchor>
+      <arglist>(MusicHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_custom_colors</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
+      <arglist>(CustomColorsHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_set_custom_colors_provider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
+      <arglist>(CustomColorsProvider cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_add_inbox_complete</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga502ebf1b6d9c87b77f5f708cd7424f86</anchor>
+      <arglist>(InboxCompleteHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_open</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab954f122b1dd5b44dfd5bda314c53831</anchor>
+      <arglist>(uint32_t inbox_size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_weather</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaf552756e4da1e1818775bb984bdd36c0</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_stock</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gac7dbcd76bf92e5bbf684d2c9849b5ebf</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_calendar</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gac18380f0c5fdc613452b569ef4d88c35</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga65ada3fd289956eb8297c91927fad985</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>appmessage_features.h</name>
+    <path>src/c/pebble/io/appmessage/</path>
+    <filename>appmessage__features_8h.html</filename>
+    <includes id="plugin__source_8h" name="plugin_source.h" local="yes" import="no" module="no" objc="no">system/settings/plugin_source.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>APPMESSAGE_HAS_WEATHER</name>
+      <anchorfile>appmessage__features_8h.html</anchorfile>
+      <anchor>a3aba6bce2b80ffd9a7451b8e3156b002</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>APPMESSAGE_HAS_LOCATION</name>
+      <anchorfile>appmessage__features_8h.html</anchorfile>
+      <anchor>ac8ca4974136fb295f05597a68462a938</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>outbox_queue.h</name>
+    <path>src/c/pebble/io/</path>
+    <filename>outbox__queue_8h.html</filename>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <class kind="struct">OutboxJob</class>
+    <class kind="struct">OutboxQueue</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_PHONE_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gadaf079e1656e97a39ec7774e22eb9703</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_MUSIC_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga96bed56e5b3532f2e5e466e3270c88c3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_QUEUE_MAX</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gacb075235dabec7bf871cfc5698a42526</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>OutboxKind</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga247b62ae1a0fa87cef6e3e8b7f738f17</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_NONE</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_WEATHER</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_SETTINGS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_FRESH</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_STOCK</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_CALENDAR</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_PHONE</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_MUSIC</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>outbox_busy</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga2c94fc09107a6527a82ec145fd784a9d</anchor>
+      <arglist>(const OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>outbox_pending</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6f6fa750435ac4704bb55298be9b7e27</anchor>
+      <arglist>(const OutboxQueue *outbox, OutboxKind kind)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>outbox_push</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga219aad77cbe9215d9c3cd1aacd33a457</anchor>
+      <arglist>(OutboxQueue *outbox, OutboxKind kind, int retries)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_pop_front</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaa5025f0a1f281cb9b6b3f74c2a7f7481</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_take_head</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga821df0e180a04bb345ca338f3d6829e4</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static OutboxJob</type>
+      <name>outbox_release</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gabf4958a2b2c2b9310e9c3dde7d76e18d</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_hold_failed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga1a93146eec16ce495449829a38274d31</anchor>
+      <arglist>(OutboxQueue *outbox, OutboxJob job)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>outbox_retry_pass</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga66fb285ede9868f85fbaa10fe36ebbba</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_clear</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7a65d4b95956b231936a0de61759fca9</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>calendar_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>calendar__store_8c.html</filename>
+    <includes id="calendar__store_8h" name="calendar_store.h" local="yes" import="no" module="no" objc="no">io/stores/calendar_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <class kind="struct">CalendarPersist</class>
+    <class kind="struct">[struct].s_state</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>CALENDAR_FIRST_POLL_MS</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a73139d62bf8fca78148767c7d0c96938</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>CALENDAR_PERSIST_SLOTS</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a6e53a2809a0e3f9ee7c3f806191d7c58</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>reset_state</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a9fbef29f6a0a976770a3055c37a35d95</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>persist_save</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>apply_seed</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>ac1b0e8487bbcc44a33b7c5d631d628e1</anchor>
+      <arglist>(const CalendarSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_calendar_strip</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a1ad7346f70a3c6902ddca4acf2a83838</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>cadence_poll</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>ac219f20bf18466869ec6ecc7820e97a6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga83e9c3f206ad5ced9e3d6c50cb0fa96b</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad9d0b53b9a4f189dd3a591801401ec35</anchor>
+      <arglist>(CalendarConfig cfg, const CalendarSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gade1a2a8d19355c64e027ed3b89479f0e</anchor>
+      <arglist>(CalendarConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>const CalendarStrip *</type>
+      <name>calendar_store_strip</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabbe75636f8fd3bbc25e5907b8b703478</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const CalendarEvent *</type>
+      <name>calendar_store_event</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b326a92ec3b996da7b21ffe32934106</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>calendar_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga53bd3d81fba50d07ccee2739d53c22ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @333057173063067325370144265362001102161165156072</type>
+      <name>s_state</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a5cec17681bdc44c7f6b9742712dacf24</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static StoreFetch</type>
+      <name>s_fetch</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>af962c600172c1bf7e33a007776cba2ab</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_saved_sum</name>
+      <anchorfile>calendar__store_8c.html</anchorfile>
+      <anchor>afd6bfed4583dc043e4cb212594733f97</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>calendar_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>calendar__store_8h.html</filename>
+    <includes id="calendar__wire_8h" name="calendar_wire.h" local="yes" import="no" module="no" objc="no">wire/calendar_wire.h</includes>
+    <class kind="struct">CalendarConfig</class>
+    <class kind="struct">CalendarSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad9d0b53b9a4f189dd3a591801401ec35</anchor>
+      <arglist>(CalendarConfig cfg, const CalendarSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gade1a2a8d19355c64e027ed3b89479f0e</anchor>
+      <arglist>(CalendarConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga83e9c3f206ad5ced9e3d6c50cb0fa96b</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const CalendarStrip *</type>
+      <name>calendar_store_strip</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabbe75636f8fd3bbc25e5907b8b703478</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const CalendarEvent *</type>
+      <name>calendar_store_event</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b326a92ec3b996da7b21ffe32934106</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>calendar_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga53bd3d81fba50d07ccee2739d53c22ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hr_day.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hr__day_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_roll</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a9d8da02696f28e5400fc6edb7b6e7bc6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>add_record_hr</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>af161a06c28e6fcaef55b01b2e08d1fe0</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>read_hr_day</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a609b81fd914cb0e3fb55f6958077a55a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_first_read</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a3083e45022ac37f47439277d8b78ec74</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_start</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a948fb5e0ac39e379ab5ea8244405fc64</anchor>
+      <arglist>(const HealthConfig *cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_heart_rate</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a60130fe502016c220e3e9bf645e7df61</anchor>
+      <arglist>(int hr, bool from_event)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_day_poll</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a192123c01290bc19ee65310b57597030</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>hr_day_sum</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>abd07b42daafec72c85e9afdf5ded77bd</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrDay *</type>
+      <name>health_store_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa83227ebe779ce764a7ce57df3311f77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrDay</type>
+      <name>s_day</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a8d174e6ec36fac03d6fe809d28854796</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga41c920e1c1687197b86fcae1bd17c5aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_day_start</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>ac33dd9862e573600e675c24ddc6ae894</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_from_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a66e299376bc633cef478aefa25e9e265</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_last_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a8edbb611e8d38fd3296c3cdc8e3c21e3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_pending</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a92320ccd45668277bda8c95946d10c01</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_day_start</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>ac33dd9862e573600e675c24ddc6ae894</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_from_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a66e299376bc633cef478aefa25e9e265</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_last_min</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a8edbb611e8d38fd3296c3cdc8e3c21e3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_pending</name>
+      <anchorfile>health__hr__day_8c.html</anchorfile>
+      <anchor>a92320ccd45668277bda8c95946d10c01</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hr_history.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hr__history_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <includes id="minute__window_8h" name="minute_window.h" local="yes" import="no" module="no" objc="no">health/minute_window.h</includes>
+    <class kind="struct">HealthSaved</class>
+    <class kind="struct">[struct].s_window</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HR_HISTORY_MINUTES</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a565e5d788d520b3a16db7c546e9ee7b3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>read_hr_history</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>ae75b734a66f178f0637203c5db0fecf1</anchor>
+      <arglist>(time_t now_min)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>persist_save</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_history_advance</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>abec475d019d9d8e7a8f2b899624e41bb</anchor>
+      <arglist>(time_t now_min)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_history_start</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>ac79f49d2a9ea2683c20afefe11c19f68</anchor>
+      <arglist>(const HealthConfig *cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hr_history_heart_rate</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a6c566426a31bca1a22dab9207831e9ce</anchor>
+      <arglist>(int hr, bool from_event)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>hr_history_sum</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>aea3fe99399ab8e8006eb9838f5b1d218</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
+      <name>health_store_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab42f7ec6f1b3c4b0403d76027e1a856e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @057071061146157263371363233006106142166035206323</type>
+      <name>s_window</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>aa5f9a2880b003e432c66f242c07f2f70</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>health__hr__history_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3c6bccf52afd82d7b55d77836e6ae39</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hrv.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hrv_8c.html</filename>
+    <includes id="health__hrv_8h" name="health_hrv.h" local="yes" import="no" module="no" objc="no">io/stores/health_hrv.h</includes>
+    <includes id="hrv__run_8h" name="hrv_run.h" local="yes" import="no" module="no" objc="no">health/hrv_run.h</includes>
+    <includes id="hrv__motion_8h" name="hrv_motion.h" local="yes" import="no" module="no" objc="no">health/hrv_motion.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <class kind="struct">HrvSaved</class>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>steps_now</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>af42559c7602ff70bb8e7f95df9f61c29</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>steps_through</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a124963a78e7a449ee0fc362e0368814e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static HrvState</type>
+      <name>burst_state</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad1e68f4522e89cf530f16fc0b97b5794</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>cannot_count</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad7194780c79904ef6f09ddc26dd1c27c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>note_burst</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa5502a859e4315cf11b57e1dbf94a892</anchor>
+      <arglist>(int ms, uint32_t now_sec, bool counted)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>show</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a0471acb230fbd6e0a6823a71a4c51849</anchor>
+      <arglist>(int ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>save_log</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a6972b5bfe6d44f0c3afb9030852e10be</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>local_day</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a5a3a8615b64a1e549d90fd2bb4349a45</anchor>
+      <arglist>(uint32_t now_sec, int32_t *day, int *minute_of_day)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>record</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a1eec8cf29190373ee37ae2e9f1e6c501</anchor>
+      <arglist>(int ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>request</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad69029585e2bff65f98182904a9704e2</anchor>
+      <arglist>(uint16_t period_sec, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_accel</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ac4213a7f97913295407406ce98253dc7</anchor>
+      <arglist>(AccelData *data, uint32_t num_samples)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>accel_start</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aef7990c4ff7e2751ac00c521ca69e9c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>accel_stop</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aff955dd46087bcc8cf70260712acfd28</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hold_drop</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a049a8ab3d3768f47b07b5fbaa51b6c1e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hold_start</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a42875a5f566a2b6a83f9d1919c327b8e</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>hold_end</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a50a51e28dd5c0c6eb1e1c5a0856ed882</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>end_quiet_burst</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a4a4b4d4148f1efa19b86b8ef9c2f9087</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_on_gap</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga223234c2f0122059fd1706b2ff12e987</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_poll</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga364caae9b733dea62975ada41d355328</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>show_latest_logged</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ac7ba8f136e68f64501250125318c7839</anchor>
+      <arglist>(uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga302a123979f2732edb6738c61c8d0650</anchor>
+      <arglist>(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *seed_log, void(*changed)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3de2b90ca51ac9d5544c9cebf2eb7239</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaca781624ec8eabf5d4916cfd2a731d57</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaeb21c567d464de358f3f62a99315af26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ac4ace78fa451b80f418f1c9dbe1ada</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga37582149cbe5836b28881faff2fd5705</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga372e93534744b6e53b18de37df9001f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga72d9d6bfe8bca402429ac3e0c09845ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4d9e68b5550cc8cf8ca340322883a01b</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab389960f3a525c0eaf80a93a62171c5f</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga07a3890b8ec14d604f9c33f3882885fb</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa0582954b31101fd5c9649ac6a4c3b19</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvRun</type>
+      <name>s_run</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa3c21f0ec1e161155b8b2fe7cb2e5291</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_ms</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aca152a3645dcb8c3933853ab8af41c95</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_measured_at</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a3120fa28716868a7c09e026ffc878775</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_period_sec</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a96eedd3090f06d509f7d7f0a2ca7e989</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_sampling</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a8d4a86d5635c31a11d143e4fd123c9e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_asked_at</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a77c41e71b2b50e50f053d76bb07b1ea5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_gap_at</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a06dbba63ed53d5f1029e282767549193</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_holding</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa86bece94dffaa772eb12a852ea724e9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_settle</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>ad1eb2596701315dc1d2bb7d7a1422c54</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_still_mg</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a31272f777c51281c6bb31af57950b97a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint16_t</type>
+      <name>s_walk_steps</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>adbf964a3b7eabb1f38369e58b2d2d14e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_settle_gaps</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>abcfb4d77f0fc22dd2a8325e8dc1313a5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvCount</type>
+      <name>s_count</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>acf1886a7de20037aa5be621859c81bfd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_accel_on</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a8f66f63f31c07291b181e5bae3bf9669</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvMotion</type>
+      <name>s_motion</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aa05f21e513a6673438d6f61ff3f84152</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_held_since</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a3cf690cf6816b9f2893a1e2c572cf094</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_changed</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a469c36d4178c807f64b7d5d2e077c717</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_keep_all</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a3a2392ea513225daa7078cdb71928cbd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live_redraw</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a6c33dbe33460784c1fab01e4cbfe9070</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int32_t</type>
+      <name>s_steps_start</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a99dc978dbb9ca13788c701c4143b0893</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_hold_gaps</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a7eb962c39b492de944d2b3484dd3b8e6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvBurst</type>
+      <name>s_recent</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a84f02e0024684d850d01e63ed2e54c8c</anchor>
+      <arglist>[HRV_RECENT]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_recent_head</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>aae56ad3fcfd0ab68a634d6709ee6a043</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HrvLog</type>
+      <name>s_log</name>
+      <anchorfile>health__hrv_8c.html</anchorfile>
+      <anchor>a5ef77755d7fa4a69b8bbf13431d29220</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_hrv.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__hrv_8h.html</filename>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <class kind="struct">HealthHrvConfig</class>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga302a123979f2732edb6738c61c8d0650</anchor>
+      <arglist>(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *seed_log, void(*changed)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3de2b90ca51ac9d5544c9cebf2eb7239</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaca781624ec8eabf5d4916cfd2a731d57</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_on_gap</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga223234c2f0122059fd1706b2ff12e987</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_poll</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga364caae9b733dea62975ada41d355328</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaeb21c567d464de358f3f62a99315af26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ac4ace78fa451b80f418f1c9dbe1ada</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga37582149cbe5836b28881faff2fd5705</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga372e93534744b6e53b18de37df9001f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga72d9d6bfe8bca402429ac3e0c09845ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4d9e68b5550cc8cf8ca340322883a01b</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab389960f3a525c0eaf80a93a62171c5f</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga07a3890b8ec14d604f9c33f3882885fb</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa0582954b31101fd5c9649ac6a4c3b19</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_step_history.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__step__history_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <includes id="scale_8h" name="scale.h" local="yes" import="no" module="no" objc="no">math/scale.h</includes>
+    <includes id="step__hours_8h" name="step_hours.h" local="yes" import="no" module="no" objc="no">health/step_hours.h</includes>
+    <class kind="struct">[struct].s_hours</class>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>add_record_steps</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a3fb4ed9255723df69b4c5e0238be8b26</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>read_step_hourly</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>ac5d29c457db49f5400731bc15fcb9c32</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>steps_first_read</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a005cb76793b70941963f6480b8a38e8c</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>step_history_start</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>abe5b14e24afd654ebb1424945e9c7d85</anchor>
+      <arglist>(const HealthConfig *cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>step_history_steps</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>acfce0af54967cea4c7432f55b04c265a</anchor>
+      <arglist>(int steps)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>step_history_sum</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>ad0ec27b23c098487914dec579cfe2951</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint16_t *</type>
+      <name>health_store_step_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga34ce959b4e7f9802230c7e1319b3bf28</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_step_hours</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7f6eb32c1ad9a2a9ffa41d13dc507204</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @210355151357034220336236057327220076034261254104</type>
+      <name>s_hours</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a2e906b2b92f6ee4e2395c0b2387f4b3c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_pending</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a92320ccd45668277bda8c95946d10c01</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_no_timer</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a658ff262f3d2e7fd0d12e963b290f7f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_steps</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a5f833cb8ed2204402eca026a668fb9e8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_step_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81bcfdc1cea1875ac0c3a5140dc8d80d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_cached_day</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>aded462fa2005d5b78ddcc2ec22a3c224</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_settled_hours</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a368b1a1c575f22bb1bcd8da8f13d0523</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_cached_day</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>aded462fa2005d5b78ddcc2ec22a3c224</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_settled_hours</name>
+      <anchorfile>health__step__history_8c.html</anchorfile>
+      <anchor>a368b1a1c575f22bb1bcd8da8f13d0523</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__store_8c.html</filename>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <includes id="health__hrv_8h" name="health_hrv.h" local="yes" import="no" module="no" objc="no">io/stores/health_hrv.h</includes>
+    <includes id="health__store__parts_8h" name="health_store_parts.h" local="yes" import="no" module="no" objc="no">io/stores/health_store_parts.h</includes>
+    <includes id="hrv__run_8h" name="hrv_run.h" local="yes" import="no" module="no" objc="no">health/hrv_run.h</includes>
+    <class kind="struct">[struct].s_state</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_BUILT</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>aaf317adbbde86f789a9ab27e98beeab7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_PART_COUNT</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a7c28568717007967741130ef80d37059</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STEP_CATCHUP_HOURS</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>ae8aeac449ddb0996fbb979993bc46de9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_metric_available</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3d46e137f1e65f3e36baf89f1557b87</anchor>
+      <arglist>(HealthMetric metric, time_t start, time_t end)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>read_hr</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>aa5e9651b7557a0bdec77456faa7b73be</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>read_sum_today</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a78f21309c4be5fcdb65ba548b2024d0c</anchor>
+      <arglist>(HealthMetric metric, int fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>HealthMinuteData *</type>
+      <name>health_scratch_take</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac028dda967096a1c36f3deff186a846c</anchor>
+      <arglist>(int records)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>health_hour_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ea9c8677cce316fa3d469d08faafc52</anchor>
+      <arglist>(const struct tm *today, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_walk_minute_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf18cc0c1c6259577a616c734457c2f40</anchor>
+      <arglist>(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>refresh_hr</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a1198d2e95d57cb493cbfcf02ca2c498a</anchor>
+      <arglist>(bool from_event)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>refresh_activity</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>ad11a87cd6fe81b62297e02012fd47e6d</anchor>
+      <arglist>(bool force)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>state_sum</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a00147e6b69266575007151b658718ee9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>notify_if_moved</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a1cf17fd9b8be04e83da4326f31779975</anchor>
+      <arglist>(uint32_t before)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_health_event</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a9db8db45c6d49c4ea12cd407be92143c</anchor>
+      <arglist>(HealthEventType event, void *context)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>cadence_poll</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>ac219f20bf18466869ec6ecc7820e97a6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3d23a155e70dad9fd2ac23f2ec39775c</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_redraw</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga91ad7f45647093a68eb19f67e6605c26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0e1f4e480b7ae883e73cc7270bbf7ffc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad4831647379f8aee421bde9e18cf09b9</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4e877491cc83ecdeacdb4cf786979cd6</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadb98993f8a5d2ea3ac0b99effab8b393</anchor>
+      <arglist>(HealthConfig cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_has_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga562ecf251588c9e48d0397eda3f69325</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaebe919776f17167171641aeae6310796</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga38cd6bed400162ebab1a2284484c4445</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_calories</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabe7efc42c8679e55ecb7804fb17895ec</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_sleep_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaae218db51d5633570091919ba1e07ab4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_active_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga1712c5d7441e81d5b804d19e112bdb3c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_distance_m</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga82d8e5fff446bf3a7e20228c8cb49df9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga46bf291eab60978c19fcd948808a0196</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab79c3a58fb2df070dbd4e0abcce41a22</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga847895390fe76e993bc34ea4f2202a59</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4acc41f26f8a766529d223582a98cf01</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga651a1038499ef99c95416e64e71242d5</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga27882c04c06b01103dabf8fdc8069a61</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2d8d7e527bf6f1348312fe2079772ce6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_store_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ae6d44d0ab68b09306d57bae82eae77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @341244052024166035161306331212041200054146255225</type>
+      <name>s_state</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a864af5e865991c4e111dc08d165206ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const HealthPart *</type>
+      <name>s_parts</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a2df5ab1454cc36e44a2fb0ac05c77164</anchor>
+      <arglist>[HEALTH_PART_COUNT]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_sleep</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a60233dc911b0cddbb4943118bdcd6a49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_active</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a95c0d4852541c54e2e54f73d03906258</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_calories</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a1298cf249bbdfafe80e35ecbf562df8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_distance</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a09c973a046d205986bf3f25f8cdf198e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_sleep</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a60233dc911b0cddbb4943118bdcd6a49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_active</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a95c0d4852541c54e2e54f73d03906258</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_calories</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a1298cf249bbdfafe80e35ecbf562df8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_distance</name>
+      <anchorfile>health__store_8c.html</anchorfile>
+      <anchor>a09c973a046d205986bf3f25f8cdf198e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__store_8h.html</filename>
+    <includes id="hrv__motion_8h" name="hrv_motion.h" local="yes" import="no" module="no" objc="no">health/hrv_motion.h</includes>
+    <includes id="hrv__log_8h" name="hrv_log.h" local="yes" import="no" module="no" objc="no">health/hrv_log.h</includes>
+    <includes id="hr__day_8h" name="hr_day.h" local="yes" import="no" module="no" objc="no">health/hr_day.h</includes>
+    <class kind="struct">HealthPart</class>
+    <class kind="struct">HealthConfig</class>
+    <class kind="struct">HealthSeed</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_SENSOR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0736746982e40115c0c7a4185694247d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf58a7b0cae4bb710b1c4834cd90df0ba</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_STEP_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf48ed118c83053074b953aa994ace230</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_DAY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f959c79f659728bb1df249db66cefaf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthPart</type>
+      <name>HealthPart</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga23f35f535d443dacbf52ac58dde0b22c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthConfig</type>
+      <name>HealthConfig</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga70156b27716f66602b46ccb5449a0e84</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthSeed</type>
+      <name>HealthSeed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae837bb856deb22a451dd505b6c72e844</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadb98993f8a5d2ea3ac0b99effab8b393</anchor>
+      <arglist>(HealthConfig cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3d23a155e70dad9fd2ac23f2ec39775c</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0e1f4e480b7ae883e73cc7270bbf7ffc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad4831647379f8aee421bde9e18cf09b9</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4e877491cc83ecdeacdb4cf786979cd6</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
+      <name>health_store_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab42f7ec6f1b3c4b0403d76027e1a856e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrDay *</type>
+      <name>health_store_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa83227ebe779ce764a7ce57df3311f77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint16_t *</type>
+      <name>health_store_step_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga34ce959b4e7f9802230c7e1319b3bf28</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_step_hours</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7f6eb32c1ad9a2a9ffa41d13dc507204</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaebe919776f17167171641aeae6310796</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_has_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga562ecf251588c9e48d0397eda3f69325</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga38cd6bed400162ebab1a2284484c4445</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_calories</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabe7efc42c8679e55ecb7804fb17895ec</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_sleep_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaae218db51d5633570091919ba1e07ab4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_active_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga1712c5d7441e81d5b804d19e112bdb3c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_distance_m</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga82d8e5fff446bf3a7e20228c8cb49df9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga46bf291eab60978c19fcd948808a0196</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab79c3a58fb2df070dbd4e0abcce41a22</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga847895390fe76e993bc34ea4f2202a59</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_store_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ae6d44d0ab68b09306d57bae82eae77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4acc41f26f8a766529d223582a98cf01</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga651a1038499ef99c95416e64e71242d5</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga27882c04c06b01103dabf8fdc8069a61</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2d8d7e527bf6f1348312fe2079772ce6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3c6bccf52afd82d7b55d77836e6ae39</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_step_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81bcfdc1cea1875ac0c3a5140dc8d80d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga41c920e1c1687197b86fcae1bd17c5aa</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>health_store_parts.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>health__store__parts_8h.html</filename>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MinuteRecordFn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga67ca3e59cfbc387a8cc491a82a19a3a5</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_redraw</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga91ad7f45647093a68eb19f67e6605c26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>health_hour_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ea9c8677cce316fa3d469d08faafc52</anchor>
+      <arglist>(const struct tm *today, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_metric_available</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3d46e137f1e65f3e36baf89f1557b87</anchor>
+      <arglist>(HealthMetric metric, time_t start, time_t end)</arglist>
+    </member>
+    <member kind="function">
+      <type>HealthMinuteData *</type>
+      <name>health_scratch_take</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac028dda967096a1c36f3deff186a846c</anchor>
+      <arglist>(int records)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_walk_minute_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf18cc0c1c6259577a616c734457c2f40</anchor>
+      <arglist>(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each, void *context)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>location_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>location__store_8c.html</filename>
+    <includes id="location__store_8h" name="location_store.h" local="yes" import="no" module="no" objc="no">io/stores/location_store.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="coords_8h" name="coords.h" local="yes" import="no" module="no" objc="no">wire/coords.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <class kind="struct">[struct].s_state</class>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>persist_save</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>copy_pair</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>a7238543f70fce43dac381df674ccca7a</anchor>
+      <arglist>(char *out_lat, char *out_lon, const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>set</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>ae105e0a25cad9f394204c3eebad894f5</anchor>
+      <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>location_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga59425f07e9de612bbcaae2dd0bcf266f</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>location_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2027df7324b501eba2a93b048974f50c</anchor>
+      <arglist>(LocationConfig cfg, const LocationSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>location_store_lat</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaca52fe40f16b8699445cc2a3d3df0bf9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>location_store_lon</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga84432464d20d131431730d966053fc52</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @071205373035162224161047017043173162266213116111</type>
+      <name>s_state</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>ae7f03baf77e513f445e5b03585e4987e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_saved_sum</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>afd6bfed4583dc043e4cb212594733f97</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>location__store_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>location_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>location__store_8h.html</filename>
+    <class kind="struct">LocationConfig</class>
+    <class kind="struct">LocationSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>location_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2027df7324b501eba2a93b048974f50c</anchor>
+      <arglist>(LocationConfig cfg, const LocationSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>location_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga59425f07e9de612bbcaae2dd0bcf266f</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>location_store_lat</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaca52fe40f16b8699445cc2a3d3df0bf9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>location_store_lon</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga84432464d20d131431730d966053fc52</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>music__store_8c.html</filename>
+    <includes id="music__store_8h" name="music_store.h" local="yes" import="no" module="no" objc="no">io/stores/music_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="music__track_8h" name="music_track.h" local="yes" import="no" module="no" objc="no">wire/music_track.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b54671a652a83acb2d78e058340bf38</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad97ad3d36947dc02e52d750cbe25af50</anchor>
+      <arglist>(MusicConfig cfg, const MusicSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_title</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga08e7dbd7f6e711074c87b072b80a89fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_artist</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae7f812e0a0d418107f257c99733aacb2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_playing</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad2b234359cbfa7449cab2a1b25de11e6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_has_track</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>music_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>music__store_8h.html</filename>
+    <class kind="struct">MusicConfig</class>
+    <class kind="struct">MusicSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad97ad3d36947dc02e52d750cbe25af50</anchor>
+      <arglist>(MusicConfig cfg, const MusicSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b54671a652a83acb2d78e058340bf38</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_title</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga08e7dbd7f6e711074c87b072b80a89fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_artist</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae7f812e0a0d418107f257c99733aacb2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_playing</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad2b234359cbfa7449cab2a1b25de11e6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_has_track</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>phone_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>phone__store_8c.html</filename>
+    <includes id="phone__store_8h" name="phone_store.h" local="yes" import="no" module="no" objc="no">io/stores/phone_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9782ad57861fed3323134ef011ea1826</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadd2ca01419697d7f37ae4fe64ac8efb7</anchor>
+      <arglist>(PhoneConfig cfg, const PhoneSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>phone_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>phone_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>phone__store_8h.html</filename>
+    <includes id="phone__level_8h" name="phone_level.h" local="yes" import="no" module="no" objc="no">wire/phone_level.h</includes>
+    <class kind="struct">PhoneConfig</class>
+    <class kind="struct">PhoneSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadd2ca01419697d7f37ae4fe64ac8efb7</anchor>
+      <arglist>(PhoneConfig cfg, const PhoneSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9782ad57861fed3323134ef011ea1826</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>phone_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>stock_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>stock__store_8c.html</filename>
+    <includes id="stock__store_8h" name="stock_store.h" local="yes" import="no" module="no" objc="no">io/stores/stock_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <class kind="struct">[struct].s_state</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>STOCK_FIRST_POLL_MS</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>add7b6eb41b69d99664bcf9d324a8019d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>reset_state</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>a9fbef29f6a0a976770a3055c37a35d95</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>persist_save</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>a7929b94f95a6b9dba4c3af1f4ee2acd2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>apply_seed</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>a0dc7c52be58d63c4224ad00a7f2b5e5d</anchor>
+      <arglist>(const StockSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_stock_strip</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>a611ee6200dc6d16566d4f9039f03ded9</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>cadence_poll</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>ac219f20bf18466869ec6ecc7820e97a6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga286d1850c71a9b7e3e62be5b92ea916a</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaec0631f8c075d9a6c76e2f6f386f3970</anchor>
+      <arglist>(StockConfig cfg, const StockSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf5880da69fee6e18843b989032e67836</anchor>
+      <arglist>(StockConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>const StockStrip *</type>
+      <name>stock_store_strip</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4b56f050715401cfdd8a57bd1063cbe7</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const StockSlot *</type>
+      <name>stock_store_slot</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga44242789115b6e0615358ddc114a24dc</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>stock_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5074e747148193546c869652ea01584d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @312127331127251366210315313134246166131107211324</type>
+      <name>s_state</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>ae885cb7823f20f0776a27f98b68935b2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static StoreFetch</type>
+      <name>s_fetch</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>af962c600172c1bf7e33a007776cba2ab</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_saved_sum</name>
+      <anchorfile>stock__store_8c.html</anchorfile>
+      <anchor>afd6bfed4583dc043e4cb212594733f97</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>stock_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>stock__store_8h.html</filename>
+    <includes id="stock__wire_8h" name="stock_wire.h" local="yes" import="no" module="no" objc="no">wire/stock_wire.h</includes>
+    <class kind="struct">StockConfig</class>
+    <class kind="struct">StockSeed</class>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaec0631f8c075d9a6c76e2f6f386f3970</anchor>
+      <arglist>(StockConfig cfg, const StockSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf5880da69fee6e18843b989032e67836</anchor>
+      <arglist>(StockConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga286d1850c71a9b7e3e62be5b92ea916a</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const StockStrip *</type>
+      <name>stock_store_strip</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4b56f050715401cfdd8a57bd1063cbe7</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const StockSlot *</type>
+      <name>stock_store_slot</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga44242789115b6e0615358ddc114a24dc</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>stock_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5074e747148193546c869652ea01584d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_cadence.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__cadence_8c.html</filename>
+    <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
+    <includes id="callback__list_8h" name="callback_list.h" local="yes" import="no" module="no" objc="no">io/callback_list.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>store_cadence_register</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadc0f8176e42cbe69fd30b1a363ca4794</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_cadence_fire</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga10c78a131269bea0afd102549a41083c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static CallbackListFn</type>
+      <name>s_entries</name>
+      <anchorfile>store__cadence_8c.html</anchorfile>
+      <anchor>a12aea18762db9ee08cbf3a1741e2b9a7</anchor>
+      <arglist>[STORE_CADENCE_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static CallbackList</type>
+      <name>s_list</name>
+      <anchorfile>store__cadence_8c.html</anchorfile>
+      <anchor>a34430e955454940bcf64454c4c01dfc4</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_cadence.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__cadence_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_CADENCE_MAX</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga60f6d598b8ff59f299aa4ded2e48b695</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_cadence_register</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadc0f8176e42cbe69fd30b1a363ca4794</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_cadence_fire</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga10c78a131269bea0afd102549a41083c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_fetch.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__fetch_8c.html</filename>
+    <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_fire</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f892bf9d70a4f44dbdd186ce95eaf12</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga01742f5fe91b9b4c089f9540e5c6a10f</anchor>
+      <arglist>(StoreFetch *fetch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_arm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad33c4412c02b7068286958a4ff9d39c0</anchor>
+      <arglist>(StoreFetch *fetch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_turn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae24dbc83a69a2c585fc08c07f2d27091</anchor>
+      <arglist>(StoreFetch *fetch, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_on_link</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga48da19573724dbed49fc5c04f7508bb0</anchor>
+      <arglist>(StoreFetch *fetch, int age_s)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab0e39f35c438d27685e759973a271790</anchor>
+      <arglist>(StoreFetch *fetch, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3baeb7249495a37edb88ef463ba8d904</anchor>
+      <arglist>(StoreFetch *fetch, int poll_min, bool live, time_t now, bool empty)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_fetch.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__fetch_8h.html</filename>
+    <includes id="store__poll_8h" name="store_poll.h" local="yes" import="no" module="no" objc="no">io/stores/store_poll.h</includes>
+    <class kind="struct">StoreFetch</class>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_fire</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f892bf9d70a4f44dbdd186ce95eaf12</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga01742f5fe91b9b4c089f9540e5c6a10f</anchor>
+      <arglist>(StoreFetch *fetch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_arm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad33c4412c02b7068286958a4ff9d39c0</anchor>
+      <arglist>(StoreFetch *fetch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_turn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae24dbc83a69a2c585fc08c07f2d27091</anchor>
+      <arglist>(StoreFetch *fetch, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_on_link</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga48da19573724dbed49fc5c04f7508bb0</anchor>
+      <arglist>(StoreFetch *fetch, int age_s)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab0e39f35c438d27685e759973a271790</anchor>
+      <arglist>(StoreFetch *fetch, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3baeb7249495a37edb88ef463ba8d904</anchor>
+      <arglist>(StoreFetch *fetch, int poll_min, bool live, time_t now, bool empty)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_persist.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__persist_8c.html</filename>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_save_changed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga26072e6c901d3d7455c93261276e6922</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_restore_reading</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gacfb278bcfc9c6dbc28c5728a3b68e277</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_persist.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__persist_8h.html</filename>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf7f92da5799b3fc95c172f84287e6867</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5b35a6941ad6bb200a944b38ae9fa676</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga71057ac435b7b29a882b011053659d86</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HEALTH</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga31737569cb65fc760932f244727a568d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_LOCATION</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa19bf75ee3cb87a3a31a97238f4dcf73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HRV</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5dd549de392b92225c04280a50970e14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_restore</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga286178630dd827b7d2e677742541e280</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, uint8_t tag)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_save</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga814b2c13673684e3684ff4ed7beec6eb</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, uint8_t tag)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_save_changed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga26072e6c901d3d7455c93261276e6922</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_restore_reading</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gacfb278bcfc9c6dbc28c5728a3b68e277</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf7f92da5799b3fc95c172f84287e6867</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5b35a6941ad6bb200a944b38ae9fa676</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga71057ac435b7b29a882b011053659d86</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HEALTH</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga31737569cb65fc760932f244727a568d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_LOCATION</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa19bf75ee3cb87a3a31a97238f4dcf73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HRV</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5dd549de392b92225c04280a50970e14</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_poll.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__poll_8c.html</filename>
+    <includes id="store__poll_8h" name="store_poll.h" local="yes" import="no" module="no" objc="no">io/stores/store_poll.h</includes>
+    <includes id="store__live_8h" name="store_live.h" local="yes" import="no" module="no" objc="no">io/store_live.h</includes>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9d6ab580b20298f18c6243bcff7dbfb1</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_set</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga30b8b33c3204c012230afe0eb9e8d594</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_turn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga576c21d8f643934d22918c3fb2cbeeef</anchor>
+      <arglist>(StorePoll *poll, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9bd6e2af60e688844a31c8f9fb4cdae2</anchor>
+      <arglist>(const StorePoll *poll, int age_s)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_poll.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__poll_8h.html</filename>
+    <class kind="struct">StorePoll</class>
+    <member kind="function" static="yes">
+      <type>static time_t</type>
+      <name>store_poll_next</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaee79556bd3009dd1478b61913e5368d4</anchor>
+      <arglist>(int poll_min, time_t now)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_poll_due</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga997e6ccf70b96c79e2500b83af6e54dc</anchor>
+      <arglist>(int poll_min, time_t *next, time_t now)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_poll_reconnect_due</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga8bf76bddf8844add6cd6e7c0684b8ee0</anchor>
+      <arglist>(int age_s, int poll_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9d6ab580b20298f18c6243bcff7dbfb1</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_set</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga30b8b33c3204c012230afe0eb9e8d594</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_turn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga576c21d8f643934d22918c3fb2cbeeef</anchor>
+      <arglist>(StorePoll *poll, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9bd6e2af60e688844a31c8f9fb4cdae2</anchor>
+      <arglist>(const StorePoll *poll, int age_s)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_sum.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__sum_8c.html</filename>
+    <includes id="store__sum_8h" name="store_sum.h" local="yes" import="no" module="no" objc="no">io/stores/store_sum.h</includes>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>store_sum</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga51f7004ec5d8471cdf108a9ee46bb77b</anchor>
+      <arglist>(const void *bytes, size_t size)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>store_sum.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>store__sum_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_READING_SIZE</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga50fd63663c9be7ae50341d6862e04150</anchor>
+      <arglist>(state, stamp)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>store_sum</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga51f7004ec5d8471cdf108a9ee46bb77b</anchor>
+      <arglist>(const void *bytes, size_t size)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>system_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>system__store_8c.html</filename>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="link__change_8h" name="link_change.h" local="yes" import="no" module="no" objc="no">io/link_change.h</includes>
+    <class kind="struct">[struct].s_state</class>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>set_battery</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a15cd2f3047048f896198aad66974e8b5</anchor>
+      <arglist>(int level, bool charging)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>set_bluetooth</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a0e2565513a6aae0c0c79e2b69154d35c</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_battery</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>acd10b3aaddfe22573b8e9d242eff655b</anchor>
+      <arglist>(BatteryChargeState state)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_connection</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>af2f59572470146f43e36b0480130d05b</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa56e12f48eddf86b1533059128765d2e</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_on_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa29b6900ac64eda8dfb6dd8918ef531b</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga98c417e24d8488baa2bb33e39155a3e7</anchor>
+      <arglist>(SystemConfig cfg, const SystemSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga8d12e20cd8e402fc7c7abbfcd7454f3c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>system_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0a7b3e80e633a5f021929a1f3751260f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_charging</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga93e1005fb36a193016d69e406ef58f16</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_bluetooth</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2ebbd6eb46dfd92742b55a346d164961</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_next_alarm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga323c6c5d1989296b9618d94e94f92daa</anchor>
+      <arglist>(time_t *out)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct @362235322165356266257300263126207006223155011222</type>
+      <name>s_state</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a6ecec114912b30fcb280cd55636369b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_live</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a86591675781beec649ac9e8db3485c4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static time_t</type>
+      <name>s_seed_alarm</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a6c3d05d77814566ebfe0ec462c67324d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static BtVibePolicy</type>
+      <name>s_vibe</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>a31b5ed7b8b45ba3b1d0ae0689ab31747</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_reconnect</name>
+      <anchorfile>system__store_8c.html</anchorfile>
+      <anchor>aa5f439ff5804491818cbb8d665f2b0f4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>system_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>system__store_8h.html</filename>
+    <class kind="struct">SystemConfig</class>
+    <class kind="struct">SystemSeed</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_PHONE</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81426744fd8e4b25e4b1e746e01a86cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_MUSIC</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gafb83e889fc10f054eb75c665b53d6de1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gace98b5387157ba1fff930f53eb50f64a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga672425a165fced37d075b3139367469f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5bc539bc0d11cc025e1a2af0b1c950b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_COUNT</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b630fdde16d8d25ef3e24c50021837d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_SLOTS</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga6289cea1d412d1482a2e5f5dff987a58</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>BtVibePolicy</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga96c4cb6d425115a65f787896786b232f</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga98c417e24d8488baa2bb33e39155a3e7</anchor>
+      <arglist>(SystemConfig cfg, const SystemSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga8d12e20cd8e402fc7c7abbfcd7454f3c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa56e12f48eddf86b1533059128765d2e</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_on_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa29b6900ac64eda8dfb6dd8918ef531b</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>system_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0a7b3e80e633a5f021929a1f3751260f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_charging</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga93e1005fb36a193016d69e406ef58f16</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_bluetooth</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2ebbd6eb46dfd92742b55a346d164961</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_next_alarm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga323c6c5d1989296b9618d94e94f92daa</anchor>
+      <arglist>(time_t *out)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>time_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>time__store_8c.html</filename>
+    <includes id="time__store_8h" name="time_store.h" local="yes" import="no" module="no" objc="no">io/stores/time_store.h</includes>
+    <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
+    <includes id="units_8h" name="units.h" local="yes" import="no" module="no" objc="no">system/units/units.h</includes>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>tick_handler</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a693304ffdfb2fb3a8f990f8f6bab9f45</anchor>
+      <arglist>(struct tm *tick_time, TimeUnits units_changed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>set</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>af5ca081d291a55bf66553c888a21abf4</anchor>
+      <arglist>(const struct tm *t)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>beats_fire</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a760d605d56d3d2830e7356ad248400b2</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>start_ticker</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>ab8e8312ec2a60fbeb416d80c0858872f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>stop_ticker</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a598578fd5c48946f7fd5962c92b526b5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga03d7e9b1823247fa9d5a6ead85797571</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga000282fef3aa31a69a8038abb49fa576</anchor>
+      <arglist>(TimeConfig cfg, const struct tm *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9c2eacc43d552852d63185bd4ca16379</anchor>
+      <arglist>(TimeConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>const struct tm *</type>
+      <name>time_store_tm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadc9650a7506ac75294df48a7a8deadcd</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static struct tm</type>
+      <name>s_tm</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>ac91dab61b991b18d0b6f0632cb71a458</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static AppTimer *</type>
+      <name>s_beats_timer</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a25cfc5c232d6d20427553ac3cd954060</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static TimeConfig</type>
+      <name>s_cfg</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a5ed38d916996be3c73c6622ffc54a846</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_started_live</name>
+      <anchorfile>time__store_8c.html</anchorfile>
+      <anchor>a6e2284b49afe24146fe3b58cce5128c9</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>time_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>time__store_8h.html</filename>
+    <includes id="time__config_8h" name="time_config.h" local="yes" import="no" module="no" objc="no">clock/time_config.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga000282fef3aa31a69a8038abb49fa576</anchor>
+      <arglist>(TimeConfig cfg, const struct tm *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9c2eacc43d552852d63185bd4ca16379</anchor>
+      <arglist>(TimeConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga03d7e9b1823247fa9d5a6ead85797571</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const struct tm *</type>
+      <name>time_store_tm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadc9650a7506ac75294df48a7a8deadcd</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weather_store.c</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>weather__store_8c.html</filename>
+    <includes id="weather__store_8h" name="weather_store.h" local="yes" import="no" module="no" objc="no">io/stores/weather_store.h</includes>
+    <includes id="appmessage_8h" name="appmessage.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage.h</includes>
+    <includes id="store__cadence_8h" name="store_cadence.h" local="yes" import="no" module="no" objc="no">io/stores/store_cadence.h</includes>
+    <includes id="store__persist_8h" name="store_persist.h" local="yes" import="no" module="no" objc="no">io/stores/store_persist.h</includes>
+    <includes id="store__fetch_8h" name="store_fetch.h" local="yes" import="no" module="no" objc="no">io/stores/store_fetch.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <includes id="forecast__age_8h" name="forecast_age.h" local="yes" import="no" module="no" objc="no">weather/forecast_age.h</includes>
+    <includes id="weather__reading_8h" name="weather_reading.h" local="yes" import="no" module="no" objc="no">weather/weather_reading.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_FIRST_POLL_MS</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a095baca2ac96275e14cbde3495f43b73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_BOOT_RETRY_MS</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>aff467cb3eccd97fac6e8e0eb3dfb4ba7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_BOOT_RETRIES</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a3e000c92d82e89bbcb703377923e50fa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>reset_state</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a9fbef29f6a0a976770a3055c37a35d95</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>mark_dirty</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a38798b6392bd528fd20169e49b63ff36</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>persist_flush</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a91a226520846cd505005169ca4f9d754</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>inbox_done</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a9733ae28f8c21e9ec18ae4251141d96b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>apply_seed</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>aa5bb619dd308587c2ec6444250ee6ab1</anchor>
+      <arglist>(const WeatherSeed *seed)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_weather</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>af5f33238881e8b25ccd2445b79ccb95a</anchor>
+      <arglist>(const WeatherMessage *msg)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_unit_changed</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>ab270d4f87c98123387d5599b915429b3</anchor>
+      <arglist>(bool fahrenheit)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>boot_fire</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a57f5cd13bc80a504451172b29ed6e7de</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>cadence_poll</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>ac219f20bf18466869ec6ecc7820e97a6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>on_link</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a5446f3b1dc816160ec26d98e2b69785f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga40fd78d1cab03532c37b131b1c2a9111</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga49a92d34f22c2bb81f54084b02215709</anchor>
+      <arglist>(WeatherConfig cfg, const WeatherSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2af1e0b42fd91db04b7bf0e358f80a85</anchor>
+      <arglist>(WeatherConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2cd48126740a404ee6893890c5abf288</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>forecast_today</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a6338097c3aa566509557080e498f23a1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_cond</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2b52199ca0e311c968b7f831305acd62</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_cond_label</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad57eba8aa9a6f59644fedafcac7a3bab</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_humidity</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaec0de378ffe3adbadab18b877c3e214c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_wind_kmh</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga06fe793fd4c59b655856f6f1454e66a1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_wind_dir</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga21865e60abf090e923d95f74e4e5e3b2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_sunrise</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadcce3fc2dbdf6a3ccd751a70ef171adf</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_sunset</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga613a6718a67c620b3c4623cbbfc3d84e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_uv</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga839bf5c5187f067697de69f79f025b3f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp_max</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9521fad2bb38f644e02c9c3ac8547d4b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3ad694d30ad387bd9a9c1db451cc9c2d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_precip_chance</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga04d4ed2abc57cd51459c6913b2d77e1d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_feels_like</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga06cf30734c71d28b90e5b660ee75bc9d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_pressure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac167df267d9204941ae5ef9541074edc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_dew_point</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4780ec893b0d2cb94e17ab85c78e377d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const WeatherHourly *</type>
+      <name>weather_store_forecast_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaba5bc2a406811b7f6d4b6df181f620d7</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const WeatherDaily *</type>
+      <name>weather_store_forecast_daily</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0610dff5f72df6fa9f4312a73e6d96de</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7856768b2bde2cf55422b2c3b5ea3b4e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static WeatherState</type>
+      <name>s_state</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a2a3db4bc36fd168193b20a09c608c773</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_cb</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a0d75601f9ac1a6725c17065d338a664a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_boot_retries</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a3e8ceb6edd19c82d11e2d15c671924f4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static StoreFetch</type>
+      <name>s_fetch</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>af962c600172c1bf7e33a007776cba2ab</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_persist_key</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>afc1e32c72630b62007536cb95f77bb07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_dirty</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>ae8a3c3beea14ff8ceadf605953c6ee61</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_changed</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a2e6dcdd2124edeff7e300cf6de89bcda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_heard</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a4cf02b128b4097de9a6c85cd0ded8adc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_saved_sum</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>afd6bfed4583dc043e4cb212594733f97</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_BOOT_RETRY_MS</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>aff467cb3eccd97fac6e8e0eb3dfb4ba7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_BOOT_RETRIES</name>
+      <anchorfile>weather__store_8c.html</anchorfile>
+      <anchor>a3e000c92d82e89bbcb703377923e50fa</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>weather_store.h</name>
+    <path>src/c/pebble/io/stores/</path>
+    <filename>weather__store_8h.html</filename>
+    <includes id="weather__wire_8h" name="weather_wire.h" local="yes" import="no" module="no" objc="no">wire/weather_wire.h</includes>
+    <class kind="struct">WeatherConfig</class>
+    <class kind="struct">WeatherSeed</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_SEED_EMPTY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae0d84f2727ec304e5376009e5f7dcd18</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga49a92d34f22c2bb81f54084b02215709</anchor>
+      <arglist>(WeatherConfig cfg, const WeatherSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2af1e0b42fd91db04b7bf0e358f80a85</anchor>
+      <arglist>(WeatherConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga40fd78d1cab03532c37b131b1c2a9111</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2cd48126740a404ee6893890c5abf288</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_cond</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2b52199ca0e311c968b7f831305acd62</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_cond_label</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad57eba8aa9a6f59644fedafcac7a3bab</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_humidity</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaec0de378ffe3adbadab18b877c3e214c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_wind_kmh</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga06fe793fd4c59b655856f6f1454e66a1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_wind_dir</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga21865e60abf090e923d95f74e4e5e3b2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_sunrise</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadcce3fc2dbdf6a3ccd751a70ef171adf</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_sunset</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga613a6718a67c620b3c4623cbbfc3d84e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_feels_like</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga06cf30734c71d28b90e5b660ee75bc9d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_pressure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac167df267d9204941ae5ef9541074edc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_dew_point</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4780ec893b0d2cb94e17ab85c78e377d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_uv</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga839bf5c5187f067697de69f79f025b3f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp_max</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9521fad2bb38f644e02c9c3ac8547d4b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3ad694d30ad387bd9a9c1db451cc9c2d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_precip_chance</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga04d4ed2abc57cd51459c6913b2d77e1d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const WeatherHourly *</type>
+      <name>weather_store_forecast_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaba5bc2a406811b7f6d4b6df181f620d7</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const WeatherDaily *</type>
+      <name>weather_store_forecast_daily</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0610dff5f72df6fa9f4312a73e6d96de</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7856768b2bde2cf55422b2c3b5ea3b4e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>tuple_read.c</name>
+    <path>src/c/pebble/io/</path>
+    <filename>tuple__read_8c.html</filename>
+    <includes id="tuple__read_8h" name="tuple_read.h" local="yes" import="no" module="no" objc="no">io/tuple_read.h</includes>
+    <includes id="wire__read_8h" name="wire_read.h" local="yes" import="no" module="no" objc="no">wire/wire_read.h</includes>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_int_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga2efbc3a4f1c2f061db644fae33148a15</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>tuple_str_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga86dd1adef099205e5eb8c1d52b03ce96</anchor>
+      <arglist>(const Tuple *tuple, const char *fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_number_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3d6f1eecd7cf908b32fe3f73a2b428a7</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>tuple_read.h</name>
+    <path>src/c/pebble/io/</path>
+    <filename>tuple__read_8h.html</filename>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_int_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga2efbc3a4f1c2f061db644fae33148a15</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>tuple_str_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga86dd1adef099205e5eb8c1d52b03ce96</anchor>
+      <arglist>(const Tuple *tuple, const char *fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_number_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3d6f1eecd7cf908b32fe3f73a2b428a7</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>plugin_source.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>plugin__source_8h.html</filename>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <class kind="struct">PluginSourceSettings</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_WEATHER</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7519f9e335dac1caa4af7e098ba595df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_CALENDAR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54d7afa30c1599cabdaefe00ebe5e667</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_ANY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga256177eefe8ca85558ab1950faeb5d0b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga990cbb3116efef955c98d6f789302b35</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab2dda1ab7a5b7a83f3f2923e285d2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_VERSION</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga2443bbd036bbbdda30abfa06a473bdd0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIRST_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaf0cade985b8b365b66441618bc5085a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadefc10b23da283a35b2957a7e6e6082c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaed0d9a6d4a3165af7fd1c790795ca7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIELDS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga172fb13323b731d043aefa0d66a751ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>plugin_source_write_needed</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54bef5368ed91eec6a9cfef4521c6e02</anchor>
+      <arglist>(const PluginSourceSettings *now, const PluginSourceSettings *on_flash, bool on_flash_known)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>setting_values.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>setting__values_8h.html</filename>
+    <includes id="wind_8h" name="wind.h" local="yes" import="no" module="no" objc="no">units/wind.h</includes>
+    <member kind="enumeration">
+      <type></type>
+      <name>TimeFormat</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga25de3b313f6a766c08b5af9f3cac864d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_SYSTEM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_12H</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_24H</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_BEATS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_12H_NO_LEAD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>StepsMode</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga6e6066815d52058ba7571050020ca960</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_STEPS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_MILES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_KM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>DistanceUnit</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4c67a7b952f3804e2bd056cf95c4161a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DISTANCE_UNIT_KM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DISTANCE_UNIT_MILES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DISTANCE_UNIT_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>VibeChoice</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7b8aec224cacf74446d899e5eaab0819</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_NONE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_SHORT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_LONG</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_DOUBLE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>BatteryDisplay</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaaec2354b2ba9c2f927d81fc5daf6d24d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_BOTH</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_PERCENT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24dadb70a1bb92d4ea05d4d1ddf4b3f230d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>settings.c</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>settings_8c.html</filename>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="plugin__source_8h" name="plugin_source.h" local="yes" import="no" module="no" objc="no">system/settings/plugin_source.h</includes>
+    <includes id="settings__chain_8h" name="settings_chain.h" local="yes" import="no" module="no" objc="no">system/settings/settings_chain.h</includes>
+    <includes id="tuple__read_8h" name="tuple_read.h" local="yes" import="no" module="no" objc="no">io/tuple_read.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SCHEMA_TAIL</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a94cecdf0ca24c34090b67ae74219410d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>EACH_SCHEMA</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>af5a0ec4c8af6087521e6c57d66a398ab</anchor>
+      <arglist>(schema)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void *</type>
+      <name>field_ptr</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a9c02c31794700bb68b55537aba182399</anchor>
+      <arglist>(const SettingsSchema *schema, const SettingField *field)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>get_version</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a50844639d64b22a4b3af0facb74ccf31</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>set_version</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>ad62598c57dd65d4124722127957f24cd</anchor>
+      <arglist>(const SettingsSchema *schema, uint8_t version)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>build_index</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a06306d4021a430cb7838afe79711bc82</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>color_channel</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a6a4ffb328a62269e89060788a3940157</anchor>
+      <arglist>(uint32_t byte)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>color_from_hex</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a4e4f02059ce1a056a7ea9757a4c6129d</anchor>
+      <arglist>(uint32_t hex)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>color_to_hex</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a616476f1136e572530e52bedc804b1ad</anchor>
+      <arglist>(uint8_t argb)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>apply_defaults</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a8fd085e0bf9151d4771683129cb2964c</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>sanitize_cstring</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>ae0e0f648471d2d0721f39364d0fd7311</anchor>
+      <arglist>(const SettingsSchema *schema, const SettingField *field)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>sanitize</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a65b158704b02954e590b5e35d81a1557</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>save_schema</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a2cf5365c5efd32d58fee43dc10e0cb09</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>load_schema</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>ade6ab9e36147a4fcf04acd1f5264a98b</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_init</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gabf78fb93dcb30f9c8f17cc2eaa9a934e</anchor>
+      <arglist>(const SettingsSchema *head)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>settings_was_fresh</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga40b5dc5d02dfa2e8a630782dc5be7263</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_save</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab9d20e3758e874e18f045827a5cd29b3</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_mark_restored</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga311ba161873a4026937acc17c57525cc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>settings_u8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3751b197b3c6a12637ebdf7ebc0ea997</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>settings_str</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab048a393e0f36aa1df969db0a34db046</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_set_u8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaca6beaa8ac8e3de5499b406ebab187af</anchor>
+      <arglist>(SettingId id, uint8_t value)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>settings_enum_count</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7f6e82a36168e1d570748a8c18d0a30b</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>enum_text</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a895927e65d1e699baf9e552d266c02cc</anchor>
+      <arglist>(uint8_t value, char *buf, size_t size)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>field_value_size_max</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>af2864a2798c5e8551ec3217923c20354</anchor>
+      <arglist>(const SettingField *field)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>settings_serialized_size_max</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga281a4f818f93bf883410d0222e21713b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>settings_serialize</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8a25e0c1aea6e4cb033cefa62a590458</anchor>
+      <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+    <member kind="function">
+      <type>SettingsInbound</type>
+      <name>settings_apply_inbox</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga226c66180fb376a5888b279eca034417</anchor>
+      <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>s_primary</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a103a9efc5cd332137f9d11dca75ae011</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_was_fresh</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>aa467d3462915f91a8ef7e224cba65b46</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const SettingField *</type>
+      <name>s_by_id</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>adcdaae53b13f19b99ab529c1fcf20f70</anchor>
+      <arglist>[SETTING_COUNT]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>s_owner_by_id</name>
+      <anchorfile>settings_8c.html</anchorfile>
+      <anchor>a8e4e35842d12414042a0ffc65b36328e</anchor>
+      <arglist>[SETTING_COUNT]</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>settings.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>settings_8h.html</filename>
+    <class kind="struct">SettingField</class>
+    <class kind="struct">SettingsSchema</class>
+    <class kind="struct">SettingsInbound</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_PLUGIN_SOURCE_KEY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga23404e19f790c5308f720b0237438e4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9f418302396c6aa0b9d2bc9a2e75a9b0</anchor>
+      <arglist>(blob)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3af4893cdd074306b3fcc30df1cb8a00</anchor>
+      <arglist>(settings, first)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_FIRST_SIZE_</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8db432ced131d3416a56b8de4dd53bc2</anchor>
+      <arglist>(first, settings)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct SettingsSchema</type>
+      <name>SettingsSchema</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4c71229864f5dc765a8b70c2c971fb99</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SettingId</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga5b6861430c47031f602e2af972953f53</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_TEMPERATURE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_DATE_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_THEME</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_STEPS_MODE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_DISTANCE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_TIME_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BLUETOOTH_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_QUIET_TIME_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BLUETOOTH_VIBE_CONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BLUETOOTH_VIBE_DISCONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_HOURLY_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BATTERY_DISPLAY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_HEADER_FONT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SettingType</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8dfa1a122b59a38c38cc2824be723338</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BOOL</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_ENUM_U8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_CSTRING</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_COLOR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_init</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gabf78fb93dcb30f9c8f17cc2eaa9a934e</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>settings_was_fresh</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga40b5dc5d02dfa2e8a630782dc5be7263</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_save</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab9d20e3758e874e18f045827a5cd29b3</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_mark_restored</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga311ba161873a4026937acc17c57525cc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>settings_u8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3751b197b3c6a12637ebdf7ebc0ea997</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>settings_str</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab048a393e0f36aa1df969db0a34db046</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_set_u8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaca6beaa8ac8e3de5499b406ebab187af</anchor>
+      <arglist>(SettingId id, uint8_t value)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>settings_enum_count</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7f6e82a36168e1d570748a8c18d0a30b</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>settings_serialized_size_max</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga281a4f818f93bf883410d0222e21713b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>settings_serialize</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8a25e0c1aea6e4cb033cefa62a590458</anchor>
+      <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+    <member kind="function">
+      <type>SettingsInbound</type>
+      <name>settings_apply_inbox</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga226c66180fb376a5888b279eca034417</anchor>
+      <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>settings_catalog.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>settings__catalog_8h.html</filename>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gae38319f1a2067a1c9f6b2652bb41b226</anchor>
+      <arglist>(key)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT_CHECKED</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga60da601435a75b4d496364449dd1060a</anchor>
+      <arglist>(key, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_DEFAULT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gacefbc55594446448ad80ff74406626a7</anchor>
+      <arglist>(key)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_TEMPERATURE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaeeceac8a6d66376b0fbb3b495e245a8c</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_DATE_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaf2a01fb04cac500bbbd57bdd6666a897</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_THEME</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gad2d575c6e87c1859cd11cd814560f708</anchor>
+      <arglist>(off, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_HEADER_FONT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga779ccdfaac16f2eeba42f85f6ce894b9</anchor>
+      <arglist>(off, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_STEPS_MODE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga53d6cc56389abbc368788db97d0d747e</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_DISTANCE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaba0654c3c38a9186e4ecc9732c481e4a</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_TIME_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab20b6970a9c594d7d09fa91fb2f5d24b</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BLUETOOTH_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga5f8c5ebca9a4cae4d21ee7a6b8280fb8</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_QUIET_TIME_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga85914fbaf222c55ef9c16f52c16fceb0</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BLUETOOTH_VIBE_CONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gae7d8e8aee5d1d672fbb7931627cf170c</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BLUETOOTH_VIBE_DISCONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8603b3236f69557a9e021326e5396ce7</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_HOURLY_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadc1a8ba6bbe41444b7ba1906e5a7f536</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BATTERY_DISPLAY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga826e14901547c30cb46f62ebc9582a71</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga270513f4a67f8533c0b8d28e53cb6e52</anchor>
+      <arglist>(off)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>settings_chain.h</name>
+    <path>src/c/pebble/system/settings/</path>
+    <filename>settings__chain_8h.html</filename>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_CHAIN_EACH</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac06564560a442b796c3ae56c1be2f4a9</anchor>
+      <arglist>(schema, head, tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_first</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab3b5e81aea94a408da290199d66c0800</anchor>
+      <arglist>(const SettingsSchema *head, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_next</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac722dd54f21bc2a4d1a44dd7b95f7571</anchor>
+      <arglist>(const SettingsSchema *schema, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_field</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga501156d20707f95fbf16d066f4120fd4</anchor>
+      <arglist>(const SettingsSchema *head, const uint32_t *message_key)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_key</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9b68a17d307380fb0db49597095cb9fa</anchor>
+      <arglist>(const SettingsSchema *head, uint32_t key)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>units.c</name>
+    <path>src/c/pebble/system/units/</path>
+    <filename>units_8c.html</filename>
+    <includes id="units_8h" name="units.h" local="yes" import="no" module="no" objc="no">system/units/units.h</includes>
+    <includes id="beats_8h" name="beats.h" local="yes" import="no" module="no" objc="no">clock/beats.h</includes>
+    <includes id="distance_8h" name="distance.h" local="yes" import="no" module="no" objc="no">units/distance.h</includes>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>ms_into_bmt_day</name>
+      <anchorfile>units_8c.html</anchorfile>
+      <anchor>ae91f72639754ac5618e2ccafd1cff1a1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>units_swatch_beats</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga6abe1f5f8efd60ddf21617822f0f6fd6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>units_ms_until_next_beat</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga85d3000cf6b4ab6360ff3df4e97add8e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units_format_distance</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga94c81ab17362b08d64e0b2497730bbd5</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units_format_distance_value</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga4132ffc49e378387d53b1a1171fd2b05</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>units_distance_unit</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga6c4edc61ad14869972212cf59a4f7d47</anchor>
+      <arglist>(bool miles)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>units.h</name>
+    <path>src/c/pebble/system/units/</path>
+    <filename>units_8h.html</filename>
+    <member kind="function">
+      <type>int</type>
+      <name>units_swatch_beats</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga6abe1f5f8efd60ddf21617822f0f6fd6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>units_ms_until_next_beat</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga85d3000cf6b4ab6360ff3df4e97add8e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units_format_distance</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga94c81ab17362b08d64e0b2497730bbd5</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units_format_distance_value</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga4132ffc49e378387d53b1a1171fd2b05</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>units_distance_unit</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga6c4edc61ad14869972212cf59a4f7d47</anchor>
+      <arglist>(bool miles)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>vibe.c</name>
+    <path>src/c/pebble/system/vibe/</path>
+    <filename>vibe_8c.html</filename>
+    <includes id="vibe_8h" name="vibe.h" local="yes" import="no" module="no" objc="no">system/vibe/vibe.h</includes>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <includes id="hour__latch_8h" name="hour_latch.h" local="yes" import="no" module="no" objc="no">clock/hour_latch.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_pulse</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga06fdc71bb88f3abae23d9c6ac8ef7c8e</anchor>
+      <arglist>(VibePulse pulse)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_custom</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga005b71470c6beaa166cd9cc7c5cf10b1</anchor>
+      <arglist>(const uint32_t *durations, uint32_t num_segments)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_choice</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga68e3aacc6c4efcb6b2827627e09da299</anchor>
+      <arglist>(uint8_t choice)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_bt_transition</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga9b510de5a24f5136dfb470f5aa6aafd5</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static time_t</type>
+      <name>current_hour_start</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>ac6e503c7200a4d17d92d72bf022b100a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_hourly</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
+      <arglist>(const struct tm *tick, uint8_t choice)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static HourLatch</type>
+      <name>s_hour_latch</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>ae7894f3fe6b89ec0d145e0333e66a1b0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>s_hourly_seeded</name>
+      <anchorfile>vibe_8c.html</anchorfile>
+      <anchor>a1a5df4ca02d3ced1f6fa3bb20fd17006</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>vibe.h</name>
+    <path>src/c/pebble/system/vibe/</path>
+    <filename>vibe_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>VibePulse</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>gabbe12c91a0e3541c91618e6765204e19</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VibePulseShort</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ggabbe12c91a0e3541c91618e6765204e19ae9aaea4d3226665ad0772d40537a1319</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VibePulseLong</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ggabbe12c91a0e3541c91618e6765204e19a362ca2d17606221941dfa679ddb9ecbe</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VibePulseDouble</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ggabbe12c91a0e3541c91618e6765204e19ae2653abdfc98405084bd8d0da715af1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_pulse</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga06fdc71bb88f3abae23d9c6ac8ef7c8e</anchor>
+      <arglist>(VibePulse pulse)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_custom</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga005b71470c6beaa166cd9cc7c5cf10b1</anchor>
+      <arglist>(const uint32_t *durations, uint32_t num_segments)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_choice</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga68e3aacc6c4efcb6b2827627e09da299</anchor>
+      <arglist>(uint8_t choice)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_bt_transition</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga9b510de5a24f5136dfb470f5aa6aafd5</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_hourly</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
+      <arglist>(const struct tm *tick, uint8_t choice)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>engine.c</name>
+    <path>src/c/pebble/ui/engine/</path>
+    <filename>engine_8c.html</filename>
+    <includes id="engine_8h" name="engine.h" local="yes" import="no" module="no" objc="no">ui/engine/engine.h</includes>
+    <includes id="cstring__fit_8h" name="cstring_fit.h" local="yes" import="no" module="no" objc="no">text/cstring_fit.h</includes>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>draw_update</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>acea3c30698a26ada1bf81c4b8bff34a4</anchor>
+      <arglist>(Layer *layer, GContext *ctx)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>build</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>a79a6b7fc5a64b226b38077e891474536</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>destroy</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>aa52351d1dfae43c635aa490655abf35a</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_init</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga80e9c91268f57dc6bd9233afc9d7a19f</anchor>
+      <arglist>(Window *window, EngineBuild build_cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_deinit</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga371c44d7e8c48ce708a69bfd413a2a0e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_rebuild</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga878b25483298cd1601b2191e7eb9da87</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>repaint_slot</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>aa951c14b92f78cf5e7dd25b4ebf47007</anchor>
+      <arglist>(uint8_t i)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_mark_dirty</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaec392c631ca5f1420f4ad730f2c0c8c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_mark_dirty_tags</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8cfbff710717e1257d8545775d7171b0</anchor>
+      <arglist>(uint32_t changed)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static Window *</type>
+      <name>s_window</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>a3ddf81e700000ec6ae43c39a1be82d1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static EngineBuild</type>
+      <name>s_build</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>ad322bae72e6bc943d51af5902a99a3ad</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static EngineSlot</type>
+      <name>s_slots</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>ab47e3dffda0fb3da71f5308551ff8937</anchor>
+      <arglist>[ENGINE_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static Layer *</type>
+      <name>s_layers</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>a3fa7e2e9379aa307aa925cddced90a7d</anchor>
+      <arglist>[ENGINE_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static TextLayer *</type>
+      <name>s_text_layers</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>ad792650669a1fe7fbc8ddd2ea0cfbbe3</anchor>
+      <arglist>[ENGINE_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static char</type>
+      <name>s_last_text</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>a3d49692c74bd5279da1b848ad2265459</anchor>
+      <arglist>[ENGINE_SLOTS_MAX][24]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_count</name>
+      <anchorfile>engine_8c.html</anchorfile>
+      <anchor>a7e54b2f45f314ed1fcc886592c28d8ea</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>engine.h</name>
+    <path>src/c/pebble/ui/engine/</path>
+    <filename>engine_8h.html</filename>
+    <includes id="zone_8h" name="zone.h" local="yes" import="no" module="no" objc="no">ui/zone.h</includes>
+    <class kind="struct">EngineSlot</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ENGINE_SLOTS_MAX</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga60efc891e07d5be12f10e4c1dc7f43d9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>uint8_t(*)</type>
+      <name>EngineBuild</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gafb4e0c889ad43fc740ce8968464eead4</anchor>
+      <arglist>(EngineSlot *out, uint8_t max, GRect bounds)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_init</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga80e9c91268f57dc6bd9233afc9d7a19f</anchor>
+      <arglist>(Window *window, EngineBuild build)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_deinit</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga371c44d7e8c48ce708a69bfd413a2a0e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_rebuild</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga878b25483298cd1601b2191e7eb9da87</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_mark_dirty</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaec392c631ca5f1420f4ad730f2c0c8c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_mark_dirty_tags</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8cfbff710717e1257d8545775d7171b0</anchor>
+      <arglist>(uint32_t changed)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>fonts.c</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>fonts_8c.html</filename>
+    <includes id="fonts_8h" name="fonts.h" local="yes" import="no" module="no" objc="no">ui/fonts.h</includes>
+    <includes id="font__slots_8h" name="font_slots.h" local="yes" import="no" module="no" objc="no">ui/font_slots.h</includes>
+    <member kind="function" static="yes">
+      <type>static void *</type>
+      <name>load_font</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a3a29718b94e247c9ed0deb5016329b7b</anchor>
+      <arglist>(uint32_t resource)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>unload_font</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a82bf9753020d031688b7e8bcd073fb8f</anchor>
+      <arglist>(void *handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_register</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gad49c536818ff15a0e7535e258fbdd59b</anchor>
+      <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_register_system</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gac0a1fd4baa979be69b65a646fd457ad8</anchor>
+      <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>GFont</type>
+      <name>fonts_get</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7a313b71a1524d1183f9163522710472</anchor>
+      <arglist>(FontId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_unload_all</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab7fb11d15d23d2ef37c4baa9db129ee1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_load</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5dd98d76023121d74003ec12118e65b2</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_swap</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8ad877e9d1ef455a6f28358671f32602</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void *</type>
+      <name>s_fonts</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a96e88a98eb7541bf26bd8e95f5fe33a8</anchor>
+      <arglist>[FONT_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_states</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a2432dfac9ba36284dd7b0fc32b077d01</anchor>
+      <arglist>[FONT_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_resources</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a47aabf2b33ad683b29143f2ff7d8b72e</anchor>
+      <arglist>[FONT_SLOTS_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const FontSlots</type>
+      <name>s_slots</name>
+      <anchorfile>fonts_8c.html</anchorfile>
+      <anchor>a2f1b45eaa59b3a595fb8fc1eae4db075</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>fonts.h</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>fonts_8h.html</filename>
+    <member kind="define">
+      <type>#define</type>
+      <name>FONT_SLOTS_MAX</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga4ca1872518ba74eea31ab554588e7398</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>uint8_t</type>
+      <name>FontId</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8cad323339ccb30f88dae519c4e198f5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_register</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gad49c536818ff15a0e7535e258fbdd59b</anchor>
+      <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_load</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5dd98d76023121d74003ec12118e65b2</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_swap</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8ad877e9d1ef455a6f28358671f32602</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_register_system</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gac0a1fd4baa979be69b65a646fd457ad8</anchor>
+      <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>GFont</type>
+      <name>fonts_get</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7a313b71a1524d1183f9163522710472</anchor>
+      <arglist>(FontId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_unload_all</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab7fb11d15d23d2ef37c4baa9db129ee1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>icon_cache.c</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>icon__cache_8c.html</filename>
+    <includes id="icon__cache_8h" name="icon_cache.h" local="yes" import="no" module="no" objc="no">ui/icon_cache.h</includes>
+    <class kind="struct">IconEntry</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ICON_CACHE_MAX</name>
+      <anchorfile>icon__cache_8c.html</anchorfile>
+      <anchor>a25fec78ed8dc40aafa0ee6173a93e661</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icon_tint</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gafa86e8ce9e0e424a0bb3b08e7dd3c04e</anchor>
+      <arglist>(GBitmap *bmp, GColor color)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint8_t</type>
+      <name>px_alpha</name>
+      <anchorfile>icon__cache_8c.html</anchorfile>
+      <anchor>aa9b17bd6491a4fb807f99fb1b0a66a40</anchor>
+      <arglist>(GBitmapFormat fmt, const uint8_t *data, const GColor *palette, int x)</arglist>
+    </member>
+    <member kind="function">
+      <type>IconMargins</type>
+      <name>icon_margins_of</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gabad4c43378e5bd3628da4131b2343ad5</anchor>
+      <arglist>(GBitmap *bmp)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static IconEntry *</type>
+      <name>icon_entry</name>
+      <anchorfile>icon__cache_8c.html</anchorfile>
+      <anchor>aaa420ba9eb1f45c44be31a81a75e521c</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>GBitmap *</type>
+      <name>icon_get</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7968af6a0c5eadec10e501121ec97760</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>IconMargins</type>
+      <name>icon_margins</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga2040f8e16081e8b48289641c6914c73f</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>GSize</type>
+      <name>icon_size</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaa15abf7931b6be2b608974a6c263c56e</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icon_align_trim</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab859f1d276edd74cad316c2b811d79cc</anchor>
+      <arglist>(GAlign align, IconMargins m, int *trim_dx, int *trim_dy)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icons_cleanup</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3b5138fb45e8c6ce2ed2648318eefdab</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static IconEntry</type>
+      <name>s_cache</name>
+      <anchorfile>icon__cache_8c.html</anchorfile>
+      <anchor>a18da54972932ec5215eb68625bc9b2fc</anchor>
+      <arglist>[ICON_CACHE_MAX]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_cache_count</name>
+      <anchorfile>icon__cache_8c.html</anchorfile>
+      <anchor>a087e3f140143741a1c109e184bb4f93c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint32_t</type>
+      <name>s_use_clock</name>
+      <anchorfile>icon__cache_8c.html</anchorfile>
+      <anchor>a8525e491c3ae583afac48b8313e3fc40</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>icon_cache.h</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>icon__cache_8h.html</filename>
+    <class kind="struct">IconMargins</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ICON_AUTOTRIM</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga0218b6d868d6c02e798e1f43e04a8d28</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ICON_TRIM_LOG</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gacd235799baa707d5f8b99169732c0625</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>GBitmap *</type>
+      <name>icon_get</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7968af6a0c5eadec10e501121ec97760</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>GSize</type>
+      <name>icon_size</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaa15abf7931b6be2b608974a6c263c56e</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>IconMargins</type>
+      <name>icon_margins</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga2040f8e16081e8b48289641c6914c73f</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>IconMargins</type>
+      <name>icon_margins_of</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gabad4c43378e5bd3628da4131b2343ad5</anchor>
+      <arglist>(GBitmap *bmp)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icon_tint</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gafa86e8ce9e0e424a0bb3b08e7dd3c04e</anchor>
+      <arglist>(GBitmap *bmp, GColor color)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icon_align_trim</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab859f1d276edd74cad316c2b811d79cc</anchor>
+      <arglist>(GAlign align, IconMargins margins, int *trim_dx, int *trim_dy)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icons_cleanup</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3b5138fb45e8c6ce2ed2648318eefdab</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>readouts.c</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>readouts_8c.html</filename>
+    <includes id="readouts_8h" name="readouts.h" local="yes" import="no" module="no" objc="no">ui/readouts.h</includes>
+    <includes id="beats_8h" name="beats.h" local="yes" import="no" module="no" objc="no">clock/beats.h</includes>
+    <includes id="time__store_8h" name="time_store.h" local="yes" import="no" module="no" objc="no">io/stores/time_store.h</includes>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="weather__store_8h" name="weather_store.h" local="yes" import="no" module="no" objc="no">io/stores/weather_store.h</includes>
+    <includes id="location__store_8h" name="location_store.h" local="yes" import="no" module="no" objc="no">io/stores/location_store.h</includes>
+    <includes id="phone__store_8h" name="phone_store.h" local="yes" import="no" module="no" objc="no">io/stores/phone_store.h</includes>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="setting__values_8h" name="setting_values.h" local="yes" import="no" module="no" objc="no">system/settings/setting_values.h</includes>
+    <includes id="units_8h" name="units.h" local="yes" import="no" module="no" objc="no">system/units/units.h</includes>
+    <includes id="text__case_8h" name="text_case.h" local="yes" import="no" module="no" objc="no">text/text_case.h</includes>
+    <includes id="wx__label_8h" name="wx_label.h" local="yes" import="no" module="no" objc="no">weather/wx_label.h</includes>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_time</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5f1ce126b5f8ddfb48e78d1077355883</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_meridiem</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gad7314f0630f01d77249d12b3f5018d20</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_date</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga27e66e5fb5efa50e5cd3a641ca95f3e1</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>readout_date_shows_beats</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gac815591cccd1783227eb1a656212c8c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hr</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab74d674a3402d0c3ccb145f54ee4d5dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hrv</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3323a26d3294679e221801278ed1b808</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_steps</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga46b62b70722c1a8885049b5dd237aa7e</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_weather_temp</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaee4e7d275341c91bdbae7a5adc7ddc09</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_weather_cond</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5d4d51464278e6e297e35ecf92b88666</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_lat</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaa2fe71cbe1755aae8977cad2d17e71ed</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_lon</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gacea2f8a4dcf1bff5344807e02a4842aa</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_phone_battery</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga89ae84ee592aa9854c2e5047545b145d</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>readouts.h</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>readouts_8h.html</filename>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_time</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5f1ce126b5f8ddfb48e78d1077355883</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_meridiem</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gad7314f0630f01d77249d12b3f5018d20</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_date</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga27e66e5fb5efa50e5cd3a641ca95f3e1</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>readout_date_shows_beats</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gac815591cccd1783227eb1a656212c8c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hr</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab74d674a3402d0c3ccb145f54ee4d5dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hrv</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3323a26d3294679e221801278ed1b808</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_steps</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga46b62b70722c1a8885049b5dd237aa7e</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_weather_temp</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaee4e7d275341c91bdbae7a5adc7ddc09</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_weather_cond</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5d4d51464278e6e297e35ecf92b88666</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_lat</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaa2fe71cbe1755aae8977cad2d17e71ed</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_lon</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gacea2f8a4dcf1bff5344807e02a4842aa</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_phone_battery</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga89ae84ee592aa9854c2e5047545b145d</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>icons.c</name>
+    <path>src/c/pebble/ui/weather/</path>
+    <filename>icons_8c.html</filename>
+    <includes id="icons_8h" name="icons.h" local="yes" import="no" module="no" objc="no">ui/weather/icons.h</includes>
+  </compound>
+  <compound kind="file">
+    <name>icons.h</name>
+    <path>src/c/pebble/ui/weather/</path>
+    <filename>icons_8h.html</filename>
+    <includes id="wire__caps_8g_8h" name="wire_caps.g.h" local="yes" import="no" module="no" objc="no">wire/wire_caps.g.h</includes>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>wx_resource_for</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga9a50b66845b71a795a1739d45b510875</anchor>
+      <arglist>(const char *condition)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>icons_table.g.h</name>
+    <path>src/c/pebble/ui/weather/</path>
+    <filename>icons__table_8g_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>wx_resource_for_table</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7bdf911d493eb75876b96a13b80a6e41</anchor>
+      <arglist>(const char *condition)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>zone.c</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>zone_8c.html</filename>
+    <includes id="zone_8h" name="zone.h" local="yes" import="no" module="no" objc="no">ui/zone.h</includes>
+    <member kind="function">
+      <type>TextLayer *</type>
+      <name>zone_make_layer</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga43295bc3eba00fc026a19f6533e2533b</anchor>
+      <arglist>(Layer *parent, const Zone *zone)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>text_width</name>
+      <anchorfile>zone_8c.html</anchorfile>
+      <anchor>a0ea4a7818cf122b46d82952aa93168b7</anchor>
+      <arglist>(const char *text, GFont font, GTextAlignment align)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>zone_set_text_fit</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga9caa8b2be1e2c9459049c7e6a37d8f7b</anchor>
+      <arglist>(TextLayer *layer, const Zone *zone, const char *text)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>zone.h</name>
+    <path>src/c/pebble/ui/</path>
+    <filename>zone_8h.html</filename>
+    <includes id="fonts_8h" name="fonts.h" local="yes" import="no" module="no" objc="no">ui/fonts.h</includes>
+    <class kind="struct">Zone</class>
+    <member kind="function">
+      <type>TextLayer *</type>
+      <name>zone_make_layer</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga43295bc3eba00fc026a19f6533e2533b</anchor>
+      <arglist>(Layer *parent, const Zone *zone)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>zone_set_text_fit</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga9caa8b2be1e2c9459049c7e6a37d8f7b</anchor>
+      <arglist>(TextLayer *layer, const Zone *zone, const char *text)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>dev_hooks.h</name>
+    <path>src/plugins/dev/c/dev/</path>
+    <filename>dev__hooks_8h.html</filename>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gadf53283b086362bedf9d7b445e457ea4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_start</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga51d93254270b5de85c1a52d484bc4f74</anchor>
+      <arglist>(void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_stop</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gabefedd1cbff9a29f82f78f8bf92352f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_force_time</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga0fc1db4f8d84b98e40c608c63b2395af</anchor>
+      <arglist>(struct tm *when)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>dev_walk.c</name>
+    <path>src/plugins/dev/c/dev/</path>
+    <filename>dev__walk_8c.html</filename>
+    <includes id="dev__walk_8h" name="dev_walk.h" local="yes" import="no" module="no" objc="no">dev/dev_walk.h</includes>
+    <includes id="time__store_8h" name="time_store.h" local="yes" import="no" module="no" objc="no">io/stores/time_store.h</includes>
+    <includes id="weather__store_8h" name="weather_store.h" local="yes" import="no" module="no" objc="no">io/stores/weather_store.h</includes>
+    <includes id="health__store_8h" name="health_store.h" local="yes" import="no" module="no" objc="no">io/stores/health_store.h</includes>
+    <includes id="system__store_8h" name="system_store.h" local="yes" import="no" module="no" objc="no">io/stores/system_store.h</includes>
+    <includes id="location__store_8h" name="location_store.h" local="yes" import="no" module="no" objc="no">io/stores/location_store.h</includes>
+    <includes id="stock__store_8h" name="stock_store.h" local="yes" import="no" module="no" objc="no">io/stores/stock_store.h</includes>
+    <includes id="calendar__store_8h" name="calendar_store.h" local="yes" import="no" module="no" objc="no">io/stores/calendar_store.h</includes>
+    <includes id="phone__store_8h" name="phone_store.h" local="yes" import="no" module="no" objc="no">io/stores/phone_store.h</includes>
+    <includes id="music__store_8h" name="music_store.h" local="yes" import="no" module="no" objc="no">io/stores/music_store.h</includes>
+    <includes id="appmessage__features_8h" name="appmessage_features.h" local="yes" import="no" module="no" objc="no">io/appmessage/appmessage_features.h</includes>
+    <includes id="settings_8h" name="settings.h" local="yes" import="no" module="no" objc="no">system/settings/settings.h</includes>
+    <includes id="engine_8h" name="engine.h" local="yes" import="no" module="no" objc="no">ui/engine/engine.h</includes>
+    <class kind="struct">DevShot</class>
+    <class kind="struct">[struct].s_fixed</class>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>seed_shot</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a0d50aab0fcb61728053f2ac0cb2aee53</anchor>
+      <arglist>(const DevShot *shot)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>apply_shot</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a626e6bc16739d5be4d8e8ff0e4233ecb</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>tap_handler</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a562c18803644a3ae69effdc57b5ccf91</anchor>
+      <arglist>(AccelAxisType axis, int32_t direction)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gad7d36031f9102cac1d91f9d66079d9ed</anchor>
+      <arglist>(int hour, int min)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_init</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga881065800617954a0fd094063774f0d9</anchor>
+      <arglist>(DevWalkMode mode, void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_deinit</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga1ff4ca8046b48b20d4d60258901384c1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const struct @337347247241174026125101045250041056377017370105</type>
+      <name>s_fixed</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>aa91d6e818850cb441758cd44ac29ef88</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static const DevShot</type>
+      <name>s_shots</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>ac25bab8a664832452512cea49fba4bab</anchor>
+      <arglist>[]</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static DevWalkMode</type>
+      <name>s_mode</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a0dfed1fc4a58a0b8d59b3c8cfc20b767</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static void(*)</type>
+      <name>s_apply_theme</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>a64a674fa95930169baa46bbb3ac437c4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static uint8_t</type>
+      <name>s_theme</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>afcaa9a965b7eaadd0552070c0b7eeb82</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_hour</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>ab37f9bc781877575967ffb6110c32529</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static int</type>
+      <name>s_minute</name>
+      <anchorfile>dev__walk_8c.html</anchorfile>
+      <anchor>ab5090bdb6421b46ebdbb010b88a0dae2</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>dev_walk.h</name>
+    <path>src/plugins/dev/c/dev/</path>
+    <filename>dev__walk_8h.html</filename>
+    <member kind="enumeration">
+      <type></type>
+      <name>DevWalkMode</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gabd7169bdf3c69ae6ffe751b975f1fadd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_WALK_NONE</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_WALK_THEMES</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gad7d36031f9102cac1d91f9d66079d9ed</anchor>
+      <arglist>(int hour, int min)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_init</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga881065800617954a0fd094063774f0d9</anchor>
+      <arglist>(DevWalkMode mode, void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_deinit</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga1ff4ca8046b48b20d4d60258901384c1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>[struct].s_fixed</name>
+    <filename>struct_0fstruct_0e_8s__fixed.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>calories</name>
+      <anchorfile>struct_0fstruct_0e_8s__fixed.html</anchorfile>
+      <anchor>a3aef642ea830252c418387bb9331342c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sleep_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__fixed.html</anchorfile>
+      <anchor>a85a2a81d7e03a3f25205c85b1f08d8dd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>active_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__fixed.html</anchorfile>
+      <anchor>acbb3138223564be2d44b7f7cd1abd26f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>distance_m</name>
+      <anchorfile>struct_0fstruct_0e_8s__fixed.html</anchorfile>
+      <anchor>a4ad4a4626c800920155f2409f1d71226</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>lat</name>
+      <anchorfile>struct_0fstruct_0e_8s__fixed.html</anchorfile>
+      <anchor>a74b97d14e2be5e70d0ad5e79dd53e265</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>lon</name>
+      <anchorfile>struct_0fstruct_0e_8s__fixed.html</anchorfile>
+      <anchor>aededa9781856985a2837fa0d086a38ef</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>[struct].s_handlers</name>
+    <filename>struct_0fstruct_0e_8s__handlers.html</filename>
+    <member kind="variable">
+      <type>WeatherHandler</type>
+      <name>on_weather</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>a69f4025ef640e22fdbdfd1b8abda2563</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CoordsHandler</type>
+      <name>on_coords</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>ac75dc0a5cf7ad1a997637c47e0f21b03</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>SettingsChangedHandler</type>
+      <name>on_settings_changed</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>aea93a03a20cd498ea7b38fd7878944b5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>UnitChangedHandler</type>
+      <name>on_unit_changed</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>a16abc213f8353b8189883a65cc18c656</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>StockStripHandler</type>
+      <name>on_stock_strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>a9956f39bd575f4584916564bd5703ef7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarStripHandler</type>
+      <name>on_calendar_strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>ae620e28c9358d52d80d1c44736a01299</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CustomColorsHandler</type>
+      <name>on_custom_colors</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>a4af2fcbe1312196adbfee82a78b6c585</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CustomColorsProvider</type>
+      <name>custom_colors_provider</name>
+      <anchorfile>struct_0fstruct_0e_8s__handlers.html</anchorfile>
+      <anchor>a03250f868919dfc3d4477ad54741f30e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>[struct].s_hours</name>
+    <filename>struct_0fstruct_0e_8s__hours.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>step_hourly</name>
+      <anchorfile>struct_0fstruct_0e_8s__hours.html</anchorfile>
+      <anchor>abd059fa328e9264564b60957fb56696f</anchor>
+      <arglist>[HOURS_PER_DAY]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>step_hours</name>
+      <anchorfile>struct_0fstruct_0e_8s__hours.html</anchorfile>
+      <anchor>a848ed5523b067bf05dd5907529261202</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>[struct].s_state</name>
+    <filename>struct_0fstruct_0e_8s__state.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a6b42b043dd8aa439301e3ef7f088d97e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lat</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a49d22b97f22f8f3b5f52e9c3f5320abd</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>lon</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>ab9a6be89c66daedb8c2c8cf463e543e9</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a159cde20b06213ce3c284be791802f9d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a76fab064443fccad957cca54b5bf2c27</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>aa3436b4f53e574810565c9b29d0042d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>StockStrip</type>
+      <name>strip</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a67444768cf8bf88bd0e079bfc6f9378a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a71acacf736c0662ae8a364a757778e46</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>battery_level</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a5342d9c4d055ae70b79f91132fa02d4b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>charging</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>addc8e821b664e115fe20565aa835a42d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>LinkState</type>
+      <name>link</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a21ac9c99ae8ee34bcc3bc028d7e10495</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>hr</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a69dfa550f32ab21f5c6c5d378d8acd7f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>steps</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>ae463a880e2607355d222974f60b31907</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>calories</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a87fa654bed2286d1a29fa1d3815c44d2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sleep_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a4ff82846014207e0597ba097ec0aa0c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>active_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a11d0ef78d29da6a774cd888998da275f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>distance_m</name>
+      <anchorfile>struct_0fstruct_0e_8s__state.html</anchorfile>
+      <anchor>a6bae943d352d4ea4b1a3f3085e626110</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>[struct].s_window</name>
+    <filename>struct_0fstruct_0e_8s__window.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>hr_history</name>
+      <anchorfile>struct_0fstruct_0e_8s__window.html</anchorfile>
+      <anchor>a4d76d9a5f88589d6d9c83fab6cb4be15</anchor>
+      <arglist>[HR_HISTORY_MINUTES]</arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>hr_last_min</name>
+      <anchorfile>struct_0fstruct_0e_8s__window.html</anchorfile>
+      <anchor>a9b95b17d3bad6b5c13592bb635aab58f</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>CalendarConfig</name>
+    <filename>structCalendarConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structCalendarConfig.html</anchorfile>
+      <anchor>a686613ad49821e6aab85b1ff80eb9ac7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>poll_min</name>
+      <anchorfile>structCalendarConfig.html</anchorfile>
+      <anchor>acb8009a48a79bd45de23069a2a9160f8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structCalendarConfig.html</anchorfile>
+      <anchor>a28bab0644bbdd2302aea9e28f11b1dc8</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>CalendarEvent</name>
+    <filename>structCalendarEvent.html</filename>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>start</name>
+      <anchorfile>structCalendarEvent.html</anchorfile>
+      <anchor>a35709dd02442840c04c3b8f55df74bd9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>end</name>
+      <anchorfile>structCalendarEvent.html</anchorfile>
+      <anchor>a69c9ffe9bd08ab6d24ba17bedd033be4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>all_day</name>
+      <anchorfile>structCalendarEvent.html</anchorfile>
+      <anchor>a169531a172f31f86d98b773c59209a04</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>title</name>
+      <anchorfile>structCalendarEvent.html</anchorfile>
+      <anchor>a6fc555791791a4a6738122267e7891fa</anchor>
+      <arglist>[CAL_TITLE_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>location</name>
+      <anchorfile>structCalendarEvent.html</anchorfile>
+      <anchor>a33d3f80513e76379d78b3fa3617167ae</anchor>
+      <arglist>[CAL_LOC_LEN]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>CalendarPersist</name>
+    <filename>structCalendarPersist.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>structCalendarPersist.html</anchorfile>
+      <anchor>ae1a586fe7cef0f2f8c9bd272419823a1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structCalendarPersist.html</anchorfile>
+      <anchor>ab7ff281f30f99dc0780b00c6a1acf883</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarEvent</type>
+      <name>event</name>
+      <anchorfile>structCalendarPersist.html</anchorfile>
+      <anchor>aec7795407c3e51ac596988c7e65e4ad1</anchor>
+      <arglist>[CALENDAR_PERSIST_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>structCalendarPersist.html</anchorfile>
+      <anchor>a9ba0dbe5f0bd8c2114bacc0be1385f11</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>CalendarSeed</name>
+    <filename>structCalendarSeed.html</filename>
+    <member kind="variable">
+      <type>const CalendarStrip *</type>
+      <name>strip</name>
+      <anchorfile>structCalendarSeed.html</anchorfile>
+      <anchor>ae30b59c3ff9a7e08801f875e88e94e50</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>CalendarStrip</name>
+    <filename>structCalendarStrip.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structCalendarStrip.html</anchorfile>
+      <anchor>a72c606e3a79d61f51137e7ab7630ffd2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>CalendarEvent</type>
+      <name>event</name>
+      <anchorfile>structCalendarStrip.html</anchorfile>
+      <anchor>ab1ebd00551b1b306009bf85fca08746e</anchor>
+      <arglist>[CALENDAR_SLOTS_MAX]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>CallbackList</name>
+    <filename>structCallbackList.html</filename>
+    <member kind="variable">
+      <type>CallbackListFn *</type>
+      <name>entries</name>
+      <anchorfile>structCallbackList.html</anchorfile>
+      <anchor>a7cb0e28a0c100340f47600574a57e79a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>max</name>
+      <anchorfile>structCallbackList.html</anchorfile>
+      <anchor>ad33600bd393ae2c2c781e19ac92d9daa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>count</name>
+      <anchorfile>structCallbackList.html</anchorfile>
+      <anchor>abfedc29c17bb9afb36b5b966f70a9f2d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>DevShot</name>
+    <filename>structDevShot.html</filename>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>temp</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>ab2b6ce3f1accb9c6755384132c4e8249</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>cond</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>a33f6181cb79b77d7b3a0f7d7c7891ab7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>hr</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>a61106f9c84b95b72b4da3cca2a312f74</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>steps</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>a2e288d0b1865a8bde030569b98274f60</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>battery</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>a071b035c65394ce86dc044d4aa3517bf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>bluetooth</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>a36e1570c506bfeec9d9e8f527a4d1123</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>quiet_icon</name>
+      <anchorfile>structDevShot.html</anchorfile>
+      <anchor>a7fcd16cb2a5cb8d4c948f589352e0e70</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>EngineSlot</name>
+    <filename>structEngineSlot.html</filename>
+    <member kind="variable">
+      <type>GRect</type>
+      <name>frame</name>
+      <anchorfile>structEngineSlot.html</anchorfile>
+      <anchor>a0cc398600007b0b9eafeb67ca50b9201</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>draw</name>
+      <anchorfile>structEngineSlot.html</anchorfile>
+      <anchor>a1b963e9e7f45ae3fdd2a683646ad1124</anchor>
+      <arglist>(GContext *ctx, GRect bounds, const void *data)</arglist>
+    </member>
+    <member kind="variable">
+      <type>const void *</type>
+      <name>data</name>
+      <anchorfile>structEngineSlot.html</anchorfile>
+      <anchor>a42d96fd8327f37c24cb80e76386ecd45</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const Zone *</type>
+      <name>zone</name>
+      <anchorfile>structEngineSlot.html</anchorfile>
+      <anchor>a69694269a011f100691b29354f0ca5c5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>text</name>
+      <anchorfile>structEngineSlot.html</anchorfile>
+      <anchor>a8a5ac19edbcc57bc74acebfa446f4180</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>tags</name>
+      <anchorfile>structEngineSlot.html</anchorfile>
+      <anchor>a4587109d787749d3787c2521ec404314</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>FontSlots</name>
+    <filename>structFontSlots.html</filename>
+    <member kind="variable">
+      <type>void **</type>
+      <name>handles</name>
+      <anchorfile>structFontSlots.html</anchorfile>
+      <anchor>afac089c41cbf3630803b0196b642c052</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t *</type>
+      <name>states</name>
+      <anchorfile>structFontSlots.html</anchorfile>
+      <anchor>a108607742ea5763b94a195e067184c5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>count</name>
+      <anchorfile>structFontSlots.html</anchorfile>
+      <anchor>ac8b4c11c8402208fa0c24b6f25e9c29a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthConfig</name>
+    <filename>structHealthConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a0d2006e2992c6532c1fab3102c8fda14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart *</type>
+      <name>hr_history</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a96796ce0373e3d8bf3a20f4b92ee562a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart *</type>
+      <name>step_history</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a2b0766458c8fcb62af6708785123522e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart *</type>
+      <name>hr_day</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ac21b65af356c6ae70fa024719aeb5f1e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>sleep</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>abc0f98aaaeadd8c236d39a08d7deebcf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>active</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a843879d7b5ad5103735e75d662e3781b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>calories</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>af6cc7bfa1e1468a1568965065272ec3a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>distance</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ae5c2a0cad22cbfae68a1dde16c9f822b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_period_sec</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a8e637a9018d8e8c9d8e295a20e1bde3e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_still_mg</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>acfebb54de2a823338599ea012e461f7e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_walk_steps</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a72ae3b5cbca33403651ac580b74a73bc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a0731ff79f359c3332e041cdad2a567c9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvCount</type>
+      <name>hrv_count</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ada15ad269a3134ff2ebb721a1c2aeef1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>hrv_keep_all</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>ada28d8d02cd0dfb04fc8852e9707aa34</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>hrv_live_redraw</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a061a4b722de6578616ce05af73b2a9a5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>hrv_persist_key</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>aab37c71e8400eb25e7187131ca40bf20</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structHealthConfig.html</anchorfile>
+      <anchor>a162f07256f08bd8dada6c12f6178cce0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthHrvConfig</name>
+    <filename>structHealthHrvConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a581da6804d052936dc3e6dbdbbe8d0ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>period_sec</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a75deb2b8f8899dbbb62b936ab5c52f26</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>still_mg</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>ae51ccd02a82b1544b151d29f59605603</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>walk_steps</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a6ee174215aaaf176978fe25a5af47d03</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>settle_gaps</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>aa95836d24b5b59e300ce09786aa14aa4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvCount</type>
+      <name>count</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>aa23c616a682cecedddf36b6569275652</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>keep_all</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>a8d5344dcfe1a958c87e8cfe469d36e13</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live_redraw</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>ac7610afd71927b65c5544bc3e264762f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structHealthHrvConfig.html</anchorfile>
+      <anchor>afbb9c1c8fbd170998832acf2a1654c08</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthPart</name>
+    <filename>structHealthPart.html</filename>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>start</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a12a4aadf15fcf1f24673a41edf301c31</anchor>
+      <arglist>(const struct HealthConfig *cfg, const struct HealthSeed *seed)</arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>heart_rate</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a915f5979b635dc500a0c39e012dd206e</anchor>
+      <arglist>(int hr, bool from_event)</arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>steps</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a9ff2638dccc449a741d6bd4f51436811</anchor>
+      <arglist>(int steps)</arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>poll</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>adee53ec3450d3777577cfcc64641ddee</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t(*)</type>
+      <name>sum</name>
+      <anchorfile>structHealthPart.html</anchorfile>
+      <anchor>a6a8afb5813844f4108eeac487ef069fd</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthSaved</name>
+    <filename>structHealthSaved.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>structHealthSaved.html</anchorfile>
+      <anchor>aebdb6f4702918a9ec02f00d43c665fda</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>hr_history</name>
+      <anchorfile>structHealthSaved.html</anchorfile>
+      <anchor>a328aae865b39d96d9b4b1a3f812fd77a</anchor>
+      <arglist>[HR_HISTORY_MINUTES]</arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>hr_last_min</name>
+      <anchorfile>structHealthSaved.html</anchorfile>
+      <anchor>a0c08244c197ab8cfa9544f175fdf7011</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HealthSeed</name>
+    <filename>structHealthSeed.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>hr</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a164c62c872f758f093f13bb1772e3cbe</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>steps</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a192572a06658ca20b3f0f436379b0c05</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>calories</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>aa6696d59b0ddcf768b8fd291bbc14119</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sleep_min</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a8a4f5427747cc9c610f9a4d762f60e82</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>active_min</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a8be3ae0a2c011bad8f9bec3c4328b687</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>distance_m</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>aa847d55e5639320abb08555d2507c30f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>hr_history</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>afd4cb3c261939fd333cfbd42c93ed85a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint16_t *</type>
+      <name>step_hourly</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a1ed293dabaee597deaed84e6448b0eb0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>step_hours</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>ae8ed84681436e54cc8f65a3270cea4e1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>hrv_ms</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>ab2c79c328b5052d7f80c63c19554fb0a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HrvLog *</type>
+      <name>hrv_log</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>a9db1153f7855a60da1c483835e617b34</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HrDay *</type>
+      <name>hr_day</name>
+      <anchorfile>structHealthSeed.html</anchorfile>
+      <anchor>afbd19a428a976ca092968a28be9b55bb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HourLatch</name>
+    <filename>structHourLatch.html</filename>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_start</name>
+      <anchorfile>structHourLatch.html</anchorfile>
+      <anchor>af42cb17bd6a6dfea7d7c95e87eb8f37a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrDay</name>
+    <filename>structHrDay.html</filename>
+    <member kind="variable">
+      <type>HrHour</type>
+      <name>hours</name>
+      <anchorfile>structHrDay.html</anchorfile>
+      <anchor>a76dfd4ae93e2e8456f39ff3e4696a551</anchor>
+      <arglist>[HR_DAY_HOURS]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrHour</name>
+    <filename>structHrHour.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>sum</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>ae7c30238cdf33fbe7bd2a71e969073d4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>a79afcfd92db39ce28cd2403870d003c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>low</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>acc0ce007509ea40c9fe818e314e29a82</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>high</name>
+      <anchorfile>structHrHour.html</anchorfile>
+      <anchor>a480f4555048bcc612e1fa22e6e15bd25</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvBurst</name>
+    <filename>structHrvBurst.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>at_sec</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a0b575b957833471898c947e909993977</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>ms</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a6df7af8a3ad719c38288e1fa90284cc7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>score</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a7f41783d828f1c3a38b165b18d9359a3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>steps</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a5348549429b22c79d0609ea689c271a3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>state</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a58ee6dd37207c2516a9f4d30b907c13a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>kept</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>ad59f10883d3d332aef745fcf2436ddb8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>gaps</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a85f277ac10b1ac6c9ee0b90907759f15</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>counted</name>
+      <anchorfile>structHrvBurst.html</anchorfile>
+      <anchor>a4d29b6ad9315ce792bb2c02fc5ca8c2d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvLog</name>
+    <filename>structHrvLog.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>at_min</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a898e4d69bd130a381d7e5b2a27704d93</anchor>
+      <arglist>[HRV_LOG_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>state_at_min</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a132744d928d35ad4e74aff4a8c128ce1</anchor>
+      <arglist>[HRV_STATE_COUNT]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>night_last_min</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a3d1963f976288c425e3091b7ea680ae1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int32_t</type>
+      <name>today</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a55a17799c1b88a50a3c0ae498d46bbe7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hour_sum</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a6c4b08a197ab3fa859726fbce53e9e32</anchor>
+      <arglist>[HRV_LOG_HOURS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>night_sum</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a8358c0a25ef95a20bb12a3c777f632bf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>ms</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>aa95148fd04e627a8fe481a0ddd983721</anchor>
+      <arglist>[HRV_LOG_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>flags</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a9f7a5f58d53427cce901584c8e4ae8af</anchor>
+      <arglist>[HRV_LOG_SLOTS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>hour_count</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a9997f5a57d71177899bb1d516cbf3bc9</anchor>
+      <arglist>[HRV_LOG_HOURS]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>state_ms</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a9988535882d653682cec76de29ac25e5</anchor>
+      <arglist>[HRV_STATE_COUNT]</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>night_count</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>a7b458c2b7c1198060bdee317fc595b8e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>head</name>
+      <anchorfile>structHrvLog.html</anchorfile>
+      <anchor>aa75f1f8b1b62fa4fa8255bcd675a84ca</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvMotion</name>
+    <filename>structHrvMotion.html</filename>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>last_x</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a41c7172c7306a847903028be8a6c1fea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>last_y</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a6e5f5c3c8c361ee8cf0f65cdc3d19be3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>last_z</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>af87e0721177b9e093cc6c190baabec62</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>primed</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>ad8bc1316b2adb8e66b7c078b6911737f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>sum</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a81caf58201cd5b6e599cbb3b628e12ae</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>samples</name>
+      <anchorfile>structHrvMotion.html</anchorfile>
+      <anchor>a96262039c2c01aaf5903a94e72eebed8</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvRun</name>
+    <filename>structHrvRun.html</filename>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>last_ms</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>ab97d22d055ef0b60e635d6dc9b4054ec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>diffs</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>abecaa11823f37d0a00f94eb998531779</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>sum_sq</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>a28c5a2fd3af6e8aa44b548948457e89a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>last_at</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>ad9b69963930bf29a2ee1ba9aaacb171d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>finished_diffs</name>
+      <anchorfile>structHrvRun.html</anchorfile>
+      <anchor>ac6cfd6e43f145c2428061b7ed8141d9e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>HrvSaved</name>
+    <filename>structHrvSaved.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>structHrvSaved.html</anchorfile>
+      <anchor>ad558b727e15dd18b15f8a0edad9af7a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>pad</name>
+      <anchorfile>structHrvSaved.html</anchorfile>
+      <anchor>a5e1ed03113c7b90fb66b52e22318925d</anchor>
+      <arglist>[3]</arglist>
+    </member>
+    <member kind="variable">
+      <type>HrvLog</type>
+      <name>log</name>
+      <anchorfile>structHrvSaved.html</anchorfile>
+      <anchor>a0724c369de7401a1acd54d5d05f67e52</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>IconEntry</name>
+    <filename>structIconEntry.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>res</name>
+      <anchorfile>structIconEntry.html</anchorfile>
+      <anchor>afbac9a3396568064669ee57bbeb0b533</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GBitmap *</type>
+      <name>bmp</name>
+      <anchorfile>structIconEntry.html</anchorfile>
+      <anchor>afe492534dca5b03d015294388fe33d3e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>IconMargins</type>
+      <name>margin</name>
+      <anchorfile>structIconEntry.html</anchorfile>
+      <anchor>a28ec4407002560f82c3199726fbc4d56</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GColor</type>
+      <name>tint</name>
+      <anchorfile>structIconEntry.html</anchorfile>
+      <anchor>aff9ed05ce2b092a889acb2cfdb5a3149</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>tinted</name>
+      <anchorfile>structIconEntry.html</anchorfile>
+      <anchor>a7b9da71f47b947747679cd8eb52290bb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>used</name>
+      <anchorfile>structIconEntry.html</anchorfile>
+      <anchor>a11d272fabe3a08b5ab94b0190abc098a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>IconMargins</name>
+    <filename>structIconMargins.html</filename>
+    <member kind="variable">
+      <type>int8_t</type>
+      <name>n</name>
+      <anchorfile>structIconMargins.html</anchorfile>
+      <anchor>a5b847402c47da2a5c68015b168b6f095</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int8_t</type>
+      <name>e</name>
+      <anchorfile>structIconMargins.html</anchorfile>
+      <anchor>a1a468355cf81853b147b86eb299ca9d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int8_t</type>
+      <name>s</name>
+      <anchorfile>structIconMargins.html</anchorfile>
+      <anchor>ac096607bc2480aecff0caa913c973da6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int8_t</type>
+      <name>w</name>
+      <anchorfile>structIconMargins.html</anchorfile>
+      <anchor>a6009de65228c00ea94faf8a265d22337</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>LinkState</name>
+    <filename>structLinkState.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>connected</name>
+      <anchorfile>structLinkState.html</anchorfile>
+      <anchor>a1e23f35e88c771bf6c15b7af729f4997</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>seeded</name>
+      <anchorfile>structLinkState.html</anchorfile>
+      <anchor>a1897bf6317866c03d247834e9826dbee</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>LocationConfig</name>
+    <filename>structLocationConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structLocationConfig.html</anchorfile>
+      <anchor>a83c6b320e75bb7bed8f72b441b063e33</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structLocationConfig.html</anchorfile>
+      <anchor>a4ba08972332cc0893b16546ee64ff001</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>LocationSeed</name>
+    <filename>structLocationSeed.html</filename>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>lat</name>
+      <anchorfile>structLocationSeed.html</anchorfile>
+      <anchor>a58307502423dcd0ab844df491022d3a5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>lon</name>
+      <anchorfile>structLocationSeed.html</anchorfile>
+      <anchor>a525f72325d8cad6c0317e6b0d4ce469f</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicConfig</name>
+    <filename>structMusicConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structMusicConfig.html</anchorfile>
+      <anchor>a636a310038ea4387959c0dd3be233cc8</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicSeed</name>
+    <filename>structMusicSeed.html</filename>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>title</name>
+      <anchorfile>structMusicSeed.html</anchorfile>
+      <anchor>a3af3b5747a6be4137b9539836a1ee61a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>artist</name>
+      <anchorfile>structMusicSeed.html</anchorfile>
+      <anchor>a4723f047d981cabde8f045172453d66b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>playing</name>
+      <anchorfile>structMusicSeed.html</anchorfile>
+      <anchor>a1ea9e553344167fdd6541de050a2400c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>MusicTrack</name>
+    <filename>structMusicTrack.html</filename>
+    <member kind="variable">
+      <type>char</type>
+      <name>title</name>
+      <anchorfile>structMusicTrack.html</anchorfile>
+      <anchor>a583668c50deecc86873ee1e656d27055</anchor>
+      <arglist>[MUSIC_TEXT_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>artist</name>
+      <anchorfile>structMusicTrack.html</anchorfile>
+      <anchor>a29074906d638e30c2c9d76034e9d2fa4</anchor>
+      <arglist>[MUSIC_TEXT_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>playing</name>
+      <anchorfile>structMusicTrack.html</anchorfile>
+      <anchor>aac9bdcbbd4c48e417f15e08049eb211d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>OutboxJob</name>
+    <filename>structOutboxJob.html</filename>
+    <member kind="variable">
+      <type>OutboxKind</type>
+      <name>kind</name>
+      <anchorfile>structOutboxJob.html</anchorfile>
+      <anchor>aa20c6b821810cd0c7e429d39ab384177</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>retries_left</name>
+      <anchorfile>structOutboxJob.html</anchorfile>
+      <anchor>ad67e53a2715d5da68bcfc499b76ac9f1</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>OutboxQueue</name>
+    <filename>structOutboxQueue.html</filename>
+    <member kind="variable">
+      <type>OutboxJob</type>
+      <name>queue</name>
+      <anchorfile>structOutboxQueue.html</anchorfile>
+      <anchor>a141b8e118c59b9bc0ca098764a31e621</anchor>
+      <arglist>[OUTBOX_QUEUE_MAX]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>queue_len</name>
+      <anchorfile>structOutboxQueue.html</anchorfile>
+      <anchor>ab70b090f98cb6d8312839fab6df2e760</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>OutboxJob</type>
+      <name>failed</name>
+      <anchorfile>structOutboxQueue.html</anchorfile>
+      <anchor>a92e6621d86ce15a0c8b267ccfbd104ad</anchor>
+      <arglist>[OUTBOX_QUEUE_MAX]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>failed_len</name>
+      <anchorfile>structOutboxQueue.html</anchorfile>
+      <anchor>a8e19a14422d45c421b65bb40f9c1241f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>OutboxJob</type>
+      <name>inflight</name>
+      <anchorfile>structOutboxQueue.html</anchorfile>
+      <anchor>a862c21cc48afbee03d844a6d56a404f0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>PhoneConfig</name>
+    <filename>structPhoneConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structPhoneConfig.html</anchorfile>
+      <anchor>adb4652349b381a696e385de7d05928c9</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>PhoneSeed</name>
+    <filename>structPhoneSeed.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>battery</name>
+      <anchorfile>structPhoneSeed.html</anchorfile>
+      <anchor>a89def13debe62b82f2e4843a1b3cf63e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>PluginSourceSettings</name>
+    <filename>structPluginSourceSettings.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>version</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a409a10e68ff84095c7161fca52377e1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>weather</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a2b47841bbff1c8c327755fcc07dc4fd4</anchor>
+      <arglist>[PLUGIN_SOURCE_WEATHER_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>calendar</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a75f039697f416740c7eac0c5653862da</anchor>
+      <arglist>[PLUGIN_SOURCE_CALENDAR_LEN]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>SettingField</name>
+    <filename>structSettingField.html</filename>
+    <member kind="variable">
+      <type>SettingId</type>
+      <name>id</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>aec798b7f3491ac6acec2d2188063e15b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint32_t *</type>
+      <name>message_key</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>ac8a166713eef87fb9adb5c8119c0d4dd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>SettingType</type>
+      <name>type</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>ae67eb62444a3ef84ce77260694c533c1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>offset</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>a1d9df18c4cf838434964e182d565b4d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>size</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>a3b8afca1c975f184271f81e55763af53</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>enum_count</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>a1b26f28a04acef7e3ea2af0b7e1f1707</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>default_num</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>ab9dc0056bfc6811d5be0dd8600042c14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>default_str</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>a3a2055d62a14725d4f8b08a50d6546d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>affects_layout</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>ab9b0ae808d778bce54ba249994d87728</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>affects_weather</name>
+      <anchorfile>structSettingField.html</anchorfile>
+      <anchor>a5b5aa3e72da7efea998a16f6c833e4e3</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>SettingsInbound</name>
+    <filename>structSettingsInbound.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>changed</name>
+      <anchorfile>structSettingsInbound.html</anchorfile>
+      <anchor>afe10d6eafb1c7b87bbf92d71cd16618f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>layout_changed</name>
+      <anchorfile>structSettingsInbound.html</anchorfile>
+      <anchor>a0191358313d7d00799bd893bc58e491f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>weather_changed</name>
+      <anchorfile>structSettingsInbound.html</anchorfile>
+      <anchor>a843cd791d2de3b7dc02479ba114cf969</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>SettingsSchema</name>
+    <filename>structSettingsSchema.html</filename>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>key</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a8ebbf487f15d86af43b9aea6d0316c07</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>version</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a1ba82ee7252bbf6eac986e2e8cfcc10d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>first_size</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a631fe9764dad73ab2e4042366932ff3e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>void *</type>
+      <name>blob</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a438d6811d84f07c545ee4446c8fa9c5b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>blob_size</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a596fbeb3c05f172304792c0479cea8cb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const SettingField *</type>
+      <name>fields</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a0c8a65bed4b4810a0d8b5aa38b7ea2ed</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>field_count</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a06d990933c3f595e205f7cca8a63a5eb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool(*)</type>
+      <name>migrate</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a98dd2666626795edfc3593fd9880b495</anchor>
+      <arglist>(int stored_size)</arglist>
+    </member>
+    <member kind="variable">
+      <type>const struct SettingsSchema *</type>
+      <name>companion</name>
+      <anchorfile>structSettingsSchema.html</anchorfile>
+      <anchor>a0ca782030ce421247e781ebb459f438e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>StockConfig</name>
+    <filename>structStockConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structStockConfig.html</anchorfile>
+      <anchor>ae0699f32855948ce685614e570317f38</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>poll_min</name>
+      <anchorfile>structStockConfig.html</anchorfile>
+      <anchor>a26c88d84596dd4347fe66f69a84fc698</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structStockConfig.html</anchorfile>
+      <anchor>a35aea9539901a173b4dc1343054dff80</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>StockSeed</name>
+    <filename>structStockSeed.html</filename>
+    <member kind="variable">
+      <type>const StockStrip *</type>
+      <name>strip</name>
+      <anchorfile>structStockSeed.html</anchorfile>
+      <anchor>ad8f30db92dc3f9f9c3127c38b6aa58ca</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>StockSlot</name>
+    <filename>structStockSlot.html</filename>
+    <member kind="variable">
+      <type>char</type>
+      <name>symbol</name>
+      <anchorfile>structStockSlot.html</anchorfile>
+      <anchor>a297cf0bffbcaf225d6be1979660efbb0</anchor>
+      <arglist>[STOCK_SYMBOL_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>price_cents</name>
+      <anchorfile>structStockSlot.html</anchorfile>
+      <anchor>a5256275b025aa00f48cc430f0fb775be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>change_pct</name>
+      <anchorfile>structStockSlot.html</anchorfile>
+      <anchor>a8dd9ac04b08e83a1400323dcd32e76f8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>ok</name>
+      <anchorfile>structStockSlot.html</anchorfile>
+      <anchor>afcd50802e50f27fd66ede857cd333679</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>StockStrip</name>
+    <filename>structStockStrip.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structStockStrip.html</anchorfile>
+      <anchor>a42f670ac4726b7bda534a6a5b0856b03</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>StockSlot</type>
+      <name>slot</name>
+      <anchorfile>structStockStrip.html</anchorfile>
+      <anchor>a45e9c3f96711770e84c15dbc8ba8f14a</anchor>
+      <arglist>[STOCK_SLOTS_MAX]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>StoreFetch</name>
+    <filename>structStoreFetch.html</filename>
+    <member kind="variable">
+      <type>StorePoll</type>
+      <name>poll</name>
+      <anchorfile>structStoreFetch.html</anchorfile>
+      <anchor>a5b02e91cae8fecfcff25a25c162bd923</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>AppTimer *</type>
+      <name>timer</name>
+      <anchorfile>structStoreFetch.html</anchorfile>
+      <anchor>a4850747c6e69fbb4bfbd859aa8ca8d14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>void(*)</type>
+      <name>request</name>
+      <anchorfile>structStoreFetch.html</anchorfile>
+      <anchor>a6faa1b9a94dd4e7faf5bb6ff5de4087d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>first_ms</name>
+      <anchorfile>structStoreFetch.html</anchorfile>
+      <anchor>a57bae37532649062e21d44b21b93a0ff</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>StorePoll</name>
+    <filename>structStorePoll.html</filename>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>next</name>
+      <anchorfile>structStorePoll.html</anchorfile>
+      <anchor>a324f51d57d9b85613a6ea5ab1c6411e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>poll_min</name>
+      <anchorfile>structStorePoll.html</anchorfile>
+      <anchor>a8ddb0db53f8ee2769ef42460bbd94303</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structStorePoll.html</anchorfile>
+      <anchor>ad96becb58ae977574a0b761caa011cb8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>pinned</name>
+      <anchorfile>structStorePoll.html</anchorfile>
+      <anchor>aba76cc6762ace5d4c5ceddfa7b919de1</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>SystemConfig</name>
+    <filename>structSystemConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structSystemConfig.html</anchorfile>
+      <anchor>a3a51107da6d0eccf43036c688e77b2fa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>BtVibePolicy</type>
+      <name>vibe</name>
+      <anchorfile>structSystemConfig.html</anchorfile>
+      <anchor>a7009ff4ab3db654c9944b6cc01c4d9d2</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>SystemSeed</name>
+    <filename>structSystemSeed.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>battery</name>
+      <anchorfile>structSystemSeed.html</anchorfile>
+      <anchor>a51e6c8c9c417fce174a71a3ba8d3994d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>charging</name>
+      <anchorfile>structSystemSeed.html</anchorfile>
+      <anchor>a709c393ec6012a6fccd8bfba55c21594</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>bluetooth</name>
+      <anchorfile>structSystemSeed.html</anchorfile>
+      <anchor>aace126b5167d9b3e1b8b6caa82717dee</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>next_alarm</name>
+      <anchorfile>structSystemSeed.html</anchorfile>
+      <anchor>ab5d79666596362e29fc16f637bb07ae7</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>TimeBand</name>
+    <filename>structTimeBand.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>start_min</name>
+      <anchorfile>structTimeBand.html</anchorfile>
+      <anchor>a740086bb48f2ad7e76e859f9eb151232</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>span_min</name>
+      <anchorfile>structTimeBand.html</anchorfile>
+      <anchor>a9841d94a14ac1b0ca9e1f33868437da5</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>TimeBandSpan</name>
+    <filename>structTimeBandSpan.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>from</name>
+      <anchorfile>structTimeBandSpan.html</anchorfile>
+      <anchor>a3e97f13ab587ef30e42ededc9f0a595b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>to</name>
+      <anchorfile>structTimeBandSpan.html</anchorfile>
+      <anchor>a0520d74d4aa34d60477daf1e2845e6e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>clipped_start</name>
+      <anchorfile>structTimeBandSpan.html</anchorfile>
+      <anchor>a9a878a11dc8dcb894f60e121ffb50c20</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>clipped_end</name>
+      <anchorfile>structTimeBandSpan.html</anchorfile>
+      <anchor>abb8db41808468ee3b0693a2a427e12c9</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>TimeConfig</name>
+    <filename>structTimeConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structTimeConfig.html</anchorfile>
+      <anchor>af951cac1e7733963949ff707dcfe650e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>minute_tick</name>
+      <anchorfile>structTimeConfig.html</anchorfile>
+      <anchor>a2c93b890d0d369c7e4b82648bac39d20</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>beats</name>
+      <anchorfile>structTimeConfig.html</anchorfile>
+      <anchor>a9f051ec76f4f1a95058f5ec52506aabc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>hourly</name>
+      <anchorfile>structTimeConfig.html</anchorfile>
+      <anchor>ab302b6ad83ef9a9f1a26f0bcab293e16</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherClock</name>
+    <filename>structWeatherClock.html</filename>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>now</name>
+      <anchorfile>structWeatherClock.html</anchorfile>
+      <anchor>a9fdd4c975baaa069590ed44b86c207a1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>day_start</name>
+      <anchorfile>structWeatherClock.html</anchorfile>
+      <anchor>a3ae8fad6167ba4194d754c420fed06cb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>hour</name>
+      <anchorfile>structWeatherClock.html</anchorfile>
+      <anchor>a8ff4a083b881047a4608b0d328c3b6e6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>minute</name>
+      <anchorfile>structWeatherClock.html</anchorfile>
+      <anchor>a7562e2fafbe4bd092596ab24d60c1c21</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>second</name>
+      <anchorfile>structWeatherClock.html</anchorfile>
+      <anchor>a392bd2d9e6c9ecc8247663108492fcbb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>wday</name>
+      <anchorfile>structWeatherClock.html</anchorfile>
+      <anchor>a8e6c870f60a2694eaa5e8af7755bf724</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherConfig</name>
+    <filename>structWeatherConfig.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>live</name>
+      <anchorfile>structWeatherConfig.html</anchorfile>
+      <anchor>ad002199ba6f3a4b7af38924a8bb640e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>poll_min</name>
+      <anchorfile>structWeatherConfig.html</anchorfile>
+      <anchor>ae74aa3985257e1cabb55468fb482cba4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint32_t</type>
+      <name>persist_key</name>
+      <anchorfile>structWeatherConfig.html</anchorfile>
+      <anchor>aea465941bd98b1490454738c7af6088e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherDaily</name>
+    <filename>structWeatherDaily.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structWeatherDaily.html</anchorfile>
+      <anchor>abbd4a49f7df11b0756e1418e49fb391b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>base_weekday</name>
+      <anchorfile>structWeatherDaily.html</anchorfile>
+      <anchor>af780eee24c1b9f82b788f4fdcd7379c8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>WeatherDayCol</type>
+      <name>col</name>
+      <anchorfile>structWeatherDaily.html</anchorfile>
+      <anchor>a989f24bc5dd7bd2740be75a9b1be6904</anchor>
+      <arglist>[WEATHER_FORECAST_COLS]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherDayCol</name>
+    <filename>structWeatherDayCol.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>code</name>
+      <anchorfile>structWeatherDayCol.html</anchorfile>
+      <anchor>ac38766be593b08c4c3abdc4a89626203</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>temp_max</name>
+      <anchorfile>structWeatherDayCol.html</anchorfile>
+      <anchor>ad3f35b86fa0243cf336df447a5823c64</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>temp_min</name>
+      <anchorfile>structWeatherDayCol.html</anchorfile>
+      <anchor>a07060351177da6c12bd309d7c76e79ab</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherHourCol</name>
+    <filename>structWeatherHourCol.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>code</name>
+      <anchorfile>structWeatherHourCol.html</anchorfile>
+      <anchor>ae088f957b24a2f5b36846803d1e1b383</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>temp</name>
+      <anchorfile>structWeatherHourCol.html</anchorfile>
+      <anchor>a1775eddd69fb1c024595af53454d0e22</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherHourly</name>
+    <filename>structWeatherHourly.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>count</name>
+      <anchorfile>structWeatherHourly.html</anchorfile>
+      <anchor>ad43f77992787c31c31ee2048e367a58e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>base_hour</name>
+      <anchorfile>structWeatherHourly.html</anchorfile>
+      <anchor>ad7a834d6b6571d80f22136ef20ef9e41</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>step_hours</name>
+      <anchorfile>structWeatherHourly.html</anchorfile>
+      <anchor>a7cc8b049ea31e32b4c89ee2f49294eaa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>WeatherHourCol</type>
+      <name>col</name>
+      <anchorfile>structWeatherHourly.html</anchorfile>
+      <anchor>a6bac632eda867f46146ff87090e81473</anchor>
+      <arglist>[WEATHER_FORECAST_COLS]</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherMessage</name>
+    <filename>structWeatherMessage.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>groups</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a2ef77286e2f02067ca9e7437aca389a6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>ok</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a328318e4aa166fec155634010ddf8431</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a975df3054641eddb181006370fe704be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>cond</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>af788f75769fe248ae57b11f9eb626fdd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>humidity</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a58ad44b76adbf7e94a0b5acb50c04783</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>wind_kmh</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a16481e6e0f37ab4e8d86756af480984b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>wind_dir</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a51a1436b6e9630b7f1c9f9c420607120</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>cond_label</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>ad6aae8415749e405ce9892c61daa06cb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sunrise</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a423bfb57af732fbe40889a50a5d6604f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>sunset</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a2adc5a90619bd4a3572ff13fc54bf45c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>uv</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>aa64e5b7422e22ec1eb018b0afe7bf56d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp_max</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a217ead73acf2ca31c797d0e536dfff33</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp_min</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a16a30cff51ac31165840714b5bac5227</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>precip_chance</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a196b4cbc8502c9c6e24d1040d4ff8ce2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>feels_like</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>ace9fa48992630d940ef2fbd4e21dfd05</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>pressure</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>ae9d770ab1a1756f491395ca35cf2014e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>dew_point</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a9b16dd1fd8f5a9f6ee2c3d7902e57368</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>hourly</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a7b03071ef02a2a9a5906f65735f1b010</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>hourly_len</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a9137b2f3ba3f619fbecd49e518a97bcb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const uint8_t *</type>
+      <name>daily</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>afc89d1fd8b8de86ea19a1704a0623543</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>uint16_t</type>
+      <name>daily_len</name>
+      <anchorfile>structWeatherMessage.html</anchorfile>
+      <anchor>a2246248b9662e9e1bd5ca6c8ed1a4096</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherSeed</name>
+    <filename>structWeatherSeed.html</filename>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>temp</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a800405640fdfe30f5f50c13c2ff784c6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>cond</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a93c60f615195612444d3d584e7a669cb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>humidity</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a3283c2db1cab5449deea79f7ec44ff4d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>wind_kmh</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a709b8a2cb2aa19136736b221aa2b600d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>wind_dir</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>abe78d980ed72ae675e9e9c4aac94baf5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const char *</type>
+      <name>cond_label</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>aa97c3694fa89fbfa1c502bdd12b33a91</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>sunrise</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>aba05dbb6d3d4c5affa61bd1bfab8fdf4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>sunset</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>addb3dcd8ffd37faf745214d6503b30cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>uv</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>af976c15fe0ef750a0e83a1250f6bea43</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp_max</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a61eddb007829da41b47f94582d5c43a6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp_min</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a961fe24ad83d628b251f98ad0e96b32d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>precip_chance</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a87dffebd1350edddd8bff9f6488f6437</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>feels_like</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>abb6bbc297a857aaca63ced30f49e05e7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>pressure</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a90ff9b074f7922ebde4f03d1acb34902</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>dew_point</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a0511b520955d08ad1183532ad35cb828</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const WeatherHourly *</type>
+      <name>forecast_hourly</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>afa5fea3e4ef452f8a9fedf2f5d125a04</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const WeatherDaily *</type>
+      <name>forecast_daily</name>
+      <anchorfile>structWeatherSeed.html</anchorfile>
+      <anchor>a982b6926993492b778b20d9fbf5e6bcb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>WeatherState</name>
+    <filename>structWeatherState.html</filename>
+    <member kind="variable">
+      <type>uint8_t</type>
+      <name>tag</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>ada60a92f0690b1a06bca06d42984ae7a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>temp</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>ae41f90ba55b0a7b7f53812816ee435d0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>cond</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a7e43f225b231eed29dffcecb9f8c7d2f</anchor>
+      <arglist>[32]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>cond_label</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>aff9f98e3f9cbf2fab7b41e46d7552c56</anchor>
+      <arglist>[20]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>humidity</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>aab2b5a749e4b0f1b2e4a98e04e811694</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>wind_kmh</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>ac89a66ed27ff84aa61675f2b78d4784e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>wind_dir</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>ac4711deb819db30232d3cbb525ddeafe</anchor>
+      <arglist>[4]</arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>sunrise</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a297b2b392f2d3752f55360f3ffd30d9d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int16_t</type>
+      <name>sunset</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a4e42b02e63c4eca428a9c75a12133583</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>uv</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a31a4fb50d7112a091d3c60d6a7f89903</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp_max</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a7608d767f3af291200139974bef30df5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>temp_min</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a1317a6f4ed770efe3bdf6352dbe7d1a2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>precip_chance</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a27ceeb5c3bd3ae1d840b53f10f8ad709</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>feels_like</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>adb364d466033e6a7031057861d40b6e2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>pressure</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a10a0c1b94135d6c9d6ed2e49102e6e0e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>dew_point</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a8a4412e90af8c10f96abe56ea378170a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>forecast_day</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>af60f8192ef84bbbd9b6decd7cd2f4c77</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>WeatherHourly</type>
+      <name>hourly</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a51b784635421b939e7c3d77c78523d92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>hourly_first</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a0880368890fa96ac09b581c38f07f714</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>daily_first</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>aa668cd1b177bbfd27dd0a60215ea6ec9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>WeatherDaily</type>
+      <name>daily</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a0585006c516149c78970319d8bdc07b0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>time_t</type>
+      <name>last_sync</name>
+      <anchorfile>structWeatherState.html</anchorfile>
+      <anchor>a91c5cb1e7246a0080820a3dbb9eb689a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>Zone</name>
+    <filename>structZone.html</filename>
+    <member kind="variable">
+      <type>GRect</type>
+      <name>rect</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a25225c676df4e85a03e75dab3df8e22a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>FontId</type>
+      <name>font_id</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a34c68d9d67fb5a1616bd31447e3f9b19</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GTextAlignment</type>
+      <name>align</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>ad4476b64011cab9f23f617932288e4f6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GColor</type>
+      <name>color</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a44f03b8c83bbfaac1fc3c59936584f9a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>FontId</type>
+      <name>font_id_fallback</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a1ce7118149bace3fb6260d85a0c8b159</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GRect</type>
+      <name>rect_fallback</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a839f256ad624c5be0d82732ecab01f47</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>FontId</type>
+      <name>font_id_fallback2</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>ae0fc160a4fcbf56dbef709fa11ed4192</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GRect</type>
+      <name>rect_fallback2</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a896caa855cd84c0e6ef28c7c1856eafe</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>FontId</type>
+      <name>font_id_fallback3</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>acfe63c946adc852f1475a9f8a68369c0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>GRect</type>
+      <name>rect_fallback3</name>
+      <anchorfile>structZone.html</anchorfile>
+      <anchor>a9991f1fe88fcf46da0b4e4e1fbdc8aab</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_core</name>
+    <title>Core Helpers</title>
+    <filename>group__lib__core.html</filename>
+    <file path="src/c/core/clock/">astro.c</file>
+    <file path="src/c/core/clock/">astro.h</file>
+    <file path="src/c/core/clock/">beats.c</file>
+    <file path="src/c/core/clock/">beats.h</file>
+    <file path="src/c/core/clock/">date.c</file>
+    <file path="src/c/core/clock/">date.h</file>
+    <file path="src/c/core/clock/">duration.c</file>
+    <file path="src/c/core/clock/">duration.h</file>
+    <file path="src/c/core/clock/">hour_latch.c</file>
+    <file path="src/c/core/clock/">hour_latch.h</file>
+    <file path="src/c/core/clock/">moon.c</file>
+    <file path="src/c/core/clock/">moon.h</file>
+    <file path="src/c/core/clock/">nightsched.c</file>
+    <file path="src/c/core/clock/">nightsched.h</file>
+    <file path="src/c/core/clock/">rotate.c</file>
+    <file path="src/c/core/clock/">rotate.h</file>
+    <file path="src/c/core/clock/">solar.c</file>
+    <file path="src/c/core/clock/">solar.h</file>
+    <file path="src/c/core/clock/">tide.c</file>
+    <file path="src/c/core/clock/">tide.h</file>
+    <file path="src/c/core/clock/">time_config.c</file>
+    <file path="src/c/core/clock/">time_config.h</file>
+    <file path="src/c/core/clock/">timeband.c</file>
+    <file path="src/c/core/clock/">timeband.h</file>
+    <file path="src/c/core/clock/">weekday.c</file>
+    <file path="src/c/core/clock/">weekday.h</file>
+    <file path="src/c/core/clock/">zone_setting.c</file>
+    <file path="src/c/core/clock/">zone_setting.h</file>
+    <file path="src/c/core/health/">hr_day.h</file>
+    <file path="src/c/core/health/">hrv_log.c</file>
+    <file path="src/c/core/health/">hrv_log.h</file>
+    <file path="src/c/core/health/">hrv_motion.c</file>
+    <file path="src/c/core/health/">hrv_motion.h</file>
+    <file path="src/c/core/health/">hrv_run.c</file>
+    <file path="src/c/core/health/">hrv_run.h</file>
+    <file path="src/c/core/health/">minute_window.c</file>
+    <file path="src/c/core/health/">minute_window.h</file>
+    <file path="src/c/core/health/">step_hours.c</file>
+    <file path="src/c/core/health/">step_hours.h</file>
+    <file path="src/c/core/io/">bytes_le.h</file>
+    <file path="src/c/core/io/">callback_list.c</file>
+    <file path="src/c/core/io/">callback_list.h</file>
+    <file path="src/c/core/io/">link_change.h</file>
+    <file path="src/c/core/io/">store_live.h</file>
+    <file path="src/c/core/layout/">layout_string.c</file>
+    <file path="src/c/core/layout/">layout_string.h</file>
+    <file path="src/c/core/math/">pct.c</file>
+    <file path="src/c/core/math/">pct.h</file>
+    <file path="src/c/core/math/">scale.c</file>
+    <file path="src/c/core/math/">scale.h</file>
+    <file path="src/c/core/math/">series.c</file>
+    <file path="src/c/core/math/">series.h</file>
+    <file path="src/c/core/role/">role.c</file>
+    <file path="src/c/core/role/">role.h</file>
+    <file path="src/c/core/text/">cstring_fit.c</file>
+    <file path="src/c/core/text/">cstring_fit.h</file>
+    <file path="src/c/core/text/">number_format.c</file>
+    <file path="src/c/core/text/">number_format.h</file>
+    <file path="src/c/core/text/">text_case.c</file>
+    <file path="src/c/core/text/">text_case.h</file>
+    <file path="src/c/core/ui/">font_slots.c</file>
+    <file path="src/c/core/ui/">font_slots.h</file>
+    <file path="src/c/core/units/">distance.c</file>
+    <file path="src/c/core/units/">distance.h</file>
+    <file path="src/c/core/units/">wind.c</file>
+    <file path="src/c/core/units/">wind.h</file>
+    <file path="src/c/core/weather/">forecast_age.c</file>
+    <file path="src/c/core/weather/">forecast_age.h</file>
+    <file path="src/c/core/weather/">uv_band.c</file>
+    <file path="src/c/core/weather/">uv_band.h</file>
+    <file path="src/c/core/weather/">weather_reading.c</file>
+    <file path="src/c/core/weather/">weather_reading.h</file>
+    <file path="src/c/core/weather/">wind_dir.c</file>
+    <file path="src/c/core/weather/">wind_dir.h</file>
+    <file path="src/c/core/weather/">wx_cond.c</file>
+    <file path="src/c/core/weather/">wx_cond.g.h</file>
+    <file path="src/c/core/weather/">wx_cond.h</file>
+    <file path="src/c/core/weather/">wx_label.c</file>
+    <file path="src/c/core/weather/">wx_label.h</file>
+    <file path="src/c/core/wire/">calendar_wire.c</file>
+    <file path="src/c/core/wire/">calendar_wire.h</file>
+    <file path="src/c/core/wire/">coords.c</file>
+    <file path="src/c/core/wire/">coords.h</file>
+    <file path="src/c/core/wire/">music_track.c</file>
+    <file path="src/c/core/wire/">music_track.h</file>
+    <file path="src/c/core/wire/">phone_level.h</file>
+    <file path="src/c/core/wire/">stock_wire.c</file>
+    <file path="src/c/core/wire/">stock_wire.h</file>
+    <file path="src/c/core/wire/">weather_wire.c</file>
+    <file path="src/c/core/wire/">weather_wire.h</file>
+    <file path="src/c/core/wire/">wire_caps.g.h</file>
+    <file path="src/c/core/wire/">wire_read.h</file>
+    <class kind="struct">HourLatch</class>
+    <class kind="struct">TimeConfig</class>
+    <class kind="struct">TimeBand</class>
+    <class kind="struct">TimeBandSpan</class>
+    <class kind="struct">HrHour</class>
+    <class kind="struct">HrDay</class>
+    <class kind="struct">HrvBurst</class>
+    <class kind="struct">HrvLog</class>
+    <class kind="struct">HrvMotion</class>
+    <class kind="struct">HrvRun</class>
+    <class kind="struct">CallbackList</class>
+    <class kind="struct">LinkState</class>
+    <class kind="struct">FontSlots</class>
+    <class kind="struct">WeatherMessage</class>
+    <class kind="struct">WeatherState</class>
+    <class kind="struct">WeatherClock</class>
+    <class kind="struct">CalendarEvent</class>
+    <class kind="struct">CalendarStrip</class>
+    <class kind="struct">MusicTrack</class>
+    <class kind="struct">StockSlot</class>
+    <class kind="struct">StockStrip</class>
+    <class kind="struct">WeatherHourCol</class>
+    <class kind="struct">WeatherDayCol</class>
+    <class kind="struct">WeatherHourly</class>
+    <class kind="struct">WeatherDaily</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HOUR_LATCH_EMPTY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9462df08933e714a6f14495ba12c19e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MOON_SYNODIC_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga550e4dc38f3305d3ad3dcd0dd394de94</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>MOON_EPOCH_UTC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf586f63d0905b47c9548a10f0310bc81</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TIDE_PERIOD_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa01e1adc5b81c1d2cc14f870a42e5f3f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>TIMEBAND_DAY_MINUTES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad3c2b297779efc19aa0c02f2e8635917</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HR_DAY_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae3dd69cb6828ef994edacf5f710a0707</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_SLOTS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef8d372067c4fa13a781401cef30d6dd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_HOURS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24d8afb395355e1268c709cbcb6ac136</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_MS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae62e193a45f5e99b5c7f083ae69f3079</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NIGHT_GAP_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46a85f845d87d94530bb5f06187f2458</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_FROM_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga300b215938ab954e0d365a5a447ba108</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_NAP_UNTIL_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c96ec630f977cb0eab583f999c74c29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_WALK_STEPS_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad46f32990b5080141609508a2f406f7c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_RECENT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga29d5cfdac8f3395b7cb700ab9408c1d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_ASLEEP</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63f3ed0e45cc4da29578aad101c2c414</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_LOG_STATE_MASK</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga24a559688bccfd57843cf956f5b5766b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_STILL_DEFAULT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga13618435dba1bc51f20f014a2de937bd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_MOTION_MIN_SAMPLES</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1a2153b6e909b367d89943775c4c76e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MIN_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaefdc36c44d4b4bb7d75b49971dafa75</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_PPI_MAX_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga25c5320ce0b3cb8d6318006c39554d9c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_JUMP_PCT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaefbe63307314a051f668d64f02af5d87</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_QUIET_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga59b2e0772453c9dc6f043dccff16db65</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_MIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf327b41b60f9c86f55e411ee317d2545</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_DIFFS_FULL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga524644e6318004787bb4db9ecf847255</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_PERIODS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9506f432151279855933339ae78cfb91</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_STALE_MIN_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga606ade592998e531ca1b4ee8336c1d51</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_PERIOD_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae821813667772afcba017bb0a1765c89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_HOLD_MAX_SEC</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5cce8c8e009bc553503dee841fa01bc3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga353a8f23c99dd39c3dbfa02708208d29</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HRV_SETTLE_GAPS_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacd7ae320dd9f133f840d906727165648</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STEP_HOURS_PER_DAY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab582a8ca15586973977cd7f48de42fa2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>LAYOUT_INT_MAX</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga19726e59e3c59c41210823d2d3dac836</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_CURRENT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gace94f04d01ec6679143f9937fc0d7d35</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_EXTRA</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad2a50305c20a2dc3acf340c9837a065b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_FORECAST</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7eef9602c89fd58adb11e058618d1dd7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_GROUP_AIR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga49eb8281314392449d74706359777576</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_EACH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga710ccc7ecaa09946b618d027925b0c2a</anchor>
+      <arglist>(X)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_TOKEN_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf4575f238d81aa1bf9b2c36693401cb0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_ENDING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab9a04b425ab74065b8c3c6b849594c40</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WX_COND_NIGHT_LEN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae204af4aba228d010c1299270dc0a7d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PHONE_NO_LEVEL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga605dd03e235d86fb34bc9fae7d950149</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CallbackListFn</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gace9c32cbf32397ccc0a34a750ce3ea68</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void *(*)</type>
+      <name>FontSlotLoad</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c9edfdde131dda8d1f2cfcd8d5414c6</anchor>
+      <arglist>(uint32_t resource)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>FontSlotUnload</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga82fc7dd46c44db9ab4043cc891631c8f</anchor>
+      <arglist>(void *handle)</arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>NightSchedMode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90cd678ac8db70a4a741a5ef04cd8793</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NIGHT_SCHED_OFF</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a6a8c99fc2f822c3b640066f69ce2d997</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NIGHT_SCHED_SOLAR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a0ff4de0039a79b3e04a3052f98707a73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NIGHT_SCHED_FIXED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga90cd678ac8db70a4a741a5ef04cd8793a8c275a9c35ee2c3bb0d2875a56b2b8be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae63b8153c70e7611881a2e05bec214a7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a9213062236e43045db311812a26aaf1b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_BUSY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7af27f31cad3ac4a0abd28c786cd30da8f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_STATE_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae63b8153c70e7611881a2e05bec214a7a1c8df711fdc3517bfabac5e9412fda1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>HrvCount</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7e84a97be9f69040bef94b003e32be1a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_NOT_WALKING</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa4ccd07016c8f8f331da2df6f72663ffc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_STILL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa3740bb5c8f987a4fc9163cd79f38a5d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>HRV_COUNT_ANY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga7e84a97be9f69040bef94b003e32be1aa70bb5f3e759fd417f790fa29180c301f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>LinkChange</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74178abed5fae945e1364010e009448</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_SAME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a432b1d29bb1f587e2c7bbc80f36164aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_DROPPED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a8d4fd3f7d66697a5ec2983845f66e644</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>LINK_RECONNECTED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggae74178abed5fae945e1364010e009448a26d88e62a7d3a8a7278e8825d95f56b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>Role</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacdd79a1a4f81dd6ee5cddcb21149b951</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_DAY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951a01ba56e04901f02d0afcd73315f6c8eb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_NIGHT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951ae389e94798afb9fed7f0cbe4e569e0b4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ROLE_QUIET</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggacdd79a1a4f81dd6ee5cddcb21149b951afb5b202311c68c4f734aa40f047b74e0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>FontSlotState</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gabd8aa4927cda7d0e7c6d41f16b59773c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_UNOWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca6ed032047afedb5d59c723e1eebe67d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_OWNED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773ca5864de48c2c19f5bd37e2f160930b2ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>FONT_SLOT_LOADED</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ggabd8aa4927cda7d0e7c6d41f16b59773cae0f587a65b22db60cbab2e14657bb54e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>WindUnit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga81835140b8dd390d395cd5fcf7dee1b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_KMH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1aa05ca61b7909a966d95caac6d27dc51c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_MPH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a3d492848e908a0c4425a669ee67ee63b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_KTS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a60a6d323d0f94b93a78fc02d92b6545d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_MS</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1ae2b15fe48410daeee405fc533127c566</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WIND_UNIT_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga81835140b8dd390d395cd5fcf7dee1b1a93a87520ef04d333e59aced98692a2ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>UvBand</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5ca55b9e69235c86280b6f126493cf8a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_NONE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aad74569e2ebfe131e5a25d81ba63a5910</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_LOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa135ff7d88afa2c549ca23f517af21dc2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_MODERATE</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aaa221336e627a94321ccc46da7da5a739</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa31059fa1666a62bfd849ed84082bb9b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_VERY_HIGH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aa0f2765a9b60dbfca65ca374e6adaa239</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>UV_BAND_EXTREME</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga5ca55b9e69235c86280b6f126493cf8aada94409ee138b768a63162746bce87df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>WxCond</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9421de4c15783a83fa65e156b89c355f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLEAR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fab715353cef1077a4f81bf3022d7ff1b9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_PCLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fac70ab838717568275ae531dd04313b0f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_CLDY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fad8df7a26e7019b059a665529b925a1a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FOGGY</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa449e280c8168731280d7cd25cf8d2ee0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_DRZL</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa497b0ea7e083043fa33361b05c2a933f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZDZ</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa2bd9ef49b035063b5d4c5d1f90c654b6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_RAIN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa37a4645d62ffb97e6e5f5911281319d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_FZRN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa7457a58717005e93765d76a649d80428</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNOW</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa87f5b81c4f0572ae827f093f3e055b90</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SHWR</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa4019d928980d25431663c7dba6ec1266</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_SNSH</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa1d9077d97bc0b0e07fdbd1169aede0b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_STRM</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9313c6631d59f675046fc9da15aff092</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_COUNT</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fa9d358fbc807306dd0ef5ad8a31fea111</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>WX_COND_UNKNOWN</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gga9421de4c15783a83fa65e156b89c355fabc721de38ea50fb8b77d72c75fac52ec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>astro_jd_centi</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8847a29aa0210773d90c83257417e30d</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>beats_from_ms</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga748d1547c38334f1800f0d0bf0ddfb63</anchor>
+      <arglist>(int32_t ms_into_bmt_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>ms_until_next_beat</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b06de249c8214693fdf100d868f54f4</anchor>
+      <arglist>(int32_t ms_into_bmt_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>beats_ms_from_hms</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga60ea394a4edab1661bfdfcec61a49a73</anchor>
+      <arglist>(int hour, int minute, int second, uint16_t ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>beats_has_token</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaaed371b1b105688cc7ca824ba6ed0090</anchor>
+      <arglist>(const char *format)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>beats_expand_token</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2fdfec41ce1bb098586cf3d82c921cd5</anchor>
+      <arglist>(char *text, int beats)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_week</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaee874b4db4f19a63aec92cf2c57defd2</anchor>
+      <arglist>(int year, int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_week_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0c190d7c5d5f7d46fc36c3f04bd3e56a</anchor>
+      <arglist>(int year, int yday, int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_iso_weeks_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga70f355976c89a7190d80f6d344631710</anchor>
+      <arglist>(int year)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_day_of_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadde776e9b470fd4e9df1307415b09851</anchor>
+      <arglist>(int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_days_left_in_year</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c68f59a1602b5e27b1a05a0d63b499c</anchor>
+      <arglist>(int year, int yday)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_days_in_month</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaef88f0efc2274de9f1984658aea37f9b</anchor>
+      <arglist>(int year, int mon0)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>date_first_wday</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0b126160626de63678618d54227455ad</anchor>
+      <arglist>(int wday, int mday)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>duration_hm</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4fe493c620f4247fb241b538db2aec72</anchor>
+      <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>duration_hm_compact</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0b34387761f2f9297553dcad5ac0f206</anchor>
+      <arglist>(char *out, size_t n, int minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>hour_latch_start</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7c35b1a9c0faafc665826130832ddf52</anchor>
+      <arglist>(time_t now, int tm_min, int tm_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hour_latch_take</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaafead0993ab7c57e2ae8a7b8fe65d6d7</anchor>
+      <arglist>(HourLatch *latch, int tick_min, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hour_latch_seed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3cbf613cf79116cd37b00238914036f8</anchor>
+      <arglist>(HourLatch *latch, time_t start)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>moon_age_sec</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf635be67f90fcbcc72361db3e1b899e0</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_glyph_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga83dfa9388ce19b76dd9f18ffc9135a67</anchor>
+      <arglist>(time_t utc, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_illumination_pct</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa3fa4262c82f6312ffc7ac9a36ad08e1</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>moon_phase_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6a99ed843383ec7d057306db91bb91fc</anchor>
+      <arglist>(time_t utc)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>moon_days_to_phase</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3c81c549c8dfe4c2751f023abfe727b7</anchor>
+      <arglist>(time_t utc, bool to_full)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>clock_window_contains</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga284e05094c9084b2fca021122f13488d</anchor>
+      <arglist>(int start, int end, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>night_schedule_active</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gab655e624866f012b97621268f0038504</anchor>
+      <arglist>(int mode, int now, int rise, int set, int fixed_start, int fixed_end, bool have_night)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>rotate_index</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2c930ac9149442ad63c57a55927f6090</anchor>
+      <arglist>(int year, int yday, int hour, int minute, int interval_min, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_day_progress</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac982a31420ab76dbaa86ab1885c065ad</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_night_progress</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaee0b6058425e523d5393b77aceb34a54</anchor>
+      <arglist>(int rise, int set, int now)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>solar_next_event</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga974fb27e5854c3558a46a423c0e9e621</anchor>
+      <arglist>(int rise, int set, int now, bool *is_sunrise)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>tide_level</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9ca1c1d9a5df71a89fc61da050ca3b8d</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>tide_rising</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga910d5986818e759ad59e4e50cefdbe8f</anchor>
+      <arglist>(int32_t minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_same_tickers</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafdebf69530ed918eaeb2fb2e00b7e154</anchor>
+      <arglist>(TimeConfig a, TimeConfig b)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeConfig</type>
+      <name>time_config_reconfigured</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga97a3a19c7df73172fc1ef49f4784a479</anchor>
+      <arglist>(TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>time_config_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga23e87de26014fa5fd1b5644213852011</anchor>
+      <arglist>(TimeConfig *running, TimeConfig cfg, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_full_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2e4ca30c1616284c941596b66bcc6158</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_rolling</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga17975bf89798eeb2baacffec94111b18</anchor>
+      <arglist>(int now_min, int span_min, int lead_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>TimeBand</type>
+      <name>timeband_from_hour</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga1e2241cf9d353b6c48f57c9e49dbcbe9</anchor>
+      <arglist>(int base_hour, int span_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac788ab450b30bbb9e4c0c16e2a96d1de</anchor>
+      <arglist>(TimeBand band, int minute_of_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_pos</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4d0f6578d1e429d7c77be357109a6989</anchor>
+      <arglist>(TimeBand band, int length, int minute_of_day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_pos_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga464dfe5bbece0af2f5539d0616fd7643</anchor>
+      <arglist>(TimeBand band, int length, int offset_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>timeband_clip</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0a00805862511df587e96edc9083c7da</anchor>
+      <arglist>(TimeBand band, time_t window_epoch, time_t start, time_t end, TimeBandSpan *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>timeband_clip_daily</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7ec5edf0ceeb305eed2d84da3130a0ba</anchor>
+      <arglist>(TimeBand band, int from_min, int to_min, TimeBandSpan *out, int max_out)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>timeband_window_epoch</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63e7a4d00b37b74522dc6eaab727b6f8</anchor>
+      <arglist>(TimeBand band, time_t now, int now_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weekday_short</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadccedafdeb6e437c664e8426bfd9812b</anchor>
+      <arglist>(int wday)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zone_setting_is_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga48a1bec6aa209e10ce939af6b9d53222</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>int16_t</type>
+      <name>zone_setting_offset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6654376c135443aa4f6756f406340f02</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>zone_setting_label</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f625161eafd8ce62405cce899c8ff80</anchor>
+      <arglist>(const char *value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_clear</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10a8d6b3da25bae2446917c4d2926172</anchor>
+      <arglist>(HrDay *day)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3d58235334983237da2d42be7603056a</anchor>
+      <arglist>(HrDay *day, int hour, int bpm)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hr_day_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9e6cbd7e421ca0ebd91abd4389a09e0c</anchor>
+      <arglist>(const HrDay *day, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hr_day_stats</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga66d1f37711cadadbbcc9d15f90fef1cf</anchor>
+      <arglist>(const HrDay *day, int *low, int *avg, int *high)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga50ef6e3a945c258e4fc83bb1929a83da</anchor>
+      <arglist>(HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>HrvState</type>
+      <name>hrv_log_state_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf48d364de1b0985d9d0206b1023922a7</anchor>
+      <arglist>(int motion_score, int steps, uint16_t still_mg, uint16_t walk_steps)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_counts</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga248f18e06ef62e0e1d10e772f767a5b9</anchor>
+      <arglist>(HrvState state, HrvCount count)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae0bb96d786cefdddabe9708b30b409c5</anchor>
+      <arglist>(HrvLog *log, int ms, uint32_t now_min, int32_t day, int minute_of_day, HrvState state, bool asleep)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_roll_day</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9f583fc30f55e7e82457e3fef5bbeb7b</anchor>
+      <arglist>(HrvLog *log, int32_t day)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_count</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa5780e28f269349f66933da35d0ba821</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_get</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac6bf1a23fcf5966f02387bc150c8a9fd</anchor>
+      <arglist>(const HrvLog *log, int back, int *ms, uint32_t *at_min, uint8_t *flags)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_hour_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3f51dbfb1a7c497a93a39bf61faa7ee5</anchor>
+      <arglist>(const HrvLog *log, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_log_today</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2361e1061a377a432e5ef300f78e6b4c</anchor>
+      <arglist>(const HrvLog *log, int *low_ms, int *avg_ms, int *high_ms)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_log_night_avg</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0ea30c8342186116f4422246ff53b6ca</anchor>
+      <arglist>(const HrvLog *log)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_log_last</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga484d26e50432a4d931eb57316576def6</anchor>
+      <arglist>(const HrvLog *log, HrvState state, int *ms, uint32_t *at_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga90849b5fc07cff2b120dc7dfc1785796</anchor>
+      <arglist>(HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_motion_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d089c1610381c0c18606831554fae28</anchor>
+      <arglist>(HrvMotion *motion, int16_t x_mg, int16_t y_mg, int16_t z_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_motion_score</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7b2736ae74a9625bc123d925774616fb</anchor>
+      <arglist>(const HrvMotion *motion)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae09067019afb5ff7d2af7ffad13e7ab2</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_motion_cannot_pass</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga926738e9460f83ceedca4e1075a3595e</anchor>
+      <arglist>(const HrvMotion *motion, uint16_t max_mg, uint32_t max_samples)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>hrv_run_reset</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga820f7ded1182d953adac970b65798571</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_push</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae74b9acde0c1bb0a850ee1b2f8763e58</anchor>
+      <arglist>(HrvRun *run, uint16_t ppi_ms, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_run_quiet</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5a9fade553546533a99efde079418e37</anchor>
+      <arglist>(const HrvRun *run, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>hrv_run_finish</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f4bc4b0a4b9727d00dbd5a5a4571a81</anchor>
+      <arglist>(HrvRun *run)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_reading_stale</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga694e9c38004c250485939cbf5c33ea1f</anchor>
+      <arglist>(uint32_t measured_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_should_ask</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga63af7759a1aab1ce49fad20c956816f2</anchor>
+      <arglist>(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t now_sec, uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>hrv_hold_over</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga10fae5233f760fb6787caa3e0876836c</anchor>
+      <arglist>(uint32_t held_since, uint32_t now_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>hrv_settle_gaps</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3ec53ad7f3196535760825f02dc2611f</anchor>
+      <arglist>(uint16_t asked)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>minute_window_first_slot</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf7d993bee5b11fc9f9ea5918d9f7d991</anchor>
+      <arglist>(time_t first_min, time_t end_min, int minutes)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>step_hours_settled</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga998d8f2fe2b302cdff2610abd009f245</anchor>
+      <arglist>(int cur_hour, int cur_min)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int16_t</type>
+      <name>read_i16_le</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3fd54f4514af9738e081706d21fd44bc</anchor>
+      <arglist>(const uint8_t *p)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>read_i32_le</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga7ac2e494355ca66ce8ec8bbd881e90e9</anchor>
+      <arglist>(const uint8_t *p)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>callback_list_add</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed0238885522c47e90f7a547719983bc</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callback_list_remove</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa1d38a3ffb6ab6b59cb850fbef1bbc60</anchor>
+      <arglist>(CallbackList *list, CallbackListFn cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callback_list_fire</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6b4dbe785f6d28d845b326a152444ddd</anchor>
+      <arglist>(const CallbackList *list)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static LinkChange</type>
+      <name>link_change_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac9b21726fd911bc2a4498ef0472e0b02</anchor>
+      <arglist>(LinkState *state, bool connected)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_live_after_reconfigure</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga827da9e4ea26a5bb3d4d3847921d2271</anchor>
+      <arglist>(bool live, bool pinned)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>layout_parse_int</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6de1604c8d0aab3e3a3226dccb171cce</anchor>
+      <arglist>(const char **cursor)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>layout_has_any_block</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadb8a7e98c9c67c5167942ae96433c21f</anchor>
+      <arglist>(const char *layout, int type_count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>pct_of</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0fa2f5ff0207c0179c689d0277bdfffd</anchor>
+      <arglist>(int value, int goal)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>clamp_int</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2a3f6820b74bffadc7d6f3b88eb4916d</anchor>
+      <arglist>(int value, int lo, int hi)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>segment_width</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac01ee128d72ea0af440967d27c4de224</anchor>
+      <arglist>(int total, int gap, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>fraction_px</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga9ed357804da26e96f0ae19aa3d02873f</anchor>
+      <arglist>(int total, int num, int den)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>segments_filled</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga5e3c99e7f2fade51632dd8aa3f3988f0</anchor>
+      <arglist>(int level, int segments)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>plot_y</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadc6c8c4764edd2d25babbc4689eaa73b</anchor>
+      <arglist>(int y0, int height, int lo, int hi, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>series_range</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga4260de92aa2412a987a0d0ee799d5406</anchor>
+      <arglist>(const uint8_t *samples, int count, uint8_t no_sample, int *lo, int *hi, int *last)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>series_max_u16</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8cc817ecf16f05e721472b4f6714943a</anchor>
+      <arglist>(const uint16_t *values, int count)</arglist>
+    </member>
+    <member kind="function">
+      <type>Role</type>
+      <name>role_pick</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga402c61aef6b17ca699ea0d42ebe1f1c8</anchor>
+      <arglist>(bool quiet_on, bool quiet_set, bool night_on, bool night_set)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>cstring_fit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga48dcd72e49fa122dc562f64605efdc75</anchor>
+      <arglist>(char *dst, const char *src, size_t size)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>cstring_fit_same</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga13d8bf38f7877df6836f074354b4bcb9</anchor>
+      <arglist>(const char *current, const char *value, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>copy_bounded</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2d2900400e9b136d9d176de8838c52a4</anchor>
+      <arglist>(char *dst, uint8_t cap, const uint8_t *src, uint8_t len)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6334eca7eb0a33cdf25b1bb9060afa35</anchor>
+      <arglist>(const char *s, uint16_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>cstring_setting_is_clean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga58af7628a1a740a9fb7a220b3a472c22</anchor>
+      <arglist>(const char *s, uint16_t size, const char *default_str)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>number_group</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga3633a279bf5254234b2a8549d98e80de</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_int_or_dash</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga145e042f4414e0854e809ac7c7b086ca</anchor>
+      <arglist>(char *buffer, size_t size, int value, const char *fmt)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_hundredths</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafa9f63d99d2011c46da1397b798fc529</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fmt_pct_signed</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad8460f42bd55675f97ac3b2feae4fde0</anchor>
+      <arglist>(char *buffer, size_t size, int value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>text_to_upper</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga0f128dcb6dbe22caba62e2b47c1da00a</anchor>
+      <arglist>(char *s)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_put</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gae543e3b227da62b3b310c4c08d6190da</anchor>
+      <arglist>(const FontSlots *slots, int id, void *handle, bool owned)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_load</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gada066b8fbc1e5c66d9251183dddc6d33</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>font_slots_swap</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga8675d6c21e94528034c37ff0d7a3f667</anchor>
+      <arglist>(const FontSlots *slots, uint32_t *resources, int id, uint32_t resource, FontSlotLoad load, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>font_slots_unload_all</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga46e2dae0d43b28c2a98befa1aa8cb299</anchor>
+      <arglist>(const FontSlots *slots, FontSlotUnload unload)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>distance_unit</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadad9778fe90b71058c77ee83f2f26e2e</anchor>
+      <arglist>(bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>distance_format_value</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga93901c7cecf40133c250e13cf5cdb4bd</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>distance_format</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gadf1a4e77db17b89d4d0e81dc25c9bcf2</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_from_kmh</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga56c983dede8e0be266f38d389a62c371</anchor>
+      <arglist>(int kmh, WindUnit unit)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>wind_unit_label</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafd0dc1755ed3d4dd661c56e5c498e84d</anchor>
+      <arglist>(WindUnit unit)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>forecast_hours_past</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga39e6efbba632aacf61875379354b1c38</anchor>
+      <arglist>(int32_t seconds_into_strip, uint8_t step_hours, uint8_t count)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>forecast_days_past</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2f750b53c34d89db9ce79a2a252ebf02</anchor>
+      <arglist>(int days_since_first, uint8_t count)</arglist>
+    </member>
+    <member kind="function">
+      <type>UvBand</type>
+      <name>uv_band</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gad6f91a09bcfc296da7c32fe552d9999b</anchor>
+      <arglist>(int uv)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga807386d3788e5e0b340cc8dc8b361115</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>uv_band_short_name</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga794ee07e02945524a05f36a787b60717</anchor>
+      <arglist>(UvBand band)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_reading_apply</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga2b36f0d71ccc983475ea5fa5e919e585</anchor>
+      <arglist>(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_reading_convert</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga6fcabd81132c73ba225beaf6f035fe5c</anchor>
+      <arglist>(WeatherState *state, bool to_fahrenheit)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_bearing</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaf6fadf25dfa1b520911598ccade94119</anchor>
+      <arglist>(const char *dir)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>wind_lean</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga357ae2f2cfb0a32380b717e9a8ac6ce8</anchor>
+      <arglist>(int bearing)</arglist>
+    </member>
+    <member kind="function">
+      <type>WxCond</type>
+      <name>wx_cond_parse</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga05e157aa912339869db64fa7a0f4af98</anchor>
+      <arglist>(const char *token, bool *night)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>wx_label_short</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga174ee20c1de042aac051cdc44dc9847a</anchor>
+      <arglist>(char *out, size_t n, const char *condition)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>calendar_wire_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gafd03d47d8eb87604abcd082423036833</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, CalendarStrip *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>coords_look_real</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga11b6bfbd1863803faf31b81bdea9ef1f</anchor>
+      <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_set</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacfcf657cc8e3fec58597ccf478164315</anchor>
+      <arglist>(MusicTrack *track, const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_track_has</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga742467746b72e45dfda1d5862875bf76</anchor>
+      <arglist>(const MusicTrack *track)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>phone_level_read</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga77ee9672eb59f523d0871ebda12fd0a3</anchor>
+      <arglist>(int32_t sent)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>stock_wire_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gacaf9695fcec823203cf5c23309448d8f</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, StockStrip *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_hourly_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaa8a79a3914a591d37a2080d4a9c2dd86</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, WeatherHourly *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>weather_daily_decode</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gac4fcf3a860dea22cf18924b3c4783405</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len, WeatherDaily *out)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>wire_int_or</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaac313f9ba01fb8da75be8388287f9a7a</anchor>
+      <arglist>(bool is_signed, uint16_t length, const uint8_t *value, int32_t fallback)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>wire_cstring_terminated</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>ga700d7a3380b25b5472c1b580502b9b3e</anchor>
+      <arglist>(const char *s, uint16_t length)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int32_t</type>
+      <name>wire_digits_or</name>
+      <anchorfile>group__lib__core.html</anchorfile>
+      <anchor>gaed7baf2dfca7dd9ada03434d0777b788</anchor>
+      <arglist>(const char *text, int32_t fallback)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_io</name>
+    <title>Data In and Out</title>
+    <filename>group__lib__io.html</filename>
+    <file path="src/c/pebble/io/appmessage/">appmessage.c</file>
+    <file path="src/c/pebble/io/appmessage/">appmessage.h</file>
+    <file path="src/c/pebble/io/appmessage/">appmessage_features.h</file>
+    <file path="src/c/pebble/io/">outbox_queue.h</file>
+    <file path="src/c/pebble/io/">tuple_read.c</file>
+    <file path="src/c/pebble/io/">tuple_read.h</file>
+    <class kind="struct">OutboxJob</class>
+    <class kind="struct">OutboxQueue</class>
+    <class kind="struct">[struct].s_handlers</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>APPMESSAGE_CUSTOM_COLORS_MAX</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8bfcc8d396856901aeea684974fdb15c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_PHONE_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gadaf079e1656e97a39ec7774e22eb9703</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_MUSIC_SLOTS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga96bed56e5b3532f2e5e466e3270c88c3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>OUTBOX_QUEUE_MAX</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gacb075235dabec7bf871cfc5698a42526</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>WeatherHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga5e383acfcc7c48eb2dd8caac176bf5cb</anchor>
+      <arglist>(const WeatherMessage *msg)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CoordsHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga59b6055d84a446d8b469ba7ef8883030</anchor>
+      <arglist>(const char *lat, const char *lon)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>SettingsChangedHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaa75e1339172964d75887a1c2b7b464fe</anchor>
+      <arglist>(bool time_or_date_changed)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>UnitChangedHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6fb408316f6f72341bf67751cdbd36d9</anchor>
+      <arglist>(bool fahrenheit)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>StockStripHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaad5cc31baad613ac137e95653cdab162</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CalendarStripHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaea56a19672a4978e838e9d0a8753405b</anchor>
+      <arglist>(const uint8_t *buf, uint16_t len)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>PhoneBatteryHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab43d16e4f4337a52a7e9d4befa90b848</anchor>
+      <arglist>(int level)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MusicHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga91efba350e00e340bfd106ee9aff0238</anchor>
+      <arglist>(const char *title, const char *artist, bool playing)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CustomColorsHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6daf051587a0083e33af5e4d0847f931</anchor>
+      <arglist>(const char *combined)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>CustomColorsProvider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6efc27e8b660e10498f1678ddecc05dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>InboxCompleteHandler</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaae586b1981cefa58e0284ec05e167205</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>OutboxKind</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga247b62ae1a0fa87cef6e3e8b7f738f17</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_NONE</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a7d25a430a1d15cc7f34d60d396174dc8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_WEATHER</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17ab990da3519ee9e75a966f64b2a9fde49</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_SETTINGS</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a761144dce82352e049fa8cf0c4817b1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_FRESH</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a4abf64336b0b394adc142475e4687010</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_STOCK</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a1f1d2bff0cb91b1bde99a9eef0459e14</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_CALENDAR</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a2061a1a93d2450838ff186868e6b3345</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_PHONE</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17ad6a78861619811337738c08f22a0b1e2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>OUTBOX_MUSIC</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gga247b62ae1a0fa87cef6e3e8b7f738f17a5d61cb24ce9b5121048d838f523ae81f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_weather</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga8760e9417f2f894915a0950dc1fdab07</anchor>
+      <arglist>(WeatherHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_coords</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7c64814ef2b8dcd4ee38743e31fb58d2</anchor>
+      <arglist>(CoordsHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_settings_changed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gad9d1d40d059728d240df1d07fd713323</anchor>
+      <arglist>(SettingsChangedHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_unit_changed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab58b5b73b9f4c46fa2b249e2378b71b3</anchor>
+      <arglist>(UnitChangedHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_stock_strip</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga45a5f177aabba862b779b38b5b4ed288</anchor>
+      <arglist>(StockStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_calendar_strip</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga1ab2899a032be1fe4ab307e70f8bf3cd</anchor>
+      <arglist>(CalendarStripHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_phone_battery</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga067bf9e32b6a13413d5157b17e86147c</anchor>
+      <arglist>(PhoneBatteryHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga757a519d948bf39e5414b62761c20593</anchor>
+      <arglist>(MusicHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_on_custom_colors</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gacd479537bb794bc2cc1f07b4db3fb830</anchor>
+      <arglist>(CustomColorsHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_set_custom_colors_provider</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaf7a398e20625029f2e376405e9132660</anchor>
+      <arglist>(CustomColorsProvider cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_add_inbox_complete</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga502ebf1b6d9c87b77f5f708cd7424f86</anchor>
+      <arglist>(InboxCompleteHandler cb)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_open</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gab954f122b1dd5b44dfd5bda314c53831</anchor>
+      <arglist>(uint32_t inbox_size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_weather</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaf552756e4da1e1818775bb984bdd36c0</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_stock</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gac7dbcd76bf92e5bbf684d2c9849b5ebf</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_calendar</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gac18380f0c5fdc613452b569ef4d88c35</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_phone</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga65ada3fd289956eb8297c91927fad985</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>appmessage_request_music</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga9c7f2e2781d3b6f639b9ce19a5628a1f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>outbox_busy</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga2c94fc09107a6527a82ec145fd784a9d</anchor>
+      <arglist>(const OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>outbox_pending</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga6f6fa750435ac4704bb55298be9b7e27</anchor>
+      <arglist>(const OutboxQueue *outbox, OutboxKind kind)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>outbox_push</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga219aad77cbe9215d9c3cd1aacd33a457</anchor>
+      <arglist>(OutboxQueue *outbox, OutboxKind kind, int retries)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_pop_front</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gaa5025f0a1f281cb9b6b3f74c2a7f7481</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_take_head</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga821df0e180a04bb345ca338f3d6829e4</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static OutboxJob</type>
+      <name>outbox_release</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>gabf4958a2b2c2b9310e9c3dde7d76e18d</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_hold_failed</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga1a93146eec16ce495449829a38274d31</anchor>
+      <arglist>(OutboxQueue *outbox, OutboxJob job)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static int</type>
+      <name>outbox_retry_pass</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga66fb285ede9868f85fbaa10fe36ebbba</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>outbox_clear</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga7a65d4b95956b231936a0de61759fca9</anchor>
+      <arglist>(OutboxQueue *outbox)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_int_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga2efbc3a4f1c2f061db644fae33148a15</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>tuple_str_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga86dd1adef099205e5eb8c1d52b03ce96</anchor>
+      <arglist>(const Tuple *tuple, const char *fallback)</arglist>
+    </member>
+    <member kind="function">
+      <type>int32_t</type>
+      <name>tuple_number_or</name>
+      <anchorfile>group__lib__io.html</anchorfile>
+      <anchor>ga3d6f1eecd7cf908b32fe3f73a2b428a7</anchor>
+      <arglist>(const Tuple *tuple, int32_t fallback)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_stores</name>
+    <title>Stores</title>
+    <filename>group__lib__stores.html</filename>
+    <file path="src/c/pebble/io/stores/">calendar_store.c</file>
+    <file path="src/c/pebble/io/stores/">calendar_store.h</file>
+    <file path="src/c/pebble/io/stores/">health_hr_day.c</file>
+    <file path="src/c/pebble/io/stores/">health_hr_history.c</file>
+    <file path="src/c/pebble/io/stores/">health_hrv.c</file>
+    <file path="src/c/pebble/io/stores/">health_hrv.h</file>
+    <file path="src/c/pebble/io/stores/">health_step_history.c</file>
+    <file path="src/c/pebble/io/stores/">health_store.c</file>
+    <file path="src/c/pebble/io/stores/">health_store.h</file>
+    <file path="src/c/pebble/io/stores/">health_store_parts.h</file>
+    <file path="src/c/pebble/io/stores/">location_store.c</file>
+    <file path="src/c/pebble/io/stores/">location_store.h</file>
+    <file path="src/c/pebble/io/stores/">music_store.c</file>
+    <file path="src/c/pebble/io/stores/">music_store.h</file>
+    <file path="src/c/pebble/io/stores/">phone_store.c</file>
+    <file path="src/c/pebble/io/stores/">phone_store.h</file>
+    <file path="src/c/pebble/io/stores/">stock_store.c</file>
+    <file path="src/c/pebble/io/stores/">stock_store.h</file>
+    <file path="src/c/pebble/io/stores/">store_cadence.c</file>
+    <file path="src/c/pebble/io/stores/">store_cadence.h</file>
+    <file path="src/c/pebble/io/stores/">store_fetch.c</file>
+    <file path="src/c/pebble/io/stores/">store_fetch.h</file>
+    <file path="src/c/pebble/io/stores/">store_persist.c</file>
+    <file path="src/c/pebble/io/stores/">store_persist.h</file>
+    <file path="src/c/pebble/io/stores/">store_poll.c</file>
+    <file path="src/c/pebble/io/stores/">store_poll.h</file>
+    <file path="src/c/pebble/io/stores/">store_sum.c</file>
+    <file path="src/c/pebble/io/stores/">store_sum.h</file>
+    <file path="src/c/pebble/io/stores/">system_store.c</file>
+    <file path="src/c/pebble/io/stores/">system_store.h</file>
+    <file path="src/c/pebble/io/stores/">time_store.c</file>
+    <file path="src/c/pebble/io/stores/">time_store.h</file>
+    <file path="src/c/pebble/io/stores/">weather_store.c</file>
+    <file path="src/c/pebble/io/stores/">weather_store.h</file>
+    <class kind="struct">CalendarConfig</class>
+    <class kind="struct">CalendarSeed</class>
+    <class kind="struct">HealthHrvConfig</class>
+    <class kind="struct">HealthPart</class>
+    <class kind="struct">HealthConfig</class>
+    <class kind="struct">HealthSeed</class>
+    <class kind="struct">LocationConfig</class>
+    <class kind="struct">LocationSeed</class>
+    <class kind="struct">MusicConfig</class>
+    <class kind="struct">MusicSeed</class>
+    <class kind="struct">PhoneConfig</class>
+    <class kind="struct">PhoneSeed</class>
+    <class kind="struct">StockConfig</class>
+    <class kind="struct">StockSeed</class>
+    <class kind="struct">StoreFetch</class>
+    <class kind="struct">StorePoll</class>
+    <class kind="struct">SystemConfig</class>
+    <class kind="struct">SystemSeed</class>
+    <class kind="struct">WeatherConfig</class>
+    <class kind="struct">WeatherSeed</class>
+    <class kind="struct">[struct].s_hours</class>
+    <class kind="struct">[struct].s_state</class>
+    <class kind="struct">[struct].s_window</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_SENSOR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0736746982e40115c0c7a4185694247d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf58a7b0cae4bb710b1c4834cd90df0ba</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_STEP_HISTORY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf48ed118c83053074b953aa994ace230</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>HEALTH_HR_DAY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f959c79f659728bb1df249db66cefaf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_CADENCE_MAX</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga60f6d598b8ff59f299aa4ded2e48b695</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_READING_SIZE</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga50fd63663c9be7ae50341d6862e04150</anchor>
+      <arglist>(state, stamp)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_PHONE</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81426744fd8e4b25e4b1e746e01a86cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_MUSIC</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gafb83e889fc10f054eb75c665b53d6de1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gace98b5387157ba1fff930f53eb50f64a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga672425a165fced37d075b3139367469f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LISTENS_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5bc539bc0d11cc025e1a2af0b1c950b1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_COUNT</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b630fdde16d8d25ef3e24c50021837d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SYSTEM_STORE_LINK_LISTENER_SLOTS</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga6289cea1d412d1482a2e5f5dff987a58</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>WEATHER_SEED_EMPTY</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae0d84f2727ec304e5376009e5f7dcd18</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthPart</type>
+      <name>HealthPart</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga23f35f535d443dacbf52ac58dde0b22c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthConfig</type>
+      <name>HealthConfig</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga70156b27716f66602b46ccb5449a0e84</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct HealthSeed</type>
+      <name>HealthSeed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae837bb856deb22a451dd505b6c72e844</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>MinuteRecordFn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga67ca3e59cfbc387a8cc491a82a19a3a5</anchor>
+      <arglist>(int hour, const HealthMinuteData *record, void *context)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>void(*)</type>
+      <name>BtVibePolicy</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga96c4cb6d425115a65f787896786b232f</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad9d0b53b9a4f189dd3a591801401ec35</anchor>
+      <arglist>(CalendarConfig cfg, const CalendarSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gade1a2a8d19355c64e027ed3b89479f0e</anchor>
+      <arglist>(CalendarConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>calendar_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga83e9c3f206ad5ced9e3d6c50cb0fa96b</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const CalendarStrip *</type>
+      <name>calendar_store_strip</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabbe75636f8fd3bbc25e5907b8b703478</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const CalendarEvent *</type>
+      <name>calendar_store_event</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b326a92ec3b996da7b21ffe32934106</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>calendar_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga53bd3d81fba50d07ccee2739d53c22ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga302a123979f2732edb6738c61c8d0650</anchor>
+      <arglist>(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *seed_log, void(*changed)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3de2b90ca51ac9d5544c9cebf2eb7239</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_set_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaca781624ec8eabf5d4916cfd2a731d57</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_on_gap</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga223234c2f0122059fd1706b2ff12e987</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_poll</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga364caae9b733dea62975ada41d355328</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_hrv_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaeb21c567d464de358f3f62a99315af26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ac4ace78fa451b80f418f1c9dbe1ada</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga37582149cbe5836b28881faff2fd5705</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga372e93534744b6e53b18de37df9001f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga72d9d6bfe8bca402429ac3e0c09845ae</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4d9e68b5550cc8cf8ca340322883a01b</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab389960f3a525c0eaf80a93a62171c5f</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga07a3890b8ec14d604f9c33f3882885fb</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3681a65febb8fb93ba84f3413ffac786</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa0582954b31101fd5c9649ac6a4c3b19</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadb98993f8a5d2ea3ac0b99effab8b393</anchor>
+      <arglist>(HealthConfig cfg, const HealthSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3d23a155e70dad9fd2ac23f2ec39775c</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0e1f4e480b7ae883e73cc7270bbf7ffc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_period</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad4831647379f8aee421bde9e18cf09b9</anchor>
+      <arglist>(uint16_t period_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_set_hrv_rules</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4e877491cc83ecdeacdb4cf786979cd6</anchor>
+      <arglist>(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all, bool live_redraw)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint8_t *</type>
+      <name>health_store_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab42f7ec6f1b3c4b0403d76027e1a856e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrDay *</type>
+      <name>health_store_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa83227ebe779ce764a7ce57df3311f77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const uint16_t *</type>
+      <name>health_store_step_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga34ce959b4e7f9802230c7e1319b3bf28</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_step_hours</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7f6eb32c1ad9a2a9ffa41d13dc507204</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaebe919776f17167171641aeae6310796</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_has_hr</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga562ecf251588c9e48d0397eda3f69325</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga38cd6bed400162ebab1a2284484c4445</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_calories</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gabe7efc42c8679e55ecb7804fb17895ec</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_sleep_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaae218db51d5633570091919ba1e07ab4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_active_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga1712c5d7441e81d5b804d19e112bdb3c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_distance_m</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga82d8e5fff446bf3a7e20228c8cb49df9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>health_store_hrv_ms</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga46bf291eab60978c19fcd948808a0196</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_sampling</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab79c3a58fb2df070dbd4e0abcce41a22</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_measuring</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga847895390fe76e993bc34ea4f2202a59</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const HrvLog *</type>
+      <name>health_store_hrv_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4ae6d44d0ab68b09306d57bae82eae77</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_recent</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4acc41f26f8a766529d223582a98cf01</anchor>
+      <arglist>(int back, HrvBurst *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_store_hrv_live</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga651a1038499ef99c95416e64e71242d5</anchor>
+      <arglist>(int *score, int *steps, int *held_sec)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_still_mg</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga27882c04c06b01103dabf8fdc8069a61</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_walk_steps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3e2d5278051f5cb8fc972614b3b6054f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint16_t</type>
+      <name>health_store_hrv_settle_gaps</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2d8d7e527bf6f1348312fe2079772ce6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>health_store_redraw</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga91ad7f45647093a68eb19f67e6605c26</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>time_t</type>
+      <name>health_hour_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0ea9c8677cce316fa3d469d08faafc52</anchor>
+      <arglist>(const struct tm *today, int hour)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_metric_available</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3d46e137f1e65f3e36baf89f1557b87</anchor>
+      <arglist>(HealthMetric metric, time_t start, time_t end)</arglist>
+    </member>
+    <member kind="function">
+      <type>HealthMinuteData *</type>
+      <name>health_scratch_take</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac028dda967096a1c36f3deff186a846c</anchor>
+      <arglist>(int records)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>health_walk_minute_log</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf18cc0c1c6259577a616c734457c2f40</anchor>
+      <arglist>(const struct tm *local, int first_hour, int end_hour, time_t until, MinuteRecordFn each, void *context)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>location_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2027df7324b501eba2a93b048974f50c</anchor>
+      <arglist>(LocationConfig cfg, const LocationSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>location_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga59425f07e9de612bbcaae2dd0bcf266f</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>location_store_lat</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaca52fe40f16b8699445cc2a3d3df0bf9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>location_store_lon</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga84432464d20d131431730d966053fc52</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad97ad3d36947dc02e52d750cbe25af50</anchor>
+      <arglist>(MusicConfig cfg, const MusicSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>music_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3b54671a652a83acb2d78e058340bf38</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_title</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga08e7dbd7f6e711074c87b072b80a89fa</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>music_store_artist</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae7f812e0a0d418107f257c99733aacb2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_playing</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad2b234359cbfa7449cab2a1b25de11e6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>music_store_has_track</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad7118955d71e3c934fd9d7f87114ae5f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadd2ca01419697d7f37ae4fe64ac8efb7</anchor>
+      <arglist>(PhoneConfig cfg, const PhoneSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>phone_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9782ad57861fed3323134ef011ea1826</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>phone_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga939563949a26e3d5c4a9d3990e60d518</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaec0631f8c075d9a6c76e2f6f386f3970</anchor>
+      <arglist>(StockConfig cfg, const StockSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf5880da69fee6e18843b989032e67836</anchor>
+      <arglist>(StockConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stock_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga286d1850c71a9b7e3e62be5b92ea916a</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const StockStrip *</type>
+      <name>stock_store_strip</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4b56f050715401cfdd8a57bd1063cbe7</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const StockSlot *</type>
+      <name>stock_store_slot</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga44242789115b6e0615358ddc114a24dc</anchor>
+      <arglist>(uint8_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>stock_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5074e747148193546c869652ea01584d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_cadence_register</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadc0f8176e42cbe69fd30b1a363ca4794</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_cadence_fire</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga10c78a131269bea0afd102549a41083c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_fire</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5f892bf9d70a4f44dbdd186ce95eaf12</anchor>
+      <arglist>(void *data)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_stop</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga01742f5fe91b9b4c089f9540e5c6a10f</anchor>
+      <arglist>(StoreFetch *fetch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_arm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad33c4412c02b7068286958a4ff9d39c0</anchor>
+      <arglist>(StoreFetch *fetch)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_turn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gae24dbc83a69a2c585fc08c07f2d27091</anchor>
+      <arglist>(StoreFetch *fetch, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_on_link</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga48da19573724dbed49fc5c04f7508bb0</anchor>
+      <arglist>(StoreFetch *fetch, int age_s)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab0e39f35c438d27685e759973a271790</anchor>
+      <arglist>(StoreFetch *fetch, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>store_fetch_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3baeb7249495a37edb88ef463ba8d904</anchor>
+      <arglist>(StoreFetch *fetch, int poll_min, bool live, time_t now, bool empty)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_restore</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga286178630dd827b7d2e677742541e280</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, uint8_t tag)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_save</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga814b2c13673684e3684ff4ed7beec6eb</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, uint8_t tag)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_save_changed</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga26072e6c901d3d7455c93261276e6922</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_restore_reading</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gacfb278bcfc9c6dbc28c5728a3b68e277</anchor>
+      <arglist>(uint32_t key, void *state, size_t size, size_t reading_size, uint8_t tag, uint32_t *saved_sum)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static time_t</type>
+      <name>store_poll_next</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaee79556bd3009dd1478b61913e5368d4</anchor>
+      <arglist>(int poll_min, time_t now)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_poll_due</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga997e6ccf70b96c79e2500b83af6e54dc</anchor>
+      <arglist>(int poll_min, time_t *next, time_t now)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>store_poll_reconnect_due</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga8bf76bddf8844add6cd6e7c0684b8ee0</anchor>
+      <arglist>(int age_s, int poll_min)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_start</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9d6ab580b20298f18c6243bcff7dbfb1</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_set</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga30b8b33c3204c012230afe0eb9e8d594</anchor>
+      <arglist>(StorePoll *poll, int poll_min, bool live, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_turn</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga576c21d8f643934d22918c3fb2cbeeef</anchor>
+      <arglist>(StorePoll *poll, time_t now)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>store_poll_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9bd6e2af60e688844a31c8f9fb4cdae2</anchor>
+      <arglist>(const StorePoll *poll, int age_s)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>store_sum</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga51f7004ec5d8471cdf108a9ee46bb77b</anchor>
+      <arglist>(const void *bytes, size_t size)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga98c417e24d8488baa2bb33e39155a3e7</anchor>
+      <arglist>(SystemConfig cfg, const SystemSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_deinit</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga8d12e20cd8e402fc7c7abbfcd7454f3c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa56e12f48eddf86b1533059128765d2e</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>system_store_on_reconnect</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa29b6900ac64eda8dfb6dd8918ef531b</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>system_store_battery</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0a7b3e80e633a5f021929a1f3751260f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_charging</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga93e1005fb36a193016d69e406ef58f16</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_bluetooth</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2ebbd6eb46dfd92742b55a346d164961</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>system_store_next_alarm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga323c6c5d1989296b9618d94e94f92daa</anchor>
+      <arglist>(time_t *out)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga000282fef3aa31a69a8038abb49fa576</anchor>
+      <arglist>(TimeConfig cfg, const struct tm *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9c2eacc43d552852d63185bd4ca16379</anchor>
+      <arglist>(TimeConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>time_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga03d7e9b1823247fa9d5a6ead85797571</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>const struct tm *</type>
+      <name>time_store_tm</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadc9650a7506ac75294df48a7a8deadcd</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_init</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga49a92d34f22c2bb81f54084b02215709</anchor>
+      <arglist>(WeatherConfig cfg, const WeatherSeed *seed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_reconfigure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2af1e0b42fd91db04b7bf0e358f80a85</anchor>
+      <arglist>(WeatherConfig cfg)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>weather_store_subscribe</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga40fd78d1cab03532c37b131b1c2a9111</anchor>
+      <arglist>(void(*cb)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2cd48126740a404ee6893890c5abf288</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_cond</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga2b52199ca0e311c968b7f831305acd62</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_cond_label</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gad57eba8aa9a6f59644fedafcac7a3bab</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_humidity</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaec0de378ffe3adbadab18b877c3e214c</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_wind_kmh</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga06fe793fd4c59b655856f6f1454e66a1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>weather_store_wind_dir</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga21865e60abf090e923d95f74e4e5e3b2</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_sunrise</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gadcce3fc2dbdf6a3ccd751a70ef171adf</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_sunset</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga613a6718a67c620b3c4623cbbfc3d84e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_feels_like</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga06cf30734c71d28b90e5b660ee75bc9d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_pressure</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gac167df267d9204941ae5ef9541074edc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_dew_point</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga4780ec893b0d2cb94e17ab85c78e377d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_uv</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga839bf5c5187f067697de69f79f025b3f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp_max</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga9521fad2bb38f644e02c9c3ac8547d4b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_temp_min</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga3ad694d30ad387bd9a9c1db451cc9c2d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_precip_chance</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga04d4ed2abc57cd51459c6913b2d77e1d</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const WeatherHourly *</type>
+      <name>weather_store_forecast_hourly</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaba5bc2a406811b7f6d4b6df181f620d7</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>const WeatherDaily *</type>
+      <name>weather_store_forecast_daily</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga0610dff5f72df6fa9f4312a73e6d96de</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>weather_store_age_s</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga7856768b2bde2cf55422b2c3b5ea3b4e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gab3c6bccf52afd82d7b55d77836e6ae39</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_step_history</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga81bcfdc1cea1875ac0c3a5140dc8d80d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const HealthPart</type>
+      <name>health_part_hr_day</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga41c920e1c1687197b86fcae1bd17c5aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_WEATHER</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaf7f92da5799b3fc95c172f84287e6867</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_STOCK</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5b35a6941ad6bb200a944b38ae9fa676</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_CALENDAR</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga71057ac435b7b29a882b011053659d86</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HEALTH</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga31737569cb65fc760932f244727a568d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_LOCATION</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>gaa19bf75ee3cb87a3a31a97238f4dcf73</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>STORE_TAG_HRV</name>
+      <anchorfile>group__lib__stores.html</anchorfile>
+      <anchor>ga5dd549de392b92225c04280a50970e14</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_settings</name>
+    <title>Settings</title>
+    <filename>group__lib__settings.html</filename>
+    <file path="src/c/pebble/system/settings/">plugin_source.h</file>
+    <file path="src/c/pebble/system/settings/">setting_values.h</file>
+    <file path="src/c/pebble/system/settings/">settings.c</file>
+    <file path="src/c/pebble/system/settings/">settings.h</file>
+    <file path="src/c/pebble/system/settings/">settings_catalog.h</file>
+    <file path="src/c/pebble/system/settings/">settings_chain.h</file>
+    <class kind="struct">PluginSourceSettings</class>
+    <class kind="struct">SettingField</class>
+    <class kind="struct">SettingsSchema</class>
+    <class kind="struct">SettingsInbound</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_WEATHER</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7519f9e335dac1caa4af7e098ba595df</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_CALENDAR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54d7afa30c1599cabdaefe00ebe5e667</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_ANY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga256177eefe8ca85558ab1950faeb5d0b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga990cbb3116efef955c98d6f789302b35</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab2dda1ab7a5b7a83f3f2923e285d2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_VERSION</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga2443bbd036bbbdda30abfa06a473bdd0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIRST_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaf0cade985b8b365b66441618bc5085a0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_WEATHER_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadefc10b23da283a35b2957a7e6e6082c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_CALENDAR_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaed0d9a6d4a3165af7fd1c790795ca7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_FIELDS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga172fb13323b731d043aefa0d66a751ce</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_PLUGIN_SOURCE_KEY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga23404e19f790c5308f720b0237438e4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB_SIZE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9f418302396c6aa0b9d2bc9a2e75a9b0</anchor>
+      <arglist>(blob)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_BLOB</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3af4893cdd074306b3fcc30df1cb8a00</anchor>
+      <arglist>(settings, first)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_FIRST_SIZE_</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8db432ced131d3416a56b8de4dd53bc2</anchor>
+      <arglist>(first, settings)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gae38319f1a2067a1c9f6b2652bb41b226</anchor>
+      <arglist>(key)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_COUNT_CHECKED</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga60da601435a75b4d496364449dd1060a</anchor>
+      <arglist>(key, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_DEFAULT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gacefbc55594446448ad80ff74406626a7</anchor>
+      <arglist>(key)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_TEMPERATURE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaeeceac8a6d66376b0fbb3b495e245a8c</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_DATE_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaf2a01fb04cac500bbbd57bdd6666a897</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_THEME</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gad2d575c6e87c1859cd11cd814560f708</anchor>
+      <arglist>(off, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_HEADER_FONT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga779ccdfaac16f2eeba42f85f6ce894b9</anchor>
+      <arglist>(off, table_count)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_STEPS_MODE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga53d6cc56389abbc368788db97d0d747e</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_DISTANCE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaba0654c3c38a9186e4ecc9732c481e4a</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_TIME_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab20b6970a9c594d7d09fa91fb2f5d24b</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BLUETOOTH_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga5f8c5ebca9a4cae4d21ee7a6b8280fb8</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_QUIET_TIME_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga85914fbaf222c55ef9c16f52c16fceb0</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BLUETOOTH_VIBE_CONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gae7d8e8aee5d1d672fbb7931627cf170c</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BLUETOOTH_VIBE_DISCONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8603b3236f69557a9e021326e5396ce7</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_HOURLY_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gadc1a8ba6bbe41444b7ba1906e5a7f536</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_BATTERY_DISPLAY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga826e14901547c30cb46f62ebc9582a71</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>KNOWN_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga270513f4a67f8533c0b8d28e53cb6e52</anchor>
+      <arglist>(off)</arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>SETTINGS_CHAIN_EACH</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac06564560a442b796c3ae56c1be2f4a9</anchor>
+      <arglist>(schema, head, tail)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>struct SettingsSchema</type>
+      <name>SettingsSchema</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4c71229864f5dc765a8b70c2c971fb99</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>TimeFormat</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga25de3b313f6a766c08b5af9f3cac864d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_SYSTEM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da63335a13eb734c3302caeeb5b9d74485</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_12H</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864daed991c52c4fa5f4569d7213de1fa7763</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_24H</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864daf1d5570fd3277ed40a3b0378cf1a2f79</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_BEATS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da7cda0e5d3eeee8e6f82b6ae89cf120d5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_12H_NO_LEAD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da9522d658e373ea077be0a0edfaf58468</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>TIME_FORMAT_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga25de3b313f6a766c08b5af9f3cac864da4ffd6b05b8739bfa9443b3b08aaa447f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>StepsMode</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga6e6066815d52058ba7571050020ca960</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_STEPS</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960aa29671c6c7e06670eb55a4a4f062e7fa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_MILES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960a062656b30d579c0240fb0328b9b95fbe</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_KM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960a5bfc8f1e5575d9f15901d28ed9a82edf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>STEPS_MODE_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga6e6066815d52058ba7571050020ca960ab5ce5ab146d3c8bd00eeb2c933937928</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>DistanceUnit</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4c67a7b952f3804e2bd056cf95c4161a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DISTANCE_UNIT_KM</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga4c67a7b952f3804e2bd056cf95c4161aa9f93d9e27b923402d6c730122896530f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DISTANCE_UNIT_MILES</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga4c67a7b952f3804e2bd056cf95c4161aae026af054f0e10b7ae1896cf47ab26f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DISTANCE_UNIT_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga4c67a7b952f3804e2bd056cf95c4161aaca24a90c5e04e8f18619665261912ae9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>VibeChoice</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7b8aec224cacf74446d899e5eaab0819</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_NONE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819acea2b08ae811c660ece561bd9ee6075a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_SHORT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819a81c74b9772cdf17b4c1ba152a188f052</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_LONG</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819acebdbaa12797350abb41b9484f67de79</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_DOUBLE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819ad39a0395f1a3f01c96f7ea467c9bbc26</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VIBE_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga7b8aec224cacf74446d899e5eaab0819a1415e32b1347a563573ba9ce377f4856</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>BatteryDisplay</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaaec2354b2ba9c2f927d81fc5daf6d24d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_BOTH</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24da5e582ca0827de8a4e8fde4b51531e8c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24da932a7cf8db1d4e388d04275565b50357</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_PERCENT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24dadb70a1bb92d4ea05d4d1ddf4b3f230d7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>BATTERY_DISPLAY_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ggaaec2354b2ba9c2f927d81fc5daf6d24daa60c922484f7d2a88e9c7d42a8af9fb0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SettingId</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga5b6861430c47031f602e2af972953f53</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_TEMPERATURE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a1019e4e2d28c1701a2d2f31b733bb188</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_DATE_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53af80c4cb917a7de898f4024852a77cf75</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_THEME</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a71f897633057f6efea0f87bd0ffaa5a2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_STEPS_MODE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53af493313f74aa611a4726b8beebe09ea4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_DISTANCE_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53acb4709fec470f37af97855bcffbf6e19</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_TIME_FORMAT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aa11a12d9cbe1d2e83e9ebdbb799582cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BLUETOOTH_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53ac6fc547727f28528f43d6e9dafa34315</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_QUIET_TIME_ICON</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a72f06dd4e0dfaf0b724a5b3188e2c5bd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BLUETOOTH_VIBE_CONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a4134cdbe739d3b5cfbaf90fa65312548</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BLUETOOTH_VIBE_DISCONNECT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aa7a8c945d5c0cc9cf86a295aa468dfc0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_HOURLY_VIBE</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a1cc0cdb25c54b97706636d1b0019e895</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BATTERY_DISPLAY</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a55fd50c70be3d5855ed7ae3f9a158276</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_HEADER_FONT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53aafd1da9c39c0d57c730c1aadea997fb9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_WIND_UNIT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a68913fe599618ea235f9a9caef1a4e5e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_COUNT</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga5b6861430c47031f602e2af972953f53a426d509db457c0ed090c5cbe59517a33</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SettingType</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8dfa1a122b59a38c38cc2824be723338</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_BOOL</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338ae6502b94eb9c2d9511fef893f08cf3be</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_ENUM_U8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338a75134673575de8e48aec0067e543b066</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_CSTRING</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338af6eeeb0762facb761e45e86fea90b345</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>SETTING_COLOR</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gga8dfa1a122b59a38c38cc2824be723338a9a64de1bc8a9ea6b2eb8ad77c291fdf3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>plugin_source_write_needed</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga54bef5368ed91eec6a9cfef4521c6e02</anchor>
+      <arglist>(const PluginSourceSettings *now, const PluginSourceSettings *on_flash, bool on_flash_known)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_init</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gabf78fb93dcb30f9c8f17cc2eaa9a934e</anchor>
+      <arglist>(const SettingsSchema *schema)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>settings_was_fresh</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga40b5dc5d02dfa2e8a630782dc5be7263</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_save</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab9d20e3758e874e18f045827a5cd29b3</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_mark_restored</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga311ba161873a4026937acc17c57525cc</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>settings_u8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga3751b197b3c6a12637ebdf7ebc0ea997</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>settings_str</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab048a393e0f36aa1df969db0a34db046</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>settings_set_u8</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gaca6beaa8ac8e3de5499b406ebab187af</anchor>
+      <arglist>(SettingId id, uint8_t value)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint8_t</type>
+      <name>settings_enum_count</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga7f6e82a36168e1d570748a8c18d0a30b</anchor>
+      <arglist>(SettingId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>settings_serialized_size_max</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga281a4f818f93bf883410d0222e21713b</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>settings_serialize</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga8a25e0c1aea6e4cb033cefa62a590458</anchor>
+      <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+    <member kind="function">
+      <type>SettingsInbound</type>
+      <name>settings_apply_inbox</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga226c66180fb376a5888b279eca034417</anchor>
+      <arglist>(DictionaryIterator *iter)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_first</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab3b5e81aea94a408da290199d66c0800</anchor>
+      <arglist>(const SettingsSchema *head, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static const SettingsSchema *</type>
+      <name>settings_chain_next</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gac722dd54f21bc2a4d1a44dd7b95f7571</anchor>
+      <arglist>(const SettingsSchema *schema, const SettingsSchema *tail)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_field</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga501156d20707f95fbf16d066f4120fd4</anchor>
+      <arglist>(const SettingsSchema *head, const uint32_t *message_key)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>settings_chain_has_key</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga9b68a17d307380fb0db49597095cb9fa</anchor>
+      <arglist>(const SettingsSchema *head, uint32_t key)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_system</name>
+    <title>System Bits</title>
+    <filename>group__lib__system.html</filename>
+    <file path="src/c/pebble/system/units/">units.c</file>
+    <file path="src/c/pebble/system/units/">units.h</file>
+    <file path="src/c/pebble/system/vibe/">vibe.c</file>
+    <file path="src/c/pebble/system/vibe/">vibe.h</file>
+    <member kind="enumeration">
+      <type></type>
+      <name>VibePulse</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>gabbe12c91a0e3541c91618e6765204e19</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VibePulseShort</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ggabbe12c91a0e3541c91618e6765204e19ae9aaea4d3226665ad0772d40537a1319</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VibePulseLong</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ggabbe12c91a0e3541c91618e6765204e19a362ca2d17606221941dfa679ddb9ecbe</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>VibePulseDouble</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ggabbe12c91a0e3541c91618e6765204e19ae2653abdfc98405084bd8d0da715af1c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>units_swatch_beats</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga6abe1f5f8efd60ddf21617822f0f6fd6</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>units_ms_until_next_beat</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga85d3000cf6b4ab6360ff3df4e97add8e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units_format_distance</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga94c81ab17362b08d64e0b2497730bbd5</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>units_format_distance_value</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga4132ffc49e378387d53b1a1171fd2b05</anchor>
+      <arglist>(char *buffer, size_t size, int meters, bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>const char *</type>
+      <name>units_distance_unit</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga6c4edc61ad14869972212cf59a4f7d47</anchor>
+      <arglist>(bool miles)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_pulse</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga06fdc71bb88f3abae23d9c6ac8ef7c8e</anchor>
+      <arglist>(VibePulse pulse)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_custom</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga005b71470c6beaa166cd9cc7c5cf10b1</anchor>
+      <arglist>(const uint32_t *durations, uint32_t num_segments)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_choice</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga68e3aacc6c4efcb6b2827627e09da299</anchor>
+      <arglist>(uint8_t choice)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_bt_transition</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga9b510de5a24f5136dfb470f5aa6aafd5</anchor>
+      <arglist>(bool connected)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>vibe_hourly</name>
+      <anchorfile>group__lib__system.html</anchorfile>
+      <anchor>ga984f91ed1f50b63098f92155a219cc56</anchor>
+      <arglist>(const struct tm *tick, uint8_t choice)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_ui</name>
+    <title>UI</title>
+    <filename>group__lib__ui.html</filename>
+    <file path="src/c/pebble/ui/engine/">engine.c</file>
+    <file path="src/c/pebble/ui/engine/">engine.h</file>
+    <file path="src/c/pebble/ui/">fonts.c</file>
+    <file path="src/c/pebble/ui/">fonts.h</file>
+    <file path="src/c/pebble/ui/">icon_cache.c</file>
+    <file path="src/c/pebble/ui/">icon_cache.h</file>
+    <file path="src/c/pebble/ui/">readouts.c</file>
+    <file path="src/c/pebble/ui/">readouts.h</file>
+    <file path="src/c/pebble/ui/weather/">icons.c</file>
+    <file path="src/c/pebble/ui/weather/">icons.h</file>
+    <file path="src/c/pebble/ui/weather/">icons_table.g.h</file>
+    <file path="src/c/pebble/ui/">zone.c</file>
+    <file path="src/c/pebble/ui/">zone.h</file>
+    <class kind="struct">EngineSlot</class>
+    <class kind="struct">IconMargins</class>
+    <class kind="struct">Zone</class>
+    <member kind="define">
+      <type>#define</type>
+      <name>ENGINE_SLOTS_MAX</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga60efc891e07d5be12f10e4c1dc7f43d9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>FONT_SLOTS_MAX</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga4ca1872518ba74eea31ab554588e7398</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ICON_AUTOTRIM</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga0218b6d868d6c02e798e1f43e04a8d28</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>ICON_TRIM_LOG</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gacd235799baa707d5f8b99169732c0625</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>uint8_t(*)</type>
+      <name>EngineBuild</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gafb4e0c889ad43fc740ce8968464eead4</anchor>
+      <arglist>(EngineSlot *out, uint8_t max, GRect bounds)</arglist>
+    </member>
+    <member kind="typedef">
+      <type>uint8_t</type>
+      <name>FontId</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8cad323339ccb30f88dae519c4e198f5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_init</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga80e9c91268f57dc6bd9233afc9d7a19f</anchor>
+      <arglist>(Window *window, EngineBuild build)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_deinit</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga371c44d7e8c48ce708a69bfd413a2a0e</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_rebuild</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga878b25483298cd1601b2191e7eb9da87</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_mark_dirty</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaec392c631ca5f1420f4ad730f2c0c8c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>engine_mark_dirty_tags</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8cfbff710717e1257d8545775d7171b0</anchor>
+      <arglist>(uint32_t changed)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_register</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gad49c536818ff15a0e7535e258fbdd59b</anchor>
+      <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_load</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5dd98d76023121d74003ec12118e65b2</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fonts_swap</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga8ad877e9d1ef455a6f28358671f32602</anchor>
+      <arglist>(FontId id, uint32_t resource_id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_register_system</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gac0a1fd4baa979be69b65a646fd457ad8</anchor>
+      <arglist>(FontId id, GFont handle)</arglist>
+    </member>
+    <member kind="function">
+      <type>GFont</type>
+      <name>fonts_get</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7a313b71a1524d1183f9163522710472</anchor>
+      <arglist>(FontId id)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fonts_unload_all</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab7fb11d15d23d2ef37c4baa9db129ee1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>GBitmap *</type>
+      <name>icon_get</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7968af6a0c5eadec10e501121ec97760</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>GSize</type>
+      <name>icon_size</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaa15abf7931b6be2b608974a6c263c56e</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>IconMargins</type>
+      <name>icon_margins</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga2040f8e16081e8b48289641c6914c73f</anchor>
+      <arglist>(uint32_t res)</arglist>
+    </member>
+    <member kind="function">
+      <type>IconMargins</type>
+      <name>icon_margins_of</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gabad4c43378e5bd3628da4131b2343ad5</anchor>
+      <arglist>(GBitmap *bmp)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icon_tint</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gafa86e8ce9e0e424a0bb3b08e7dd3c04e</anchor>
+      <arglist>(GBitmap *bmp, GColor color)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icon_align_trim</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab859f1d276edd74cad316c2b811d79cc</anchor>
+      <arglist>(GAlign align, IconMargins margins, int *trim_dx, int *trim_dy)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>icons_cleanup</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3b5138fb45e8c6ce2ed2648318eefdab</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_time</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5f1ce126b5f8ddfb48e78d1077355883</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_meridiem</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gad7314f0630f01d77249d12b3f5018d20</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_date</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga27e66e5fb5efa50e5cd3a641ca95f3e1</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>readout_date_shows_beats</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gac815591cccd1783227eb1a656212c8c5</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hr</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gab74d674a3402d0c3ccb145f54ee4d5dc</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_hrv</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga3323a26d3294679e221801278ed1b808</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_steps</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga46b62b70722c1a8885049b5dd237aa7e</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_weather_temp</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaee4e7d275341c91bdbae7a5adc7ddc09</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_weather_cond</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga5d4d51464278e6e297e35ecf92b88666</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_lat</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gaa2fe71cbe1755aae8977cad2d17e71ed</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_lon</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>gacea2f8a4dcf1bff5344807e02a4842aa</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>readout_phone_battery</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga89ae84ee592aa9854c2e5047545b145d</anchor>
+      <arglist>(char *out, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint32_t</type>
+      <name>wx_resource_for</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga9a50b66845b71a795a1739d45b510875</anchor>
+      <arglist>(const char *condition)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static uint32_t</type>
+      <name>wx_resource_for_table</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga7bdf911d493eb75876b96a13b80a6e41</anchor>
+      <arglist>(const char *condition)</arglist>
+    </member>
+    <member kind="function">
+      <type>TextLayer *</type>
+      <name>zone_make_layer</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga43295bc3eba00fc026a19f6533e2533b</anchor>
+      <arglist>(Layer *parent, const Zone *zone)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>zone_set_text_fit</name>
+      <anchorfile>group__lib__ui.html</anchorfile>
+      <anchor>ga9caa8b2be1e2c9459049c7e6a37d8f7b</anchor>
+      <arglist>(TextLayer *layer, const Zone *zone, const char *text)</arglist>
+    </member>
+  </compound>
+  <compound kind="group">
+    <name>lib_plugins</name>
+    <title>Plugins</title>
+    <filename>group__lib__plugins.html</filename>
+    <subgroup>lib_dev</subgroup>
+  </compound>
+  <compound kind="group">
+    <name>lib_dev</name>
+    <title>Dev Harness</title>
+    <filename>group__lib__dev.html</filename>
+    <file path="src/plugins/dev/c/dev/">dev_hooks.h</file>
+    <file path="src/plugins/dev/c/dev/">dev_walk.c</file>
+    <file path="src/plugins/dev/c/dev/">dev_walk.h</file>
+    <class kind="struct">[struct].s_fixed</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>DevWalkMode</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gabd7169bdf3c69ae6ffe751b975f1fadd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_WALK_NONE</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddae5c1f92f3e0ce1d4f302715625f3d2ca</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DEV_WALK_THEMES</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ggabd7169bdf3c69ae6ffe751b975f1faddac0d36779d185db570fe780315e64261d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static bool</type>
+      <name>dev_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gadf53283b086362bedf9d7b445e457ea4</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_start</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga51d93254270b5de85c1a52d484bc4f74</anchor>
+      <arglist>(void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_stop</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gabefedd1cbff9a29f82f78f8bf92352f9</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function" static="yes">
+      <type>static void</type>
+      <name>dev_force_time</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga0fc1db4f8d84b98e40c608c63b2395af</anchor>
+      <arglist>(struct tm *when)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_seed_stores</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>gad7d36031f9102cac1d91f9d66079d9ed</anchor>
+      <arglist>(int hour, int min)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_init</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga881065800617954a0fd094063774f0d9</anchor>
+      <arglist>(DevWalkMode mode, void(*apply_theme)(void))</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dev_walk_deinit</name>
+      <anchorfile>group__lib__dev.html</anchorfile>
+      <anchor>ga1ff4ca8046b48b20d4d60258901384c1</anchor>
+      <arglist>(void)</arglist>
+    </member>
+  </compound>
+  <compound kind="page">
+    <name>index</name>
+    <title>Device API</title>
+    <filename>index.html</filename>
+  </compound>
+</tagfile>
