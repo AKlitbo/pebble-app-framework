@@ -11,6 +11,10 @@
  */
 #pragma once
 
+// the wind unit's choices are WindUnit, which the core's wind maths takes, so they live with it
+// and WIND_UNIT_COUNT reaches the settings from there
+#include "units/wind.h"
+
 /**
  * @addtogroup lib_settings
  * @{

@@ -3,9 +3,90 @@ Builds a staged sandbox: the include paths, the C and the PebbleKit JS, one app 
 the bundle.
 """
 
+import hashlib
 import os
+import re
 
-from paf_features import define_cflags, feature_cflags, read_manifest
+from paf_features import define_cflags, feature_cflags, read_manifest, text_define_cflags
+
+# the lines tools/pkjs/settings-page.ts writes into page/settings_page.h
+FINGERPRINT_LINE = re.compile(r'^// sandbox fingerprint: ([0-9a-f]{64})$', re.MULTILINE)
+COUNTED_LINE = re.compile(r'^// counted on: (.*)$', re.MULTILINE)
+FORMAT_LINE = re.compile(r'^// format: (\d+)$', re.MULTILINE)
+
+# the header format tools/pkjs/settings-page.ts writes, its HEADER_FORMAT. a header without it was
+# written before the header carried the defaults, so its fingerprint can match while the defaults are missing
+HEADER_FORMAT = 2
+
+
+def sandbox_fingerprint(sandbox):
+    """
+    The sandbox's fingerprint, worked out the way sandboxFingerprint in tools/pkjs/settings-page.ts
+    works it out: a sha256 over package.json and every file under emit/, in order of their paths
+    from the sandbox with forward slashes, each as its path, a newline, its bytes, and a newline.
+    """
+    files = []
+    emit = os.path.join(sandbox, 'emit')
+    for root, _dirs, names in os.walk(emit):
+        for name in names:
+            full = os.path.join(root, name)
+            if os.path.isfile(full) and not os.path.islink(full):
+                files.append(os.path.relpath(full, sandbox).replace(os.sep, '/'))
+    if os.path.isfile(os.path.join(sandbox, 'package.json')):
+        files.append('package.json')
+
+    digest = hashlib.sha256()
+    for rel in sorted(files, key=lambda path: path.encode('utf-8')):
+        digest.update(rel.encode('utf-8') + b'\n')
+        with open(os.path.join(sandbox, *rel.split('/')), 'rb') as handle:
+            digest.update(handle.read())
+        digest.update(b'\n')
+    return digest.hexdigest()
+
+
+def page_header_problem(sandbox):
+    """
+    What is wrong with the sandbox's page/settings_page.h, or None when it was written for this very
+    build. paf build writes the header from the phone code it just compiled, so a missing header, or
+    one whose fingerprint does not match the sandbox's package.json and emit/, would hand the C counts
+    from a page that is not the one the face ships. A header of another format is refused before its
+    fingerprint, since one from before the defaults can match the fingerprint and still lack them.
+    """
+    header = os.path.join(sandbox, 'page', 'settings_page.h')
+    if not os.path.isfile(header):
+        return 'No page/settings_page.h in this sandbox. Build the face with paf build, which writes it.'
+
+    with open(header, 'r') as handle:
+        text = handle.read()
+    form = FORMAT_LINE.search(text)
+    if not form or int(form.group(1)) != HEADER_FORMAT:
+        return ('page/settings_page.h was written by another version of paf build. '
+                'Build the face with paf build, which writes it.')
+    found = FINGERPRINT_LINE.search(text)
+    if not found or found.group(1) != sandbox_fingerprint(sandbox):
+        return ('page/settings_page.h was written for another build of this sandbox. '
+                'Build the face with paf build, which writes it.')
+    return None
+
+
+def page_platforms_problem(sandbox, target_platforms):
+    """
+    What is wrong with the platforms page/settings_page.h was counted on, or None when they cover every
+    platform this build makes. The build counts the page on the appinfo's targetPlatforms, or on its own
+    list of the SDK's platforms when the appinfo has none, so an SDK with a platform that list lacks
+    would build it with counts from the other platforms' pages. A header with no such line has no counts.
+    """
+    with open(os.path.join(sandbox, 'page', 'settings_page.h'), 'r') as handle:
+        found = COUNTED_LINE.search(handle.read())
+    if not found:
+        return None
+    counted = found.group(1).split()
+    missing = [platform for platform in target_platforms if platform not in counted]
+    if missing:
+        return ('page/settings_page.h counts the settings page as it opens on {}, but this build also makes '
+                'the face for {}. List the face\'s platforms in its appinfo\'s targetPlatforms.'
+                .format(', '.join(counted), ', '.join(sorted(missing))))
+    return None
 
 
 def build_face(ctx, source, extra_cflags=None):
@@ -29,11 +110,23 @@ def build_face(ctx, source, extra_cflags=None):
     # this face's own sources (grid engine, widgets, main, theme)
     local_c = ctx.path.find_dir('src/c')
 
+    # the header tools/build.ts writes from the face's settings page, which settings_catalog.h
+    # includes for the choice counts. it is always written, empty for a face with no page, and it
+    # carries the fingerprint of the sandbox it was written for, so a sandbox without it, or one
+    # whose phone code changed since, was not built by paf build
+    problem = page_header_problem(ctx.path.abspath()) or \
+        page_platforms_problem(ctx.path.abspath(), list(ctx.env.TARGET_PLATFORMS))
+    if problem:
+        ctx.fatal(problem)
+    page_dir = ctx.path.find_dir('page')
+
     # the framework's C roots and the face-local dir are on the include path. every shared header is
     # included with its folder relative to a root (e.g. "ui/engine/engine.h" or "clock/beats.h") so
     # moving a folder never touches this list. c/ itself is a root too, so a plugin's folder, such as
-    # the dev harness, keeps its "dev/" prefix without being one more root of its own
+    # the dev harness, keeps its "dev/" prefix without being one more root of its own. page/ goes
+    # first, so the build's settings_page.h wins over any header of that name in the face
     include_paths = [
+        page_dir.abspath(),
         lib_c_core.abspath(),
         lib_c_pebble.abspath(),
         lib_c.abspath(),
@@ -65,9 +158,10 @@ def build_face(ctx, source, extra_cflags=None):
     binaries = []
     cached_env = ctx.env
 
-    # the framework's own feature switches, then any define the face set for itself
+    # the framework's own feature switches, then any define the face set for itself, then the text
+    # defines the build worked out for it
     manifest = read_manifest(ctx)
-    cflags = feature_cflags(ctx, manifest) + define_cflags(ctx, manifest)
+    cflags = feature_cflags(ctx, manifest) + define_cflags(ctx, manifest) + text_define_cflags(ctx, manifest)
     if extra_cflags:
         cflags.extend(extra_cflags)
 

@@ -40,6 +40,38 @@ An error page or a body cut off partway is not a calendar, and says nothing abou
 
 A download gives up after 15 seconds. When the wearer changes the link, the phone fetches the new feed straight after the save, and an answer still out for the old link is dropped when it lands, so an old feed can never overwrite a new one. [The Phone Side](phone-side.md#after-a-save) covers that rule for every feature.
 
+## Which Hosts Feeds Come From
+
+The calendar asks for any site, since the wearer's feed can sit anywhere. A face can list the hosts its wearers' feeds come from as `calendarHosts` in its appinfo's `providers`, and the calendar asks for those alone, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers. With plugins on, a feed on a host the face did not list costs the wearer one failed fetch and a notification from the Pebble app, and loads once the wearer allows it. With plugins off, nothing is held to the list.
+
+Each host covers its subdomains. These are the hosts the common services hand out links on:
+
+| Service | Where the Feed Comes From | Host to List | Checked |
+| :-- | :-- | :-- | :-- |
+| Google Calendar, secret address | `https://calendar.google.com/calendar/ical/<id>/private-<token>/basic.ics`, or the older `https://www.google.com/calendar/ical/<id>/private-<token>/basic.ics` | `google.com` | yes |
+| iCloud, public calendar | `webcal://p<NN>-caldav.icloud.com/published/2/<token>`, with the number varying per account | `icloud.com` | yes |
+| Outlook.com, published calendar | `https://outlook.live.com/owa/calendar/<id>/<id>/calendar.ics` | `outlook.live.com` | yes |
+| Microsoft 365, published calendar | `https://outlook.office365.com/owa/calendar/<id>/<id>/calendar.ics` | `outlook.office365.com` | yes |
+| Proton Calendar, share link | `https://calendar.proton.me/api/calendar/v1/url/<id>/calendar.ics` | `calendar.proton.me` | partly |
+| Fastmail, public calendar | believed to be `https://user.fm/calendar/v1-<token>/<name>.ics` | `user.fm` | no |
+| Yahoo Calendar, ICS share link | somewhere under `calendar.yahoo.com` | `yahoo.com` | no |
+
+Google takes `google.com` rather than `calendar.google.com`, since a wearer who saved their secret address years ago can still hold the `www.google.com` form, and the phone checks the host that link names. A face can list whichever hosts its wearers use.
+
+## From a Pebble App Plugin
+
+A face built with `PLUGIN_CALENDAR` can also read the events in the phone's own calendars, through the Pebble app's calendar plugin, as [Pebble App Plugins](plugin-sources.md) covers. The settings page gains a **Calendar Source** select, with **iCal Link** and **Pebble App: Preferred Source**, or with a `providers` list of `["plugin"]` the calendar reads from the plugin alone. The saved `CALENDAR_SOURCE` picks the mode, and a face declares that key even though its own page has no such row. With `plugin` saved, the phone subscribes to `calendar/event` and runs no iCal round. The mapping is in [`calendar.ts`](../../src/ts/plugin-sources/calendar.ts) and the mode in [`calendar-driver.ts`](../../src/ts/plugin-sources/calendar-driver.ts), both under `src/ts/plugin-sources/`. The plugin needs the `Calendar` permission, which the manifest lists for a face with the define.
+
+**The Same Week.** A calendar plugin serves one instance per event. The phone reads its title and place, preferring the long text, and its start, end, and all-day flag. An event with no start is left off. A timed event with no end, or one that ends at or before its start, gets an hour, as an iCal event does. The events then go through the same window and sort as an iCal feed's, in [`window.ts`](../../src/ts/calendar/window.ts), so the agenda reads the same from either source.
+
+**All-Day Events.** The watch reads an all-day time as the phone's local midnight, as the iCal reader sends it. The Pebble app's plugin sends UTC midnight instead, and Android and iOS disagree on the end. So the phone rounds every all-day start and end to the nearest local midnight, which puts each event on the day it means for a phone from UTC-12 to UTC+12. An all-day event whose end is missing, or rounds to its start, gets one day. Further east, as in New Zealand's summer, an all-day event reads a day late, since nothing in the plugin's data tells the two days apart.
+
+**What Reaches the Watch.** The plugin sends on every change, and the phone sends each update as it comes, cut to the soonest six. An update with no events sends an empty agenda, since that is how the watch hears every event was deleted, and the settings page then shows a note saying the Pebble app may need permission to read the phone's calendars, or that those calendars may be switched off in its calendar settings. An error sends nothing, since the watch has no status line for the calendar, so the watch keeps its agenda and the settings page explains. A watch ask resends the last update as of now, so an event that ended since is left off.
+
+**The Agenda Hold after a Reset.** On a fresh install of the Pebble app, the face's phone code starts before the watch's settings reply lands, while the phone holds no settings at all. An iCal round then has no link, and its empty agenda would clear the watch, only for the restore to bring back the plugin a moment later. So while the phone holds no settings, the settings request is still out, and a plugin could answer, an iCal round with no link sends nothing. The hold lifts when the restore lands, when the watch turns every settings request away, or after 15 seconds, and the held round then runs once, so a watch on iCal with no link still learns its agenda is empty. A face with no `SETTINGS_REQUEST` key never holds. [The Life of a Setting](life-of-a-setting.md#after-a-reinstall) covers the restore.
+
+**The Link Is Not Kept.** The watch keeps the plugin choice through a reset, as [Keeping a Plugin Source](settings-on-the-watch.md#keeping-a-plugin-source) covers, but it keeps no copy of the iCal link. A wearer on an iCal link pastes it again after a reset.
+
 ## Which Events Make the Strip
 
 [ical.js](https://github.com/kewisch/ical.js) reads the feed and handles the iCal rules. The framework chooses what the watch shows.

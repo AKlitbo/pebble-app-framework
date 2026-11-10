@@ -177,6 +177,39 @@ describe('createSettingsAsk', () => {
     expect(log).toHaveBeenCalledTimes(1);
   });
 
+  /** Anything waiting on the watch's settings has to hear that none are coming, or it waits for the rest of the session. */
+  test('says once that no reply is coming when the last ask is turned away too', () => {
+    const unanswered = vi.fn();
+    const { sends, queueSend } = recordingQueue();
+    const ask = createSettingsAsk(queueSend, unanswered);
+
+    ask.start(ASK);
+
+    for (let round = 0; round < SETTINGS_ASK_RETRIES + 1; round++) {
+      refuseNewest(sends);
+    }
+
+    expect(unanswered).toHaveBeenCalledTimes(1);
+  });
+
+  /** A refusal that comes after the reply, from a lost ack, must not tell anything waiting that no reply is coming. */
+  test('says nothing about a missing reply once the watch has replied', () => {
+    const unanswered = vi.fn();
+    const { sends, queueSend } = recordingQueue();
+    const ask = createSettingsAsk(queueSend, unanswered);
+
+    ask.start(ASK);
+
+    for (let round = 0; round < SETTINGS_ASK_RETRIES; round++) {
+      refuseNewest(sends);
+    }
+
+    ask.answered();
+    sends[sends.length - 1].fail();
+
+    expect(unanswered).not.toHaveBeenCalled();
+  });
+
   /**
    * A second reply after a seed would make the phone restore the watch with the settings it just
    * took from it.

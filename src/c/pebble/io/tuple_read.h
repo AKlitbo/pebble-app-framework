@@ -43,4 +43,19 @@ int32_t tuple_int_or(const Tuple *tuple, int32_t fallback);
  */
 const char *tuple_str_or(const Tuple *tuple, const char *fallback);
 
+/**
+ * @brief Reads a whole number whether the phone sent it as an int or as text holding only digits.
+ *
+ * Clay sends a select as text and a toggle as an int, and a face's own component can send either,
+ * so every toggle and choice reads through here and takes the value whichever way it came. An int
+ * reads as tuple_int_or reads it. Text reads through wire_digits_or, so a sign, a space, or anything
+ * after the digits gives the fallback, and digits too big for an int32_t read as INT32_MAX. A
+ * colour stays on tuple_int_or, since its text could be hex and this would read it as decimal.
+ *
+ * @param tuple The tuple, or NULL when the key was absent.
+ * @param fallback Returned when the tuple is absent, or is neither an int nor digits.
+ * @return The value, or @p fallback.
+ */
+int32_t tuple_number_or(const Tuple *tuple, int32_t fallback);
+
 /** @} */

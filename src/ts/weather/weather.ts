@@ -8,7 +8,7 @@
 import openMeteo from './providers/openmeteo';
 import owm from './providers/owm';
 import weatherApi from './providers/weatherapi';
-import { pickProvider } from '../pkjs/providers';
+import { pickProvider, WEATHER_FALLBACK } from '../pkjs/providers';
 import type { RequestFn, DoneFn, WeatherOpts } from './util';
 
 /** A provider module: the one fetch entry the dispatcher calls. */
@@ -23,6 +23,9 @@ const PROVIDERS: Record<string, WeatherProvider> = {
   weatherapi: weatherApi,
 };
 
+/** The data sources a settings page can offer, which are the ones fetchWeather has a provider for. */
+export const WEATHER_PROVIDERS = Object.keys(PROVIDERS);
+
 /**
  * Looks up current weather using the configured provider and location.
  *
@@ -33,7 +36,7 @@ const PROVIDERS: Record<string, WeatherProvider> = {
 function fetchWeather(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   // each provider attaches its own forecast strip when the face asks for one so the
   // dispatcher just routes and hands the result straight back
-  pickProvider(PROVIDERS, opts.provider, 'openmeteo', 'weather').fetch(opts, request, done);
+  pickProvider(PROVIDERS, opts.provider, WEATHER_FALLBACK, 'weather').fetch(opts, request, done);
 }
 
 export default { fetchWeather };

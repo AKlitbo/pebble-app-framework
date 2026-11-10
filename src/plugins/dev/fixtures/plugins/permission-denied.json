@@ -1,0 +1,127 @@
+{
+  "plugins": [
+    {
+      "uuid": "00000000-0000-0000-0001-000000000002",
+      "name": "Weather",
+      "sources": [
+        {
+          "category": "weather",
+          "items": [
+            "location"
+          ],
+          "properties": {
+            "name": [
+              "shortText"
+            ],
+            "temperature": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ],
+            "feels_like": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ],
+            "high": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ],
+            "low": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ],
+            "condition": [
+              "shortText",
+              "longText",
+              "icon",
+              "image"
+            ],
+            "condition_code": [
+              "longText"
+            ],
+            "uv_index": [
+              "numericValue",
+              "shortText"
+            ],
+            "precipitation": [
+              "numericValue",
+              "shortText"
+            ],
+            "hourly_temperature": [
+              "series.numericValue",
+              "series.shortText"
+            ],
+            "hourly_condition_code": [
+              "series.longText"
+            ],
+            "daily_sunrise": [
+              "series.timestamp"
+            ],
+            "daily_sunset": [
+              "series.timestamp"
+            ],
+            "wind_speed": [
+              "numericValue",
+              "shortText"
+            ],
+            "sunrise": [
+              "timestamp"
+            ],
+            "sunset": [
+              "timestamp"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    },
+    {
+      "uuid": "00000000-0000-0000-0001-000000000004",
+      "name": "Calendar",
+      "sources": [
+        {
+          "category": "calendar",
+          "items": [
+            "event"
+          ],
+          "properties": {
+            "name": [
+              "shortText",
+              "longText"
+            ],
+            "location": [
+              "shortText",
+              "longText"
+            ],
+            "starts_at": [
+              "shortText",
+              "longText",
+              "timestamp"
+            ],
+            "ends_at": [
+              "shortText",
+              "timestamp"
+            ],
+            "all_day": [
+              "boolean"
+            ],
+            "calendar": [
+              "shortText"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ],
+  "state": {
+    "weather/location": {
+      "pluginUuid": null,
+      "lastError": "PERMISSION_DENIED",
+      "lastEmpty": false
+    }
+  }
+}

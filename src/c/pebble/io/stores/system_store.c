@@ -7,6 +7,11 @@
  */
 #include "io/stores/system_store.h"
 
+#include "io/link_change.h"
+#if defined(SYSTEM_STORE_LINK_LISTENERS)
+#include "io/callback_list.h"
+#endif
+
 /**
  * @var s_state
  * @brief The battery and bluetooth readings the store holds.
@@ -15,15 +20,22 @@ static struct
 {
     int  battery_level;       ///< Battery charge, in percent
     bool charging;            ///< Whether the watch is charging
-    bool bluetooth_connected; ///< Whether the phone is connected
+    LinkState link;           ///< The phone link as last read. The first reading only seeds. Later changes can buzz
 } s_state;
 
-static bool s_bt_initialized;     ///< The first bluetooth reading only seeds. Later changes can buzz
 static bool s_live;               ///< False pins the seeded values so screenshots stay put
 static time_t s_seed_alarm;       ///< The pinned alarm used while not live
 static void (*s_cb)(void);        ///< Called whenever a reading changes, so the face can redraw
 static BtVibePolicy s_vibe;       ///< What to buzz when the phone connects or drops
 static void (*s_reconnect)(void); ///< Fired on a real change from disconnected to connected
+
+#if defined(SYSTEM_STORE_LINK_LISTENERS)
+/// Room for the stores that listen for the link, phone battery and now playing
+#define LINK_LISTENERS_MAX 2
+
+static CallbackListFn s_link_listener_entries[LINK_LISTENERS_MAX]; ///< The stores listening for the link, in the order they were added
+static CallbackList s_link_listeners = {s_link_listener_entries, LINK_LISTENERS_MAX, 0}; ///< The list over that storage
+#endif
 
 /**
  * @brief Save the battery reading and notify.
@@ -45,24 +57,31 @@ static void set_battery(int level, bool charging)
  */
 static void set_bluetooth(bool connected)
 {
-    // the new state goes in first, so a reconnect handler that reads the store sees it connected
-    bool was_connected = s_state.bluetooth_connected;
-    s_state.bluetooth_connected = connected;
+    // the new state goes in first, so a reconnect handler that reads the store sees it connected.
+    // the first reading only seeds it
+    LinkChange change = link_change_read(&s_state.link, connected);
 
-    // hand a real transition to the face's policy. the first reading only seeds the state
-    if (s_bt_initialized && was_connected != connected && s_vibe)
+    // hand a real transition to the face's policy
+    if (change != LINK_SAME && s_vibe)
     {
         s_vibe(connected);
     }
 
     // the phone app just came back. let the face catch up its phone-backed readouts now instead
-    // of waiting out each store's poll. the first reading only seeds, so this skips at launch
-    if (s_bt_initialized && !was_connected && connected && s_reconnect)
+    // of waiting out each store's poll
+    if (change == LINK_RECONNECTED && s_reconnect)
     {
         s_reconnect();
     }
 
-    s_bt_initialized = true;
+#if defined(SYSTEM_STORE_LINK_LISTENERS)
+    // the stores that only hold what the phone just said clear on a drop and ask again on a return
+    if (change != LINK_SAME)
+    {
+        callback_list_fire(&s_link_listeners);
+    }
+#endif
+
     if (s_cb) s_cb();
 }
 
@@ -100,12 +119,22 @@ void system_store_on_reconnect(void (*cb)(void))
     s_reconnect = cb;
 }
 
+#if defined(SYSTEM_STORE_LINK_LISTENERS)
+void system_store_add_link_listener(void (*listener)(void))
+{
+    // a full list means a store never hears the link change, so say so
+    if (!callback_list_add(&s_link_listeners, listener))
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "link listener list full, dropping a listener");
+    }
+}
+#endif
+
 void system_store_init(SystemConfig cfg, const SystemSeed *seed)
 {
     s_state.battery_level = 0;
     s_state.charging = false;
-    s_state.bluetooth_connected = false;
-    s_bt_initialized = false;
+    s_state.link = (LinkState){0};
     s_vibe = cfg.vibe;
     s_live = cfg.live;
     s_seed_alarm = 0;
@@ -115,7 +144,7 @@ void system_store_init(SystemConfig cfg, const SystemSeed *seed)
         // write straight to state so a pinned bluetooth value never trips the vibe guard
         s_state.battery_level = seed->battery;
         s_state.charging = seed->charging;
-        s_state.bluetooth_connected = seed->bluetooth;
+        s_state.link.connected = seed->bluetooth;
         s_seed_alarm = seed->next_alarm;
     }
 
@@ -141,7 +170,7 @@ void system_store_deinit(void)
 
 int  system_store_battery(void)   { return s_state.battery_level; }
 bool system_store_charging(void)  { return s_state.charging; }
-bool system_store_bluetooth(void) { return s_state.bluetooth_connected; }
+bool system_store_bluetooth(void) { return s_state.link.connected; }
 
 bool system_store_next_alarm(time_t *out)
 {

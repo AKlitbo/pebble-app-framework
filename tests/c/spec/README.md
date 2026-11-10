@@ -27,6 +27,10 @@ A few units under `src/c/pebble` sit on the near side of that line anyway. `stor
 
 `host/pack_le.h` holds the little-endian writers the wire specs build their messages with, one byte, a 16 or 32-bit value, or a length-prefixed string at a time. The watch only ever reads these layouts, so the writers live here rather than beside the readers in `bytes_le.h`.
 
+## Compiles That Have to Stop
+
+Some checks are the build stopping, such as `SETTINGS_BLOB` turning away a first size written with `sizeof`. `stops/` holds a small `.c` file for each, whose first line is `// stops: ` followed by the text its error has to hold. After the specs, `make` compiles each one with `-fsyntax-only`, and a stop passes only when its compile fails and gcc's output holds that text. So a check that quietly stopped stopping fails the suite, and so does one that now stops for some other reason. gcc's own messages are not printed, since CI would read them as a spec that did not build, and the line that fails names the file and the text it wanted. `make stops` runs them on their own, and adding one needs no Makefile entry.
+
 ## Unity (Third-Party)
 
 `unity/` is a vendored copy of the [Unity](https://github.com/ThrowTheSwitch/Unity) test framework, kept verbatim. Each file carries its own MIT copyright header.

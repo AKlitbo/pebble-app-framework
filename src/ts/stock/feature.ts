@@ -15,6 +15,7 @@ import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
 import { getConfig, readText, readValue, watchSettings } from '../pkjs/settings-store';
+import { STOCK_FALLBACK } from '../pkjs/providers';
 import type { Feature } from '../pkjs/feature';
 import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 import { finishRound, roundIsCurrent, shutOutRound, startRound } from '../pkjs/round';
@@ -171,11 +172,20 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
 const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
   const stockSettings = watchSettings(STOCK_KEYS, defaults);
 
+  /** The provider some settings pick, lowercased once, since the provider lookup ignores case and the quota gate has to agree with it. */
+  function providerIn(config: Record<string, unknown>): string {
+    return String(readValue(config.STOCK_PROVIDER, defaults.STOCK_PROVIDER || STOCK_FALLBACK)).toLowerCase();
+  }
+
   // fetch state carried across stock rounds and mutated in place by runStockRound. the two
   // throttle stamps come back off the phone because this JS is killed and restarted at will and
-  // a gate that forgets when it last fetched is no gate at all
-  const savedStock = stockCache.load(localStorage);
+  // a gate that forgets when it last fetched is no gate at all. a cache another provider saved
+  // reads as empty, since its stamps say nothing about this provider's quota
+  const savedStock = stockCache.load(localStorage, providerIn(getConfig()));
   const stockState: StockState = { inFlight: false, round: 0, lastFetchMs: savedStock.lastFetchMs, lastAsOf: savedStock.lastAsOf };
+
+  // whose quotes the stamps and the kept strip are, checked on every round
+  let cacheProvider = savedStock.provider;
 
   // the last strip worth showing kept across restarts so a watch with an empty store still has
   // something while the gate is shut. this is not the dedupe cache below and must never be one:
@@ -204,8 +214,8 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     sender.push({ [messageKeys.STOCK_STRIP]: bytes });
   }
 
-  /** Sends the packed watchlist strip to the watch, and keeps it for the next run. */
-  function sendStocks(results: StockQuote[]) {
+  /** Sends the packed watchlist strip to the watch, and keeps it for the next run under the provider that fetched it. */
+  function sendStocks(results: StockQuote[], provider: string) {
     const bytes = wire.packStockStrip(results);
 
     // a round the provider never answered, a network blip, says nothing about the quotes, so the
@@ -227,6 +237,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       lastAsOf: stockState.lastAsOf,
       lastFetchMs: stockState.lastFetchMs,
       strip: savedStrip,
+      provider,
     });
   }
 
@@ -237,14 +248,15 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
    * a change leaves nothing of the old list to push back to the watch, and the gate opens on the new
    * list's own quotes.
    */
-  function forgetStrip() {
+  function forgetStrip(provider: string) {
     // a round still out for the old list would land in the moment before the forced refetch and put
     // the old strip and stamps back. shutting it out drops its late answers and its own close with them
     shutOutRound(stockState);
     savedStrip = null;
     stockState.lastFetchMs = 0;
     stockState.lastAsOf = '';
-    stockCache.save(localStorage, { lastAsOf: '', lastFetchMs: 0, strip: null });
+    cacheProvider = provider;
+    stockCache.save(localStorage, { lastAsOf: '', lastFetchMs: 0, strip: null, provider });
   }
 
   /**
@@ -253,10 +265,10 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
    * Both halves matter. The watch keeps its list in flash until it is told otherwise, and a kept
    * strip would go back to the watch the next time a fetch was held back.
    */
-  function clearStocks() {
+  function clearStocks(provider: string) {
     if (savedStrip) {
       savedStrip = null;
-      stockCache.save(localStorage, { lastAsOf: stockState.lastAsOf, lastFetchMs: stockState.lastFetchMs, strip: null });
+      stockCache.save(localStorage, { lastAsOf: stockState.lastAsOf, lastFetchMs: stockState.lastFetchMs, strip: null, provider });
     }
 
     pushStockBytes(wire.packStockStrip([]));
@@ -277,13 +289,19 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     }
 
     const config = getConfig();
-    // lowercased once, since the provider lookup ignores case and the quota gate has to agree with it
-    const provider = String(readValue(config.STOCK_PROVIDER, defaults.STOCK_PROVIDER || 'finnhub')).toLowerCase();
+    const provider = providerIn(config);
+
+    // the provider can move with no save from the page, as when a settings restore from the watch
+    // brings back another one. the stamps and the strip are the old provider's, so they go
+    if (provider !== cacheProvider) {
+      forgetStrip(provider);
+    }
+
     const key = readText(config.STOCK_API_KEY, String(defaults.STOCK_API_KEY || '')).trim().slice(0, 64);
     const symbols = parseSymbols(readText(config.STOCK_SYMBOLS, String(defaults.STOCK_SYMBOLS || '')));
 
     if (!symbols.length) {
-      clearStocks();
+      clearStocks(provider);
       return true;
     }
 
@@ -297,7 +315,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     // on its own if a round gets stuck
     runStockRound(stockState, symbols, Boolean(force), {
       fetchQuote: (symbol, onQuote) => stock.fetchQuote({ provider, key, symbol }, request, onQuote),
-      sendStocks: sendStocks,
+      sendStocks: (results) => sendStocks(results, provider),
       now: Date.now,
       timeoutMs: STOCK_ROUND_TIMEOUT_MS,
     });
@@ -361,7 +379,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
     configSaved() {
       // forced, since a changed provider, key or symbol list is worth a fetch past the quota gate
       if (stockSettings.changed()) {
-        forgetStrip();
+        forgetStrip(providerIn(getConfig()));
         refetchAfterSave(asks, refetchDelayMs, () => getStocks(true));
       }
     },

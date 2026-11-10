@@ -155,6 +155,8 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
   entry('CAL_TITLE_LEN', caps.CALENDAR_TITLE_MAX + 1, `An event title, ${caps.CALENDAR_TITLE_MAX} characters plus its terminator`);
   entry('CAL_LOC_LEN', caps.CALENDAR_LOC_MAX + 1, `An event location, ${caps.CALENDAR_LOC_MAX} characters plus its terminator`);
   lines.push('');
+  entry('MUSIC_TEXT_LEN', caps.MUSIC_TEXT_MAX + 1, `A now playing title or artist, ${caps.MUSIC_TEXT_MAX} characters plus its terminator`);
+  lines.push('');
   entry('WEATHER_FORECAST_COLS', caps.FORECAST_COLS_MAX, 'How many columns a forecast strip carries');
   entry('WEATHER_NO_TEMP', caps.FORECAST_NO_TEMP, 'A column with no reading, so the watch draws a placeholder');
   lines.push('');

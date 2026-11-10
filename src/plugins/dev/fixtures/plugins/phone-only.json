@@ -1,0 +1,34 @@
+{
+  "plugins": [
+    {
+      "uuid": "00000000-0000-0000-0001-000000000001",
+      "name": "Phone",
+      "sources": [
+        {
+          "category": "phone",
+          "items": [
+            "phone_state"
+          ],
+          "properties": {
+            "battery_level": [
+              "numericValue",
+              "shortText"
+            ],
+            "cell": [
+              "shortText"
+            ],
+            "wifi": [
+              "boolean",
+              "shortText"
+            ],
+            "mobile_data": [
+              "boolean",
+              "shortText"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ]
+}

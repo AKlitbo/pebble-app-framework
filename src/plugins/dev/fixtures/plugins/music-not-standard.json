@@ -1,0 +1,63 @@
+{
+  "plugins": [
+    {
+      "uuid": "6c1b0d1e-0000-4000-8000-00000000a0d1",
+      "name": "Odd Music",
+      "sources": [
+        {
+          "category": "music",
+          "items": [
+            "track"
+          ],
+          "properties": {
+            "song": [
+              "shortText",
+              "longText"
+            ],
+            "by": [
+              "shortText"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    },
+    {
+      "uuid": "00000000-0000-0000-0001-000000000001",
+      "name": "Phone",
+      "sources": [
+        {
+          "category": "phone",
+          "items": [
+            "phone_state"
+          ],
+          "properties": {
+            "battery_level": [
+              "numericValue",
+              "shortText"
+            ],
+            "cell": [
+              "shortText"
+            ],
+            "wifi": [
+              "boolean",
+              "shortText"
+            ],
+            "mobile_data": [
+              "boolean",
+              "shortText"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ],
+  "state": {
+    "music/track": {
+      "pluginUuid": "6c1b0d1e-0000-4000-8000-00000000a0d1",
+      "lastError": null,
+      "lastEmpty": false
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "page-platform",
+  "displayName": "Page Platform",
+  "targetPlatforms": ["emery", "gabbro"],
+  "watchapp": { "watchface": true },
+  "messageKeys": ["APPEARANCE_THEME", "CLOCK_WEEK_START"]
+}

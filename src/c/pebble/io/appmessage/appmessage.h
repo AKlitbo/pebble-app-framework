@@ -1,7 +1,8 @@
 /**
  * @file appmessage.h
  * @brief AppMessage transport. Decodes the inbox and notifies the app through per-channel
- * handlers, and queues the outbound weather, stock, and calendar requests through one outbox.
+ * handlers, and queues the outbound weather, stock, calendar, phone battery, and now playing
+ * requests through one outbox.
  *
  * @ingroup lib_io
  */
@@ -69,6 +70,24 @@ typedef void (*StockStripHandler)(const uint8_t *buf, uint16_t len);
  */
 typedef void (*CalendarStripHandler)(const uint8_t *buf, uint16_t len);
 
+/**
+ * @brief Called with the phone's battery level.
+ *
+ * @param level The level from 0 to 100, or -1 when the phone has no reading.
+ */
+typedef void (*PhoneBatteryHandler)(int level);
+
+/**
+ * @brief Called with what the phone is playing.
+ *
+ * The text is read straight off the inbox, so it only lives for this call.
+ *
+ * @param title The song's title, empty for none.
+ * @param artist Who it is by, empty for none.
+ * @param playing True while it plays.
+ */
+typedef void (*MusicHandler)(const char *title, const char *artist, bool playing);
+
 // the custom-colours string can be too big for one persist key, so it rides its own handler
 // instead of the settings table. inbound the face splits it and stores it. outbound the
 // provider rebuilds it into the buffer appmessage hands over, so nobody keeps a worst-case
@@ -107,6 +126,8 @@ void appmessage_on_settings_changed(SettingsChangedHandler cb);  /**< @brief A s
 void appmessage_on_unit_changed(UnitChangedHandler cb);          /**< @brief The wearer switched the temperature unit */
 void appmessage_on_stock_strip(StockStripHandler cb);            /**< @brief Packed watchlist strip */
 void appmessage_on_calendar_strip(CalendarStripHandler cb);      /**< @brief Packed agenda strip */
+void appmessage_on_phone_battery(PhoneBatteryHandler cb);        /**< @brief The phone's battery. Does nothing on a face without the phone keys */
+void appmessage_on_music(MusicHandler cb);                       /**< @brief What the phone is playing. Does nothing on a face without the music keys */
 void appmessage_on_custom_colors(CustomColorsHandler cb);        /**< @brief Inbound: splits and stores the combined string */
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb); /**< @brief Outbound: rebuilds the combined string */
 /**
@@ -159,5 +180,17 @@ void appmessage_request_stock(void);
  * shared cadence. Does nothing on faces that do not declare the calendar keys.
  */
 void appmessage_request_calendar(void);
+
+/**
+ * @brief Asks the phone for its battery level. The phone battery store calls this at launch and when
+ * the phone comes back. Does nothing on a face that does not declare PHONE_BATTERY and PHONE_REQUEST.
+ */
+void appmessage_request_phone(void);
+
+/**
+ * @brief Asks the phone what it is playing. The now playing store calls this at launch and when the
+ * phone comes back. Does nothing on a face that does not declare the four music keys.
+ */
+void appmessage_request_music(void);
 
 /** @} */

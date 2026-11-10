@@ -1,0 +1,30 @@
+{
+  "plugins": [
+    {
+      "uuid": "00000000-0000-0000-0001-000000000004",
+      "name": "Calendar",
+      "sources": [
+        {
+          "category": "calendar",
+          "items": ["event"],
+          "properties": {
+            "name": ["shortText", "longText"],
+            "location": ["shortText", "longText"],
+            "starts_at": ["shortText", "longText", "timestamp"],
+            "ends_at": ["shortText", "timestamp"],
+            "all_day": ["boolean"],
+            "calendar": ["shortText"]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ],
+  "state": {
+    "calendar/event": {
+      "pluginUuid": null,
+      "lastError": "PERMISSION_DENIED",
+      "lastEmpty": false
+    }
+  }
+}

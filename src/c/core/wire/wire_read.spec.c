@@ -10,6 +10,10 @@
  * So every width is pinned at both signs, and so is the refusal of a width no sender may use. The
  * buffers below carry a marker behind the value on purpose: a reader that overruns lands on it,
  * which is exactly what the watch would do to the next value along.
+ *
+ * The digits reader is how every toggle and choice from the settings page takes a number sent as
+ * text. What is worth pinning there is what it turns away, since a value it takes wrongly
+ * moves the wearer's setting and one it drops leaves the setting as it was.
  */
 #include "unity.h"
 
@@ -190,6 +194,142 @@ void test_a_string_of_just_a_terminator_is_readable(void)
     TEST_ASSERT_TRUE(result);
 }
 
+/**
+ * @brief A select's value of "0" is the first choice and not the fallback.
+ *
+ * The first option on a page is a real choice. Read as the fallback, picking it would leave the
+ * setting on whatever it held before.
+ */
+void test_digits_zero_reads_as_zero(void)
+{
+    int32_t result = wire_digits_or("0", -1);
+
+    TEST_ASSERT_EQUAL_INT32(0, result);
+}
+
+/** @brief A one digit select value reads as its number, the everyday case for a choice. */
+void test_digits_one_digit_reads_as_its_number(void)
+{
+    int32_t result = wire_digits_or("3", -1);
+
+    TEST_ASSERT_EQUAL_INT32(3, result);
+}
+
+/** @brief Several digits read as one number, so the last value a choice can hold arrives whole. */
+void test_digits_several_digits_read_as_one_number(void)
+{
+    int32_t result = wire_digits_or("254", -1);
+
+    TEST_ASSERT_EQUAL_INT32(254, result);
+}
+
+/** @brief The biggest number an int32_t holds still reads as itself. */
+void test_digits_reads_up_to_the_largest_int32(void)
+{
+    int32_t result = wire_digits_or("2147483647", -1);
+
+    TEST_ASSERT_EQUAL_INT32(INT32_MAX, result);
+}
+
+/**
+ * @brief One past the biggest int32_t reads as INT32_MAX rather than wrapping round or falling back.
+ *
+ * Wrapped, a long run of digits could land on a small number and move the setting to a choice
+ * nobody picked. As the fallback it would leave the setting as it was, where "300" resets it. Held
+ * at the top, it lands past the end of every list and resets the same way.
+ */
+void test_digits_past_the_largest_int32_holds_at_the_top(void)
+{
+    int32_t result = wire_digits_or("2147483648", -1);
+
+    TEST_ASSERT_EQUAL_INT32(INT32_MAX, result);
+}
+
+/** @brief A far longer run of digits holds at the top too, rather than whatever is left after wrapping. */
+void test_digits_a_long_run_holds_at_the_top(void)
+{
+    int32_t result = wire_digits_or("99999999999999999999", -1);
+
+    TEST_ASSERT_EQUAL_INT32(INT32_MAX, result);
+}
+
+/** @brief A letter after a long run of digits still turns the text away, so holding at the top stops nothing early. */
+void test_digits_a_long_run_with_a_letter_is_refused(void)
+{
+    int32_t result = wire_digits_or("99999999999999999999x", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/** @brief An empty select sends empty text, which is no choice at all, so the setting stays as it was. */
+void test_digits_empty_text_is_refused(void)
+{
+    int32_t result = wire_digits_or("", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/** @brief No text means the fallback, so a caller can pass a failed string read straight through. */
+void test_digits_no_text_is_refused(void)
+{
+    int32_t result = wire_digits_or(NULL, -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/**
+ * @brief Text with anything after its digits gives the fallback.
+ *
+ * Read as 3, a page sending "3a" would switch the watch to the fourth theme, or whatever else sits
+ * fourth on that list, when nobody picked it.
+ */
+void test_digits_trailing_letters_are_refused(void)
+{
+    int32_t result = wire_digits_or("3a", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/** @brief A word gives the fallback rather than reading as 0, which would be the first choice. */
+void test_digits_a_word_is_refused(void)
+{
+    int32_t result = wire_digits_or("openmeteo", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/** @brief A minus sign gives the fallback, since no choice, toggle, or colour is below 0. */
+void test_digits_a_minus_sign_is_refused(void)
+{
+    int32_t result = wire_digits_or("-1", -99);
+
+    TEST_ASSERT_EQUAL_INT32(-99, result);
+}
+
+/** @brief A plus sign gives the fallback too, since only digits count. */
+void test_digits_a_plus_sign_is_refused(void)
+{
+    int32_t result = wire_digits_or("+3", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/** @brief A space in front gives the fallback, the same as any other character that is not a digit. */
+void test_digits_a_leading_space_is_refused(void)
+{
+    int32_t result = wire_digits_or(" 3", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
+/** @brief A space behind gives the fallback too, so no padding is trimmed either side. */
+void test_digits_a_trailing_space_is_refused(void)
+{
+    int32_t result = wire_digits_or("3 ", -1);
+
+    TEST_ASSERT_EQUAL_INT32(-1, result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -209,6 +349,21 @@ int main(void)
     RUN_TEST(test_a_terminator_past_the_length_is_refused);
     RUN_TEST(test_an_empty_string_is_refused);
     RUN_TEST(test_a_string_of_just_a_terminator_is_readable);
+    RUN_TEST(test_digits_zero_reads_as_zero);
+    RUN_TEST(test_digits_one_digit_reads_as_its_number);
+    RUN_TEST(test_digits_several_digits_read_as_one_number);
+    RUN_TEST(test_digits_reads_up_to_the_largest_int32);
+    RUN_TEST(test_digits_past_the_largest_int32_holds_at_the_top);
+    RUN_TEST(test_digits_a_long_run_holds_at_the_top);
+    RUN_TEST(test_digits_a_long_run_with_a_letter_is_refused);
+    RUN_TEST(test_digits_empty_text_is_refused);
+    RUN_TEST(test_digits_no_text_is_refused);
+    RUN_TEST(test_digits_trailing_letters_are_refused);
+    RUN_TEST(test_digits_a_word_is_refused);
+    RUN_TEST(test_digits_a_minus_sign_is_refused);
+    RUN_TEST(test_digits_a_plus_sign_is_refused);
+    RUN_TEST(test_digits_a_leading_space_is_refused);
+    RUN_TEST(test_digits_a_trailing_space_is_refused);
 
     return UNITY_END();
 }

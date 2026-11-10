@@ -1,0 +1,26 @@
+{
+  "plugins": [
+    {
+      "uuid": "6c1b0d1e-0000-4000-8000-00000000d011",
+      "name": "Rain$'Check $$SETTINGS$$",
+      "sources": [
+        {
+          "category": "weather",
+          "items": ["location"],
+          "properties": {
+            "temp": ["numericValue"],
+            "condition_code": ["longText"]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ],
+  "state": {
+    "weather/location": {
+      "pluginUuid": "6c1b0d1e-0000-4000-8000-00000000d011",
+      "lastError": null,
+      "lastEmpty": false
+    }
+  }
+}

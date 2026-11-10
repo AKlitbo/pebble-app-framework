@@ -10,7 +10,8 @@
  *
  * What the seam still owns, because they are ours and not the RFC's:
  *
- * - the window of today plus the next six days, and the sort, which are what the agenda draws
+ * - the window of today plus the next six days, and the sort, which are what the agenda draws. Both
+ *   live in window.ts, so any calendar reader lands on the agenda the same way
  * - a timed event with no stated end, which we give an hour so free/busy has a cell to shade
  * - the cap, so a feed with a busy rule cannot build a list nothing will read
  *
@@ -27,6 +28,7 @@
  */
 
 import ICAL from './icaljs';
+import { horizonFor, upcomingWindow } from './window';
 
 /** One upcoming event the watch shows: its window, all-day flag, title, and place. */
 export interface CalendarEvent {
@@ -36,10 +38,6 @@ export interface CalendarEvent {
   title: string;
   location: string;
 }
-
-// how far ahead we care about: one week so the agenda's two-letter day codes never repeat a
-// weekday (today plus the next six days). events past this are dropped
-const LOOKAHEAD_DAYS = 6;
 
 const DAY_SECONDS = 24 * 60 * 60;
 const HOUR_SECONDS = 60 * 60;
@@ -245,14 +243,8 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
  */
 function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
   const now = nowEpoch || Math.floor(Date.now() / 1000);
-  // the window runs to the end of the sixth day ahead on the phone's clock, the last second before
-  // that day's midnight. six days on from now would cut the last day at whatever time the feed
-  // was fetched, keeping a morning event on it and dropping an evening one
-  const end = new Date(now * 1000);
-
-  end.setHours(0, 0, 0, 0);
-  end.setDate(end.getDate() + LOOKAHEAD_DAYS + 1);
-  const horizon = Math.floor(end.getTime() / 1000) - 1;
+  // a rule's walk stops at the window's last second, and upcomingWindow is handed the same one
+  const horizon = horizonFor(now);
 
   let root: ICAL.Component;
 
@@ -334,12 +326,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
     }
   });
 
-  // keep an event while it has not finished and its start is inside the window. testing
-  // against endEpoch means an in-progress meeting still counts as current
-  const kept = events.filter((event) => event.endEpoch >= now && event.startEpoch <= horizon);
-
-  kept.sort((left, right) => left.startEpoch - right.startEpoch);
-  return kept.slice(0, MAX_EVENTS);
+  return upcomingWindow(events, now, horizon).slice(0, MAX_EVENTS);
 }
 
 export default { parseIcal };

@@ -1,0 +1,15 @@
+{
+  "name": "page-check-stocks",
+  "displayName": "Page Check Stocks",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "STOCK_REQUEST",
+    "STOCK_STRIP",
+    "STOCK_PROVIDER",
+    "STOCK_API_KEY",
+    "STOCK_SYMBOLS"
+  ]
+}

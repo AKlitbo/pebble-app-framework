@@ -24,7 +24,7 @@ app.startPebbleApp({
 });
 ```
 
-A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as [The Phone Side](phone-side.md#features) covers. The face also declares the `STOCK_STRIP` and `STOCK_REQUEST` message keys, plus `STOCK_PROVIDER`, `STOCK_API_KEY`, and `STOCK_SYMBOLS` for the settings. The settings page's stock section has a data source, an API key, and a comma list of tickers. A face that lists the feature but not `STOCK_STRIP` gets nothing from it, since there is nowhere on the watch for a strip to land.
+A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as [The Phone Side](phone-side.md#features) covers. The face also declares the `STOCK_STRIP` and `STOCK_REQUEST` message keys, plus `STOCK_PROVIDER`, `STOCK_API_KEY`, and `STOCK_SYMBOLS` for the settings. The settings page's stock section has a data source, an API key that hides for Yahoo, which needs none, and a comma list of tickers. A face that lists the feature but not `STOCK_STRIP` gets nothing from it, since there is nowhere on the watch for a strip to land.
 
 ## What the Watch Holds
 
@@ -75,6 +75,8 @@ The wearer picks the source on the settings page. Each answers one request per t
 * **Twelve Data** covers global markets on a free key that allows 800 calls a day.
 * **Alpha Vantage** has end of day prices only, on a free key that allows 25 calls a day.
 
+A face can list the stock providers it offers in its appinfo's `providers`, and the manifest then asks only for their sites, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers.
+
 The phone turns every provider's reply into the same quote shape, so the rest of the feature never knows which provider answered. Some providers report trouble in the body of a reply with a 200 status, as Alpha Vantage and Twelve Data do, so the phone reads the body for it. A hit cap then shows as `RATE LIMIT` rather than an empty quote.
 
 ## Keeping Under the Quota
@@ -114,6 +116,8 @@ flowchart TD
 ## Surviving a Restart
 
 The phone kills its PebbleKit JS whenever it likes, and the gate above is only worth anything if it remembers when it last fetched. So the phone keeps a small cache in `localStorage`, under a key of its own: the time of the last fetch, the trading day of the last good quote, and the last strip with a real quote in it. Clay rewrites its own settings blob on every save, so the cache sits beside it rather than inside it. Each field is checked on its own when it is read back, so one damaged field costs only itself.
+
+**Whose Quotes They Are.** The cache also records the provider that fetched them, by its lowercase name. Each round compares that provider with the one the settings pick, and a cache saved under another provider is dropped, since the old provider's trading day would otherwise hold the new provider's gate shut until tomorrow. That covers a settings restore from the watch that moves the provider with no save from the page. A cache with no provider recorded reads as the current provider's own, so the first launch after an update keeps its strip and its stamps. A face whose `providers` list moves its stock provider, as [Offering Fewer Providers](settings-page.md#offering-fewer-providers) covers, has the phone empty the cache at launch, unless the new provider saved it, since a cache with no provider recorded would otherwise pass as the new provider's.
 
 **Which Fetches Count.** A round with a good quote records the time and the trading day. A round where the provider answered with nothing good, such as `RATE LIMIT` or `NO SYMBOL`, still records the time, since that answer spent a call on a metered plan. A round the provider never answered, such as a network blip, records nothing, so the next ask tries again.
 

@@ -82,9 +82,31 @@ def define_cflags(ctx, manifest):
     cflags = []
     for name in sorted(defines):
         value = defines[name]
-        # a JSON true reads as an int in Python, so a bool is turned away on its own
-        if not re.match(r'^[A-Z][A-Z0-9_]*$', name) or isinstance(value, bool) or not isinstance(value, int):
+        # a JSON true reads as an int in Python, so a bool is turned away on its own. fullmatch rather
+        # than $, which also takes a name with a newline on its end
+        if not re.fullmatch(r'[A-Z][A-Z0-9_]*', name) or isinstance(value, bool) or not isinstance(value, int):
             ctx.fatal('package.json defines {} as {!r}, which is not a macro name and a whole number.'.format(name, value))
         cflags.append('-D{}={}'.format(name, value))
+
+    return cflags
+
+
+def text_define_cflags(ctx, manifest):
+    """
+    The -D flags for the defines build-manifests.ts writes as text, such as the default of a plugin
+    source choice the watch keeps. Each one becomes a C string. Only the build writes them, so a name
+    or a value that is not plain letters and digits means a broken manifest and stops the build, since
+    a quote in one would end the string early.
+    """
+    defines = manifest.get('textDefines', {})
+    if not isinstance(defines, dict):
+        ctx.fatal('package.json textDefines has to be a map of macro name to text.')
+
+    cflags = []
+    for name in sorted(defines):
+        value = defines[name]
+        if not re.fullmatch(r'[A-Z][A-Z0-9_]*', name) or not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9]+', value):
+            ctx.fatal('package.json textDefines {} as {!r}, which is not a macro name and plain text.'.format(name, value))
+        cflags.append('-D{}="{}"'.format(name, value))
 
     return cflags

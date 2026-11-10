@@ -13,6 +13,8 @@ The stores live under `src/c/pebble/io/stores/`:
 | [Stocks](stock-store.md) | a watchlist | the phone |
 | [Calendar](calendar-store.md) | the next few events | the phone |
 | [Health](health-store.md) | heart rate, steps, sleep, and activity | the watch's health service |
+| [Phone](phone-and-music-stores.md) | the phone's own battery | the phone, from a Pebble app plugin |
+| [Music](phone-and-music-stores.md#what-is-playing) | what the phone is playing | the phone, from a Pebble app plugin |
 
 ## The Shape Every Store Takes
 
@@ -28,7 +30,7 @@ time_store_subscribe(engine_mark_dirty);
 weather_store_subscribe(engine_mark_dirty);
 ```
 
-**The Config.** Every store takes a small struct of rules, and every one of them has `live`. A live store claims its messages or its services, polls, and saves to flash. The stores that ask the phone for data take `poll_min`, the minutes between asks, and the ones that save take `persist_key`, the flash slot to save into. The face picks the key, so a store never takes one the face already uses. The config is built from the face's own settings, so a store never reads a setting itself.
+**The Config.** Every store takes a small struct of rules, and every one of them has `live`. A live store claims its messages or its services, polls, and saves to flash. The stores that ask the phone for data take `poll_min`, the minutes between asks, and the ones that save take `persist_key`, the flash slot to save into. The face picks the key, so a store never takes one the face already uses. The one key the framework keeps for itself is 249, `SETTINGS_PLUGIN_SOURCE_KEY`, so no store goes on it. The framework never sees a store's key, so nothing catches a store on 249, as [Keeping a Plugin Source](settings-on-the-watch.md#keeping-a-plugin-source) covers. The config is built from the face's own settings, so a store never reads a setting itself.
 
 **The Seed.** The second argument is an optional reading to start from. With `live` true it shows until a real reading lands. With `live` false it is all the store ever shows, which is how a face takes screenshots (see [Seeded for Screenshots](#seeded-for-screenshots)).
 

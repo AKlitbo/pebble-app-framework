@@ -1,0 +1,12 @@
+{
+  "name": "page-check-no-page",
+  "displayName": "Page Check No Page",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "WEATHER_REQUEST",
+    "WEATHER_TEMPERATURE",
+    "WEATHER_CONDITIONS",
+    "WEATHER_OK"
+  ]
+}

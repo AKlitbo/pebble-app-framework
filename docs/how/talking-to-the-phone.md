@@ -99,7 +99,7 @@ flowchart TD
 
 ## Reading Values Safely
 
-The watch reads every value in an incoming message through two helpers, `tuple_int_or` and `tuple_str_or`. Each takes the value and a fallback, and returns the fallback whenever the value is missing or is not what it should be:
+The watch reads every value in an incoming message through `tuple_int_or`, `tuple_str_or`, and `tuple_number_or`. Each takes the value and a fallback, and returns the fallback whenever the value is missing or is not what it should be:
 
 ```c
 int32_t humidity = tuple_int_or(dict_find(iter, MESSAGE_KEY_WEATHER_HUMIDITY), INT_MIN);
@@ -119,7 +119,9 @@ The SDK packs each value as a small header followed by the value, all back to ba
 
 **Text Has to End inside Itself.** The phone is meant to include each string's terminator, and nothing in the SDK checks that it did. A string without one runs on into whatever follows it. `tuple_str_or` only returns a string whose last byte is its terminator, and gives the fallback otherwise.
 
-**The Fallback Carries Meaning.** Each caller picks a fallback the phone never sends, so missing and wrong look the same and are handled once. The weather uses `INT_MIN` as its mark for a reading the phone left out. A toggle uses -1, so a value of the wrong type leaves the setting as it was. The helpers only unwrap the SDK's packing, and the reading itself lives in [`wire_read.h`](../../src/c/core/wire/wire_read.h) with the rest of [The Message Formats](message-formats.md).
+**A Setting's Number Can Come as Text.** Clay sends a select as text, so a choice of 3 arrives as `"3"`. `tuple_number_or` reads an int the way `tuple_int_or` does, and reads text holding one or more digits and nothing else as the number it spells. A sign, a space, or anything after the digits gives the fallback. Digits too big for an `int32_t` read as `INT32_MAX`, so a choice takes them as past the end of its list. Every toggle and choice in the settings table reads through it. A colour stays on `tuple_int_or`, since its text could be hex and would read wrong as decimal.
+
+**The Fallback Carries Meaning.** Each caller picks a fallback the phone never sends, so missing and wrong look the same and are handled once. The weather uses `INT_MIN` as its mark for a reading the phone left out. A toggle uses -1, so a value that is neither a number nor digits leaves the setting as it was. The helpers only unwrap the SDK's packing, and the reading itself lives in [`wire_read.h`](../../src/c/core/wire/wire_read.h) with the rest of [The Message Formats](message-formats.md).
 
 ## Switches from the Message Keys
 
@@ -127,4 +129,4 @@ A face lists its message keys in its appinfo, and the build defines a `HAS_MESSA
 
 **A Face Only Pays for What It Declares.** The build leaves out the code that reads, requests, and hands on each feature when its keys are missing. A face with no calendar carries no calendar code in its message handling, and a face with no weather sends no weather requests. A face that starts the weather store live without declaring the weather keys logs a warning the first time it asks, rather than polling a phone that never answers.
 
-**Groups of Keys Come Together or Not at All.** Some keys only make sense as a set. Weather needs `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK`, and the last one is what tells a failed fetch from a reading. Without it a failed fetch's status text would show as a live 0 degrees. A face that declares part of a set fails to build, with each missing key named in the error. A typo in a key name would otherwise build cleanly and leave those panels on dashes with nothing to say why.
+**Groups of Keys Come Together or Not at All.** Some keys only make sense as a set. Weather needs `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK`, and the last one is what tells a failed fetch from a reading. Without it a failed fetch's status text would show as a live 0 degrees. The phone's battery needs `PHONE_BATTERY` and `PHONE_REQUEST`, and now playing needs `MUSIC_TITLE`, `MUSIC_ARTIST`, `MUSIC_PLAYING`, and `MUSIC_REQUEST`. A face that declares part of a set fails to build, with each missing key named in the error. A typo in a key name would otherwise build cleanly and leave those panels on dashes with nothing to say why.

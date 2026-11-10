@@ -16,6 +16,13 @@ describe('leavesHere', () => {
     expect(result).toBe(true);
   });
 
+  /** Build output is written by tools, not people, so a check would fail on a file nobody can fix by hand. */
+  test.each(['src/plugins/dev/build', 'src/plugins/dev/build/page-check/compiled'])('leaves the build output in %s', (folder) => {
+    const result = leavesHere(folder);
+
+    expect(result).toBe(true);
+  });
+
   /**
    * The docs package formats these with a Prettier of its own version, so a second run over them could ask
    * for output the first refuses, and the lint job could not pass for those files.

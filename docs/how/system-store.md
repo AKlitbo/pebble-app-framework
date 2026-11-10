@@ -36,9 +36,10 @@ flowchart TD
   changed -- no --> redraw["tell the face to redraw"]
   changed -- yes --> buzz["run the face's buzz policy, if it has one"]
   buzz --> back{"did the phone just connect?"}
-  back -- no --> redraw
+  back -- no --> listeners["run the stores listening for the link"]
   back -- yes --> catchup["run the face's reconnect callback"]
-  catchup --> redraw
+  catchup --> listeners
+  listeners --> redraw
 ```
 
 The new state goes in first, so a buzz policy or a reconnect callback that reads the store sees the phone as connected.
@@ -60,6 +61,8 @@ system_store_init((SystemConfig){.live = true, .vibe = on_link_change}, NULL);
 The framework's own policy, `vibe_bt_transition`, plays the buzz the wearer picked on the settings page, as [Vibrations](vibrations.md#phone-connect-and-disconnect) covers.
 
 **Catching Up after a Reconnect.** The phone's PebbleKit JS may have been closed the whole time the phone was away, so the weather, stocks, or calendar can be stale when it comes back. The store runs the face's reconnect callback only on a change from disconnected to connected. The face decides which readings to ask for again, and [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) shows the check that keeps a flapping connection from fetching faster than the normal polling. The store holds one callback, so a face with several phone-fed stores catches them all up from the same function.
+
+**Stores Listening for the Link.** A Pebble app has one connection handler, and a second subscribe replaces the first. So the system store holds the only subscription, and a store that has to hear the link adds itself with `system_store_add_link_listener`. Each listener runs on every real change, after the buzz policy and the reconnect callback, and reads the new state with `system_store_bluetooth`. The phone battery and now playing stores use it to clear what they hold when the phone drops and to ask again when it comes back. The list is only built for a face that declares `PHONE_REQUEST` or `MUSIC_REQUEST`, so any other face carries none of it, and `system_store_add_link_listener` does not exist there.
 
 ## The Next Alarm
 

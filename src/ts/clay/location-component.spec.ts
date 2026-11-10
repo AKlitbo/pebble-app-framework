@@ -32,11 +32,11 @@ function mount(config?: ClayComponentContext['config']) {
   return {
     ctx,
     root,
-    query: root.querySelector('.loc-query') as HTMLInputElement,
-    hidden: root.querySelector('.loc-value') as HTMLInputElement,
-    list: root.querySelector('.loc-list') as HTMLElement,
-    note: root.querySelector('.loc-note') as HTMLElement,
-    unpicked: root.querySelector('.loc-unpicked') as HTMLElement,
+    query: root.querySelector('.pf-loc-query') as HTMLInputElement,
+    hidden: root.querySelector('.pf-loc-value') as HTMLInputElement,
+    list: root.querySelector('.pf-loc-list') as HTMLElement,
+    note: root.querySelector('.pf-loc-note') as HTMLElement,
+    unpicked: root.querySelector('.pf-loc-unpicked') as HTMLElement,
   };
 }
 
@@ -49,6 +49,30 @@ function type(query: HTMLInputElement, text: string): void {
   query.value = text;
   query.dispatchEvent(new Event('input'));
 }
+
+describe('the style', () => {
+  /**
+   * The callout and control rules are shared with the plugin note and panel, and a change made for
+   * them must not move the location picker's page. A face that sets no --pf-* property keeps
+   * Clay's colours.
+   */
+  test('keeps its own rules for the search box and the list it opens', () => {
+    const result = component.style;
+
+    expect(result).toBe([
+      '.pf-loc-search .input { position: relative; }',
+      '.pf-loc-search .pf-loc-query:focus-visible { outline: 2px solid var(--pf-accent, #ff4700); outline-offset: 2px; }',
+      '.pf-loc-search .pf-loc-list { position: absolute; left: 0; right: 0; top: 100%; z-index: 10; list-style: none; margin: 0; padding: 0; background: var(--pf-surface, #fff); color: var(--pf-ink, #000); border: 1px solid var(--pf-line, #ccc); border-radius: 0 0 4px 4px; max-height: 180px; overflow-y: auto; }',
+      '.pf-loc-search .pf-loc-list:not(.show) { display: none; }',
+      '.pf-loc-search .pf-loc-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid var(--pf-line, #eee); }',
+      '.pf-loc-search .pf-loc-item:last-child { border-bottom: none; }',
+      '.pf-loc-search .pf-loc-item:hover, .pf-loc-search .pf-loc-item:active { background: var(--pf-accent, #ff4700); color: var(--pf-on-accent, #fff); }',
+      '.pf-loc-search .pf-loc-hint { float: right; opacity: 0.55; }',
+      '.pf-loc-search .pf-loc-note { position: relative; margin: 0.7rem 0 0.15rem; padding: 0.5rem 0.6rem 0.5rem 2.1rem; background: rgba(255, 71, 0, 0.1); background: color-mix(in srgb, var(--pf-note-accent, #ff4700) 10%, transparent); border-left: 3px solid var(--pf-note-accent, #ff4700); font-size: 0.85em; line-height: 1.4; }',
+      '.pf-loc-search .pf-loc-note:before { content: "!"; position: absolute; left: 0.6rem; top: 0.65rem; width: 1.15em; height: 1.15em; border: 1px solid var(--pf-note-accent, #ff4700); border-radius: 50%; color: var(--pf-note-accent, #ff4700); font-size: 0.95em; font-weight: 700; line-height: 1.1em; text-align: center; }',
+    ].join(''));
+  });
+});
 
 describe('Clay serialisation safety', () => {
   /**
@@ -231,7 +255,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [{ name: evil, latitude: 1, longitude: 2 }] }));
 
     const images = mounted.list.querySelectorAll('img');
-    const text = mounted.list.querySelector('.loc-item').textContent;
+    const text = mounted.list.querySelector('.pf-loc-item').textContent;
 
     expect(images).toHaveLength(0);
     expect(text).toBe(evil);
@@ -251,7 +275,7 @@ describe('initialize', () => {
       { name: 'Berlin', latitude: 3, longitude: 4 },
     ] }));
 
-    const items = mounted.list.querySelectorAll('.loc-item');
+    const items = mounted.list.querySelectorAll('.pf-loc-item');
 
     expect(items[0].textContent).toBe('Phoenix, Arizona, United States');
     expect(items[1].textContent).toBe('Berlin');
@@ -269,7 +293,7 @@ describe('initialize', () => {
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
 
-    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: 3600, timezone: 'America/Phoenix' }));
 
     const saved = JSON.parse(mounted.hidden.value);
@@ -305,7 +329,7 @@ describe('initialize', () => {
     ] }));
     // the place row, since a timezone field lists America/Phoenix above it and picking that one
     // would answer the prompt outright
-    mounted.list.querySelector('.loc-item:not(.loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(mounted.note.style.display).toBe('block');
   });
@@ -325,7 +349,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Tokyo', country: 'Japan', latitude: 35.7, longitude: 139.7, timezone: 'Asia/Tokyo' },
     ] }));
-    mounted.list.querySelector('.loc-item:not(.loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -346,7 +370,7 @@ describe('initialize', () => {
       { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
       { name: 'Springfield', admin1: 'Missouri', latitude: 37.2, longitude: -93.3 },
     ] }));
-    const items = mounted.list.querySelectorAll('.loc-item');
+    const items = mounted.list.querySelectorAll('.pf-loc-item');
 
     items[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     items[1].dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -369,7 +393,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Springfield', admin1: 'Illinois', latitude: 39.8, longitude: -89.6 },
     ] }));
-    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     type(mounted.query, 'Spr');
     xhrs[1].respond(200, JSON.stringify({ utc_offset_seconds: -18000, timezone: 'America/Chicago' }));
 
@@ -415,7 +439,7 @@ describe('initialize', () => {
     xhrs[0].respond(200, JSON.stringify({ results: [
       { name: 'Phoenix', admin1: 'Arizona', country: 'United States', latitude: 33.4, longitude: -112 },
     ] }));
-    mounted.list.querySelector('.loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     expect(mounted.unpicked.style.display).toBe('none');
   });
@@ -464,7 +488,7 @@ describe('initialize', () => {
     xhrs[1].respond(200, JSON.stringify({ results: [{ name: 'Phoenix', latitude: 1, longitude: 2 }] }));
     xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Phonsavan', latitude: 3, longitude: 4 }] }));
 
-    const items = mounted.list.querySelectorAll('.loc-item');
+    const items = mounted.list.querySelectorAll('.pf-loc-item');
 
     expect(items).toHaveLength(1);
     expect(items[0].textContent).toBe('Phoenix');
@@ -526,7 +550,7 @@ describe('zone search', () => {
 
   /** The rows a query put up, as the text of each one. */
   function zoneRows(mounted: ReturnType<typeof mount>): string[] {
-    const items = mounted.list.querySelectorAll('.loc-item-zone');
+    const items = mounted.list.querySelectorAll('.pf-loc-item-zone');
 
     return Array.prototype.map.call(items, (item: HTMLElement) => item.firstChild.textContent) as string[];
   }
@@ -576,7 +600,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -594,7 +618,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5');
-    const row = mounted.list.querySelector('.loc-item-zone');
+    const row = mounted.list.querySelector('.pf-loc-item-zone');
 
     expect(row.textContent).toBe('UTC+05:00');
   });
@@ -615,7 +639,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'berlin');
-    const row = mounted.list.querySelector('.loc-item-zone');
+    const row = mounted.list.querySelector('.pf-loc-item-zone');
 
     expect(row.textContent).toBe('Europe/BerlinUTC+01:00');
     now.mockRestore();
@@ -655,7 +679,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc');
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     vi.advanceTimersByTime(300);
 
     expect(xhrs).toHaveLength(0);
@@ -670,7 +694,7 @@ describe('zone search', () => {
 
     type(mounted.query, 'utc');
     vi.advanceTimersByTime(300);
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
     xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Utcubamba', latitude: 1, longitude: 2 }] }));
 
     expect(mounted.list.classList.contains('show')).toBe(false);
@@ -687,7 +711,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5');
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -701,7 +725,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'gmt-8');
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -715,7 +739,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'utc+5:30');
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -741,7 +765,7 @@ describe('zone search', () => {
     mounted.ctx.initialize();
 
     type(mounted.query, 'adelaide');
-    mounted.list.querySelector('.loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    mounted.list.querySelector('.pf-loc-item-zone').dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
     const result = JSON.parse(mounted.hidden.value);
 
@@ -759,7 +783,7 @@ describe('zone search', () => {
     vi.advanceTimersByTime(300);
     xhrs[0].respond(200, JSON.stringify({ results: [{ name: 'Berlin', country: 'DE', latitude: 52.5, longitude: 13.4 }] }));
 
-    const result = mounted.list.querySelector('.loc-item:not(.loc-item-zone)');
+    const result = mounted.list.querySelector('.pf-loc-item:not(.pf-loc-item-zone)');
 
     expect(result.textContent).toBe('Berlin, DE');
   });
@@ -861,8 +885,8 @@ function hintFor(query: string, zone: string): string {
   mounted.ctx.initialize();
   type(mounted.query, query);
 
-  const rows = Array.from(mounted.list.querySelectorAll('.loc-item-zone'));
+  const rows = Array.from(mounted.list.querySelectorAll('.pf-loc-item-zone'));
   const row = rows.find((item) => (item.textContent || '').indexOf(zone) === 0);
 
-  return (row && row.querySelector('.loc-hint') && (row.querySelector('.loc-hint') as HTMLElement).textContent) || '';
+  return (row && row.querySelector('.pf-loc-hint') && (row.querySelector('.pf-loc-hint') as HTMLElement).textContent) || '';
 }

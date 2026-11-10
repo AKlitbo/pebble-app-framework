@@ -42,7 +42,11 @@ COVERAGE_BUILD = $(BUILD)/coverage
 COVERAGE_OUT  ?= ../../../docs/site/dist/coverage/c
 COVERAGE_FLAGS = $(filter-out -O%,$(CFLAGS)) -O0 -g --coverage -fprofile-abs-path
 
-.PHONY: test coverage clean
+# every compile that has to stop, each with the text its error has to hold on its first line,
+# after // stops:
+STOPS = $(wildcard stops/*.c)
+
+.PHONY: test stops coverage clean
 .DEFAULT_GOAL := test
 
 # compile each spec fresh, then run it right away. every spec gets the whole of core, plus its own
@@ -62,6 +66,26 @@ test:
 	  $(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) $$spec $$sibling $(CORE_SRC) $(UNITY) -o $$bin || { fail=1; continue; }; \
 	  $$bin || fail=1; \
 	done; \
+	$(MAKE) --no-print-directory stops || fail=1; \
+	exit $$fail
+
+# a stop passes only when its compile fails with its own text, so a check that quietly stopped
+# stopping fails here. gcc's messages stay in the shell, since an error printed here would read to
+# CI as a spec that did not build. LC_ALL=C keeps gcc's quotes plain, so the text can match them
+stops:
+	@fail=0; \
+	for stop in $(STOPS); do \
+	  want=$$(sed -n '1s|^// stops: ||p' $$stop); \
+	  if [ -z "$$want" ]; then \
+	    echo "$$stop has no // stops: line to say what its error holds"; fail=1; continue; \
+	  fi; \
+	  if out=$$(LC_ALL=C $(CC) $(CFLAGS) $(DEFINES) $(INCLUDES) -fsyntax-only $$stop 2>&1); then \
+	    echo "$$stop built, and it has to stop with: $$want"; fail=1; \
+	  elif ! printf '%s\n' "$$out" | grep -qF -- "$$want"; then \
+	    echo "$$stop stopped, but not with: $$want"; fail=1; \
+	  fi; \
+	done; \
+	[ $$fail -ne 0 ] || echo "stops: $(words $(STOPS)) compiles stopped as they should"; \
 	exit $$fail
 
 # runs the suite as a coverage build, then has gcovr write the report the docs site publishes

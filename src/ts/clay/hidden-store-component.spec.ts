@@ -64,11 +64,11 @@ describe('template', () => {
     expect(result).toBe('hidden');
   });
 
-  /** Another component finds this store by .gl-store, so dropping the class orphans the value. */
-  test('carries the gl-store handle class', () => {
+  /** Another component finds this store by .pf-hidden-store, so dropping the class orphans the value. */
+  test('carries the pf-hidden-store handle class', () => {
     const { root } = mount();
 
-    const result = root.classList.contains('gl-store');
+    const result = root.classList.contains('pf-hidden-store');
 
     expect(result).toBe(true);
   });
@@ -90,7 +90,7 @@ describe('template', () => {
 
 describe('initialize', () => {
   /**
-   * A page with two stores would otherwise have both answer to .gl-store, and a querySelector
+   * A page with two stores would otherwise have both answer to .pf-hidden-store, and a querySelector
    * would keep finding the first, so the second store's value is read as the first one's.
    */
   test('stamps the configured storeClass onto the input', () => {
@@ -102,12 +102,12 @@ describe('initialize', () => {
   });
 
   /** The shared handle has to survive the extra class or every existing lookup stops matching. */
-  test('keeps the gl-store class alongside the configured one', () => {
+  test('keeps the pf-hidden-store class alongside the configured one', () => {
     const { context, root } = mount({ storeClass: 'gl-layouts' });
 
     context.initialize();
 
-    expect(root.classList.contains('gl-store')).toBe(true);
+    expect(root.classList.contains('pf-hidden-store')).toBe(true);
   });
 
   /** The only store on a page needs no extra class, and adding "undefined" would break selectors. */
@@ -116,7 +116,7 @@ describe('initialize', () => {
 
     context.initialize();
 
-    expect(root.className).toBe('gl-store');
+    expect(root.className).toBe('pf-hidden-store');
   });
 
   /** A throw inside initialize takes the whole settings page down, so a missing config must be survivable. */

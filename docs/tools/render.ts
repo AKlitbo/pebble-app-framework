@@ -69,6 +69,7 @@ export const HOW_GROUPS: readonly PageGroup[] = [
       { file: 'docs/how/life-of-a-setting.md', folder: 'how/life-of-a-setting/', title: 'The Life of a Setting' },
       { file: 'docs/how/phone-side.md', folder: 'how/phone-side/', title: 'The Phone Side' },
       { file: 'docs/how/settings-page.md', folder: 'how/settings-page/', title: 'The Settings Page' },
+      { file: 'docs/how/plugin-sources.md', folder: 'how/plugin-sources/', title: 'Pebble App Plugins' },
       { file: 'docs/how/settings-on-the-watch.md', folder: 'how/settings-on-the-watch/', title: 'Settings on the Watch' },
       { file: 'docs/how/talking-to-the-phone.md', folder: 'how/talking-to-the-phone/', title: 'Talking to the Phone' },
       { file: 'docs/how/message-formats.md', folder: 'how/message-formats/', title: 'The Message Formats' },
@@ -87,6 +88,7 @@ export const HOW_GROUPS: readonly PageGroup[] = [
       { file: 'docs/how/stock-store.md', folder: 'how/stock-store/', title: 'The Stock Store' },
       { file: 'docs/how/calendar-store.md', folder: 'how/calendar-store/', title: 'The Calendar Store' },
       { file: 'docs/how/health-store.md', folder: 'how/health-store/', title: 'The Health Store' },
+      { file: 'docs/how/phone-and-music-stores.md', folder: 'how/phone-and-music-stores/', title: 'The Phone and Music Stores' },
     ],
   },
   {

@@ -31,3 +31,13 @@ const char *tuple_str_or(const Tuple *tuple, const char *fallback)
     const char *cstring = tuple->value->cstring;
     return wire_cstring_terminated(cstring, tuple->length) ? cstring : fallback;
 }
+
+int32_t tuple_number_or(const Tuple *tuple, int32_t fallback)
+{
+    if (tuple && tuple->type == TUPLE_CSTRING)
+    {
+        return wire_digits_or(tuple_str_or(tuple, NULL), fallback);
+    }
+
+    return tuple_int_or(tuple, fallback);
+}

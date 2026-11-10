@@ -5,12 +5,14 @@
  * Every part of the runtime reads settings through these, so a value read wrong here is read
  * wrong everywhere. The cases worth pinning are the stored blob that is missing or will not parse,
  * Clay's habit of wrapping a value in an object, and a real zero or false that must not be
- * mistaken for unset. The settings watch decides whether a save refetches, so a miss there either
- * leaves a new city unfetched or spends a provider call on every theme change.
+ * mistaken for unset. A select reads as its choice whether Clay stored it as text or as a number,
+ * since text is what it nearly always holds. The settings watch decides whether a save refetches,
+ * so a miss there either leaves a new city unfetched or spends a provider call on every theme
+ * change.
  */
 
 import { describe, test, expect, beforeEach } from 'vitest';
-import { getConfig, readBool, readText, readValue, watchSettings } from './settings-store';
+import { getConfig, readBool, readChoice, readFahrenheit, readText, readValue, watchSettings } from './settings-store';
 
 describe('getConfig', () => {
   beforeEach(() => {
@@ -126,6 +128,90 @@ describe('readBool', () => {
     const result = readBool(undefined, true);
 
     expect(result).toBe(true);
+  });
+});
+
+describe('readChoice', () => {
+  /**
+   * Clay stores a select as the option's text, and the watch's reply writes a choice back as text,
+   * so the phone's copy holds "3" far more often than 3. All three forms must read as the same
+   * choice, or a face reading a select sees its default whenever the value came back as text.
+   */
+  test.each([['3'], [3], [{ value: '3' }], [{ value: 3 }]])('reads %j as 3', (value) => {
+    const result = readChoice(value, 0);
+
+    expect(result).toBe(3);
+  });
+
+  /** The first option is a real choice, so "0" must not be mistaken for unset and take the fallback. */
+  test.each([['0'], [0]])('reads %j as the first choice', (value) => {
+    const result = readChoice(value, 7);
+
+    expect(result).toBe(0);
+  });
+
+  /**
+   * A toggle saved under the same key leaves a boolean, or the word for one, and it must still read
+   * as the matching choice.
+   */
+  test.each([
+    [true, 1],
+    [false, 0],
+    ['true', 1],
+    ['false', 0],
+  ])('reads %j as %d', (value, expected) => {
+    const result = readChoice(value, 5);
+
+    expect(result).toBe(expected);
+  });
+
+  /**
+   * Nothing saved, a word, a negative, a fraction, or text with anything but digits is no choice,
+   * so each takes the fallback rather than landing on a choice nobody picked.
+   */
+  test.each([[undefined], [null], [''], ['abc'], ['3a'], [' 3'], ['-1'], [-1], [1.5], ['1.5'], [{ value: '' }]])('gives the fallback for %j', (value) => {
+    const result = readChoice(value, 4);
+
+    expect(result).toBe(4);
+  });
+
+  /** A run of digits too long to hold exactly is no choice either, rather than a rounded one. */
+  test('gives the fallback for digits past a safe integer', () => {
+    const result = readChoice('99999999999999999999', 2);
+
+    expect(result).toBe(2);
+  });
+});
+
+describe('readFahrenheit', () => {
+  /**
+   * Every value a page, a toggle, or the watch's reply saves for the unit has to give the unit
+   * readBool gave it, or a wearer's Fahrenheit flips to Celsius on update. Nothing saved takes the
+   * page's default, either way round and in any of its forms.
+   */
+  test.each([
+    [0, 0, false],
+    [1, 0, true],
+    ['0', 1, false],
+    ['1', 0, true],
+    [true, 0, true],
+    [false, 1, false],
+    ['true', 0, true],
+    ['false', 1, false],
+    [{ value: '1' }, 0, true],
+    [undefined, 0, false],
+    [undefined, 1, true],
+    [undefined, '1', true],
+    [undefined, true, true],
+    [undefined, 'true', true],
+    [undefined, 'false', false],
+    ['', 1, true],
+  ])('reads a saved unit of %j with a default of %j as Fahrenheit %s', (saved, fallback, expected) => {
+    const config = saved === undefined ? {} : { WEATHER_TEMPERATURE_UNIT: saved };
+
+    const result = readFahrenheit(config, { WEATHER_TEMPERATURE_UNIT: fallback });
+
+    expect(result).toBe(expected);
   });
 });
 

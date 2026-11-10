@@ -3,8 +3,8 @@
  *
  * It takes the file rule, the settings, and the run itself from the code-style plugin, so the framework
  * and a unit that turns Prettier on are formatted alike. On top of what the plugin leaves alone, this
- * leaves a spec's fixtures, which are read byte for byte, and the three docs folders the docs package
- * formats with a Prettier of its own, so no file is formatted by two runs.
+ * leaves a spec's fixtures, which are read byte for byte, build output, which tools write, and the three
+ * docs folders the docs package formats with a Prettier of its own, so no file is formatted by two runs.
  *
  * npm run format rewrites the files, and npm run format:check says which would change and writes none.
  */
@@ -24,10 +24,15 @@ const DOCS_OWN = ['docs/site', 'docs/typedoc', 'docs/doxygen'];
  * Whether the format run leaves a folder unwalked, by its path from the repo root.
  *
  * @param rel The folder's path from the repo root, with forward slashes.
- * @return True for a folder of fixtures, at any depth, and for a folder the docs package formats.
+ * @return True for a folder of fixtures or of build output, at any depth, and for a folder the docs
+ *   package formats.
  */
 export function leavesHere(rel: string): boolean {
-  return rel.split('/').includes('fixtures') || DOCS_OWN.includes(rel);
+  // build/ is gitignored output, such as the page check's sandboxes, whose tsconfig the build writes
+  // with JSON.stringify rather than Prettier
+  const parts = rel.split('/');
+
+  return parts.includes('fixtures') || parts.includes('build') || DOCS_OWN.includes(rel);
 }
 
 async function main(): Promise<void> {

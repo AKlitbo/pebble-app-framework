@@ -14,15 +14,16 @@
 /**
  * @brief Which unit a wind speed reads out in.
  *
- * KMH is zero so a raw setting byte maps straight across and no unsigned range
- * check ever compares below zero.
+ * The values are the choices the settings page's wind unit row saves, so a saved
+ * byte maps straight across. KMH is zero, so no unsigned range check ever compares
+ * below zero. KNOWN_WIND_UNIT takes its count from WIND_UNIT_COUNT.
  */
 typedef enum
 {
     WIND_UNIT_KMH = 0,  ///< kilometres per hour
-    WIND_UNIT_MPH,      ///< miles per hour
-    WIND_UNIT_KTS,      ///< knots
-    WIND_UNIT_MS,       ///< metres per second
+    WIND_UNIT_MPH = 1,  ///< miles per hour
+    WIND_UNIT_KTS = 2,  ///< knots
+    WIND_UNIT_MS  = 3,  ///< metres per second
     WIND_UNIT_COUNT     ///< how many units there are, not a unit itself
 } WindUnit;
 

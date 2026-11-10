@@ -15,13 +15,31 @@
 #pragma once
 #include <stdbool.h>
 
+#include "io/appmessage/appmessage_features.h"
+
 /**
  * @addtogroup lib_io
  * @{
  */
 
+// a kind is held once at most, so the queue and the failed set never need more slots than there are
+// kinds. the weather, stock, calendar, settings, and fresh reply kinds fit in the 6 every face has,
+// with one to spare. phone battery and now playing each add a slot, only on a face that compiles them
+// in, so a face with every kind can have all of them fail at once and keep each one for the retry.
+// sizing to the kinds a face has keeps every other face's outbox the size it was
+#if defined(APPMESSAGE_HAS_PHONE)
+#define OUTBOX_PHONE_SLOTS 1 ///< the phone battery request has a slot
+#else
+#define OUTBOX_PHONE_SLOTS 0 ///< no phone battery request on this face
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+#define OUTBOX_MUSIC_SLOTS 1 ///< the now playing request has a slot
+#else
+#define OUTBOX_MUSIC_SLOTS 0 ///< no now playing request on this face
+#endif
+
 /// Most jobs the work queue or the failed set holds at once
-#define OUTBOX_QUEUE_MAX 6
+#define OUTBOX_QUEUE_MAX (6 + OUTBOX_PHONE_SLOTS + OUTBOX_MUSIC_SLOTS)
 
 /**
  * @brief What an outbox job sends.
@@ -33,7 +51,9 @@ typedef enum
     OUTBOX_SETTINGS, ///< The settings reply
     OUTBOX_FRESH,    ///< The short settings reply, only whether the watch booted with nothing saved
     OUTBOX_STOCK,    ///< A stock request
-    OUTBOX_CALENDAR  ///< A calendar request
+    OUTBOX_CALENDAR, ///< A calendar request
+    OUTBOX_PHONE,    ///< A phone battery request
+    OUTBOX_MUSIC     ///< A now playing request
 } OutboxKind;
 
 /**

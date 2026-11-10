@@ -75,7 +75,7 @@ KNOWN_THEME(offsetof(LcarsSettings, theme), 9),
 
 A key in the message that is not on the list is ignored. It still takes up room in the message, though.
 
-**Checked on the Way In.** `settings_apply_inbox` checks each value for its type and range and skips one that already matches what the watch holds, so an unchanged save does not count as a change. [Settings on the Watch](settings-on-the-watch.md#taking-values-from-the-phone) has the rules. A theme past the end of the list reads as the default, so a face adding a theme raises the count in its `KNOWN_THEME` line too.
+**Checked on the Way In.** `settings_apply_inbox` checks each value for its type and range and skips one that already matches what the watch holds, so an unchanged save does not count as a change. [Settings on the Watch](settings-on-the-watch.md#taking-values-from-the-phone) has the rules. A theme past the end of the list reads as the default. `paf build` counts the themes off the settings page and `KNOWN_THEME` takes that count. The 9 is how many themes the face's own table holds, and the build stops when the page offers a different number, as [Counts from the Settings Page](settings-on-the-watch.md#counts-from-the-settings-page) covers.
 
 **Saved to Flash.** When anything changed, `settings_save` writes the whole block of settings to the face's persist key in one write, and the watch reads the block back and checks it again at every launch, as [Settings on the Watch](settings-on-the-watch.md#loading-at-launch) covers.
 
@@ -114,5 +114,7 @@ sequenceDiagram
     Phone->>Phone: saves them as clay-settings
   end
 ```
+
+When the phone has none, it copies each value the watch sends for a row on the face's page, and then each feature's `seeded` hook runs on those settings before they are saved. A hook can set a value the page has no row for, such as the calendar's plugin choice, whose select only appears when the page opens. It can also take out a value that no longer makes sense on this phone, such as a weather provider that needs an API key the phone does not hold, since the key never reaches the watch. Everything a hook sets is saved with the rest. A hook that throws is skipped, and the settings are still saved. [Keeping the Choice through a Reset](plugin-sources.md#keeping-the-choice-through-a-reset) covers the hooks the plugin sources supply.
 
 The phone keeps the settings for good. Until the restore lands, the watch saves nothing to flash, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains. A restore also skips the unit conversion, since the reading on the watch was fetched in the restored unit already.

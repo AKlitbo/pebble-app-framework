@@ -83,6 +83,63 @@ export function readBool(value: any, fallback: boolean): boolean {
 }
 
 /**
+ * Reads a select or radio group's saved value as the number of the choice, applying a fallback when
+ * it is unset or is not a choice.
+ *
+ * Clay stores a select's value as the option's text, and the watch's reply writes a choice back as
+ * text too, so a saved choice is far more often `"3"` than `3`. Both read as 3. A whole number from
+ * 0 up and text holding only digits count, as they do on the watch.
+ *
+ * It also takes what the watch never receives. A toggle saved under the same key leaves `true` or
+ * `false` on the phone, or the words `"true"` and `"false"`, and each reads as 1 or 0. Anything
+ * else, such as another word, a negative, or a fraction, gives the fallback.
+ *
+ * @param value The raw Clay value, which may already be unwrapped or still wrapped.
+ * @param fallback What to return when the value is missing or is not a choice.
+ * @return The choice's number, or the fallback.
+ */
+export function readChoice(value: any, fallback: number): number {
+  const result = readValue(value, undefined);
+
+  if (result === true || result === 'true') {
+    return 1;
+  }
+
+  if (result === false || result === 'false') {
+    return 0;
+  }
+
+  if (typeof result === 'string' && /^\d+$/.test(result)) {
+    return wholeOr(Number(result), fallback);
+  }
+
+  if (typeof result === 'number') {
+    return wholeOr(result, fallback);
+  }
+
+  return fallback;
+}
+
+/** A choice is a whole number from 0 up that stays exact, so a fraction or a run of digits too long to hold is no choice. */
+function wholeOr(value: number, fallback: number): number {
+  return Number.isSafeInteger(value) && value >= 0 ? value : fallback;
+}
+
+/**
+ * Reads whether the weather goes out in Fahrenheit, from the face's temperature unit select.
+ *
+ * The select's second choice is Fahrenheit. A unit with nothing saved takes the page's default, read
+ * by the same rule, so a default of `1`, `"1"`, or `true` all mean Fahrenheit.
+ *
+ * @param config The saved settings, normally from getConfig.
+ * @param defaults The face's config defaults.
+ * @return True for Fahrenheit, false for Celsius.
+ */
+export function readFahrenheit(config: Record<string, any>, defaults: Record<string, unknown>): boolean {
+  return readChoice(config.WEATHER_TEMPERATURE_UNIT, readChoice(defaults.WEATHER_TEMPERATURE_UNIT, 0)) === 1;
+}
+
+/**
  * Snapshots the settings behind a key list so a later save can be diffed against them. A setting
  * with nothing saved reads as its default, which is what a fetch used for it, so a first save or
  * seed that writes the default back does not count as a change. A single value compares by its

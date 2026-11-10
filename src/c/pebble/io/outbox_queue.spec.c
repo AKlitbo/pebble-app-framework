@@ -264,9 +264,9 @@ void test_popping_an_empty_queue_leaves_it_empty(void)
  * @brief A full queue must refuse rather than write past the end of its array.
  *
  * The kind pushed has to be one the queue does not already hold, or the pending check refuses it
- * first and the capacity guard is never reached. There are only four kinds and the pending check
- * sits in front of it, so a real run never fills the queue, which leaves this the only thing
- * holding the guard up.
+ * first and the capacity guard is never reached. The queue has a slot for every kind the face sends
+ * and the pending check sits in front of it, so a real run never fills the queue, which leaves this
+ * the only thing holding the guard up.
  */
 void test_a_full_queue_refuses_another_job(void)
 {

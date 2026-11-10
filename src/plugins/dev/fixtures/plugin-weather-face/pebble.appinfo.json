@@ -1,0 +1,24 @@
+{
+  "name": "page-check-plugin-weather",
+  "displayName": "Page Check Plugin Weather",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "WEATHER_REQUEST",
+    "WEATHER_TEMPERATURE",
+    "WEATHER_CONDITIONS",
+    "WEATHER_OK",
+    "WEATHER_API_KEY",
+    "WEATHER_TEMPERATURE_UNIT",
+    "LOCATION_USE_GPS",
+    "LOCATION_GPS_FALLBACK",
+    "LOCATION_NAME",
+    "CALENDAR_REQUEST",
+    "CALENDAR_STRIP",
+    "CALENDAR_SOURCE",
+    "CALENDAR_ICS_URL",
+    "CALENDAR_POLL"
+  ]
+}

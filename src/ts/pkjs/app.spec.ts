@@ -17,28 +17,81 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import app, { collectDefaults, createClay, hasVisibleWhen, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, usesComponent, wrapStoredConfig } from './app';
+import app, { collectDefaults, createClay, faceStart, foldFeatures, hasVisibleWhen, payloadByKeyId, retimeSettings, seedConfigFromWatch, SETTINGS_REFETCH_DELAY_MS, usesComponent, wrapStoredConfig } from './app';
+import { faceProvidersFor } from '../face-providers/narrow';
+import { allItems, dropRows } from '../clay/rows';
 import locationComponent from '../clay/location-component';
-import { SETTINGS_ASK_RETRY_MS } from './settings-ask';
+import themePreviewComponent from '../clay/theme-preview-component';
+import hiddenStoreComponent from '../clay/hidden-store-component';
+import pageStyleComponent from '../clay/page-style-component';
+import dependentVisibility from '../clay/dependent-visibility';
+import noteComponent from '../plugin-sources/note-component';
+import buildConfig from './config-builder';
+import { select } from './config-rows';
+import { pluginSourcePage } from '../plugin-sources/page';
+import { WEATHER_STANDARD } from '../plugin-sources/standard';
+import { SETTINGS_ASK_RETRIES, SETTINGS_ASK_RETRY_MS } from './settings-ask';
 import { SEND_RETRIES, SEND_RETRY_MS } from './send-queue';
 import { WIRE_CAPS } from './wire';
 import stocks from '../stock/feature';
 import calendar from '../calendar/feature';
 import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
-import type { Feature } from './feature';
+import type { Feature, FeatureHooks } from './feature';
+import type { ClayConfigItem } from '../clay/types';
 import { installFakeXhr } from '../testing/xhr';
 import { stubModuleLoad } from '../testing/module-load';
 import { withFakePebble } from '../testing/pebble';
 import type { FakePebble } from '../testing/pebble';
+
+// the plugin code a face built with PLUGIN_CALENDAR finds, which a spec turns off to stand for a face
+// built without it. the build writes null into the index then, which is what the getter hands back
+const pluginCode = vi.hoisted(() => ({ off: false }));
+
+vi.mock('../plugin-sources/index', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../plugin-sources/index')>();
+
+  return {
+    ...real,
+    get calendarPlugins() {
+      return pluginCode.off ? null : real.calendarPlugins;
+    },
+  };
+});
+
+// the providers the build writes into the bundle, which a spec sets to stand for a face that lists
+// some. a face that lists none keeps tsc's own index, which is null
+const providerCode = vi.hoisted(() => ({ current: null as unknown }));
+
+vi.mock('../face-providers/index', () => ({
+  get faceProviders() {
+    return providerCode.current;
+  },
+}));
 
 // stands in for the per-face generated message_keys: each key name maps to
 // itself so payloads and stored config use readable string keys
 const messageKeys = new Proxy({}, { get: (_target, prop) => prop });
 
 /**
- * Every source file a module reaches at runtime, following relative imports, re-exports, and
- * requires out from it. Type-only imports are left out, since tsc drops them from the emitted JS.
+ * The source files one module reaches straight away at runtime, through its relative imports,
+ * re-exports, and requires. Type-only imports are left out, since tsc drops them from the emitted JS.
  */
+function runtimeImports(file: string): string[] {
+  const source = fs.readFileSync(file, 'utf8');
+  const specs = [
+    ...[...source.matchAll(/^\s*(?:import|export)(?!\s+type\b)[^;]*?\bfrom\s+['"]([^'"]+)['"]/gm)].map((match) => match[1]),
+    ...[...source.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((match) => match[1]),
+    ...[...source.matchAll(/\brequire\(\s*['"]([^'"]+)['"]\s*\)/g)].map((match) => match[1]),
+  ];
+
+  return specs.filter((name) => name.startsWith('.')).map((spec) => {
+    const base = path.resolve(path.dirname(file), spec);
+
+    return [base, `${base}.ts`, path.join(base, 'index.ts')].find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+  }).filter((target) => target !== undefined);
+}
+
+/** Every source file a module reaches at runtime, following its imports out as far as they go. */
 function runtimeGraph(entry: string): string[] {
   const seen = new Set<string>();
 
@@ -48,25 +101,32 @@ function runtimeGraph(entry: string): string[] {
     }
 
     seen.add(file);
-    const source = fs.readFileSync(file, 'utf8');
-    const specs = [
-      ...[...source.matchAll(/^\s*(?:import|export)(?!\s+type\b)[^;]*?\bfrom\s+['"]([^'"]+)['"]/gm)].map((match) => match[1]),
-      ...[...source.matchAll(/^\s*import\s+['"]([^'"]+)['"]/gm)].map((match) => match[1]),
-      ...[...source.matchAll(/\brequire\(\s*['"]([^'"]+)['"]\s*\)/g)].map((match) => match[1]),
-    ];
-
-    for (const spec of specs.filter((name) => name.startsWith('.'))) {
-      const base = path.resolve(path.dirname(file), spec);
-      const target = [base, `${base}.ts`, path.join(base, 'index.ts')].find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
-
-      if (target) {
-        visit(target);
-      }
-    }
+    runtimeImports(file).forEach(visit);
   };
 
   visit(entry);
   return [...seen];
+}
+
+/** Every source file under ts/ that can reach a face's bundle, leaving out the specs, their helpers, and the builder pieces. */
+function shippedSources(): string[] {
+  const root = path.join(import.meta.dirname, '..');
+  const files = fs.readdirSync(root, { recursive: true, encoding: 'utf8' }).map((file) => file.split(path.sep).join('/'));
+
+  return files
+    .filter((file) => file.endsWith('.ts') && !file.endsWith('.spec.ts') && !file.endsWith('.d.ts'))
+    .filter((file) => !file.startsWith('testing/') && !file.startsWith('clay/builder/'))
+    .map((file) => path.join(root, file));
+}
+
+/**
+ * Where each part's source starts in the text Clay writes for a custom function, in the order given,
+ * or -1 for a part the text does not hold. Rising numbers mean the parts run in that order.
+ */
+function partPlaces(customFn: unknown, parts: unknown[]): number[] {
+  const source = String(customFn);
+
+  return parts.map((part) => source.indexOf(String(part)));
 }
 
 describe('app imports', () => {
@@ -79,6 +139,75 @@ describe('app imports', () => {
     const weatherDir = path.join(import.meta.dirname, '..', 'weather') + path.sep;
 
     const result = runtimeGraph(path.join(import.meta.dirname, 'app.ts')).filter((file) => file.startsWith(weatherDir));
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * The plugin code only reaches a face built with plugin sources, through the features. A runtime
+   * import of it from app.ts would put it in every face's bundle, and break the build of a face
+   * without the define once the build swaps the folder out.
+   */
+  test('reaches no plugin source code at runtime', () => {
+    const pluginDir = path.join(import.meta.dirname, '..', 'plugin-sources') + path.sep;
+
+    const result = runtimeGraph(path.join(import.meta.dirname, 'app.ts')).filter((file) => file.startsWith(pluginDir));
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * The build writes plugin-sources/index.js again for each face, and leaves every other file in the
+   * folder out of a face built without its plugin defines. A value import of types.ts or shapes.ts
+   * from a feature would survive as a require for a file that face does not carry, and break it.
+   */
+  test('reaches plugin source code from outside its folder only through the index', () => {
+    const pluginDir = path.join(import.meta.dirname, '..', 'plugin-sources') + path.sep;
+    const index = path.join(pluginDir, 'index.ts');
+    const outside = shippedSources().filter((file) => !file.startsWith(pluginDir));
+
+    const result = outside.flatMap((file) => runtimeImports(file).filter((target) => target.startsWith(pluginDir) && target !== index).map((target) => `${path.basename(file)} -> ${path.basename(target)}`));
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * A face that lists weather alone carries narrow.ts, so a runtime import of the stock or weather code
+   * from it would put that feature's code in a face that never asked for it. The build hands the stock
+   * cache over only for a face with a stock list.
+   */
+  test('reaches no stock or weather code from the face provider passes', () => {
+    const narrowFile = path.join(import.meta.dirname, '..', 'face-providers', 'narrow.ts');
+    const featureDirs = ['stock', 'weather'].map((dir) => path.join(import.meta.dirname, '..', dir) + path.sep);
+
+    const result = runtimeGraph(narrowFile).filter((file) => featureDirs.some((dir) => file.startsWith(dir))).map((file) => path.basename(file));
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * Every face's bundle holds app.ts, so a runtime import of narrow.ts from it would put the
+   * narrowing in a face that lists no providers, and break that face once the build takes the file out.
+   */
+  test('reaches face provider code from app.ts only through the index', () => {
+    const providersDir = path.join(import.meta.dirname, '..', 'face-providers') + path.sep;
+
+    const result = runtimeGraph(path.join(import.meta.dirname, 'app.ts')).filter((file) => file.startsWith(providersDir)).map((file) => path.basename(file));
+
+    expect(result).toEqual(['index.ts']);
+  });
+
+  /**
+   * The build writes face-providers/index.js again for a face that lists providers, and leaves
+   * narrow.js out of a face that lists none. A value import of narrow.ts from anywhere else would
+   * survive as a require for a file that face does not carry, and break it.
+   */
+  test('reaches face provider code from outside its folder only through the index', () => {
+    const providersDir = path.join(import.meta.dirname, '..', 'face-providers') + path.sep;
+    const index = path.join(providersDir, 'index.ts');
+    const outside = shippedSources().filter((file) => !file.startsWith(providersDir));
+
+    const result = outside.flatMap((file) => runtimeImports(file).filter((target) => target.startsWith(providersDir) && target !== index).map((target) => `${path.basename(file)} -> ${path.basename(target)}`));
 
     expect(result).toEqual([]);
   });
@@ -277,6 +406,66 @@ describe('seedConfigFromWatch', () => {
     const result = stored('CLOCK_TIMEZONE_1');
 
     expect(result).toBe(saved);
+  });
+
+  /**
+   * The seed skips a key the page has no row for, so a feature restoring a choice its page hook
+   * adds has to set it itself. A change made after the write would be lost, and the choice would
+   * drop back to its default after every reset.
+   */
+  test('saves what a seeded hook sets from the echo', () => {
+    const feature: FeatureHooks = {
+      seeded: (config, echoed) => {
+        config.CALENDAR_SOURCE = echoed('CALENDAR_SOURCE');
+      },
+    };
+
+    seedConfigFromWatch(messageKeys, { CALENDAR_SOURCE: 'plugin' }, page, [feature]);
+
+    const result = stored('CALENDAR_SOURCE');
+
+    expect(result).toBe('plugin');
+  });
+
+  /**
+   * A hook putting back a value that makes no sense on this phone has to see the watch's values
+   * already in, or it checks the empty settings and lets the bad value through.
+   */
+  test('hands a seeded hook the settings with the watch values already in', () => {
+    const providerPage = [{ type: 'select', messageKey: 'WEATHER_PROVIDER' }];
+    const feature: FeatureHooks = {
+      seeded: (config) => {
+        if (config.WEATHER_PROVIDER === 'owm' && !config.WEATHER_API_KEY) {
+          config.WEATHER_PROVIDER = 'openmeteo';
+        }
+      },
+    };
+
+    seedConfigFromWatch(messageKeys, { WEATHER_PROVIDER: 'owm' }, providerPage, [feature]);
+
+    const result = stored('WEATHER_PROVIDER');
+
+    expect(result).toBe('openmeteo');
+  });
+
+  /** A hook that breaks on this phone must not cost the wearer the rest of the restore. */
+  test('skips a seeded hook that throws and still saves', () => {
+    const broken: FeatureHooks = {
+      seeded: () => {
+        throw new Error('no plugins here');
+      },
+    };
+    const fine: FeatureHooks = {
+      seeded: (config) => {
+        config.CALENDAR_SOURCE = 'plugin';
+      },
+    };
+
+    seedConfigFromWatch(messageKeys, { CLOCK_DATE_FORMAT: '%Y.%m.%d' }, page, [broken, fine]);
+
+    const result = JSON.parse(localStorage.getItem('clay-settings'));
+
+    expect(result).toEqual({ CLOCK_DATE_FORMAT: '%Y.%m.%d', CALENDAR_SOURCE: 'plugin' });
   });
 });
 
@@ -497,17 +686,51 @@ describe('payloadByKeyId', () => {
 });
 
 describe('createClay', () => {
-  /** A Clay that records what it was built with and every component registered on it. */
+  // Clay's own text box and select, as a Clay built from a page drawing one holds it
+  const CLAY_INPUT = { name: 'input', manipulator: 'val' };
+  const CLAY_SELECT = { name: 'select', manipulator: 'val' };
+
+  // a theme picker with one theme and no pictures
+  const PICKER: ClayConfigItem = { type: 'themePreview', messageKey: 'APPEARANCE_THEME', label: 'Theme', defaultValue: 'a', options: [{ label: 'A', value: 'a' }], previews: {} };
+
+  /**
+   * A Clay that records what the first one was built with, how many were built, and every component
+   * registered on it, keyed by name like the real one. Like the real one, it holds Clay's own text box
+   * and select when the page it was built with draws one, in a section or out of one.
+   */
   class RecordingClay {
     static built: { config: unknown; customClay: unknown; options: unknown } | null = null;
+    static made = 0;
+    static failSpare = false;
     registered: unknown[] = [];
+    components: Record<string, unknown> = {};
 
     constructor(config: unknown, customClay: unknown, options: unknown) {
-      RecordingClay.built = { config, customClay, options };
+      RecordingClay.built = RecordingClay.built || { config, customClay, options };
+      RecordingClay.made += 1;
+
+      if (RecordingClay.failSpare && RecordingClay.made > 1) {
+        throw new Error('the spare failed');
+      }
+
+      const walk = (items: ClayConfigItem[]) => {
+        items.forEach((item) => {
+          if (item.type === 'section') {
+            walk(item.items || []);
+          } else if (item.type === 'input') {
+            this.components.input = { ...CLAY_INPUT };
+          } else if (item.type === 'select') {
+            this.components.select = { ...CLAY_SELECT };
+          }
+        });
+      };
+
+      walk(config as ClayConfigItem[]);
     }
 
-    registerComponent(component: unknown) {
+    registerComponent(component: { name: string }) {
       this.registered.push(component);
+      this.components[component.name] = component;
     }
   }
 
@@ -515,11 +738,59 @@ describe('createClay', () => {
 
   beforeEach(() => {
     RecordingClay.built = null;
+    RecordingClay.made = 0;
+    RecordingClay.failSpare = false;
     restoreLoad = stubModuleLoad((id) => (id === '@rebble/clay/src/js/index' ? RecordingClay : undefined));
   });
 
   afterEach(() => {
     restoreLoad();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  /**
+   * A bridge whose listener is a getter with no setter, handing back a fresh wrapper on each read the
+   * way some bindings do. Setting it throws, since the framework's code is strict.
+   */
+  function refusingBridge(): { addEventListener: unknown } {
+    const bridge = {};
+
+    Object.defineProperty(bridge, 'addEventListener', { get: () => function () {}, enumerable: true });
+    return bridge as { addEventListener: unknown };
+  }
+
+  /** The settings page is built at launch, so a bridge that refuses the swap must not stop it there. */
+  test('builds the page on a bridge that refuses the listener swap', () => {
+    vi.stubGlobal('Pebble', refusingBridge());
+    const clayConfig = [{ type: 'section', items: [{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }] }];
+
+    const result = createClay({ clayConfig }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, CLAY_INPUT, locationComponent]);
+  });
+
+  /** A spare that throws mid build must not leave the bridge's listener swapped, or every later event the face listens for is lost. */
+  test('puts the bridge\'s listener back when the spare Clay throws', () => {
+    const listen = vi.fn();
+
+    vi.stubGlobal('Pebble', { addEventListener: listen });
+    RecordingClay.failSpare = true;
+
+    const result = () => createClay({ clayConfig: [{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }] });
+
+    expect(result).toThrow('the spare failed');
+    expect(Pebble.addEventListener).toBe(listen);
+  });
+
+  /** On a bridge that refused the swap, a spare that throws has to surface its own error rather than one from putting the listener back. */
+  test('surfaces the spare Clay\'s own error on a bridge that refuses the listener swap', () => {
+    vi.stubGlobal('Pebble', refusingBridge());
+    RecordingClay.failSpare = true;
+
+    const result = () => createClay({ clayConfig: [{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }] });
+
+    expect(result).toThrow('the spare failed');
   });
 
   /**
@@ -527,23 +798,204 @@ describe('createClay', () => {
    * preview registers what the phone does. A component missing from the phone's list makes Clay stop
    * with "is not registered" and the settings page never opens.
    */
-  test('registers the location component and then the components the face passes, in order', () => {
+  test('registers the rules for the whole page, the location component, and then the components the face passes, in order', () => {
     const layout = { name: 'layoutBuilder' };
     const store = { name: 'hiddenStore' };
 
     const result = createClay({ clayConfig: [], components: [layout, store] }) as unknown as RecordingClay;
 
-    expect(result.registered).toEqual([locationComponent, layout, store]);
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent, layout, store]);
+  });
+
+  /** A hidden store row with no component stops Clay building the page there, so every row below it never shows. */
+  test('registers the hidden store for a page that holds one when the face leaves it out', () => {
+    const clayConfig = [{ type: 'section', items: [{ type: 'hiddenStore', messageKey: 'GRID_LIBRARY' }] }];
+
+    const result = createClay({ clayConfig }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent, hiddenStoreComponent]);
+  });
+
+  /** A face's own component under the name has to win, or its page would draw the framework's store instead. */
+  test('leaves a face\'s own hiddenStore component in place of the framework\'s', () => {
+    const ownStore = { name: 'hiddenStore', template: '<input type="hidden">' };
+
+    const result = createClay({ clayConfig: [{ type: 'hiddenStore', messageKey: 'GRID_LIBRARY' }], components: [ownStore] }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent, ownStore]);
+  });
+
+  /**
+   * The location search takes its look from Clay's text box, and Clay adds that style only to a page
+   * that registers the text box. Without it the search is a plain white field beside its label.
+   */
+  test('registers Clay\'s text box ahead of the location component on a page with a location search and no text box', () => {
+    const clayConfig = [{ type: 'section', items: [{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }] }];
+
+    const result = createClay({ clayConfig }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, CLAY_INPUT, locationComponent]);
+    expect(RecordingClay.made).toBe(2);
+  });
+
+  /**
+   * Clay registers its own text box for a text row inside a section as well as one outside, and that
+   * one already brings the style. A spare Clay built anyway would cost every settings page open a
+   * second Clay for a component the page has.
+   */
+  test('builds no spare Clay for a page whose section draws one of Clay\'s own text boxes', () => {
+    const clayConfig = [{ type: 'section', items: [{ type: 'input', messageKey: 'WEATHER_API_KEY' }, { type: 'locationsearch', messageKey: 'LOCATION_NAME' }] }];
+
+    const result = createClay({ clayConfig }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent]);
+    expect(RecordingClay.made).toBe(1);
+  });
+
+  /**
+   * A face that passes its own text box draws the search with it. Clay's would be built for nothing,
+   * and registered ahead of the face's it would move the face's ahead of the location search.
+   */
+  test('leaves a face\'s own text box in the place the face registers it', () => {
+    const ownInput = { name: 'input', template: '<div class="component component-input"></div>', manipulator: 'val' };
+    const clayConfig = [{ type: 'section', items: [{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }] }];
+
+    const result = createClay({ clayConfig, components: [ownInput] }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent, ownInput]);
+    expect(RecordingClay.made).toBe(1);
+  });
+
+  /**
+   * The theme picker takes its look from Clay's select, and Clay adds that style only to a page that
+   * registers the select. Without it the picker shows the bare native dropdown over its own name.
+   */
+  test('registers Clay\'s select ahead of the theme picker on a page with a theme picker and no select', () => {
+    const result = createClay({ clayConfig: [{ type: 'section', items: [PICKER] }] }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, CLAY_SELECT, locationComponent, themePreviewComponent]);
+    expect(RecordingClay.made).toBe(2);
+  });
+
+  /** A page holding both rows takes both looks from one spare Clay rather than one each. */
+  test('takes the text box and the select from one spare Clay', () => {
+    const clayConfig = [{ type: 'section', items: [{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }, PICKER] }];
+
+    const result = createClay({ clayConfig }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, CLAY_INPUT, CLAY_SELECT, locationComponent, themePreviewComponent]);
+    expect(RecordingClay.made).toBe(2);
+  });
+
+  /** A face that passes its own select draws the picker with it, and Clay's registered first would move the face's ahead of the picker. */
+  test('leaves a face\'s own select in the place the face registers it', () => {
+    const ownSelect = { name: 'select', template: '<div class="component component-select"></div>', manipulator: 'val' };
+
+    const result = createClay({ clayConfig: [{ type: 'section', items: [PICKER] }], components: [ownSelect] }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent, themePreviewComponent, ownSelect]);
+    expect(RecordingClay.made).toBe(1);
+  });
+
+  /** A page with no store must not carry the component's code. */
+  test('leaves the hidden store off a page that holds none', () => {
+    const result = createClay({ clayConfig: [{ type: 'heading', defaultValue: 'Page' }] }) as unknown as RecordingClay;
+
+    expect(result.registered).toEqual([pageStyleComponent, locationComponent]);
+  });
+
+  /**
+   * The page Clay is built with opens on its own when no feature has a page hook, so its intro is
+   * settled there too. The face's own page keeps the mark, since every later open settles it again.
+   */
+  test('builds Clay from the page with the builder\'s intro settled and its mark gone', () => {
+    const clayConfig: ClayConfigItem[] = [{ type: 'text', defaultValue: 'Personalize your layout, dial in your weather preferences, and make this watchface your own.', introWithoutWeather: 'Personalize your layout and make this watchface your own.' }];
+
+    createClay({ clayConfig });
+
+    expect(RecordingClay.built?.config).toEqual([{ type: 'text', defaultValue: 'Personalize your layout and make this watchface your own.' }]);
+    expect(clayConfig[0].introWithoutWeather).toBe('Personalize your layout and make this watchface your own.');
   });
 
   /** A face's page code and its rows have to reach Clay, and Clay's own send path has to stay off. */
   test('builds Clay from the page and customClay the face passes, with its own event handling off', () => {
     const clayConfig = [{ type: 'heading', defaultValue: 'Page' }];
-    const customClay = () => {};
+    const customClay = function () {};
 
     createClay({ clayConfig, customClay });
 
     expect(RecordingClay.built).toEqual({ config: clayConfig, customClay, options: { autoHandleEvents: false } });
+  });
+
+  /**
+   * Clay refuses a custom function that is not a function only when it is handed one alone. Checked
+   * at startup, the face gets Clay's own error whatever its page holds, rather than one only on pages
+   * with no visibleWhen row.
+   */
+  test.each([
+    { name: 'with no visibleWhen rows', clayConfig: [{ type: 'heading', defaultValue: 'Page' }] },
+    { name: 'with visibleWhen rows', clayConfig: [{ type: 'toggle', messageKey: 'SHOWN', visibleWhen: { key: 'MODE', in: ['on'] } }] },
+  ])('stops with the error Clay gives for a customClay that is not a function, $name', ({ clayConfig }) => {
+    const result = () => createClay({ clayConfig, customClay: 'reset' });
+
+    expect(result).toThrow('customFn must be a function or "null"');
+  });
+
+  /** Clay hands the custom function the page as this, which an arrow cannot take, so its code never reaches the page. */
+  test('warns about a customClay written as an arrow', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    createClay({ clayConfig: [], customClay: () => {} });
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('not an arrow'));
+  });
+
+  /** A warning on a plain function would send a face hunting for a mistake it never made. */
+  test.each([
+    { name: 'a plain function', customClay: function () {} },
+    { name: 'a named function', customClay: function faceCode() {} },
+    { name: 'an async function', customClay: async function () {} },
+  ])('says nothing about $name', ({ customClay }) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    createClay({ clayConfig: [], customClay });
+
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  /** A page with no page code has to get none, so Clay writes its own do-nothing function and the page text stays as it is. */
+  test('gives Clay no custom function for a page with no visibleWhen and no customClay', () => {
+    createClay({ clayConfig: [{ type: 'heading', defaultValue: 'Page' }] });
+
+    const result = RecordingClay.built?.customClay;
+
+    expect(result).toBeUndefined();
+  });
+
+  /** A face that leaves customClay out has to get the show and hide itself, not a wrapper, so its page text stays as it is. */
+  test('gives Clay the show and hide itself for a page with visibleWhen rows and no customClay', () => {
+    createClay({ clayConfig: [{ type: 'toggle', messageKey: 'SHOWN', visibleWhen: { key: 'MODE', in: ['on'] } }] });
+
+    const result = RecordingClay.built?.customClay;
+
+    expect(result).toBe(dependentVisibility);
+  });
+
+  /**
+   * A face's customClay standing in for the show and hide leaves its visibleWhen rows always showing.
+   * Both have to run, the framework's first so the face's code can still change a row after it.
+   */
+  test('runs the show and hide and then the face\'s customClay for a page with visibleWhen rows', () => {
+    const customClay = function () {
+      document.title = 'face page code';
+    };
+
+    createClay({ clayConfig: [{ type: 'toggle', messageKey: 'SHOWN', visibleWhen: { key: 'MODE', in: ['on'] } }], customClay });
+
+    const result = partPlaces(RecordingClay.built?.customClay, [dependentVisibility, customClay]);
+
+    expect(result[0]).toBeGreaterThanOrEqual(0);
+    expect(result[1]).toBeGreaterThan(result[0]);
   });
 });
 
@@ -745,6 +1197,22 @@ describe('startPebbleApp weather', () => {
     const sends = weatherSends();
 
     expect(sends[0][0]).toMatchObject({ WEATHER_OK: 1, LAT: '33.4' });
+  });
+
+  /**
+   * The label prefers a result's own words, and no provider sets them. A face showing the label has
+   * to get the very message it got before, with the token's words in it.
+   */
+  test('sends the token words as the label for a provider reading', () => {
+    keys = { ...weatherKeys, WEATHER_CONDITION_LABEL: 'WEATHER_CONDITION_LABEL' };
+    start([weather]);
+    fire('ready');
+
+    sent[0].respond(200, JSON.stringify({ current: { temperature_2m: 21, weather_code: 3, is_day: 1 } }));
+
+    const sends = weatherSends();
+
+    expect(sends[0][0]).toEqual({ WEATHER_TEMPERATURE: 21, WEATHER_CONDITIONS: 'CLDY', WEATHER_OK: 1, WEATHER_CONDITION_LABEL: 'Cloudy' });
   });
 
   /** Weather is opt-in, so a face that lists no features must never fetch it or send a reading. */
@@ -961,6 +1429,7 @@ describe('startPebbleApp stock and calendar', () => {
   });
 
   afterEach(() => {
+    pluginCode.off = false;
     restoreLoad();
     pebble.restore();
     vi.useRealTimers();
@@ -1080,6 +1549,76 @@ describe('startPebbleApp stock and calendar', () => {
     const result = JSON.parse(localStorage.getItem('stock-cache') as string).strip;
 
     expect(result).toBeNull();
+  });
+
+  /**
+   * The cache records whose quotes it holds. A strip saved with no provider would read as belonging
+   * to whatever provider loads it next, so a provider changed at launch would keep the old quotes.
+   */
+  test('saves the provider it fetched with beside the strip', () => {
+    start({ STOCK_PROVIDER: 'Yahoo', STOCK_SYMBOLS: 'AAPL' }, null, [stocks]);
+    pebble.fire('ready');
+
+    sent.forEach((request) => request.respond(200, JSON.stringify({ chart: { result: [{ meta: { symbol: 'AAPL', regularMarketPrice: 261.74, chartPreviousClose: 260.5, regularMarketTime: 1719849600 } }], error: null } })));
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).provider;
+
+    expect(result).toBe('yahoo');
+  });
+
+  /**
+   * A provider change on the page forgets the old strip. Saving that empty cache under the old
+   * provider would let the next launch read the new provider's first quotes as the old one's.
+   */
+  test('saves the new provider when a provider change forgets the strip', () => {
+    start({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' }, SAVED_STRIP, [stocks]);
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'finnhub', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'AAPL' }));
+
+    pebble.fire('webviewclosed', { response: '{}' });
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string);
+
+    expect(result).toEqual({ lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'finnhub' });
+  });
+
+  /**
+   * A provider that changed while nothing ran found the old provider's strip and pushed it to the
+   * watch while its own gate was shut, as Alpha Vantage's is on a weekday morning.
+   */
+  test('pushes no strip saved under another provider while the gate is shut', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 15, 0));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'AAPL' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-07-01', lastFetchMs: Date.now() - 60000, strip: SAVED_STRIP, provider: 'finnhub' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+
+    pebble.fire('ready');
+
+    const result = sendsOf('STOCK_STRIP');
+
+    expect(result).not.toContainEqual(SAVED_STRIP);
+  });
+
+  /**
+   * A settings restore from the watch can move the provider after the cache was loaded, with no save
+   * from the page to say so. The next round kept the old provider's stamps and pushed its strip.
+   */
+  test('drops a cache saved under another provider at the next round after a seed moves the provider', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 15, 0));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-07-01', lastFetchMs: Date.now() - 60000, strip: SAVED_STRIP, provider: 'yahoo' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'AAPL' }));
+    pebble.sendAppMessage.mockClear();
+
+    pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string);
+
+    expect(result).toEqual({ lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'alphavantage' });
+    expect(sendsOf('STOCK_STRIP')).not.toContainEqual(SAVED_STRIP);
   });
 
   /** Deleting every upcoming event has to clear the watch, or the deleted events stay on the agenda for good. */
@@ -1224,12 +1763,36 @@ describe('startPebbleApp stock and calendar', () => {
   });
 
   /** Removing the feed has to clear the watch too, or the old agenda outlives the setting that made it. */
-  test('sends an empty agenda when no feed is set', () => {
+  test('sends an empty agenda when no feed is set on a face built without PLUGIN_CALENDAR', () => {
+    pluginCode.off = true;
     start({});
 
     pebble.fire('ready');
 
     expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
+  });
+
+  /** With the define, a wearer who saved an empty link still has to see the agenda clear, as on any other face. */
+  test('sends an empty agenda when the saved feed is empty on a face built with PLUGIN_CALENDAR', () => {
+    pebble.plugins = [{ uuid: 'calendar-uuid', name: 'Calendar', sources: [{ category: 'calendar', items: ['event'] }] }];
+    start({ CALENDAR_ICS_URL: '' });
+
+    pebble.fire('ready');
+
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([[0]]);
+  });
+
+  /**
+   * With the define and a calendar plugin on the phone, a fresh install of the Pebble app may still
+   * get the plugin back from the watch. An empty agenda before that would clear what the plugin filled.
+   */
+  test('holds the empty agenda with nothing saved on a face built with PLUGIN_CALENDAR while a plugin serves the events', () => {
+    pebble.plugins = [{ uuid: 'calendar-uuid', name: 'Calendar', sources: [{ category: 'calendar', items: ['event'] }] }];
+    start({});
+
+    pebble.fire('ready');
+
+    expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
   });
 
   /**
@@ -1447,6 +2010,19 @@ describe('startPebbleApp settings restore', () => {
     expect(result).toEqual([WIRE_CAPS.SETTINGS_REQUEST_FRESH]);
   });
 
+  /** A feature holding something back until the watch's settings land would otherwise wait for the rest of the session. */
+  test('tells each feature once the watch has turned away every ask', () => {
+    const unanswered = vi.fn();
+
+    pebble.answer = 'nack';
+    app.startPebbleApp({ clayConfig: [], features: [() => ({ settingsUnanswered: unanswered })] });
+    pebble.fire('ready');
+
+    vi.advanceTimersByTime((SETTINGS_ASK_RETRIES + 1) * (SETTINGS_ASK_RETRY_MS + SEND_RETRY_MS * SEND_RETRIES));
+
+    expect(unanswered).toHaveBeenCalledTimes(1);
+  });
+
   /**
    * The first reply from a fresh watch seeds an empty phone with the watch's defaults, and a second
    * would send those same defaults straight back to the watch, a message and a flash write that
@@ -1540,6 +2116,27 @@ describe('startPebbleApp settings restore', () => {
     watchReplies(false, '%Y-%m-%d');
 
     expect(calls).toEqual(['opened:null', 'saved:%Y-%m-%d']);
+  });
+
+  /**
+   * The started features have to reach the seed, or no seeded hook runs on a real phone. The phone
+   * app keys the reply by name, so the echo has to find a numbered key under its name as well.
+   */
+  test('runs the started features\' seeded hooks on the watch\'s reply', () => {
+    keys = { ...numberedKeys, CALENDAR_SOURCE: 10009 };
+    const feature = () => ({
+      seeded: (config: Record<string, unknown>, echoed: (name: string) => unknown) => {
+        config.CALENDAR_SOURCE = echoed('CALENDAR_SOURCE');
+      },
+    });
+
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
+    pebble.fire('ready');
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 0, CLOCK_DATE_FORMAT: '%Y-%m-%d', CALENDAR_SOURCE: 'plugin' } });
+
+    const result = stored('CALENDAR_SOURCE');
+
+    expect(result).toBe('plugin');
   });
 
   /**
@@ -1761,5 +2358,825 @@ describe('collectDefaults', () => {
     const result = collectDefaults(items);
 
     expect(result).toEqual({});
+  });
+});
+
+describe('foldFeatures', () => {
+  /** Each hook builds on the page the hooks before it made, so a hook run out of order or on the wrong page loses its rows. */
+  test('passes the page through each page hook in order', () => {
+    const page: ClayConfigItem[] = [{ type: 'heading', defaultValue: 'Page' }];
+    const second: FeatureHooks = { page: (config) => [...config, { type: 'text', defaultValue: 'second' }] };
+    const first: FeatureHooks = { page: (config) => [...config, { type: 'text', defaultValue: 'first' }] };
+
+    const result = foldFeatures(page, [first, {}, second]);
+
+    expect(result.map((item) => item.defaultValue)).toEqual(['Page', 'first', 'second']);
+  });
+
+  /**
+   * The defaults, the settings restore, and every later open read the face's page, so a hook that
+   * changed what it got would change all of them. A function a custom component carries is not
+   * data, so it is handed on as it is.
+   */
+  test('gives the first hook a copy of the face\'s page, with functions kept as they are', () => {
+    const render = () => {};
+    const page: ClayConfigItem[] = [{ type: 'section', items: [{ type: 'layoutBuilder', moduleOptions: { render } }] }];
+    const seen: ClayConfigItem[][] = [];
+    const pushing: FeatureHooks = {
+      page: (config) => {
+        seen.push(config);
+        (config[0].items as ClayConfigItem[]).push({ type: 'text', defaultValue: 'pushed' });
+        return config;
+      },
+    };
+
+    foldFeatures(page, [pushing]);
+
+    expect(page[0].items).toHaveLength(1);
+    expect((seen[0][0].items as ClayConfigItem[])[0].moduleOptions).toEqual({ render });
+    expect(((seen[0][0].items as ClayConfigItem[])[0].moduleOptions as { render: unknown }).render).toBe(render);
+  });
+
+  /**
+   * A hook changes the page it is given in place. The page an earlier hook made is what the fold
+   * opens when a later hook throws, so a later hook that reached it would leave that page half changed.
+   */
+  test('gives every hook its own copy, so a later hook never reaches the page an earlier one made', () => {
+    const page: ClayConfigItem[] = [{ type: 'section', items: [{ type: 'text', defaultValue: 'face' }] }];
+    const made: ClayConfigItem[][] = [];
+    const adding = (word: string): FeatureHooks => ({
+      page: (config) => {
+        (config[0].items as ClayConfigItem[]).push({ type: 'text', defaultValue: word });
+        made.push(config);
+        return config;
+      },
+    });
+
+    const result = foldFeatures(page, [adding('first'), adding('second')]);
+
+    expect((page[0].items as ClayConfigItem[]).map((item) => item.defaultValue)).toEqual(['face']);
+    expect((made[0][0].items as ClayConfigItem[]).map((item) => item.defaultValue)).toEqual(['face', 'first']);
+    expect((result[0].items as ClayConfigItem[]).map((item) => item.defaultValue)).toEqual(['face', 'first', 'second']);
+  });
+
+  /** A hook that breaks on this phone must not cost the wearer the rows the other features added, or the page itself. */
+  test.each([
+    ['throws', (): ClayConfigItem[] => {
+      throw new Error('no plugins here');
+    }],
+    ['hands back no page', () => undefined as unknown as ClayConfigItem[]],
+  ])('skips a hook that %s and keeps the page the hooks before it made', (_label, broken) => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const page: ClayConfigItem[] = [{ type: 'heading', defaultValue: 'Page' }];
+    const first: FeatureHooks = { page: (config) => [...config, { type: 'text', defaultValue: 'first' }] };
+    const last: FeatureHooks = { page: (config) => [...config, { type: 'text', defaultValue: 'last' }] };
+
+    const result = foldFeatures(page, [first, { page: broken }, last]);
+
+    expect(result.map((item) => item.defaultValue)).toEqual(['Page', 'first', 'last']);
+    log.mockRestore();
+  });
+});
+
+describe('startPebbleApp settings page hooks', () => {
+  // the components Clay carries itself, as its bundle lists them
+  const CLAY_OWN = ['color', 'footer', 'heading', 'input', 'select', 'submit', 'text', 'toggle', 'radiogroup', 'checkboxgroup', 'button', 'slider'];
+
+  /**
+   * A Clay that keeps what it was built with and what each page it opened held. Like the real one,
+   * it deep copies the page it is built with, keeps a do-nothing custom function when given none,
+   * registers its own component for each of its types the page it was built with uses, and adds a
+   * ready listener to the Pebble bridge, as Clay does with its own events left to the face.
+   */
+  class PageClay {
+    static built: PageClay[] = [];
+    static opened: Array<{ config: unknown; customFn: unknown }> = [];
+    static heard: PageClay[] = [];
+    config: unknown[];
+    customFn: unknown;
+    components: Record<string, unknown> = {};
+    builtConfig: unknown[];
+    builtCustomFn: unknown;
+
+    constructor(config: ClayConfigItem[], customFn?: unknown) {
+      this.config = JSON.parse(JSON.stringify(config));
+
+      this.customFn = customFn || function () {};
+
+      this.builtConfig = this.config;
+      this.builtCustomFn = this.customFn;
+
+      const register = (items: ClayConfigItem[]) => {
+        items.forEach((item) => {
+          if (CLAY_OWN.includes(item.type)) {
+            this.components[item.type] = { name: item.type };
+          }
+
+          register(item.items || []);
+        });
+      };
+
+      register(config);
+      PageClay.built.push(this);
+      Pebble.addEventListener('ready', () => PageClay.heard.push(this));
+    }
+
+    registerComponent(component: { name: string }) {
+      this.components[component.name] = component;
+    }
+
+    getSettings() {
+      return {};
+    }
+
+    generateUrl() {
+      PageClay.opened.push({ config: this.config, customFn: this.customFn });
+      return '';
+    }
+  }
+
+  const pageKeys = { SETTINGS_REQUEST: 'SETTINGS_REQUEST', WEATHER_PROVIDER: 'WEATHER_PROVIDER' };
+
+  let pebble: FakePebble;
+  let restoreLoad: () => void;
+
+  /** A feature with only a page hook. */
+  function pageFeature(page: (config: ClayConfigItem[]) => ClayConfigItem[]): Feature {
+    return () => ({ page });
+  }
+
+  /** Starts the app and opens the settings page, as the phone does when the wearer taps settings. */
+  function openSettings(clayConfig: ClayConfigItem[], features: Feature[], customClay?: unknown) {
+    app.startPebbleApp({ clayConfig, features, customClay });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+  }
+
+  beforeEach(() => {
+    localStorage.clear();
+    PageClay.built = [];
+    PageClay.opened = [];
+    PageClay.heard = [];
+    pebble = withFakePebble();
+    restoreLoad = stubModuleLoad((id) => {
+      if (id === 'message_keys') {
+        return pageKeys;
+      }
+
+      return id === '@rebble/clay/src/js/index' ? PageClay : undefined;
+    });
+  });
+
+  afterEach(() => {
+    restoreLoad();
+    pebble.restore();
+    vi.restoreAllMocks();
+  });
+
+  /**
+   * The builder's marks sit on every face's page, and no feature brings a page hook yet. Opening the
+   * page has to hand Clay exactly what it was built with, or every face's page would change.
+   */
+  test('leaves the page and the custom function Clay was built with when no feature has a page hook', () => {
+    openSettings(buildConfig({ location: {}, weather: {}, calendar: {} }), [() => ({})]);
+
+    const result = PageClay.built[0];
+
+    expect(result.config).toBe(result.builtConfig);
+    expect(result.customFn).toBe(result.builtCustomFn);
+  });
+
+  /** A fold from the last open's page would add the same rows again on every open. */
+  test('folds from the face\'s own page on every open', () => {
+    const clayConfig: ClayConfigItem[] = [{ type: 'heading', defaultValue: 'Page' }, { type: 'text', defaultValue: 'Intro' }];
+    const given: ClayConfigItem[][] = [];
+    const feature = pageFeature((config) => {
+      given.push(config);
+      return [...config, { type: 'text', defaultValue: 'added' }];
+    });
+
+    openSettings(clayConfig, [feature]);
+
+    pebble.fire('showConfiguration');
+
+    expect(given[1]).toEqual(clayConfig);
+    expect(PageClay.opened[1].config).toEqual([...clayConfig, { type: 'text', defaultValue: 'added' }]);
+  });
+
+  /** A hook that changed the face's page would change the defaults and the restore, and its rows would pile up on every open. */
+  test('keeps the face\'s page whole when a hook pushes a row into what it gets', () => {
+    const clayConfig: ClayConfigItem[] = [{ type: 'heading', defaultValue: 'Page' }, { type: 'text', defaultValue: 'Intro' }];
+    const given: ClayConfigItem[][] = [];
+    const feature = pageFeature((config) => {
+      given.push(config.slice());
+      config.push({ type: 'text', defaultValue: 'pushed' });
+      return config;
+    });
+
+    openSettings(clayConfig, [feature]);
+
+    pebble.fire('showConfiguration');
+
+    expect(clayConfig).toHaveLength(2);
+    expect(given[1]).toHaveLength(2);
+  });
+
+  /**
+   * The builder's marks only become a visibleWhen once a page hook runs, so a page whose only other
+   * visibleWhen is gone was built with no show and hide. Without it the location rows would stay on
+   * the page while the plugin is picked. The key row carries a visibleWhen of its own, so it comes off.
+   */
+  test('wires the show and hide for a page whose only visibleWhen comes from the marks', () => {
+    const plugin = { uuid: 'weather-uuid', name: 'Weather', sources: [{ category: 'weather', items: ['location'] }] };
+    const state = { pluginUuid: null, lastError: null, lastEmpty: false };
+    const inputs = { selectKey: 'WEATHER_PROVIDER', category: 'weather', item: 'location', plugins: [plugin], messageKeys: { WEATHER_PROVIDER: 1 }, state, standard: WEATHER_STANDARD, texts: {} };
+    const page = buildConfig({ location: {}, weather: {} });
+
+    dropRows(page, (item) => item.messageKey === 'WEATHER_API_KEY');
+
+    openSettings(page, [pageFeature((config) => pluginSourcePage(config, inputs))]);
+
+    expect(PageClay.opened[0].customFn).toBe(dependentVisibility);
+    expect(hasVisibleWhen(PageClay.opened[0].config as ClayConfigItem[])).toBe(true);
+  });
+
+  /** A plugin page on a face with its own customClay has to hide its rows as well as run the face's code, or the location rows stay showing while the plugin is picked. */
+  test('runs the show and hide and then the face\'s customClay when the plugin page adds a visibleWhen', () => {
+    const customClay = function () {
+      document.title = 'face page code';
+    };
+    const plugin = { uuid: 'weather-uuid', name: 'Weather', sources: [{ category: 'weather', items: ['location'] }] };
+    const state = { pluginUuid: null, lastError: null, lastEmpty: false };
+    const inputs = { selectKey: 'WEATHER_PROVIDER', category: 'weather', item: 'location', plugins: [plugin], messageKeys: { WEATHER_PROVIDER: 1 }, state, standard: WEATHER_STANDARD, texts: {} };
+
+    openSettings(buildConfig({ location: {}, weather: {} }), [pageFeature((config) => pluginSourcePage(config, inputs))], customClay);
+
+    const result = partPlaces(PageClay.opened[0].customFn, [dependentVisibility, customClay]);
+
+    expect(result[0]).toBeGreaterThanOrEqual(0);
+    expect(result[1]).toBeGreaterThan(result[0]);
+  });
+
+  /** A face's customClay alone has to reach Clay as it is when nothing on the page needs the show and hide, so its page text stays as it is. */
+  test('hands Clay the face\'s customClay itself when the hooks add no visibleWhen', () => {
+    const customClay = function () {};
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, { type: 'text', defaultValue: 'Added' }])], customClay);
+
+    const result = PageClay.opened[0].customFn;
+
+    expect(result).toBe(customClay);
+  });
+
+  /**
+   * Each open puts its own custom function together. One that kept an earlier open's would run the
+   * show and hide on a page with plugins turned off, or leave it off a page that turned them back on.
+   */
+  test.each([
+    { name: 'with no customClay', customClay: undefined },
+    { name: 'with a customClay', customClay: function () {
+      document.title = 'face page code';
+    } },
+  ])('puts the custom function together from each open\'s own page, plugins on and then off, $name', ({ customClay }) => {
+    const hidden: ClayConfigItem = { type: 'text', defaultValue: 'Plugin only', visibleWhen: { key: 'WEATHER_PROVIDER', in: ['plugin'] } };
+    let pluginsOn = true;
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => (pluginsOn ? [...config, hidden] : config.slice()))], customClay);
+    pluginsOn = false;
+    pebble.fire('showConfiguration');
+
+    const result = PageClay.opened.map((opened) => partPlaces(opened.customFn, [dependentVisibility]));
+
+    expect(result[0][0]).toBeGreaterThanOrEqual(0);
+    expect(result[1][0]).toBe(-1);
+    expect(PageClay.opened[1].customFn).toBe(customClay || PageClay.built[0].builtCustomFn);
+  });
+
+  /**
+   * Clay only registers its own components for the page it was built with, so a select added to a
+   * page with none would stop the page with "is not registered" unless it is registered first.
+   */
+  test('registers Clay\'s own component for a type the folded page adds', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const added: ClayConfigItem = { type: 'select', messageKey: 'NEW', options: [{ label: 'A', value: 'a' }] };
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, added])]);
+
+    expect(PageClay.opened[0].config).toEqual([{ type: 'text', defaultValue: 'Intro' }, added]);
+    expect(PageClay.built[0].components.select).toEqual({ name: 'select' });
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  /** The plugin sources' notes are drawn by a component their feature hands over, so a page holding one opens with it rather than falling back. */
+  test('registers a component a feature brings for a folded page holding its rows', () => {
+    const note: ClayConfigItem = { type: 'pluginNote', tone: 'info', defaultValue: 'From the Pebble app.' };
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [() => ({ page: (config) => [...config, note], components: [noteComponent] })]);
+
+    expect(PageClay.built[0].components.pluginNote).toBe(noteComponent);
+    expect(PageClay.opened[0].config).toEqual([{ type: 'text', defaultValue: 'Intro' }, note]);
+  });
+
+  /** A page without a note never needs the component, and carrying it would put code on the page nothing draws with. */
+  test('registers no component a feature brings for a folded page without its rows', () => {
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [() => ({ page: (config) => [...config, { type: 'text', defaultValue: 'Added' }], components: [noteComponent] })]);
+
+    expect(PageClay.built[0].components.pluginNote).toBeUndefined();
+  });
+
+  /** A note registered on one open would otherwise ride along on every later page, notes or not, since Clay writes every component it holds. */
+  test('takes a component back off on an open whose page no longer holds its rows', () => {
+    const note: ClayConfigItem = { type: 'pluginNote', defaultValue: 'Allow Location.' };
+    let withNote = true;
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [() => ({ page: (config) => (withNote ? [...config, note] : config.slice()), components: [noteComponent] })]);
+    withNote = false;
+    pebble.fire('showConfiguration');
+
+    expect(PageClay.built[0].components.pluginNote).toBeUndefined();
+  });
+
+  /** A face's own component under the same name is the face's to keep, and taking it off would break the face's page. */
+  test('leaves a face\'s own component of the same name in place', () => {
+    const own = { name: 'pluginNote', template: '<div></div>' };
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [() => ({ page: (config) => config.slice(), components: [noteComponent] })]);
+    PageClay.built[0].registerComponent(own);
+    pebble.fire('showConfiguration');
+
+    expect(PageClay.built[0].components.pluginNote).toBe(own);
+  });
+
+  /** A location search a hook adds to a page with no text box would draw as a plain white field without Clay's text box style. */
+  test('registers Clay\'s text box for a folded page that gains a location search', () => {
+    const search: ClayConfigItem = { type: 'locationsearch', messageKey: 'LOCATION_NAME' };
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, search])]);
+
+    expect(PageClay.built[0].components.input).toEqual({ name: 'input' });
+    expect(PageClay.opened[0].config).toEqual([{ type: 'text', defaultValue: 'Intro' }, search]);
+  });
+
+  /**
+   * A spare Clay's ready listener reads the watch info and both tokens into a Clay nothing reads.
+   * Only the real page's listener may reach the bridge, and a fold needing both a Clay type and the
+   * search's text box builds one spare for the two.
+   */
+  test('builds one spare Clay for a fold, with no ready listener of its own', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const search: ClayConfigItem = { type: 'locationsearch', messageKey: 'LOCATION_NAME' };
+    const pick: ClayConfigItem = { type: 'select', messageKey: 'NEW', options: [{ label: 'A', value: 'a' }] };
+    const listen = Pebble.addEventListener;
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, pick, search])]);
+    PageClay.heard = [];
+    pebble.fire('ready');
+
+    expect(PageClay.built).toHaveLength(2);
+    expect(PageClay.heard).toEqual([PageClay.built[0]]);
+    expect(Object.keys(PageClay.built[0].components)).toEqual(expect.arrayContaining(['select', 'input']));
+    expect(Pebble.addEventListener).toBe(listen);
+  });
+
+  /** The page's own spare for the search's text box must not leave a listener on the bridge either. */
+  test('builds the spare for a page with a location search with no ready listener of its own', () => {
+    openSettings([{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }], []);
+    PageClay.heard = [];
+    pebble.fire('ready');
+
+    expect(PageClay.built).toHaveLength(2);
+    expect(PageClay.heard).toEqual([PageClay.built[0]]);
+  });
+
+  /** A face that passes its own text box draws the search with it, so a fold has nothing to take. */
+  test('keeps a face\'s own text box for a location search a fold adds', () => {
+    const ownInput = { name: 'input', template: '<div></div>', manipulator: 'val' };
+    const search: ClayConfigItem = { type: 'locationsearch', messageKey: 'LOCATION_NAME' };
+
+    app.startPebbleApp({ clayConfig: [{ type: 'text', defaultValue: 'Intro' }], features: [pageFeature((config) => [...config, search])], components: [ownInput] });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+
+    expect(PageClay.built[0].components.input).toBe(ownInput);
+    expect(PageClay.built).toHaveLength(1);
+  });
+
+  /** A text box left on after the search goes would carry its code and style on every later page that has no use for it. */
+  test('takes the text box back off on an open whose fold drops the location search', () => {
+    const search: ClayConfigItem = { type: 'locationsearch', messageKey: 'LOCATION_NAME' };
+    let withSearch = true;
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => (withSearch ? [...config, search] : config.slice()))]);
+    withSearch = false;
+    pebble.fire('showConfiguration');
+
+    expect(PageClay.built[0].components.input).toBeUndefined();
+  });
+
+  /**
+   * A feature that brings its own text box draws the page's text rows with it, the way a face's own
+   * does, so it takes the place of the one taken from Clay for the search's look. Once its rows go,
+   * the search takes Clay's look again.
+   */
+  test('lets a feature\'s own text box take the place of the search\'s look from Clay', () => {
+    const featureInput = { name: 'input', template: '<div></div>', manipulator: 'val' };
+    const words: ClayConfigItem = { type: 'input', messageKey: 'WORDS' };
+    let withWords = true;
+
+    openSettings([{ type: 'locationsearch', messageKey: 'LOCATION_NAME' }], [() => ({ page: (config) => (withWords ? [...config, words] : config.slice()), components: [featureInput] })]);
+    const first = PageClay.built[0].components.input;
+
+    withWords = false;
+    pebble.fire('showConfiguration');
+
+    expect(first).toBe(featureInput);
+    expect(PageClay.built[0].components.input).toEqual({ name: 'input' });
+  });
+
+  /** A theme picker a hook adds to a page with no select would show the bare native dropdown, and the select left on after it goes would ride along on every later page. */
+  test('registers Clay\'s select for a folded page that gains a theme picker and takes it off once the picker goes', () => {
+    const picker: ClayConfigItem = { type: 'themePreview', messageKey: 'APPEARANCE_THEME', label: 'Theme', defaultValue: 'a', options: [{ label: 'A', value: 'a' }], previews: {} };
+    let withPicker = true;
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [() => ({ page: (config) => (withPicker ? [...config, picker] : config.slice()), components: [themePreviewComponent] })]);
+    const first = PageClay.built[0].components.select;
+
+    withPicker = false;
+    pebble.fire('showConfiguration');
+
+    expect(first).toEqual({ name: 'select' });
+    expect(PageClay.built[0].components.select).toBeUndefined();
+  });
+
+  /** A face that passes its own select draws the picker with it, so a fold has nothing to take or to take off. */
+  test('keeps a face\'s own select for a theme picker a fold adds and drops', () => {
+    const ownSelect = { name: 'select', template: '<div></div>', manipulator: 'val' };
+    const picker: ClayConfigItem = { type: 'themePreview', messageKey: 'APPEARANCE_THEME', label: 'Theme', defaultValue: 'a', options: [{ label: 'A', value: 'a' }], previews: {} };
+    let withPicker = true;
+
+    app.startPebbleApp({ clayConfig: [{ type: 'text', defaultValue: 'Intro' }], features: [() => ({ page: (config) => (withPicker ? [...config, picker] : config.slice()), components: [themePreviewComponent] })], components: [ownSelect] });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    withPicker = false;
+    pebble.fire('showConfiguration');
+
+    expect(PageClay.built[0].components.select).toBe(ownSelect);
+    expect(PageClay.built).toHaveLength(1);
+  });
+
+  /** A hidden store row a hook adds with no component would stop Clay there, and every row below it would never show. */
+  test('registers the hidden store for a folded page that gains a hiddenStore row', () => {
+    const store = { type: 'hiddenStore', messageKey: 'SCRATCH' };
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, store])]);
+
+    expect(PageClay.built[0].components.hiddenStore).toBe(hiddenStoreComponent);
+    expect(PageClay.opened[0].config).toEqual([{ type: 'text', defaultValue: 'Intro' }, store]);
+  });
+
+  /** An intro asking the wearer to dial in weather preferences over a page with no Weather section promises settings it does not have. */
+  test('takes the builder\'s intro back to its plain wording when a fold leaves no Weather section', () => {
+    const dropWeather = pageFeature((config) => {
+      dropRows(config, (item) => item.messageKey === 'WEATHER_PROVIDER' || item.messageKey === 'WEATHER_API_KEY' || item.type === 'text' && item.pluginSourceLead !== undefined);
+      return config;
+    });
+
+    openSettings(buildConfig({ weather: {} }), [dropWeather]);
+
+    const result = (PageClay.opened[0].config as ClayConfigItem[])[1];
+
+    expect(result).toEqual({ type: 'text', defaultValue: 'Personalize your layout and make this watchface your own.' });
+  });
+
+  /** The weather wording has to stay while the Weather section does, with the mark gone so it reaches the page as plain text. */
+  test('keeps the builder\'s weather intro when the fold leaves the Weather section', () => {
+    openSettings(buildConfig({ weather: {}, temperature: {} }), [pageFeature((config) => config.slice())]);
+
+    const result = (PageClay.opened[0].config as ClayConfigItem[])[1];
+
+    expect(result).toEqual({ type: 'text', defaultValue: 'Personalize your layout, dial in your weather preferences, and make this watchface your own.' });
+  });
+
+  /** A row no component can draw stops the page from opening at all, which is worse than a page without the features' rows. */
+  test('opens the page Clay was built with when a hook adds a type no component draws', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    openSettings([{ type: 'text', defaultValue: 'Intro' }], [pageFeature((config) => [...config, { type: 'layoutBuilder', messageKey: 'NEW' }])]);
+
+    expect(PageClay.opened[0].config).toEqual(PageClay.built[0].builtConfig);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('layoutBuilder'));
+  });
+
+  /**
+   * The page a fold falls back to is one the wearer sees too. Left unsettled it would promise weather
+   * settings over a page whose Weather section the start took off, and hand Clay the mark.
+   */
+  test('settles the builder\'s intro on the page it falls back to', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const intro: ClayConfigItem = { type: 'text', defaultValue: 'Personalize your layout, dial in your weather preferences, and make this watchface your own.', introWithoutWeather: 'Personalize your layout and make this watchface your own.' };
+
+    openSettings([intro], [pageFeature((config) => [...config, { type: 'layoutBuilder', messageKey: 'NEW' }])]);
+
+    expect(PageClay.opened[0].config).toEqual([{ type: 'text', defaultValue: 'Personalize your layout and make this watchface your own.' }]);
+  });
+
+  /** A wearer whose features' rows could not be added still sees the location search, and it has to look like a text box there too. */
+  test('keeps Clay\'s text box for a location search on the page it falls back to', () => {
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    const search: ClayConfigItem = { type: 'locationsearch', messageKey: 'LOCATION_NAME' };
+
+    openSettings([search], [pageFeature(() => {
+      throw new Error('fold failed');
+    })]);
+
+    expect(PageClay.opened[0].config).toEqual([search]);
+    expect(PageClay.built[0].components.input).toEqual({ name: 'input' });
+  });
+});
+
+describe('faceStart', () => {
+  // a page with the builder's weather section, whose Data Source offers every weather provider
+  const weatherPage = (): ClayConfigItem[] => buildConfig({ weather: {}, location: {} });
+
+  beforeEach(() => {
+    localStorage.clear();
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  /**
+   * The page half of the promise that a face without providers is untouched. Clay, the defaults, and
+   * the features have to get exactly what they got before the providers code existed.
+   */
+  test('hands a face without providers its own options, its page\'s defaults, and no hooks', () => {
+    const options = { clayConfig: weatherPage() };
+
+    const result = faceStart(options, null);
+
+    expect(result.options).toBe(options);
+    expect(result.defaults).toEqual(collectDefaults(options.clayConfig));
+    expect(result.providers).toBeNull();
+    expect(result.hooks).toEqual([]);
+  });
+
+  /** A start that read the face's own page would offer every provider while the manifest lists only some. */
+  test('narrows the page every reader takes, and fills the provider default', () => {
+    const options = { clayConfig: weatherPage() };
+
+    const result = faceStart(options, faceProvidersFor({ weather: { offered: ['plugin', 'weatherapi'], needsKey: true } }));
+
+    expect(result.defaults.WEATHER_PROVIDER).toBe('weatherapi');
+    expect(result.providers).toEqual({ weather: ['plugin', 'weatherapi'] });
+    expect(options.clayConfig).toEqual(weatherPage());
+    expect(allItems(result.options.clayConfig).find((item) => item.messageKey === 'WEATHER_PROVIDER')?.options).toEqual([{ label: 'WeatherAPI.com', value: 'weatherapi' }]);
+  });
+
+  /**
+   * The app reads an empty phone as one to fill from the watch. A launch that wrote settings would
+   * make the phone look like it had its own and skip that restore.
+   */
+  test('leaves clay-settings unset on an empty phone', () => {
+    faceStart({ clayConfig: weatherPage() }, faceProvidersFor({ weather: { offered: ['openmeteo'], needsKey: false } }));
+
+    const result = localStorage.getItem('clay-settings');
+
+    expect(result).toBeNull();
+  });
+
+  /** A saved provider the face dropped shows a blank select and fetches from a site the phone now blocks. */
+  test('saves a settle that changed the saved settings', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', WEATHER_API_KEY: 'abc' }));
+
+    faceStart({ clayConfig: weatherPage() }, faceProvidersFor({ weather: { offered: ['openmeteo'], needsKey: false } }));
+
+    const result = JSON.parse(localStorage.getItem('clay-settings') as string);
+
+    expect(result).toEqual({ WEATHER_PROVIDER: 'openmeteo' });
+  });
+
+  /** Settings that are already fine must not be written, or every launch costs a write for nothing. */
+  test('writes nothing when the saved settings are already fine', () => {
+    const saved = '{ "WEATHER_PROVIDER": "openmeteo" }';
+
+    localStorage.setItem('clay-settings', saved);
+    faceStart({ clayConfig: weatherPage() }, faceProvidersFor({ weather: { offered: ['openmeteo', 'owm'], needsKey: true } }));
+
+    const result = localStorage.getItem('clay-settings');
+
+    expect(result).toBe(saved);
+  });
+});
+
+describe('startPebbleApp face providers', () => {
+  /** A Clay that keeps the page it was built with and each page it opened. */
+  class ProviderClay {
+    static built: ProviderClay[] = [];
+    static opened: unknown[] = [];
+    config: unknown[];
+    customFn: unknown;
+    components: Record<string, unknown> = { heading: {}, text: {}, select: {}, input: {}, toggle: {}, submit: {} };
+    madeFrom: ClayConfigItem[];
+
+    constructor(config: ClayConfigItem[], customFn?: unknown) {
+      this.madeFrom = config;
+      this.config = JSON.parse(JSON.stringify(config));
+
+      this.customFn = customFn || function () {};
+
+      ProviderClay.built.push(this);
+    }
+
+    registerComponent(component: { name: string }) {
+      this.components[component.name] = component;
+    }
+
+    // the real Clay reads the page's { value } wrapper off each setting, so a restore shows up as the
+    // values reaching the watch
+    getSettings(json: string) {
+      const settings = JSON.parse(json);
+      const dict: Record<string, unknown> = {};
+
+      Object.keys(settings).forEach((key) => {
+        dict[key] = settings[key] && typeof settings[key] === 'object' ? settings[key].value : settings[key];
+      });
+      return dict;
+    }
+
+    generateUrl() {
+      ProviderClay.opened.push(this.config);
+      return '';
+    }
+  }
+
+  const providerKeys = { SETTINGS_REQUEST: 'SETTINGS_REQUEST', WEATHER_PROVIDER: 'WEATHER_PROVIDER' };
+
+  // a page with one weather select of the face's own, which offers three providers
+  const ownPage = (): ClayConfigItem[] => [
+    select('WEATHER_PROVIDER', 'Data Source', [{ label: 'Open-Meteo', value: 'openmeteo' }, { label: 'OWM', value: 'owm' }, { label: 'WeatherAPI', value: 'weatherapi' }], 'openmeteo'),
+  ];
+
+  let pebble: FakePebble;
+  let restoreLoad: () => void;
+
+  beforeEach(() => {
+    localStorage.clear();
+    ProviderClay.built = [];
+    ProviderClay.opened = [];
+    pebble = withFakePebble();
+    restoreLoad = stubModuleLoad((id) => {
+      if (id === 'message_keys') {
+        return providerKeys;
+      }
+
+      return id === '@rebble/clay/src/js/index' ? ProviderClay : undefined;
+    });
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    providerCode.current = null;
+    restoreLoad();
+    pebble.restore();
+    vi.restoreAllMocks();
+  });
+
+  /**
+   * A face without providers has to build, start its features, and open its page exactly as it did
+   * before the providers code existed, with no hook of the providers' own in the way.
+   */
+  test('builds Clay from the face\'s own page and hands the features no lists for a face without providers', () => {
+    const clayConfig = ownPage();
+    const contexts: Array<{ providers: unknown }> = [];
+
+    app.startPebbleApp({ clayConfig, features: [(context) => { contexts.push(context); return {}; }] });
+    pebble.fire('showConfiguration');
+
+    expect(ProviderClay.built[0].madeFrom).toEqual(clayConfig);
+    expect(contexts.map((context) => context.providers)).toEqual([null]);
+    expect(ProviderClay.opened[0]).toBe(ProviderClay.built[0].config);
+  });
+
+  /** A feature reading its kind's list from anywhere but its context would have to require the generated entry itself. */
+  test('hands every feature the lists the build wrote', () => {
+    const contexts: Array<{ providers: unknown }> = [];
+
+    providerCode.current = faceProvidersFor({ weather: { offered: ['plugin', 'openmeteo'], needsKey: false } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [(context) => { contexts.push(context); return {}; }, (context) => { contexts.push(context); return {}; }] });
+
+    const result = contexts.map((context) => context.providers);
+
+    expect(result).toEqual([{ weather: ['plugin', 'openmeteo'] }, { weather: ['plugin', 'openmeteo'] }]);
+  });
+
+  /**
+   * The weather page hook adds the plugin choice to a select the first pass left with one option, so
+   * a pass that dropped that select before the hooks ran would take away the choice the hook adds.
+   */
+  test('runs the page pass after every feature\'s page hook', () => {
+    providerCode.current = faceProvidersFor({ weather: { offered: ['plugin', 'openmeteo'], needsKey: false } });
+    app.startPebbleApp({
+      clayConfig: ownPage(),
+      features: [() => ({
+        page: (config) => {
+          (config[0].options as Array<{ label: string; value: string }>).push({ label: 'Pebble App', value: 'plugin' });
+          return config;
+        },
+      })],
+    });
+
+    pebble.fire('showConfiguration');
+
+    const result = (ProviderClay.opened[0] as ClayConfigItem[])[0].options?.map((option) => option.value);
+
+    expect(result).toEqual(['openmeteo', 'plugin']);
+  });
+
+  /** A dropdown with one provider on it is no choice, and the open pass is what takes it away. */
+  test('opens without a picker left with one provider', () => {
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo'], needsKey: false } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+
+    pebble.fire('showConfiguration');
+
+    expect(ProviderClay.opened[0]).toEqual([]);
+  });
+
+  /**
+   * The watch echoes whatever it was last sent, so a watch last saved before the face narrowed its
+   * list hands back a provider the face no longer offers. A settle made after the seed's write would
+   * be lost, so the spec reads the store.
+   */
+  test('settles a provider the watch brings back before the seed saves it', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'weatherapi' }));
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, WEATHER_PROVIDER: 'owm' } });
+
+    const result = JSON.parse(localStorage.getItem('clay-settings') as string).WEATHER_PROVIDER;
+
+    expect(result).toBe('openmeteo');
+  });
+
+  /**
+   * The watch keeps what it was last sent, so a settle it never heard about left it echoing the
+   * dropped provider, and the phone settled it again on every launch.
+   */
+  test('sends the watch the settings a seed settled', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'weatherapi' }));
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, WEATHER_PROVIDER: 'owm' } });
+
+    const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
+
+    expect(result).toEqual([{ WEATHER_PROVIDER: 'openmeteo' }]);
+  });
+
+  /** A watch already in line has nothing to hear, and a send on every launch would wake it for nothing. */
+  test('sends the watch nothing after a seed the settle left alone', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'weatherapi' }));
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, WEATHER_PROVIDER: 'weatherapi' } });
+
+    const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
+
+    expect(result).toEqual([]);
+  });
+
+  /** A hook that throws is skipped, and the providers' own pass still takes away a picker left with one provider. */
+  test('drops a one-provider picker when a feature\'s page hook throws', () => {
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo'], needsKey: false } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [() => ({ page: () => { throw new Error('broken'); } })] });
+
+    pebble.fire('showConfiguration');
+
+    expect(ProviderClay.opened[0]).toEqual([]);
+  });
+
+  /**
+   * An open that cannot add the features' rows falls back to the page Clay was built with. On a face
+   * with providers that page still held a one-provider dropdown and the empty row the notes hang off.
+   */
+  test('falls back to a page with the providers\' pass run on it', () => {
+    providerCode.current = faceProvidersFor({ weather: { offered: ['plugin'], needsKey: false }, stocks: { offered: ['yahoo'], needsKey: false } });
+    const clayConfig: ClayConfigItem[] = [
+      ...ownPage(),
+      select('STOCK_PROVIDER', 'Stocks', [{ label: 'Finnhub', value: 'finnhub' }, { label: 'Yahoo', value: 'yahoo' }], 'finnhub'),
+    ];
+
+    app.startPebbleApp({ clayConfig, features: [() => ({ page: (config) => [...config, { type: 'layoutBuilder', messageKey: 'NEW' }] })] });
+    pebble.fire('showConfiguration');
+
+    expect(ProviderClay.opened[0]).toEqual([]);
   });
 });

@@ -5,15 +5,16 @@
  * @ingroup lib_settings
  */
 #include "system/settings/settings.h"
+#include "system/settings/plugin_source.h"
+#include "system/settings/settings_chain.h"
 
 #include "io/tuple_read.h"
 #include "text/cstring_fit.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-/// Head of the schema chain registered by settings_init, the primary plus any companions
+/// The face's first schema, registered by settings_init. The walk goes through its companions and then the framework's schema
 static const SettingsSchema *s_primary;
 /**
  * @brief True when any schema in the chain had no saved blob at init, or one was reset for a blob it
@@ -28,6 +29,40 @@ static bool s_was_fresh;
 static const SettingField *s_by_id[SETTING_COUNT];
 /// The schema that owns each indexed field, so a typed read hits the right blob
 static const SettingsSchema *s_owner_by_id[SETTING_COUNT];
+
+#if PLUGIN_SOURCE_KEEPS_ANY
+/// The weather and calendar source choice, kept for the phone and never read on the watch
+static PluginSourceSettings s_plugin_source;
+
+/// The fields of the framework's own schema, one for each kind whose choice the watch keeps
+static const SettingField s_plugin_source_fields[] = { PLUGIN_SOURCE_FIELDS };
+
+/// The framework's own schema, which the walk puts after the face's last one
+static const SettingsSchema s_plugin_source_schema = {
+    .key = SETTINGS_PLUGIN_SOURCE_KEY,
+    .version = PLUGIN_SOURCE_VERSION,
+    SETTINGS_BLOB(s_plugin_source, PLUGIN_SOURCE_FIRST_SIZE),
+    .fields = s_plugin_source_fields,
+    .field_count = sizeof(s_plugin_source_fields) / sizeof(s_plugin_source_fields[0]),
+};
+
+/// The framework's schema once settings_init takes it on, or NULL before that or when a face schema holds its key
+static const SettingsSchema *s_tail;
+/// The choices as they were last loaded or written, so a save that changes nothing skips the write
+static PluginSourceSettings s_plugin_source_on_flash;
+/// Whether s_plugin_source_on_flash is really what the key holds
+static bool s_plugin_source_on_flash_known;
+#endif
+
+/// The framework's schema for the walk, or NULL on a face that keeps no source choice
+#if PLUGIN_SOURCE_KEEPS_ANY
+#define SCHEMA_TAIL s_tail
+#else
+#define SCHEMA_TAIL NULL
+#endif
+
+/// Walks the face's schemas and then the framework's, for a `for` loop's header
+#define EACH_SCHEMA(schema) SETTINGS_CHAIN_EACH(schema, s_primary, SCHEMA_TAIL)
 
 /**
  * @brief A pointer to a field's storage inside its owning schema's blob.
@@ -76,7 +111,7 @@ static void build_index(void)
     memset(s_by_id, 0, sizeof(s_by_id));
     memset(s_owner_by_id, 0, sizeof(s_owner_by_id));
 
-    for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
+    EACH_SCHEMA(schema)
     {
         for (uint8_t i = 0; i < schema->field_count; i++)
         {
@@ -264,14 +299,34 @@ static bool sanitize(const SettingsSchema *schema)
  */
 static void save_schema(const SettingsSchema *schema)
 {
+#if PLUGIN_SOURCE_KEEPS_ANY
+    // every save writes every schema, and the choices rarely move, so an unchanged one costs no write
+    if (schema == &s_plugin_source_schema &&
+        !plugin_source_write_needed(&s_plugin_source, &s_plugin_source_on_flash, s_plugin_source_on_flash_known))
+    {
+        return;
+    }
+#endif
+
     // a failed write is logged and not tried again
     // a write falls short when the struct is over the 256 bytes a key holds, when the app's storage is
     // full, or when the watch cannot rewrite its settings file. none of those clears on its own, so a
     // retry would cost bytes and never land
+    // the framework's schema is tried again on the next save, since its copy of flash only moves when
+    // a write lands whole. that costs one write per face save until the key takes it
     if (persist_write_data(schema->key, schema->blob, schema->blob_size) != (int)schema->blob_size)
     {
         APP_LOG(APP_LOG_LEVEL_ERROR, "settings: key %lu not saved whole", (unsigned long)schema->key);
+        return;
     }
+
+#if PLUGIN_SOURCE_KEEPS_ANY
+    if (schema == &s_plugin_source_schema)
+    {
+        s_plugin_source_on_flash = s_plugin_source;
+        s_plugin_source_on_flash_known = true;
+    }
+#endif
 }
 
 /**
@@ -301,10 +356,10 @@ static void load_schema(const SettingsSchema *schema)
         return;
     }
 
-    // versioned blob: at least this schema's frozen v1 size (smaller would shift
+    // versioned blob: at least the size the struct first shipped at (smaller would shift
     // fields) and no bigger than the current struct. a short read upgrades an older
     // shorter version and the trailing fields keep their just-applied defaults
-    if (stored >= schema->min_versioned_size && stored <= schema->blob_size)
+    if (stored >= schema->first_size && stored <= schema->blob_size)
     {
         persist_read_data(schema->key, schema->blob, schema->blob_size);
 
@@ -320,6 +375,15 @@ static void load_schema(const SettingsSchema *schema)
                 set_version(schema, schema->version);
                 save_schema(schema);
             }
+#if PLUGIN_SOURCE_KEEPS_ANY
+            // read back clean and not saved again, so memory holds exactly what the key does. a re-save
+            // above sets the copy itself, and only when the write lands whole
+            else if (schema == &s_plugin_source_schema)
+            {
+                s_plugin_source_on_flash = s_plugin_source;
+                s_plugin_source_on_flash_known = true;
+            }
+#endif
 
             return;
         }
@@ -335,8 +399,54 @@ static void load_schema(const SettingsSchema *schema)
     s_was_fresh = true;
 }
 
+#if PLUGIN_SOURCE_KEEPS_ANY
+/**
+ * @brief Takes the framework's schema on, unless a face schema already holds its key, and logs a face
+ * field that doubles one the framework keeps.
+ *
+ * A face schema on the framework's key would have the two overwrite each other on every save, so the
+ * face's settings win and the choice is not kept. A doubled field still works, since both copies take
+ * every save, but the watch then sends the key twice. The framework cannot see the keys a face hands
+ * its stores, so a store on the same key goes unnoticed here.
+ *
+ * @param head The face's first schema, or NULL.
+ */
+static void take_plugin_source(const SettingsSchema *head)
+{
+    s_tail = &s_plugin_source_schema;
+    // nothing is known about flash until the load below reads the key back clean or a write lands, so
+    // an empty key, a dropped blob, or a failed re-save all leave the next save to write
+    s_plugin_source_on_flash_known = false;
+
+    if (settings_chain_has_key(head, SETTINGS_PLUGIN_SOURCE_KEY))
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "settings: key %d is the framework's plugin source key, so the source choice is not kept. Move the face's schema to another key",
+                SETTINGS_PLUGIN_SOURCE_KEY);
+        s_tail = NULL;
+    }
+
+#if PLUGIN_SOURCE_KEEPS_WEATHER
+    if (settings_chain_has_field(head, &MESSAGE_KEY_WEATHER_PROVIDER))
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "settings: the framework keeps WEATHER_PROVIDER, so take the face's own field on it out");
+    }
+#endif
+
+#if PLUGIN_SOURCE_KEEPS_CALENDAR
+    if (settings_chain_has_field(head, &MESSAGE_KEY_CALENDAR_SOURCE))
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "settings: the framework keeps CALENDAR_SOURCE, so take the face's own field on it out");
+    }
+#endif
+}
+#endif
+
 void settings_init(const SettingsSchema *head)
 {
+#if PLUGIN_SOURCE_KEEPS_ANY
+    take_plugin_source(head);
+#endif
+
     s_primary = head;
     build_index();
 
@@ -345,12 +455,12 @@ void settings_init(const SettingsSchema *head)
     // them. a companion a new build adds counts too, which costs one restore of what the phone holds
     s_was_fresh = false;
 
-    // load every schema in the chain (the primary plus any companions)
-    for (const SettingsSchema *schema = head; schema; schema = schema->companion)
+    // load every schema in the chain, the primary, any companions, and the framework's own last
+    SETTINGS_CHAIN_EACH(schema, head, SCHEMA_TAIL)
     {
         // a struct over what one key holds is only ever saved in part, so its tail comes back as the
-        // defaults on every launch. SETTINGS_BLOB_SIZE stops the build for it, and this catches a face
-        // that sets blob_size with plain sizeof
+        // defaults on every launch. SETTINGS_BLOB stops the build for it, and this catches a face
+        // that fills in blob_size by hand with plain sizeof
         if (schema->blob_size > PERSIST_DATA_MAX_LENGTH)
         {
             APP_LOG(APP_LOG_LEVEL_ERROR, "settings: key %lu is over %d bytes", (unsigned long)schema->key,
@@ -372,7 +482,7 @@ bool settings_was_fresh(void)
 
 void settings_save(void)
 {
-    for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
+    EACH_SCHEMA(schema)
     {
         save_schema(schema);
     }
@@ -460,7 +570,7 @@ static uint32_t field_value_size_max(const SettingField *field)
 uint32_t settings_serialized_size_max(void)
 {
     uint32_t size = 0;
-    for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
+    EACH_SCHEMA(schema)
     {
         for (uint8_t i = 0; i < schema->field_count; i++)
         {
@@ -475,7 +585,7 @@ uint32_t settings_serialized_size_max(void)
 
 bool settings_serialize(DictionaryIterator *iter)
 {
-    for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
+    EACH_SCHEMA(schema)
     {
         for (uint8_t i = 0; i < schema->field_count; i++)
         {
@@ -525,7 +635,7 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
 {
     SettingsInbound result = {false, false, false};
 
-    for (const SettingsSchema *schema = s_primary; schema; schema = schema->companion)
+    EACH_SCHEMA(schema)
     {
         for (uint8_t i = 0; i < schema->field_count; i++)
         {
@@ -543,9 +653,10 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
             {
                 case SETTING_BOOL:
                 {
-                    // -1 is a value the phone never sends for a bool so it doubles as the
-                    // "wrong wire type" signal and the field keeps whatever it already held
-                    int32_t on = tuple_int_or(tuple, -1);
+                    // a toggle comes as an int or as digits. -1 is a value the phone never sends
+                    // for one, so it doubles as the mark for anything else and the field keeps
+                    // whatever it already held
+                    int32_t on = tuple_number_or(tuple, -1);
                     if (on < 0)
                     {
                         continue;
@@ -563,32 +674,19 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
 
                 case SETTING_ENUM_U8:
                 {
-                    // a select arrives as a cstring, unless the page asks Clay to send it as an
-                    // integer. atoi reads until it finds a terminator, so it has to be handed a
-                    // string that has one inside itself. a raw tuple is only the phone's word for that
-                    int value;
-                    const char *digits = tuple_str_or(tuple, NULL);
-                    if (digits)
+                    // a select arrives as text and a face's own component can send an int, and
+                    // both read the same. -1 marks anything else, such as an empty select or a
+                    // word, and the field keeps what it held rather than taking the first choice.
+                    // digits too big for an int32_t read as INT32_MAX and reset to the default below
+                    int32_t value = tuple_number_or(tuple, -1);
+                    if (value == -1)
                     {
-                        // atoi reads text that does not start with a digit as 0, the first choice, so an
-                        // empty select or a word is left alone rather than taken
-                        if (digits[0] < '0' || digits[0] > '9')
-                        {
-                            continue;
-                        }
-                        value = atoi(digits);
+                        continue;
                     }
-                    else
-                    {
-                        value = (int)tuple_int_or(tuple, -1);
-                        if (value == -1)
-                        {
-                            continue;  // neither text nor a number, so nothing to take
-                        }
-                    }
+
                     if (value < 0 || value >= field->enum_count)
                     {
-                        value = (int)field->default_num;  // out-of-range from the phone so clamp to default
+                        value = (int32_t)field->default_num;  // out-of-range from the phone so clamp to default
                     }
 
                     if (*(uint8_t *)ptr == (uint8_t)value)
@@ -622,8 +720,10 @@ SettingsInbound settings_apply_inbox(DictionaryIterator *iter)
 
                 case SETTING_COLOR:
                 {
-                    // -1 is outside the 0xRRGGBB range the picker sends, so it doubles as the
-                    // "wrong wire type" signal and the field keeps whatever it already held
+                    // a colour is read as an int only, since text could be hex such as "FF0000"
+                    // and reading it as decimal would land on the wrong colour. -1 is outside the
+                    // 0xRRGGBB range the picker sends, so it doubles as the "wrong wire type" signal
+                    // and the field keeps whatever it already held
                     int32_t hex = tuple_int_or(tuple, -1);
                     if (hex < 0)
                     {

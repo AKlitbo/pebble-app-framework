@@ -1,0 +1,4 @@
+{
+  "WEATHER_PROVIDER": "owm",
+  "WEATHER_API_KEY": "abc"
+}

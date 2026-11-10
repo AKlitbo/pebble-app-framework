@@ -20,7 +20,8 @@
     "format:check": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/format.ts --check",
     "typecheck": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/typecheck.ts",
     "build:conditions": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-conditions.ts",
-    "check:fresh-unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/fresh-unit.ts"
+    "check:fresh-unit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/fresh-unit.ts",
+    "check:pages": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON src/plugins/dev/page-check.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

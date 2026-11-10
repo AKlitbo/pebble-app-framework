@@ -10,12 +10,14 @@
  */
 
 import type { ClayConfigItem, ThemePreviewPictures } from '../clay/types';
-import { VIBE_OPTIONS } from './config-rows';
+import { VIBE_OPTIONS, WIND_UNIT_OPTIONS } from './config-rows';
 
 /** The per-section description a face hands buildConfig. Each section is optional.
  * Present means "include it", and its own fields tune it. */
 export interface ConfigBuilderOptions {
   heading?: string;
+  /** The lead line under the heading. Left out, the page gets the default one, which mentions weather
+   * while the page has a Weather section. */
   intro?: string;
   /** previews shows a picture of the chosen theme under the dropdown, keyed by the option's value as
    * a string, each a list of one or more pictures (such as a day and a night shot), or a map of such
@@ -44,6 +46,9 @@ export interface ConfigBuilderOptions {
   location?: { gpsDefault?: boolean };
   weather?: unknown;
   temperature?: unknown;
+  /** A marker that adds the wind speed unit to the Weather section, on WEATHER_WIND_UNIT. The watch
+   * reads it through KNOWN_WIND_UNIT. */
+  wind?: unknown;
   battery?: { label?: string; description?: string };
   /** Stock quotes: the data source, its key, and the tickers. description replaces the lead line, and
    * items adds a face's own controls under the tickers, such as a refresh interval its watch reads. */
@@ -83,6 +88,20 @@ const beatsDateOptions = [
   { 'label': '0618.672 (mmdd.beat)', 'value': '%m%d.{B}' },
   { 'label': '2026.0618.672 (yyyy.mmdd.beat)', 'value': '%Y.%m%d.{B}' },
 ];
+
+/** The weather providers that need no API key, so the key row hides for them. Like the stock one
+ * below, they are written out rather than read from the feature, since this file is in every face's
+ * phone bundle. A spec checks both lists against the providers table. */
+const KEYLESS_WEATHER = ['openmeteo'];
+
+/** The stock providers that need no API key. */
+const KEYLESS_STOCKS = ['yahoo'];
+
+/** The default intro for a page with no Weather section. */
+const PLAIN_INTRO = 'Personalize your layout and make this watchface your own.';
+
+/** The default intro for a page with a Weather section. */
+const WEATHER_INTRO = 'Personalize your layout, dial in your weather preferences, and make this watchface your own.';
 
 /** Whether a theme's previews entry carries at least one picture, across both shapes it can take, a
  * plain list or a list per platform. */
@@ -380,14 +399,18 @@ export function locationSection(options: ConfigBuilderOptions): ClayConfigItem |
     return null;
   }
 
+  // every row here only feeds a weather fetch, so each one hides while the weather comes from a
+  // Pebble app plugin. the heading goes too, or it would stand alone over nothing
   const locationItems: ClayConfigItem[] = [
     {
       'type': 'heading',
       'defaultValue': 'Location Settings',
+      'pluginSourceHides': 'WEATHER_PROVIDER',
     },
     {
       'type': 'toggle',
       'messageKey': 'LOCATION_USE_GPS',
+      'pluginSourceHides': 'WEATHER_PROVIDER',
       'label': 'Enable Phone GPS',
       'description': 'Automatically fetch weather for your current location.',
       'defaultValue': options.location.gpsDefault !== undefined ? options.location.gpsDefault : false,
@@ -395,6 +418,7 @@ export function locationSection(options: ConfigBuilderOptions): ClayConfigItem |
     {
       'type': 'toggle',
       'messageKey': 'LOCATION_GPS_FALLBACK',
+      'pluginSourceHides': 'WEATHER_PROVIDER',
       'label': 'Fallback to Manual Location',
       'description': 'If GPS is on but cannot find you, use the city picked below.',
       'defaultValue': true,
@@ -403,6 +427,7 @@ export function locationSection(options: ConfigBuilderOptions): ClayConfigItem |
       'type': 'locationsearch',
       'messageKey': 'LOCATION_NAME',
       'label': 'Manual Location',
+      'pluginSourceHides': 'WEATHER_PROVIDER',
       'attributes': {
         'placeholder': 'Search a city, e.g. Phoenix',
       },
@@ -416,13 +441,14 @@ export function locationSection(options: ConfigBuilderOptions): ClayConfigItem |
 }
 
 /**
- * The Weather section: the temperature unit and the provider picker, each when asked for.
+ * The Weather section: the temperature unit, the wind speed unit, and the provider picker, each when
+ * asked for.
  *
- * @param options The per-section description, read for temperature and weather.
- * @return The section, or null for a face that asks for neither.
+ * @param options The per-section description, read for temperature, wind, and weather.
+ * @return The section, or null for a face that asks for none of them.
  */
 export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | null {
-  if (!(options.weather || options.temperature)) {
+  if (!(options.weather || options.temperature || options.wind)) {
     return null;
   }
 
@@ -446,17 +472,33 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
     });
   }
 
+  if (options.wind) {
+    weatherItems.push({
+      'type': 'select',
+      'messageKey': 'WEATHER_WIND_UNIT',
+      'label': 'Wind Speed Unit',
+      'defaultValue': 0,
+      'options': WIND_UNIT_OPTIONS,
+    });
+  }
+
   if (options.weather) {
     weatherItems.push(
+      // the lead line sits right above the select and stays while a plugin is picked, since hiding it
+      // would move the select under the wearer's finger. its mark lets a page with no select at all
+      // take it away with the select
       {
         'type': 'text',
         'defaultValue': 'Choose where your watch pulls its weather data. Open-Meteo works right out of the box with no setup required.',
+        'pluginSourceLead': 'WEATHER_PROVIDER',
       },
       {
         'type': 'select',
         'messageKey': 'WEATHER_PROVIDER',
         'label': 'Data Source',
         'defaultValue': 'openmeteo',
+        // a face built with plugin sources adds the Pebble app's weather to this list
+        'pluginSource': { 'category': 'weather', 'item': 'location' },
         'options': [
           { 'label': 'Open-Meteo (Free, No Key Required)', 'value': 'openmeteo' },
           { 'label': 'OpenWeatherMap', 'value': 'owm' },
@@ -467,7 +509,10 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
         'type': 'input',
         'messageKey': 'WEATHER_API_KEY',
         'label': 'API Key',
-        'description': 'Only required if you selected OpenWeatherMap or WeatherAPI above.',
+        'pluginSourceHides': 'WEATHER_PROVIDER',
+        // hidden only for a provider known to need no key, so a blank or unknown choice still shows it
+        'visibleWhen': { 'key': 'WEATHER_PROVIDER', 'notIn': [...KEYLESS_WEATHER] },
+        'description': 'Grab a free key from your chosen provider and paste it here.',
         'attributes': {
           'placeholder': 'Paste your private API key here...',
           'maxlength': 64,
@@ -524,7 +569,9 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'type': 'input',
         'messageKey': 'STOCK_API_KEY',
         'label': 'API Key',
-        'description': 'Grab a free key from your chosen provider and paste it here. Yahoo needs no key, so leave this blank when you pick it.',
+        // hidden only for a provider known to need no key, so a blank or unknown choice still shows it
+        'visibleWhen': { 'key': 'STOCK_PROVIDER', 'notIn': [...KEYLESS_STOCKS] },
+        'description': 'Grab a free key from your chosen provider and paste it here.',
         'attributes': {
           'placeholder': 'Paste your private API key here...',
           'maxlength': 64,
@@ -563,14 +610,19 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
         'type': 'heading',
         'defaultValue': 'Calendar Preferences',
       },
+      // the lead line and the link only mean something for an iCal link, so both hide while the
+      // events come from a Pebble app plugin. the source select a face built with plugin sources
+      // adds goes under the heading, above them
       {
         'type': 'text',
         'defaultValue': options.calendar.description || 'Paste your private iCal link below to show your upcoming events.',
+        'pluginSourceHides': 'CALENDAR_SOURCE',
       },
       {
         'type': 'input',
         'messageKey': 'CALENDAR_ICS_URL',
         'label': 'iCal URL',
+        'pluginSourceHides': 'CALENDAR_SOURCE',
         'description': 'Paste any calendar\'s private iCal (.ics) address. Google Calendar: Settings and sharing, Integrate calendar, "Secret address in iCal format". Apple iCloud: share a calendar as Public. Outlook: publish the calendar. Treat the link like a password: anyone with it can read your calendar.',
         'attributes': {
           'placeholder': 'https://.../calendar.ics',
@@ -583,13 +635,46 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
 }
 
 /**
+ * The lead line under the page heading: the face's own intro, or the default.
+ *
+ * The default mentions weather when the page has a Weather section, from weather, temperature, or
+ * wind. A fold can take that section off later, such as on a face whose weather comes from a plugin
+ * alone and that shows no unit, so the row carries the plain wording too, and the phone settles it
+ * on every page it opens.
+ *
+ * @param options The per-section description, read for intro and the Weather section's fields.
+ * @return The text row.
+ */
+function introRow(options: ConfigBuilderOptions): ClayConfigItem {
+  if (options.intro) {
+    return { 'type': 'text', 'defaultValue': options.intro };
+  }
+
+  if (!weatherSection(options)) {
+    return { 'type': 'text', 'defaultValue': PLAIN_INTRO };
+  }
+
+  return { 'type': 'text', 'defaultValue': WEATHER_INTRO, 'introWithoutWeather': PLAIN_INTRO };
+}
+
+/**
  * Builds a Clay config array from a per-section description.
  *
  * It is the section builders above in their usual order, for a face that wants the whole page. A
  * face that needs its own sections in between calls the builders it wants and lays them out itself.
  *
+ * Some rows carry plugin source marks on every face. The `WEATHER_PROVIDER` select carries a
+ * `pluginSource` mark. The API key, the Location Settings heading and its three rows, the iCal lead
+ * line, and the iCal link carry `pluginSourceHides`, naming `WEATHER_PROVIDER` or `CALENDAR_SOURCE`.
+ * The weather lead line carries `pluginSourceLead`, naming `WEATHER_PROVIDER`, since it stays above the
+ * select while a plugin is picked and only goes on a page with no select.
+ * Clay ignores both, so the page is unchanged on a face without plugin sources. On a face built with
+ * them, the weather and calendar features turn the marks into the Preferred Source option and hide
+ * those rows while it is picked.
+ *
  * Top-level fields:
- *   heading, intro        page title and lead paragraph (both optional)
+ *   heading, intro        page title and lead paragraph (both optional). The default intro
+ *                         mentions weather while the page has a Weather section
  *
  * Section objects (each section is customized through its own fields):
  *   appearanceItems [ClayConfigItem]            extra controls inside the Appearance section, which
@@ -608,6 +693,7 @@ export function calendarSection(options: ConfigBuilderOptions): ClayConfigItem |
  *   location    { gpsDefault? }                  the GPS toggles and the manual city, which weather reads
  *   weather     {}                               marker, adds the provider picker to the Weather section
  *   temperature {}                               marker, adds the unit dropdown to the Weather section
+ *   wind        {}                               marker, adds the wind speed unit to the Weather section
  *   calendar    { description?, items? }         the iCal link, then a face's own calendar controls
  *   stocks      { description?, items? }         the data source, key, and tickers, then a face's own controls
  *
@@ -623,10 +709,7 @@ function buildConfig(options: ConfigBuilderOptions): ClayConfigItem[] {
       'type': 'heading',
       'defaultValue': options.heading || 'Watchface Configuration',
     },
-    {
-      'type': 'text',
-      'defaultValue': options.intro || 'Personalize your layout and make this watchface your own.',
-    },
+    introRow(options),
     ...(hasAppearance(options) ? [appearanceSection(options)] : []),
     // face-specific sections (e.g. a layout and goals) sit after Appearance, or open the page without it
     ...(options.layoutSections || []),

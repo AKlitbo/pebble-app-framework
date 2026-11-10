@@ -35,9 +35,10 @@ export interface SettingsAsk {
  * never doubles the asks that follow.
  *
  * @param queueSend The queue every send goes through.
+ * @param onUnanswered Called once a run's last ask is turned away too, so no reply comes for that run.
  * @return The ask, ready to start on ready.
  */
-export function createSettingsAsk(queueSend: QueueSendFn): SettingsAsk {
+export function createSettingsAsk(queueSend: QueueSendFn, onUnanswered?: () => void): SettingsAsk {
   // bumped on every start, so a callback from an earlier run does nothing
   let run = 0;
   let replied = false;
@@ -58,6 +59,7 @@ export function createSettingsAsk(queueSend: QueueSendFn): SettingsAsk {
 
       if (asksLeft === 0) {
         console.log('settings: the watch turned away every ask for its settings');
+        onUnanswered?.();
         return;
       }
 

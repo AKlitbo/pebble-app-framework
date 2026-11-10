@@ -84,6 +84,10 @@ void readout_steps(char *out, size_t n);
 /**
  * @brief Format the temperature with its unit letter, or "--" when there is no reading.
  *
+ * A face built with `PLUGIN_WEATHER` and no `WEATHER_TEMPERATURE_UNIT` key gets the number alone,
+ * such as "73". Its weather comes in the unit the wearer picked in the Pebble app, from the plugin and
+ * from a fetch alike, and the watch never hears which unit that is, so a letter could be wrong.
+ *
  * @param[out] out Output buffer.
  * @param n Buffer size.
  */
@@ -115,5 +119,15 @@ void readout_lat(char *out, size_t n);
  * @param n Buffer size.
  */
 void readout_lon(char *out, size_t n);
+
+/**
+ * @brief Format the phone's battery as a percent, such as "84%", or "--" when there is no reading.
+ *
+ * A face built without the phone battery keys always gets "--".
+ *
+ * @param[out] out Output buffer.
+ * @param n Buffer size.
+ */
+void readout_phone_battery(char *out, size_t n);
 
 /** @} */

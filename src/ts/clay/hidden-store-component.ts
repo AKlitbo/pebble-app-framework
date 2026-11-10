@@ -8,8 +8,9 @@
  * own scratch state (like a layout library) across visits.
  *
  * Point a page item at it with a messageKey and read or write the value off the
- * input from another component in the same page. A page with more than one of
- * these must give each a `storeClass`, since they all carry .gl-store and a
+ * input from another component in the same page. The framework registers it for any
+ * page with a hiddenStore row, so a face never lists it. A page with more than one of
+ * these must give each a `storeClass`, since they all carry .pf-hidden-store and a
  * plain querySelector would keep finding the first.
  */
 
@@ -24,7 +25,7 @@ export default {
 
   // the input is the manipulator target itself, so Clay's val get/set round-trip
   // its value. the class is the handle another component finds it by
-  template: '<input type="hidden" class="gl-store" data-manipulator-target>',
+  template: '<input type="hidden" class="pf-hidden-store" data-manipulator-target>',
 
   manipulator: 'val',
 

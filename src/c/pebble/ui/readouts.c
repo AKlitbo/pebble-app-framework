@@ -14,6 +14,7 @@
 #include "io/stores/health_store.h"
 #include "io/stores/weather_store.h"
 #include "io/stores/location_store.h"
+#include "io/stores/phone_store.h"
 #include "system/settings/settings.h"
 #include "system/settings/setting_values.h"
 #include "system/units/units.h"
@@ -152,7 +153,13 @@ void readout_weather_temp(char *out, size_t n)
         return;
     }
 
+#if defined(PLUGIN_WEATHER) && PLUGIN_WEATHER && !defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE_UNIT)
+    // a face with no unit key gets all its weather, plugin or fetched, in the unit picked in the Pebble app
+    // the watch never hears which one, so the number goes out bare rather than with a letter that can be wrong
+    snprintf(out, n, "%d", temp);
+#else
     snprintf(out, n, "%d%c", temp, settings_u8(SETTING_TEMPERATURE_UNIT) ? 'F' : 'C');
+#endif
 }
 
 void readout_weather_cond(char *out, size_t n)
@@ -178,4 +185,17 @@ void readout_lon(char *out, size_t n)
 {
     const char *lon = location_store_lon();
     snprintf(out, n, "%s", lon[0] ? lon : "--");
+}
+
+void readout_phone_battery(char *out, size_t n)
+{
+    int level = phone_store_battery();
+    if (level >= 0)
+    {
+        snprintf(out, n, "%d%%", level);
+    }
+    else
+    {
+        snprintf(out, n, "--");
+    }
 }

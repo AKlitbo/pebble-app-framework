@@ -6,7 +6,8 @@
  * rather than written out again in each face.
  *
  * VIBE_OPTIONS is here because several sections offer the same buzz: the bluetooth connect and
- * disconnect pickers and the hourly chime.
+ * disconnect pickers and the hourly chime. WIND_UNIT_OPTIONS is here so a face that builds its own
+ * weather section offers the same units as the builder's.
  */
 
 import type { ClayConfigItem, ClayOption } from '../clay/types';
@@ -90,4 +91,12 @@ export const VIBE_OPTIONS: ClayOption[] = [
   { label: 'Double', value: 3 },
 ];
 
-export default { select, heading, toggle, VIBE_OPTIONS };
+/** The units a wind speed reads out in. The values line up with the watch's own WindUnit. */
+export const WIND_UNIT_OPTIONS: ClayOption[] = [
+  { label: 'Kilometres/hour (km/h)', value: 0 },
+  { label: 'Miles/hour (mph)', value: 1 },
+  { label: 'Knots (kts)', value: 2 },
+  { label: 'Metres/second (m/s)', value: 3 },
+];
+
+export default { select, heading, toggle, VIBE_OPTIONS, WIND_UNIT_OPTIONS };

@@ -73,4 +73,4 @@ The factors are the real ones to three places, and the result is cut to a whole 
 
 **No Reading First.** The store's marker for no wind reading is -1, and -1 km/h converts to 0 mph, since the division rounds toward zero. A face checks for no reading before it converts, or a missing wind shows as calm.
 
-**The Setting Is the Face's.** The framework has no wind unit setting of its own. The units are numbered 0 for km/h, 1 for mph, 2 for knots, and 3 for m/s, so a face adds a four way select to its page with those values and passes the stored byte straight in. A number outside that range reads as km/h.
+**The Setting.** The units are numbered 0 for km/h, 1 for mph, 2 for knots, and 3 for m/s. `wind: {}` on `buildConfig` adds the select on `WEATHER_WIND_UNIT`, and `KNOWN_WIND_UNIT` keeps it on the watch, so a face passes `settings_u8(SETTING_WIND_UNIT)` straight in. A number outside that range reads as km/h.

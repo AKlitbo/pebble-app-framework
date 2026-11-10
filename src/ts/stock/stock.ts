@@ -9,7 +9,7 @@ import finnhub from './providers/finnhub';
 import alphavantage from './providers/alphavantage';
 import yahoo from './providers/yahoo';
 import twelvedata from './providers/twelvedata';
-import { pickProvider } from '../pkjs/providers';
+import { pickProvider, STOCK_FALLBACK } from '../pkjs/providers';
 import type { RequestFn, DoneFn, StockOpts } from './util';
 
 /** A provider module: the one fetch entry the dispatcher calls. */
@@ -36,7 +36,7 @@ export const STOCK_PROVIDERS = Object.keys(PROVIDERS);
  * @param done Called once with the finished quote result.
  */
 function fetchQuote(opts: StockOpts, request: RequestFn, done: DoneFn): void {
-  pickProvider(PROVIDERS, opts.provider, 'finnhub', 'stock').fetch(opts, request, done);
+  pickProvider(PROVIDERS, opts.provider, STOCK_FALLBACK, 'stock').fetch(opts, request, done);
 }
 
 export default { fetchQuote };

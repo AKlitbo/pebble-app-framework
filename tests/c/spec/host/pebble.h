@@ -3,9 +3,10 @@
  * @brief The sliver of the SDK the host specs need, for the pure sources that include it.
  *
  * A few files under src/c/pebble are plain logic that happen to include <pebble.h> for a constant
- * or the log macro. This stands in for that much and nothing else: no persist, no timers, no
- * dictionaries, no AppMessage. Nothing here mirrors SDK behaviour, so nothing here can drift out
- * of step with it and quietly turn a passing test into a wrong watch.
+ * or the log macro, and settings.h names the dictionary type in its prototypes. This stands in for
+ * that much and nothing else: no persist, no timers, no dictionary reads, no AppMessage. Nothing
+ * here mirrors SDK behaviour, so nothing here can drift out of step with it and quietly turn a
+ * passing test into a wrong watch.
  *
  * That is the whole line. A source that wants a real SDK call tested is a source this cannot help,
  * and it stays on the device.
@@ -18,6 +19,12 @@
 
 /** The SDK's own value, which the poll maths multiplies minutes by. */
 #define SECONDS_PER_MINUTE (60)
+
+/** The SDK's own value, the most one persist key holds, which SETTINGS_BLOB_SIZE checks a struct against. */
+#define PERSIST_DATA_MAX_LENGTH 256
+
+/** Left with no body, so settings.h can name it in a prototype and nothing can read through it. */
+typedef struct DictionaryIterator DictionaryIterator;
 
 #define APP_LOG_LEVEL_ERROR 1
 #define APP_LOG_LEVEL_WARNING 50

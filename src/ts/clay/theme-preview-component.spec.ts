@@ -62,12 +62,12 @@ function mount(config?: Record<string, unknown>) {
 
 /** The src of every preview image currently drawn. */
 function previewSrcs(root: HTMLElement): string[] {
-  return [...root.querySelectorAll('.tp-preview img')].map((img) => (img as HTMLImageElement).src);
+  return [...root.querySelectorAll('.pf-theme-preview img')].map((img) => (img as HTMLImageElement).src);
 }
 
 /** Whether a preview image carries the round mask class. */
 function previewRounded(root: HTMLElement): boolean[] {
-  return [...root.querySelectorAll('.tp-preview img')].map((img) => (img as HTMLElement).classList.contains('tp-round'));
+  return [...root.querySelectorAll('.pf-theme-preview img')].map((img) => (img as HTMLElement).classList.contains('pf-theme-round'));
 }
 
 describe('Clay serialisation safety', () => {
@@ -97,7 +97,7 @@ describe('the dropdown', () => {
 
     context.initialize();
 
-    const result = [...root.querySelectorAll('.tp-select option')].map((option) => (option as HTMLOptionElement).value);
+    const result = [...root.querySelectorAll('.pf-theme-select option')].map((option) => (option as HTMLOptionElement).value);
 
     expect(result).toEqual(['0', '4']);
   });
@@ -106,7 +106,7 @@ describe('the dropdown', () => {
   test('marks the select as the manipulator target', () => {
     const { root } = mount(themeConfig);
 
-    const result = (root.querySelector('.tp-select') as HTMLElement).getAttribute('data-manipulator-target');
+    const result = (root.querySelector('.pf-theme-select') as HTMLElement).getAttribute('data-manipulator-target');
 
     expect(result).not.toBeNull();
   });
@@ -129,7 +129,7 @@ describe('the preview', () => {
     const { context, root, handlers } = mount(themeConfig);
 
     context.initialize();
-    (root.querySelector('.tp-select') as HTMLSelectElement).value = '4';
+    (root.querySelector('.pf-theme-select') as HTMLSelectElement).value = '4';
     handlers.change();
 
     const result = previewSrcs(root);
@@ -358,7 +358,7 @@ describe('previews keyed by a sibling control', () => {
 
     run(context, clay);
     clay.build();
-    (root.querySelector('.tp-select') as HTMLSelectElement).value = '4';
+    (root.querySelector('.pf-theme-select') as HTMLSelectElement).value = '4';
     handlers.change();
 
     const result = previewSrcs(root);

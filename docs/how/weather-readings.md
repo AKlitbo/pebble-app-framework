@@ -104,4 +104,4 @@ A wind from the west blows east, so `W` leans 100 and `SW` leans 70. A wind from
 
 The phone sends the condition as a short label, such as `CLEAR` or `PCLDY`, so a small slot can print it as it is. After dark it adds `_NIGHT`, as in `PCLDY_NIGHT`, so the watch can pick a night icon. `wx_label_short` drops that ending for the text, since a small slot reads the same by day and by night, and writes `UNKNOWN` for an empty condition. The framework's condition readout shows dashes before any reading arrives and the short label after. [Icons](icons.md#weather-icons) covers how the condition picks a picture.
 
-The long label, such as `Partly Cloudy`, arrives as its own value for a face that declares a key for it, and the store keeps it beside the short one.
+The long label, such as `Partly Cloudy`, arrives as its own value for a face that declares a key for it, and the store keeps it beside the short one. Weather from a Pebble app plugin carries the plugin's own words for the sky where it has them, such as `Rain and snow` for a sky whose short label reads `FZRN`, as [Fetching the Weather](fetching-the-weather.md#from-a-pebble-app-plugin) covers.

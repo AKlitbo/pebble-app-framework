@@ -3,6 +3,12 @@
  * requests that run side by side.
  */
 
+/** The weather provider a face fetches from when its settings name none. */
+export const WEATHER_FALLBACK = 'openmeteo';
+
+/** The stock provider a face fetches from when its settings name none. */
+export const STOCK_FALLBACK = 'finnhub';
+
 /**
  * Finds the provider a face saved, or the fallback when the name is not one of the table's own.
  *

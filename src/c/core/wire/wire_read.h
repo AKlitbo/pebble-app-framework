@@ -6,10 +6,11 @@
  * length it puts beside the value rather than by the type. The values sit back to back with
  * nothing between them, so a reader that takes the type's word for the width and grabs four bytes
  * off a one-byte value walks straight into whatever is packed behind it. That is what these are
- * for: the width decides how many bytes get read, and anything else is refused.
+ * for: the width decides how many bytes get read, and anything else is refused. A number sent as
+ * text is read here too, so a setting takes it whichever way the phone sent it.
  *
- * Header only on purpose. There is one caller on the watch (tuple_read.c) and the bodies are
- * smaller than a call would be, so they fold into it and nothing is spent on getting there.
+ * Header only on purpose. There is one caller on the watch (tuple_read.c), so each body folds into
+ * it and nothing is spent on getting there.
  *
  * @ingroup lib_core
  */
@@ -74,6 +75,52 @@ static inline int32_t wire_int_or(bool is_signed, uint16_t length, const uint8_t
 static inline bool wire_cstring_terminated(const char *s, uint16_t length)
 {
     return s && length > 0 && s[length - 1] == '\0';
+}
+
+/**
+ * @brief Reads text holding only digits as the whole number it spells, such as a select's "3".
+ *
+ * Clay sends a select's value as text, so a choice of 3 arrives as "3". One or more digits and
+ * nothing else is a number. A sign, a space at either end, or anything after the digits gives the
+ * fallback, so "3a" is turned away rather than read as 3.
+ *
+ * A run of digits too big for an int32_t is still a number, just a big one, so it reads as
+ * INT32_MAX. That keeps it apart from the fallback, and a choice then takes it the way it takes
+ * "300", as past the end of its list.
+ *
+ * @param text The text, already checked to end inside its own length, or NULL.
+ * @param fallback Returned when there is no text, or it holds anything but digits.
+ * @return The number, INT32_MAX for digits past it, or @p fallback.
+ */
+static inline int32_t wire_digits_or(const char *text, int32_t fallback)
+{
+    if (!text || text[0] == '\0')
+    {
+        return fallback;
+    }
+
+    int32_t value = 0;
+    for (const char *cursor = text; *cursor != '\0'; cursor++)
+    {
+        if (*cursor < '0' || *cursor > '9')
+        {
+            return fallback;
+        }
+
+        int32_t digit = *cursor - '0';
+
+        // held at the top before the next digit goes on, since a sum past INT32_MAX is undefined
+        // in C. the walk carries on so a letter further along still turns the text away
+        if (value > (INT32_MAX - digit) / 10)
+        {
+            value = INT32_MAX;
+            continue;
+        }
+
+        value = value * 10 + digit;
+    }
+
+    return value;
 }
 
 /** @} */

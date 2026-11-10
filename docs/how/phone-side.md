@@ -24,7 +24,7 @@ app.startPebbleApp({
 
 ## Features
 
-A feature is a function the app calls once, at start, with what every feature shares: the face's message keys, the defaults from its settings page, the send queue, and how long to wait before fetching again after a save. It hands back the hooks the app calls on it:
+A feature is a function the app calls once, at start, with what every feature shares: the face's message keys, the defaults from its settings page, the send queue, how long to wait before fetching again after a save, and the providers the face lists for each kind, or `null` for a face that lists none. It hands back the hooks the app calls on it:
 
 | Hook | When It Runs |
 | :-- | :-- |
@@ -33,6 +33,10 @@ A feature is a function the app calls once, at start, with what every feature sh
 | `refresh` | the background refresh ticked, with a flag for the slower ticks |
 | `configOpened` | the settings page is about to open, while the old settings are still saved |
 | `configSaved` | the settings page closed and its new settings are saved |
+| `page` | the settings page is about to open, after `configOpened`, with its own copy of the page so far, and hands back the page to open |
+| `components` | not a hook but a list, the Clay components the `page` rows are drawn with, which the app registers only for a page that holds those rows |
+| `seeded` | the phone is filling its saved settings from the watch's reply, with those settings before they are saved and a way to read each value as the watch sent it |
+| `settingsUnanswered` | the watch turned away every settings request since the last `ready`, so no reply comes until the next `ready` asks again |
 
 Every hook is optional. A feature also lists the watch's request keys it answers, such as `WEATHER_REQUEST`. When the watch sends a request no listed feature answers, the app logs one warning naming the key, which is how a face that declares a feature's keys but forgot to list the feature finds out.
 
@@ -42,11 +46,50 @@ Every hook is optional. A feature also lists the watch's request keys it answers
 
 **A Feature Checks Its Own Keys.** Weather that is listed but missing one of its four core message keys fetches nothing and logs which keys are missing, since a fetch would spend provider quota on a reading the watch cannot show. Stocks without `STOCK_STRIP` and a calendar without `CALENDAR_STRIP` skip every fetch, with no log line.
 
+**Reading a Saved Setting.** A feature, or a face's own phone code, reads the settings the phone keeps through [`settings-store.ts`](../../src/ts/pkjs/settings-store.ts). `getConfig` gives every saved setting, `readText` reads a text field, `readBool` a toggle, and `readChoice` a select or radio group as the number of its choice. Clay saves a select as the option's text, and the watch's reply writes a choice back as text too, so a saved choice is nearly always `"3"` rather than `3`. `readChoice` reads both as 3, and takes a whole number from 0 up or text holding only digits, as the watch does. It also takes what the watch never receives, since a toggle saved under the same key leaves `true` or `false`, or the words `"true"` and `"false"`, and reads each as 1 or 0. Each reader takes a fallback for a setting with nothing saved, and `readChoice` also gives it for a value that is no choice, such as another word or `"3a"`. `readFahrenheit` reads the temperature unit through `readChoice`, with the page's default read the same way, and the weather reads its unit through it.
+
+**Plugins for Weather and the Calendar.** A face built with `PLUGIN_WEATHER` or `PLUGIN_CALENDAR` lets the wearer pick the Pebble app's plugin as the source, or takes the kind from the plugin alone, with no change to the feature it lists. The plugin code lives under `ts/plugin-sources/`, and the features reach it through its index, which the build writes with each kind that is off set to `null`. A face built without the define carries none of it. [Pebble App Plugins](plugin-sources.md) covers all of it.
+
+**Features That Need a Plugin Define.** Now playing, in `ts/music/feature`, and the phone's battery, in `ts/phone/feature`, read from Pebble app plugins and nothing else. Each one runs only on a face built with its define in the appinfo, `PLUGIN_MUSIC` or `PLUGIN_PHONE`. The build refuses either define without its message keys, and refuses those keys without the define, since nothing else on the phone would ever answer them. A face that lists one of them without the define gets a warning in the log saying so, and the feature does nothing. The plugin code itself stays out of the bundle of a face built without the define, whether the face lists the feature or not.
+
 ## What the Phone Lets It Reach
 
 A pbw built as `manifestVersion` 2, the default from SDK 4.42.0 on, gets only the sites and phone features its appinfo lists in `usesPermissions`. The Pebble app holds the phone code to that list whenever the wearer has plugins turned on. A request to a site the list leaves out fails straight away, and a GPS lookup is turned away unless the list has `Location`.
 
-**The List Comes from the Keys.** The manifest builder writes `usesPermissions` into each target's `package.json`, in [`permissions.ts`](../../src/tools/manifest/permissions.ts). `WEATHER_REQUEST` adds `Location` and the weather providers' sites. The GPS switch is a setting, so `Location` goes in for every weather face, and the phone only asks the wearer once the face looks the position up. `STOCK_STRIP` adds the stock providers' sites. `CALENDAR_STRIP` asks for the whole web instead of a list, since a calendar feed can sit on any site. A face with none of these keys gets no list. Each site covers its subdomains, so `open-meteo.com` takes in `api.open-meteo.com`. Every weather face lists Open-Meteo, since OpenWeatherMap and WeatherAPI borrow the readings they lack from it.
+**The List Comes from the Keys.** The manifest builder writes `usesPermissions` into each target's `package.json`, in [`permissions.ts`](../../src/tools/manifest/permissions.ts). `WEATHER_REQUEST` adds `Location` and the weather providers' sites. The GPS switch is a setting, so `Location` goes in for every weather face, and the phone only asks the wearer once the face looks the position up. `STOCK_STRIP` adds the stock providers' sites. `CALENDAR_STRIP` asks for the whole web instead of a list, since a calendar feed can sit on any site. `LOCATION_NAME` or a `CLOCK_TIMEZONE_` key such as `CLOCK_TIMEZONE_1` adds `open-meteo.com`, since the location and time zone pickers search Open-Meteo from inside the settings page, and the Pebble app holds that page to the same list. A face with none of these keys gets no list. A face built with `PLUGIN_CALENDAR` also lists `Calendar`, and one built with `PLUGIN_MUSIC` lists `ReadMusic`, since the Pebble app's own calendar and music plugins ask their callers for those. The phone asks a wearer about `ReadMusic` once, and only on a face that can also reach the internet. `PLUGIN_PHONE` lists nothing, since the Phone plugin asks for no permission. Each site covers its subdomains, so `open-meteo.com` takes in `api.open-meteo.com`. Every weather face lists Open-Meteo, since OpenWeatherMap and WeatherAPI borrow the readings they lack from it.
+
+**The Providers a Face Offers.** A face can name the providers it offers for each kind of data in its appinfo, beside `defines`, and the manifest builder asks only for the sites those providers call:
+
+```json
+"providers": {
+  "weather": ["plugin", "openmeteo"],
+  "calendar": ["plugin"],
+  "stocks": ["yahoo"]
+}
+```
+
+The names are the values the provider selects save, with `ical` for the calendar's link and `plugin` for the Pebble app's Preferred Source. `music` and `phone`, for now playing and phone battery, only ever hold `["plugin"]`. Each list puts its kind in one of three modes. A list of custom providers asks for their sites alone. `["plugin"]` takes the kind from its plugin and asks for no site. A list holding `plugin` and custom providers asks for the custom providers' sites. A kind the face leaves out asks for every site its keys bring, so a face without `providers` gets the list the keys alone give. The field stays in the appinfo and never reaches the manifest, the same as `defines`.
+
+| Kind | Name | Sites | Needs a Key |
+| :-- | :-- | :-- | :-- |
+| `weather` | `openmeteo` | `open-meteo.com` | no |
+| `weather` | `owm` | `openweathermap.org`, `open-meteo.com` | yes |
+| `weather` | `weatherapi` | `weatherapi.com`, `open-meteo.com` | yes |
+| `weather` | `plugin` | none | no |
+| `stocks` | `alphavantage` | `alphavantage.co` | yes |
+| `stocks` | `finnhub` | `finnhub.io` | yes |
+| `stocks` | `twelvedata` | `twelvedata.com` | yes |
+| `stocks` | `yahoo` | `yahoo.com` | no |
+| `calendar` | `ical` | the face's `calendarHosts`, or any site without them | no |
+| `calendar` | `plugin` | none | no |
+| `music` | `plugin` | none | no |
+| `phone` | `plugin` | none | no |
+
+OpenWeatherMap and WeatherAPI add `open-meteo.com` too, since they borrow readings from it. The sites keep the order of the framework's own lists rather than the face's, so the order a face lists its providers in never changes the manifest, and a face listing every provider gets the same manifest as one listing none. `Location` stays on for every weather face, a plugin only one included, since the weather plugin reads the location as well. A plugin only weather list takes the location search off the settings page with the other location rows, so `LOCATION_NAME` adds no `open-meteo.com` there. A `CLOCK_TIMEZONE_` key still adds it, since the time zone picker stays whatever the weather comes from, and a face that keeps a location search of its own with no `pluginSourceHides` mark lists `open-meteo.com` in its own `usesPermissions`. The build cannot see the mark, so it warns a face with a `["plugin"]` weather list that declares `LOCATION_NAME`, and carries on. A face whose kinds all come from plugins, with no picker left on the page, asks for no `Internet` at all. The example above, built with `PLUGIN_WEATHER` and `PLUGIN_CALENDAR`, gets `Location`, `Calendar`, and an `Internet` entry holding `open-meteo.com` and `yahoo.com`. The settings page narrows to the same list, as [Offering Fewer Providers](settings-page.md#offering-fewer-providers) covers, so the page never offers a provider the phone would block.
+
+**Calendar Hosts.** A calendar offering its iCal link asks for any site, since a feed can sit anywhere. A face that knows where its wearers' feeds come from lists those hosts inside `providers`, beside the kind lists, as in `"providers": { "calendar": ["ical"], "calendarHosts": ["google.com", "icloud.com"] }`, and the calendar asks for them in place of any site. They follow the other sites in the face's own order, and a host already on the list goes on once. Each is a bare host name in lowercase, and covers its subdomains. The phone checks the host the wearer's link names, not where a redirect lands, so only that host needs listing. A later Pebble app could check the redirect too. A feed on a host the face left out costs the wearer one failed fetch and a notification from the Pebble app, and loads once the wearer allows it. [Which Hosts Feeds Come From](calendar-store.md#which-hosts-feeds-come-from) lists the hosts the common calendar services use.
+
+**What the Build Refuses.** The manifest build stops, naming the face, on a `providers` that is not a map, a kind it does not know, a list that is empty or names a provider twice, and a name the kind does not have, such as `plugin` for stocks, which have no plugin kind yet. It stops on a list for a kind the face has no key for, so `weather` needs `WEATHER_REQUEST`, `stocks` needs `STOCK_STRIP`, and `calendar` or `calendarHosts` needs `CALENDAR_STRIP`. The list and the kind's plugin define have to agree: `plugin` in a list needs the define on, and a define on beside a list needs `plugin` in it. A plugin only weather or calendar list keeps no choice on the watch, so the build refuses it beside `WEATHER_PROVIDER` or `CALENDAR_SOURCE`. The face takes the key out of `messageKeys` and builds with `--clean`. The define then needs the kind's other keys and not the select key. For `calendarHosts`, the build stops on an empty list, since leaving it out is how a face allows any site, on a calendar list without `ical`, on a host that is not a bare lowercase host name with a dot, such as `https://calendar.google.com` or `*.google.com`, on an IP address, which the phone cannot match by name, and on a bare `Internet` of the face's own, which would leave the hosts doing nothing. It warns and carries on when a list's first custom provider needs a key, such as `["plugin", "owm"]`, since that provider is the default and a fresh install shows `No API Key` until the wearer pastes one.
 
 **A Face's Own Entries.** A face that fetches from somewhere of its own lists it in its appinfo's `usesPermissions`, in the form the Pebble app reads, as in `"usesPermissions": [{ "name": "Internet", "parameters": { "domains": ["example.com"] } }]`. Its sites join the one `Internet` entry the keys made, and a bare `Internet` opens that entry to every site. A name already on the list, such as `Location`, is not added twice. An entry with no name, parameters that are not each a list of text, or a `plugin` that is not text stops the build.
 

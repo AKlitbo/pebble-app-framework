@@ -24,6 +24,8 @@
 #define CAL_TITLE_LEN 25 ///< An event title, 24 characters plus its terminator
 #define CAL_LOC_LEN 17 ///< An event location, 16 characters plus its terminator
 
+#define MUSIC_TEXT_LEN 33 ///< A now playing title or artist, 32 characters plus its terminator
+
 #define WEATHER_FORECAST_COLS 8 ///< How many columns a forecast strip carries
 #define WEATHER_NO_TEMP (-1000) ///< A column with no reading, so the watch draws a placeholder
 

@@ -28,6 +28,7 @@ A readout holds no state and keeps no copy. It reads the store each time it is c
 | `readout_weather_temp` | the weather store | Temperature Unit | `--` |
 | `readout_weather_cond` | the weather store | nothing | `--` |
 | `readout_lat`, `readout_lon` | the location store | nothing | `--` |
+| `readout_phone_battery` | the phone store | nothing | `--` |
 
 ## The Clock
 
@@ -63,8 +64,14 @@ A step count of -1 means there is no reading, and the readout writes `--` in eve
 
 **Temperature.** `readout_weather_temp` writes the temperature with its unit letter, such as `23C` or `73F`. The weather store already holds it in the wearer's unit, so the readout only adds the letter. When the store has no temperature yet it writes `--`.
 
+**A Face with No Unit Setting.** A face built with `PLUGIN_WEATHER` and no `WEATHER_TEMPERATURE_UNIT` key gets the number alone, such as `73`. The phone sends all of that face's weather, from the plugin or from a fetch, in the unit the wearer picked in the Pebble app, as [Fetching the Weather](fetching-the-weather.md#units-and-values) covers, and the watch never hears which unit that is. Every other face keeps its letter.
+
 **Condition.** `readout_weather_cond` writes the condition's short label, such as `RAIN` or `PCLDY`. After dark the phone sends a night form such as `CLEAR_NIGHT`, which picks the night icon (see [Icons](icons.md)). The readout trims the `_NIGHT` off, so the text reads `CLEAR` by day or night. With no condition yet it writes `--`.
 
 ## Location
 
 `readout_lat` and `readout_lon` write the latitude and longitude as the phone formatted them, or `--` when the watch has no location yet. The location store keeps them as text, so the readout copies them as they are.
+
+## The Phone's Battery
+
+`readout_phone_battery` writes the phone's battery as a percent, such as `84%`, or `--` when the watch has no reading. It has none with the phone away, with plugins off in the Pebble app, and on a face built without the phone battery keys (see [The Phone and Music Stores](phone-and-music-stores.md)).

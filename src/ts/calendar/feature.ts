@@ -4,6 +4,14 @@
  * Fetches the face's private iCal feed, reads the next few days out of it, and sends the packed agenda
  * to the watch. An empty calendar or a removed feed sends an empty agenda, so the watch clears what it
  * had. A face without the CALENDAR_STRIP key gets nothing from it, even when it opts in.
+ *
+ * A face built with `PLUGIN_CALENDAR` can also read its events from a Pebble app plugin, which reads
+ * the calendars on the phone. The saved `CALENDAR_SOURCE` picks the mode, and `plugin` subscribes
+ * rather than fetching. Each update goes through the same deduped sender a fetch uses, and a watch
+ * ask resends the last one as of now. The page hook adds the Calendar Source select, and the seeded
+ * hook brings back a plugin choice the watch kept through a reset. All of that lives behind
+ * plugin-sources/index, so a face built without the define reads null there, carries none of it, and
+ * fetches exactly as it always has.
  */
 import ical from './ical';
 import type { CalendarEvent } from './ical';
@@ -14,17 +22,23 @@ import { getConfig, readText, watchSettings } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
 import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 import { createRound, finishRound, shutOutRound, startRound } from '../pkjs/round';
+import { calendarPlugins } from '../plugin-sources/index';
+import type { CalendarDriver } from '../plugin-sources/types';
 
 /**
  * Starts the calendar feature for a face.
  *
  * @param context What the app shares: the face's message keys, its config defaults, the send queue,
- *   and the refetch delay after a settings save.
+ *   the refetch delay after a settings save, and the providers the face lists.
  * @return The hooks the app calls on ready, on a watch message, on each refresh tick, and around the
  *   settings page.
  */
-const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
+const calendar: Feature = (context) => {
+  const { messageKeys, defaults, queueSend, refetchDelayMs } = context;
   const feedSetting = watchSettings(['CALENDAR_ICS_URL'], defaults);
+
+  // the plugin mode on a face built with PLUGIN_CALENDAR, made once the rounds below exist
+  let driver: CalendarDriver | null = null;
 
   // which download is the current one. a URL change starts one while another is still out, and
   // the two can answer in any order, so only the newest reaches the watch. request() settles every
@@ -84,6 +98,13 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
     if (!url) {
       // no feed means nothing to download, so the round ends here rather than holding the gate
       finishRound(state, round);
+
+      // the plugin mode can hold the empty agenda back while a reset may still bring the plugin back
+      if (driver && driver.holdsEmptyAgenda()) {
+        console.log('Calendar: no link and no saved settings yet, so the watch keeps its agenda');
+        return;
+      }
+
       sendCalendar([]);
       return;
     }
@@ -123,6 +144,30 @@ const calendar: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs })
       // an empty list still goes, since that is how the watch hears every event was deleted
       sendCalendar(events);
     });
+  }
+
+  // a face built with PLUGIN_CALENDAR runs its plugin mode, which runs the rounds above whenever the
+  // plugin is not picked. a face that does not declare the strip key has nowhere to show its events
+  if (calendarPlugins && messageKeys.CALENDAR_STRIP !== undefined) {
+    driver = calendarPlugins.driver(context, {
+      send: sendCalendar,
+      forget: () => sender.forget(),
+      shutOut: () => shutOutRound(state),
+      fetch: (force) => getCalendar(force),
+      askFetch: () => {
+        if (askShouldFetch(asks)) {
+          getCalendar();
+        }
+      },
+      slowFetch: () => {
+        if (slowTickShouldFetch(asks)) {
+          getCalendar();
+        }
+      },
+      afterSave: (run) => refetchAfterSave(asks, refetchDelayMs, run),
+    });
+
+    return driver.hooks;
   }
 
   return {

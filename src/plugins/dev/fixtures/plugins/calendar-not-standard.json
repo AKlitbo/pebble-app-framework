@@ -1,0 +1,27 @@
+{
+  "plugins": [
+    {
+      "uuid": "6c1b0d1e-0000-4000-8000-0000000ca1e0",
+      "name": "Odd Calendar",
+      "sources": [
+        {
+          "category": "calendar",
+          "items": ["event"],
+          "properties": {
+            "title": ["shortText", "longText"],
+            "start": ["timestamp"],
+            "end": ["timestamp"]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ],
+  "state": {
+    "calendar/event": {
+      "pluginUuid": "6c1b0d1e-0000-4000-8000-0000000ca1e0",
+      "lastError": null,
+      "lastEmpty": false
+    }
+  }
+}

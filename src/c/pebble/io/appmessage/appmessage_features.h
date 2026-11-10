@@ -6,7 +6,11 @@
  * same answer.
  *
  * APPMESSAGE_HAS_WEATHER is defined when the face has weather, and APPMESSAGE_HAS_LOCATION when it
- * gets coordinates.
+ * gets coordinates. APPMESSAGE_HAS_PHONE is defined when it shows the phone's battery, and
+ * APPMESSAGE_HAS_MUSIC when it shows what the phone is playing.
+ *
+ * A face that keeps a plugin source choice without both settings keys stops the build here too. The
+ * manifest build refuses it first, so this is what still stops a build run some other way.
  *
  * @ingroup lib_io
  */
@@ -46,4 +50,44 @@
 #error "coordinates need LOCATION_LONGITUDE in messageKeys beside LOCATION_LATITUDE"
 #elif defined(HAS_MESSAGE_KEY_LOCATION_LONGITUDE)
 #error "coordinates need LOCATION_LATITUDE in messageKeys beside LOCATION_LONGITUDE"
+#endif
+
+// a face shows the phone's battery when it declares both phone keys. the watch asks with one and
+// reads the level off the other, so one without the other could never show a level, and the build
+// stops and names the missing one
+#if defined(HAS_MESSAGE_KEY_PHONE_BATTERY) && defined(HAS_MESSAGE_KEY_PHONE_REQUEST)
+#define APPMESSAGE_HAS_PHONE 1 ///< the face declares both phone battery keys
+#elif defined(HAS_MESSAGE_KEY_PHONE_BATTERY)
+#error "the phone battery needs PHONE_REQUEST in messageKeys beside PHONE_BATTERY"
+#elif defined(HAS_MESSAGE_KEY_PHONE_REQUEST)
+#error "the phone battery needs PHONE_BATTERY in messageKeys beside PHONE_REQUEST"
+#endif
+
+// a face shows what the phone is playing when it declares all four music keys. the phone sends the
+// three values in one message and the watch asks with the fourth, so they are one decision, and a
+// face that declares only some of them stops the build with each missing one named
+#if defined(HAS_MESSAGE_KEY_MUSIC_TITLE) && defined(HAS_MESSAGE_KEY_MUSIC_ARTIST) && \
+    defined(HAS_MESSAGE_KEY_MUSIC_PLAYING) && defined(HAS_MESSAGE_KEY_MUSIC_REQUEST)
+#define APPMESSAGE_HAS_MUSIC 1 ///< the face declares all four now playing keys
+#elif defined(HAS_MESSAGE_KEY_MUSIC_TITLE) || defined(HAS_MESSAGE_KEY_MUSIC_ARTIST) || \
+    defined(HAS_MESSAGE_KEY_MUSIC_PLAYING) || defined(HAS_MESSAGE_KEY_MUSIC_REQUEST)
+#if !defined(HAS_MESSAGE_KEY_MUSIC_TITLE)
+#error "now playing needs MUSIC_TITLE in messageKeys. A face with now playing declares MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and MUSIC_REQUEST"
+#endif
+#if !defined(HAS_MESSAGE_KEY_MUSIC_ARTIST)
+#error "now playing needs MUSIC_ARTIST in messageKeys. A face with now playing declares MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and MUSIC_REQUEST"
+#endif
+#if !defined(HAS_MESSAGE_KEY_MUSIC_PLAYING)
+#error "now playing needs MUSIC_PLAYING in messageKeys. A face with now playing declares MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and MUSIC_REQUEST"
+#endif
+#if !defined(HAS_MESSAGE_KEY_MUSIC_REQUEST)
+#error "now playing needs MUSIC_REQUEST in messageKeys. A face with now playing declares MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and MUSIC_REQUEST"
+#endif
+#endif
+
+// a face that keeps a plugin source choice needs both settings keys, since only the settings reply
+// hands the wearer's pick back to the phone. without them a reinstall of the Pebble app loses it
+#include "system/settings/plugin_source.h"
+#if PLUGIN_SOURCE_KEEPS_ANY && !(defined(HAS_MESSAGE_KEY_SETTINGS_REQUEST) && defined(HAS_MESSAGE_KEY_SETTINGS_FRESH))
+#error "a kept plugin source choice needs SETTINGS_REQUEST and SETTINGS_FRESH in messageKeys, since only the settings reply hands it back to the phone"
 #endif

@@ -6,6 +6,13 @@
  * `weather.withCoords(formatCoords)`, and its formatter adds them to every weather message. A face
  * missing any of the WEATHER_MESSAGE_KEYS gets nothing from it, even when it opts in, and the log
  * names the missing key.
+ *
+ * A face built with `PLUGIN_WEATHER` can also read its weather from a Pebble app plugin. The saved
+ * `WEATHER_PROVIDER` picks the mode, and `plugin` subscribes rather than fetching. Each update is
+ * sent through the same deduped sender a fetch uses, and a watch ask resends the last one. The page
+ * hook adds the plugin to the Data Source select, and the seeded hook checks a choice the watch brings
+ * back after a reset. All of that lives behind plugin-sources/index, so a face built without the
+ * define reads null there, carries none of it, and fetches exactly as it always has.
  */
 
 // the `any`s that remain in this file sit at two genuinely-dynamic boundaries: the provider result
@@ -17,8 +24,10 @@ import type { WeatherResult } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
-import { getConfig, readBool, readText, readValue, watchSettings } from '../pkjs/settings-store';
+import { getConfig, readBool, readFahrenheit, readText, readValue, watchSettings } from '../pkjs/settings-store';
+import { WEATHER_FALLBACK } from '../pkjs/providers';
 import type { Feature, FeatureContext, FeatureHooks } from '../pkjs/feature';
+import { weatherPlugins } from '../plugin-sources/index';
 import { readPlace } from '../pkjs/place';
 import { phoneZone } from '../pkjs/timezone';
 import conditions from './conditions';
@@ -48,6 +57,12 @@ export type CoordsFormatter = (messageKeys: Record<string, number>, result: Weat
 export interface WeatherFeature extends Feature {
   /**
    * The weather feature for a face that shows coordinates.
+   *
+   * A Pebble app plugin's places carry no coordinates, so on a face built with `PLUGIN_WEATHER` this
+   * form offers no plugin choice and never reads its weather from a plugin, and it warns when the
+   * face lists the plugin among other providers. A face whose providers list is the plugin alone asked
+   * for nothing else, so it reads from the plugin anyway, with a warning that its coordinate readouts
+   * show no fix. A face with no unit key still reads the Pebble app's unit for its fetches.
    *
    * @param formatCoords Builds the face's coordinate keys from each weather result.
    * @return A feature to pass to startPebbleApp in place of the plain one.
@@ -149,6 +164,24 @@ export function conditionLabel(condition: unknown): string {
 }
 
 /**
+ * The sky in words for a weather result, as the phone sends it in WEATHER_CONDITION_LABEL.
+ *
+ * A result that carries its own words sends those, since a token can be coarser than its source.
+ * The plugin weather maps rain and snow to FZRN, which would otherwise read "Freezing Rain". A
+ * result without them sends the words for its token.
+ *
+ * @param result The weather result, read for its own words and its condition token.
+ * @return The words to send.
+ */
+export function weatherLabel(result: Pick<WeatherResult, 'condition' | 'conditionLabel'>): string {
+  if (typeof result.conditionLabel === 'string' && result.conditionLabel !== '') {
+    return result.conditionLabel;
+  }
+
+  return conditionLabel(result.condition);
+}
+
+/**
  * Runs one weather round: fetches, sends the result on, and retries a failed fetch a few times.
  *
  * The watch re-asks every few seconds until its first reading lands, so without a gate every ask
@@ -216,12 +249,14 @@ export function runWeatherRound(state: WeatherState, force: boolean, deps: Weath
  * Starts the weather feature for a face, with or without the coordinate keys.
  *
  * @param context What the app shares: the face's message keys, its config defaults, the send queue,
- *   and the refetch delay after a settings save.
+ *   the refetch delay after a settings save, and the providers the face lists.
  * @param formatCoords The face's coordinate formatter, or null for a face that shows none.
  * @return The hooks the app calls on ready, on a watch message, on each refresh tick, and around the
  *   settings page.
  */
-function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: FeatureContext, formatCoords: CoordsFormatter | null): FeatureHooks {
+function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | null): FeatureHooks {
+  const { messageKeys, defaults, queueSend, refetchDelayMs } = context;
+
   // the watch only asks for and reads weather when every one of WEATHER_MESSAGE_KEYS is declared,
   // so the phone goes by the same list. without them a fetch would spend provider quota on a
   // reading nothing shows, so the feature does nothing and says why
@@ -234,8 +269,6 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     return { requests: ['WEATHER_REQUEST'] };
   }
 
-  const weatherSettings = watchSettings(WEATHER_KEYS, defaults);
-
   // weather round state mutated in place by runWeatherRound
   const state: WeatherState = createRound();
 
@@ -245,6 +278,16 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
   // the weather dict the watch holds, so an unchanged refresh skips the redundant BLE wake.
   // forgotten on ready and on a watch-initiated request so the watch always gets a fresh answer
   const sender = createDedupedSender(queueSend, 'Weather');
+
+  // only faces that declare a forecast key pay to fetch the strips. everyone else skips the extra
+  // hourly block and the supplemental provider call
+  const wantForecast = messageKeys.WEATHER_FORECAST_HOURLY !== undefined || messageKeys.WEATHER_FORECAST_DAILY !== undefined;
+
+  // the readings this face has keys for, so a provider can skip a request that only brings others
+  const fields = EXTRA_WEATHER_FIELDS.filter(({ key }) => messageKeys[key] !== undefined).map(({ field }) => field);
+
+  // the unit a fetch asks for when the plugin mode hands one over, for a face with no unit of its own
+  let unitFrom: (() => boolean) | null = null;
 
   /** Sends a weather result to the watch. */
   function sendWeather(result: any) {
@@ -256,7 +299,7 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
 
     // the sky in words, for a face that shows it. the watch has no table of its own for these
     if (messageKeys.WEATHER_CONDITION_LABEL !== undefined) {
-      dict[messageKeys.WEATHER_CONDITION_LABEL] = conditionLabel(result.condition);
+      dict[messageKeys.WEATHER_CONDITION_LABEL] = weatherLabel(result);
     }
 
     // extra readings only sent for faces that declare the keys
@@ -304,16 +347,13 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
     const config = getConfig();
 
     const opts: any = {
-      provider: String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER || 'openmeteo')),
+      provider: String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER || WEATHER_FALLBACK)),
       key: readText(config.WEATHER_API_KEY, String(defaults.WEATHER_API_KEY || '')).trim().slice(0, 64),
-      fahrenheit: readBool(config.WEATHER_TEMPERATURE_UNIT, defaults.WEATHER_TEMPERATURE_UNIT as boolean),
+      fahrenheit: unitFrom ? unitFrom() : readFahrenheit(config, defaults),
       coords: null,
       label: undefined,
-      // only faces that declare a forecast key pay to fetch the strips. everyone
-      // else skips the extra hourly block and the supplemental provider call
-      wantForecast: messageKeys.WEATHER_FORECAST_HOURLY !== undefined || messageKeys.WEATHER_FORECAST_DAILY !== undefined,
-      // the readings this face has keys for, so a provider can skip a request that only brings others
-      fields: EXTRA_WEATHER_FIELDS.filter(({ key }) => messageKeys[key] !== undefined).map(({ field }) => field),
+      wantForecast,
+      fields,
       // the watch keeps the phone's clock, so a provider that can answer in the phone's zone does
       zone: phoneZone(Date.now()) || undefined,
     };
@@ -410,6 +450,40 @@ function startWeather({ messageKeys, defaults, queueSend, refetchDelayMs }: Feat
       timeoutMs: WEATHER_ROUND_TIMEOUT_MS,
     });
   }
+
+  // a face built with PLUGIN_WEATHER runs its plugin mode, which runs the fetch above whenever the
+  // plugin is not picked. a face that shows coordinates and lists more than the plugin gets none
+  const driven = weatherPlugins ? weatherPlugins.driver(context, {
+    send: sendWeather,
+    forget: () => sender.forget(),
+    shutOut: () => shutOutRound(state),
+    fetch: (force) => getWeather(force),
+    askFetch: () => {
+      if (askShouldFetch(asks)) {
+        getWeather();
+      }
+    },
+    slowFetch: () => {
+      if (slowTickShouldFetch(asks)) {
+        getWeather();
+      }
+    },
+    afterSave: (run) => refetchAfterSave(asks, refetchDelayMs, run),
+    fields,
+    wantForecast,
+    withCoords: formatCoords !== null,
+    settingKeys: WEATHER_KEYS,
+    useUnit: (fahrenheit) => {
+      unitFrom = fahrenheit;
+    },
+    savePending: () => asks.savePending,
+  }) : null;
+
+  if (driven) {
+    return driven;
+  }
+
+  const weatherSettings = watchSettings(WEATHER_KEYS, defaults);
 
   return {
     requests: ['WEATHER_REQUEST'],

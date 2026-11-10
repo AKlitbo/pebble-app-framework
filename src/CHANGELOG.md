@@ -4,6 +4,65 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Added the `PLUGIN_WEATHER`, `PLUGIN_CALENDAR`, `PLUGIN_MUSIC`, and `PLUGIN_PHONE` defines, which read the weather, the calendar, now playing, and the phone's battery from Pebble app plugins. Set the define in the appinfo's `defines`, declare the message keys it needs, and build with `--clean`. The build adds the permissions it needs. For now playing and the battery, also pass `music` from `ts/music/feature` or `phone` from `ts/phone/feature` to `startPebbleApp`, and read them on the watch from `music_store` and `phone_store`. The pkjs build carries the plugin code only for the kinds a face turns on.
+- Added `providers` to the appinfo, beside `defines`, to name what a face offers for each kind of data, as in `"providers": { "weather": ["plugin", "openmeteo"], "calendar": ["plugin"] }`. The first custom provider listed is the default, a kind left out keeps every provider, and `calendarHosts` names the hosts a face's iCal feeds come from. `usesPermissions` then lists only the sites the listed providers call. The build stops on a list it cannot use, and warns a plugin only weather face that declares `LOCATION_NAME`. Mark its location search with `pluginSourceHides: 'WEATHER_PROVIDER'`, or list `open-meteo.com` in its own `usesPermissions`.
+- Added the `pluginSource`, `pluginSourceHides`, `pluginSourceLead`, and `pluginSourceRows` marks on `ClayConfigItem`, and `hideWhenEmpty` on a section. Mark a face's own weather or calendar rows with `pluginSourceHides` so they hide while the plugin is picked, and its own line about choosing a provider with `pluginSourceLead`.
+- Added the `page`, `seeded`, and `settingsUnanswered` hooks and the `components` list to `FeatureHooks`, and `providers` to `FeatureContext`.
+- The watch now keeps the wearer's weather and calendar source choice through a reinstall of the Pebble app, in a settings schema of the framework's own under persist key 249, `SETTINGS_PLUGIN_SOURCE_KEY`. Leave that key free in every face. A face that keeps the choice declares `SETTINGS_REQUEST` and `SETTINGS_FRESH`, and calls `settings_init(NULL)` when it has no settings of its own. The build writes the defaults from `providers` as `PLUGIN_SOURCE_WEATHER_DEFAULT` and `PLUGIN_SOURCE_CALENDAR_DEFAULT`, so a face cannot set either in its `defines`. The first launch that keeps a choice counts the watch as fresh, so the phone restores the settings once. Say so under Notes in the face's own changelog.
+- A face built with `PLUGIN_WEATHER` and no `WEATHER_TEMPERATURE_UNIT` key now gets its weather in the unit the wearer picked in the Pebble app. `readout_weather_temp` then writes the temperature with no unit letter.
+- Added plugin only weather for a face with no settings page of its own. Pass `clayConfig: []` to `startPebbleApp` and list `"providers": { "weather": ["plugin"] }`.
+- Added the supported plugins panel, which lists the plugins each of a face's kinds can read from, with links to their appstore listings, at the foot of the settings page of a face built with a plugin define.
+- Added `--plugins=<file>` and `--out=<file>` to `clay-preview`, to open the page on a phone with the plugins the file lists and to write the page to another file.
+- `startPebbleApp` now logs a warning at startup when a face's `customClay` is not written as a `function`, since Clay hands it the page as `this` and an arrow cannot take that.
+- Added the `--pf-accent`, `--pf-on-accent`, `--pf-surface`, `--pf-ink`, and `--pf-line` custom properties, which colour the location search and the supported plugins panel, and a keyboard focus ring on both. Set them on `:root` from the face's own component CSS. Each falls back to Clay's own colour.
+- Added `readChoice` and `readFahrenheit` in `ts/pkjs/settings-store.ts`, which read a saved select or radio group, and the temperature unit, whether Clay saved it as text or as a number.
+- `paf build` now loads the face's settings page before `pebble build` and writes `page/settings_page.h` into each sandbox, with the page's counts and defaults for the watch. The waf build stops on a header that does not match the sandbox, so build with `paf build` rather than `pebble build` in a sandbox.
+- Added `SETTINGS_COUNT(KEY)`, `SETTINGS_COUNT_CHECKED(KEY, table_count)`, and `SETTINGS_DEFAULT(KEY)` in `settings_catalog.h`, the page's option count and default on a message key, for a face's own fields. `SETTINGS_COUNT_CHECKED` stops the build when the page's count differs from the face's table.
+- Added `KNOWN_WIND_UNIT(off)` and `SETTING_WIND_UNIT` for the wind speed unit, and `wind: {}` on `buildConfig` and `weatherSection` for its select, with `WIND_UNIT_OPTIONS` in `config-rows.ts` for a face's own weather section. Declare `WEATHER_WIND_UNIT` in `messageKeys` and build with `--clean`.
+- Added `notIn` on a `visibleWhen` condition, the values that hide a row.
+
+#### Changed
+
+- **Breaking:** `SettingsSchema.min_versioned_size` is now `first_size`, set with `SETTINGS_BLOB`. Replace a schema's `.blob`, `.blob_size`, and `.min_versioned_size` lines with `SETTINGS_BLOB(s_settings, 25)`. The number is the struct's size in bytes in the blob's first release, written as one plain number. `docs/how/settings-on-the-watch.md` covers finding it.
+- **Breaking:** `KNOWN_THEME(off, table_count)` and `KNOWN_HEADER_FONT(off, table_count)` now clamp to the count on the settings page, and stop the build when it differs from the face's own table. Pass the size of that table, such as `THEME_COUNT`. Delete the count argument from `KNOWN_STEPS_MODE`, `KNOWN_DISTANCE_UNIT`, `KNOWN_TIME_FORMAT`, `KNOWN_BLUETOOTH_VIBE_CONNECT`, `KNOWN_BLUETOOTH_VIBE_DISCONNECT`, `KNOWN_HOURLY_VIBE`, and `KNOWN_BATTERY_DISPLAY`.
+- **Breaking:** Every settings page now registers a `pafPageStyle` component, so a face cannot register one of that name. Its style repeats Clay's own row padding at `.section > .component.component-X`, so a face rule that sets that padding at Clay's weight, such as `.section .component-select`, now loses. Write it at `.section > .component.component-select` or higher. A face component that borrows one of Clay's row classes, such as `component-button`, now takes Clay's padding for that row on every page.
+- **Breaking:** A face's `customClay` now runs after the framework's own page code rather than replacing it. Drop the code that shows and hides `visibleWhen` rows from a `customClay`, or drop `visibleWhen` from those rows to keep its own rules.
+- **Breaking:** The settings page's own classes now start with `pf-`. `.theme-preview` is now `.pf-theme`, `.tp-*` is `.pf-theme-*`, `.gl-store` is `.pf-hidden-store`, and `.loc-*` is `.pf-loc-*`. Rename them in the face's page styles and code, since a missed rename still builds and passes every check. A `storeClass` the face passes keeps its name.
+- **Breaking:** `KNOWN_DATE_FORMAT(off)` no longer takes a default. Delete the second argument. Every `KNOWN_*` entry now takes its default from the settings page, so set the page's default to the one a fresh watch should show.
+- **Breaking:** `paf build` now stops on a settings page default the watch would get wrong, such as one that is not among its options, and on an option past the count the watch holds for a shared setting, naming the face and the key. Change the page's default to one the watch can hold, and take such an option off the page.
+- **Breaking:** `paf build` now stops on a page control whose `messageKey` the appinfo does not declare, a `_REQUEST` key no feature answers, and a `customClay` not written with the `function` keyword. Declare the key or take the control off the page, pass the feature that answers the request or take its key out, and write `customClay` as `function customClay() { ... }`.
+- **Breaking:** `paf build` now stops when the face's own `WEATHER_PROVIDER` or `CALENDAR_SOURCE` picker does not offer, or does not open on, the default it writes from `providers`. Offer the provider in the picker, or list the one it opens on first in `providers`.
+- The provider pickers on the settings page now offer only the providers a face lists. A picker left with one provider is dropped, and a plugin only kind loses its picker and its custom rows. A saved provider the face no longer offers is rewritten to the default at launch. When a face moves weather or the calendar to `["plugin"]`, say so under Notes in its own changelog, since that deletes the wearer's saved city and API key, or the iCal link.
+- The location search's notes now take their colours from `--pf-note-accent`, as the plugin notes do.
+- The framework now registers `hiddenStoreComponent` for a page that holds a `hiddenStore` row, so a face can drop it from `components`.
+- A page from `buildConfig`, `weatherSection`, or `stocksSection` with weather or stocks now carries the framework's show and hide code, `dependentVisibility`, for its API key row's `visibleWhen`.
+- `createClay` and `prepareSettingsPage` now add Clay's own `input` or `select` style to a page with a location search or theme picker and no text box or dropdown of its own, unless the face passes its own. A face rule on those fields lighter than Clay's own rules now loses.
+
+#### Removed
+
+- **Breaking:** Removed `serializeValueAs` from `ClayConfigItem`. Delete it from any select, radio group, or input. The watch reads a choice sent as text or as a number.
+
+### Wearer-Visible Changes
+
+#### Changed
+
+- The settings page's opening line now mentions the weather when the page has a Weather section and the face has no opening line of its own. `buildConfig` picks the line.
+
+#### Fixed
+
+- Fixed the settings page showing an API Key box under Open-Meteo and Yahoo, which need no key. The key rows from `weatherSection` and `stocksSection` now hide for those providers.
+- Fixed a setting picked from a dropdown doing nothing on the watch when the watch keeps it as an on or off switch. The watch now takes a toggle sent as the text `"0"` or `"1"`. `settings_apply_inbox` reads it through `tuple_number_or` in `c/pebble/io/tuple_read.h`.
+- Fixed the location and time zone searches finding nothing on Android with plugins on when the face has no built-in weather. `usesPermissions` now lists `open-meteo.com` for a `CLOCK_TIMEZONE_` key, and for `LOCATION_NAME` unless `providers.weather` is `["plugin"]`, which gets a warning instead.
+- Fixed the stock strip keeping another source's quotes until the next day after a settings restore changed the stock source. The stock cache now starts fresh when the provider changes.
+- Fixed the settings page showing extra space under and beside its controls in the Pebble Android app with plugins on.
+- Fixed the location search showing as a plain white box, and the theme picker as a bare dropdown, on a settings page with no other text box or dropdown.
+
 ## [5.0.0] - 2026-11-05
 
 ### Framework Changes
@@ -486,6 +545,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v5.0.0...HEAD
 [5.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.6.0...v5.0.0
 [4.6.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.5.0...v4.6.0
 [4.5.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.4.1...v4.5.0

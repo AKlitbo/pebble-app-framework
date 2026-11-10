@@ -11,7 +11,7 @@ usage: paf <command> [args]
                                fill each unit's paf/ from its pinned tag and install its node_modules
   status                       each unit's faces, tag, the newest framework tag, and whether it is ready
   pin <unit> <tag|latest>
-                               move a unit to another tag, showing the changelog between them first
+                               move a unit to another tag and fill its paf/, printing the breaking entries between them first
   use <unit> local [path]      point a unit's paf/ at a local framework clone, builds included
   use <unit> pinned            put it back on its tag
   build <face|all> [--clean]   build a face in its unit (not on Windows itself), clean when message keys, dependencies, or the framework changed
@@ -181,6 +181,16 @@ paf build <face|all> [--clean] [args]
 ```
 
 Builds a face into a `.pbw` with the framework's build script. It runs on WSL, Linux, or macOS with the Pebble SDK, and refuses on Windows itself. `all` builds every face in the repo and carries on past a failing one.
+
+For each face the script writes each target's sandbox, compiles the phone code into it, and loads the face's settings page from that code, the way the phone builds it, once for each platform the face targets. It writes the page's choice counts and defaults into `targets/<target>/page/settings_page.h`, which the watch's settings take their counts and defaults from, as [Counts from the Settings Page](../how/settings-on-the-watch.md#counts-from-the-settings-page) and [Defaults from the Settings Page](../how/settings-on-the-watch.md#defaults-from-the-settings-page) cover, and says so in a line such as `read my-face's settings page and wrote 6 choice counts and 20 defaults into page/settings_page.h`. Then it runs `pebble build` in each sandbox. A face whose page script reaches for something the build's stand-in phone lacks as it loads stops the build there.
+
+Before it writes the header, the script checks the page and stops with a line naming the face and the fix on any of these:
+
+- a control whose `messageKey` the appinfo does not declare
+- a `_REQUEST` key in `messageKeys` that no feature passed to `startPebbleApp` answers
+- a `customClay` that is not written with the `function` keyword
+- a choice whose default is not one of its options, a key that opens on two defaults, a default past its key's count, or a default for a shared `KNOWN_*` setting of the wrong kind or too long for its field
+- a weather or calendar source default that the face's own picker does not offer, or that the page does not open on, matched without regard to case
 
 `paf` keeps a record of what each face's last passing build was made from, in `targets/.paf-build.json`. The next build starts clean on its own when the face's message keys, the unit's lock, or the framework in `paf/` changed since then, or when there is no passing build to go on from, and it names the reason:
 

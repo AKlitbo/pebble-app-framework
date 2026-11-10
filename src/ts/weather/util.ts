@@ -8,6 +8,9 @@
 import conditions from './conditions';
 import { requestJson as sharedRequestJson } from '../pkjs/request';
 import type { RequestFn } from '../pkjs/request';
+// the phone's offset and day come from the phone clock module, which the plugin calendar reads too
+// they stay on the default export below, so a spec that pins the phone's zone through util still does
+import { phoneDayOf, phoneOffsetMinutes } from '../pkjs/phone-clock';
 
 /** A resolved latitude/longitude pair. */
 export interface WeatherCoords {
@@ -40,6 +43,11 @@ export interface WeatherResult {
   condition: string;
   location: string;
   ok: boolean;
+  /**
+   * The sky in words from a source that has its own, such as "Rain and snow". Left out, the phone
+   * sends the words for the condition token instead.
+   */
+  conditionLabel?: string;
   lat?: number;
   lon?: number;
   humidity?: number;
@@ -253,34 +261,6 @@ function minutesFromIso(iso: unknown): number | null {
   const match = /T(\d{2}):(\d{2})/.exec(String(iso || ''));
 
   return match ? Number(match[1]) * 60 + Number(match[2]) : null;
-}
-
-/**
- * How far ahead of UTC the phone's clock is at a moment, in minutes.
- *
- * Read through here rather than straight off Date so a spec can pin the phone's zone whatever
- * machine it runs on.
- *
- * @param epochMs The moment to read the phone's offset at.
- * @return The offset in minutes, negative west of UTC.
- */
-function phoneOffsetMinutes(epochMs: number): number {
-  return -new Date(epochMs).getTimezoneOffset();
-}
-
-/**
- * The phone's calendar day at a moment, as YYYY-MM-DD.
- *
- * It is the one rule for which of a provider's days counts as today, so every provider that
- * matches its days against the phone's reads it from here. The offset is passed in, read through
- * phoneOffsetMinutes, so a spec that pins the phone's zone pins this too.
- *
- * @param epochMs The moment to read the day at.
- * @param offsetMinutes The phone's offset from UTC at that moment.
- * @return The phone's day, such as "2026-07-05".
- */
-function phoneDayOf(epochMs: number, offsetMinutes: number): string {
-  return new Date(epochMs + offsetMinutes * 60000).toISOString().slice(0, 10);
 }
 
 /**

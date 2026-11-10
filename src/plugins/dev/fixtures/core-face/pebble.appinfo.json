@@ -1,0 +1,21 @@
+{
+  "name": "page-check-core",
+  "displayName": "Page Check Core",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "WEATHER_REQUEST",
+    "WEATHER_TEMPERATURE",
+    "WEATHER_CONDITIONS",
+    "WEATHER_OK",
+    "WEATHER_PROVIDER",
+    "WEATHER_API_KEY",
+    "WEATHER_TEMPERATURE_UNIT",
+    "WEATHER_WIND_UNIT",
+    "LOCATION_USE_GPS",
+    "LOCATION_GPS_FALLBACK",
+    "LOCATION_NAME"
+  ]
+}

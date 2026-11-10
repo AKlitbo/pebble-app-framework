@@ -13,6 +13,7 @@
 #include "io/outbox_queue.h"
 #include "io/tuple_read.h"
 #include "math/scale.h"
+#include "wire/phone_level.h"
 #include "system/settings/settings.h"
 #include "wire/wire_caps.g.h"
 #include <limits.h>
@@ -44,6 +45,12 @@ static struct
     UnitChangedHandler          on_unit_changed;        ///< The wearer switched the temperature unit
     StockStripHandler           on_stock_strip;         ///< The stock strip arrived
     CalendarStripHandler        on_calendar_strip;      ///< The calendar strip arrived
+#if defined(APPMESSAGE_HAS_PHONE)
+    PhoneBatteryHandler         on_phone_battery;       ///< The phone's battery arrived
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+    MusicHandler                on_music;               ///< What the phone is playing arrived
+#endif
     CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
     CustomColorsProvider        custom_colors_provider; ///< Supplies the face's custom colours for the settings reply
 } s_handlers;
@@ -61,6 +68,24 @@ void appmessage_on_unit_changed(UnitChangedHandler cb)         { s_handlers.on_u
 void appmessage_on_stock_strip(StockStripHandler cb)          { s_handlers.on_stock_strip = cb; }
 void appmessage_on_calendar_strip(CalendarStripHandler cb)   { s_handlers.on_calendar_strip = cb; }
 void appmessage_on_custom_colors(CustomColorsHandler cb)      { s_handlers.on_custom_colors = cb; }
+
+void appmessage_on_phone_battery(PhoneBatteryHandler cb)
+{
+#if defined(APPMESSAGE_HAS_PHONE)
+    s_handlers.on_phone_battery = cb;
+#else
+    (void)cb;
+#endif
+}
+
+void appmessage_on_music(MusicHandler cb)
+{
+#if defined(APPMESSAGE_HAS_MUSIC)
+    s_handlers.on_music = cb;
+#else
+    (void)cb;
+#endif
+}
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb) { s_handlers.custom_colors_provider = cb; }
 
 void appmessage_add_inbox_complete(InboxCompleteHandler cb)
@@ -115,6 +140,12 @@ static bool kind_has_key(OutboxKind kind)
 #if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
         case OUTBOX_CALENDAR:
 #endif
+#if defined(APPMESSAGE_HAS_PHONE)
+        case OUTBOX_PHONE:
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+        case OUTBOX_MUSIC:
+#endif
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
         case OUTBOX_FRESH:
 #endif
@@ -156,6 +187,16 @@ static bool send_job(OutboxKind kind)
 #if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
         case OUTBOX_CALENDAR:
             dict_write_uint8(iter, MESSAGE_KEY_CALENDAR_REQUEST, 1);
+            break;
+#endif
+#if defined(APPMESSAGE_HAS_PHONE)
+        case OUTBOX_PHONE:
+            dict_write_uint8(iter, MESSAGE_KEY_PHONE_REQUEST, 1);
+            break;
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+        case OUTBOX_MUSIC:
+            dict_write_uint8(iter, MESSAGE_KEY_MUSIC_REQUEST, 1);
             break;
 #endif
 #if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
@@ -284,6 +325,20 @@ void appmessage_request_calendar(void)
 {
 #if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
     enqueue(OUTBOX_CALENDAR, REQUEST_RETRY_MAX);
+#endif
+}
+
+void appmessage_request_phone(void)
+{
+#if defined(APPMESSAGE_HAS_PHONE)
+    enqueue(OUTBOX_PHONE, REQUEST_RETRY_MAX);
+#endif
+}
+
+void appmessage_request_music(void)
+{
+#if defined(APPMESSAGE_HAS_MUSIC)
+    enqueue(OUTBOX_MUSIC, REQUEST_RETRY_MAX);
 #endif
 }
 
@@ -560,6 +615,29 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 #endif
 #if defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
     dispatch_bytes(iterator, MESSAGE_KEY_CALENDAR_STRIP, s_handlers.on_calendar_strip);
+#endif
+
+    // the phone's battery rides as one whole number. a width the helper cannot read is no reading
+#if defined(APPMESSAGE_HAS_PHONE)
+    Tuple *phone_t = dict_find(iterator, MESSAGE_KEY_PHONE_BATTERY);
+    if (phone_t && s_handlers.on_phone_battery)
+    {
+        s_handlers.on_phone_battery(phone_level_read(tuple_int_or(phone_t, PHONE_NO_LEVEL)));
+    }
+#endif
+
+    // the phone sends the title, the artist, and playing together. playing is always a number, so a
+    // message holding it is a whole track. a bridge can drop a tuple holding an empty string, so the
+    // title and the artist are not what marks one, and a line left out, or one that is not text,
+    // reads as empty. that is how a clear for nothing playing still lands
+#if defined(APPMESSAGE_HAS_MUSIC)
+    Tuple *music_playing_t = dict_find(iterator, MESSAGE_KEY_MUSIC_PLAYING);
+    if (music_playing_t && s_handlers.on_music)
+    {
+        const char *music_title = tuple_str_or(dict_find(iterator, MESSAGE_KEY_MUSIC_TITLE), "");
+        const char *music_artist = tuple_str_or(dict_find(iterator, MESSAGE_KEY_MUSIC_ARTIST), "");
+        s_handlers.on_music(music_title, music_artist, tuple_int_or(music_playing_t, 0) == 1);
+    }
 #endif
 
     // coordinates arrive as strings already laid out by the face's own formatter, so their shape is

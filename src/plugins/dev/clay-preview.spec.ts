@@ -1,27 +1,29 @@
 /**
  * Specs for the Clay preview's own decisions.
  *
- * Building the page is Clay's work, and compiling it is the build's. What the preview decides itself
- * is what it was asked for, and which page and components it hands Clay. A wrong answer there
- * previews a fresh install when a returning wearer was asked for, or shows a working page for a face
- * whose settings never open on the phone.
+ * Building the page is Clay's work, compiling it is the build's, and loading it is the settings page
+ * loader's, which has specs of its own. What the preview decides itself is what it was asked for, and
+ * which phone the page's features find. A wrong answer there previews a fresh install when a returning
+ * wearer was asked for, or opens the page on plugins and a saved state the page never reads.
  */
-import { describe, expect, test } from 'vitest';
-import { captureStart, parseClayPreviewArgs, type StartHost, type StartOptions } from './clay-preview.ts';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
+import { parseClayPreviewArgs, previewPlugins, hasPluginDefines } from './clay-preview.ts';
+import { installHost } from '../../tools/pkjs/settings-page.ts';
+import { createSourceSubscription } from '../../ts/plugin-sources/subscription.ts';
 
 describe('parseClayPreviewArgs', () => {
   /** The flags a face developer types every day have to land where the build reads them. */
   test('reads the face and every flag', () => {
-    const result = parseClayPreviewArgs(['my-face', '--watch', '--platform=gabbro', '--settings=saved.json']);
+    const result = parseClayPreviewArgs(['my-face', '--watch', '--platform=gabbro', '--settings=saved.json', '--plugins=plugins.json', '--out=page.html']);
 
-    expect(result).toEqual({ face: 'my-face', watch: true, platform: 'gabbro', settings: 'saved.json', help: false });
+    expect(result).toEqual({ face: 'my-face', watch: true, platform: 'gabbro', settings: 'saved.json', plugins: 'plugins.json', out: 'page.html', help: false });
   });
 
   /** With nothing but the face it previews a fresh install on emery, the watch most faces are built for. */
   test('defaults to a fresh install on emery', () => {
     const result = parseClayPreviewArgs(['my-face']);
 
-    expect(result).toEqual({ face: 'my-face', watch: false, platform: 'emery', settings: null, help: false });
+    expect(result).toEqual({ face: 'my-face', watch: false, platform: 'emery', settings: null, plugins: null, out: null, help: false });
   });
 
   /**
@@ -32,6 +34,13 @@ describe('parseClayPreviewArgs', () => {
     const result = () => parseClayPreviewArgs(['my-face', '--settings', 'saved.json']);
 
     expect(result).toThrow('unknown argument: --settings');
+  });
+
+  /** Ignoring a --plugins with a space would preview a phone with no plugins while the developer expects some. */
+  test('refuses --plugins with a space instead of an equals sign', () => {
+    const result = () => parseClayPreviewArgs(['my-face', '--plugins', 'plugins.json']);
+
+    expect(result).toThrow('unknown argument: --plugins');
   });
 
   /** A typo in a flag stops the run rather than previewing something other than what was asked for. */
@@ -70,55 +79,124 @@ describe('parseClayPreviewArgs', () => {
   });
 });
 
-describe('captureStart', () => {
-  /** A host whose real startPebbleApp records that it ran, so a spec can see whether it was put back. */
-  function recordingHost(): { host: StartHost; realCalls: StartOptions[] } {
-    const realCalls: StartOptions[] = [];
-    const host: StartHost = { startPebbleApp: (options) => { realCalls.push(options); } };
+describe('hasPluginDefines', () => {
+  /**
+   * The opt-in. A face with no plugin define has to preview the page Clay builds from its own config
+   * with no feature started, so a feature that reaches for a phone global the preview lacks never
+   * stops its preview.
+   */
+  test('starts no feature for a face without a plugin define', () => {
+    const result = hasPluginDefines({ HEALTH_HRV: 1 });
 
-    return { host, realCalls };
+    expect(result).toBe(false);
+  });
+
+  /** A define set to 0 is off, as the build reads it, so the face previews as one without it. */
+  test('reads a plugin define of 0 as off', () => {
+    const result = hasPluginDefines({ PLUGIN_WEATHER: 0 });
+
+    expect(result).toBe(false);
+  });
+
+  /** A face built with a plugin define gets the page its features change, which is what the preview is for. */
+  test('starts the features for a face with a plugin define on', () => {
+    const result = hasPluginDefines({ PLUGIN_WEATHER: 1 });
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('previewPlugins', () => {
+  /** A file with no plugins field is a phone without the plugin calls, which is not the same as an empty list. */
+  test('reads a file with no plugins list as a phone without the plugin calls', () => {
+    const result = previewPlugins({ state: {} }, 'plugins.json');
+
+    expect(result.plugins).toBeNull();
+  });
+
+  /** A misspelt field would otherwise open the page on a phone the developer never asked for. */
+  test('refuses a field it does not know', () => {
+    const result = () => previewPlugins({ plugin: [] }, 'plugins.json');
+
+    expect(result).toThrow('has a field called plugin');
+  });
+
+  /** A state keyed by the category alone would land under a key no plugin source reads. */
+  test('refuses a state that is not keyed by category and item', () => {
+    const result = () => previewPlugins({ state: { weather: { lastError: 'PERMISSION_DENIED' } } }, 'plugins.json');
+
+    expect(result).toThrow('has a state for weather');
+  });
+});
+
+describe('installHost', () => {
+  const host = globalThis as unknown as Record<string, unknown>;
+  let before: Record<'Pebble' | 'localStorage', PropertyDescriptor | undefined>;
+
+  beforeEach(() => {
+    before = {
+      Pebble: Object.getOwnPropertyDescriptor(host, 'Pebble'),
+      localStorage: Object.getOwnPropertyDescriptor(host, 'localStorage'),
+    };
+  });
+
+  afterEach(() => {
+    (['Pebble', 'localStorage'] as const).forEach((name) => {
+      const descriptor = before[name];
+
+      if (descriptor) {
+        Object.defineProperty(host, name, descriptor);
+      } else {
+        delete host[name];
+      }
+    });
+  });
+
+  /** A weather subscription as a page hook makes one, never started. */
+  function weatherSubscription(): ReturnType<typeof createSourceSubscription> {
+    return createSourceSubscription({ category: 'weather', item: 'location', onUpdate: () => {}, onError: () => {} });
   }
 
   /**
-   * The point of the capture. The preview registers exactly what the face passes, so a component
-   * left out of startPebbleApp is missing here too, the way it is on the phone.
+   * The two sides of the --plugins state. The file's state has to land under the key the plugin
+   * source reads, or no warning row the page shows from a saved state would ever appear.
    */
-  test('hands back what the face passed to startPebbleApp', () => {
-    const { host } = recordingHost();
-    const passed: StartOptions = { clayConfig: [{ type: 'heading', defaultValue: 'Page' }], components: ['layout'], customClay: 'reset' };
+  test('puts each saved state where the plugin source reads it', () => {
+    const plugins = previewPlugins({ plugins: [], state: { 'weather/location': { pluginUuid: null, lastError: 'PERMISSION_DENIED', lastEmpty: false } } }, 'plugins.json');
 
-    const result = captureStart(host, () => host.startPebbleApp(passed), 'my-face');
+    installHost({ platform: 'emery', settings: null }, plugins);
 
-    expect(result).toBe(passed);
+    const result = weatherSubscription().state();
+
+    expect(result.lastError).toBe('PERMISSION_DENIED');
   });
 
-  /** The face's start-up must never reach the real startPebbleApp, which would wire phone events under node. */
-  test('keeps the real startPebbleApp from running', () => {
-    const { host, realCalls } = recordingHost();
+  /** The page hooks read the plugin list through the subscription, so the file's list has to come out there. */
+  test('gives the plugin source the plugins the file lists', () => {
+    const listed = [{ uuid: 'weather-uuid', name: 'Weather', sources: [] }];
 
-    captureStart(host, () => host.startPebbleApp({ clayConfig: [] }), 'my-face');
+    installHost({ platform: 'emery', settings: null }, previewPlugins({ plugins: listed }, 'plugins.json'));
 
-    expect(realCalls).toHaveLength(0);
+    const result = weatherSubscription().plugins();
+
+    expect(result).toEqual(listed);
   });
 
-  /** A rebuild under --watch loads the face again, so the real call has to be back after a failed load. */
-  test('puts the real startPebbleApp back when the load throws', () => {
-    const { host } = recordingHost();
-    const real = host.startPebbleApp;
-    const load = () => { throw new Error('bad face'); };
+  /** A list call that throws is how the page check stands in for a phone whose plugin list cannot be read, which the page must not take for plugins off. */
+  test('gives the plugin source a list call that throws for an unreadable file', () => {
+    installHost({ platform: 'emery', settings: null }, previewPlugins({ unreadable: true }, 'plugins.json'));
 
-    const result = () => captureStart(host, load, 'my-face');
+    const result = weatherSubscription().plugins();
 
-    expect(result).toThrow('bad face');
-    expect(host.startPebbleApp).toBe(real);
+    expect(result).toBeNull();
   });
 
-  /** A face whose start-up never starts has no page the phone would build, so the preview says so. */
-  test('refuses a face that never calls startPebbleApp', () => {
-    const { host } = recordingHost();
+  /** A phone without the plugin calls has no enumeratePlugins at all, which is how plugins switched off look. */
+  test('leaves enumeratePlugins off for a file with no plugins list', () => {
+    installHost({ platform: 'emery', settings: null }, previewPlugins({}, 'plugins.json'));
 
-    const result = () => captureStart(host, () => {}, 'my-face');
+    const result = (host.Pebble as Record<string, unknown>).enumeratePlugins;
 
-    expect(result).toThrow("my-face's src/pkjs/index.ts never calls startPebbleApp");
+    expect(result).toBeUndefined();
   });
 });

@@ -54,7 +54,7 @@ A face repo's CI runs the `setup-pebble`, `report-memory`, and `render-memory` a
 Everything a face gets lives under `src/`, which is the folder paf copies, without the specs and their fixtures.
 
 * **`src/c/`**: the watch code. `core/` is plain C with host specs. `pebble/` needs the SDK.
-* **`src/ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, Clay), and `generated.d.ts`, which types every `*.g` module a generator writes. Its `testing/` folder holds helpers the framework's specs share, which a face's own specs can use too.
+* **`src/ts/`**: the PebbleKit JS runtime (weather, stocks, calendar, now playing, the phone's battery, Pebble app plugins, Clay), and `generated.d.ts`, which types every `*.g` module a generator writes. Its `testing/` folder holds helpers the framework's specs share, which a face's own specs can use too.
 * **`src/tools/`**: the tools a face builds with. `build.ts` builds the `.pbw` for `paf build`, on WSL, Linux, or macOS with the Pebble SDK installed. The others are the Clay component generator and its check, the pkjs build, and the manifest build. `shared/` holds the helpers the tools and plugins share, such as the face lookup and the framework's paths, and a face's own tools can import them too.
 * **`src/waf/`**: the waf helpers that stage and build a face, and the wscript template each build target gets.
 * **`src/plugins/`**: what a face opts into, each with its own `package.json` and dependencies. A plugin is mostly tools, but it can carry watch C too, which the build stages beside the framework's own.
@@ -80,7 +80,7 @@ Framework releases are git tags such as `v4.0.0`. Framework 4 needs `paf 2.0.0`.
 The framework's own checks need no faces.
 
 * **`tools/`**: the framework's own scripts, `typecheck.ts`, `build-conditions.ts`, `format.ts`, `fresh-unit.ts`, and the `paf-key.ts` helper it shares with a spec. They only run in this repo.
-* **`tests/c/spec/`**: the host C test harness. The specs themselves sit beside the code they cover.
+* **`tests/c/spec/`**: the host C test harness, and in `stops/` the compiles that have to fail. The specs themselves sit beside the code they cover.
 * **`eslint.config.ts`**, **`vitest.config.ts`**, and the **`tsconfig.*.json`** files at the root: the framework's own lint, test, and typecheck setup. Its lint takes the house style from the `code-style` plugin. The root **`tsconfig.json`** holds no files and points an editor at those projects.
 * **`.githooks/`**: the pre-commit hook that runs lint and typecheck.
 * **`.github/actions/`**: the GitHub Actions, each with its script and specs under `scripts/`. The framework's own workflows run the verify actions, `build-doxygen`, `build-docs-site`, and `publish-docs-site`.
@@ -95,6 +95,7 @@ npm ci
 npm test              # providers, Clay pieces, build tools against fixtures/, and the action scripts
 npm run lint
 npm run typecheck
+npm run check:pages   # the settings page in headless Chromium, through the plugin and provider scenarios
 ```
 
 `npm run format` runs Prettier over the framework's own CSS, JSON, and YAML with the `code-style` plugin's settings. `npm run format:check` lists the files it would change.

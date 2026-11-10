@@ -1,0 +1,18 @@
+{
+  "name": "page-check-plugin-no-unit",
+  "displayName": "Page Check Plugin No Unit",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "WEATHER_REQUEST",
+    "WEATHER_TEMPERATURE",
+    "WEATHER_CONDITIONS",
+    "WEATHER_OK",
+    "WEATHER_API_KEY",
+    "LOCATION_USE_GPS",
+    "LOCATION_GPS_FALLBACK",
+    "LOCATION_NAME"
+  ]
+}

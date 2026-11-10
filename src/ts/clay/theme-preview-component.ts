@@ -72,14 +72,14 @@ export default {
   // the .value span, which shows the chosen name, and the preview goes under the whole row. initialize
   // fills the label, the options, the description, and the first picture
   template: [
-    '<div class="component component-select theme-preview">',
+    '<div class="component component-select pf-theme">',
     '  <label class="tap-highlight">',
-    '    <span class="label tp-label"></span>',
+    '    <span class="label pf-theme-label"></span>',
     '    <span class="value"></span>',
-    '    <select class="tp-select" data-manipulator-target></select>',
+    '    <select class="pf-theme-select" data-manipulator-target></select>',
     '  </label>',
-    '  <div class="tp-preview"></div>',
-    '  <div class="description tp-desc" style="display:none;"></div>',
+    '  <div class="pf-theme-preview"></div>',
+    '  <div class="description pf-theme-desc" style="display:none;"></div>',
     '</div>',
   ].join(''),
 
@@ -88,11 +88,11 @@ export default {
   // shot is a square framebuffer with the corners outside the circle, so the box is rounded off to the
   // circle the watch really shows. initialize sets image-rendering per shot: crisp pixels when a shot
   // is drawn larger than its own pixels, smooth when a hi-res shot is shrunk to fit. the dropdown
-  // itself takes Clay's own select styles
+  // itself takes Clay's own select styles, which createClay registers on every page holding a picker
   style: [
-    '.theme-preview .tp-preview { display: flex; justify-content: center; gap: 1.4rem; margin: 0.9rem 0 0.3rem; }',
-    '.theme-preview .tp-img { display: block; width: 8rem; max-width: 40%; height: auto; background: #000; border: 2px solid #3d434d; }',
-    '.theme-preview .tp-img.tp-round { border-radius: 50%; }',
+    '.pf-theme .pf-theme-preview { display: flex; justify-content: center; gap: 1.4rem; margin: 0.9rem 0 0.3rem; }',
+    '.pf-theme .pf-theme-img { display: block; width: 8rem; max-width: 40%; height: auto; background: #000; border: 2px solid #3d434d; }',
+    '.pf-theme .pf-theme-img.pf-theme-round { border-radius: 50%; }',
   ].join(''),
 
   // Clay's built-in value manipulator reads and writes the select's value, so the chosen theme saves
@@ -132,14 +132,14 @@ export default {
     // control is only reachable once the page is built
     const previewsByKey = config.previewsByKey;
     let sibling: ThemePreviewSibling | undefined;
-    const select = root.querySelector('.tp-select') as HTMLSelectElement;
+    const select = root.querySelector('.pf-theme-select') as HTMLSelectElement;
     const valueSpan = root.querySelector('.value') as HTMLElement;
-    const gallery = root.querySelector('.tp-preview') as HTMLElement;
+    const gallery = root.querySelector('.pf-theme-preview') as HTMLElement;
 
-    (root.querySelector('.tp-label') as HTMLElement).textContent = config.label || 'Theme';
+    (root.querySelector('.pf-theme-label') as HTMLElement).textContent = config.label || 'Theme';
 
     if (config.description) {
-      const desc = root.querySelector('.tp-desc') as HTMLElement;
+      const desc = root.querySelector('.pf-theme-desc') as HTMLElement;
 
       desc.textContent = config.description;
       desc.style.display = 'block';
@@ -223,7 +223,7 @@ export default {
         if (typeof picture === 'string' && picture.indexOf('data:image/') === 0) {
           const img = document.createElement('img');
 
-          img.className = round ? 'tp-img tp-round' : 'tp-img';
+          img.className = round ? 'pf-theme-img pf-theme-round' : 'pf-theme-img';
           img.alt = '';
 
           // a watch shot drawn bigger than its own pixels keeps hard edges, so it stays pixelated. a

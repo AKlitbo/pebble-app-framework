@@ -1,0 +1,16 @@
+{
+  "name": "page-check-music-phone",
+  "displayName": "Page Check Music Phone",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "MUSIC_TITLE",
+    "MUSIC_ARTIST",
+    "MUSIC_PLAYING",
+    "MUSIC_REQUEST",
+    "PHONE_BATTERY",
+    "PHONE_REQUEST"
+  ]
+}

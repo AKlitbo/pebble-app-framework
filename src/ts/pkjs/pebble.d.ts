@@ -1,6 +1,6 @@
 /**
  * PebbleKit JS runtime globals and the shapes the app talks to. Ambient (global),
- * so app.ts uses these without importing. Only the surface app.ts touches is typed.
+ * so app.ts uses these without importing. Only the surface the phone code touches is typed.
  * There is no upstream @types for PebbleKit JS.
  */
 
@@ -24,6 +24,13 @@ interface PebbleBridge {
   addEventListener(type: 'ready' | 'showConfiguration', handler: () => void): void;
   addEventListener(type: 'appmessage', handler: (event: PebbleAppMessageEvent) => void): void;
   addEventListener(type: 'webviewclosed', handler: (event: PebbleWebviewClosedEvent) => void): void;
+
+  // the plugin calls are only on a phone that has them, so both are optional. they are typed
+  // unknown because this file imports nothing, and plugin-sources/subscription.ts checks what comes back
+  /** The installed plugins. */
+  enumeratePlugins?(): unknown;
+  /** Subscribes to one category and item, and hands back a handle carrying unsubscribe. */
+  subscribeToSource?(request: unknown): unknown;
 }
 
 declare const Pebble: PebbleBridge;
@@ -34,6 +41,16 @@ interface ClayConstructor {
     registerComponent(component: unknown): void;
     getSettings(json: string): AppMessageDict;
     generateUrl(): string;
+    // generateUrl writes the page from these two each time it runs, so setting them after the
+    // constructor changes the next page that opens. they are typed loosely because this file imports
+    // nothing. Clay deep copies the page it was built with into config, and keeps a do-nothing
+    // function in customFn when it was given none
+    /** The settings page the next generateUrl writes. */
+    config: unknown[];
+    /** The function the page runs before it builds. */
+    customFn: unknown;
+    /** Every component registered so far, by name. Clay registers its own for each type the page it was built with uses. */
+    components: Record<string, unknown>;
   };
 }
 

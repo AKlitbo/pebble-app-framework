@@ -34,6 +34,8 @@ export const WIRE_CAPS = {
   CALENDAR_TITLE_MAX: 24,
   /** How long an event location can be, in characters. */
   CALENDAR_LOC_MAX: 16,
+  /** How long a now playing title or artist can be, in characters. */
+  MUSIC_TEXT_MAX: 32,
   /** A forecast column with no reading ships this marker so the watch draws a placeholder. */
   FORECAST_NO_TEMP: -1000,
   /** A settings request for the watch's whole snapshot, to seed the settings page from. */

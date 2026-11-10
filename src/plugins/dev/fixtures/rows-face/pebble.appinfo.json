@@ -1,0 +1,17 @@
+{
+  "name": "page-check-rows",
+  "displayName": "Page Check Rows",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "ROW_PICK",
+    "ROW_WORDS",
+    "ROW_SWITCH",
+    "ROW_LEVEL",
+    "ROW_INK",
+    "ROW_ONE",
+    "ROW_SOME"
+  ]
+}

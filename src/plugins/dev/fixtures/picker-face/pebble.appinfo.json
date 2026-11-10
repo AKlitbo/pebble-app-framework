@@ -1,0 +1,12 @@
+{
+  "name": "page-check-picker",
+  "displayName": "Page Check Picker",
+  "targetPlatforms": ["emery"],
+  "watchapp": { "watchface": true },
+  "messageKeys": [
+    "SETTINGS_REQUEST",
+    "SETTINGS_FRESH",
+    "APPEARANCE_THEME",
+    "PICK_SWITCH"
+  ]
+}

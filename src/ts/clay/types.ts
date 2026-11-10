@@ -10,8 +10,10 @@ export type ClayValue = string | number | boolean | { value: string | number | b
 /** One choice a select or radio group offers: its label and the value Clay stores. */
 export type ClayOption = { label: string; value: string | number };
 
-/** One `visibleWhen` test: the control to read, by messageKey, and the values that reveal the item. */
-export type VisibilityCondition = { key: string; in: Array<string | number | boolean> };
+/** One `visibleWhen` test: the control to read, by messageKey, and either `in`, the values that
+ * reveal the item, or `notIn`, the values that hide it. A value neither list names, such as a select
+ * left blank by a saved choice it no longer offers, hides an `in` row and shows a `notIn` one. */
+export type VisibilityCondition = { key: string; in: Array<string | number | boolean> } | { key: string; notIn: Array<string | number | boolean> };
 
 /** The pictures a themePreview draws for one option. A plain list is drawn on every watch. A map
  * keyed by platform name (emery, gabbro, and so on) draws that watch's own list, so a round watch
@@ -36,11 +38,6 @@ export interface ClayConfigItem {
   options?: ClayOption[];
   /** heading only: how big the heading is, from 1 to 6. Clay draws 4 when none is given. */
   size?: number;
-  /** input, select, and radiogroup only: how Clay sends the value to the watch. 'string', the
-   * default, sends it as it is. 'integer' sends a whole number, and Clay turns any value that is not
-   * one into 0, so it only suits a select whose option values are all numbers and that fills a choice
-   * setting. A text setting on the watch drops an integer, and a word would land as the first choice. */
-  serializeValueAs?: 'string' | 'integer';
   /** A name Clay's getItemsByGroup finds the item by, for a custom function that works on several
    * items at once. */
   group?: string;
@@ -68,18 +65,81 @@ export interface ClayConfigItem {
    * option's value, so the shots under the picker follow a second choice such as the scene. The named
    * control is read once the page is built, and the preview redraws whenever it changes. */
   previewsByKey?: string;
+  /** The builder's default intro carries the plain wording here. The page takes it in place of the
+   * wording that mentions weather when no Weather section is left once the page is folded, such as
+   * on a face whose weather comes from a plugin alone. Clay ignores the field. */
+  introWithoutWeather?: string;
   /** hiddenStore only: the extra class that tells one store on a page from another. */
   storeClass?: string;
   /** Shows this item only while another control holds one of the given values, so a row that does
    * nothing under the current choice is hidden rather than left on the page. One condition, or a
    * list of them that all have to hold. `key` is a control's messageKey and `in` the values that
-   * reveal this item (a toggle's are `true`/`false`). The framework wires the showing and hiding
-   * when a page has any, as long as the face passes no customClay of its own. */
+   * reveal this item (a toggle's are `true`/`false`), or `notIn` the values that hide it. The
+   * framework wires the showing and hiding when a page has any, ahead of the face's own customClay. */
   visibleWhen?: VisibilityCondition | VisibilityCondition[];
+  /** select only: the Pebble app plugin source this choice can read from instead, by category and
+   * item, such as weather and location. A face built with plugin sources adds a "Pebble App:
+   * Preferred Source" option to it when a plugin on the phone serves that item. Clay ignores the
+   * field, so on any other face the select is left as it is. */
+  pluginSource?: { category: string; item: string };
+  /** The messageKey of a pluginSource select this row means nothing under while a plugin is picked,
+   * such as the API key row under WEATHER_PROVIDER. A face built with plugin sources hides the row
+   * while that select reads from a plugin. Clay ignores the field, so on any other face the row
+   * shows as it always does. */
+  pluginSourceHides?: string;
+  /** The messageKey of the provider select this text row leads into, such as the builder's line above
+   * WEATHER_PROVIDER. It shows with a plugin choice on offer, so the select stays where the wearer
+   * found it, and only a page that takes the select away takes this row with it. Clay ignores the
+   * field. */
+  pluginSourceLead?: string;
+  /** The kind of Pebble app plugin data whose notes go straight after this row, such as `music`,
+   * `phone`, `weather`, or `calendar`. A face built with that kind's plugin define puts the notes for
+   * a kind with no source choice here, such as the one saying to turn plugins on. Without the mark
+   * they go at the foot of the page. Clay ignores the field. */
+  pluginSourceRows?: string;
+  /** pluginNote only: `warning`, the default, with its "!" badge, or `info` for the calmer look. */
+  tone?: 'warning' | 'info';
+  /** pluginPanel only: what the supported plugins panel lists, every word in it HTML-escaped. */
+  panel?: PluginPanelContent;
+  /** section only: hides the whole card while every row in it is hidden, and shows it again once
+   * any row shows. Clay draws a section as a card it cannot hide, so a section whose rows all hide
+   * would leave an empty card. `dependentVisibility` acts on it, and only a section carrying it is
+   * hidden. The plugin source page sets it on a section whose rows all hide while a plugin is picked. */
+  hideWhenEmpty?: boolean;
   /** color only: false shows the true colours instead of their washed-out sunlight pair. */
   sunlight?: boolean;
   /** slider only: the gap between values. Its decimal places are how far Clay scales the value up for the watch. */
   step?: number;
+}
+
+/** One plugin in the supported plugins panel. */
+export interface PluginPanelEntry {
+  /** The plugin's name. */
+  name: string;
+  /** A short word after the name, such as that it is installed, or empty for none. */
+  tag: string;
+  /** The address of its store listing, or empty for a plugin with none. */
+  listing: string;
+}
+
+/** One kind of data in the supported plugins panel, with the plugins that serve it. */
+export interface PluginPanelKind {
+  category: string;
+  item: string;
+  /** The heading over its plugins, such as `Weather`. */
+  label: string;
+  entries: PluginPanelEntry[];
+}
+
+/** What the supported plugins panel shows. Every word is HTML-escaped, since Clay writes the row into a script block. */
+export interface PluginPanelContent {
+  /** The words the panel shows while it is closed. */
+  title: string;
+  /** The line under the title once it opens. */
+  intro: string;
+  /** The line saying to turn plugins on, or empty while the phone lists any plugin. */
+  off: string;
+  kinds: PluginPanelKind[];
 }
 
 /**
