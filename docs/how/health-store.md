@@ -32,6 +32,8 @@ A `HealthSeed` pins fixed numbers and curves for screenshots, as [How the Stores
 
 **Heart Rate.** A peek at the watch's current reading, which is cheap. A watch with no heart rate sensor, or no reading yet, gives -1, and the framework's `readout_hr` draws dashes for it.
 
+**Whether There Is a Sensor at All.** `health_store_has_hr` says whether this watch has a heart rate sensor, for a face that leaves its heart rate slot out rather than drawing dashes that never go away. It goes by the platform, through `HEALTH_HR_SENSOR` in `health_store.h`, since the watch's health service never checks for the sensor and answers the same with one or without. Gabbro's emulator even reports a heart rate as there. Emery and diorite answer true and every other platform false. A watch off the wrist, one that has not read yet, and one with heart rate turned off in Health still answer true, since the slot fills once the sensor reads. The Pebble 2 SE answers true as well, because it shares diorite with the Pebble 2 HR and nothing tells the two apart, so its slot shows dashes. The answer never changes on a given watch, so a face can ask once when it lays out its screen, before `health_store_init` or in a seeded build alike.
+
 **Steps.** Today's total. The watch keeps it to hand, so it is cheap too. No reading, such as with Health turned off, gives -1.
 
 **Sleep, Active Minutes, Calories, and Distance.** Each of these costs a blocking flash read every time it is asked for, which is why a face pays only for the ones it shows. Sleep and active minutes arrive in seconds, and the store turns them into minutes. Sleep is the watch's total for today.
@@ -150,7 +152,7 @@ health_store_init((HealthConfig){.live = true, .hrv_period_sec = 300,
 
 // when the wearer changes a setting, or places or removes a panel
 health_store_set_hrv_period(period);
-health_store_set_hrv_rules(still_mg, walk_steps, HRV_COUNT_NOT_WALKING, keep_all, live_redraw);
+health_store_set_hrv_rules(still_mg, walk_steps, settle_gaps, HRV_COUNT_NOT_WALKING, keep_all, live_redraw);
 
 // and in the face's deinit
 health_store_deinit();
@@ -166,7 +168,7 @@ health_store_deinit();
 
 The watch turns the sensor off as soon as it has a good heart rate, which on a Time 2 is about six beats in, and a run needs 20 differences. So on the first gap of a burst the store asks for a period of one second, shorter than the sensor's warm up, which keeps it on. It goes back to the face's period once the run fills at 60 differences, goes quiet, or reaches 90 seconds. On a Time 2 a held burst took 40 to 90 seconds, longer when the heart beats slower.
 
-**The First Gaps Are Left Out.** For its first few seconds the sensor can swap between two gaps, 730 and 620 ms on a Time 2, close enough to pass the jump rule below. Left in, those lifted one reading from 35 ms to 50. So the store drops the first 10 gaps of each burst.
+**The First Gaps Are Left Out.** For its first few seconds the sensor can swap between two gaps, 730 and 620 ms on a Time 2, close enough to pass the jump rule below. Left in, those lifted one reading from 35 ms to 50. So the store drops the first 10 gaps of each burst, or the `hrv_settle_gaps` a face sets, up to 20. A sensor that settles slower can take more, and the cap keeps a run's 21 gaps inside the 90 second hold for a heart as slow as 30 a minute. A new count from `health_store_set_hrv_rules` applies from the next burst, since a burst reads it as it starts.
 
 ### What the Wearer Was Doing
 
@@ -184,7 +186,7 @@ HRV only means something at rest. Walking raises the heart rate and shakes the s
 
 Every finished reading goes into an [`HrvLog`](../../src/c/core/health/hrv_log.h), read with `health_store_hrv_log` and the `hrv_log` functions. It holds the latest 24 readings with what the wearer was doing and whether Pebble said they were asleep, today's readings averaged by the hour, the night's average, and the latest reading of each state. A walking reading shows in the history and as the latest walking one, but stays out of the hours and the night. A reading taken asleep between noon and 21:00 is a nap's and stays out of the night too, since those are the hours the watch calls a sleep a nap. The store saves the log under `hrv_persist_key` each time a reading lands, so a face opened again after an app still has its day. With no key it lives in memory only. `HealthSeed.hrv_log` pins one for screenshots, and a seeded log is never saved.
 
-For a panel that helps the wearer pick the two limits, `health_store_hrv_recent` gives the last six bursts, dropped ones included, with each one's score, steps, state, how many beats it kept, and whether it counted. `health_store_hrv_live` gives the burst being held right now, and `hrv_live_redraw` redraws the face once a second while one is. `health_store_hrv_still_mg` and `health_store_hrv_walk_steps` give the limits in use, so a panel shows the same numbers as the settings. The recent bursts live in memory only, since they are for watching the numbers while moving.
+For a panel that helps the wearer pick the limits, `health_store_hrv_recent` gives the last six bursts, dropped ones included, with each one's score, steps, state, how many beats it kept, and whether it counted. `health_store_hrv_live` gives the burst being held right now, and `hrv_live_redraw` redraws the face once a second while one is. `health_store_hrv_still_mg`, `health_store_hrv_walk_steps`, and `health_store_hrv_settle_gaps` give the limits in use, so a panel shows the same numbers as the settings. The recent bursts live in memory only, since they are for watching the numbers while moving.
 
 ### How a Reading Is Worked Out
 

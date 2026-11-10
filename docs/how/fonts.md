@@ -32,49 +32,51 @@ The face owns the numbering and what each slot means. The registry treats a slot
 
 ## Loading at Startup
 
-A face registers each font once, before the engine builds its screen:
+A face loads each font once, before the engine builds its screen:
 
 ```c
 static void load_fonts(void)
 {
-    fonts_register(FONT_CLOCK,
-        fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CLOCK_48)));
-    fonts_register(FONT_CLOCK_SMALL,
-        fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CLOCK_36)));
+    fonts_load(FONT_CLOCK, RESOURCE_ID_FONT_CLOCK_48);
+    fonts_load(FONT_CLOCK_SMALL, RESOURCE_ID_FONT_CLOCK_36);
     fonts_register_system(FONT_LABEL, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 }
 ```
 
+`fonts_load` loads the font from its resource and registers it under the slot. It is the same as `fonts_register(id, fonts_load_custom_font(resource_get_handle(resource)))`, which a face can still write itself, and it logs the slot when the font does not load. It also records the resource in the slot, so a later `fonts_swap` to the same one does nothing.
+
 On the way out, one call to `fonts_unload_all` frees every font the face loaded.
 
-**Custom Fonts and System Fonts.** The two register calls differ in who owns the font. `fonts_register` is for a font the face loaded itself, which the face has to free. `fonts_register_system` is for one of the watch's built-in fonts, which the firmware owns. Freeing one of those is a fault when the app closes. So the registry remembers which is which, and `fonts_unload_all` skips the built-in ones.
+**Custom Fonts and System Fonts.** The two register calls differ in who owns the font. `fonts_register` is for a font the face loaded itself, which the face has to free, and `fonts_load` registers through it. `fonts_register_system` is for one of the watch's built-in fonts, which the firmware owns. Freeing one of those is a fault when the app closes. So the registry remembers which is which, and `fonts_unload_all` skips the built-in ones.
 
 **One Font in Several Slots.** A face can register the same loaded font under more than one slot, such as a fallback tier that reuses the main font at the same size. `fonts_unload_all` frees it once and clears every slot holding it, so the second slot never frees it again.
 
-**A Missing Font.** `fonts_get` hands back Gothic 24, one of the watch's built-in fonts, for a slot with nothing in it. That covers a slot the face forgot to register and a font that failed to load, since `fonts_load_custom_font` gives back NULL then and the slot reads as empty. The text still draws, only in the wrong typeface, and the registry logs the miss once per slot rather than on every redraw. A face that loads many fonts can check each load and log its own message too, because the wrong typeface on one line is easy to miss on the screen.
+**A Missing Font.** `fonts_get` hands back Gothic 24, one of the watch's built-in fonts, for a slot with nothing in it. That covers a slot the face forgot to register and a font that failed to load, since `fonts_load_custom_font` gives back NULL then and the slot reads as empty. The text still draws, only in the wrong typeface, and the registry logs the miss once per slot rather than on every redraw. `fonts_load` also logs the slot at the moment its load fails, because the wrong typeface on one line is easy to miss on the screen, and it returns false so a face can act on it.
 
 ## Swapping a Font While Running
 
-A face that lets the wearer pick a font loads the new one when the setting changes. Registering into a slot that already holds a font overwrites it without freeing the old one, so the face keeps its own handle and frees the old font first:
+A face that lets the wearer pick a font swaps it when the setting changes:
 
 ```c
-static GFont s_header_font;
-
-static void apply_header_font(uint32_t resource)
+static void apply_header_font(void)
 {
-    if (s_header_font)
-    {
-        fonts_unload_custom_font(s_header_font);
-    }
-
-    s_header_font = fonts_load_custom_font(resource_get_handle(resource));
-    fonts_register(FONT_HEADER, s_header_font);
+    fonts_swap(FONT_HEADER, header_font_resource(settings_u8(SETTING_HEADER_FONT)));
 }
 ```
 
-The registry never frees on an overwrite. The same font can sit in another slot too, and only the face knows whether the old one is still in use.
+`fonts_swap` frees the font the slot held, then loads and registers the new one. The face can call it on every settings save, since it does nothing when the slot already holds that resource from `fonts_load` or an earlier swap. The first call on an empty slot just loads, so the same call works at startup. A load that fails leaves the slot empty, and the text draws in the fallback font.
 
-The new font is in the slot straight away, and anything that looks the slot up while drawing gets it. A `TextLayer` is different. It keeps the font it was last fitted with, which is now the freed one, so the face calls `engine_rebuild` after the swap to make its text layers again. It does that anyway after any settings save (see [The Engine](engine.md)).
+**Rebuild Straight After.** Call `fonts_swap` only where the face rebuilds its layers right after it. A `TextLayer` keeps the font it was last fitted with, and so does a `GFont` the face copied out of `fonts_get` and kept, and after a swap that font may be freed memory. `engine_rebuild` makes the text layers again, and the face calls it after any settings save anyway (see [The Engine](engine.md)). Anything that looks the slot up while drawing gets the new font straight away.
+
+**What It Leaves Loaded.** It never frees a system font. It does not free a font another slot also holds, since that slot still draws with it. When the other slot registered it as a system font, that slot takes over owning it, so it is still freed once on the way out. In either case the old font and the new one sit in the heap together. Otherwise the old font is freed before the new one loads. `fonts_unload_all` frees whatever is left on the way out, the last font swapped in included.
+
+**Each Write Resets the Record.** The record of which resource a slot holds lasts only until the next write to the slot. `fonts_register`, `fonts_register_system`, and `fonts_unload_all` clear it, and `fonts_load` replaces it. So a font a face registered by hand is always swapped out, even when it happens to sit at the address a freed font used.
+
+**Plain Registering Never Frees.** `fonts_register` and `fonts_load` overwrite a slot without freeing the font in it, so a face that swaps with them keeps its own handle and frees the old font first.
+
+**What It Costs.** Each slot records the resource its font came from, which is 4 bytes of RAM a slot, 96 with the default 24 slots. A face that calls neither `fonts_load` nor `fonts_swap` carries none of it.
+
+The decisions about owning and freeing live in [`font_slots.c`](../../src/c/core/ui/font_slots.c) under `src/c/core/ui/`, with a host spec, and `fonts.c` hands them the SDK's load and unload calls.
 
 ## What a Font Costs
 

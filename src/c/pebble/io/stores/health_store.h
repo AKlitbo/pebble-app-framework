@@ -17,6 +17,29 @@
  * @{
  */
 
+/**
+ * @brief 1 on a platform where a watch model carries a heart rate sensor, 0 everywhere else.
+ *
+ * The platform is the only thing that tells. The health service never checks for the sensor
+ * itself, so `health_service_metric_accessible` for the heart rate gives a watch built without one
+ * the same answers as a watch with one. In PebbleOS, `fw/applib/health_service.c` returns
+ * NotSupported only for a time range or aggregation it cannot answer, and NoPermission only for
+ * the wearer's heart rate setting. The emulator's setting is always on (`fw/shell/sdk/prefs.c`), so
+ * it reports a heart rate as there on gabbro. The boards that build the sensor in, with
+ * `CONFIG_HRM` in their `defconfig`, are obelix, the Pebble Time 2 on emery, and qemu_emery.
+ * Asterix on flint and getafix on gabbro have none.
+ *
+ * Diorite is in because the Pebble 2 HR has a sensor. The Pebble 2 SE on the same platform has
+ * none, and the health service cannot tell the two apart, so its heart rate slot shows dashes.
+ *
+ * A new platform with a sensor joins the list here.
+ */
+#if defined(PBL_HEALTH) && (defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_DIORITE))
+#define HEALTH_HR_SENSOR 1
+#else
+#define HEALTH_HR_SENSOR 0
+#endif
+
 struct HealthConfig;
 struct HealthSeed;
 
@@ -74,6 +97,7 @@ typedef struct HealthConfig
     uint16_t hrv_period_sec;    ///< How often the watch takes a burst of beat gaps, in seconds, or 0 for no HRV
     uint16_t hrv_still_mg;      ///< The most the wrist may move for a burst to be still, in milli-g a sample, or 0 for HRV_MOTION_STILL_DEFAULT
     uint16_t hrv_walk_steps;    ///< The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT
+    uint16_t hrv_settle_gaps;   ///< Gaps left out at the start of each burst while the sensor settles, or 0 for HRV_SETTLE_GAPS. Held to 1 to HRV_SETTLE_GAPS_MAX
     HrvCount hrv_count;         ///< Which bursts count for the main reading. The default leaves out walking ones
     bool     hrv_keep_all;      ///< Measure a burst that cannot count rather than drop it, for a panel that shows walking readings
     bool     hrv_live_redraw;   ///< Redraw once a second while a burst is held, for a panel that shows the burst as it happens
@@ -139,11 +163,15 @@ void health_store_set_hrv_period(uint16_t period_sec);
  *
  * @param still_mg The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT.
  * @param walk_steps The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT.
+ * @param settle_gaps Gaps left out at the start of each burst while the sensor settles, or 0 for
+ * HRV_SETTLE_GAPS. It is held to 1 to HRV_SETTLE_GAPS_MAX, and a burst already settling keeps the
+ * count it started with, so a new count applies from the next burst.
  * @param count Which bursts count for the main reading.
  * @param keep_all Measure a burst that cannot count rather than drop it. Holds the sensor on for up to 90 seconds more each.
  * @param live_redraw Redraw once a second while a burst is held.
  */
-void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw);
+void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count,
+                                bool keep_all, bool live_redraw);
 
 // the store takes its own turn on the face's cadence (see store_cadence.h), registered at init,
 // so nothing here needs calling once a minute by hand
@@ -176,6 +204,22 @@ int health_store_step_hours(void);
 
 /** @brief The heart rate in beats per minute, or -1 if we have not got one yet. */
 int health_store_hr(void);
+
+/**
+ * @brief Whether this watch can give a heart rate at all, for a face that leaves its heart rate
+ * slot out rather than showing dashes forever.
+ *
+ * It answers HEALTH_HR_SENSOR, which goes by the platform, since the health service cannot say
+ * whether a sensor is there (see HEALTH_HR_SENSOR). A watch off the wrist, one that has not taken
+ * its first reading yet, and one with heart rate turned off in Health all answer true, since the
+ * sensor is there and the slot fills once it reads.
+ *
+ * The answer never changes on a given watch, so a face can ask once, such as when it lays out its
+ * screen. It works before the store is started and in a seeded build alike.
+ *
+ * @return true when the watch has a heart rate sensor.
+ */
+bool health_store_has_hr(void);
 
 /** @brief The steps taken so far today, or -1 if we have not got one yet. */
 int health_store_steps(void);
@@ -261,5 +305,13 @@ uint16_t health_store_hrv_still_mg(void);
  * @return The step count.
  */
 uint16_t health_store_hrv_walk_steps(void);
+
+/**
+ * @brief The gaps left out at the start of each burst, after the hold to HRV_SETTLE_GAPS_MAX, so a
+ * panel shows the count in use rather than the one asked for.
+ *
+ * @return The gap count.
+ */
+uint16_t health_store_hrv_settle_gaps(void);
 
 /** @} */

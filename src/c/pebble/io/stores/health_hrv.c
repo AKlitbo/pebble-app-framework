@@ -33,6 +33,7 @@ static bool s_holding;           ///< True while a burst is held on with HRV_HOL
 static uint8_t s_settle;         ///< Gaps still to leave out at the start of this burst
 static uint16_t s_still_mg;      ///< The most the wrist may move for a burst to be still
 static uint16_t s_walk_steps;    ///< The steps through a burst that make it a walk
+static uint8_t s_settle_gaps;    ///< The gaps a burst leaves out as it starts
 static HrvCount s_count;         ///< Which bursts count for the main reading
 static bool s_accel_on;          ///< Whether the accelerometer is being read for the burst
 static HrvMotion s_motion;       ///< The movement seen through the burst being held
@@ -425,7 +426,7 @@ void health_hrv_on_gap(void)
         {
             end_quiet_burst(now);
         }
-        s_settle = HRV_SETTLE_GAPS;
+        s_settle = s_settle_gaps;
         hold_start(now);
     }
 
@@ -601,7 +602,8 @@ void health_hrv_start(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *see
     // up and the reading shown. only the rules can have changed
     if (s_live && cfg->live)
     {
-        health_hrv_set_rules(cfg->still_mg, cfg->walk_steps, cfg->count, cfg->keep_all, cfg->live_redraw);
+        health_hrv_set_rules(cfg->still_mg, cfg->walk_steps, cfg->settle_gaps, cfg->count, cfg->keep_all,
+                             cfg->live_redraw);
         health_hrv_set_period(cfg->period_sec);
         return;
     }
@@ -617,7 +619,8 @@ void health_hrv_start(const HealthHrvConfig *cfg, int seed_ms, const HrvLog *see
     s_period_sec = period_sec;
     s_sampling = false;
     hold_drop();
-    health_hrv_set_rules(cfg->still_mg, cfg->walk_steps, cfg->count, cfg->keep_all, cfg->live_redraw);
+    health_hrv_set_rules(cfg->still_mg, cfg->walk_steps, cfg->settle_gaps, cfg->count, cfg->keep_all,
+                         cfg->live_redraw);
     // a seeded log is a fixture, so it never goes to flash over the wearer's own
     s_persist_key = seed_log ? 0 : cfg->persist_key;
     memset(s_recent, 0, sizeof(s_recent));
@@ -702,10 +705,14 @@ void health_hrv_set_period(uint16_t period_sec)
     }
 }
 
-void health_hrv_set_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)
+void health_hrv_set_rules(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all,
+                          bool live_redraw)
 {
     s_still_mg = still_mg > 0 ? still_mg : HRV_MOTION_STILL_DEFAULT;
     s_walk_steps = walk_steps > 0 ? walk_steps : HRV_WALK_STEPS_DEFAULT;
+    // read only as a burst starts, so a burst already settling keeps its count and the next one
+    // takes the new one
+    s_settle_gaps = hrv_settle_gaps(settle_gaps);
     s_count = count <= HRV_COUNT_ANY ? count : HRV_COUNT_NOT_WALKING;
     s_keep_all = keep_all;
     s_live_redraw = live_redraw;
@@ -783,4 +790,9 @@ uint16_t health_hrv_still_mg(void)
 uint16_t health_hrv_walk_steps(void)
 {
     return s_walk_steps > 0 ? s_walk_steps : HRV_WALK_STEPS_DEFAULT;
+}
+
+uint16_t health_hrv_settle_gaps(void)
+{
+    return s_settle_gaps > 0 ? s_settle_gaps : HRV_SETTLE_GAPS;
 }

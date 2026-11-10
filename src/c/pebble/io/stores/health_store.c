@@ -10,6 +10,7 @@
 #include "io/stores/store_sum.h"
 #include "io/stores/health_hrv.h"
 #include "io/stores/health_store_parts.h"
+#include "health/hrv_run.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -483,13 +484,15 @@ void health_store_set_hrv_period(uint16_t period_sec)
 #endif
 }
 
-void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw)
+void health_store_set_hrv_rules(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count,
+                                bool keep_all, bool live_redraw)
 {
 #if HRV_BUILT
-    health_hrv_set_rules(still_mg, walk_steps, count, keep_all, live_redraw);
+    health_hrv_set_rules(still_mg, walk_steps, settle_gaps, count, keep_all, live_redraw);
 #else
     (void)still_mg;
     (void)walk_steps;
+    (void)settle_gaps;
     (void)count;
     (void)keep_all;
     (void)live_redraw;
@@ -577,6 +580,7 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
         .period_sec = cfg.hrv_period_sec,
         .still_mg = cfg.hrv_still_mg,
         .walk_steps = cfg.hrv_walk_steps,
+        .settle_gaps = cfg.hrv_settle_gaps,
         .count = cfg.hrv_count,
         .keep_all = cfg.hrv_keep_all,
         .live_redraw = cfg.hrv_live_redraw,
@@ -584,6 +588,11 @@ void health_store_init(HealthConfig cfg, const HealthSeed *seed)
     };
     health_hrv_start(&hrv, seed ? seed->hrv_ms : 0, seed ? seed->hrv_log : NULL, hrv_changed);
 #endif
+}
+
+bool health_store_has_hr(void)
+{
+    return HEALTH_HR_SENSOR;
 }
 
 int health_store_hr(void)         { return s_state.hr; }
@@ -658,6 +667,15 @@ uint16_t health_store_hrv_walk_steps(void)
     return health_hrv_walk_steps();
 #else
     return HRV_WALK_STEPS_DEFAULT;
+#endif
+}
+
+uint16_t health_store_hrv_settle_gaps(void)
+{
+#if HRV_BUILT
+    return health_hrv_settle_gaps();
+#else
+    return HRV_SETTLE_GAPS;
 #endif
 }
 

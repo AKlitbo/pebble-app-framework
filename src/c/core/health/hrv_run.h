@@ -34,7 +34,8 @@
 #define HRV_STALE_MIN_SEC 1800 ///< A reading is never stale sooner than this, however short the period
 #define HRV_HOLD_PERIOD_SEC 1  ///< The period asked for while a burst is measured, which keeps the sensor on
 #define HRV_HOLD_MAX_SEC 90    ///< The longest the sensor is held on for one burst
-#define HRV_SETTLE_GAPS 10     ///< Gaps left out at the start of each burst, while the sensor settles
+#define HRV_SETTLE_GAPS 10     ///< Gaps left out at the start of each burst while the sensor settles, when a face sets none
+#define HRV_SETTLE_GAPS_MAX 20 ///< The most gaps a face can have left out, which still leaves a slow heart time for a run
 
 /**
  * @brief One run of beats being added up. Start it with hrv_run_reset.
@@ -131,5 +132,16 @@ bool hrv_should_ask(bool sampling, uint32_t gap_at, uint32_t asked_at, uint32_t 
  * @return True once HRV_HOLD_MAX_SEC have passed. A clock set back reads as no time passed.
  */
 bool hrv_hold_over(uint32_t held_since, uint32_t now_sec);
+
+/**
+ * @brief How many gaps to leave out at the start of a burst, from the count a face asked for.
+ *
+ * The first gaps of a burst can swap between two values while the sensor settles, so the store
+ * leaves some out. A face can tune how many, and this holds its ask to 1 to HRV_SETTLE_GAPS_MAX.
+ *
+ * @param asked The gaps the face asked for, or 0 for HRV_SETTLE_GAPS.
+ * @return HRV_SETTLE_GAPS for 0, otherwise the ask, held to HRV_SETTLE_GAPS_MAX.
+ */
+uint8_t hrv_settle_gaps(uint16_t asked);
 
 /** @} */

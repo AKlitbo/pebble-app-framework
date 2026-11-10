@@ -68,6 +68,22 @@ A step count of -1 means there is no reading, and the readout writes `--` in eve
 
 **Condition.** `readout_weather_cond` writes the condition's short label, such as `RAIN` or `PCLDY`. After dark the phone sends a night form such as `CLEAR_NIGHT`, which picks the night icon (see [Icons](icons.md)). The readout trims the `_NIGHT` off, so the text reads `CLEAR` by day or night. With no condition yet it writes `--`.
 
+**The UV Risk Band.** There is no UV readout, since faces put the band in different places, but every face gets the band from the same place. `uv_band` in [`uv_band.h`](../../src/c/core/weather/uv_band.h) turns the weather store's UV index into its WHO risk band: 0 to 2 low, 3 to 5 moderate, 6 and 7 high, 8 to 10 very high, and 11 or more extreme. `uv_band_name` gives the full name, such as `VERY HIGH`, and `uv_band_short_name` gives at most six letters, such as `V.HIGH`, for a slot with the number in front of it. With no reading the store gives -1, the band is `UV_BAND_NONE`, and both names are empty, so a face that writes the name after its dashes adds nothing:
+
+```c
+int uv = weather_store_uv();
+if (uv < 0)
+{
+    snprintf(out, n, "--");
+}
+else
+{
+    snprintf(out, n, "%d %s", uv, uv_band_short_name(uv_band(uv)));
+}
+```
+
+The band is an enum, so a face can also colour the reading by it. The font has to carry the space and the full stop the names use.
+
 ## Location
 
 `readout_lat` and `readout_lon` write the latitude and longitude as the phone formatted them, or `--` when the watch has no location yet. The location store keeps them as text, so the readout copies them as they are.

@@ -26,6 +26,7 @@ typedef struct
     uint16_t period_sec;    ///< How often the watch takes a burst, in seconds, or 0 for not at all
     uint16_t still_mg;      ///< The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT
     uint16_t walk_steps;    ///< The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT
+    uint16_t settle_gaps;   ///< Gaps left out at the start of a burst, or 0 for HRV_SETTLE_GAPS
     HrvCount count;         ///< Which bursts count for the main reading
     bool keep_all;          ///< Measure a burst that cannot count rather than drop it, for a panel that shows it
     bool live_redraw;       ///< Redraw the face once a second while a burst is held, for a tuning panel
@@ -60,11 +61,14 @@ void health_hrv_set_period(uint16_t period_sec);
  *
  * @param still_mg The most the wrist may move for a burst to be still, or 0 for HRV_MOTION_STILL_DEFAULT.
  * @param walk_steps The steps through a burst that make it a walk, or 0 for HRV_WALK_STEPS_DEFAULT.
+ * @param settle_gaps Gaps left out at the start of a burst, or 0 for HRV_SETTLE_GAPS. Held to
+ * HRV_SETTLE_GAPS_MAX, and a burst already settling keeps the count it started with.
  * @param count Which bursts count for the main reading.
  * @param keep_all Measure a burst that cannot count rather than drop it.
  * @param live_redraw Redraw the face once a second while a burst is held.
  */
-void health_hrv_set_rules(uint16_t still_mg, uint16_t walk_steps, HrvCount count, bool keep_all, bool live_redraw);
+void health_hrv_set_rules(uint16_t still_mg, uint16_t walk_steps, uint16_t settle_gaps, HrvCount count, bool keep_all,
+                          bool live_redraw);
 
 /** @brief Reads one beat gap from the watch. The health store calls it for each HRV event. */
 void health_hrv_on_gap(void);
@@ -111,5 +115,8 @@ uint16_t health_hrv_still_mg(void);
 
 /** @brief The steps through a burst that make it a walk. */
 uint16_t health_hrv_walk_steps(void);
+
+/** @brief The gaps left out at the start of each burst. */
+uint16_t health_hrv_settle_gaps(void);
 
 /** @} */

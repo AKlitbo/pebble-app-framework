@@ -160,3 +160,22 @@ bool hrv_hold_over(uint32_t held_since, uint32_t now_sec)
 {
     return now_sec >= held_since && now_sec - held_since >= HRV_HOLD_MAX_SEC;
 }
+
+// the settle is held to HRV_SETTLE_GAPS_MAX, so a face cannot leave out more than 20 gaps even for a
+// sensor that settles slower. a burst is held for HRV_HOLD_MAX_SEC at most, and a run needs
+// HRV_DIFFS_MIN differences, which takes that many gaps plus one after the settle. at the slowest heart
+// rate kept, 30 a minute, a gap lands every 2 seconds, so a settle of 20 has the run's 20th difference
+// in by 80 seconds with five beats spare. a longer settle would let a slow heart's hold run out before
+// its run gave a reading, so that wearer would never see one
+_Static_assert((HRV_SETTLE_GAPS_MAX + HRV_DIFFS_MIN) * HRV_PPI_MAX_MS / 1000 <= HRV_HOLD_MAX_SEC,
+               "the longest settle must leave a run at 30 bpm time to finish inside one hold");
+
+uint8_t hrv_settle_gaps(uint16_t asked)
+{
+    if (asked == 0)
+    {
+        return HRV_SETTLE_GAPS;
+    }
+
+    return asked < HRV_SETTLE_GAPS_MAX ? (uint8_t)asked : HRV_SETTLE_GAPS_MAX;
+}

@@ -369,6 +369,49 @@ void test_a_finished_run_keeps_its_count(void)
     TEST_ASSERT_EQUAL_UINT16(0, run.diffs);
 }
 
+/** @brief A face that sets no settle count leaves out 10 gaps, the count the store was tuned with on a Time 2. */
+void test_settle_defaults_to_ten_gaps(void)
+{
+    uint8_t result = hrv_settle_gaps(0);
+
+    TEST_ASSERT_EQUAL_UINT8(10, result);
+}
+
+/** @brief The fewest gaps a face can ask for is taken as asked, so a sensor that settles fast loses only one. */
+void test_settle_takes_one_gap(void)
+{
+    uint8_t result = hrv_settle_gaps(1);
+
+    TEST_ASSERT_EQUAL_UINT8(1, result);
+}
+
+/** @brief The top of the range is taken as asked, so a tuning panel's highest setting is the one in use. */
+void test_settle_takes_twenty_gaps(void)
+{
+    uint8_t result = hrv_settle_gaps(20);
+
+    TEST_ASSERT_EQUAL_UINT8(20, result);
+}
+
+/**
+ * @brief A count past 20 is held to 20. A longer settle would let a slow heart's 90 second hold run
+ * out before its run reached 20 differences, so that wearer would never get a reading.
+ */
+void test_settle_holds_twenty_one_gaps_to_twenty(void)
+{
+    uint8_t result = hrv_settle_gaps(21);
+
+    TEST_ASSERT_EQUAL_UINT8(20, result);
+}
+
+/** @brief 266 is held to 20 too. Cut to a byte before the check, it would read as 10 and pass for a real ask. */
+void test_settle_holds_a_count_past_a_byte_to_twenty(void)
+{
+    uint8_t result = hrv_settle_gaps(266);
+
+    TEST_ASSERT_EQUAL_UINT8(20, result);
+}
+
 /** Unity needs each test naming, so a new one above is added here too. */
 int main(void)
 {
@@ -399,6 +442,11 @@ int main(void)
     RUN_TEST(test_asks_again_when_a_taken_request_brings_no_gaps);
     RUN_TEST(test_a_hold_is_over_after_its_cap);
     RUN_TEST(test_a_clock_set_back_does_not_end_a_hold);
+    RUN_TEST(test_settle_defaults_to_ten_gaps);
+    RUN_TEST(test_settle_takes_one_gap);
+    RUN_TEST(test_settle_takes_twenty_gaps);
+    RUN_TEST(test_settle_holds_twenty_one_gaps_to_twenty);
+    RUN_TEST(test_settle_holds_a_count_past_a_byte_to_twenty);
 
     return UNITY_END();
 }
