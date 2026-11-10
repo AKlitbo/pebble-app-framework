@@ -79,9 +79,9 @@ Nothing is published before the last step, so a run that stops earlier leaves no
 
 A release tag is shaped `<face>-v<version>`. `prepare-release` splits it at the last `-v` with a digit straight after it. A face name can hold `-v` itself, as in `retro-vapor`, and so can a pre-release label, as in `-very.1`, and neither is followed by a digit, so `retro-vapor-v2.0.0-very.1` still splits into `retro-vapor` and `2.0.0-very.1`. A tag with no such `-v` stops the release with the shape it should have.
 
-**The Face's Name.** A face goes by the name the tools give it where it builds. A face that is its own unit, at the repo root or in a folder under `watchfaces/` or `watchapps/`, goes by the `name` in its appinfo, since its folder is named after wherever it was cloned. A face in a family goes by its folder's name beside the family's `core/`. So the LCARS face at its repo's root releases as `lcars-stardate-v1.13.0`, and Ridgeline in the Sketchbook family as `ridgeline-v1.4.2`.
+**The Face's Name.** A face goes by the name the tools give it where it builds. A face that is its own unit, at the repo root or in a folder under `watchfaces/`, `watchapps/`, or `plugins/`, goes by the `name` in its appinfo, since its folder is named after wherever it was cloned. A face in a family goes by its folder's name beside the family's `core/`. So the LCARS face at its repo's root releases as `lcars-stardate-v1.13.0`, and Ridgeline in the Sketchbook family as `ridgeline-v1.4.2`.
 
-**Finding Its Unit.** The action looks at the repo root and every folder under `watchfaces/` and `watchapps/` for a face of that name, which also tells it the unit the face builds from. Then it lists the faces with [`faces.ts`](../../src/tools/shared/faces.ts) from that unit's own `paf/`, the same lookup the face's build uses, even when the action comes from a newer tag. A name that matches no face stops the release there.
+**Finding Its Unit.** The action looks at the repo root and every folder under `watchfaces/`, `watchapps/`, and `plugins/` for a face of that name, which also tells it the unit the face builds from. Then it lists the faces with [`faces.ts`](../../src/tools/shared/faces.ts) from that unit's own `paf/`, the same lookup the face's build uses, even when the action comes from a newer tag. A name that matches no face stops the release there.
 
 **One Name, One Face.** A face's name is its release tag, so two faces with the same name anywhere in the repo stop the lookup with both paths. Picking one would publish the wrong face's build and notes under the tag.
 
@@ -93,7 +93,7 @@ Every check that can stop a release runs here, before the SDK install and the bu
 
 **The Version.** The action reads the face's version from the same place the build does, which is the appinfo's `version`, or the unit's `package.json` version when the appinfo has none. It has to match the version in the tag, since a tag that disagrees with the face is a typo, and a published release cannot be cleanly taken back. It also has to be shaped `X.Y.Z` or `X.Y.Z-label`, such as `1.11.0` or `1.11.0-rc.1`. A version with build metadata, such as `1.11.0+2`, is refused, since `publish-release` could not read a label from it and would publish it as the latest release.
 
-**Target Platforms.** The appinfo has to list `targetPlatforms`, since each `.pbw` on the release is named after the platforms it installs on. Finding that out after the SDK install and the whole build would waste both.
+**Target Platforms.** The appinfo has to list `targetPlatforms`, since each `.pbw` on the release is named after the platforms it installs on. Finding that out after the SDK install and the whole build would waste both. A plugin app, whose appinfo sets `"projectType": "plugin"`, runs on the phone and builds for no platform, so it lists none and the check skips it.
 
 **The Changelog.** The face's `CHANGELOG.md` beside its appinfo has to hold a Keep a Changelog heading for the version, such as `## [1.4.2] - 2026-09-27`. A version with no heading of its own stops the release, which includes one still written up under `Unreleased`. So does a heading with no date, or with a date that does not exist, such as `2026-19-07` or `2026-02-30`. The entry under the heading has to hold some text.
 
@@ -117,7 +117,7 @@ Released 2026-09-27.
 
 `setup-pebble` runs with the face `prepare-release` found, so the release installs the same SDK and pebble-tool the face's framework records and its CI builds with. A release built on a different toolchain from CI would be a release nobody tested.
 
-`paf build` then builds every target the face declares. The release workflow runs no memory report.
+`paf build` then builds every target the face declares. It passes no `--dev`, so the face ships with the `dev` plugin's dev mode off whatever the unit's `paf.dev.config.json` holds. The release workflow runs no memory report.
 
 ## What publish-release Attaches
 
@@ -131,10 +131,11 @@ Released 2026-09-27.
 | :-- | :-- | :-- |
 | one platform | `<target>-<platform>-<version>.pbw` | `gridlock-face-emery-1.5.0.pbw` |
 | several platforms | `<target>-<version>.pbw` | `ridgeline-1.4.2.pbw` |
+| a plugin app, which builds for no platform | `<target>-<version>.pbw` | `my-plugin-1.0.0.pbw` |
 
 A `.pbw` built for several platforms carries a binary for each, so naming it after any one of them would mislead.
 
-**Nothing Goes Out Short.** A target with no `.pbw`, or whose manifest lists no platforms, stops the step before `gh` runs, so a release never goes out missing a file. `gh release create` then creates the release with the title, the notes, and every file in one call.
+**Nothing Goes Out Short.** A target with no `.pbw`, or a face's target whose manifest lists no platforms, stops the step before `gh` runs, so a release never goes out missing a file. `gh release create` then creates the release with the title, the notes, and every file in one call.
 
 **The Tag Has to Exist.** The call passes `--verify-tag`. Without it, `gh` creates a tag that was never pushed at the default branch's tip, and the release would carry `.pbw` files built from another commit.
 

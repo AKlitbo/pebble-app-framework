@@ -148,6 +148,17 @@ describe('publish-release', () => {
     expect(exec.getExecOutput.mock.calls.some(([command]) => command === 'gh')).toBe(false);
   });
 
+  /** A plugin app lists no platforms, since it runs on the phone, and the platform check stopped every release of one. */
+  test('attaches a plugin app with no platforms under its version name', async () => {
+    writeTarget('calendar-ical', undefined);
+    fs.writeFileSync(path.join(workspace, 'targets', 'calendar-ical', 'package.json'), JSON.stringify({ pebble: { projectType: 'plugin' } }));
+
+    const { core } = await publish(({ command }) => (command === 'node' ? { stdout: 'calendar-ical\n' } : { stdout: 'https://example.com/release\n' }));
+
+    expect(core.setFailed).not.toHaveBeenCalled();
+    expect(fs.readFileSync(path.join(workspace, 'release-assets', 'calendar-ical-1.3.1.pbw'), 'utf8')).toBe('calendar-ical');
+  });
+
   /** A manifest with no pebble block crashed the step with a stack trace rather than saying what was wrong. */
   test('stops with a message when a manifest has no pebble block', async () => {
     writeTarget('gridlock-face', ['emery']);

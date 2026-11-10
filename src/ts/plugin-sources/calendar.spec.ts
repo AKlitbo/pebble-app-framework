@@ -38,13 +38,16 @@ interface EventSetup {
   start?: number;
   end?: number;
   allDay?: boolean | null;
+  calendar?: string | null;
 }
 
 /** One event as the built-in serves it. A null leaves that property off. */
 function event(setup: EventSetup): Record<string, SourceProperty> {
-  const properties: Record<string, SourceProperty> = {
-    calendar: { shortText: { text: 'Work' } },
-  };
+  const properties: Record<string, SourceProperty> = {};
+
+  if (setup.calendar !== null) {
+    properties.calendar = { shortText: { text: setup.calendar ?? 'Work' } };
+  }
 
   if (setup.title !== null) {
     const title = setup.title ?? 'Standup';
@@ -87,7 +90,16 @@ describe('eventsFromUpdate', () => {
 
     const result = eventsFromUpdate(update(standup), NOW);
 
-    expect(result).toEqual([{ startEpoch: utc(11, 4, 20), endEpoch: utc(11, 4, 20, 30), allDay: false, title: 'Standup', location: 'Room 4' }]);
+    expect(result).toEqual([{ startEpoch: utc(11, 4, 20), endEpoch: utc(11, 4, 20, 30), allDay: false, title: 'Standup', location: 'Room 4', calendar: 'Work' }]);
+  });
+
+  /** A plugin that does not name the calendar leaves it off, rather than marking the event as from a calendar called empty. */
+  test('leaves the calendar off an event that does not name one', () => {
+    const unnamed = event({ calendar: null, start: utc(11, 4, 20), end: utc(11, 4, 21) });
+
+    const result = eventsFromUpdate(update(unnamed), NOW);
+
+    expect(result[0]).not.toHaveProperty('calendar');
   });
 
   /** The plugin guide sizes a shortText at about 7 characters, and the strip holds 24, so a title would come out cut. */

@@ -318,7 +318,7 @@ function findFaceProject(repoRoot, name) {
   const root = path.resolve(repoRoot);
   const projects = [root];
 
-  for (const folder of ['watchfaces', 'watchapps']) {
+  for (const folder of ['watchfaces', 'watchapps', 'plugins']) {
     const dir = path.join(root, folder);
 
     if (fs.existsSync(dir)) {

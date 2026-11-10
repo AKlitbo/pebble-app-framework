@@ -59,7 +59,7 @@ So the theme reaches the watch as the text `"3"`, not the number 3.
 
 **A Second Clock.** A city chosen for a second clock is rewritten as `"offset,label"`, with the offset worked out for the current date, as [Time Zones](time-zones.md#from-the-saved-place-to-the-setting) covers.
 
-**The Fresh Flag.** When the face declares `SETTINGS_FRESH`, the message carries it as `0`, which tells the watch this came from a save on the page. The watch uses that flag after a reinstall, covered below.
+**The Fresh Flag.** The message carries `SETTINGS_FRESH` as `0`, which tells the watch this came from a save on the page. The watch uses that flag after a reinstall, covered below.
 
 **Through the Send Queue.** The framework sends the save itself rather than letting Clay do it, so the save waits its turn in the one queue every message to the watch goes through. [The Phone Side](phone-side.md#the-send-queue) covers the queue and its retries.
 

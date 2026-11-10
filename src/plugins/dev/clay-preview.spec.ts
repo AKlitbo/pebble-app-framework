@@ -6,8 +6,11 @@
  * which phone the page's features find. A wrong answer there previews a fresh install when a returning
  * wearer was asked for, or opens the page on plugins and a saved state the page never reads.
  */
+import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
-import { parseClayPreviewArgs, previewPlugins, hasPluginDefines } from './clay-preview.ts';
+import { parseClayPreviewArgs, previewBridge, previewPlugins, hasPluginDefines } from './clay-preview.ts';
+import { readPluginPage, renderPluginPage } from '../../tools/pkjs/plugin-page.ts';
+import { JSDOM, VirtualConsole } from 'jsdom';
 import { installHost } from '../../tools/pkjs/settings-page.ts';
 import { createSourceSubscription } from '../../ts/plugin-sources/subscription.ts';
 
@@ -198,5 +201,39 @@ describe('installHost', () => {
     const result = (host.Pebble as Record<string, unknown>).enumeratePlugins;
 
     expect(result).toBeUndefined();
+  });
+});
+
+describe('previewBridge', () => {
+  /**
+   * A plugin app's page in a desktop browser has no Pebble app behind it, so without the stand-in it
+   * would load nothing and refuse to save. With it the page fills from the --settings values, and a
+   * Save shows what it would have sent and says on the page that nothing was saved.
+   */
+  test('fills a plugin app page from the saved values and shows what a save would send', async () => {
+    const fixture = path.join(import.meta.dirname, '..', '..', 'tools', 'pkjs', 'fixtures', 'plugin-app');
+    const page = renderPluginPage(await readPluginPage(fixture, 'fixture-plugin'), 'fixture-plugin');
+    const logged: string[] = [];
+    const virtualConsole = new VirtualConsole();
+
+    virtualConsole.on('log', (...parts: unknown[]) => { logged.push(parts.join(' ')); });
+
+    const dom = new JSDOM(page.replace('<head>', '<head>' + previewBridge({ FEED_ON: true, FEED_URL: 'https://example.com/</script>.ics', REFRESH: '5' })), { runScripts: 'dangerously', url: 'https://preview.invalid/', virtualConsole });
+
+    for (let turn = 0; turn < 20; turn++) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+
+    (dom.window.document.querySelector('[type="submit"]') as HTMLElement).click();
+
+    for (let turn = 0; turn < 20; turn++) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+
+    const result = { logged, status: dom.window.document.body.textContent ?? '' };
+
+    expect(result.logged).toContain('clay-preview: a save would have sent {"FEED_ON":true,"FEED_URL":"https://example.com/</script>.ics","REFRESH":"5"}');
+    expect(result.status).toContain('this is a preview, so nothing was saved');
+    dom.window.close();
   });
 });

@@ -70,6 +70,7 @@ export const HOW_GROUPS: readonly PageGroup[] = [
       { file: 'docs/how/phone-side.md', folder: 'how/phone-side/', title: 'The Phone Side' },
       { file: 'docs/how/settings-page.md', folder: 'how/settings-page/', title: 'The Settings Page' },
       { file: 'docs/how/plugin-sources.md', folder: 'how/plugin-sources/', title: 'Pebble App Plugins' },
+      { file: 'docs/how/plugin-apps.md', folder: 'how/plugin-apps/', title: 'Plugin Apps' },
       { file: 'docs/how/settings-on-the-watch.md', folder: 'how/settings-on-the-watch/', title: 'Settings on the Watch' },
       { file: 'docs/how/talking-to-the-phone.md', folder: 'how/talking-to-the-phone/', title: 'Talking to the Phone' },
       { file: 'docs/how/message-formats.md', folder: 'how/message-formats/', title: 'The Message Formats' },

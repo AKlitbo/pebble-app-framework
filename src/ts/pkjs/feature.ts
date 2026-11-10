@@ -96,4 +96,12 @@ export interface FeatureHooks {
 }
 
 /** A feature. The app starts it once with its context, and it returns the hooks the app calls. */
-export type Feature = (context: FeatureContext) => FeatureHooks;
+export type Feature = {
+  (context: FeatureContext): FeatureHooks;
+  /**
+   * The message keys the feature cannot run without, such as the four weather keys. paf build reads
+   * them from the compiled phone code and adds each one the face does not list to its messageKeys,
+   * after the face's own, so a face that passes the feature never lists them. Left out, it needs none.
+   */
+  messageKeys?: readonly string[];
+};

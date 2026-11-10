@@ -25,14 +25,16 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { facePaths, type FacePaths } from './build-pkjs.ts';
-import { readAppinfo } from '../manifest/build-manifests.ts';
+import { readDefines, type PreparedFace, type SharedAppinfo } from '../manifest/build-manifests.ts';
 import { keyNames } from '../manifest/message-keys.ts';
+import { NO_START, featureKeys, fillAppinfo, withAddedKeys, type FaceStartFacts } from '../manifest/feature-keys.ts';
 import { PLUGIN_KINDS } from '../manifest/plugin-kinds.ts';
-import { PROVIDERS } from '../manifest/providers.ts';
+import { PROVIDERS, readProviders } from '../manifest/providers.ts';
 import { customClayShape } from '../../ts/clay/custom-fn.ts';
 import { readChoice } from '../../ts/pkjs/settings-store.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ToolError } from '../shared/tool-error.ts';
+import { isObject } from '../shared/values.ts';
 import type { ClayConfigItem } from '../../ts/clay/types.ts';
 
 const requireHost = createRequire(import.meta.url);
@@ -260,20 +262,20 @@ export const KNOWN_FIELDS: Readonly<Record<string, KnownField>> = {
 };
 
 /**
- * Runs the face's own start-up with startPebbleApp swapped for one that records what it was handed.
+ * Runs the face's own start-up with startPebbleApp swapped for one that records each call.
  *
  * The real call is put back whether the load finishes or throws.
  *
  * @param host The framework's app module, the same instance the face's code imports.
  * @param load Loads the face's compiled index.js, which calls startPebbleApp as it loads.
- * @return What the face handed startPebbleApp, or null when its start-up never calls it.
+ * @return What the face handed startPebbleApp on each call, in order, empty when it never calls it.
  */
-export function captureStart(host: StartHost, load: () => void): StartOptions | null {
+export function captureStarts(host: StartHost, load: () => void): StartOptions[] {
   const real = host.startPebbleApp;
-  const seen: { options: StartOptions | null } = { options: null };
+  const seen: StartOptions[] = [];
 
   host.startPebbleApp = (options) => {
-    seen.options = options;
+    seen.push(options);
   };
 
   try {
@@ -282,18 +284,32 @@ export function captureStart(host: StartHost, load: () => void): StartOptions | 
     host.startPebbleApp = real;
   }
 
-  return seen.options;
+  return seen;
 }
 
 /**
- * The face's message keys as a map of name to a made up id, from its parsed appinfo.
+ * Runs the face's own start-up and gives back what its last startPebbleApp call was handed.
+ *
+ * @param host The framework's app module, the same instance the face's code imports.
+ * @param load Loads the face's compiled index.js, which calls startPebbleApp as it loads.
+ * @return What the face handed startPebbleApp, or null when its start-up never calls it.
+ */
+export function captureStart(host: StartHost, load: () => void): StartOptions | null {
+  const seen = captureStarts(host, load);
+
+  return seen.length ? seen[seen.length - 1] : null;
+}
+
+/**
+ * The face's message keys as a map of name to a made up id, in the order they are given.
  *
  * The watch build aliases "message_keys" to a generated file which does not exist under plain node,
  * so the loader stands this map in. The real ids do not matter for building the page. The SDK takes
- * messageKeys as a list of names or as a map of name to id, so either one gives the names.
+ * messageKeys as a list of names or as a map of name to id, so either one gives the names. The keys
+ * are the manifest's, from fillAppinfo, so nothing here works out which keys a face has.
  *
- * @param appinfo The face's pebble.appinfo.json, parsed.
- * @return Each declared key by name.
+ * @param appinfo An appinfo or a manifest's pebble block, read for its messageKeys.
+ * @return Each key by name.
  */
 export function messageKeysOf(appinfo: { messageKeys?: unknown }): Record<string, number> {
   const listed = appinfo.messageKeys || [];
@@ -308,11 +324,94 @@ export function messageKeysOf(appinfo: { messageKeys?: unknown }): Record<string
 /**
  * The face's message keys as a map of name to a made up id, read from its appinfo file.
  *
+ * The keys are the face's own with its plugin defines' keys added, as fillAppinfo adds them.
+ * loadSettingsPage adds the keys the features bring once it reads which ones the face passes. The face
+ * is named after the appinfo's folder, which is how the build names it.
+ *
  * @param appinfo The face's pebble.appinfo.json.
- * @return Each declared key by name.
+ * @return Each key by name.
  */
 export function messageKeysFrom(appinfo: string): Record<string, number> {
-  return messageKeysOf(JSON.parse(fs.readFileSync(appinfo, 'utf8')));
+  const config = JSON.parse(fs.readFileSync(appinfo, 'utf8')) as SharedAppinfo;
+  const face = path.basename(path.dirname(path.resolve(appinfo)));
+  const defines = readDefines(config, face);
+
+  return messageKeysOf(fillAppinfo(config, face, NO_START, defines, readProviders(config, face, defines)));
+}
+
+/**
+ * Adds the keys the features bring to a stand-in map, after the ones it holds, by fillAppinfo's rule.
+ *
+ * The map is the one message_keys stands in as, so the face's code and its features see the keys too.
+ */
+function addFeatureKeys(messageKeys: Record<string, number>, keys: readonly string[], face: string): void {
+  const listed = Object.keys(messageKeys);
+  const full = withAddedKeys(listed, keys, face) as string[];
+
+  full.slice(listed.length).forEach((key, index) => { messageKeys[key] = 10000 + listed.length + index; });
+}
+
+/** The timer calls the face's code is loaded with, which hold what it asks for and never run it. */
+const TIMER_CALLS = ['setTimeout', 'setInterval', 'setImmediate', 'clearTimeout', 'clearInterval', 'clearImmediate'];
+
+/**
+ * Swaps node's timers for ones that hold what they are handed and never run it, while face code loads.
+ *
+ * The build runs from start to end without a break, so a timer the face starts as it loads would not
+ * run before the build ends anyway. A real one would then keep node alive after the build is done,
+ * and an interval would hold it open for good. A held timer gives back a handle with the calls node's
+ * own has, and clearing one does nothing. A handle from before the swap still clears for real.
+ *
+ * @return Puts node's own timers back.
+ */
+function holdTimers(): () => void {
+  const host = global as unknown as Record<string, unknown>;
+  const before = TIMER_CALLS.map((name) => host[name]);
+  const held = new Set<object>();
+  const hold = (): object => {
+    const handle = { ref: () => handle, unref: () => handle, hasRef: () => false, refresh: () => handle };
+
+    held.add(handle);
+    return handle;
+  };
+  const clear = (real: unknown) => (handle: unknown): void => {
+    if (!held.has(handle as object)) {
+      (real as (handle: unknown) => void)(handle);
+    }
+  };
+
+  host.setTimeout = hold;
+  host.setInterval = hold;
+  host.setImmediate = hold;
+  host.clearTimeout = clear(before[3]);
+  host.clearInterval = clear(before[4]);
+  host.clearImmediate = clear(before[5]);
+
+  return () => {
+    TIMER_CALLS.forEach((name, index) => { host[name] = before[index]; });
+  };
+}
+
+/**
+ * Loads the face's compiled index.js, naming the face when its code throws as it loads.
+ *
+ * The code runs under node on a stand-in phone, so a face that reaches for something the phone has and
+ * the stand-in does not stops here with the reason rather than a bare stack. The build's first read of
+ * the start runs before it knows the keys the features bring, so a throw there also says that a key
+ * the code needs as it loads has to be listed.
+ */
+function loadFaceCode(face: string, entry: string, firstRead: boolean = false): void {
+  try {
+    requireHost(entry);
+  } catch (error) {
+    if (error instanceof ToolError) {
+      throw error;
+    }
+
+    const before = firstRead ? ' This was the build\'s first read of the code, which runs before it knows the keys the features bring, so a key the code needs as it loads has to be listed in messageKeys.' : '';
+
+    throw new ToolError(`${face}'s phone code threw while the build loaded it: ${(error as Error).message}. The build loads it under node on a phone with only ${STAND_INS}, so code that reaches for anything else as it loads cannot run here.${before}`);
+  }
 }
 
 /**
@@ -445,6 +544,11 @@ function startFeatures(start: StartOptions, context: PageFeatureContext): unknow
   });
 }
 
+/** Where the framework's compiled app module sits in a sandbox's emit/. */
+function appModulePath(paths: FacePaths): string {
+  return path.join(path.dirname(paths.pluginSources), 'pkjs', 'app.js');
+}
+
 /**
  * Builds the settings page the phone would open, from the face's compiled code.
  *
@@ -456,36 +560,98 @@ function startFeatures(start: StartOptions, context: PageFeatureContext): unknow
  * the features' page hooks and then the providers' own. Without it only the providers' hooks run.
  *
  * The caller stands in message_keys and the phone's globals first, with stubModuleLoad and installHost.
+ * Before the face's code runs for the page, startFacts reads which features it passes on the platform
+ * the caller's phone is on, and the keys those features bring join that map, as the build adds them to
+ * the face's message keys. So a face whose code reads those keys as it loads, or that leaves them to the
+ * features, loads the same page. The face's timers are held for the whole load, as holdTimers says.
  *
- * Given the face's name, as the build gives it, the face's customClay is checked before Clay sees it,
- * so a customClay that is not a plain function stops the load with a line naming the face and the fix
- * rather than Clay's own error or the phone's warning.
+ * The build's keys already hold every key the features bring, so with keysWhole the start is not read
+ * again, and only clay-preview and page-check pay for it.
+ *
+ * With checks, as the build loads it, the face's customClay is checked before Clay sees it, so a
+ * customClay that is not a plain function stops the load with a line naming the face and the fix
+ * rather than Clay's own error or the phone's warning. So is each feature once it starts, so a feature
+ * that answers a request the keys do not carry stops the load, as checkFeatureRequests says.
  *
  * @param paths The paths for the face's sandbox, already compiled and filled.
  * @param messageKeys The face's message keys, as messageKeysFrom gives them.
  * @param withFeatures Whether to start the features and run their page hooks.
- * @param face The face whose customClay to check, left out to skip the check.
+ * @param options The face's name, whether to run the build's checks, and whether the keys are whole.
  * @return The loaded page, or null for a face with no index.js of its own or whose start-up never calls startPebbleApp.
  */
-export function loadSettingsPage(paths: FacePaths, messageKeys: Record<string, number>, withFeatures: boolean, face?: string): LoadedPage | null {
+export function loadSettingsPage(paths: FacePaths, messageKeys: Record<string, number>, withFeatures: boolean, options: PageLoadOptions = {}): LoadedPage | null {
   const entry = path.join(paths.emitPkjs, 'index.js');
 
   if (!fs.existsSync(entry)) {
     return null;
   }
 
+  const name = options.face ?? path.basename(path.dirname(path.dirname(paths.emitPkjs)));
+
+  if (!options.keysWhole) {
+    addFeatureKeys(messageKeys, startFacts(paths, name, Object.keys(messageKeys), [hostPlatform()]).featureKeys, name);
+    forgetCompiled(paths);
+  }
+
+  const restoreTimers = holdTimers();
+
+  try {
+    return loadPage(paths, entry, messageKeys, withFeatures, name, options.checks === true);
+  } finally {
+    restoreTimers();
+  }
+}
+
+/** How loadSettingsPage loads a face's page. */
+export type PageLoadOptions = {
+  /** The face the page belongs to, which a refusal or a warning names. Left out, the face's folder names it. */
+  face?: string;
+  /** Whether to run the build's own checks as the page loads, on the customClay and on each feature. */
+  checks?: boolean;
+  /** Whether the keys already hold every key the features bring, as the build's do, so the start is not read. */
+  keysWhole?: boolean;
+};
+
+/**
+ * Stops on a started feature that answers a request key the keys do not carry.
+ *
+ * The build adds a feature's keys from the messageKeys on the function the face passes. A feature the
+ * face wraps in a function of its own hides them, so the build adds none, and the watch never sends
+ * the request the feature waits for.
+ */
+function checkFeatureRequests(face: string, features: unknown[], messageKeys: Record<string, number>): void {
+  const carried = keyNames(Object.keys(messageKeys));
+
+  features.forEach((hooks) => {
+    const requests = isObject(hooks) && Array.isArray(hooks.requests) ? hooks.requests.map(String) : [];
+    const key = requests.find((request) => !carried.has(request));
+
+    if (key !== undefined) {
+      throw new ToolError(`${face} passes startPebbleApp a feature that answers ${key}, but its message keys do not carry ${key}, so the watch would never ask for it. The build reads a feature's keys off the function the face passes, which a function of the face's own wrapped around the feature hides. Pass the feature itself, or list ${key} in messageKeys`);
+    }
+  });
+}
+
+/** The platform the installed stand-in phone is on, which the start read before a page load uses. */
+function hostPlatform(): string {
+  const pebble = (global as unknown as { Pebble?: { platform?: unknown } }).Pebble;
+
+  return typeof pebble?.platform === 'string' ? pebble.platform : PEBBLE_PLATFORMS[0];
+}
+
+/** Loads the page once the map holds the features' keys, as loadSettingsPage describes. */
+function loadPage(paths: FacePaths, entry: string, messageKeys: Record<string, number>, withFeatures: boolean, face: string, checks: boolean): LoadedPage | null {
   // required per load so each pass picks up the freshly compiled emit/ tree. at module scope it
   // would stay bound to the first load and dropping the require cache would not budge it
-  const appPath = path.join(path.dirname(paths.pluginSources), 'pkjs', 'app.js');
-  const app = requireHost(appPath) as AppModule;
+  const app = requireHost(appModulePath(paths)) as AppModule;
 
-  const given = captureStart(app.default, () => requireHost(entry));
+  const given = captureStart(app.default, () => loadFaceCode(face, entry));
 
   if (given === null) {
     return null;
   }
 
-  if (face !== undefined) {
+  if (checks) {
     checkCustomClay(face, given.customClay);
   }
 
@@ -504,6 +670,11 @@ export function loadSettingsPage(paths: FacePaths, messageKeys: Record<string, n
       providers: start.providers,
     })
     : [];
+
+  if (checks) {
+    checkFeatureRequests(face, features, messageKeys);
+  }
+
   const hooks = [...features, ...start.hooks];
 
   if (hooks.length) {
@@ -511,11 +682,6 @@ export function loadSettingsPage(paths: FacePaths, messageKeys: Record<string, n
   }
 
   return { given, start, clay, built, features };
-}
-
-/** Whether a value is a plain object, the shape JSON gives `{}`. */
-function isObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
 /** Every option value a choice control lists, with Clay's option groups opened up. */
@@ -1169,7 +1335,7 @@ export function loadOnPlatforms(paths: FacePaths, messageKeys: Record<string, nu
         // reads it afresh
         forgetCompiled(paths);
 
-        const loaded = loadSettingsPage(paths, messageKeys, true, face);
+        const loaded = loadSettingsPage(paths, messageKeys, true, { face, checks: true, keysWhole: true });
 
         if (loaded === null) {
           return [];
@@ -1188,6 +1354,94 @@ export function loadOnPlatforms(paths: FacePaths, messageKeys: Record<string, nu
 }
 
 /**
+ * What a face's compiled phone code starts with, read before the sandboxes are written.
+ *
+ * @param face The face to read.
+ * @param prepared What prepareFace read of the face.
+ * @return Whether the face calls startPebbleApp and the keys its features need, or nothing for a face with no index.js.
+ */
+export function readFaceStart(face: string, prepared: PreparedFace): FaceStartFacts {
+  return startFacts(facePaths(prepared.targets[0].name, face), face, prepared.baseKeys, platformsOf(prepared.appinfo));
+}
+
+/** How many times startFacts reads the start before it stops on keys that keep coming. */
+const START_READS = 4;
+
+/**
+ * What a sandbox's compiled phone code starts with, on every platform it builds for.
+ *
+ * The face's index.js loads with startPebbleApp swapped for a recorder, as the page loader does, on a
+ * fresh phone on each platform, with its timers held. Nothing starts, so no feature runs. Every call to
+ * startPebbleApp counts, and so does every platform, so a feature passed on one watch alone still
+ * brings its keys, and the face is started when any load calls it.
+ *
+ * A face can pass a feature only when one of its keys is there, which only that feature brings. So the
+ * code is read again with the keys the last read found added, until a read finds nothing new. Each read
+ * only adds keys, and the framework's features carry no more than a handful, so this settles within a
+ * few reads. A face whose features bring new keys on every read is refused after START_READS, since the
+ * build cannot say which features it ships.
+ *
+ * @param paths The paths for the sandbox, already compiled and filled.
+ * @param face The face the code belongs to, which a refusal names.
+ * @param messageKeys The keys before the features, the face's own and its defines', as fillAppinfo gives them.
+ * @param platforms The platforms the face builds for.
+ * @return Whether the face calls startPebbleApp and the keys its features need, or nothing for a sandbox with no index.js.
+ */
+export function startFacts(paths: FacePaths, face: string, messageKeys: unknown, platforms: string[]): FaceStartFacts {
+  if (!fs.existsSync(path.join(paths.emitPkjs, 'index.js'))) {
+    return NO_START;
+  }
+
+  const found: string[] = [];
+  let keys = messageKeys;
+  let started = false;
+
+  for (let read = 0; read < START_READS; read++) {
+    const calls = platforms.flatMap((platform) => startCalls(paths, face, messageKeysOf({ messageKeys: keys }), platform, read === 0));
+
+    started = started || calls.length > 0;
+    featureKeys(calls.flatMap((call) => call.features || [])).filter((key) => !found.includes(key)).forEach((key) => found.push(key));
+
+    const next = withAddedKeys(keys, found, face);
+
+    if (next === keys) {
+      if (!started) {
+        console.warn(`warning: ${face}'s phone code has an index.js that never calls startPebbleApp as it loads, so the build reads no features from it, adds none of their keys, and gives it no settings page. The call has to run as index.js loads, not later in a callback`);
+      }
+
+      return { started, featureKeys: found };
+    }
+
+    keys = next;
+  }
+
+  throw new ToolError(`${face}'s phone code passes features that bring new message keys each time the build reads it with the keys the last read found, and still did after ${START_READS} reads. Pass the features whatever keys the face has, or list the keys its code reads in messageKeys`);
+}
+
+/** Every startPebbleApp call the face's code makes on one platform, with the given keys stood in. */
+function startCalls(paths: FacePaths, face: string, messageKeys: Record<string, number>, platform: string, firstRead: boolean): StartOptions[] {
+  const restoreLoad = stubModuleLoad((id) => (id === 'message_keys' ? messageKeys : undefined));
+
+  try {
+    const restoreHost = installHost({ platform, settings: null }, null);
+    const restoreTimers = holdTimers();
+
+    try {
+      forgetCompiled(paths);
+
+      const app = requireHost(appModulePath(paths)) as AppModule;
+
+      return captureStarts(app.default, () => loadFaceCode(face, path.join(paths.emitPkjs, 'index.js'), firstRead));
+    } finally {
+      restoreTimers();
+      restoreHost();
+    }
+  } finally {
+    restoreLoad();
+  }
+}
+
+/**
  * Loads a face's settings page from its first target's compiled phone code, once for each platform.
  *
  * Every target's emit/ is a copy of the first's, so one sandbox serves them all. The features start and
@@ -1195,13 +1449,12 @@ export function loadOnPlatforms(paths: FacePaths, messageKeys: Record<string, nu
  * face's page has to offer the same whole number choices whatever the phone has installed or saved.
  *
  * @param face The face whose page to load.
- * @param targets The face's targets, the first of which compiled.
+ * @param prepared What prepareFace read of the face.
+ * @param messageKeys The message keys the sandboxes' manifests carry, from writeSandboxes.
  * @return The page on each platform the face targets, or empty for a face with no settings page.
  */
-export function loadFacePage(face: string, targets: string[]): PlatformPage[] {
-  const appinfo = readAppinfo(face);
-
-  return loadOnPlatforms(facePaths(targets[0], face), messageKeysOf(appinfo), platformsOf(appinfo), face);
+export function loadFacePage(face: string, prepared: PreparedFace, messageKeys: unknown): PlatformPage[] {
+  return loadOnPlatforms(facePaths(prepared.targets[0].name, face), messageKeysOf({ messageKeys }), platformsOf(prepared.appinfo), face);
 }
 
 /**

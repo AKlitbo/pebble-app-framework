@@ -1,8 +1,8 @@
 /**
  * Screenshots every state of a face's dev tap walk, from WSL with the Pebble SDK installed.
  *
- * With `DEV_MODE` and one of the face's walk switches, such as `DEV_TAP_WALK_THEMES`, on in its
- * src/c/dev/dev.h, each accel tap steps the face to its next state. This taps, waits for the redraw,
+ * On a face built with `paf build <face> --dev` and a walk picked, such as `"walk": "themes"`, in the
+ * unit's paf.dev.config.json, each accel tap steps the face to its next state. This taps, waits for the redraw,
  * and takes a screenshot, over and over, and stops once a shot matches the first one, since the walk
  * has come back round to the start.
  *
@@ -14,7 +14,7 @@
  * face's latest build there first. A face that ships several targets builds each in a sandbox of its
  * own, such as gridlock-face and gridlock-app, so --target picks the one --install installs.
  * Building is left to paf build, which knows when a clean build is needed, so a face is built with
- * paf build before --install puts it on the emulator.
+ * paf build <face> --dev before --install puts it on the emulator.
  *
  * Usage, from the unit that holds the face: paf tool <face> tap-walk [options], which runs it as
  * node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON paf/plugins/dev/tap-walk.ts <face> [options].
@@ -56,7 +56,7 @@ const INSTALL_SETTLE_MS = 2000;
 export const DEFAULT_OUT = '.tmp/tap-walk-shots';
 
 /** What a walk that never moves has to check, since its taps change nothing on the watch. */
-const SWITCH_HINT = "Check DEV_MODE and one of the face's walk switches, such as DEV_TAP_WALK_THEMES, are on in its src/c/dev/dev.h";
+const SWITCH_HINT = `Check that the unit's paf.dev.config.json picks a "walk" for the face, such as "themes", and that the face was built with paf build <face> --dev after it changed`;
 
 /** Files an OS drops in a folder someone opened to look at the shots. */
 const OS_FILES = new Set(['desktop.ini', 'Thumbs.db', '.DS_Store']);
@@ -66,12 +66,12 @@ const USAGE = `usage: paf tool <face> tap-walk [options]
    or: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON paf/plugins/dev/tap-walk.ts <face> [options]
 
 Screenshots every state of the face's dev tap walk, from WSL with the Pebble SDK installed, run from
-the unit that holds the face. Turn on DEV_MODE and one of the face's walk switches, such as
-DEV_TAP_WALK_THEMES, in its src/c/dev/dev.h first. Each new state is saved as shot_000.png,
+the unit that holds the face. Pick a "walk", such as "themes", in the unit's paf.dev.config.json,
+and build the face with paf build <face> --dev, first. Each new state is saved as shot_000.png,
 shot_001.png, and so on.
 
   --install           install the face's latest build on the emulator first.
-                      Build it with paf build <face> beforehand
+                      Build it with paf build <face> --dev beforehand
   --emulator=<name>   the emulator to walk, emery by default
   --out=<folder>      where the shots go, relative to the unit, ${DEFAULT_OUT} by default.
                       It is emptied first, so it has to hold only earlier shots
@@ -337,7 +337,7 @@ function installFace(face: string, target: string, emulator: string): void {
   const pbw = pbwPath(target);
 
   if (!fs.existsSync(pbw)) {
-    throw new ToolError(`no build at ${path.relative(WORKSPACE, pbw)}. Build it with paf build ${face} first`);
+    throw new ToolError(`no build at ${path.relative(WORKSPACE, pbw)}. Build it with paf build ${face} --dev first`);
   }
 
   console.log(`>> installing ${target} on ${emulator}`);

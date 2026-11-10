@@ -42,7 +42,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { faceRelative } from '../shared/faces.ts';
-import { readFaceBuildInfo } from '../manifest/build-manifests.ts';
+import { readFaceBuildInfo, type FaceBuildInfo } from '../manifest/build-manifests.ts';
 import type { Defines } from '../manifest/build-manifests.ts';
 import { PLUGIN_KINDS, pluginKindsOn } from '../manifest/plugin-kinds.ts';
 import type { PluginKind } from '../manifest/plugin-kinds.ts';
@@ -555,11 +555,12 @@ export function fillEmit(first: FacePaths, rest: FacePaths[], defines: Defines, 
  * gets a tsconfig written.
  *
  * @param face The face whose targets to build.
+ * @param info The face's targets, defines, and providers, as paf build already read them. Left out, they are read here.
  * @return The targets built, the generated components copied, whether ical.js went in, and the
  *   plugin kinds and providers built with.
  */
-export function buildFace(face: string): FaceBuild {
-  const { targets, defines, providers } = readFaceBuildInfo(face);
+export function buildFace(face: string, info: FaceBuildInfo = readFaceBuildInfo(face)): FaceBuild {
+  const { targets, defines, providers } = info;
   const [first, ...rest] = targets.map((target) => facePaths(target, face));
 
   cleanEmit(first);

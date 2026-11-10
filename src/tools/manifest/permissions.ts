@@ -13,8 +13,12 @@ import { pluginKindsOn } from './plugin-kinds.ts';
 import { FEATURE_KEYS, providerMode, providersOffered } from './providers.ts';
 import type { ProviderKind, ProviderLists } from './providers.ts';
 
-/** One usesPermissions entry, as the Pebble app reads it: a bare name, or a name with its arguments. */
-export type Permission = string | { name: string; parameters?: Record<string, string[]>; plugin?: string };
+/**
+ * One usesPermissions entry, as the Pebble app reads it: a bare name, or a name with its arguments. A
+ * plugin app writes its own entries, which can also carry the reason shown to the wearer and whether the
+ * permission is required.
+ */
+export type Permission = string | { name: string; parameters?: Record<string, string[]>; plugin?: string; reason?: string; required?: boolean };
 
 // each domain covers its subdomains on the phone, so open-meteo.com takes in api.open-meteo.com
 // OpenWeatherMap and WeatherAPI borrow the readings they lack from Open-Meteo, so every weather face lists it
@@ -55,8 +59,15 @@ function narrowed(all: string[], kind: ProviderKind, list: string[] | undefined)
   return all.filter((site) => sites.has(site));
 }
 
-/** A face's own usesPermissions entries, checked so each one reads the way the Pebble app expects. */
-function readOwn(declared: unknown, face: string): Permission[] {
+/**
+ * A face's own usesPermissions entries, or a plugin app's, checked so each one reads the way the
+ * Pebble app expects.
+ *
+ * @param declared The usesPermissions the appinfo lists, if it lists any.
+ * @param face The face or plugin app the appinfo belongs to, which a refusal names.
+ * @return The entries as the appinfo writes them, empty when it lists none.
+ */
+export function readOwn(declared: unknown, face: string): Permission[] {
   if (declared === undefined) {
     return [];
   }
@@ -86,6 +97,45 @@ function readOwn(declared: unknown, face: string): Permission[] {
   }
 
   return declared;
+}
+
+/** The refusal for calendar hosts beside the face's own Internet entry opening every site. */
+function hostsOpenedWide(face: string): string {
+  return `${face}'s appinfo lists providers.calendarHosts while its own usesPermissions opens Internet to any site, so the hosts would do nothing. Take the bare Internet out of usesPermissions, or take calendarHosts out`;
+}
+
+/** True for an entry of the face's own that opens every site, as permissionsFor reads one: a bare Internet, or an Internet whose only parameter is an empty domains list. */
+function opensEverySite(entry: Permission): boolean {
+  if (typeof entry === 'string') {
+    return entry === 'Internet';
+  }
+
+  const parameters = entry.parameters ?? {};
+
+  if (entry.name !== 'Internet' || entry.plugin !== undefined) {
+    return false;
+  }
+
+  return Object.keys(parameters).every((key) => key === 'domains') && (parameters.domains ?? []).length === 0;
+}
+
+/**
+ * Refuses the face's own usesPermissions entries the build cannot use, from the appinfo alone.
+ *
+ * Each entry has to read the way the Pebble app expects, and calendar hosts beside an entry of the
+ * face's own that opens every site would do nothing. Neither needs the keys the features bring, so the
+ * build checks them before the phone build. permissionsFor checks both again on the whole list.
+ *
+ * @param declared The face's own usesPermissions from its appinfo, if it has any.
+ * @param face The face the appinfo belongs to, which a refusal names.
+ * @param providers The face's providers list, from readProviders.
+ */
+export function checkOwnPermissions(declared: unknown, face: string, providers: ProviderLists): void {
+  const own = readOwn(declared, face);
+
+  if (providers.calendarHosts && own.some(opensEverySite)) {
+    throw new ToolError(hostsOpenedWide(face));
+  }
 }
 
 /** True for a parameters object the phone can read, each name mapped to a list of text. */
@@ -150,7 +200,7 @@ export function permissionsFor(messageKeys: unknown, declared: unknown, face: st
     names.add('Location');
   }
 
-  // CALENDAR_SOURCE needs no check here, since checkAppinfo runs checkPluginKeys before this
+  // CALENDAR_SOURCE needs no check here, since the build adds it beside PLUGIN_CALENDAR when the face keeps a choice
   const kindsOn = pluginKindsOn(defines).map((kind) => kind.define);
 
   if (kindsOn.includes('PLUGIN_CALENDAR')) {
@@ -188,7 +238,7 @@ export function permissionsFor(messageKeys: unknown, declared: unknown, face: st
   // with hosts listed the calendar opens no site itself, so any site here came from the face's own
   // entries, which would leave the hosts doing nothing
   if (providers.calendarHosts && anySite) {
-    throw new ToolError(`${face}'s appinfo lists providers.calendarHosts while its own usesPermissions opens Internet to any site, so the hosts would do nothing. Take the bare Internet out of usesPermissions, or take calendarHosts out`);
+    throw new ToolError(hostsOpenedWide(face));
   }
 
   const permissions: Permission[] = [...names];

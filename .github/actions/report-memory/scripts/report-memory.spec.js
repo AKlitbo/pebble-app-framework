@@ -101,6 +101,17 @@ describe('report-memory', () => {
     expect(core.warning).toHaveBeenCalledWith('targets/ridgeline/build/gabbro/pebble-app.bin is missing, so its app image and static size read as 0.', { title: 'ridgeline Memory' });
   });
 
+  /** A plugin app links no watch binary, so its log has no memory report, and failing on it failed every CI run of a repo holding one. */
+  test('passes over a plugin app with a line and no rows', async () => {
+    fs.writeFileSync(path.join(workspace, 'pebble.appinfo.json'), JSON.stringify({ name: 'ridgeline', projectType: 'plugin' }));
+
+    const { core, rows } = await report('[ 3/5] plugin.js\n');
+
+    expect(core.setFailed).not.toHaveBeenCalled();
+    expect(core.info).toHaveBeenCalledWith('ridgeline is a plugin app, which links no watch binary, so it has no memory report.');
+    expect(rows).toEqual([]);
+  });
+
   /** Uploading nothing would leave the face off the table with no sign anything went wrong in its job. */
   test('fails when the log has no memory report', async () => {
     const { core, rows } = await report('[ 12/102] Compiling emery | c: src/c/main.c\nBuild failed\n');

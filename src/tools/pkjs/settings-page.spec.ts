@@ -14,6 +14,12 @@
  * string early. The checks that stop the build on a page the watch or the phone would get wrong are
  * pinned one refusal at a time, each beside the page it lets through.
  *
+ * The start read decides which keys the build adds, so a feature it misses ships a face without the
+ * keys the feature needs. It is pinned on hand-written sandboxes that stand in a tiny app module and a
+ * face's index.js, for the reads a real face cannot easily show: a feature on one watch alone, a
+ * second call, a feature passed only beside another's key, a face that throws as it loads, and one that
+ * starts an interval, which would keep the build running after it is done.
+ *
  * The loading specs build three of the dev plugin's fixture faces with tsc into sandboxes under build/
  * beside this file, the way the build does, and load each one's page from the compiled code. The
  * sandboxes sit inside the repo so the compiled code finds Clay in its node_modules. The header checks
@@ -22,12 +28,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { pathToFileURL } from 'node:url';
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest';
 import { cleanEmit, compile, facePaths, fillEmit, writeTsconfig, type FacePaths, type FacePlace } from './build-pkjs.ts';
 import { ENGINE } from '../shared/paths.ts';
 import { pluginSourceDefaults } from '../manifest/providers.ts';
+import { tempDir } from '../../ts/testing/temp-dir.ts';
+import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import {
   captureStart,
+  forgetCompiled,
   checkCustomClay,
   checkPage,
   choiceCounts,
@@ -36,12 +46,14 @@ import {
   loadOnPlatforms,
   loadSettingsPage,
   messageKeysFrom,
+  messageKeysOf,
   pageDefaults,
   pageFacts,
   platformsOf,
   sandboxFingerprint,
   PEBBLE_PLATFORMS,
   settingsPageHeader,
+  startFacts,
   KNOWN_FIELDS,
   type AppinfoFacts,
   type CheckedPage,
@@ -49,6 +61,23 @@ import {
   type StartHost,
   type StartOptions,
 } from './settings-page.ts';
+
+/**
+ * Loads a page the way clay-preview does, with the keys stood in as message_keys on a fresh emery phone,
+ * and puts both back after.
+ */
+function loadAsPreview(paths: FacePaths, keys: Record<string, number>, options: Parameters<typeof loadSettingsPage>[3]): ReturnType<typeof loadSettingsPage> {
+  const restoreLoad = stubModuleLoad((id) => (id === 'message_keys' ? keys : undefined));
+  const restoreHost = installHost({ platform: 'emery', settings: null }, null);
+
+  try {
+    forgetCompiled(paths);
+    return loadSettingsPage(paths, keys, true, options);
+  } finally {
+    restoreHost();
+    restoreLoad();
+  }
+}
 
 /** The dev plugin's fixture faces, which page-check builds too. */
 const FIXTURES = path.join(ENGINE, 'plugins', 'dev', 'fixtures');
@@ -742,6 +771,198 @@ describe('captureStart', () => {
   });
 });
 
+describe('messageKeysFrom', () => {
+  /**
+   * clay-preview and page-check load a page on this map, not on the build's. A face that leaves its
+   * plugin select key to the define would preview with the plugin choice left off its page.
+   */
+  test('adds the keys the plugin defines bring after the face\'s own', () => {
+    const dir = path.join(tempDir('keys-from-'), 'my-face');
+    const file = path.join(dir, 'pebble.appinfo.json');
+
+    fs.mkdirSync(dir);
+    fs.writeFileSync(file, JSON.stringify({ messageKeys: ['SETTINGS_REQUEST', 'SETTINGS_FRESH'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin', 'openmeteo'] } }));
+
+    const result = messageKeysFrom(file);
+
+    expect(result).toEqual({ SETTINGS_REQUEST: 10000, SETTINGS_FRESH: 10001, WEATHER_REQUEST: 10002, WEATHER_TEMPERATURE: 10003, WEATHER_CONDITIONS: 10004, WEATHER_OK: 10005, WEATHER_PROVIDER: 10006 });
+  });
+
+  /** A define the build would refuse stops the preview with the build's own line, naming the face by its folder. */
+  test('refuses a define the build refuses', () => {
+    const dir = path.join(tempDir('keys-from-'), 'my-face');
+    const file = path.join(dir, 'pebble.appinfo.json');
+
+    fs.mkdirSync(dir);
+    fs.writeFileSync(file, JSON.stringify({ messageKeys: [], defines: { PLUGIN_WEATHER: 'on' } }));
+
+    const call = () => messageKeysFrom(file);
+
+    expect(call).toThrow("my-face's appinfo defines PLUGIN_WEATHER as \"on\", which is not a whole number");
+  });
+});
+
+describe('startFacts', () => {
+  /**
+   * A sandbox with a stand-in app module, whose startPebbleApp does nothing and whose page calls hand
+   * back the page the face gave, and the face's index.js as given.
+   */
+  function fakeSandbox(index: string): FacePaths {
+    const sandbox = tempDir('start-facts-');
+    const emit = path.join(sandbox, 'emit');
+    const emitPkjs = path.join(emit, 'face', 'src', 'pkjs');
+    const appDir = path.join(emit, 'paf', 'ts', 'pkjs');
+
+    fs.mkdirSync(emitPkjs, { recursive: true });
+    fs.mkdirSync(appDir, { recursive: true });
+    fs.writeFileSync(path.join(appDir, 'app.js'), [
+      'exports.default = { startPebbleApp() {} };',
+      'exports.faceStart = (options) => ({ options, defaults: {}, providers: null, hooks: [], fallbackPage: (config) => config });',
+      "exports.createClay = (options) => ({ config: options.clayConfig || [], customFn: null, generateUrl: () => '' });",
+      'exports.prepareSettingsPage = () => {};',
+      'exports.SETTINGS_REFETCH_DELAY_MS = 0;',
+      '',
+    ].join('\n'));
+    fs.writeFileSync(path.join(emitPkjs, 'index.js'), `const app = require('../../../paf/ts/pkjs/app.js').default;\nconst keys = require('message_keys');\n${index}\n`);
+
+    return { emit, emitPkjs, pluginSources: path.join(emit, 'paf', 'ts', 'plugin-sources') } as FacePaths;
+  }
+
+  /** A feature that carries the given keys. */
+  const feature = (name: string, keys: string[]): string => `const ${name} = () => ({});\n${name}.messageKeys = ${JSON.stringify(keys)};\n`;
+
+  /** A feature passed on a round watch alone still ships in the one pbw, so its keys have to be in it. */
+  test('reads the features on every platform the face builds for', () => {
+    const paths = fakeSandbox(`${feature('rect', ['RECT_KEY'])}${feature('round', ['ROUND_KEY'])}app.startPebbleApp({ clayConfig: [], features: Pebble.platform === 'gabbro' ? [round] : [rect] });`);
+
+    const result = startFacts(paths, 'face', [], ['emery', 'gabbro']);
+
+    expect(result).toEqual({ started: true, featureKeys: ['RECT_KEY', 'ROUND_KEY'] });
+  });
+
+  /** The phone runs the features of every call, so a second call's feature needs its keys too. */
+  test('reads the features of every startPebbleApp call', () => {
+    const paths = fakeSandbox(`${feature('first', ['FIRST_KEY'])}${feature('second', ['SECOND_KEY'])}app.startPebbleApp({ clayConfig: [], features: [first] });\napp.startPebbleApp({ clayConfig: [], features: [second] });`);
+
+    const result = startFacts(paths, 'face', [], ['emery']);
+
+    expect(result).toEqual({ started: true, featureKeys: ['FIRST_KEY', 'SECOND_KEY'] });
+  });
+
+  /**
+   * A face can pass a feature only beside another one's key. Read once on the face's own keys, the
+   * second feature would never show and its keys would be left out.
+   */
+  test('reads again with the keys it found until nothing new turns up', () => {
+    const paths = fakeSandbox(`${feature('base', ['BASE_KEY'])}${feature('extra', ['EXTRA_KEY'])}app.startPebbleApp({ clayConfig: [], features: keys.BASE_KEY === undefined ? [base] : [base, extra] });`);
+
+    const result = startFacts(paths, 'face', ['SETTINGS_REQUEST'], ['emery']);
+
+    expect(result).toEqual({ started: true, featureKeys: ['BASE_KEY', 'EXTRA_KEY'] });
+  });
+
+  /** A face whose features change with every key it is given would never settle, and the build cannot say what it ships. */
+  test('refuses features that bring new keys on every read', () => {
+    const paths = fakeSandbox(`const count = Object.keys(keys).length;\nconst grow = () => ({});\ngrow.messageKeys = ['KEY_' + count];\napp.startPebbleApp({ clayConfig: [], features: [grow] });`);
+
+    const call = () => startFacts(paths, 'face', [], ['emery']);
+
+    expect(call).toThrow("face's phone code passes features that bring new message keys each time the build reads it");
+  });
+
+  /** A bare stack from node says nothing about which face or why, so the line has to name both. */
+  test('names the face when its code throws as it loads', () => {
+    const paths = fakeSandbox("throw new Error('fetch is not defined');");
+
+    const call = () => startFacts(paths, 'my-face', [], ['emery']);
+
+    expect(call).toThrow("my-face's phone code threw while the build loaded it: fetch is not defined. The build loads it under node on a phone with only");
+  });
+
+  /** The page load runs the face's code too, so a throw there has to name the face the same way. */
+  test('names the face when its code throws as its page loads', () => {
+    const paths = fakeSandbox("throw new Error('fetch is not defined');");
+
+    const call = () => loadSettingsPage(paths, {}, true, { face: 'my-face' });
+
+    expect(call).toThrow("my-face's phone code threw while the build loaded it: fetch is not defined");
+  });
+
+  /** The first read has none of the features' keys yet, so a face whose code needs one as it loads has to hear why it threw. */
+  test('says the first read runs before the features\' keys are known', () => {
+    const paths = fakeSandbox("if (keys.WEATHER_OK === undefined) { throw new Error('no WEATHER_OK'); }");
+
+    const call = () => startFacts(paths, 'my-face', [], ['emery']);
+
+    expect(call).toThrow("This was the build's first read of the code, which runs before it knows the keys the features bring, so a key the code needs as it loads has to be listed in messageKeys.");
+  });
+
+  /**
+   * A feature wrapped in a function of the face's own hides the keys the framework's feature carries,
+   * so the build adds none, and the watch never sends the request the feature waits for.
+   */
+  test('refuses a feature that answers a request the keys do not carry, as the build loads the page', () => {
+    const paths = fakeSandbox("const wrapped = () => ({ requests: ['WEATHER_REQUEST'] });\napp.startPebbleApp({ clayConfig: [], features: [wrapped] });");
+
+    const call = () => loadAsPreview(paths, { SETTINGS_REQUEST: 10000 }, { face: 'my-face', checks: true, keysWhole: true });
+
+    expect(call).toThrow('my-face passes startPebbleApp a feature that answers WEATHER_REQUEST, but its message keys do not carry WEATHER_REQUEST');
+  });
+
+  /** clay-preview and page-check open a page the build would refuse, so the refusal is the build's alone. */
+  test('opens the same page without the build\'s checks', () => {
+    const paths = fakeSandbox("const wrapped = () => ({ requests: ['WEATHER_REQUEST'] });\napp.startPebbleApp({ clayConfig: [], features: [wrapped] });");
+
+    const result = loadAsPreview(paths, {}, { face: 'my-face', keysWhole: true });
+
+    expect(result?.features).toEqual([{ requests: ['WEATHER_REQUEST'] }]);
+  });
+
+  /** The build's keys already hold the features' keys, so reading the start again on every platform's page load would double the face's loads for nothing. */
+  test('reads the start before the page only when the keys are not whole', () => {
+    const paths = fakeSandbox('globalThis.pageLoads = (globalThis.pageLoads || 0) + 1;\napp.startPebbleApp({ clayConfig: [], features: [] });');
+    const host = globalThis as unknown as { pageLoads?: number };
+
+    host.pageLoads = 0;
+    loadAsPreview(paths, {}, { face: 'my-face', keysWhole: true });
+    const whole = host.pageLoads;
+
+    host.pageLoads = 0;
+    loadAsPreview(paths, {}, { face: 'my-face' });
+    const result = [whole, host.pageLoads];
+
+    delete host.pageLoads;
+    expect(result).toEqual([1, 2]);
+  });
+
+  /** A face that starts later, in a callback, would build with none of its features' keys and no settings page, and nothing would say why. */
+  test('warns when the face\'s code never calls startPebbleApp as it loads', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const paths = fakeSandbox('setTimeout(() => app.startPebbleApp({ clayConfig: [] }), 0);');
+
+    startFacts(paths, 'my-face', [], ['emery']);
+
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("my-face's phone code has an index.js that never calls startPebbleApp as it loads"));
+    warn.mockRestore();
+  });
+
+  /**
+   * The bug this pins. A real interval started as the face's code loads keeps node running after the
+   * build is done, so paf build would never return. The read runs in a node of its own, which has to
+   * end by itself.
+   */
+  test('holds a timer the face starts as it loads, so node still ends', () => {
+    const paths = fakeSandbox("setInterval(() => { process.stdout.write('tick'); }, 1);\nsetTimeout(() => { process.stdout.write('tock'); }, 1);\napp.startPebbleApp({ clayConfig: [], features: [] });");
+    const loader = pathToFileURL(path.join(import.meta.dirname, 'settings-page.ts')).href;
+    const script = `import { startFacts } from ${JSON.stringify(loader)};\nconst result = startFacts(${JSON.stringify(paths)}, 'face', [], ['emery']);\nprocess.stdout.write(JSON.stringify(result));`;
+
+    const result = spawnSync(process.execPath, ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', '--input-type=module', '-e', script], { encoding: 'utf8', timeout: 60_000 });
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toBe('{"started":true,"featureKeys":[]}');
+  });
+});
+
 describe('installHost', () => {
   /**
    * The build loads every face in one process, so a phone left behind would hand the next face the
@@ -893,6 +1114,39 @@ describe('loading a face page', () => {
 
     expect(loaded).toHaveLength(1);
     expect(result).toEqual({});
+  });
+
+  /**
+   * A face that leaves the weather and calendar keys to the features has to load the same page as one
+   * that lists them. Without them the weather feature starts on nothing and its page hook never runs.
+   */
+  test('adds the keys the features need before they start, as clay-preview loads the page', () => {
+    const brought = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK', 'CALENDAR_REQUEST', 'CALENDAR_STRIP'];
+    const keys = messageKeysOf({ messageKeys: Object.keys(keysOf('face')).filter((key) => !brought.includes(key)) });
+    const listed = loadOnPlatforms(face, keysOf('face'), ['emery'], 'face');
+
+    const loaded = loadAsPreview(face, keys, { face: 'face' });
+
+    expect(Object.keys(keys)).toEqual(expect.arrayContaining(brought));
+    expect(JSON.stringify(loaded?.clay.config)).toBe(JSON.stringify(listed[0].clay.config));
+  });
+
+  /** The build adds the keys the features carry, so a start read that missed one would build a face without it. */
+  test('reads the keys the features need and that the face starts', () => {
+    const appinfo = JSON.parse(fs.readFileSync(path.join(FIXTURES, 'face', 'pebble.appinfo.json'), 'utf8'));
+
+    const result = startFacts(face, 'face', appinfo.messageKeys, ['emery']);
+
+    expect(result).toEqual({ started: true, featureKeys: ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK', 'CALENDAR_REQUEST', 'CALENDAR_STRIP'] });
+  });
+
+  /** A face with no phone code adds no feature keys and no settings page capability, rather than stopping the build. */
+  test('reads nothing from a sandbox with no index.js', () => {
+    const paths = facePaths('none', 'none', { root: ENGINE, rel: 'plugins/dev/fixtures/none', sandbox: path.join(OUT_DIR, 'none') });
+
+    const result = startFacts(paths, 'none', [], ['emery']);
+
+    expect(result).toEqual({ started: false, featureKeys: [] });
   });
 
   /** A face with no phone code of its own has no settings page, and the build has to go on to an empty header rather than stop. */

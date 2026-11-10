@@ -206,11 +206,11 @@ typedef struct
  * gets the framework's schema for the source choice, walked after its own and saved under
  * SETTINGS_PLUGIN_SOURCE_KEY. The choice is only kept once this has run, so a face with no settings
  * of its own still has to call it, as settings_init(NULL), or a reset of the Pebble app drops the
- * wearer's pick. The pick only reaches the phone in the settings reply, so the build refuses such a
- * face without SETTINGS_REQUEST and SETTINGS_FRESH. Call it before appmessage_open, which sizes the
- * outbox from the settings reply. Called after, every settings reply goes out empty and a reinstall
- * restores nothing. A face schema on SETTINGS_PLUGIN_SOURCE_KEY is logged as an error and the
- * framework's schema is left out. A face field on a select key the framework keeps is logged too.
+ * wearer's pick. The pick only reaches the phone in the settings reply, so the build adds
+ * SETTINGS_REQUEST and SETTINGS_FRESH to such a face's keys. Call it before appmessage_open, which
+ * sizes the outbox from the settings reply. Called after, every settings reply goes out empty and a
+ * reinstall restores nothing. A face schema on SETTINGS_PLUGIN_SOURCE_KEY is logged as an error and
+ * the framework's schema is left out. A face field on a select key the framework keeps is logged too.
  *
  * @param schema The head schema defining the face's settings, or NULL for a face with none.
  */

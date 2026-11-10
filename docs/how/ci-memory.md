@@ -56,6 +56,8 @@ The block only appears while linking, so the log of a build that linked is the o
 
 **The Binaries.** For each target and platform, the action opens the build's `pebble-app.bin` under `targets/<target>/build/<platform>/` in the face's unit. The app image is the file's size, which is the load size plus the relocation table. The static size is the `virtual_size` field in the app's header, which the SDK fills with `.text` plus `.data` plus `.bss`. A missing binary reads as 0 with a warning, and its row is kept, so the gap shows in the table instead of the row vanishing.
 
+**A Plugin App.** A face whose appinfo sets `"projectType": "plugin"` runs on the phone and links no watch binary, so its log holds no memory report. The step says so in one line and writes an empty list of rows, so the upload after it still has its file.
+
 **What Stops It.** The step fails when no `log` was passed, when there is no file at that path, when the log holds no memory report at all, or when it holds one and none of the figures can be read. The last message says the SDK may have changed how it prints them, since the figures are only ever read from the SDK's own wording.
 
 **What It Writes.** One row per target and platform, with the face, the target, the platform, the app image, the static size, and the resources, footprint, and free heap from the log. The rows go into a JSON file, uploaded as the artifact `memory-<face>`. A re-run of a job that already uploaded its rows replaces them, since a second upload under the same name is otherwise refused.

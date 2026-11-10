@@ -8,6 +8,13 @@ import { describe, expect, test } from 'vitest';
 import { assetName } from './lib.js';
 
 describe('assetName', () => {
+  /** A plugin app lists no platforms, and naming it from an empty list crashed the step after the whole build. */
+  test('names a plugin app by its version alone', () => {
+    const result = assetName('calendar-ical', null, '1.0.0');
+
+    expect(result).toBe('calendar-ical-1.0.0.pbw');
+  });
+
   /** Without the platform in the name, a gabbro owner cannot tell an emery-only pbw will not install. */
   test('names the watch for a pbw built for one platform', () => {
     const result = assetName('lcars-stardate', ['emery'], '1.11.0');

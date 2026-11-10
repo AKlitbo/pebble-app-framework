@@ -171,6 +171,17 @@ describe('findFaceProject', () => {
     expect(result).toEqual({ project: path.join(root, 'watchapps', 'toolbox'), face: path.join(root, 'watchapps', 'toolbox', 'timer') });
   });
 
+  /** A repo of plugin apps keeps each under plugins/, and a release of one found nothing there and stopped. */
+  test('finds a plugin app of its own under plugins/', () => {
+    const root = tree({
+      'plugins/calendar-ical/pebble.appinfo.json': '{ "name": "calendar-ical", "projectType": "plugin" }',
+    });
+
+    const result = findFaceProject(root, 'calendar-ical');
+
+    expect(result).toEqual({ project: path.join(root, 'plugins', 'calendar-ical'), face: path.join(root, 'plugins', 'calendar-ical') });
+  });
+
   /** A family can be a repo of its own, with its faces beside its core/, and setup-pebble has to find them there. */
   test('finds a face straight under a family at the repo root', () => {
     const root = tree({

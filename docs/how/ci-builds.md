@@ -50,7 +50,7 @@ The steps run in this order because each reads what the one before it left. The 
 
 **Every Target the Face Builds.** The `face*` in the path picks up each target's sandbox, so a face that builds a watchface and a watchapp from one source, such as Gridlock's `gridlock-face` and `gridlock-app`, uploads both. `if-no-files-found: error` fails the job when the build left nothing to upload.
 
-**Piped through `tee`.** The log is kept for `report-memory`, as [What report-memory Reads](ci-memory.md#what-report-memory-reads) covers. `shell: bash` runs the step with `pipefail`, so a build that fails still fails the step rather than passing on `tee`'s exit code.
+**Piped through `tee`.** The log is kept for `report-memory`, as [What report-memory Reads](ci-memory.md#what-report-memory-reads) covers. A plugin app gets no memory report, since it runs on the phone and links no watch binary. `report-memory` says so in one line and uploads no rows for it. `shell: bash` runs the step with `pipefail`, so a build that fails still fails the step rather than passing on `tee`'s exit code.
 
 The other jobs in the same workflow, such as `paf test`, `paf lint`, `paf typecheck`, and `paf check`, run the sync action with no `face`. That fills every unit in the repo, and each command then runs across all of them.
 

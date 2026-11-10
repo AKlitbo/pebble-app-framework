@@ -12,7 +12,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { PROVIDERS, pluginSourceDefaults, providerMode, providerWarnings, readProviders } from './providers';
+import { PROVIDERS, checkProviderKeys, pluginSourceDefaults, providerMode, providerWarnings, readProviders } from './providers';
 import { PLUGIN_KINDS } from './plugin-kinds';
 import { STOCK_DOMAINS, WEATHER_DOMAINS } from './permissions';
 import { WEATHER_PROVIDERS } from '../../ts/weather/weather';
@@ -185,18 +185,14 @@ describe('readProviders', () => {
     expect(call).toThrow(`my-face's appinfo providers.${kind} names spotify, but ${words} comes only from a plugin, so its list can only be ["plugin"]`);
   });
 
-  /** A list for a kind the face does not have narrows nothing, and says the face offers something it never shows. */
-  test.each([
-    ['weather', { weather: ['openmeteo'] }, 'WEATHER_REQUEST'],
-    ['stocks', { stocks: ['yahoo'] }, 'STOCK_STRIP'],
-    ['calendar', { calendar: ['ical'] }, 'CALENDAR_STRIP'],
-    ['calendarHosts', { calendarHosts: ['google.com'] }, 'CALENDAR_STRIP'],
-  ])('refuses %s without its feature key', (kind, providers, key) => {
-    const keys = ALL_KEYS.filter((declared) => declared !== key);
+  /**
+   * The phone build reads the list before the build knows the keys the features bring, so a stocks list
+   * on a face that leaves STOCK_STRIP to the stocks feature has to pass here.
+   */
+  test('reads a list without looking at the message keys', () => {
+    const result = readProviders(appinfo({ stocks: ['yahoo'] }, []), 'my-face', {});
 
-    const call = () => readProviders(appinfo(providers, keys), 'my-face', {});
-
-    expect(call).toThrow(`my-face's appinfo lists providers.${kind} without the ${key} message key`);
+    expect(result).toEqual({ stocks: ['yahoo'] });
   });
 
   /** A face whose page offers the plugin while its bundle has no plugin code is the bug this catches. */
@@ -216,15 +212,6 @@ describe('readProviders', () => {
     expect(call).toThrow("my-face's appinfo defines PLUGIN_CALENDAR, but providers.calendar does not list plugin");
   });
 
-  /** A plugin only face that keeps its select key logs the reset-field error at every launch. */
-  test.each([
-    ['weather', 'PLUGIN_WEATHER', 'WEATHER_PROVIDER'],
-    ['calendar', 'PLUGIN_CALENDAR', 'CALENDAR_SOURCE'],
-  ])('refuses a plugin only %s list beside its select key', (kind, define, key) => {
-    const call = () => readProviders(appinfo({ [kind]: ['plugin'] }), 'my-face', { [define]: 1 });
-
-    expect(call).toThrow(`my-face's appinfo lists providers.${kind} as ["plugin"] and still declares ${key}. A plugin only kind keeps no choice on the watch, so take ${key} out of messageKeys`);
-  });
 
   /** A plugin only face without its select keys is the shape the refusal asks for, so it has to build. */
   test('takes plugin only weather and calendar without their select keys', () => {
@@ -282,6 +269,48 @@ describe('readProviders', () => {
     const call = () => readProviders(appinfo({ calendarHosts: ['Google.com'] }), 'my-face', {});
 
     expect(call).toThrow("my-face's appinfo providers.calendarHosts holds Google.com. Write it in lowercase, as google.com");
+  });
+});
+
+describe('checkProviderKeys', () => {
+  /**
+   * A list for a kind the face does not have narrows nothing, and says the face offers something it
+   * never shows. The feature brings the key, so the refusal says to pass it.
+   */
+  test.each([
+    ['weather', { weather: ['openmeteo'] }, 'WEATHER_REQUEST', 'weather from ts/weather/feature'],
+    ['stocks', { stocks: ['yahoo'] }, 'STOCK_STRIP', 'stocks from ts/stock/feature'],
+    ['calendar', { calendar: ['ical'] }, 'CALENDAR_STRIP', 'calendar from ts/calendar/feature'],
+    ['calendarHosts', { calendarHosts: ['google.com'] }, 'CALENDAR_STRIP', 'calendar from ts/calendar/feature'],
+  ])('refuses %s without its feature key', (kind, providers, key, feature) => {
+    const keys = ALL_KEYS.filter((declared) => declared !== key);
+    const lists = readProviders(appinfo(providers, keys), 'my-face', {});
+
+    const call = () => checkProviderKeys(lists, keys, 'my-face');
+
+    expect(call).toThrow(`my-face's appinfo lists providers.${kind} without the ${key} message key`);
+    expect(call).toThrow(`Pass ${feature} in startPebbleApp's features, which brings the key`);
+  });
+
+  /** A plugin only face that keeps its select key logs the reset-field error at every launch. */
+  test.each([
+    ['weather', 'PLUGIN_WEATHER', 'WEATHER_PROVIDER'],
+    ['calendar', 'PLUGIN_CALENDAR', 'CALENDAR_SOURCE'],
+  ])('refuses a plugin only %s list beside its select key', (kind, define, key) => {
+    const lists = readProviders(appinfo({ [kind]: ['plugin'] }), 'my-face', { [define]: 1 });
+
+    const call = () => checkProviderKeys(lists, ALL_KEYS, 'my-face');
+
+    expect(call).toThrow(`my-face's appinfo lists providers.${kind} as ["plugin"] and still declares ${key}. A plugin only kind keeps no choice on the watch, so take ${key} out of messageKeys`);
+  });
+
+  /** A face whose keys back every list it gives builds. */
+  test('passes every kind with its keys', () => {
+    const lists = readProviders(appinfo({ weather: ['plugin', 'openmeteo'], stocks: ['yahoo'], calendar: ['plugin', 'ical'], calendarHosts: ['google.com'] }), 'my-face', { PLUGIN_WEATHER: 1, PLUGIN_CALENDAR: 1 });
+
+    const call = () => checkProviderKeys(lists, ALL_KEYS, 'my-face');
+
+    expect(call).not.toThrow();
   });
 });
 

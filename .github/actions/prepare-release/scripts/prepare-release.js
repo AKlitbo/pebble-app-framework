@@ -53,7 +53,10 @@ module.exports = step(async ({ core, exec }) => {
 
   const { findFaces } = await import(pathToFileURL(path.join(framework, 'tools', 'shared', 'faces.ts')).href);
   const { APPINFO_REL } = await import(pathToFileURL(path.join(framework, 'tools', 'shared', 'paths.ts')).href);
-  const { faceVersion } = await import(pathToFileURL(path.join(framework, 'tools', 'manifest', 'build-manifests.ts')).href);
+  const manifests = await import(pathToFileURL(path.join(framework, 'tools', 'manifest', 'build-manifests.ts')).href);
+  const { faceVersion } = manifests;
+  // a framework from before plugin apps has no isPluginApp, so the appinfo is read the way it reads it
+  const isPluginApp = manifests.isPluginApp || ((config) => config.projectType === 'plugin');
   let faces;
 
   try {
@@ -98,8 +101,9 @@ module.exports = step(async ({ core, exec }) => {
   }
 
   // the release names each pbw by the platforms it installs on, and finding none out after the SDK
-  // install and the whole build wastes both
-  if (!Array.isArray(appinfo.targetPlatforms) || appinfo.targetPlatforms.length === 0) {
+  // install and the whole build wastes both. a plugin app runs on the phone and builds for no
+  // platform, so it lists none
+  if (!isPluginApp(appinfo) && (!Array.isArray(appinfo.targetPlatforms) || appinfo.targetPlatforms.length === 0)) {
     fail(`${appinfoRel} lists no targetPlatforms. Add them so the release can name what each pbw installs on.`);
   }
 

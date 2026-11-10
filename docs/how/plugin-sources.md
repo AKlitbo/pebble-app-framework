@@ -1,6 +1,6 @@
 # Pebble App Plugins
 
-The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app's own weather list, the events in the phone's calendars, what the phone is playing, and the phone's battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well.
+The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app's own weather list, the events in the phone's calendars, what the phone is playing, and the phone's battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well. [Plugin Apps](plugin-apps.md) covers building a plugin of your own.
 
 The phone code lives under `src/ts/plugin-sources/`, and the rest of the phone code reaches it only through [`index.ts`](../../src/ts/plugin-sources/index.ts). The shared parts are [`subscription.ts`](../../src/ts/plugin-sources/subscription.ts), which keeps one live subscription per kind, [`page.ts`](../../src/ts/plugin-sources/page.ts), which adds the plugin choice and its notes to the settings page, and [`standard.ts`](../../src/ts/plugin-sources/standard.ts), which checks what a plugin says it serves. Each kind has a file that turns a plugin's update into what the watch takes, such as [`weather.ts`](../../src/ts/plugin-sources/weather.ts) and [`calendar.ts`](../../src/ts/plugin-sources/calendar.ts). The build side is the table of kinds in [`plugin-kinds.ts`](../../src/tools/manifest/plugin-kinds.ts), the providers list in [`providers.ts`](../../src/tools/manifest/providers.ts), and the swap in [`build-pkjs.ts`](../../src/tools/pkjs/build-pkjs.ts).
 
@@ -19,7 +19,7 @@ A face turns plugins on one kind of data at a time, in its appinfo's `defines`. 
 app.startPebbleApp({ clayConfig, features: [weather, calendar] });
 ```
 
-| Define | What It Reads | Keys It Needs | Select Key | Permission |
+| Define | What It Reads | Keys It Brings | Select Key | Permission |
 | :-- | :-- | :-- | :-- | :-- |
 | `PLUGIN_WEATHER` | `weather/location` | `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, `WEATHER_OK` | `WEATHER_PROVIDER` | `Location`, which every weather face lists |
 | `PLUGIN_CALENDAR` | `calendar/event` | `CALENDAR_STRIP` | `CALENDAR_SOURCE` | `Calendar` |
@@ -28,7 +28,7 @@ app.startPebbleApp({ clayConfig, features: [weather, calendar] });
 
 Each define decides its own kind and nothing else. It puts that kind's plugin code in the phone bundle, adds that kind's choice and notes to the settings page, and adds its permission to the manifest, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers. A face can take plugin weather and keep its calendar on the iCal link alone, with no calendar choice on its page and no `Calendar` prompt, by setting `PLUGIN_WEATHER` alone. A define set to `0` is off, the same as one left out. The defines also reach the watch C as `-DPLUGIN_WEATHER=1` and so on. There the weather and calendar defines keep the wearer's choice on the watch, as [Keeping the Choice through a Reset](#keeping-the-choice-through-a-reset) covers, and `PLUGIN_WEATHER` on a face with no unit key drops the unit letter, as [Units from the Pebble App](#units-from-the-pebble-app) covers.
 
-**The Watch Needs settings_init.** With the weather or calendar define on and the select key declared, the watch keeps the wearer's choice in the framework's own settings schema, so a reset of the Pebble app brings it back. That only happens once `settings_init` has run. A face with settings of its own already calls it. A face with no settings of its own has to call `settings_init(NULL)` at launch, before `appmessage_open`, or it keeps nothing and a reset drops the wearer's pick. The outbox is sized from the settings reply when it opens, so a call after it leaves every settings reply empty, and a reinstall restores nothing. The build cannot tell whether a face calls it, so nothing warns. The choice only goes back to the phone in the settings reply, so the build refuses such a face without `SETTINGS_REQUEST` and `SETTINGS_FRESH`, even one with no settings of its own. [Keeping a Plugin Source](settings-on-the-watch.md#keeping-a-plugin-source) covers the rest, including key 249, which every face leaves free.
+**The Watch Needs settings_init.** With the weather or calendar define on and the select key declared, the watch keeps the wearer's choice in the framework's own settings schema, so a reset of the Pebble app brings it back. That only happens once `settings_init` has run. A face with settings of its own already calls it. A face with no settings of its own has to call `settings_init(NULL)` at launch, before `appmessage_open`, or it keeps nothing and a reset drops the wearer's pick. The outbox is sized from the settings reply when it opens, so a call after it leaves every settings reply empty, and a reinstall restores nothing. The build cannot tell whether a face calls it, so nothing warns. The choice only goes back to the phone in the settings reply, so the build adds `SETTINGS_REQUEST` and `SETTINGS_FRESH` to such a face's keys, even one with no settings of its own. [Keeping a Plugin Source](settings-on-the-watch.md#keeping-a-plugin-source) covers the rest, including key 249, which every face leaves free.
 
 **Each Define Needs Its Keys.** The build stops on a define without the keys its kind needs, so the mistake shows at build time rather than as a lost save or a subscription with nowhere to send. The select key is the one the plugin choice saves under. The calendar's select is one the page adds, and Clay saves a setting to the watch under its key's number, so the face declares `CALENDAR_SOURCE` even though its own page has no such row. A new key needs a `--clean` build. Now playing and the phone's battery have no other source, so the build also stops on their keys without their define, since nothing on the phone would ever answer them.
 
@@ -51,7 +51,7 @@ With the define on, weather and the calendar each run in one of three modes:
 
 Now playing and the phone's battery only ever run the third way, so their list is `["plugin"]` or left out.
 
-**What Each Mode Needs.** Every mode needs the kind's keys from the table. The select key is needed with no list or a mixed list, and refused with a plugin only list, since a plugin only kind keeps no choice. A face moving a kind to `["plugin"]` takes `WEATHER_PROVIDER` or `CALENDAR_SOURCE` out of `messageKeys` and builds with `--clean`.
+**What Each Mode Brings.** Every mode brings the kind's keys from the table, which the build adds to the face's message keys after its own. The select key comes with no list or a mixed list, along with `SETTINGS_REQUEST` and `SETTINGS_FRESH`, and is refused beside a plugin only list, since a plugin only kind keeps no choice. A face moving a kind to `["plugin"]` that lists `WEATHER_PROVIDER` or `CALENDAR_SOURCE` itself takes it out of `messageKeys` and builds with `--clean`.
 
 **What the Build Refuses.** The list and the define have to agree. `plugin` in a list needs the kind's define on, and a define on beside a list for its kind needs `plugin` in that list. [What the Build Refuses](phone-side.md#what-the-phone-lets-it-reach) lists the rest of the checks on the providers list, and [Offering Fewer Providers](settings-page.md#offering-fewer-providers) covers what each list does to the page.
 
@@ -188,12 +188,11 @@ A face with no settings of its own passes an empty page, and takes its weather f
 
 ```json
 "defines": { "PLUGIN_WEATHER": 1 },
-"providers": { "weather": ["plugin"] },
-"messageKeys": ["WEATHER_REQUEST", "WEATHER_TEMPERATURE", "WEATHER_CONDITIONS", "WEATHER_OK"]
+"providers": { "weather": ["plugin"] }
 ```
 
 ```ts
 app.startPebbleApp({ clayConfig: [], features: [weather] });
 ```
 
-Its page holds only the weather's notes and the supported plugins panel. It has no unit setting, so it shows the weather in the unit the wearer picked in the Pebble app, and keeps nothing on the watch for a reset, since it has no choice to keep.
+The define and the weather feature bring the four weather keys, so it lists no message keys of its own. Its page holds only the weather's notes and the supported plugins panel. It has no unit setting, so it shows the weather in the unit the wearer picked in the Pebble app, and keeps nothing on the watch for a reset, since it has no choice to keep.

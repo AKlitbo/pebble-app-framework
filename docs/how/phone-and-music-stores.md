@@ -19,7 +19,7 @@ On the phone, the face sets `PLUGIN_PHONE` or `PLUGIN_MUSIC` in its appinfo's `d
 startPebbleApp({ clayConfig, features: [phone, music] });
 ```
 
-It declares the keys each one needs, `PHONE_BATTERY` and `PHONE_REQUEST` for the battery, and `MUSIC_TITLE`, `MUSIC_ARTIST`, `MUSIC_PLAYING`, and `MUSIC_REQUEST` for now playing. A new key needs a `--clean` build. The build refuses a define without all of its keys, and refuses any of those keys without the define, since only the plugin fills them.
+Each define brings the keys its store needs, `PHONE_BATTERY` and `PHONE_REQUEST` for the battery, and `MUSIC_TITLE`, `MUSIC_ARTIST`, `MUSIC_PLAYING`, and `MUSIC_REQUEST` for now playing, and the build adds them to the face's message keys. A sandbox whose keys change that way builds clean on its own. The build refuses any of those keys without the define, since only the plugin fills them.
 
 On the watch, the face starts each store live, beside a live system store:
 

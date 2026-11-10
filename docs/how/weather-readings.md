@@ -14,7 +14,7 @@ The phone sends the weather as one message, and its keys come in groups:
 * **Air.** The feels-like temperature, the pressure, and the dew point.
 * **The Strips.** An hourly forecast and a daily one, each packed into a byte array.
 
-A face declares the keys for the groups it shows, and a group is only read when the face declares all of its keys. The current group counts as sent when the message has both a temperature and a condition. Each of the others counts as sent when any one of its keys is in the message. A value the phone had none of is left out of the message, and the AppMessage layer marks it as missing before `weather_reading_apply` sees it.
+A face declares the keys for the groups it shows, and a group is only read when the face declares all of its keys. Every group is read beside the current one, so the build stops on a group declared in part or without the current group's four keys, as [Talking to the Phone](talking-to-the-phone.md#switches-from-the-message-keys) covers. The current group counts as sent when the message has both a temperature and a condition. Each of the others counts as sent when any one of its keys is in the message. A value the phone had none of is left out of the message, and the AppMessage layer marks it as missing before `weather_reading_apply` sees it.
 
 `weather_reading_apply` then puts the message into the kept reading:
 

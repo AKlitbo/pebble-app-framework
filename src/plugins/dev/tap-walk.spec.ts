@@ -252,7 +252,7 @@ describe('walk', () => {
 
     const call = () => walk(io);
 
-    expect(call).toThrow(/the first tap drew the same screen as the start.*DEV_TAP_WALK_THEMES/);
+    expect(call).toThrow(/the first tap drew the same screen as the start.*picks a "walk".*paf build <face> --dev/);
   });
 
   /**
@@ -265,7 +265,7 @@ describe('walk', () => {
 
     const call = () => walk(io, 3);
 
-    expect(call).toThrow(/after saving 4 unique states in \.tmp\/tap-walk-shots\/\. Check DEV_MODE.*DEV_TAP_WALK_THEMES/);
+    expect(call).toThrow(/after saving 4 unique states in \.tmp\/tap-walk-shots\/\. Check that the unit's paf\.dev\.config\.json picks a "walk"/);
     expect(calls.filter((step) => step === 'tap')).toHaveLength(3);
   });
 });

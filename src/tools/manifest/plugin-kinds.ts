@@ -6,6 +6,12 @@
  * phone build reads it to write the plugin-sources/index.js that requires only the kinds that are on.
  */
 
+/**
+ * The four keys a weather reading needs. The plugin define asks for them, and the key group check
+ * reads every other weather group beside them.
+ */
+export const WEATHER_READING_KEYS: readonly string[] = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'];
+
 /** One kind of plugin data. */
 export interface PluginKind {
   /** The define that turns it on, such as `PLUGIN_WEATHER`. */
@@ -57,7 +63,7 @@ export const PLUGIN_KINDS: readonly PluginKind[] = [
     define: 'PLUGIN_WEATHER',
     file: 'weather',
     exportName: 'weatherPlugins',
-    keys: ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'],
+    keys: [...WEATHER_READING_KEYS],
     selectKey: 'WEATHER_PROVIDER',
     pageDefault: 'openmeteo',
     defaultDefine: 'PLUGIN_SOURCE_WEATHER_DEFAULT',

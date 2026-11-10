@@ -5,17 +5,22 @@
  * deep-clone that keeps one target's flag from bleeding onto the other. buildManifest is the
  * package.json wire shape pebble build reads. fillWscript is the only place a sandbox learns where
  * its framework and face sit. readDefines guards what a face hands the compiler, since each define
- * lands on its command line. checkPluginKeys refuses a plugin define the face has not declared the
- * keys for, which follow the mode the face's providers list puts the kind in. checkAppinfo is what
- * every target's manifest is built from, so a face without providers is pinned against a literal copy
- * of the manifest it builds today. main()'s file I/O is glue, left to the build.
+ * lands on its command line. checkPluginKeys refuses the keys only a plugin fills without its define.
+ * checkAppinfo is what every target's manifest is built from, so a face without providers is pinned
+ * against a literal copy of the manifest it builds today, and it is where the checks against the
+ * message keys run, on the keys the build adds as well as the face's own. A plugin app's manifest is
+ * pinned the same way, since the Pebble app reads its permissions and plugin block exactly as written,
+ * and checkPluginApp is what keeps a plugin app from building as a broken watchface. main()'s file I/O
+ * is glue, left to the build.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildMedia, buildManifest, checkAppinfo, checkPluginKeys, faceBuildInfo, fillWscript, findTargetClash, readDefines, resolveTargets } from './build-manifests';
+import { buildMedia, buildManifest, buildPluginManifest, checkAppinfo, checkPluginApp, checkPluginKeys, faceBuildInfo, fillWscript, findTargetClash, isPluginApp, keysChanged, prepareAppinfo, readDefines, recordBuiltKeys, resolveTargets } from './build-manifests';
+import { fillAppinfo } from './feature-keys';
 import type { SharedAppinfo } from './build-manifests';
+import { tempDir } from '../../ts/testing/temp-dir.ts';
 
 // a fresh config per test so the mutation check can't be masked by an earlier test
 function makeConfig(): SharedAppinfo {
@@ -287,6 +292,15 @@ describe('readDefines', () => {
     expect(call).toThrow(/PLUGIN_SOURCE_WEATHER_DEFAULT, which the build sets itself/);
   });
 
+  /** A dev switch in the appinfo would turn the fixture on in a build without --dev, a release's included. */
+  test('refuses a dev switch, which the build sets from --dev', () => {
+    const config = { ...makeConfig(), defines: { DEV_MODE: 1 } };
+
+    const call = () => readDefines(config, 'gridlock');
+
+    expect(call).toThrow("gridlock's appinfo defines DEV_MODE, which the build sets itself from the dev switches. Take it out of the appinfo, and build with paf build gridlock --dev for dev mode");
+  });
+
   /**
    * The manifest's textDefines come from the providers list alone. A block of the face's own would
    * look like it sets the watch's default and do nothing, so the build says so rather than ignore it.
@@ -382,122 +396,13 @@ describe('resolveTargets', () => {
   });
 });
 
-describe('checkPluginKeys', () => {
-  // every key both kinds need, so a spec takes one away to see it refused
-  const allKeys = ['SETTINGS_REQUEST', 'SETTINGS_FRESH', 'WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK', 'WEATHER_PROVIDER', 'CALENDAR_STRIP', 'CALENDAR_SOURCE'];
-
-  /**
-   * The weather feature runs only with all of its keys declared. A face with the define and a key
-   * missing would build fine and then never show plugin weather, so the build has to say so.
-   */
-  test('refuses PLUGIN_WEATHER without the weather keys', () => {
-    const keys = allKeys.filter((key) => key !== 'WEATHER_OK');
-
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1 }, keys, 'gridlock');
-
-    expect(call).toThrow("gridlock's appinfo defines PLUGIN_WEATHER without the message keys it needs: WEATHER_OK");
-  });
-
-  /** The plugin choice joins the provider select, so a face without WEATHER_PROVIDER has nowhere to offer it. */
-  test('refuses PLUGIN_WEATHER without WEATHER_PROVIDER', () => {
-    const keys = allKeys.filter((key) => key !== 'WEATHER_PROVIDER');
-
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1 }, keys, 'gridlock');
-
-    expect(call).toThrow(/PLUGIN_WEATHER without the message keys it needs: WEATHER_PROVIDER/);
-  });
-
-  /**
-   * Clay saves the calendar source to the watch under its key's number. A face with the define and no
-   * CALENDAR_SOURCE key would put a key the phone cannot map into every settings save.
-   */
-  test('refuses PLUGIN_CALENDAR without CALENDAR_SOURCE', () => {
-    const keys = allKeys.filter((key) => key !== 'CALENDAR_SOURCE');
-
-    const call = () => checkPluginKeys({ PLUGIN_CALENDAR: 1 }, keys, 'gridlock');
-
-    expect(call).toThrow(/PLUGIN_CALENDAR without the message keys it needs: CALENDAR_SOURCE/);
-  });
-
-  /**
-   * The watch keeps the wearer's pick, and only the settings reply hands it back to the phone. A face
-   * with no settings of its own and neither settings key would build, and lose the pick on a reinstall.
-   */
-  test.each(['SETTINGS_REQUEST', 'SETTINGS_FRESH'])('refuses a kept weather choice without %s', (key) => {
-    const keys = allKeys.filter((name) => name !== key);
-
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1 }, keys, 'gridlock');
-
-    expect(call).toThrow("gridlock's appinfo defines PLUGIN_WEATHER with WEATHER_PROVIDER, so the watch keeps the wearer's pick, and only the settings reply hands it back to the phone. Declare both SETTINGS_REQUEST and SETTINGS_FRESH in messageKeys and build with --clean");
-  });
-
-  /** A face that turned the calendar off with a 0 still builds without the calendar keys. */
-  test('passes a plugin define at 0 without its keys', () => {
-    const call = () => checkPluginKeys({ PLUGIN_CALENDAR: 0 }, ['SETTINGS_REQUEST'], 'gridlock');
-
-    expect(call).not.toThrow();
-  });
-
-  /** An array key such as CALENDAR_STRIP[2] is still the key, and refusing it would stop a face that declares it that way. */
-  test('passes a face with every key, one of them in its array form', () => {
-    const keys = allKeys.map((key) => (key === 'CALENDAR_STRIP' ? 'CALENDAR_STRIP[2]' : key));
-
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1, PLUGIN_CALENDAR: 1 }, keys, 'gridlock');
-
-    expect(call).not.toThrow();
-  });
-});
-
-describe('checkPluginKeys in each providers mode', () => {
-  const weatherKeys = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'];
-
-  /** A plugin only face has no select, so asking it for the select key would refuse the shape the build tells it to take. */
-  test('passes plugin only weather without WEATHER_PROVIDER or WEATHER_API_KEY', () => {
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1 }, weatherKeys, 'gridlock', { weather: ['plugin'] });
-
-    expect(call).not.toThrow();
-  });
-
-  /** A mixed list offers the plugin on the provider select, so a face without that key has nowhere to offer it. */
-  test('refuses mixed weather without WEATHER_PROVIDER', () => {
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1 }, weatherKeys, 'gridlock', { weather: ['plugin', 'openmeteo'] });
-
-    expect(call).toThrow("gridlock's appinfo defines PLUGIN_WEATHER without the message keys it needs: WEATHER_PROVIDER");
-  });
-
-  /** Plugin only still runs the weather feature, which needs its own keys whatever the mode. */
-  test('refuses plugin only weather without the weather keys', () => {
-    const call = () => checkPluginKeys({ PLUGIN_WEATHER: 1 }, weatherKeys.filter((key) => key !== 'WEATHER_OK'), 'gridlock', { weather: ['plugin'] });
-
-    expect(call).toThrow(/PLUGIN_WEATHER without the message keys it needs: WEATHER_OK/);
-  });
-
-  /** A plugin only calendar needs its strip alone, with no select and no iCal link. */
-  test('passes a plugin only calendar with CALENDAR_STRIP alone', () => {
-    const call = () => checkPluginKeys({ PLUGIN_CALENDAR: 1 }, ['CALENDAR_STRIP'], 'gridlock', { calendar: ['plugin'] });
-
-    expect(call).not.toThrow();
-  });
-
-  /** A calendar offering the plugin beside iCal saves the choice under CALENDAR_SOURCE, so the key has to be declared. */
-  test('refuses a mixed calendar without CALENDAR_SOURCE', () => {
-    const call = () => checkPluginKeys({ PLUGIN_CALENDAR: 1 }, ['CALENDAR_STRIP'], 'gridlock', { calendar: ['plugin', 'ical'] });
-
-    expect(call).toThrow("gridlock's appinfo defines PLUGIN_CALENDAR without the message keys it needs: CALENDAR_SOURCE");
-  });
-
-  /** A custom only face with no define carries no plugin code, so it needs nothing beyond today's keys. */
-  test('passes custom only weather and an iCal only calendar without a define', () => {
-    const call = () => checkPluginKeys({}, [...weatherKeys, 'CALENDAR_STRIP'], 'gridlock', { weather: ['openmeteo'], calendar: ['ical'] });
-
-    expect(call).not.toThrow();
-  });
-});
-
 describe('checkAppinfo', () => {
+  // the four keys weather needs, which the key group check refuses in part
+  const WEATHER_KEYS = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'];
+
   // a face with weather, stocks, and the time zone picker, which every kind's narrowing touches
   function faceConfig(extra: Partial<SharedAppinfo> = {}): SharedAppinfo & { name: string } {
-    return { ...makeConfig(), name: 'gridlock', messageKeys: ['WEATHER_REQUEST', 'WEATHER_PROVIDER', 'STOCK_STRIP', 'CLOCK_TIMEZONE_1'], ...extra };
+    return { ...makeConfig(), name: 'gridlock', messageKeys: [...WEATHER_KEYS, 'WEATHER_PROVIDER', 'STOCK_STRIP', 'CLOCK_TIMEZONE_1'], ...extra };
   }
 
   /**
@@ -505,12 +410,12 @@ describe('checkAppinfo', () => {
    * manifest such a face wrote before the list existed, written out whole.
    */
   test('builds a face without providers the manifest it builds today', () => {
-    const config = faceConfig({ messageKeys: ['WEATHER_REQUEST', 'WEATHER_PROVIDER', 'STOCK_STRIP'] });
+    const config = faceConfig({ messageKeys: [...WEATHER_KEYS, 'WEATHER_PROVIDER', 'STOCK_STRIP'] });
     const checked = checkAppinfo(config, 'gridlock');
 
     const result = JSON.stringify(buildManifest(config, { author: 'x', version: '1.0.0' }, { name: 'gridlock', watchface: true }, checked.defines, checked.permissions, checked.textDefines));
 
-    expect(result).toBe('{"name":"gridlock","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Test","uuid":"uuid-1","sdkVersion":"3","enableMultiJS":true,"targetPlatforms":["emery"],"watchapp":{"watchface":true},"capabilities":["health"],"messageKeys":["WEATHER_REQUEST","WEATHER_PROVIDER","STOCK_STRIP"],"resources":{"media":[{"type":"bitmap","name":"ICON_ONE","file":"one.png"},{"type":"bitmap","name":"ICON_TWO","file":"two.png"}]},"usesPermissions":["Location",{"name":"Internet","parameters":{"domains":["open-meteo.com","openweathermap.org","weatherapi.com","alphavantage.co","finnhub.io","twelvedata.com","yahoo.com"]}}]}}');
+    expect(result).toBe('{"name":"gridlock","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Test","uuid":"uuid-1","sdkVersion":"3","enableMultiJS":true,"targetPlatforms":["emery"],"watchapp":{"watchface":true},"capabilities":["health"],"messageKeys":["WEATHER_REQUEST","WEATHER_TEMPERATURE","WEATHER_CONDITIONS","WEATHER_OK","WEATHER_PROVIDER","STOCK_STRIP"],"resources":{"media":[{"type":"bitmap","name":"ICON_ONE","file":"one.png"},{"type":"bitmap","name":"ICON_TWO","file":"two.png"}]},"usesPermissions":["Location",{"name":"Internet","parameters":{"domains":["open-meteo.com","openweathermap.org","weatherapi.com","alphavantage.co","finnhub.io","twelvedata.com","yahoo.com"]}}]}}');
   });
 
   /** The SDK copies only the pebble block, so providers has to stay out of the manifest the way defines does. */
@@ -551,12 +456,80 @@ describe('checkAppinfo', () => {
     expect(result).toEqual([expect.stringContaining("gridlock's appinfo lists providers.weather as [\"plugin\"] and declares LOCATION_NAME")]);
   });
 
+  /** writeSandboxes runs this before any target, so a key group check that dropped out of it would let a partial group reach pebble build. */
+  test('refuses a weather group declared in part', () => {
+    const config = faceConfig({ messageKeys: [...WEATHER_KEYS, 'WEATHER_SUNRISE', 'WEATHER_SUNSET'] });
+
+    const call = () => checkAppinfo(config, 'gridlock');
+
+    expect(call).toThrow("gridlock's appinfo declares only part of the weather extras. Add WEATHER_HUMIDITY, WEATHER_WIND_SPEED, and WEATHER_WIND_DIR to messageKeys");
+  });
+
+  /** writeTarget hands these to every target's manifest, so a dev switch read here is one every target gets. */
+  test('reads the dev switches from the unit\'s paf.dev.config.json on a dev build', () => {
+    const unit = tempDir('check-appinfo-');
+
+    fs.writeFileSync(path.join(unit, 'paf.config.json'), JSON.stringify({ plugins: { dev: {} } }));
+    fs.writeFileSync(path.join(unit, 'paf.dev.config.json'), JSON.stringify({ walk: 'themes' }));
+
+    const result = checkAppinfo(faceConfig(), 'gridlock', unit, true).devDefines;
+
+    expect(result).toEqual({ DEV_MODE: 1, DEV_TIME_HOUR: 8, DEV_TIME_MIN: 0, DEV_TAP_WALK_THEMES: 1 });
+  });
+
+  /** The harness file is committed, so a build that does not ask for dev mode has to build each target with it off. */
+  test('leaves dev mode off when the build does not ask for it', () => {
+    const unit = tempDir('check-appinfo-');
+
+    fs.writeFileSync(path.join(unit, 'paf.config.json'), JSON.stringify({ plugins: { dev: {} } }));
+    fs.writeFileSync(path.join(unit, 'paf.dev.config.json'), JSON.stringify({ walk: 'themes' }));
+
+    const result = checkAppinfo(faceConfig(), 'gridlock', unit).devDefines;
+
+    expect(result).toEqual({ DEV_MODE: 0 });
+  });
+
+  /** writeSandboxes runs this before any target, so a dev setting the build cannot read stops it before anything is written. */
+  test('refuses dev settings it cannot read on a dev build', () => {
+    const unit = tempDir('check-appinfo-');
+
+    fs.writeFileSync(path.join(unit, 'paf.config.json'), JSON.stringify({ plugins: { dev: {} } }));
+    fs.writeFileSync(path.join(unit, 'paf.dev.config.json'), JSON.stringify({ clock: '8:00' }));
+
+    const call = () => checkAppinfo(faceConfig(), 'gridlock', unit, true);
+
+    expect(call).toThrow(`${path.basename(unit)}/paf.dev.config.json sets clock to "8:00"`);
+  });
+
+  /** The phone build no longer checks the settings pair, so a pair checked nowhere else would reach pebble build in part. */
+  test('refuses SETTINGS_REQUEST without SETTINGS_FRESH', () => {
+    const config = faceConfig({ messageKeys: ['SETTINGS_REQUEST'] });
+
+    const call = () => checkAppinfo(config, 'gridlock');
+
+    expect(call).toThrow("gridlock's appinfo declares only part of the settings reply. Add SETTINGS_FRESH to messageKeys");
+  });
+
+  /**
+   * A face that leaves the weather keys to the feature lists only the extras. Checked on its own list
+   * the extras would be refused as weather groups with no weather, so the checks have to see the keys
+   * the build adds.
+   */
+  test('passes the weather extras once the feature has brought the weather keys', () => {
+    const extras = ['WEATHER_HUMIDITY', 'WEATHER_WIND_SPEED', 'WEATHER_WIND_DIR', 'WEATHER_SUNRISE', 'WEATHER_SUNSET'];
+    const config = fillAppinfo(faceConfig({ messageKeys: extras }), 'gridlock', { started: true, featureKeys: WEATHER_KEYS }, {}, {});
+
+    const call = () => checkAppinfo(config, 'gridlock');
+
+    expect(call).not.toThrow();
+  });
+
   /**
    * writeTarget hands these to every target's manifest. A face with a mixed list keeps its weather
    * choice on the watch, so without the default the waf build has no string to give the C.
    */
   test('works out the source default the watch keeps from a mixed weather list', () => {
-    const config = faceConfig({ messageKeys: ['SETTINGS_REQUEST', 'SETTINGS_FRESH', 'WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK', 'WEATHER_PROVIDER'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin', 'weatherapi', 'openmeteo'] } });
+    const config = faceConfig({ messageKeys: ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK', 'WEATHER_PROVIDER'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin', 'weatherapi', 'openmeteo'] } });
 
     const result = checkAppinfo(config, 'gridlock').textDefines;
 
@@ -564,10 +537,113 @@ describe('checkAppinfo', () => {
   });
 });
 
+describe('prepareAppinfo', () => {
+  /**
+   * The build runs this before the phone build. A face that leaves the weather keys to the feature
+   * lists only the extras, so a key group check here would refuse it before its features were read.
+   */
+  test.each([
+    ['the weather extras without weather', ['WEATHER_HUMIDITY', 'WEATHER_WIND_SPEED', 'WEATHER_WIND_DIR', 'WEATHER_SUNRISE', 'WEATHER_SUNSET']],
+    ['a part of the weather keys', ['WEATHER_OK']],
+  ])('passes %s, which the features can still complete', (_name, messageKeys) => {
+    const config = { ...makeConfig(), name: 'gridlock', messageKeys };
+
+    const call = () => prepareAppinfo(config, 'gridlock');
+
+    expect(call).not.toThrow();
+  });
+
+  /**
+   * None of these needs the keys the features bring, so each is refused before the phone build compiles
+   * anything, and a refusal leaves every sandbox as it was.
+   */
+  test.each([
+    ['a usesPermissions that is not a list', { usesPermissions: 'Internet' }, "gridlock's appinfo usesPermissions has to be a list"],
+    ['calendar hosts beside a bare Internet', { providers: { calendar: ['ical'], calendarHosts: ['google.com'] }, usesPermissions: ['Internet'] }, "gridlock's appinfo lists providers.calendarHosts while its own usesPermissions opens Internet to any site"],
+    ['a part of the settings pair', { messageKeys: ['SETTINGS_REQUEST'] }, "gridlock's appinfo declares only part of the settings reply"],
+    ['a part of the coordinates', { messageKeys: ['LOCATION_LATITUDE'] }, "gridlock's appinfo declares only part of coordinates"],
+    ['a part of the weather extras', { messageKeys: ['WEATHER_SUNRISE'] }, "gridlock's appinfo declares only part of the weather extras"],
+    ['a plugin only list beside its select key', { messageKeys: ['WEATHER_PROVIDER'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin'] } }, "gridlock's appinfo lists providers.weather as [\"plugin\"] and still declares WEATHER_PROVIDER"],
+  ])('refuses %s before the features are read', (_name, extra, message) => {
+    const config = { ...makeConfig(), name: 'gridlock', ...extra };
+
+    const call = () => prepareAppinfo(config, 'gridlock');
+
+    expect(call).toThrow(message);
+  });
+
+  /** A plugin's keys are its define's alone, so a stray one is refused before the phone build compiles anything. */
+  test('refuses the music keys without PLUGIN_MUSIC', () => {
+    const config = { ...makeConfig(), name: 'gridlock', messageKeys: ['MUSIC_TITLE'] };
+
+    const call = () => prepareAppinfo(config, 'gridlock');
+
+    expect(call).toThrow(/declares MUSIC_TITLE without PLUGIN_MUSIC/);
+  });
+
+  /** A dev setting the build cannot read has to stop it before the phone build writes into the sandboxes. */
+  test('refuses dev settings it cannot read on a dev build', () => {
+    const unit = tempDir('prepare-appinfo-');
+
+    fs.writeFileSync(path.join(unit, 'paf.config.json'), JSON.stringify({ plugins: { dev: {} } }));
+    fs.writeFileSync(path.join(unit, 'paf.dev.config.json'), JSON.stringify({ clock: '8:00' }));
+
+    const call = () => prepareAppinfo({ ...makeConfig(), name: 'gridlock' }, 'gridlock', unit, true);
+
+    expect(call).toThrow(`${path.basename(unit)}/paf.dev.config.json sets clock to "8:00"`);
+  });
+
+  /** checkAppinfo works from what this read, so the dev switches and the providers reach every target from one read. */
+  test('hands checkAppinfo the dev defines it read', () => {
+    const unit = tempDir('prepare-appinfo-');
+    const config = { ...makeConfig(), name: 'gridlock' };
+
+    fs.writeFileSync(path.join(unit, 'paf.config.json'), JSON.stringify({ plugins: { dev: {} } }));
+    fs.writeFileSync(path.join(unit, 'paf.dev.config.json'), JSON.stringify({}));
+
+    const result = checkAppinfo(config, 'gridlock', '/no/such/unit', false, prepareAppinfo(config, 'gridlock', unit, true)).devDefines;
+
+    expect(result).toEqual({ DEV_MODE: 1, DEV_TIME_HOUR: 8, DEV_TIME_MIN: 0 });
+  });
+});
+
+describe('the built keys record', () => {
+  /** A sandbox that never passed a build here may hold build output from other keys, so it has to start clean. */
+  test('counts a sandbox with no record as changed', () => {
+    const sandbox = tempDir('built-keys-');
+
+    const result = keysChanged(sandbox, ['WEATHER_REQUEST']);
+
+    expect(result).toBe(true);
+  });
+
+  /** An unchanged list after a passing build has to build on, or every build would start clean. */
+  test('counts the keys a passing build recorded as unchanged', () => {
+    const sandbox = tempDir('built-keys-');
+
+    recordBuiltKeys(sandbox, ['WEATHER_REQUEST', 'WEATHER_OK']);
+
+    const result = keysChanged(sandbox, ['WEATHER_REQUEST', 'WEATHER_OK']);
+
+    expect(result).toBe(false);
+  });
+
+  /** The same keys in another order are other numbers on the watch, so they need a clean as much as a new key does. */
+  test('counts the same keys in another order as changed', () => {
+    const sandbox = tempDir('built-keys-');
+
+    recordBuiltKeys(sandbox, ['WEATHER_REQUEST', 'WEATHER_OK']);
+
+    const result = keysChanged(sandbox, ['WEATHER_OK', 'WEATHER_REQUEST']);
+
+    expect(result).toBe(true);
+  });
+});
+
 describe('faceBuildInfo', () => {
   /** The phone build reads the providers from here, so a list it skipped checking could reach the bundle unchecked. */
   test('carries the checked providers beside the targets and defines', () => {
-    const config = { ...makeConfig(), name: 'gridlock', messageKeys: ['WEATHER_REQUEST'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin'] } };
+    const config = { ...makeConfig(), name: 'gridlock', messageKeys: ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'], defines: { PLUGIN_WEATHER: 1 }, providers: { weather: ['plugin'] } };
 
     const result = faceBuildInfo(config, 'gridlock');
 
@@ -576,33 +652,29 @@ describe('faceBuildInfo', () => {
 
   /** The phone build stops on the same refusals as the manifest build, so neither can run ahead of the other. */
   test('refuses a list the manifest build would refuse', () => {
-    const config = { ...makeConfig(), name: 'gridlock', messageKeys: ['WEATHER_REQUEST'], providers: { weather: ['plugin'] } };
+    const config = { ...makeConfig(), name: 'gridlock', messageKeys: ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'], providers: { weather: ['plugin'] } };
 
     const call = () => faceBuildInfo(config, 'gridlock');
 
     expect(call).toThrow("gridlock's appinfo lists plugin in providers.weather without PLUGIN_WEATHER turned on");
+  });
+
+  /**
+   * The phone build reads this before the build knows the keys the features bring, so a face that
+   * lists the extras and leaves the weather keys to the feature would be refused before it compiled.
+   */
+  test('reads no message key, so the extras pass without the weather keys', () => {
+    const config = { ...makeConfig(), name: 'gridlock', messageKeys: ['WEATHER_SUNRISE'], providers: { stocks: ['yahoo'] } };
+
+    const call = () => faceBuildInfo(config, 'gridlock');
+
+    expect(call).not.toThrow();
   });
 });
 
 describe('checkPluginKeys for the kinds only a plugin fills', () => {
   const musicKeys = ['MUSIC_TITLE', 'MUSIC_ARTIST', 'MUSIC_PLAYING', 'MUSIC_REQUEST'];
   const phoneKeys = ['PHONE_BATTERY', 'PHONE_REQUEST'];
-
-  /** The music store asks and reads with all four keys, so a define missing one would build and never show a track. */
-  test('refuses PLUGIN_MUSIC without all four music keys', () => {
-    const keys = musicKeys.filter((key) => key !== 'MUSIC_PLAYING');
-
-    const call = () => checkPluginKeys({ PLUGIN_MUSIC: 1 }, keys, 'gridlock');
-
-    expect(call).toThrow("gridlock's appinfo defines PLUGIN_MUSIC without the message keys it needs: MUSIC_PLAYING");
-  });
-
-  /** The phone store asks with PHONE_REQUEST, so a battery key alone would build and never show a level. */
-  test('refuses PLUGIN_PHONE with PHONE_BATTERY alone', () => {
-    const call = () => checkPluginKeys({ PLUGIN_PHONE: 1 }, ['PHONE_BATTERY'], 'gridlock');
-
-    expect(call).toThrow(/PLUGIN_PHONE without the message keys it needs: PHONE_REQUEST/);
-  });
 
   /** With no plugin code behind them the watch would ask and wait forever, and its panel would stay empty. */
   test('refuses the music keys without PLUGIN_MUSIC', () => {
@@ -638,4 +710,166 @@ describe('checkPluginKeys for the kinds only a plugin fills', () => {
 
     expect(call).not.toThrow();
   });
+});
+
+describe('plugin apps', () => {
+  type AnyAppinfo = Parameters<typeof checkAppinfo>[0];
+
+  // a plugin app as Calendar + iCal declares it, with a permission reason and a source asking Calendar of its callers
+  function pluginConfig(extra: Record<string, unknown> = {}): AnyAppinfo {
+    return {
+      name: 'calendar-ical',
+      displayName: 'Calendar + iCal',
+      uuid: 'uuid-2',
+      sdkVersion: '3',
+      projectType: 'plugin',
+      configPage: 'config.html',
+      usesPermissions: [{ name: 'Calendar', reason: 'To merge your phone calendars', required: true }],
+      plugin: {
+        description: 'Phone calendars and iCal links.',
+        sources: [{ category: 'calendar', items: ['event'], properties: { name: ['longText'] }, supportsMultiple: true, callerPermissions: ['Calendar'] }],
+      },
+      ...extra,
+    } as unknown as AnyAppinfo;
+  }
+
+  /** A plugin app has no keys, defines, or watch code, so the prepare step reads none of them and gives it no dev defines. */
+  test('prepares a plugin app with no dev defines and no key checks', () => {
+    const result = prepareAppinfo(pluginConfig(), 'calendar-ical');
+
+    expect(result).toEqual({ targets: ['calendar-ical'], defines: {}, providers: {}, devDefines: {} });
+  });
+
+  /** A plugin app has no paf.dev.config.json entry to read, so a dev build reads none, and buildOne decides what --dev does with it. */
+  test('prepares a plugin app on a dev build with no dev defines', () => {
+    const result = prepareAppinfo(pluginConfig(), 'calendar-ical', '/no/such/unit', true);
+
+    expect(result.devDefines).toEqual({});
+  });
+
+  /** A plugin app built as a watchface stops partway in the SDK build, so only projectType plugin may count as one. */
+  test.each([
+    ['plugin', true],
+    ['native', false],
+    [undefined, false],
+  ])('reads projectType %s as a plugin app: %s', (projectType, expected) => {
+    const result = isPluginApp({ projectType });
+
+    expect(result).toBe(expected);
+  });
+
+  /**
+   * The Pebble app reads the reason and required flag on each permission and the callerPermissions on
+   * each source, and refuses a plugin's read of the phone calendar without them. The framework's own
+   * permission type has neither, so the manifest is pinned whole.
+   */
+  test('builds the manifest with the permissions and plugin block as written', () => {
+    const config = pluginConfig();
+
+    const result = JSON.stringify(buildPluginManifest(config, { author: 'x', version: '1.0.0' }, checkAppinfo(config, 'calendar-ical').permissions));
+
+    expect(result).toBe('{"name":"calendar-ical","author":"x","version":"1.0.0","private":true,"pebble":{"displayName":"Calendar + iCal","uuid":"uuid-2","sdkVersion":"3","projectType":"plugin","configPage":"config.html","usesPermissions":[{"name":"Calendar","reason":"To merge your phone calendars","required":true}],"plugin":{"description":"Phone calendars and iCal links.","sources":[{"category":"calendar","items":["event"],"properties":{"name":["longText"]},"supportsMultiple":true,"callerPermissions":["Calendar"]}],"script":"plugin.js"}}}');
+  });
+
+  /** The SDK takes an empty list as a plugin that reaches nothing, so no permissions leaves the key out rather than writing one. */
+  test('leaves usesPermissions out when the plugin app lists none', () => {
+    const config = pluginConfig({ usesPermissions: [] });
+
+    const result = buildPluginManifest(config, { author: 'x', version: '1.0.0' }, checkAppinfo(config, 'calendar-ical').permissions);
+
+    expect(result.pebble).not.toHaveProperty('usesPermissions');
+  });
+
+  /** The SDK builds a plugin with no platforms and its own resources, so a field only watch code reads would sit in the pbw meaning nothing. */
+  test.each(['messageKeys', 'resources', 'defines', 'providers', 'targets', 'targetPlatforms'])('refuses %s on a plugin app, naming it', (field) => {
+    const config = pluginConfig({ [field]: [] });
+
+    const result = () => checkPluginApp(config, 'calendar-ical');
+
+    expect(result).toThrow(`calendar-ical is a plugin app, which has no watch code, so its appinfo cannot set ${field}. Take it out`);
+  });
+
+  /** The SDK refuses to configure a plugin project with no plugin block, far from the appinfo that caused it. */
+  test('refuses a plugin app with no plugin block', () => {
+    const config = pluginConfig({ plugin: undefined });
+
+    const result = () => checkPluginApp(config, 'calendar-ical');
+
+    expect(result).toThrow(/calendar-ical is a plugin app whose appinfo has no plugin block/);
+  });
+
+  /** The build writes the script as plugin.js, so a plugin block naming another would build a pbw without its script. */
+  test('refuses a plugin block naming another script', () => {
+    const config = pluginConfig({ plugin: { script: 'main.js', sources: [{ category: 'calendar', items: ['event'] }] } });
+
+    const result = () => checkPluginApp(config, 'calendar-ical');
+
+    expect(result).toThrow(/names its script "main\.js", but the build writes it as plugin\.js/);
+  });
+
+  /** The build writes the settings page as config.html, so another local name would point the Pebble app at a missing page. */
+  test('refuses a local settings page by another name', () => {
+    const config = pluginConfig({ configPage: 'settings.html' });
+
+    const result = () => checkPluginApp(config, 'calendar-ical');
+
+    expect(result).toThrow(/names its settings page "settings\.html", but the build writes it as config\.html/);
+  });
+
+  /** A plugin app declares no message keys, so the key group and plugin key checks a face runs would refuse it for nothing. */
+  test('checks a plugin app by its own rules rather than a face\'s', () => {
+    const config = pluginConfig();
+
+    const result = checkAppinfo(config, 'calendar-ical');
+
+    expect(result).toEqual({
+      targets: ['calendar-ical'],
+      defines: {},
+      providers: {},
+      permissions: [{ name: 'Calendar', reason: 'To merge your phone calendars', required: true }],
+      textDefines: {},
+      devDefines: {},
+      warnings: [],
+    });
+  });
+
+  /** The phone build reads faceBuildInfo too, so a plugin app with no name has to hear what a plugin app needs there as well. */
+  test('tells a plugin app with no name what a plugin app needs', () => {
+    const config = pluginConfig({ name: undefined });
+
+    const result = () => faceBuildInfo(config, 'calendar-ical');
+
+    expect(result).toThrow('calendar-ical is a plugin app whose appinfo has no name');
+  });
+
+  /**
+   * A misspelled projectType built the plugin as a watchface, which then failed on resources it never had.
+   * The clash check and --targets read targets before anything else, so the refusal has to come from there.
+   */
+  test('refuses a projectType it does not know wherever its targets are read', () => {
+    const config = pluginConfig({ projectType: 'Plugin' });
+
+    const result = () => resolveTargets(config, 'calendar-ical');
+
+    expect(result).toThrow(/sets projectType "Plugin", which the build does not know/);
+  });
+
+  /** `pebble new-project` writes projectType native for a watchface, and refusing it stopped faces started that way from building. */
+  test('builds a face that sets projectType native as a face', () => {
+    const config = { ...makeConfig(), name: 'gridlock', projectType: 'native' } as unknown as AnyAppinfo;
+
+    const result = faceBuildInfo(config, 'gridlock');
+
+    expect(result.targets).toEqual(['gridlock']);
+  });
+
+  /** The clash check and --targets read targets through resolveTargets, so a plugin app's targets map is refused there rather than clash checked. */
+  test('refuses a targets map on a plugin app wherever its targets are read', () => {
+    const config = pluginConfig({ targets: { one: { name: 'one', watchface: false } } });
+
+    const result = () => resolveTargets(config, 'calendar-ical');
+
+    expect(result).toThrow('calendar-ical is a plugin app, which has no watch code, so its appinfo cannot set targets. Take it out');
+  });
+
 });

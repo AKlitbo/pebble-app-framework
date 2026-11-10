@@ -9,9 +9,9 @@ A unit is a folder with a `paf.config.json`. Each unit pins its own framework ta
 `paf` looks in two places:
 
 * the repo root, for a repo that is one face or one family
-* each folder straight under `watchfaces/` or `watchapps/`, for a family or a face of its own
+* each folder straight under `watchfaces/`, `watchapps/`, or `plugins/`, for a family or a face of its own
 
-The two folders only sort faces from apps, and a unit in either is laid out the same. A unit at the root is named after the repo's folder. A unit under `watchfaces/` or `watchapps/` is named after its own folder, and `paf` refuses two units with the same name.
+The three folders only sort faces, apps, and plugin apps, and a unit in any of them is laid out the same. A unit at the root is named after the repo's folder. A unit under one of the folders is named after its own folder, and `paf` refuses two units with the same name.
 
 ## Finding the Faces
 
@@ -21,6 +21,8 @@ A face is a folder holding a `pebble.appinfo.json` at its own root.
 * **A family:** the unit has a `core/` folder for the code its faces share, and each folder beside `core/` holding an appinfo is a face, named by its folder.
 
 A face's name has to be unique across the whole repo, since commands like `paf build` take a face by name alone.
+
+A plugin app is a face too, one whose appinfo sets `"projectType": "plugin"`. A unit holding one needs framework 6 or later, and [Plugin Apps](../how/plugin-apps.md) covers the rest.
 
 ## One Face at the Root
 
@@ -59,7 +61,7 @@ my-family/
 
 ## Units under watchfaces/
 
-A repo with several units keeps each under `watchfaces/` or `watchapps/`. Each one is a family or a face of its own, laid out as above:
+A repo with several units keeps each under `watchfaces/`, `watchapps/`, or `plugins/`. Each one is a family or a face of its own, laid out as above:
 
 ```
 my-faces/
@@ -118,7 +120,7 @@ Framework 4 ships these. List one under `plugins` to use it.
 | `icons` | the `icons` generator and its check. `sources` is the folder of icon SVGs, from the unit |
 | `thumbnails` | the `thumbnails` and `theme-previews` generators and their checks |
 | `frame` | the `background` generator, for faces with a `frame/frame.config.json` |
-| `dev` | the `clay-preview` and `tap-walk` tools |
+| `dev` | the `clay-preview` and `tap-walk` tools. It takes no settings here. `paf build <face> --dev` builds a face in dev mode, with the harness in a committed `paf.dev.config.json` beside `paf.config.json`, as [the dev plugin](../how/dev-plugin.md#turning-it-on-for-a-dev-build) covers |
 | `code-style` | `paf lint` and `paf format`. `"prettier": true` turns on Prettier for `paf format` |
 
 The framework itself, with no plugin listed, offers the `clay` generator, the check that its output is current, and the build.

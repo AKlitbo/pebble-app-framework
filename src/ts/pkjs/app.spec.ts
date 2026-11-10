@@ -392,9 +392,8 @@ describe('seedConfigFromWatch', () => {
   });
 
   /**
-   * A face without SETTINGS_FRESH seeds on every launch. Writing the watch's offset string over a
-   * saved place loses its zone, so the second clock stops following summer time and the page asks
-   * for the city again after every launch.
+   * Writing the watch's offset string over a saved place loses its zone, so the second clock stops
+   * following summer time and the page asks for the city again.
    */
   test('keeps a place the phone already saved for a timezone field', () => {
     const saved = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
@@ -1003,6 +1002,7 @@ describe('startPebbleApp weather', () => {
   // only the keys the weather path reads. no stock or calendar key, so those fetches stay off
   const weatherKeys = {
     SETTINGS_REQUEST: 'SETTINGS_REQUEST',
+    SETTINGS_FRESH: 'SETTINGS_FRESH',
     WEATHER_REQUEST: 'WEATHER_REQUEST',
     WEATHER_TEMPERATURE: 'WEATHER_TEMPERATURE',
     WEATHER_CONDITIONS: 'WEATHER_CONDITIONS',
@@ -1266,7 +1266,7 @@ describe('startPebbleApp weather', () => {
    * background refresh.
    */
   test('fetches for a watch ask the phone app keyed by name', () => {
-    keys = { SETTINGS_REQUEST: 10004, WEATHER_REQUEST: 10003, WEATHER_TEMPERATURE: 10001, WEATHER_CONDITIONS: 10002, WEATHER_OK: 10000 };
+    keys = { SETTINGS_REQUEST: 10004, SETTINGS_FRESH: 10005, WEATHER_REQUEST: 10003, WEATHER_TEMPERATURE: 10001, WEATHER_CONDITIONS: 10002, WEATHER_OK: 10000 };
     start([weather]);
     fire('ready');
     sent[0].respond(200, currentBody(21));
@@ -1354,6 +1354,7 @@ describe('startPebbleApp stock and calendar', () => {
   // feature, so no weather goes out whatever the face declares
   const stripKeys = {
     SETTINGS_REQUEST: 'SETTINGS_REQUEST',
+    SETTINGS_FRESH: 'SETTINGS_FRESH',
     WEATHER_REQUEST: 'WEATHER_REQUEST',
     WEATHER_TEMPERATURE: 'WEATHER_TEMPERATURE',
     WEATHER_CONDITIONS: 'WEATHER_CONDITIONS',
@@ -1853,7 +1854,7 @@ describe('startPebbleApp settings restore', () => {
     }
   }
 
-  // the keys the face under test declares. a spec for a face without SETTINGS_FRESH swaps them
+  // the keys the face under test declares. a spec for a face with more keys swaps them
   let keys: Record<string, string | number> = restoreKeys;
 
   function fakeModule(id: string): unknown {
@@ -1958,6 +1959,29 @@ describe('startPebbleApp settings restore', () => {
     pebble.fire('ready');
 
     expect(requestSent()).toEqual([WIRE_CAPS.SETTINGS_REQUEST_FULL]);
+  });
+
+  /** A face with no settings keys has nothing on the watch to ask for, and an ask under an undefined key would tie up the outbox. */
+  test('asks a face without the settings keys for nothing', () => {
+    keys = { CLOCK_DATE_FORMAT: 'CLOCK_DATE_FORMAT', APPEARANCE_THEME: 'APPEARANCE_THEME' };
+    app.startPebbleApp({ clayConfig: [] });
+
+    pebble.fire('ready');
+    const result = pebble.sendAppMessage.mock.calls;
+
+    expect(result).toEqual([]);
+  });
+
+  /** A save on a face with no settings keys still reaches the watch, with no fresh flag under an undefined key beside it. */
+  test('sends a save with no fresh flag on a face without the settings keys', () => {
+    keys = { CLOCK_DATE_FORMAT: 'CLOCK_DATE_FORMAT', APPEARANCE_THEME: 'APPEARANCE_THEME' };
+    app.startPebbleApp({ clayConfig: [] });
+    pebble.fire('ready');
+
+    pebble.fire('webviewclosed', { response: JSON.stringify({ CLOCK_DATE_FORMAT: { value: '%d.%m.%Y' } }) });
+    const result = restoreSends();
+
+    expect(result).toEqual([{ CLOCK_DATE_FORMAT: '%d.%m.%Y' }]);
   });
 
   /**
@@ -2140,32 +2164,6 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
-   * A face without SETTINGS_FRESH seeds on every launch. Its first seed, into an empty phone, gets
-   * the same refetch as the fresh path, and a later one leaves the features alone, since a refetch
-   * forced on every launch would spend a stock provider's quota.
-   */
-  test('lets features compare around only the first seed on a face without SETTINGS_FRESH', () => {
-    const { SETTINGS_FRESH: dropped, ...withoutFresh } = restoreKeys;
-
-    keys = withoutFresh;
-    const calls: string[] = [];
-    const feature = () => ({
-      configOpened: () => calls.push('opened'),
-      configSaved: () => calls.push('saved'),
-    });
-
-    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
-    pebble.fire('ready');
-
-    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
-    pebble.fire('ready');
-    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_DATE_FORMAT: '%Y-%m-%d' } });
-
-    expect(dropped).toBe('SETTINGS_FRESH');
-    expect(calls).toEqual(['opened', 'saved']);
-  });
-
-  /**
    * A seed landing while the page is open replaced the snapshot the page opened on and then cleared
    * it, so closing the page counted every setting as changed and stocks spent its quota on a forced
    * fetch. The page's own close is left to compare its settings.
@@ -2303,32 +2301,15 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
-   * A face without SETTINGS_FRESH seeds on every launch and keeps the zone the phone saved, so a
-   * zones push it refused on ready stayed an hour out until the 5 minute tick the same way.
-   */
-  test('pushes the second clocks again on the settings reply on a face without SETTINGS_FRESH', () => {
-    keys = Object.fromEntries(Object.entries(restoreKeys).filter(([name]) => name !== 'SETTINGS_FRESH'));
-    localStorage.setItem('clay-settings', londonSettings);
-    app.startPebbleApp({ clayConfig: zonePage });
-    refuseReadyThenTakeAsk();
-
-    watchReplies(false, '%d.%m.%Y');
-    const result = zonesTaken();
-
-    expect(result).toHaveLength(1);
-  });
-
-  /**
    * With the page open, an empty phone seeds the watch's own zone string from the reply. Pushing it
    * straight back would wake the watch for a value it already holds.
    */
   test('does not push the second clocks back after seeding them into an empty phone', () => {
-    keys = Object.fromEntries(Object.entries(restoreKeys).filter(([name]) => name !== 'SETTINGS_FRESH'));
     app.startPebbleApp({ clayConfig: zonePage });
     pebble.fire('showConfiguration');
     pebble.fire('ready');
 
-    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, CLOCK_TIMEZONE_1: '0,London' } });
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 1, CLOCK_TIMEZONE_1: '0,London' } });
     const result = zoneSends();
 
     expect(result).toEqual([]);
@@ -2495,7 +2476,7 @@ describe('startPebbleApp settings page hooks', () => {
     }
   }
 
-  const pageKeys = { SETTINGS_REQUEST: 'SETTINGS_REQUEST', WEATHER_PROVIDER: 'WEATHER_PROVIDER' };
+  const pageKeys = { SETTINGS_REQUEST: 'SETTINGS_REQUEST', SETTINGS_FRESH: 'SETTINGS_FRESH', WEATHER_PROVIDER: 'WEATHER_PROVIDER' };
 
   let pebble: FakePebble;
   let restoreLoad: () => void;
@@ -3011,7 +2992,7 @@ describe('startPebbleApp face providers', () => {
     }
   }
 
-  const providerKeys = { SETTINGS_REQUEST: 'SETTINGS_REQUEST', WEATHER_PROVIDER: 'WEATHER_PROVIDER' };
+  const providerKeys = { SETTINGS_REQUEST: 'SETTINGS_REQUEST', SETTINGS_FRESH: 'SETTINGS_FRESH', WEATHER_PROVIDER: 'WEATHER_PROVIDER', CLOCK_TIMEZONE_1: 'CLOCK_TIMEZONE_1' };
 
   // a page with one weather select of the face's own, which offers three providers
   const ownPage = (): ClayConfigItem[] => [
@@ -3105,17 +3086,16 @@ describe('startPebbleApp face providers', () => {
   });
 
   /**
-   * The watch echoes whatever it was last sent, so a watch last saved before the face narrowed its
-   * list hands back a provider the face no longer offers. A settle made after the seed's write would
-   * be lost, so the spec reads the store.
+   * The seed runs once, into a phone with nothing saved. The watch echoes whatever it was last sent,
+   * so a watch last saved before the face narrowed its list hands back a provider the face no longer
+   * offers. A settle made after the seed's write would be lost, so the spec reads the store.
    */
   test('settles a provider the watch brings back before the seed saves it', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'weatherapi' }));
     providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
     app.startPebbleApp({ clayConfig: ownPage(), features: [] });
     pebble.fire('ready');
 
-    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, WEATHER_PROVIDER: 'owm' } });
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 0, WEATHER_PROVIDER: 'owm' } });
 
     const result = JSON.parse(localStorage.getItem('clay-settings') as string).WEATHER_PROVIDER;
 
@@ -3123,30 +3103,126 @@ describe('startPebbleApp face providers', () => {
   });
 
   /**
-   * The watch keeps what it was last sent, so a settle it never heard about left it echoing the
-   * dropped provider, and the phone settled it again on every launch.
+   * The seed into an empty phone settles what the watch brought back. The watch keeps what it was
+   * last sent, so a settle it never heard about left it on the dropped provider while the phone
+   * showed another.
+   */
+  test('sends the watch the settings a seed into an empty phone settled', () => {
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 0, WEATHER_PROVIDER: 'owm' } });
+
+    const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
+
+    expect(result).toEqual([{ WEATHER_PROVIDER: 'openmeteo', SETTINGS_FRESH: 1 }]);
+  });
+
+  /**
+   * A phone that already has settings is settled at launch and never seeded. The watch keeps what it
+   * was last sent, so without this send it stayed on a provider the face dropped while the phone
+   * showed another, until the wearer next saved the page.
    */
   test('sends the watch the settings a seed settled', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 0 } });
+
+    const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
+
+    expect(result).toEqual([{ WEATHER_PROVIDER: 'openmeteo', SETTINGS_FRESH: 1 }]);
+  });
+
+  /** The watch heard the launch settle once, and sending it on every later reply would wake it and write flash for nothing. */
+  test('sends the launch settle to the watch once', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 0 } });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 0 } });
+
+    const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
+
+    expect(result).toHaveLength(1);
+  });
+
+  /** A wiped watch's restore already carries the settled provider, and a second send of it would write flash for nothing. */
+  test('sends a wiped watch the launch settle inside its restore alone', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm' }));
+    providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+    app.startPebbleApp({ clayConfig: ownPage(), features: [] });
+    pebble.fire('ready');
+
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 1 } });
+
+    const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
+
+    expect(result).toEqual([{ WEATHER_PROVIDER: 'openmeteo', SETTINGS_FRESH: 1 }]);
+  });
+
+  describe('with a second clock', () => {
+    const zoneRow = { type: 'locationsearch', messageKey: 'CLOCK_TIMEZONE_1', timeZone: true } as ClayConfigItem;
+    const london = JSON.stringify({ label: 'London', offset: 0, tz: 'Europe/London' });
+
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    /**
+     * The watch turned the zones away on ready, so the reply would push them again. The settled
+     * restore already carries every zone, and a push queued behind it, before its ack recorded the
+     * zones, would wake the watch twice for the same zone.
+     */
+    test('sends the settled restore alone with the zones inside it', () => {
+      localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', CLOCK_TIMEZONE_1: london }));
+      providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
+      app.startPebbleApp({ clayConfig: [...ownPage(), zoneRow], features: [] });
+      pebble.answer = 'nack';
+      pebble.fire('ready');
+      vi.advanceTimersByTime(SEND_RETRY_MS * 2 * (SEND_RETRIES - 1));
+      pebble.answer = 'hold';
+      pebble.sendAppMessage.mockClear();
+
+      pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 0 } });
+      pebble.held[0].ok();
+      const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'CLOCK_TIMEZONE_1' in dict);
+
+      expect(result).toEqual([expect.objectContaining({ WEATHER_PROVIDER: 'openmeteo', SETTINGS_FRESH: 1 })]);
+    });
+  });
+
+  /** A phone the settle left alone holds what the watch was last sent, and a send on every launch would wake the watch for nothing. */
+  test('sends a watch with settings nothing when the launch settle left the phone alone', () => {
     localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'weatherapi' }));
     providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
     app.startPebbleApp({ clayConfig: ownPage(), features: [] });
     pebble.fire('ready');
 
-    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, WEATHER_PROVIDER: 'owm' } });
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: WIRE_CAPS.SETTINGS_REQUEST_FRESH, SETTINGS_FRESH: 0 } });
 
     const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
 
-    expect(result).toEqual([{ WEATHER_PROVIDER: 'openmeteo' }]);
+    expect(result).toEqual([]);
   });
 
   /** A watch already in line has nothing to hear, and a send on every launch would wake it for nothing. */
   test('sends the watch nothing after a seed the settle left alone', () => {
-    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'weatherapi' }));
     providerCode.current = faceProvidersFor({ weather: { offered: ['openmeteo', 'weatherapi'], needsKey: true } });
     app.startPebbleApp({ clayConfig: ownPage(), features: [] });
     pebble.fire('ready');
 
-    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, WEATHER_PROVIDER: 'weatherapi' } });
+    pebble.fire('appmessage', { payload: { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 0, WEATHER_PROVIDER: 'weatherapi' } });
 
     const result = pebble.sendAppMessage.mock.calls.map(([dict]) => dict).filter((dict) => 'WEATHER_PROVIDER' in dict);
 

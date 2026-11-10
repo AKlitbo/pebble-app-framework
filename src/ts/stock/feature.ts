@@ -386,4 +386,7 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
   };
 };
 
+// the strip has to have somewhere to land and the watch a way to ask, so the build adds both
+stocks.messageKeys = ['STOCK_REQUEST', 'STOCK_STRIP'];
+
 export default stocks;

@@ -18,21 +18,6 @@
 #include "wire/wire_caps.g.h"
 #include <limits.h>
 
-// each weather group below is read whole, so a face that declares only part of one would get
-// none of it and leave those panels on dashes with nothing to say why. the build stops instead
-#if (defined(HAS_MESSAGE_KEY_WEATHER_HUMIDITY) || defined(HAS_MESSAGE_KEY_WEATHER_WIND_SPEED) || defined(HAS_MESSAGE_KEY_WEATHER_WIND_DIR) || defined(HAS_MESSAGE_KEY_WEATHER_SUNRISE) || defined(HAS_MESSAGE_KEY_WEATHER_SUNSET)) && \
-    !(defined(HAS_MESSAGE_KEY_WEATHER_HUMIDITY) && defined(HAS_MESSAGE_KEY_WEATHER_WIND_SPEED) && defined(HAS_MESSAGE_KEY_WEATHER_WIND_DIR) && defined(HAS_MESSAGE_KEY_WEATHER_SUNRISE) && defined(HAS_MESSAGE_KEY_WEATHER_SUNSET))
-#error "the weather extras need all of WEATHER_HUMIDITY, WEATHER_WIND_SPEED, WEATHER_WIND_DIR, WEATHER_SUNRISE, and WEATHER_SUNSET in messageKeys"
-#endif
-#if (defined(HAS_MESSAGE_KEY_WEATHER_UV_INDEX) || defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MAX) || defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MIN) || defined(HAS_MESSAGE_KEY_WEATHER_PRECIP_CHANCE)) && \
-    !(defined(HAS_MESSAGE_KEY_WEATHER_UV_INDEX) && defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MAX) && defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MIN) && defined(HAS_MESSAGE_KEY_WEATHER_PRECIP_CHANCE))
-#error "today's forecast need all of WEATHER_UV_INDEX, WEATHER_TEMP_MAX, WEATHER_TEMP_MIN, and WEATHER_PRECIP_CHANCE in messageKeys"
-#endif
-#if (defined(HAS_MESSAGE_KEY_WEATHER_FEELS_LIKE) || defined(HAS_MESSAGE_KEY_WEATHER_PRESSURE) || defined(HAS_MESSAGE_KEY_WEATHER_DEW_POINT)) && \
-    !(defined(HAS_MESSAGE_KEY_WEATHER_FEELS_LIKE) && defined(HAS_MESSAGE_KEY_WEATHER_PRESSURE) && defined(HAS_MESSAGE_KEY_WEATHER_DEW_POINT))
-#error "the air readings need all of WEATHER_FEELS_LIKE, WEATHER_PRESSURE, and WEATHER_DEW_POINT in messageKeys"
-#endif
-
 /**
  * @var s_handlers
  * @brief The registered channel handlers. Each one stays NULL until a consumer opts in.
@@ -119,7 +104,9 @@ static uint32_t  s_outbox_size; ///< The outbox buffer size appmessage_open aske
 
 static void pump(void);
 static uint32_t settings_reply_size(void);
+#if defined(APPMESSAGE_HAS_SETTINGS)
 static bool write_settings(DictionaryIterator *iter);
+#endif
 
 /**
  * @brief Whether this face declares the key a kind is sent under.
@@ -146,10 +133,10 @@ static bool kind_has_key(OutboxKind kind)
 #if defined(APPMESSAGE_HAS_MUSIC)
         case OUTBOX_MUSIC:
 #endif
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+#if defined(APPMESSAGE_HAS_SETTINGS)
         case OUTBOX_FRESH:
-#endif
         case OUTBOX_SETTINGS:
+#endif
             return true;
         default:
             return false;
@@ -199,13 +186,12 @@ static bool send_job(OutboxKind kind)
             dict_write_uint8(iter, MESSAGE_KEY_MUSIC_REQUEST, 1);
             break;
 #endif
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+#if defined(APPMESSAGE_HAS_SETTINGS)
         case OUTBOX_FRESH:
             // the request key rides back as the marker the phone knows a settings reply by
             dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_REQUEST, SETTINGS_REQUEST_FRESH);
             dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_FRESH, settings_was_fresh() ? 1 : 0);
             break;
-#endif
         case OUTBOX_SETTINGS:
             if (!write_settings(iter))
             {
@@ -217,6 +203,7 @@ static bool send_job(OutboxKind kind)
                 dict_write_begin(iter, (uint8_t *)start, (uint16_t)((const uint8_t *)iter->end - start));
             }
             break;
+#endif
         default:
             break; // kind_has_key already turned away a kind with no key
     }
@@ -230,7 +217,8 @@ static bool send_job(OutboxKind kind)
  * @param kind The job kind to send.
  * @param retries Retry passes left if the first send nacks.
  */
-static void enqueue(OutboxKind kind, int retries)
+// a face that declares no message keys at all has no request to queue, so nothing calls this
+__attribute__((unused)) static void enqueue(OutboxKind kind, int retries)
 {
     // outbox_push turns away a kind that is already waiting, so a poll that repeats keeps the one
     // already queued. the pump still runs, which only sends when the outbox is free
@@ -346,16 +334,15 @@ void appmessage_request_music(void)
  * @brief The most outbox bytes the settings reply could take, counting everything write_settings
  * writes. The outbox is opened at this, so no settings change can outgrow it later.
  *
- * @return The whole message's size, the dictionary's own header included.
+ * @return The whole message's size, the dictionary's own header included, or 0 for a face without
+ * the settings keys, which never sends it.
  */
 static uint32_t settings_reply_size(void)
 {
-    // the dictionary's header, the request marker, and the fields
+#if defined(APPMESSAGE_HAS_SETTINGS)
+    // the dictionary's header, the request marker, and the fields, then the fresh flag
     uint32_t size = dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) + settings_serialized_size_max();
-
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
     size += dict_calc_buffer_size(1, (uint32_t)sizeof(uint8_t)) - dict_calc_buffer_size(0);
-#endif
 
 #if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
     // counted whether or not a provider is set yet, so the order a face registers the provider and
@@ -364,6 +351,9 @@ static uint32_t settings_reply_size(void)
 #endif
 
     return size;
+#else
+    return 0;
+#endif
 }
 
 #if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
@@ -393,6 +383,8 @@ static bool custom_colors_match(const char *custom)
 }
 #endif
 
+// a face without the settings keys never asks for its settings back, so it sends no reply
+#if defined(APPMESSAGE_HAS_SETTINGS)
 /**
  * @brief Write the settings reply payload into the outbox iterator.
  *
@@ -412,9 +404,7 @@ static bool write_settings(DictionaryIterator *iter)
 
     // tell the phone whether we booted with no saved settings (wiped by an install/update), so it
     // can push its own config back instead of letting these defaults seed over it
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
     written = dict_write_uint8(iter, MESSAGE_KEY_SETTINGS_FRESH, settings_was_fresh() ? 1 : 0) == DICT_OK && written;
-#endif
 
     // custom colours ride their own key (split across two persist blobs on the watch), so the
     // settings table does not carry them: the provider rebuilds the combined string into a stack
@@ -441,6 +431,7 @@ static void send_settings(void)
     // always carries the settings as they are now
     enqueue(OUTBOX_SETTINGS, REQUEST_RETRY_MAX);
 }
+#endif
 
 // only a face with the stock or calendar strip calls this, and a face with neither would warn it
 // goes unused. the weather strips ride inside the weather message instead
@@ -482,19 +473,19 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // the phone asks for the watch's settings on launch, so reply and stop. a phone that already
     // holds settings only asks whether the watch booted empty, which is one field rather than the
     // whole table
+#if defined(APPMESSAGE_HAS_SETTINGS)
     Tuple *request = dict_find(iterator, MESSAGE_KEY_SETTINGS_REQUEST);
     if (request)
     {
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
         if (tuple_int_or(request, SETTINGS_REQUEST_FULL) == SETTINGS_REQUEST_FRESH)
         {
             enqueue(OUTBOX_FRESH, REQUEST_RETRY_MAX);
             return;
         }
-#endif
         send_settings();
         return;
     }
+#endif
 
     // a face that opts out of weather leaves this whole block out with its keys
 #if defined(APPMESSAGE_HAS_WEATHER)
@@ -534,8 +525,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
         // each group below is only read by a face that declares all of its keys, the rest leave it
         // out with them. any one of a group's keys present means the phone sent the group
-#if defined(HAS_MESSAGE_KEY_WEATHER_HUMIDITY) && defined(HAS_MESSAGE_KEY_WEATHER_WIND_SPEED) && \
-    defined(HAS_MESSAGE_KEY_WEATHER_WIND_DIR) && defined(HAS_MESSAGE_KEY_WEATHER_SUNRISE) && defined(HAS_MESSAGE_KEY_WEATHER_SUNSET)
+#if defined(APPMESSAGE_HAS_WEATHER_EXTRAS)
         Tuple *humidity_t = dict_find(iterator, MESSAGE_KEY_WEATHER_HUMIDITY);
         Tuple *wind_spd_t = dict_find(iterator, MESSAGE_KEY_WEATHER_WIND_SPEED);
         Tuple *wind_dir_t = dict_find(iterator, MESSAGE_KEY_WEATHER_WIND_DIR);
@@ -552,8 +542,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         }
 #endif
 
-#if defined(HAS_MESSAGE_KEY_WEATHER_UV_INDEX) && defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MAX) && \
-    defined(HAS_MESSAGE_KEY_WEATHER_TEMP_MIN) && defined(HAS_MESSAGE_KEY_WEATHER_PRECIP_CHANCE)
+#if defined(APPMESSAGE_HAS_WEATHER_FORECAST)
         Tuple *uv_t = dict_find(iterator, MESSAGE_KEY_WEATHER_UV_INDEX);
         Tuple *tmax_t = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMP_MAX);
         Tuple *tmin_t = dict_find(iterator, MESSAGE_KEY_WEATHER_TEMP_MIN);
@@ -568,8 +557,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         }
 #endif
 
-#if defined(HAS_MESSAGE_KEY_WEATHER_FEELS_LIKE) && defined(HAS_MESSAGE_KEY_WEATHER_PRESSURE) && \
-    defined(HAS_MESSAGE_KEY_WEATHER_DEW_POINT)
+#if defined(APPMESSAGE_HAS_WEATHER_AIR)
         Tuple *feels_t = dict_find(iterator, MESSAGE_KEY_WEATHER_FEELS_LIKE);
         Tuple *pressure_t = dict_find(iterator, MESSAGE_KEY_WEATHER_PRESSURE);
         Tuple *dew_t = dict_find(iterator, MESSAGE_KEY_WEATHER_DEW_POINT);
@@ -685,7 +673,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // blob on a save the wearer made by hand, where a checksum per schema would cost bytes on every face
     bool save = moved;
     bool restoring = false;
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+#if defined(APPMESSAGE_HAS_SETTINGS)
     // the phone marks a save or a restore from its settings page by sending SETTINGS_FRESH along
     // with it. while the watch is fresh only that message writes to flash, and it always does, since
     // the key existing is what stops the watch asking to be restored on the next launch.
@@ -708,7 +696,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         settings_save();
     }
 
-#if defined(HAS_MESSAGE_KEY_SETTINGS_FRESH)
+#if defined(APPMESSAGE_HAS_SETTINGS)
     if (page)
     {
         settings_mark_restored();

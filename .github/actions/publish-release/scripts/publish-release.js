@@ -48,10 +48,13 @@ module.exports = step(async ({ core, exec }) => {
     }
 
     const manifest = readJson(path.join(project, 'targets', target, 'package.json'), projectRel(`targets/${target}/package.json`));
-    const platforms = manifest.pebble?.targetPlatforms;
+    // a plugin app runs on the phone, so its manifest lists no platforms and its asset names none. the
+    // manifest carries the appinfo's projectType, and plugin is the one value the framework's
+    // isPluginApp takes, which this step does not load
+    const platforms = manifest.pebble?.projectType === 'plugin' ? null : manifest.pebble?.targetPlatforms;
 
     // the SDK builds every platform when the appinfo lists none, and the asset is named by what it installs on
-    if (!Array.isArray(platforms) || platforms.length === 0) {
+    if (platforms !== null && (!Array.isArray(platforms) || platforms.length === 0)) {
       fail(`${projectRel(`targets/${target}/package.json`)} lists no targetPlatforms. Add targetPlatforms to the face's appinfo so the release can name what it installs on.`);
     }
 
@@ -82,7 +85,7 @@ module.exports = step(async ({ core, exec }) => {
     '',
     url,
     '',
-    markdownTable(['Asset', 'Target', 'Platforms'], assets.map((asset) => [asset.name, asset.target, asset.platforms.join(', ')])),
+    markdownTable(['Asset', 'Target', 'Platforms'], assets.map((asset) => [asset.name, asset.target, asset.platforms ? asset.platforms.join(', ') : 'none, a plugin app'])),
   ];
 
   await core.summary.addRaw(summary.join('\n'), true).write();

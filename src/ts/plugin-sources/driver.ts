@@ -3,10 +3,9 @@
  * wearer's saved choice.
  *
  * A kind's driver, such as weather-driver.ts, builds on this. The choice can reach the saved settings
- * with no ready or save after it, such as a seed while the page is open, or the seed on every launch
- * of a face without SETTINGS_FRESH. So every hook that acts on the choice goes through `follow`,
- * which starts a subscription for a picked plugin nothing has started and stops one left running
- * once the choice has moved off the plugin.
+ * with no ready or save after it, such as a seed while the page is open. So every hook that acts on
+ * the choice goes through `follow`, which starts a subscription for a picked plugin nothing has
+ * started and stops one left running once the choice has moved off the plugin.
  */
 
 import { createSourceSubscription } from './subscription';

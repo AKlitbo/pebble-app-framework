@@ -1,0 +1,13 @@
+{
+  "name": "fixture-plugin",
+  "displayName": "Fixture Plugin",
+  "uuid": "00000000-0000-0000-0000-00000000f1a9",
+  "version": "1.0.0",
+  "sdkVersion": "3",
+  "projectType": "plugin",
+  "configPage": "config.html",
+  "plugin": {
+    "description": "A plugin app the build specs bundle.",
+    "sources": [{ "category": "calendar", "items": ["event"], "properties": { "name": ["longText"] } }]
+  }
+}

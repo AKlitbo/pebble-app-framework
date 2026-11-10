@@ -155,7 +155,7 @@ paf: this is not inside a git repo. Run paf from a face repo
 `paf` works on the git repo it runs inside. Change into the face repo first.
 
 ```
-paf: no units here. A unit is a folder with a paf.config.json holding { "framework": "<tag>" }, at the repo root or under watchfaces/ or watchapps/
+paf: no units here. A unit is a folder with a paf.config.json holding { "framework": "<tag>" }, at the repo root or under watchfaces/, watchapps/, or plugins/
 ```
 
 The repo has no `paf.config.json` where `paf` looks. See [Where Units Sit](units.md#where-units-sit).

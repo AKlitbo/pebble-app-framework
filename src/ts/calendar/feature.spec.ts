@@ -111,7 +111,7 @@ function startFace(options: { providers?: ProviderLists | null; defaults?: Recor
     onOk?.();
   });
   const hooks = calendar({
-    messageKeys: options.asks ? { ...CALENDAR_FACE_KEYS, SETTINGS_REQUEST: 'SETTINGS_REQUEST' as unknown as number } : CALENDAR_FACE_KEYS,
+    messageKeys: options.asks ? { ...CALENDAR_FACE_KEYS, SETTINGS_REQUEST: 'SETTINGS_REQUEST' as unknown as number, SETTINGS_FRESH: 'SETTINGS_FRESH' as unknown as number } : CALENDAR_FACE_KEYS,
     defaults: options.defaults || {},
     queueSend: queueSend as unknown as FeatureContext['queueSend'],
     refetchDelayMs: 250,
@@ -312,8 +312,8 @@ describe('calendar plugin mode', () => {
   });
 
   /**
-   * A seed can save the plugin with no ready or save after it, such as on every launch of a face
-   * without SETTINGS_FRESH. A unit never started is one retryIfIdle cannot bring back, so the slow
+   * A seed can save the plugin with no ready or save after it, such as a seed while the settings
+   * page is open. A unit never started is one retryIfIdle cannot bring back, so the slow
    * tick has to start it, or the agenda never fills until the next ready.
    */
   test('starts the subscription on a slow tick when the plugin was picked with nothing started', () => {
@@ -703,7 +703,7 @@ describe('calendar plugin mode after a reset', () => {
     expect(result).toEqual({});
   });
 
-  /** A face without SETTINGS_FRESH seeds on every launch, and the watch must not undo a choice the phone saved since. */
+  /** The phone's own saved choice wins over the watch's echo, so the watch must not undo a choice the phone saved. */
   test('leaves the source alone when the phone already held one of its own', () => {
     saveSettings({ CALENDAR_SOURCE: 'ical' });
     const { hooks } = startFace();

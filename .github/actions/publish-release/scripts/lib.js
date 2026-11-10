@@ -9,15 +9,16 @@
  * Names a release asset so it says what it installs on.
  *
  * A pbw built for one watch carries that watch's name. One built for several carries every platform's binary,
- * and naming it after any one of them would mislead, so it is named by the version alone.
+ * and naming it after any one of them would mislead, so it is named by the version alone. A plugin app runs
+ * on the phone and builds for no platform, so it is named by the version alone too.
  *
  * @param target The build target, such as gridlock-face.
- * @param platforms The platforms the target builds for, from its manifest.
+ * @param platforms The platforms the target builds for, from its manifest, or null for a plugin app.
  * @param version The version being released.
  * @return The asset's file name.
  */
 function assetName(target, platforms, version) {
-  if (platforms.length === 1) {
+  if (platforms && platforms.length === 1) {
     return `${target}-${platforms[0]}-${version}.pbw`;
   }
 

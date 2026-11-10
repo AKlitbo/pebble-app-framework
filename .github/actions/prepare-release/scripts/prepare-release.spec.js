@@ -35,11 +35,11 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog = CHANGELOG, targetPlatforms = ['emery', 'gabbro'] } = {}) {
+function writeFace(rel, { name = 'lcars-stardate', version = '1.11.0', changelog = CHANGELOG, targetPlatforms = ['emery', 'gabbro'], projectType } = {}) {
   const dir = path.join(workspace, rel);
 
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version, targetPlatforms }));
+  fs.writeFileSync(path.join(dir, 'pebble.appinfo.json'), JSON.stringify({ name, displayName: 'LCARS Stardate', version, targetPlatforms, projectType }));
   fs.writeFileSync(path.join(dir, 'CHANGELOG.md'), changelog);
 }
 
@@ -108,6 +108,15 @@ describe('prepare-release', () => {
     const { core } = await prepare();
 
     expect(core.setFailed).toHaveBeenCalledWith('pebble.appinfo.json lists no targetPlatforms. Add them so the release can name what each pbw installs on.');
+  });
+
+  /** A plugin app runs on the phone and lists no platforms, and the platform check stopped every release of one. */
+  test('takes a plugin app that lists no platforms', async () => {
+    writeFace('.', { targetPlatforms: null, projectType: 'plugin' });
+
+    const { core } = await prepare();
+
+    expect(core.setFailed).not.toHaveBeenCalled();
   });
 
   /** A version with build metadata was never read as a pre-release, so a candidate went out marked Latest. */

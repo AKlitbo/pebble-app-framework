@@ -71,9 +71,10 @@ export interface WeatherFeature extends Feature {
 }
 
 /**
- * The message keys a face with weather declares. The watch asks with the first and reads a reading
- * off the other three, so a face missing any of them gets no weather on either side. The ok flag is
- * what tells a failed fetch's status text from a real reading.
+ * The message keys weather cannot run without, which the feature carries so paf build adds them. The
+ * watch asks with the first and reads a reading off the other three, so a face missing any of them
+ * gets no weather on either side. The ok flag is what tells a failed fetch's status text from a real
+ * reading.
  */
 export const WEATHER_MESSAGE_KEYS = ['WEATHER_REQUEST', 'WEATHER_TEMPERATURE', 'WEATHER_CONDITIONS', 'WEATHER_OK'];
 
@@ -541,6 +542,13 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
 
 const weatherFeature = ((context: FeatureContext) => startWeather(context, null)) as WeatherFeature;
 
-weatherFeature.withCoords = (formatCoords) => (context) => startWeather(context, formatCoords);
+weatherFeature.messageKeys = WEATHER_MESSAGE_KEYS;
+
+weatherFeature.withCoords = (formatCoords) => {
+  const withCoords: Feature = (context) => startWeather(context, formatCoords);
+
+  withCoords.messageKeys = WEATHER_MESSAGE_KEYS;
+  return withCoords;
+};
 
 export default weatherFeature;

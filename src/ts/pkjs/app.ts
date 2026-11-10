@@ -573,8 +573,8 @@ export function seedConfigFromWatch(messageKeys: any, payload: any, clayConfig: 
   // the watch keeps a timezone as the "offset,label" string it was sent, so seeding it back puts
   // the place name in front of the user. the zone itself does not survive that trip, so the picker
   // shows its prompt to choose the city again, which is the only way the zone comes back.
-  // a place the phone already saved is kept, since it still has its zone. a face without
-  // SETTINGS_FRESH seeds on every launch, so writing over it would lose the zone each time
+  // a place the phone already saved is kept, since it still has its zone and writing over it would
+  // lose the zone
   timezoneFieldsIn(clayConfig, messageKeys).forEach((field) => {
     if (config[field.name]) {
       return;
@@ -874,6 +874,11 @@ export interface FaceStart {
    */
   seedSettled(): boolean;
   /**
+   * Whether the settle at launch changed the settings the phone had saved, which a watch that kept its
+   * own settings still has to hear. Asking clears it. Always false for a face that lists none.
+   */
+  launchSettled(): boolean;
+  /**
    * The page an open falls back to when the features' rows cannot be added, from the face's page as
    * the start narrowed it. A face that lists none gets that page back with only its intro settled.
    */
@@ -900,7 +905,7 @@ export interface FaceStart {
 export function faceStart(options: StartOptions, providers: FaceProviders | null = faceProviders): FaceStart {
   const start: FaceStart = providers
     ? providers.start(options, collectDefaults)
-    : { options, defaults: collectDefaults(options.clayConfig), providers: null, hooks: [], seedSettled: () => false, fallbackPage: (config) => config };
+    : { options, defaults: collectDefaults(options.clayConfig), providers: null, hooks: [], seedSettled: () => false, launchSettled: () => false, fallbackPage: (config) => config };
   const fallback = start.fallbackPage;
 
   // the fallback is a page the phone opens too, so its intro is settled once its rows are final
@@ -919,6 +924,10 @@ function startPebbleApp(faceOptions: StartOptions): void {
   // helpers without loading the per-face message_keys alias
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const messageKeys = require('message_keys');
+
+  // a face with no settings of its own declares neither settings key, so the phone never asks for the
+  // watch's settings and sends no fresh flag. the build refuses one key without the other
+  const hasSettingsKeys = messageKeys.SETTINGS_REQUEST !== undefined && messageKeys.SETTINGS_FRESH !== undefined;
 
   // the face's page narrowed to the providers it lists, which every reader of the page takes. a face
   // that lists none gets its own options back
@@ -1002,16 +1011,16 @@ function startPebbleApp(faceOptions: StartOptions): void {
   /**
    * Builds the dict for a save or a restore from the settings page.
    *
-   * A face with SETTINGS_FRESH sends the key along with it. That is how the watch tells the page's
-   * message apart from anything else carrying a setting, such as the time zone push on every ready.
-   * Only the page's message ends a fresh watch, so a push landing first cannot stop the restore.
-   * The value is 1 for a restore and 0 for a save, since a restore brings the unit the reading on the
-   * watch was fetched in and a save can be the wearer switching it.
+   * SETTINGS_FRESH goes along with it on a face that declares the settings keys. That is how the
+   * watch tells the page's message apart from anything else carrying a setting, such as the time
+   * zone push on every ready. Only the page's message ends a fresh watch, so a push landing first
+   * cannot stop the restore. The value is 1 for a restore and 0 for a save, since a restore brings
+   * the unit the reading on the watch was fetched in and a save can be the wearer switching it.
    */
   function pageSettings(json: string, restore: boolean): AppMessageDict {
     const dict = retimeSettings(clay.getSettings(json), messageKeys, clayConfig, Date.now());
 
-    if (messageKeys.SETTINGS_FRESH !== undefined) {
+    if (hasSettingsKeys) {
       dict[messageKeys.SETTINGS_FRESH] = restore ? 1 : 0;
     }
 
@@ -1092,11 +1101,13 @@ function startPebbleApp(faceOptions: StartOptions): void {
   Pebble.addEventListener('ready', () => {
     console.log('PebbleKit JS Ready!');
 
-    // a face with the fresh flag and settings already on the phone only needs to know whether the
-    // watch booted empty, so it asks for that one field. anything else seeds from the whole snapshot
-    const freshOnly = messageKeys.SETTINGS_FRESH !== undefined && Object.keys(getConfig()).length > 0;
+    // a phone with settings already saved only needs to know whether the watch booted empty, so it
+    // asks for that one field. an empty phone seeds from the whole snapshot
+    if (hasSettingsKeys) {
+      const freshOnly = Object.keys(getConfig()).length > 0;
 
-    settingsAsk.start({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
+      settingsAsk.start({ [messageKeys.SETTINGS_REQUEST]: freshOnly ? WIRE_CAPS.SETTINGS_REQUEST_FRESH : WIRE_CAPS.SETTINGS_REQUEST_FULL });
+    }
 
     // every start sends each zone again, whatever went out before. the phone can suspend this code
     // for a while, and sending them all on each ready is how the watch catches up after that
@@ -1127,14 +1138,15 @@ function startPebbleApp(faceOptions: StartOptions): void {
       }
     });
 
-    // both restore paths seed the same way, so it is written once here
+    // the seed runs once, into a phone with nothing saved, and the same way whether the page is open
+    // or closed, so it is written once here
     const seedFromWatch = (from: any) => {
       seedConfigFromWatch(messageKeys, from, clayConfig, features);
 
       // the watch sent back a value the face's providers list no longer allows, such as a provider
       // it dropped, and the settle changed it on the phone. the watch keeps what it was last sent, so
-      // it hears the settled settings the way a restore sends them, or it would echo the old value
-      // on every launch
+      // it hears the settled settings the way a restore sends them, or the two would disagree until
+      // the next save
       if (start.seedSettled()) {
         sendPageSettings(JSON.stringify(wrapStoredConfig(getConfig(), clayConfig, messageKeys)), true);
       }
@@ -1142,7 +1154,7 @@ function startPebbleApp(faceOptions: StartOptions): void {
 
     // the watch's reply to our SETTINGS_REQUEST carries the request key back as its marker, so a
     // face is recognized whichever settings it declares
-    if (messageKeys.SETTINGS_REQUEST in payload) {
+    if (hasSettingsKeys && messageKeys.SETTINGS_REQUEST in payload) {
       // a repeat of the reply is dropped. with an empty phone, the first reply seeds the phone from the
       // watch, and a second would find the phone has settings and restore them to the watch
       // that restore sends the watch its own values and writes flash for nothing
@@ -1150,51 +1162,41 @@ function startPebbleApp(faceOptions: StartOptions): void {
         return;
       }
 
-      // faces that declare SETTINGS_FRESH get the two-way restore: the watch flags when it booted
-      // with no saved settings (wiped by an install or update) so we push our own config back
-      // instead of letting its defaults seed over ours. faces without the key always seed from the watch
-      if (messageKeys.SETTINGS_FRESH !== undefined) {
-        const config = getConfig();
-        const phoneHasConfig = Object.keys(config).length > 0;
-        const watchFresh = payload[messageKeys.SETTINGS_FRESH] === 1;
+      // the watch flags when it booted with no saved settings (wiped by an install or update), so
+      // the phone pushes its own config back rather than letting the watch's defaults seed over it
+      const config = getConfig();
+      const phoneHasConfig = Object.keys(config).length > 0;
+      const watchFresh = payload[messageKeys.SETTINGS_FRESH] === 1;
 
-        if (watchFresh && phoneHasConfig) {
-          // restore the watch from our saved config using the same dict a Save would send
-          sendPageSettings(JSON.stringify(wrapStoredConfig(config, clayConfig, messageKeys)), true);
-        } else if (!phoneHasConfig) {
-          // nothing saved on the phone yet so recover it from the watch instead. the features
-          // fetched on ready with the defaults, so each one whose settings the seed moved refetches,
-          // the same as after a save. a watch on Fahrenheit got a Celsius reading otherwise, and
-          // showed 22F for a 72F day until the next poll. with the page open the hooks are left
-          // to it, since they would throw away the snapshot it opened on, and its close still
-          // compares against the empty settings the seed moved
-          if (pageOpen) {
-            seedFromWatch(payload);
-          } else {
-            eachFeature('configOpened', (feature) => feature.configOpened?.());
-            seedFromWatch(payload);
-            eachFeature('configSaved', (feature) => feature.configSaved?.());
-          }
+      if (watchFresh && phoneHasConfig) {
+        // restore the watch from our saved config using the same dict a Save would send. it carries
+        // whatever the settle at launch changed, so that has nothing left to send
+        start.launchSettled();
+        sendPageSettings(JSON.stringify(wrapStoredConfig(config, clayConfig, messageKeys)), true);
+      } else if (!phoneHasConfig) {
+        // nothing saved on the phone yet so recover it from the watch instead. the features
+        // fetched on ready with the defaults, so each one whose settings the seed moved refetches,
+        // the same as after a save. a watch on Fahrenheit got a Celsius reading otherwise, and
+        // showed 22F for a 72F day until the next poll. with the page open the hooks are left
+        // to it, since they would throw away the snapshot it opened on, and its close still
+        // compares against the empty settings the seed moved
+        if (pageOpen) {
+          seedFromWatch(payload);
         } else {
-          // both sides have settings: the phone is the source of truth and already correct. the reply
-          // proves the face is listening, so a zones push the watch turned away on ready goes again
-          pushTimezones();
+          eachFeature('configOpened', (feature) => feature.configOpened?.());
+          seedFromWatch(payload);
+          eachFeature('configSaved', (feature) => feature.configSaved?.());
         }
-      } else if (Object.keys(getConfig()).length === 0 && !pageOpen) {
-        // a first seed on a face without SETTINGS_FRESH gets the same refetch. it seeds on every
-        // launch, so only the first, into an empty phone, runs the hooks. a later one can write a
-        // value back in another form, and a stock refetch forced on every launch would spend quota
-        eachFeature('configOpened', (feature) => feature.configOpened?.());
-        seedFromWatch(payload);
-        eachFeature('configSaved', (feature) => feature.configSaved?.());
       } else {
-        const phoneHadConfig = Object.keys(getConfig()).length > 0;
-
-        seedFromWatch(payload);
-
-        // a zone the phone saved survives the seed, and the reply proves the face is listening, so a
-        // zones push the watch turned away on ready goes again
-        if (phoneHadConfig) {
+        // both sides have settings, and the phone is the source of truth. the settle at launch can
+        // have changed the phone's copy, such as a provider the face no longer lists, and the watch
+        // still holds what it was last sent. it hears the settled settings the way a restore sends
+        // them, or it would keep the dropped provider until the next save
+        // the reply proves the face is listening, so a zones push the watch turned away on ready
+        // goes again. the settled restore carries every zone already, so it goes alone then
+        if (start.launchSettled()) {
+          sendPageSettings(JSON.stringify(wrapStoredConfig(config, clayConfig, messageKeys)), true);
+        } else {
           pushTimezones();
         }
       }
@@ -1230,6 +1232,10 @@ function startPebbleApp(faceOptions: StartOptions): void {
       console.error('settings: page closed without settings', error);
       return;
     }
+
+    // the save carries every setting, the ones the settle at launch changed included, so the settings
+    // reply has nothing left to send
+    start.launchSettled();
 
     // each feature refetches when one of its own settings changed. this has to run after
     // pageSettings, since that is what saves the new values each feature compares against

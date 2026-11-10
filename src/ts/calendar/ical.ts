@@ -30,13 +30,22 @@
 import ICAL from './icaljs';
 import { horizonFor, upcomingWindow } from './window';
 
-/** One upcoming event the watch shows: its window, all-day flag, title, and place. */
+/**
+ * One upcoming event. The watch shows its window, all-day flag, title, and place. `uid` and `calendar`
+ * stay on the phone and never reach the watch. Every occurrence of a repeating event shares one `uid`,
+ * so it is the `uid` and the start together that pick out one meeting, and `calendar` names the
+ * calendar the event is from.
+ */
 export interface CalendarEvent {
   startEpoch: number;
   endEpoch: number;
   allDay: boolean;
   title: string;
   location: string;
+  /** The feed's UID for the event. Only the iCal reader fills it, and only when the feed gives one. */
+  uid?: string;
+  /** The name of the calendar the event is from. Only the plugin reader fills it, from the calendar a plugin names. */
+  calendar?: string;
 }
 
 const DAY_SECONDS = 24 * 60 * 60;
@@ -103,6 +112,20 @@ function toCalendarEvent(event: ICAL.Event, start: ICAL.Time, duration: number):
     title: event.summary || '(no title)',
     location: event.location || '',
   };
+}
+
+/**
+ * Marks a VEVENT's occurrences with its UID. It runs once per VEVENT on what the walk kept, rather than
+ * per step, since a daily rule set up years ago walks thousands of steps to reach the window.
+ */
+function withUid(events: CalendarEvent[], uid: string | null | undefined): CalendarEvent[] {
+  if (uid) {
+    events.forEach((event) => {
+      event.uid = uid;
+    });
+  }
+
+  return events;
 }
 
 /**
@@ -303,7 +326,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
     try {
       const event = new ICAL.Event(block, { exceptions: own });
 
-      events.push(...occurrencesOf(event, now, horizon));
+      events.push(...withUid(occurrencesOf(event, now, horizon), event.uid));
     } catch (error) {
       console.error('calendar: skipped an event it could not read', error);
     }
@@ -320,7 +343,7 @@ function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
     try {
       const event = new ICAL.Event(block);
 
-      events.push(toCalendarEvent(event, event.startDate, durationOf(event)));
+      events.push(...withUid([toCalendarEvent(event, event.startDate, durationOf(event))], event.uid));
     } catch (error) {
       // unreadable, so skip it
     }

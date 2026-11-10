@@ -18,7 +18,8 @@ import { PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sourc
 import panel from '../../ts/plugin-sources/panel.ts';
 import { KNOWN_PLUGINS, storeListing } from '../../ts/plugin-sources/directory.ts';
 import { readPluginsFile } from './clay-preview.ts';
-import { checkPluginKeys } from '../../tools/manifest/build-manifests.ts';
+import { checkMessageKeys } from '../../tools/manifest/build-manifests.ts';
+import { NO_START, fillAppinfo } from '../../tools/manifest/feature-keys.ts';
 import { readProviders } from '../../tools/manifest/providers.ts';
 
 /** A page where the API key row is drawn but hidden, and the Data Source select offers two sources. */
@@ -600,12 +601,15 @@ describe('the scenario table', () => {
 
   /**
    * A providers list or a define the fixture's keys cannot back is one the real build refuses, so the
-   * scenario could never be built, and a page built anyway would show something no face ships.
+   * scenario could never be built, and a page built anyway would show something no face ships. The
+   * keys get the defines' keys added, as the build adds them. No phone code is read here, so the
+   * features' keys count only where the fixture lists them.
    */
   test.each(named)('%s sets providers and defines the fixture can build with', (_name, scenario) => {
-    const keys = appinfoOf(scenario).messageKeys;
+    const providers = readProviders({ providers: scenario.providers }, 'page-check', scenario.defines);
+    const keys = fillAppinfo({ messageKeys: appinfoOf(scenario).messageKeys }, 'page-check', NO_START, scenario.defines, providers).messageKeys;
 
-    const result = () => checkPluginKeys(scenario.defines, keys, 'page-check', readProviders({ providers: scenario.providers, messageKeys: keys }, 'page-check', scenario.defines));
+    const result = () => checkMessageKeys(keys, 'page-check', scenario.defines, providers);
 
     expect(result).not.toThrow();
   });

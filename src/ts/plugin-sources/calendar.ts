@@ -3,7 +3,10 @@
  *
  * A calendar plugin serves one instance per event. Its update becomes the same `CalendarEvent` list
  * an iCal feed gives, run through the same window, so the agenda reads the same from either source.
- * The mapping is plain logic that takes "now" as an argument and never reads the clock.
+ * The two differ only in what says where an event is from. A plugin event carries the calendar the
+ * plugin names and never a `uid`, since a plugin's instance id is only its place in the list, and an
+ * iCal event carries its feed's `uid` and never a calendar. The mapping is plain logic that takes "now"
+ * as an argument and never reads the clock.
  *
  * All-day events need the most care. The watch reads an all-day time as the phone's local midnight,
  * as the iCal reader sends it. The built-in plugin sends UTC midnight instead, and the two phones
@@ -27,7 +30,7 @@ import type { CalendarPlugins, SourceEnvelope, SourceProperty } from './types';
 import type { ClayConfigItem } from '../clay/types';
 
 /** The properties the calendar subscription asks for, all the mapping reads. */
-export const CALENDAR_PROPERTIES = ['name', 'location', 'starts_at', 'ends_at', 'all_day'];
+export const CALENDAR_PROPERTIES = ['name', 'location', 'starts_at', 'ends_at', 'all_day', 'calendar'];
 
 const HOUR_SECONDS = 60 * 60;
 const DAY_SECONDS = 24 * HOUR_SECONDS;
@@ -64,8 +67,9 @@ function nearestMidnight(epochSeconds: number, offsetAt: PhoneOffset): number {
 /**
  * Turns one instance into an event, or null when it has no start to place it by.
  *
- * The title and the location prefer the `longText`, since the plugin guide sizes a `shortText` at
- * about 7 characters and the strip holds 24. A timed event with no end, or one that ends at or
+ * The title, the location, and the calendar's name prefer the `longText`, since the plugin guide sizes
+ * a `shortText` at about 7 characters. The strip holds 24 for a title, and a calendar's name is matched
+ * on the phone, where a cut one would miss. A timed event with no end, or one that ends at or
  * before its start, gets an hour, as the iCal reader gives one. An all-day event whose end is
  * missing, or rounds to its start or before, gets one day.
  */
@@ -90,13 +94,20 @@ function toEvent(properties: Record<string, SourceProperty | undefined>, offsetA
     }
   }
 
-  return {
+  const event: CalendarEvent = {
     startEpoch,
     endEpoch,
     allDay,
     title: text(properties.name, 'long') ?? '(no title)',
     location: text(properties.location, 'long') ?? '',
   };
+  const calendar = text(properties.calendar, 'long');
+
+  if (calendar) {
+    event.calendar = calendar;
+  }
+
+  return event;
 }
 
 /**
@@ -169,7 +180,8 @@ export const CALENDAR_TEXTS: PluginSourceTexts = {
  * `calendar/event`.
  */
 export const calendarPlugins: CalendarPlugins = {
-  driver: createCalendarDriver({ fromUpdate: eventsFromUpdate, properties: CALENDAR_PROPERTIES, texts: CALENDAR_TEXTS, select: CALENDAR_SOURCE_SELECT }),
+  // marked pure so a plugin app that only reads events leaves the face's driver out of its bundle
+  driver: /* @__PURE__ */ createCalendarDriver({ fromUpdate: eventsFromUpdate, properties: CALENDAR_PROPERTIES, texts: CALENDAR_TEXTS, select: CALENDAR_SOURCE_SELECT }),
 };
 
 export default { eventsFromUpdate, CALENDAR_PROPERTIES, CALENDAR_TEXTS, CALENDAR_SOURCE_SELECT, ICAL_VALUE };

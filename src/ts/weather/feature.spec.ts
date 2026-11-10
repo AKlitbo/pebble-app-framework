@@ -599,8 +599,8 @@ describe('weather plugin mode', () => {
   });
 
   /**
-   * A seed can save the plugin with no ready or save after it, such as on every launch of a face
-   * without SETTINGS_FRESH. A unit never started is one retryIfIdle cannot bring back, so the slow
+   * A seed can save the plugin with no ready or save after it, such as a seed while the settings
+   * page is open. A unit never started is one retryIfIdle cannot bring back, so the slow
    * tick has to start it, or the face fetches nothing and subscribes to nothing until the next ready.
    */
   test('starts the subscription on a slow tick when the plugin was picked with nothing started', () => {
@@ -1445,8 +1445,8 @@ describe('weather plugin mode after a reset', () => {
   });
 
   /**
-   * A face without SETTINGS_FRESH seeds on every launch. Putting back the default over the phone's
-   * own saved plugin each time would undo the choice the face keeps while plugins are off.
+   * The phone's own saved choice wins over the watch's echo. Putting back the default over the
+   * phone's saved plugin would undo the choice the face keeps while plugins are off.
    */
   test('leaves the provider alone when the phone already held one of its own', () => {
     pebble.plugins = [];

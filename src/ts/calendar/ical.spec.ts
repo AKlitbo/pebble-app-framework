@@ -622,6 +622,40 @@ describe('parseIcal text handling', () => {
   });
 });
 
+describe('parseIcal event identity', () => {
+  /** A plugin merging feeds matches the same meeting across them by its UID, so a dropped UID shows it twice. */
+  test('carries the UID of a plain event', () => {
+    const source = feed('BEGIN:VEVENT\r\nUID:picnic@example.com\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Picnic\r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result[0].uid).toBe('picnic@example.com');
+  });
+
+  /** A moved occurrence reads from its own VEVENT, which still belongs to the series it was moved off. */
+  test('keeps the series UID on a moved occurrence', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=MO\r\nSUMMARY:Gym\r\nEND:VEVENT\r\n' +
+      'BEGIN:VEVENT\r\nUID:gym@example.com\r\nRECURRENCE-ID:20260713T090000Z\r\n' +
+      'DTSTART:20260713T180000Z\r\nDTEND:20260713T183000Z\r\nSUMMARY:Gym moved\r\nEND:VEVENT\r\n'
+    );
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect([result[0].title, result[0].uid]).toEqual(['Gym moved', 'gym@example.com']);
+  });
+
+  /** A feed with no UID leaves it off, rather than giving every such event the same empty one to match on. */
+  test('leaves the UID off an event that has none', () => {
+    const source = feed('BEGIN:VEVENT\r\nDTSTART:20260710T173000Z\r\nSUMMARY:Picnic\r\nEND:VEVENT\r\n');
+
+    const result = ical.parseIcal(source, NOW);
+
+    expect(result[0]).not.toHaveProperty('uid');
+  });
+});
+
 describe('parseIcal window and ordering', () => {
   /** Finished and far-off events must be dropped and the rest sorted, or the agenda shows junk. */
   test('drops past and beyond-window events and sorts the rest', () => {

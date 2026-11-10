@@ -8,12 +8,30 @@
  * The heap figures only print when the build links, so an incremental build with nothing to relink has none.
  * CI always builds clean. It never fails a build for being large, since the SDK already fails one that passes
  * its platform's app image or memory limit.
+ *
+ * A plugin app runs on the phone and links no watch binary, so its build prints no memory report. It gets a
+ * line saying so and an empty list of rows, so the upload after this step still finds its file.
  */
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { fail, step, insideRepo, faceProject } = require('../../../shared/lib');
+const { fail, step, insideRepo, faceProject, findFaceProject, readJson } = require('../../../shared/lib');
 const { readBuildLog, readVirtualSize } = require('./lib');
+
+/**
+ * Writes a face's rows where the upload step reads them.
+ *
+ * @param face The face the rows are for.
+ * @param rows The rows, empty for a plugin app.
+ * @return The file it wrote.
+ */
+function writeRows(face, rows) {
+  const file = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'memory', `${face}.json`);
+
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(rows));
+  return file;
+}
 
 module.exports = step(async ({ core }) => {
   const face = process.env.FACE;
@@ -31,6 +49,16 @@ module.exports = step(async ({ core }) => {
 
   if (!fs.existsSync(logPath)) {
     fail(`No build log at ${log}. The build step has to tee its output there.`);
+  }
+
+  // the appinfo is what the manifest's projectType comes from, and it is known before the build names any target
+  const found = findFaceProject(workspace, face);
+  const appinfoRel = found ? path.relative(workspace, path.join(found.face, 'pebble.appinfo.json')).split(path.sep).join('/') : '';
+
+  if (found && readJson(path.join(workspace, appinfoRel), appinfoRel).projectType === 'plugin') {
+    core.info(`${face} is a plugin app, which links no watch binary, so it has no memory report.`);
+    core.setOutput('file', writeRows(face, []));
+    return;
   }
 
   const text = fs.readFileSync(logPath, 'utf8');
@@ -71,11 +99,7 @@ module.exports = step(async ({ core }) => {
     return { face, target: block.target, platform: block.platform, image, virtualSize, resources: block.resources, footprint: block.footprint, free: block.free };
   });
 
-  const file = path.join(process.env.RUNNER_TEMP || os.tmpdir(), 'memory', `${face}.json`);
-
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, JSON.stringify(rows));
-  core.setOutput('file', file);
+  core.setOutput('file', writeRows(face, rows));
 
   for (const row of rows) {
     core.info(`${row.target} on ${row.platform}: app image ${row.image} bytes, static size ${row.virtualSize} bytes, free heap ${row.free} bytes.`);

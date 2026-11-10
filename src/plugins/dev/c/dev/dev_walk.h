@@ -5,9 +5,10 @@
  * seed mechanism so no live source overwrites it, and drives an accelerometer-tap theme "walk".
  * Each tap steps to the next theme and the next fixed set of readings, on the same fixed clock.
  *
- * The dev plugin owns the walk and the fixture. A face owns only its switches, in its own
- * `src/c/dev/dev.h`, and passes them in. Compiled for any face that lists the dev plugin, but never
- * called by a release build, so the linker drops it all.
+ * The dev plugin owns the walk, the fixture, and the switches, which the build sets from `--dev` and
+ * the unit's paf.dev.config.json. A face calls it through the hooks in `dev/dev_hooks.h` rather
+ * than straight. Compiled for any face that lists the dev plugin, but never called by a release
+ * build, so the linker drops it all.
  *
  * @ingroup lib_dev
  */
@@ -20,7 +21,7 @@
  */
 
 /**
- * @brief Which walk a tap advances. The face works this out from its own toggles.
+ * @brief Which walk a tap advances. `dev_start` picks it from the walk the dev switches name.
  */
 typedef enum
 {

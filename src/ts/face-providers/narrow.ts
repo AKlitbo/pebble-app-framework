@@ -410,8 +410,11 @@ export function faceProvidersFor(written: WrittenProviders, stockCache?: StockCa
 
     // only a change is written. a phone with no saved settings has nothing to change, so clay-settings
     // stays unset. that matters, since the app reads an empty phone as one to fill from the watch, and
-    // a write here would make it look like a phone with settings of its own and skip that restore
-    if (settle(saved, pages)) {
+    // a write here would make it look like a phone with settings of its own and skip that restore.
+    // the watch still holds what it was sent before the change, so it has to hear it too
+    let launchSettled = settle(saved, pages);
+
+    if (launchSettled) {
       localStorage.setItem('clay-settings', JSON.stringify(saved));
     }
 
@@ -438,6 +441,12 @@ export function faceProvidersFor(written: WrittenProviders, stockCache?: StockCa
         const settled = seedSettled;
 
         seedSettled = false;
+        return settled;
+      },
+      launchSettled() {
+        const settled = launchSettled;
+
+        launchSettled = false;
         return settled;
       },
       // a page whose features' rows could not be added still drops a picker left with one provider,

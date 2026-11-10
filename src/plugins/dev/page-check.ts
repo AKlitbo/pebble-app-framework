@@ -46,13 +46,14 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { Browser, Page } from 'playwright';
 import { cleanEmit, compile, facePaths, writeTsconfig, type FacePaths, type FacePlace } from '../../tools/pkjs/build-pkjs.ts';
-import { checkPluginKeys } from '../../tools/manifest/build-manifests.ts';
+import { checkMessageKeys } from '../../tools/manifest/build-manifests.ts';
+import { NO_START, fillAppinfo } from '../../tools/manifest/feature-keys.ts';
 import { readProviders } from '../../tools/manifest/providers.ts';
 import { ENGINE } from '../../tools/shared/paths.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 import { isMainScript } from '../../tools/shared/entry.ts';
-import { forgetCompiled, installHost, messageKeysFrom } from '../../tools/pkjs/settings-page.ts';
+import { forgetCompiled, installHost, messageKeysOf, startFacts } from '../../tools/pkjs/settings-page.ts';
 import { fillPreviewEmit, readPluginsFile, renderPage, hasPluginDefines } from './clay-preview.ts';
 import { CLAY_ROW_PADDING } from '../../ts/clay/page-style-component.ts';
 
@@ -2163,35 +2164,38 @@ async function checkPage(browser: Browser, scenario: Scenario, html: string): Pr
   return problems;
 }
 
+/** The keys of the scenario being rendered, which a require of message_keys gets. Each scenario fills in its own. */
+let scenarioKeys: Record<string, number> | undefined;
+
 /** A fixture face's appinfo, read once, and the build every scenario on it copies. */
 interface Fixture {
   /** The fixture face's folder. */
   dir: string;
-  /** The face's message keys, as the preview stands them in. */
-  messageKeys: Record<string, number>;
-  /** The appinfo's messageKeys as written, which the plugin define check reads. */
+  /** The appinfo's messageKeys as written, which the build adds the features' and the defines' keys to before its checks. */
   declared: unknown;
   /** The build every scenario copies. */
   compiled: FacePaths;
 }
 
-/** Renders one scenario's page from its own copy of the build, onto a fresh phone. */
-function renderScenario(scenario: Scenario, paths: FacePaths, fixture: Fixture, withFeatures: boolean): ReturnType<typeof renderPage> {
+/** Renders one scenario's page from its own copy of the build, onto a fresh phone, on the scenario's own keys. */
+function renderScenario(scenario: Scenario, paths: FacePaths, messageKeys: Record<string, number>, withFeatures: boolean): ReturnType<typeof renderPage> {
   const settings = scenario.settings ? path.join(SETTINGS_FILES, scenario.settings) : null;
 
   forgetCompiled(paths);
   installHost({ platform: 'emery', settings }, scenario.plugins === null ? null : readPluginsFile(path.join(PLUGIN_FILES, scenario.plugins)));
 
-  return renderPage({ face: FACE, platform: 'emery' }, paths, fixture.messageKeys, withFeatures);
+  scenarioKeys = messageKeys;
+
+  return renderPage({ face: FACE, platform: 'emery' }, paths, messageKeys, withFeatures);
 }
 
 /** Builds one scenario's page and gives back its HTML file, and any problem with the build itself. */
 function buildScenario(scenario: Scenario, fixture: Fixture): { html: string; problems: string[] } {
   // a providers list or a define the face's keys cannot back is one the real build refuses, so the
-  // check does too, with the same checks in the same order
-  const providers = readProviders({ providers: scenario.providers, messageKeys: fixture.declared }, FACE, scenario.defines);
-
-  checkPluginKeys(scenario.defines, fixture.declared, FACE, providers);
+  // check does too, with the same checks in the same order. the providers list is read before the
+  // phone code, as the phone build reads it, and the keys are checked once the code says which
+  // features it passes, with the keys those features and the defines bring added, as the build adds them
+  const providers = readProviders({ providers: scenario.providers }, FACE, scenario.defines);
 
   const paths = fixturePaths(path.join(OUT_DIR, scenario.name), fixture.dir);
   const html = path.join(OUT_DIR, `${scenario.name}.html`);
@@ -2200,8 +2204,16 @@ function buildScenario(scenario: Scenario, fixture: Fixture): { html: string; pr
   fs.cpSync(fixture.compiled.emit, paths.emit, { recursive: true });
   fillPreviewEmit(paths, scenario.defines, providers);
 
+  const base = fillAppinfo({ messageKeys: fixture.declared }, FACE, NO_START, scenario.defines, providers).messageKeys;
+  const appinfo = fillAppinfo({ messageKeys: fixture.declared }, FACE, startFacts(paths, FACE, base, ['emery']), scenario.defines, providers);
+
+  checkMessageKeys(appinfo.messageKeys, FACE, scenario.defines, providers);
+
+  // each render gets a map of its own, since the page load adds to the map it is given
+  const keysFor = (): Record<string, number> => messageKeysOf(appinfo);
+
   // the page the preview shows, which starts the features only for a build with a plugin define
-  const page = renderScenario(scenario, paths, fixture, hasPluginDefines(scenario.defines));
+  const page = renderScenario(scenario, paths, keysFor(), hasPluginDefines(scenario.defines));
   const problems: string[] = [];
 
   fs.writeFileSync(html, scenario.androidHead ? withAndroidHead(page.html) : page.html);
@@ -2210,8 +2222,8 @@ function buildScenario(scenario: Scenario, fixture: Fixture): { html: string; pr
   // the phone starts every feature and runs its hooks on each open, plugin define or not, so that
   // path has to give the page the face builds with no features at all
   if (scenario.unchanged) {
-    const phone = renderScenario(scenario, paths, fixture, true);
-    const bare = renderScenario(scenario, paths, fixture, false);
+    const phone = renderScenario(scenario, paths, keysFor(), true);
+    const bare = renderScenario(scenario, paths, keysFor(), false);
 
     if (phone.html !== bare.html) {
       problems.push(phone.folded !== bare.folded
@@ -2238,16 +2250,12 @@ async function main(): Promise<void> {
 
     fixtures.set(dir, {
       dir,
-      messageKeys: messageKeysFrom(appinfo),
       declared: JSON.parse(fs.readFileSync(appinfo, 'utf8')).messageKeys,
       compiled: compileFixture(path.join(OUT_DIR, 'compiled', path.basename(dir)), dir),
     });
   });
 
-  // the face being rendered, whose keys a require of message_keys gets
-  let current: Fixture | undefined;
-
-  stubModuleLoad((id) => (id === 'message_keys' && current ? current.messageKeys : undefined));
+  stubModuleLoad((id) => (id === 'message_keys' && scenarioKeys ? scenarioKeys : undefined));
 
   // loaded here rather than at the top, so the specs of the pure parts above never load Playwright
   const { chromium } = await import('playwright');
@@ -2260,9 +2268,7 @@ async function main(): Promise<void> {
       let html = '';
 
       try {
-        current = fixtures.get(scenarioFace(scenario)) as Fixture;
-
-        const built = buildScenario(scenario, current);
+        const built = buildScenario(scenario, fixtures.get(scenarioFace(scenario)) as Fixture);
 
         html = built.html;
         problems = [...built.problems, ...(await checkPage(browser, scenario, built.html))];

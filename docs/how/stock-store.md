@@ -24,7 +24,7 @@ app.startPebbleApp({
 });
 ```
 
-A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as [The Phone Side](phone-side.md#features) covers. The face also declares the `STOCK_STRIP` and `STOCK_REQUEST` message keys, plus `STOCK_PROVIDER`, `STOCK_API_KEY`, and `STOCK_SYMBOLS` for the settings. The settings page's stock section has a data source, an API key that hides for Yahoo, which needs none, and a comma list of tickers. A face that lists the feature but not `STOCK_STRIP` gets nothing from it, since there is nowhere on the watch for a strip to land.
+A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as [The Phone Side](phone-side.md#features) covers. The feature brings the `STOCK_STRIP` and `STOCK_REQUEST` message keys, and the face declares `STOCK_PROVIDER`, `STOCK_API_KEY`, and `STOCK_SYMBOLS` for the settings. The settings page's stock section has a data source, an API key that hides for Yahoo, which needs none, and a comma list of tickers.
 
 ## What the Watch Holds
 

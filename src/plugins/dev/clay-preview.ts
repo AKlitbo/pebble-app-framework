@@ -14,24 +14,31 @@
  * hooks change the page the way they do each time the phone opens it. With --plugins the phone seems
  * to have the Pebble app plugins a file lists, which is what such a face offers as a source.
  *
+ * A plugin app's page is built the way the plugin app build builds it, from its src/config/index.ts. A
+ * small stand-in for the Pebble app's bridge answers the page's load with the values a --settings file
+ * holds, and shows what a Save would have sent in the browser's console, so the page loads and saves as
+ * it does on the phone.
+ *
  * Run from the unit that holds the face, through paf. USAGE below lists the options.
  *
  * Opens to: paf/plugins/dev/clay-preview.html, or the file --out names.
  *
- * The Save button does nothing here: it talks to the phone. This is for eyeballing the page.
+ * A face's Save button does nothing here, since it talks to the phone. This is for eyeballing the page.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { facePaths, compile, fillEmit, writeTsconfig, type FacePaths } from '../../tools/pkjs/build-pkjs.ts';
-import { readAppinfo, readDefines } from '../../tools/manifest/build-manifests.ts';
+import { isPluginApp, PLUGIN_CONFIG_PAGE, readAppinfo, readDefines } from '../../tools/manifest/build-manifests.ts';
+import { readPluginPage, renderPluginPage } from '../../tools/pkjs/plugin-page.ts';
 import { readProviders } from '../../tools/manifest/providers.ts';
 import type { ProviderLists } from '../../tools/manifest/providers.ts';
 import { pluginKindsOn } from '../../tools/manifest/plugin-kinds.ts';
-import { appinfoPath, familyCoreDir } from '../../tools/shared/faces.ts';
+import { appinfoPath, faceDir, familyCoreDir } from '../../tools/shared/faces.ts';
 import { ENGINE } from '../../tools/shared/paths.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ToolError, reportFailure } from '../../tools/shared/tool-error.ts';
 import { isMainScript } from '../../tools/shared/entry.ts';
+import { isObject } from '../../tools/shared/values.ts';
 import { forgetCompiled, installHost, loadSettingsPage, messageKeysFrom, type PhonePlugins } from '../../tools/pkjs/settings-page.ts';
 
 const OUT = path.join(import.meta.dirname, 'clay-preview.html');
@@ -45,7 +52,8 @@ from the unit that holds the face.
   --watch             rebuild the page after every save until stopped, then refresh the browser
   --platform=<name>   open the page as if from that watch, emery by default
   --settings=<file>   open the page filled from a file of saved values, as a returning wearer
-                      sees it, rather than as a fresh install
+                      sees it, rather than as a fresh install. For a plugin app, the values the
+                      plugin hands the page when it opens
   --plugins=<file>    open the page on a phone with the Pebble app plugins the file lists, and
                       with what each plugin source last saved
   --out=<file>        write the page to this file rather than clay-preview.html
@@ -138,11 +146,6 @@ export function parseClayPreviewArgs(args: string[]): ClayPreviewArgs {
   }
 
   return parsed;
-}
-
-/** Whether a value is a plain object, the shape JSON gives `{}`. */
-function isObject(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
 /**
@@ -299,7 +302,7 @@ export function renderPage(args: Pick<ClayPreviewArgs, 'face' | 'platform'>, pat
     throw new ToolError(`${args.face}'s src/pkjs/index.ts compiled to no index.js in ${path.relative(process.cwd(), paths.emitPkjs)}, so there is no settings page to build. Check that tsc compiled the face`);
   }
 
-  const loaded = loadSettingsPage(paths, messageKeys, withFeatures);
+  const loaded = loadSettingsPage(paths, messageKeys, withFeatures, { face: args.face });
 
   if (loaded === null) {
     throw new ToolError(`${args.face}'s src/pkjs/index.ts never calls startPebbleApp, which is where the phone builds the settings page`);
@@ -323,6 +326,105 @@ export function renderPage(args: Pick<ClayPreviewArgs, 'face' | 'platform'>, pat
     folded: JSON.stringify(clay.config),
     customFn: String(clay.customFn),
   };
+}
+
+/**
+ * A stand-in for the Pebble app's settings page bridge, for a plugin app's page in a desktop browser.
+ * It says the plugin is ready, answers the load with the saved values, and answers a save by showing
+ * what it would have sent in the console, saying on the page that nothing was saved. The values go in
+ * as JSON with every `<` escaped, so none can close the script.
+ *
+ * @param saved The values the plugin hands the page when it opens.
+ * @return The script to put at the top of the page.
+ */
+export function previewBridge(saved: Record<string, unknown>): string {
+  const values = JSON.stringify(saved).replace(/</g, '\\u003c');
+
+  return '<script>window.Pebble = {' +
+    ' addEventListener: function (name, listener) { if (name === "ready") { setTimeout(function () { listener({ target: "plugin" }); }, 0); } },' +
+    ' sendMessage: function (target, message) {' +
+    ' if (message && message.type === "paf-settings-load") { return Promise.resolve({ settings: ' + values + ' }); }' +
+    ' console.log("clay-preview: a save would have sent", JSON.stringify(message && message.settings));' +
+    ' return Promise.resolve({ error: "this is a preview, so nothing was saved. The console shows what would have been" }); } };</script>';
+}
+
+/**
+ * Builds a plugin app's settings page for a desktop browser, the way the plugin app build builds it,
+ * with the preview bridge put in ahead of Clay's own script.
+ *
+ * @param face The plugin app.
+ * @param settings A file of the values the plugin hands the page, or null for none saved.
+ * @return The page as the browser opens it.
+ */
+export async function renderPluginPreview(face: string, settings: string | null): Promise<string> {
+  if (readAppinfo(face).configPage !== PLUGIN_CONFIG_PAGE) {
+    throw new ToolError(`${face} is a plugin app with no settings page, since its appinfo names no configPage`);
+  }
+
+  let saved: unknown = {};
+
+  if (settings !== null) {
+    if (!fs.existsSync(settings)) {
+      throw new ToolError(`--settings=${settings} names no file`);
+    }
+
+    try {
+      saved = JSON.parse(fs.readFileSync(settings, 'utf8'));
+    } catch (error) {
+      throw new ToolError(`--settings=${settings} is not JSON: ${(error as Error).message}`);
+    }
+
+    if (!isObject(saved)) {
+      throw new ToolError(`--settings=${settings} has to hold an object of each setting's key and value`);
+    }
+  }
+
+  const html = renderPluginPage(await readPluginPage(faceDir(face), face), face);
+
+  if (!html.includes('<head>')) {
+    throw new ToolError(`Clay's page for ${face} has no <head> for the preview bridge to go in`);
+  }
+
+  // a replacer, so a $ in a saved value goes in as written rather than as a replacement pattern
+  return html.replace('<head>', () => '<head>' + previewBridge(saved as Record<string, unknown>));
+}
+
+/** Writes a plugin app's preview, and with --watch writes it again after every save under its src/. */
+async function previewPluginApp(args: ClayPreviewArgs): Promise<void> {
+  if (args.plugins !== null) {
+    throw new ToolError(`${args.face} is a plugin app, so --plugins means nothing to its page. Use --settings for the values it opens on`);
+  }
+
+  const out = args.out === null ? OUT : path.resolve(args.out);
+  const write = async (): Promise<void> => {
+    const html = await renderPluginPreview(args.face, args.settings);
+
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    fs.writeFileSync(out, html);
+    console.log('[' + new Date().toISOString().slice(11, 19) + '] wrote ' + out + ' (' + html.length + ' bytes) for ' + args.face);
+  };
+
+  await write();
+
+  if (!args.watch) {
+    return;
+  }
+
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  // the page config can import anything under src/, such as settings it shares with the plugin's script,
+  // so the whole folder is watched. the framework's own page code is loaded once, so an edit to it
+  // needs the preview started again
+  console.log("watching the plugin app's src/ for changes. refresh the browser after each save. restart after editing the framework.");
+  [path.join(faceDir(args.face), 'src')].filter((dir) => fs.existsSync(dir)).forEach((dir) => {
+    fs.watch(dir, { recursive: true }, () => {
+      if (timer) { clearTimeout(timer); }
+
+      timer = setTimeout(() => {
+        write().catch((error) => console.error('build failed: ' + (error as Error).message));
+      }, 150);
+    });
+  });
 }
 
 /** Renders the settings page to the out file so a browser can open it. */
@@ -393,6 +495,12 @@ function main(): void {
 
     if (args.help) {
       console.log(USAGE);
+      return;
+    }
+
+    // a plugin app's page comes from its own config, not a face's start-up, and its preview is async
+    if (isPluginApp(readAppinfo(args.face))) {
+      previewPluginApp(args).catch(reportFailure);
       return;
     }
 

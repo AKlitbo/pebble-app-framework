@@ -2,7 +2,8 @@ name: Report Memory
 description: >
   Reads a face build's memory report out of its log, and the app image and static size out of each app
   binary, then uploads the rows for render-memory to rank against every other face. Run it after a clean
-  build whose output was tee'd to a log. Reports only, and never fails a build for being large.
+  build whose output was tee'd to a log. Reports only, and never fails a build for being large. A plugin
+  app links no watch binary, so it gets a line saying so and no rows.
 
 inputs:
   face:

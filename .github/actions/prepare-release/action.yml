@@ -4,8 +4,8 @@ description: >
   read from the package.json version in its paf/. The face the tag names has to exist with that version in
   its appinfo, its changelog entry has to be dated and written, and the tag cannot already be released.
   Writes the release notes from that changelog entry. Finds the face wherever paf keeps it: at the repo
-  root, beside the core/ of a family at the root, or in a face or family folder under watchfaces/ or
-  watchapps/.
+  root, beside the core/ of a family at the root, or in a face or family folder under watchfaces/,
+  watchapps/, or plugins/.
 
 inputs:
   tag:

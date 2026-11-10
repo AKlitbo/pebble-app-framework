@@ -217,4 +217,7 @@ const calendar: Feature = (context) => {
   };
 };
 
+// the strip has to have somewhere to land and the watch a way to ask, so the build adds both
+calendar.messageKeys = ['CALENDAR_REQUEST', 'CALENDAR_STRIP'];
+
 export default calendar;

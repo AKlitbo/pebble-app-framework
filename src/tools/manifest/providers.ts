@@ -95,6 +95,13 @@ export const FEATURE_KEYS: Readonly<Record<'weather' | 'stocks' | 'calendar', st
   calendar: 'CALENDAR_STRIP',
 };
 
+/** The feature that brings each kind's feature key, as a face imports it, for the line that says to pass it. */
+const KIND_FEATURES: Readonly<Record<keyof typeof FEATURE_KEYS, string>> = {
+  weather: 'weather from ts/weather/feature',
+  stocks: 'stocks from ts/stock/feature',
+  calendar: 'calendar from ts/calendar/feature',
+};
+
 /** True for a kind with a feature key, which is every kind but the plugin only ones. */
 function hasFeatureKey(kind: ProviderKind): kind is keyof typeof FEATURE_KEYS {
   return kind in FEATURE_KEYS;
@@ -146,8 +153,8 @@ export function pluginKindMode(kind: PluginKind, providers: ProviderLists): Prov
  * The default the watch keeps for each plugin kind's source choice, as the text each one's define
  * hands the watch C, such as `{ PLUGIN_SOURCE_WEATHER_DEFAULT: 'openmeteo' }`.
  *
- * The watch keeps a choice for a kind whose define is on and whose list is not plugin only, which
- * checkPluginKeys and readProviders hold to the face declaring the select key. The default is the
+ * The watch keeps a choice for a kind whose define is on and whose list is not plugin only, since the
+ * build adds the kind's select key to the face's message keys for one. The default is the
  * settings page's own. That is the first custom provider the kind's list names, wherever `plugin` sits,
  * or with no list the page default the framework's page gives the select. So a watch that never got a
  * save sends back the choice the phone would make anyway.
@@ -209,8 +216,13 @@ function readList(value: unknown, face: string, key: string, allowEmpty: boolean
   return value;
 }
 
-/** Joins names into a sentence's list, with a serial comma. */
-function sentenceList(names: string[]): string {
+/**
+ * Joins names into a sentence's list, with a serial comma, as in "A, B, and C".
+ *
+ * @param names The names to join.
+ * @return The names as a list a sentence can hold.
+ */
+export function sentenceList(names: readonly string[]): string {
   if (names.length <= 2) {
     return names.join(' and ');
   }
@@ -240,15 +252,9 @@ function checkNames(kind: ProviderKind, list: string[], face: string): void {
   throw new ToolError(`${prefix}, which is not a ${kind} provider. The ${kind} providers are ${sentenceList(names)}`);
 }
 
-/** Refuses a list the face has no feature for, or one its plugin define and select key disagree with. */
-function checkKind(kind: ProviderKind, list: string[], face: string, declared: Set<string>, kindsOn: PluginKind[]): void {
+/** Refuses a list that names a provider the kind does not have, or one its plugin define disagrees with. */
+function checkKind(kind: ProviderKind, list: string[], face: string, kindsOn: PluginKind[]): void {
   checkNames(kind, list, face);
-
-  const featureKey = hasFeatureKey(kind) ? FEATURE_KEYS[kind] : undefined;
-
-  if (featureKey && !declared.has(featureKey)) {
-    throw new ToolError(`${face}'s appinfo lists providers.${kind} without the ${featureKey} message key, so the face has no ${KIND_WORDS[kind]} to offer them for. Add ${featureKey} to messageKeys and build with --clean, or take providers.${kind} out`);
-  }
 
   const plugin = rowsFor(kind).find((provider) => provider.plugin)?.plugin;
 
@@ -269,10 +275,25 @@ function checkKind(kind: ProviderKind, list: string[], face: string, declared: S
   if (mode === 'custom' && on) {
     throw new ToolError(`${face}'s appinfo defines ${plugin.define}, but providers.${kind} does not list plugin, so the plugin code would ship with nothing to offer it. Add "plugin" to the list, or take ${plugin.define} out of its defines`);
   }
+}
+
+/** Refuses a list the face has no feature for, or a plugin only list beside the kind's select key. */
+function checkKindKeys(kind: ProviderKind, list: string[], face: string, declared: Set<string>): void {
+  if (hasFeatureKey(kind) && !declared.has(FEATURE_KEYS[kind])) {
+    throw new ToolError(`${face}'s appinfo lists providers.${kind} without the ${FEATURE_KEYS[kind]} message key, so the face has no ${KIND_WORDS[kind]} to offer them for. Pass ${KIND_FEATURES[kind]} in startPebbleApp's features, which brings the key, or take providers.${kind} out`);
+  }
+
+  checkSelectKey(kind, list, face, declared);
+}
+
+/** Refuses a plugin only list beside the kind's select key. */
+function checkSelectKey(kind: ProviderKind, list: string[], face: string, declared: Set<string>): void {
+  const plugin = rowsFor(kind).find((provider) => provider.plugin)?.plugin;
 
   // the watch keeps the select's choice through a reset whenever the face declares this key, and a
-  // plugin only kind has no choice to keep
-  if (mode === 'plugin' && plugin.selectKey && declared.has(plugin.selectKey)) {
+  // plugin only kind has no choice to keep. the build adds the select key only beside a list that is
+  // not plugin only, so this one is a key the face lists itself
+  if (plugin?.selectKey && providerMode(list) === 'plugin' && declared.has(plugin.selectKey)) {
     throw new ToolError(`${face}'s appinfo lists providers.${kind} as ["plugin"] and still declares ${plugin.selectKey}. A plugin only kind keeps no choice on the watch, so take ${plugin.selectKey} out of messageKeys and build with --clean`);
   }
 }
@@ -281,11 +302,7 @@ function checkKind(kind: ProviderKind, list: string[], face: string, declared: S
 const HOST_NAME = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
 
 /** Refuses calendar hosts that mean nothing for the face's calendar, or that the phone cannot match. */
-function checkHosts(hosts: string[], calendar: string[] | undefined, face: string, declared: Set<string>): void {
-  if (!declared.has('CALENDAR_STRIP')) {
-    throw new ToolError(`${face}'s appinfo lists providers.${HOSTS_KEY} without the CALENDAR_STRIP message key, so the face has no calendar to fetch from them. Add CALENDAR_STRIP to messageKeys and build with --clean, or take providers.${HOSTS_KEY} out`);
-  }
-
+function checkHosts(hosts: string[], calendar: string[] | undefined, face: string): void {
   // the hosts only say where an iCal link can reach, so they need the link on offer
   if (calendar !== undefined && !calendar.includes('ical')) {
     throw new ToolError(`${face}'s appinfo lists providers.${HOSTS_KEY}, but providers.calendar does not offer ical, so no iCal link would use them. Add "ical" to the calendar list, or take ${HOSTS_KEY} out`);
@@ -316,17 +333,17 @@ function checkHosts(hosts: string[], calendar: string[] | undefined, face: strin
 /**
  * Reads and checks the `providers` list in a face's appinfo.
  *
- * The build stops on a list that does not read, a kind or a name the table does not have, a kind the
- * face has no feature for, a list and a plugin define that disagree, a plugin only list beside the
- * kind's select key, and calendar hosts that are empty, mean nothing for the face's calendar, or are
- * not bare host names.
+ * The build stops on a list that does not read, a kind or a name the table does not have, a list and a
+ * plugin define that disagree, and calendar hosts that are empty, mean nothing for the face's calendar,
+ * or are not bare host names. The phone build reads the list before the build knows every message key
+ * the face's features bring, so the checks against the keys wait for checkProviderKeys.
  *
- * @param config The face's appinfo, read for providers and messageKeys.
+ * @param config The face's appinfo, read for providers.
  * @param face The face the appinfo belongs to, which a refusal names.
  * @param defines The face's defines, from readDefines.
  * @return The checked lists, or `{}` for a face that lists none.
  */
-export function readProviders(config: { providers?: unknown; messageKeys: unknown }, face: string, defines: Record<string, number>): ProviderLists {
+export function readProviders(config: { providers?: unknown; messageKeys?: unknown }, face: string, defines: Record<string, number>): ProviderLists {
   const raw = config.providers;
 
   if (raw === undefined) {
@@ -348,22 +365,72 @@ export function readProviders(config: { providers?: unknown; messageKeys: unknow
     lists[key as keyof ProviderLists] = readList(value, face, key, key === HOSTS_KEY);
   }
 
-  const declared = keyNames(config.messageKeys);
   const kindsOn = pluginKindsOn(defines);
 
   for (const kind of PROVIDER_KINDS) {
     const list = lists[kind];
 
     if (list) {
-      checkKind(kind, list, face, declared, kindsOn);
+      checkKind(kind, list, face, kindsOn);
     }
   }
 
   if (lists.calendarHosts) {
-    checkHosts(lists.calendarHosts, lists.calendar, face, declared);
+    checkHosts(lists.calendarHosts, lists.calendar, face);
   }
 
   return lists;
+}
+
+/**
+ * Refuses a plugin only list beside the kind's select key, from the face's own keys.
+ *
+ * The build adds a select key only beside a list that is not plugin only, so the face's own keys give
+ * the same answer as the whole list, and the build checks this before the phone build.
+ * checkProviderKeys checks it again on the whole list.
+ *
+ * @param providers The face's checked providers list, from readProviders.
+ * @param messageKeys The face's own message keys, as its appinfo declares them.
+ * @param face The face the appinfo belongs to, which a refusal names.
+ */
+export function checkSelectKeys(providers: ProviderLists, messageKeys: unknown, face: string): void {
+  const declared = keyNames(messageKeys);
+
+  for (const kind of PROVIDER_KINDS) {
+    const list = providers[kind];
+
+    if (list) {
+      checkSelectKey(kind, list, face, declared);
+    }
+  }
+}
+
+/**
+ * Refuses a providers list the face's message keys cannot back.
+ *
+ * A list for a kind the face has no feature key for offers providers for nothing, and so do calendar
+ * hosts without `CALENDAR_STRIP`. A plugin only list keeps no choice on the watch, so the kind's
+ * select key beside it is refused. The keys are the whole list the build writes, the face's own and
+ * the ones its features and defines bring, so a face that passes a kind's feature passes the first two.
+ *
+ * @param providers The face's checked providers list, from readProviders.
+ * @param messageKeys The message keys the manifest carries, a list or a map.
+ * @param face The face the appinfo belongs to, which a refusal names.
+ */
+export function checkProviderKeys(providers: ProviderLists, messageKeys: unknown, face: string): void {
+  const declared = keyNames(messageKeys);
+
+  for (const kind of PROVIDER_KINDS) {
+    const list = providers[kind];
+
+    if (list) {
+      checkKindKeys(kind, list, face, declared);
+    }
+  }
+
+  if (providers.calendarHosts && !declared.has('CALENDAR_STRIP')) {
+    throw new ToolError(`${face}'s appinfo lists providers.${HOSTS_KEY} without the CALENDAR_STRIP message key, so the face has no calendar to fetch from them. Pass ${KIND_FEATURES.calendar} in startPebbleApp's features, which brings the key, or take providers.${HOSTS_KEY} out`);
+  }
 }
 
 /**

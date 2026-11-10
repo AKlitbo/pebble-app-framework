@@ -15,7 +15,7 @@ calendar_store_subscribe(redraw);
 
 `live`, `poll_min`, and `persist_key` mean the same as for every store, as [How the Stores Work](stores.md#the-shape-every-store-takes) covers, and a `CalendarSeed` pins a fixed agenda for screenshots. A store started with `live` false keeps that agenda, even one the face started live before.
 
-On the phone, the face lists `calendar` in the `features` it passes to `startPebbleApp` (see [The Phone Side](phone-side.md#features)), and declares the `CALENDAR_STRIP`, `CALENDAR_REQUEST`, and `CALENDAR_ICS_URL` message keys. The settings page's calendar section has one field for the link, with directions for finding it in Google, iCloud, and Outlook. Anyone holding that link can read the calendar, and the page tells the wearer to treat it like a password.
+On the phone, the face lists `calendar` in the `features` it passes to `startPebbleApp` (see [The Phone Side](phone-side.md#features)), which brings the `CALENDAR_STRIP` and `CALENDAR_REQUEST` message keys, and declares `CALENDAR_ICS_URL` for the link. The settings page's calendar section has one field for the link, with directions for finding it in Google, iCloud, and Outlook. Anyone holding that link can read the calendar, and the page tells the wearer to treat it like a password.
 
 ## Downloading the Feed
 
