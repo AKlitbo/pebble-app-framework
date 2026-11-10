@@ -62,7 +62,7 @@ Doxygen copies the header into every page it writes, so these notes live here ra
 
 ## Versions
 
-`docs-site-publish.yml` publishes onto the `gh-pages` branch through the `publish-docs-site` action, and GitHub Pages serves that branch. Each version is a folder of its own at the top of the branch. A push to main replaces `main/`, and a pushed `v*` tag adds a folder named for it, such as `v2.0.0/`. The action swaps only its own folder, so the docs for older releases stay as they were published, coverage reports included. When main and a tag publish at the same moment, the one whose push loses starts over from a fresh copy of the branch, so both land.
+`docs-site-publish.yml` publishes onto the `gh-pages` branch through the `publish-docs-site` action, and GitHub Pages serves that branch. Each version is a folder of its own at the top of the branch. A push to main replaces `main/`, and a pushed `v*` tag adds a folder named for it, such as `v2.0.0/`. A pre-release tag such as `v6.0.0-beta.1` publishes nothing. The action swaps only its own folder, so the docs for older releases stay as they were published, coverage reports included. When main and a tag publish at the same moment, the one whose push loses starts over from a fresh copy of the branch, so both land.
 
 Each publish also rewrites `versions.json` and `index.html` at the top of the branch. `versions.json` lists main and then the releases newest first, and `versions.js` reads it to fill the picker. Switching version keeps the reader on the same page when the other version has it, and opens that version's home page when it does not. `index.html` sends a visitor to the latest release, which skips release candidates, or to main before the first release.
 
