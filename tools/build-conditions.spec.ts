@@ -5,6 +5,10 @@
  * A drifted branch or wrong fallback ships a watchface that compiles to the
  * wrong icon (or fails to compile), so the generated shape is pinned here.
  *
+ * buildWxCond is the same kind of transform for the condition enum. A face indexes its own art by
+ * those numbers, so a number off by one draws the wrong sky and a name missing from WX_COND_EACH
+ * leaves a hole in a face's table.
+ *
  * The last group checks the committed headers instead of the transform. Three things read those
  * files straight from the source tree and none of them run this generator, so a stale commit is
  * invisible until a watch reads a different list from the phone.
@@ -13,7 +17,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { buildIconsTable, GENERATED } from './build-conditions';
+import { buildIconsTable, buildWxCond, GENERATED } from './build-conditions';
 import vocabulary from '../src/ts/weather/conditions.ts';
 import type { ConditionEntry, ConditionFallback } from '../src/ts/weather/conditions.ts';
 
@@ -144,6 +148,95 @@ describe('buildIconsTable', () => {
     expect(result).not.toContain('DUST_NIGHT');
   });
 
+});
+
+/** Builds the enum header for the tokens given, with the real unknown code and night ending. */
+function wxCondFor(tokens: string[], unknownCode = 255): string {
+  return buildWxCond({ fallback: FALLBACK, conditions: tokens.map((token) => row(token, 'WI_NA')) }, unknownCode, '_NIGHT');
+}
+
+describe('buildWxCond', () => {
+  /**
+   * A face indexes its art by these numbers and the forecast strips send them, so each one has to
+   * be the condition's place in the list the phone codes from.
+   */
+  test('numbers each condition by its place in the list', () => {
+    const result = wxCondFor(['CLEAR', 'RAIN']);
+
+    expect(result).toMatch(/WX_COND_CLEAR\s+= 0,/);
+    expect(result).toMatch(/WX_COND_RAIN\s+= 1,/);
+  });
+
+  /** The count sizes a face's table, so it has to be the row count. */
+  test('ends the conditions with their count and then the unknown code', () => {
+    const result = wxCondFor(['CLEAR', 'RAIN']);
+
+    expect(result).toMatch(/WX_COND_COUNT\s+= 2,/);
+    expect(result).toMatch(/WX_COND_UNKNOWN\s+= 255,/);
+  });
+
+  /** A row narrower than the longest token cuts that token short, and the lookup then never matches it. */
+  test('sizes the token rows for the longest token and its terminator', () => {
+    const result = wxCondFor(['FOG', 'THUNDER']);
+
+    expect(result).toContain('#define WX_COND_TOKEN_LEN 8 ');
+  });
+
+  /**
+   * A face's table and the watch's own lookup are both built from this list, so a name missing from
+   * it leaves a hole and a name out of place parses to its neighbour's number.
+   */
+  test('hands every name to the list in the same order as the numbers', () => {
+    const result = wxCondFor(['CLEAR', 'RAIN']);
+
+    expect(result).toContain('#define WX_COND_EACH(X) \\\n    X(CLEAR) \\\n    X(RAIN)\n');
+  });
+
+  /** The watch strips this ending to find the day token, so it has to be the one the phone adds. */
+  test('writes the night ending and its length', () => {
+    const result = wxCondFor(['CLEAR']);
+
+    expect(result).toContain('#define WX_COND_NIGHT_ENDING "_NIGHT" ');
+    expect(result).toContain('#define WX_COND_NIGHT_LEN 6 ');
+  });
+
+  /** With no rows the header would size the token rows from nothing and number no conditions at all. */
+  test('refuses an empty list', () => {
+    const build = () => wxCondFor([]);
+
+    expect(build).toThrow(/empty/);
+  });
+
+  /** A token with a character no C name can hold would ship a header that stops every face's build. */
+  test.each([['PARTLY-CLOUDY'], ['rain'], ['9AM']])('refuses a token that cannot be part of a C name (%s)', (token) => {
+    const build = () => wxCondFor([token]);
+
+    expect(build).toThrow(/C name/);
+  });
+
+  /**
+   * A token named COUNT or UNKNOWN would define its WX_COND_ name twice, and the phone already sends
+   * UNKNOWN for a sky it cannot read.
+   */
+  test.each([['COUNT'], ['UNKNOWN']])('refuses a token that takes the name of WX_COND_%s', (token) => {
+    const build = () => wxCondFor(['CLEAR', token]);
+
+    expect(build).toThrow(/takes the name/);
+  });
+
+  /** The watch strips the night ending before it looks a token up, so a token ending in it could never be found. */
+  test('refuses a token that ends in the night ending', () => {
+    const build = () => wxCondFor(['CLEAR', 'CLEAR_NIGHT']);
+
+    expect(build).toThrow(/ends in _NIGHT/);
+  });
+
+  /** A list as long as the unknown code would give a real condition the number a face reads as unknown. */
+  test('refuses a list that reaches the unknown code', () => {
+    const build = () => wxCondFor(['C0', 'C1', 'C2'], 3);
+
+    expect(build).toThrow(/unknown code/);
+  });
 });
 
 describe('codeFor', () => {

@@ -51,7 +51,7 @@ bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const
     if ((msg->groups & WEATHER_GROUP_CURRENT) && msg->ok)
     {
         state->temp = (int16_t)temp_or_none(msg->temp);
-        cstring_fit(state->cond, msg->cond ? msg->cond : "--", sizeof(state->cond));
+        cstring_fit(state->cond, msg->cond ? msg->cond : "", sizeof(state->cond));
         cstring_fit(state->cond_label, msg->cond_label ? msg->cond_label : "", sizeof(state->cond_label));
         kept = true;
     }

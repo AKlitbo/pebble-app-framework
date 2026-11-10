@@ -74,7 +74,7 @@ typedef struct
 {
     uint8_t tag;          ///< The store's tag, so a restore can tell this blob from another shape
     int16_t temp;         ///< Current temperature in the user's unit (WEATHER_NO_TEMP when none)
-    char   cond[32];      ///< Short word for the sky, such as "SUNNY"
+    char   cond[32];      ///< Short word for the sky, such as "SUNNY", empty when none
     char   cond_label[20]; ///< The sky in words, such as "Partly Cloudy", empty when the phone sent none
     int    humidity;      ///< Percent humidity, -1 when none
     int    wind_kmh;      ///< Wind speed in km/h, -1 when none

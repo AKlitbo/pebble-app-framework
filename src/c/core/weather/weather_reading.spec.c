@@ -105,6 +105,24 @@ void test_a_good_reading_is_kept_and_stamped(void)
     TEST_ASSERT_EQUAL_INT(900, (int)state.last_sync);
 }
 
+/**
+ * @brief A good reading with no sky keeps the sky empty, the one value the store's getter promises
+ * for none. A face that checks only for empty would otherwise draw a condition named "--".
+ */
+void test_a_reading_with_no_sky_keeps_it_empty(void)
+{
+    WeatherState state = held();
+    WeatherMessage msg = empty_message();
+    msg.groups = WEATHER_GROUP_CURRENT;
+    msg.ok = true;
+    msg.temp = 14;
+    msg.cond = NULL;
+
+    weather_reading_apply(&state, &msg, &AFTERNOON);
+
+    TEST_ASSERT_EQUAL_STRING("", state.cond);
+}
+
 /** @brief A corrupt temperature is pinned to -99 to 199, so it cannot overflow the int16 or draw absurd. */
 void test_a_temperature_out_of_range_is_clamped(void)
 {
@@ -478,6 +496,7 @@ int main(void)
 
     RUN_TEST(test_a_failed_fetch_keeps_the_last_reading);
     RUN_TEST(test_a_good_reading_is_kept_and_stamped);
+    RUN_TEST(test_a_reading_with_no_sky_keeps_it_empty);
     RUN_TEST(test_a_temperature_out_of_range_is_clamped);
     RUN_TEST(test_the_other_temperatures_out_of_range_are_clamped);
     RUN_TEST(test_the_no_data_temperature_stays_no_data);

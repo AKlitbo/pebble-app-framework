@@ -8,8 +8,7 @@
 
 #include <string.h>
 
-#define NIGHT_SUFFIX "_NIGHT" ///< What the phone adds to a token after dark
-#define NIGHT_SUFFIX_LEN 6    ///< The suffix's length, without its terminator
+#include "weather/wx_cond.g.h"
 
 void wx_label_short(char *out, size_t n, const char *condition)
 {
@@ -24,9 +23,9 @@ void wx_label_short(char *out, size_t n, const char *condition)
     }
 
     size_t len = strlen(condition);
-    if (len > NIGHT_SUFFIX_LEN && !strcmp(condition + len - NIGHT_SUFFIX_LEN, NIGHT_SUFFIX))
+    if (len > WX_COND_NIGHT_LEN && !strcmp(condition + len - WX_COND_NIGHT_LEN, WX_COND_NIGHT_ENDING))
     {
-        len -= NIGHT_SUFFIX_LEN;
+        len -= WX_COND_NIGHT_LEN;
     }
     if (len >= n)
     {

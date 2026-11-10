@@ -2,7 +2,7 @@
 
 This is the code that turns one weather message from the phone into the reading the [weather store](weather-store.md) keeps, along with the small conversions a weather panel needs: a wind direction as a bearing, a short label for the condition, and forecast strips that drop the hours already gone. Most of what can go wrong on a weather panel happens here, such as a reading the phone left out, a fetch that failed, or a forecast that arrived late, so these rules decide whether the face shows dashes, the last good number, or something wrong.
 
-It lives under `src/c/core/weather/`, in [`weather_reading.h`](../../src/c/core/weather/weather_reading.h), [`forecast_age.h`](../../src/c/core/weather/forecast_age.h), [`wind_dir.h`](../../src/c/core/weather/wind_dir.h), and [`wx_label.h`](../../src/c/core/weather/wx_label.h). It is in `c/core`, so the store breaks the clock apart and hands it in (see [Where the Code Lives](index.md#where-the-code-lives)). The store takes the day's midnight from the SDK's `time_start_of_today` rather than working it back from the hour and minute, which would be an hour out on the day the clocks change.
+It lives under `src/c/core/weather/`, in [`weather_reading.h`](../../src/c/core/weather/weather_reading.h), [`forecast_age.h`](../../src/c/core/weather/forecast_age.h), [`wind_dir.h`](../../src/c/core/weather/wind_dir.h), [`wx_label.h`](../../src/c/core/weather/wx_label.h), and [`wx_cond.h`](../../src/c/core/weather/wx_cond.h). It is in `c/core`, so the store breaks the clock apart and hands it in (see [Where the Code Lives](index.md#where-the-code-lives)). The store takes the day's midnight from the SDK's `time_start_of_today` rather than working it back from the hour and minute, which would be an hour out on the day the clocks change.
 
 ## The Message, Group by Group
 
@@ -28,7 +28,7 @@ A face declares the keys for the groups it shows, and a group is only read when 
 
 A reading left out of a group that did arrive means the provider had none this time, so the panel shows dashes rather than an older number that would look current.
 
-**No-Data Values.** A missing reading is -1 for anything that is never negative, such as humidity, wind speed, UV, the chance of rain, pressure, and the sun times. A temperature can be negative and 0 is a real one, so the temperatures use `WEATHER_NO_TEMP`, which is -1000, well outside any real reading. Missing text is an empty string, and a missing strip has a count of 0. The [weather store](weather-store.md#reading-it-back) hands these straight to the face.
+**No-Data Values.** A missing reading is -1 for anything that is never negative, such as humidity, wind speed, UV, the chance of rain, pressure, and the sun times. A temperature can be negative and 0 is a real one, so the temperatures use `WEATHER_NO_TEMP`, which is -1000, well outside any real reading. Missing text is an empty string, the condition included, and a missing strip has a count of 0. A saved reading can hold `--` for a missing condition, and the store reads that back as empty. The [weather store](weather-store.md#reading-it-back) hands these straight to the face.
 
 **A Failed Fetch.** The flag has to read exactly 1 for the current group to count, and a missing or malformed flag counts as a failure. On a failure the phone sends a status in place of the condition, which the watch only logs. The face keeps the last good temperature and condition rather than going blank. Any other group in the same message still applies.
 
@@ -103,5 +103,16 @@ A wind from the west blows east, so `W` leans 100 and `SW` leans 70. A wind from
 ## Condition Labels
 
 The phone sends the condition as a short label, such as `CLEAR` or `PCLDY`, so a small slot can print it as it is. After dark it adds `_NIGHT`, as in `PCLDY_NIGHT`, so the watch can pick a night icon. `wx_label_short` drops that ending for the text, since a small slot reads the same by day and by night, and writes `UNKNOWN` for an empty condition. The framework's condition readout shows dashes before any reading arrives and the short label after. [Icons](icons.md#weather-icons) covers how the condition picks a picture.
+
+A face that draws its own art for each condition, such as a scene or a set of small icons, reads the condition as a number. `wx_cond_parse` turns the token into a `WxCond`, from `WX_COND_CLEAR` to `WX_COND_STRM`, and says whether it carried `_NIGHT`. A token the list does not hold, or an empty one, reads `WX_COND_UNKNOWN`. `npm run build:conditions` writes the numbers into [`wx_cond.g.h`](../../src/c/core/weather/wx_cond.g.h) from the same list the phone sends from, [`conditions.ts`](../../src/ts/weather/conditions.ts), and each one is also the condition's code on the forecast strips. A face keeps its art in a table indexed by `WxCond` and builds the table from `WX_COND_EACH`, which hands each condition's name to a macro of the face's own. Each row then names a resource after its condition, so a condition added anywhere in the list stops the build on a resource the face has not got, rather than drawing the not-available art:
+
+```c
+#define SKY_ART(name) [WX_COND_##name] = RESOURCE_ID_SKY_##name,
+static const uint32_t s_art[WX_COND_COUNT] = {WX_COND_EACH(SKY_ART)};
+
+bool night;
+WxCond cond = wx_cond_parse(weather_store_cond(), &night);
+uint32_t art = cond < WX_COND_COUNT ? s_art[cond] : RESOURCE_ID_SKY_NA;
+```
 
 The long label, such as `Partly Cloudy`, arrives as its own value for a face that declares a key for it, and the store keeps it beside the short one. Weather from a Pebble app plugin carries the plugin's own words for the sky where it has them, such as `Rain and snow` for a sky whose short label reads `FZRN`, as [Fetching the Weather](fetching-the-weather.md#from-a-pebble-app-plugin) covers.

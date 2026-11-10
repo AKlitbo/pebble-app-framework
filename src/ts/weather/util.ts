@@ -100,7 +100,7 @@ for (const entry of conditions.conditions) {
   KNOWN_TOKENS.add(entry.token);
 
   if (entry.nightResource) {
-    KNOWN_TOKENS.add(`${entry.token}_NIGHT`);
+    KNOWN_TOKENS.add(`${entry.token}${conditions.NIGHT_SUFFIX}`);
   }
 }
 
@@ -165,7 +165,7 @@ function applyNight(condition: string, isDay: boolean): string {
   const token = shorten(condition);
 
   if (!isDay && NIGHT_TOKENS.has(token)) {
-    return `${token}_NIGHT`;
+    return `${token}${conditions.NIGHT_SUFFIX}`;
   }
 
   return token;

@@ -3,8 +3,8 @@
  *
  * Each token is the short condition word the PebbleKit JS producer emits (see
  * util.ts wmoToCondition / applyNight / CONDITION_ALIASES) and the C side looks up
- * to pick an icon. The C icon table, icons_table.g.h, is generated from this list by the
- * framework repo's tools/build-conditions.ts. Edit the
+ * to pick an icon. The C icon table, icons_table.g.h, and the WxCond numbers in wx_cond.g.h are
+ * generated from this list by the framework repo's tools/build-conditions.ts. Edit the
  * vocabulary here, never there.
  *
  * Fields per row:
@@ -51,6 +51,10 @@ const UNKNOWN_CODE = 255;
 // strip sets it (the daily strip is whole-day and stays on day glyphs)
 const FORECAST_NIGHT_BIT = 0x80;
 
+// what the phone adds to a token after dark when the condition has a night glyph. the C side
+// mirrors it as WX_COND_NIGHT_ENDING in weather/wx_cond.g.h, generated from this file
+const NIGHT_SUFFIX = '_NIGHT';
+
 // shown when a condition isn't recognized (the UNKNOWN token routes here)
 const fallback: ConditionFallback = { resource: 'WEATHER_NOW_NA', labelLong: 'Unknown' };
 
@@ -86,12 +90,13 @@ function codeFor(token: string): number {
     return UNKNOWN_CODE;
   }
 
-  const base = String(token).replace(/_NIGHT$/, '');
+  const text = String(token);
+  const base = text.endsWith(NIGHT_SUFFIX) ? text.slice(0, -NIGHT_SUFFIX.length) : text;
   const index = conditions.findIndex((entry) => entry.token === base);
 
   return index < 0 ? UNKNOWN_CODE : index;
 }
 
-const vocabulary = { fallback, conditions, UNKNOWN_CODE, FORECAST_NIGHT_BIT, codeFor };
+const vocabulary = { fallback, conditions, UNKNOWN_CODE, FORECAST_NIGHT_BIT, NIGHT_SUFFIX, codeFor };
 
 export default vocabulary;

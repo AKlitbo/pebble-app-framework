@@ -5,6 +5,7 @@
  * Reads the framework's src/ts/weather/conditions.ts and src/ts/pkjs/wire.ts, the two tables the phone
  * owns, and writes
  *   src/c/pebble/ui/weather/icons_table.g.h      (token  -> icon resource)
+ *   src/c/core/weather/wx_cond.g.h               (the conditions as numbers, and their names)
  *   src/c/core/wire/wire_caps.g.h                (the strip caps both sides bound against)
  *
  * Each header carries its own Doxygen blocks, so the generated lookups show up in the framework docs
@@ -29,6 +30,7 @@ const ROOT = path.resolve(import.meta.dirname, '..');
 
 const WEATHER_DIR = path.join(ENGINE, 'c', 'pebble', 'ui', 'weather');
 const ICONS_OUT = path.join(WEATHER_DIR, 'icons_table.g.h');
+const WX_COND_OUT = path.join(ENGINE, 'c', 'core', 'weather', 'wx_cond.g.h');
 const WIRE_CAPS_OUT = path.join(ENGINE, 'c', 'core', 'wire', 'wire_caps.g.h');
 
 /**
@@ -123,6 +125,110 @@ export function buildIconsTable({ fallback, conditions }: ConditionVocabulary) {
 }
 
 /**
+ * Builds the condition enum header from a condition vocabulary.
+ *
+ * Each row becomes `WX_COND_<token>` at its place in the list, which is also its code on the
+ * forecast strips. The same rows go out as `WX_COND_EACH`, a list a face hands its own macro to,
+ * so a table built from it names every condition and stops the build when one has no art. The
+ * night ending and the room the longest token needs go out beside them for the lookups in
+ * wx_cond.c and wx_label.c.
+ *
+ * A list the header could not hold stops the build here: an empty one, a token that cannot be
+ * part of a C name, one that takes the name of COUNT or UNKNOWN, one ending in the night marker,
+ * and a list long enough to reach the unknown code.
+ *
+ * @param vocabulary The rows to number.
+ * @param unknownCode The code the phone sends for a condition the list does not hold.
+ * @param nightSuffix What the phone adds to a token after dark.
+ * @return The generated C source for wx_cond.g.h.
+ */
+export function buildWxCond({ conditions }: ConditionVocabulary, unknownCode: number, nightSuffix: string): string {
+  if (conditions.length === 0) {
+    throw new Error('the condition list is empty, so WxCond would have no conditions');
+  }
+
+  for (const { token } of conditions) {
+    if (!/^[A-Z][A-Z0-9_]*$/.test(token)) {
+      throw new Error(`condition token "${token}" cannot be part of a C name, so WX_COND_${token} would not compile`);
+    }
+
+    if (token === 'COUNT' || token === 'UNKNOWN') {
+      throw new Error(`condition token "${token}" takes the name of WX_COND_${token}`);
+    }
+
+    if (token.endsWith(nightSuffix)) {
+      throw new Error(`condition token "${token}" ends in ${nightSuffix}, which the watch reads as the night form of another`);
+    }
+  }
+
+  if (conditions.length >= unknownCode) {
+    throw new Error(`${conditions.length} conditions run into the unknown code ${unknownCode}`);
+  }
+
+  const tokenLen = Math.max(...conditions.map(({ token }) => token.length)) + 1;
+  const width = 'WX_COND_'.length + Math.max('UNKNOWN'.length, ...conditions.map(({ token }) => token.length));
+  const name = (suffix: string) => `WX_COND_${suffix}`.padEnd(width);
+
+  const lines = bannerLines('wx_cond.g.h', 'The weather conditions as numbers, in the order of the shared list.', undefined, 'lib_core');
+
+  lines.push(
+    '/**',
+    ' * @addtogroup lib_core',
+    ' * @{',
+    ' */',
+    '',
+    '/**',
+    ' * @brief Each weather condition the phone can send, numbered in the order of the shared list.',
+    ' *',
+    " * A value is also the condition's code on the forecast strips, so a column's code with",
+    ' * `WX_FORECAST_NIGHT_BIT` masked off compares straight against these.',
+    ' */',
+    'typedef enum',
+    '{'
+  );
+
+  conditions.forEach(({ token, labelLong }, index) => {
+    lines.push(`    ${name(token)} = ${index}, ///< ${labelLong}`);
+  });
+
+  lines.push(
+    `    ${name('COUNT')} = ${conditions.length}, ///< How many conditions there are. Not a condition itself`,
+    `    ${name('UNKNOWN')} = ${unknownCode}, ///< A token the list does not hold, or none at all`,
+    '} WxCond;',
+    '',
+    '/**',
+    ' * @brief Hands each condition\'s name to @p X, in WxCond order.',
+    ' *',
+    ' * A face builds its art table from this rather than writing the rows out, so a condition added',
+    ' * to the list needs art of its own or the build stops on the missing name:',
+    ' *',
+    ' * @code',
+    ' * #define SKY_ART(name) [WX_COND_##name] = RESOURCE_ID_SKY_##name,',
+    ' * static const uint32_t s_art[WX_COND_COUNT] = {WX_COND_EACH(SKY_ART)};',
+    ' * @endcode',
+    ' */',
+    '#define WX_COND_EACH(X) \\'
+  );
+
+  conditions.forEach(({ token }, index) => {
+    lines.push(`    X(${token})${index === conditions.length - 1 ? '' : ' \\'}`);
+  });
+
+  lines.push(
+    '',
+    `#define WX_COND_TOKEN_LEN ${tokenLen} ///< The room the longest token takes, terminator included`,
+    '',
+    `#define WX_COND_NIGHT_ENDING "${nightSuffix}" ///< What the phone adds to a token after dark`,
+    `#define WX_COND_NIGHT_LEN ${nightSuffix.length} ///< The night ending's length, without its terminator`,
+    '',
+    '/** @} */',
+    ''
+  );
+
+  return lines.join('\n');
+}
+
+/**
  * Builds the shared wire caps header.
  *
  * Each text cap gains one for the terminator the C buffer has to hold, which is the one place that
@@ -184,6 +290,7 @@ export interface GeneratedHeader {
  */
 export const GENERATED: GeneratedHeader[] = [
   { out: ICONS_OUT, build: () => buildIconsTable(conditionVocabulary) },
+  { out: WX_COND_OUT, build: () => buildWxCond(conditionVocabulary, conditionVocabulary.UNKNOWN_CODE, conditionVocabulary.NIGHT_SUFFIX) },
   { out: WIRE_CAPS_OUT, build: () => buildWireCaps(WIRE_CAPS, conditionVocabulary.FORECAST_NIGHT_BIT) },
 ];
 

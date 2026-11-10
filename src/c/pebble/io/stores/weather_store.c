@@ -162,7 +162,7 @@ static void inbox_done(void)
 static void apply_seed(const WeatherSeed *seed)
 {
     s_state.temp = seed->temp;
-    cstring_fit(s_state.cond, seed->cond ? seed->cond : "--", sizeof(s_state.cond));
+    cstring_fit(s_state.cond, seed->cond ? seed->cond : "", sizeof(s_state.cond));
     s_state.humidity = seed->humidity;
     s_state.wind_kmh = seed->wind_kmh;
     cstring_fit(s_state.wind_dir, seed->wind_dir ? seed->wind_dir : "", sizeof(s_state.wind_dir));
@@ -343,6 +343,14 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
             s_state.cond[sizeof(s_state.cond) - 1] = '\0';
             s_state.cond_label[sizeof(s_state.cond_label) - 1] = '\0';
             s_state.wind_dir[sizeof(s_state.wind_dir) - 1] = '\0';
+
+            // a saved reading can hold "--" for a missing sky, so that reads as none too. the sum
+            // moves with it, or the next reply that changes nothing would still write flash
+            if (!strcmp(s_state.cond, "--"))
+            {
+                s_state.cond[0] = '\0';
+                s_saved_sum = store_sum(&s_state, STORE_READING_SIZE(s_state, last_sync));
+            }
         }
     }
 
