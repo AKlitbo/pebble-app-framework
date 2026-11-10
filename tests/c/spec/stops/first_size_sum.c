@@ -1,4 +1,4 @@
-// stops: invalid suffix "_is_a_number" on integer constant
+// stops: invalid suffix
 // a sum with no brackets stops too, since it pastes into a field declaration that is not one name
 #include "system/settings/settings.h"
 

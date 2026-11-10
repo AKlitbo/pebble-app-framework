@@ -1,4 +1,4 @@
-// stops: macro "KNOWN_DATE_FORMAT" passed 2 arguments, but takes just 1
+// stops: passed 2 arguments, but takes just 1
 // a face still passing its own date default would otherwise keep a second copy that can drift from the page
 #include "system/settings/settings_catalog.h"
 

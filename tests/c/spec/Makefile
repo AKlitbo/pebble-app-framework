@@ -71,7 +71,8 @@ test:
 
 # a stop passes only when its compile fails with its own text, so a check that quietly stopped
 # stopping fails here. gcc's messages stay in the shell, since an error printed here would read to
-# CI as a spec that did not build. LC_ALL=C keeps gcc's quotes plain, so the text can match them
+# CI as a spec that did not build. LC_ALL=C keeps gcc's quotes plain, but gcc 15 puts single quotes
+# round a macro or a suffix where gcc 13 put double, so a stop line leaves such a name out
 stops:
 	@fail=0; \
 	for stop in $(STOPS); do \
