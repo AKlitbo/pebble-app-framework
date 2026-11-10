@@ -7,9 +7,12 @@
  * the ways a deadline goes wrong: firing more often than the interval, which spends the user's
  * phone battery and a provider's quota, and never firing at all, which leaves the face showing
  * yesterday's weather with nothing to say it is stale. The polling state on top of them decides
- * when polling is on at all, so a store seeded with fixtures or switched off never asks. The
- * reconnect check has the same two ways to go wrong, and bluetooth dropping in and out is what
- * would make it fetch too often.
+ * when polling is on at all, so a store seeded with fixtures or switched off never asks. Only init
+ * decides whether a store is live, so a settings save never starts one seeded for screenshots
+ * fetching real readings. The reconnect check has the same two ways to go wrong, and bluetooth
+ * dropping in and out is what would make it fetch too often. Each store runs that check itself when
+ * the phone comes back, so it has to follow the store's own interval through a save and stay quiet
+ * on a store that is seeded or switched off.
  */
 #include "unity.h"
 
@@ -186,21 +189,21 @@ void test_the_tightest_cadence_still_advances(void)
 }
 
 /** @brief A store seeded with fixtures is not live, so nothing arms a fetch that would overwrite them. */
-void test_set_is_off_for_a_store_that_is_not_live(void)
+void test_start_is_off_for_a_store_that_is_not_live(void)
 {
     StorePoll poll = {.next = 0};
 
-    bool result = store_poll_set(&poll, 30, false, 1000);
+    bool result = store_poll_start(&poll, 30, false, 1000);
 
     TEST_ASSERT_FALSE(result);
 }
 
 /** @brief An interval of zero is the setting for no polling, so no first fetch is armed. */
-void test_set_is_off_for_a_zero_interval(void)
+void test_start_is_off_for_a_zero_interval(void)
 {
     StorePoll poll = {.next = 0};
 
-    bool result = store_poll_set(&poll, 0, true, 1000);
+    bool result = store_poll_start(&poll, 0, true, 1000);
 
     TEST_ASSERT_FALSE(result);
 }
@@ -215,11 +218,62 @@ void test_set_aims_the_deadline_at_the_next_boundary(void)
     TEST_ASSERT_EQUAL_INT(1800, (int)poll.next);
 }
 
+/**
+ * @brief A settings save asking for live on a store seeded for screenshots leaves it seeded.
+ *
+ * A face passes `live` true on every save, so a save on the emulator would otherwise start the store
+ * fetching real readings over its fixture and spend the provider's quota.
+ */
+void test_set_keeps_a_store_started_not_live_off(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, 30, false, 1000);
+
+    bool result = store_poll_set(&poll, 30, true, 1000);
+
+    TEST_ASSERT_FALSE(result);
+    TEST_ASSERT_FALSE(poll.live);
+}
+
+/** @brief A face's own store whose init calls store_poll_set is never pinned, so it still polls once live. */
+void test_set_alone_still_goes_live(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_set(&poll, 30, false, 1000);
+
+    bool result = store_poll_set(&poll, 30, true, 1000);
+
+    TEST_ASSERT_TRUE(result);
+}
+
+/** @brief A live store switched off by one save comes back with the next, or its readings go stale for good. */
+void test_set_turns_a_live_store_back_on(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, 30, true, 1000);
+    store_poll_set(&poll, 30, false, 1000);
+
+    bool result = store_poll_set(&poll, 30, true, 1000);
+
+    TEST_ASSERT_TRUE(result);
+}
+
+/** @brief A store started again live after a seeded start polls, since each init decides afresh. */
+void test_start_again_live_lets_a_seeded_store_poll(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, 30, false, 1000);
+
+    bool result = store_poll_start(&poll, 30, true, 1000);
+
+    TEST_ASSERT_TRUE(result);
+}
+
 /** @brief A store switched off by a reconfigure must stop polling on its next turn. */
 void test_turn_is_never_due_once_the_store_is_off(void)
 {
     StorePoll poll = {.next = 0};
-    store_poll_set(&poll, 30, true, 1000);
+    store_poll_start(&poll, 30, true, 1000);
     store_poll_set(&poll, 30, false, 1000);
 
     bool result = store_poll_turn(&poll, 5000);
@@ -231,7 +285,7 @@ void test_turn_is_never_due_once_the_store_is_off(void)
 void test_turn_fires_once_when_the_deadline_comes_round(void)
 {
     StorePoll poll = {.next = 0};
-    store_poll_set(&poll, 30, true, 1000);
+    store_poll_start(&poll, 30, true, 1000);
 
     bool first = store_poll_turn(&poll, 1800);
     bool second = store_poll_turn(&poll, 1801);
@@ -272,6 +326,108 @@ void test_reconnect_leaves_polling_that_is_off_alone(void)
     TEST_ASSERT_FALSE(result);
 }
 
+/** @brief A live store whose reading went stale while the phone was away asks once it is back. */
+void test_store_reconnect_asks_for_a_stale_reading(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, POLL_MIN, true, 1000);
+
+    bool result = store_poll_reconnect(&poll, INTERVAL);
+
+    TEST_ASSERT_TRUE(result);
+}
+
+/**
+ * @brief A live store holding a fresh reading leaves it alone on reconnect.
+ *
+ * Bluetooth dropping in and out every few seconds is a reconnect each time, so asking here would
+ * fetch far faster than the interval and spend a metered provider's quota.
+ */
+void test_store_reconnect_leaves_a_fresh_reading_alone(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, POLL_MIN, true, 1000);
+
+    bool result = store_poll_reconnect(&poll, INTERVAL - 1);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A store seeded for screenshots never asks on reconnect, or a real reading lands over its fixture. */
+void test_store_reconnect_never_asks_for_a_seeded_store(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, POLL_MIN, false, 1000);
+
+    bool result = store_poll_reconnect(&poll, -1);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A seeded store stays seeded through a settings save that asks for live, reconnect included. */
+void test_store_reconnect_never_asks_for_a_seeded_store_after_a_save(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, POLL_MIN, false, 1000);
+    store_poll_set(&poll, POLL_MIN, true, 1000);
+
+    bool result = store_poll_reconnect(&poll, -1);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A store a save switched off asks for nothing when the phone comes back. */
+void test_store_reconnect_never_asks_once_the_store_is_off(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, POLL_MIN, true, 1000);
+    store_poll_set(&poll, POLL_MIN, false, 1000);
+
+    bool result = store_poll_reconnect(&poll, -1);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A live store with polling set to none asks for nothing on reconnect, even with no reading. */
+void test_store_reconnect_never_asks_with_polling_off(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, 0, true, 1000);
+
+    bool result = store_poll_reconnect(&poll, -1);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/**
+ * @brief A save that lengthens the interval lengthens the reconnect gate with it.
+ *
+ * The stock interval is a setting. A gate still on the old, shorter interval would ask for a 45
+ * minute old quote on an hourly watchlist, which is a fetch the polling would not have spent.
+ */
+void test_store_reconnect_follows_a_longer_interval_from_a_save(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, 30, true, 1000);
+    store_poll_set(&poll, 60, true, 1000);
+
+    bool result = store_poll_reconnect(&poll, 45 * SECONDS_PER_MINUTE);
+
+    TEST_ASSERT_FALSE(result);
+}
+
+/** @brief A save that shortens the interval shortens the gate, or a reading stale by the new interval waits. */
+void test_store_reconnect_follows_a_shorter_interval_from_a_save(void)
+{
+    StorePoll poll = {.next = 0};
+    store_poll_start(&poll, 60, true, 1000);
+    store_poll_set(&poll, 15, true, 1000);
+
+    bool result = store_poll_reconnect(&poll, 20 * SECONDS_PER_MINUTE);
+
+    TEST_ASSERT_TRUE(result);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -290,15 +446,27 @@ int main(void)
     RUN_TEST(test_a_clock_that_jumped_back_pulls_the_deadline_in);
     RUN_TEST(test_a_deadline_one_interval_ahead_is_left_alone);
     RUN_TEST(test_the_tightest_cadence_still_advances);
-    RUN_TEST(test_set_is_off_for_a_store_that_is_not_live);
-    RUN_TEST(test_set_is_off_for_a_zero_interval);
+    RUN_TEST(test_start_is_off_for_a_store_that_is_not_live);
+    RUN_TEST(test_start_is_off_for_a_zero_interval);
     RUN_TEST(test_set_aims_the_deadline_at_the_next_boundary);
+    RUN_TEST(test_set_keeps_a_store_started_not_live_off);
+    RUN_TEST(test_set_alone_still_goes_live);
+    RUN_TEST(test_set_turns_a_live_store_back_on);
+    RUN_TEST(test_start_again_live_lets_a_seeded_store_poll);
     RUN_TEST(test_turn_is_never_due_once_the_store_is_off);
     RUN_TEST(test_turn_fires_once_when_the_deadline_comes_round);
     RUN_TEST(test_reconnect_asks_for_a_reading_that_never_arrived);
     RUN_TEST(test_reconnect_leaves_a_fresh_reading_alone);
     RUN_TEST(test_reconnect_asks_for_a_reading_a_whole_interval_old);
     RUN_TEST(test_reconnect_leaves_polling_that_is_off_alone);
+    RUN_TEST(test_store_reconnect_asks_for_a_stale_reading);
+    RUN_TEST(test_store_reconnect_leaves_a_fresh_reading_alone);
+    RUN_TEST(test_store_reconnect_never_asks_for_a_seeded_store);
+    RUN_TEST(test_store_reconnect_never_asks_for_a_seeded_store_after_a_save);
+    RUN_TEST(test_store_reconnect_never_asks_once_the_store_is_off);
+    RUN_TEST(test_store_reconnect_never_asks_with_polling_off);
+    RUN_TEST(test_store_reconnect_follows_a_longer_interval_from_a_save);
+    RUN_TEST(test_store_reconnect_follows_a_shorter_interval_from_a_save);
 
     return UNITY_END();
 }

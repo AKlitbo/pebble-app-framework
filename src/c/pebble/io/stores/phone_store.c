@@ -98,10 +98,17 @@ void phone_store_init(PhoneConfig cfg, const PhoneSeed *seed)
 #if defined(APPMESSAGE_HAS_PHONE)
     s_battery = seed ? phone_level_read(seed->battery) : PHONE_NO_LEVEL;
 
-    // a face seeding fixtures passes live = false and stays off the channel, so a real reading
-    // cannot overwrite what it pinned
+    // only a live store takes its channel and the link, as stores.md and store_poll_start set out
     if (!cfg.live)
     {
+        appmessage_on_phone_battery(NULL);
+        system_store_remove_link_listener(on_link);
+        // a first ask still waiting is called off, so the store never asks
+        if (s_ask_timer)
+        {
+            app_timer_cancel(s_ask_timer);
+            s_ask_timer = NULL;
+        }
         return;
     }
 

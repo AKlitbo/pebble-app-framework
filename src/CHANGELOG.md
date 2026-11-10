@@ -25,8 +25,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `readChoice` and `readFahrenheit` in `ts/pkjs/settings-store.ts`, which read a saved select or radio group, and the temperature unit, whether Clay saved it as text or as a number.
 - `paf build` now loads the face's settings page before `pebble build` and writes `page/settings_page.h` into each sandbox, with the page's counts and defaults for the watch. The waf build stops on a header that does not match the sandbox, so build with `paf build` rather than `pebble build` in a sandbox.
 - Added `SETTINGS_COUNT(KEY)`, `SETTINGS_COUNT_CHECKED(KEY, table_count)`, and `SETTINGS_DEFAULT(KEY)` in `settings_catalog.h`, the page's option count and default on a message key, for a face's own fields. `SETTINGS_COUNT_CHECKED` stops the build when the page's count differs from the face's table.
+- Added `store_poll_start` and `store_poll_reconnect` to `io/stores/store_poll.h`. A face's own polling store calls `store_poll_start` from its init in place of `store_poll_set`, and `store_poll_reconnect` says whether it should ask again when the phone comes back.
 - Added `KNOWN_WIND_UNIT(off)` and `SETTING_WIND_UNIT` for the wind speed unit, and `wind: {}` on `buildConfig` and `weatherSection` for its select, with `WIND_UNIT_OPTIONS` in `config-rows.ts` for a face's own weather section. Declare `WEATHER_WIND_UNIT` in `messageKeys` and build with `--clean`.
 - Added `notIn` on a `visibleWhen` condition, the values that hide a row.
+- Added `system_store_remove_link_listener` beside `system_store_add_link_listener`. A face's own store that listens for the link calls it from an init that starts the store with `live` false.
 
 #### Changed
 
@@ -40,8 +42,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Breaking:** `paf build` now stops on a settings page default the watch would get wrong, such as one that is not among its options, and on an option past the count the watch holds for a shared setting, naming the face and the key. Change the page's default to one the watch can hold, and take such an option off the page.
 - **Breaking:** `paf build` now stops on a page control whose `messageKey` the appinfo does not declare, a `_REQUEST` key no feature answers, and a `customClay` not written with the `function` keyword. Declare the key or take the control off the page, pass the feature that answers the request or take its key out, and write `customClay` as `function customClay() { ... }`.
 - **Breaking:** `paf build` now stops when the face's own `WEATHER_PROVIDER` or `CALENDAR_SOURCE` picker does not offer, or does not open on, the default it writes from `providers`. Offer the provider in the picker, or list the one it opens on first in `providers`.
+- **Breaking:** Only a store's init now decides whether it is live, so a store started with `live` false stays seeded through every reconfigure. Pass `live = true` at init for any store that has to start later, with `poll_min` 0 for a polling store, or with `minute_tick`, `beats`, and `hourly` all false for a clock, so it waits for the reconfigure.
 - The provider pickers on the settings page now offer only the providers a face lists. A picker left with one provider is dropped, and a plugin only kind loses its picker and its custom rows. A saved provider the face no longer offers is rewritten to the default at launch. When a face moves weather or the calendar to `["plugin"]`, say so under Notes in its own changelog, since that deletes the wearer's saved city and API key, or the iCal link.
 - The location search's notes now take their colours from `--pf-note-accent`, as the plugin notes do.
+- `dev_walk_seed_stores` now also starts the stock, calendar, phone battery, and now playing stores seeded and empty on a face that declares `STOCK_STRIP`, `CALENDAR_STRIP`, the phone battery keys, or the now playing keys. A face that seeds one of those stores itself calls that store's init after `dev_walk_seed_stores`. Its weather seed now follows the wearer's temperature unit.
+- `system_store_add_link_listener` now also exists on a face that declares `WEATHER_REQUEST`, `STOCK_REQUEST`, or `CALENDAR_REQUEST`, and its list keeps one slot spare for a listener of the face's own.
 - The framework now registers `hiddenStoreComponent` for a page that holds a `hiddenStore` row, so a face can drop it from `components`.
 - A page from `buildConfig`, `weatherSection`, or `stocksSection` with weather or stocks now carries the framework's show and hide code, `dependentVisibility`, for its API key row's `visibleWhen`.
 - `createClay` and `prepareSettingsPage` now add Clay's own `input` or `select` style to a page with a location search or theme picker and no text box or dropdown of its own, unless the face passes its own. A face rule on those fields lighter than Clay's own rules now loses.
@@ -50,10 +55,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Breaking:** Removed `serializeValueAs` from `ClayConfigItem`. Delete it from any select, radio group, or input. The watch reads a choice sent as text or as a number.
 
+#### Fixed
+
+- Fixed a weather, stock, calendar, location, or system store seeded with `live` false after a live start showing real readings over its seed, as in a screenshot build.
+- `time_store_reconfigure` now does nothing when the new `TimeConfig` runs the same tickers, so a settings save no longer runs an extra tick and repaint. `TimeConfig` now lives in `clock/time_config.h`, which `time_store.h` still brings in.
+
 ### Wearer-Visible Changes
 
 #### Changed
 
+- The weather, stocks, and calendar now catch up as soon as the phone comes back after being away, rather than at the next scheduled refresh. The stores do it themselves, so a face that asks for these readings from its own `system_store_on_reconnect` callback can delete that code.
 - The settings page's opening line now mentions the weather when the page has a Weather section and the face has no opening line of its own. `buildConfig` picks the line.
 
 #### Fixed

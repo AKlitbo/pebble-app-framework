@@ -1,7 +1,7 @@
 /**
  * @file store_fetch.h
- * @brief The fetch timing the polling stores share: the one-shot catch-up, the cadence turn, and
- * what an init or a reconfigure does to them.
+ * @brief The fetch timing the polling stores share: the one-shot catch-up, the cadence turn, the
+ * ask when the phone comes back, and what an init or a reconfigure does to them.
  *
  * Each store keeps one StoreFetch and points it at its own request. The interval and deadline
  * decisions stay in store_poll.h, so everything here is a guard around a timer or a request.
@@ -56,6 +56,20 @@ void store_fetch_arm(StoreFetch *fetch);
 void store_fetch_turn(StoreFetch *fetch, time_t now);
 
 /**
+ * @brief What a store's link listener does. When the phone link has just come back, asks the phone
+ * if the reading is at least the store's own interval old, or never arrived. A drop does nothing,
+ * so the last reading stays on show.
+ *
+ * The phone side may have been closed the whole time the link was down, so a reading can go stale
+ * with nothing on the watch to notice. A store that is not live never asks, so a seeded store keeps
+ * its fixture. The deadline is left where it was.
+ *
+ * @param fetch The store's fetch state.
+ * @param age_s Seconds since the reading arrived, or below 0 when it never has.
+ */
+void store_fetch_on_link(StoreFetch *fetch, int age_s);
+
+/**
  * @brief What a store's init does with its polling. Takes the interval, then arms one fetch shortly
  * after launch when polling is on, so the store is not blank while the first deadline is coming.
  *
@@ -70,9 +84,12 @@ void store_fetch_start(StoreFetch *fetch, int poll_min, bool live, time_t now);
  * @brief What a store's reconfigure does with its polling.
  *
  * Switching the store off clears the live flag, which stops the cadence turn too, and drops any
- * fetch still waiting. A store that keeps polling keeps its launch fetch, since a settings push that
- * lands in the first second would otherwise cancel it and leave a restored reading stale until the
- * next deadline.
+ * fetch still waiting. A store that init started with `live` false stays off whatever @p live says,
+ * so a settings save never starts a store seeded for screenshots fetching over its fixture. A store
+ * whose init never ran ignores the reconfigure altogether.
+ *
+ * A store that keeps polling keeps its launch fetch, since a settings push that lands in the first
+ * second would otherwise cancel it and leave a restored reading stale until the next deadline.
  *
  * An empty store has nothing to draw, so it catches up right away. One that already holds data
  * waits for its deadline, so a save that only touched colours does not fetch on the spot and spend
@@ -81,7 +98,7 @@ void store_fetch_start(StoreFetch *fetch, int poll_min, bool live, time_t now);
  *
  * @param fetch The store's fetch state.
  * @param poll_min Minutes between polls. 0 or less means no polling.
- * @param live True on a live face.
+ * @param live True on a live face. A store init started not live stays not live.
  * @param now The current wall-clock time.
  * @param empty True when the store holds nothing to show yet.
  */

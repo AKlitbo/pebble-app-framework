@@ -87,26 +87,56 @@ static inline bool store_poll_reconnect_due(int age_s, int poll_min)
     return age_s < 0 || age_s >= poll_min * SECONDS_PER_MINUTE;
 }
 
-/** @brief One store's polling: its interval, whether it polls at all, and when it is next due. */
+/**
+ * @brief One store's polling: its interval, whether it polls at all, and when it is next due.
+ *
+ * A StorePoll has to begin zeroed, as a static one does, or go through store_poll_start before
+ * anything else reads it. Zero one on the stack or the heap before its first store_poll_set, or a
+ * stray `pinned` keeps it off for good.
+ */
 typedef struct
 {
-    time_t next;     ///< Wall-clock second the next recurring poll is due
-    int    poll_min; ///< Minutes between polls. 0 or less means no recurring poll
-    bool   live;     ///< True on a live face. A store seeded with fixtures never polls
+    time_t next;         ///< Wall-clock second the next recurring poll is due
+    int    poll_min;     ///< Minutes between polls. 0 or less means no recurring poll
+    bool   live;         ///< True on a live face. A store seeded with fixtures never polls
+    bool   pinned;       ///< True when init started the store not live, so no reconfigure turns it live
 } StorePoll;
 
 /**
- * @brief Take a store's interval and whether it is live, as its init and its reconfigure both do.
+ * @brief Take a store's interval and whether it is live, as its init does.
  *
- * Both are always recorded. The deadline only moves when polling is on, and then to the next
- * interval boundary, so a save can bring a poll nearer but never make one come faster than the
- * interval allows.
+ * Init is the one place that decides whether the store is live at all. A store it starts with
+ * `live` false is pinned, and stays not live through every reconfigure, as store_poll_set covers.
+ * A store whose init calls store_poll_set instead is never pinned, so a reconfigure can turn it
+ * live.
+ *
+ * The pin only covers asking the phone. A store that also takes pushes or listens for the link
+ * registers its handler and its listener only when init starts it live. An init that starts it with
+ * `live` false clears the handler and removes the listener, so a store started live and then pinned
+ * takes no push over its seed.
  *
  * @param[in,out] poll The store's polling state.
  * @param poll_min Minutes between polls. 0 or less turns polling off.
  * @param live Whether the store is live.
  * @param now The current wall-clock time.
- * @return Whether polling is on, which is when a store may arm its first or catch-up fetch.
+ * @return Whether polling is on, which is when a store may arm its first fetch.
+ */
+bool store_poll_start(StorePoll *poll, int poll_min, bool live, time_t now);
+
+/**
+ * @brief Take a store's interval and whether it is live, as its reconfigure does.
+ *
+ * Both are always recorded. A store that store_poll_start pinned stays not live whatever @p live
+ * says, so a settings save in a build seeded for screenshots never starts it fetching over its
+ * fixture. A live store can still be switched off here and back on again. The deadline only moves
+ * when polling is on, and then to the next interval boundary, so a save can bring a poll nearer but
+ * never make one come faster than the interval allows.
+ *
+ * @param[in,out] poll The store's polling state.
+ * @param poll_min Minutes between polls. 0 or less turns polling off.
+ * @param live Whether the store should be live.
+ * @param now The current wall-clock time.
+ * @return Whether polling is on, which is when a store may arm its catch-up fetch.
  */
 bool store_poll_set(StorePoll *poll, int poll_min, bool live, time_t now);
 
@@ -118,5 +148,18 @@ bool store_poll_set(StorePoll *poll, int poll_min, bool live, time_t now);
  * @return Whether to ask the phone now.
  */
 bool store_poll_turn(StorePoll *poll, time_t now);
+
+/**
+ * @brief A store's catch-up when the phone comes back: whether to ask for its reading again.
+ *
+ * Only a live store asks, so a store seeded for screenshots keeps its fixture through a reconnect.
+ * The age and the interval decide the rest, the same as store_poll_reconnect_due. The deadline is
+ * left alone, so a catch-up never pushes the next recurring poll further away.
+ *
+ * @param poll The store's polling state.
+ * @param age_s Seconds since the reading arrived, or below 0 when it never has.
+ * @return Whether to ask the phone now.
+ */
+bool store_poll_reconnect(const StorePoll *poll, int age_s);
 
 /** @} */

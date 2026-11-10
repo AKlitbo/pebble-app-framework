@@ -95,7 +95,7 @@ pinned.tm_sec = 0;
 time_store_init((TimeConfig){.live = false}, &pinned);
 ```
 
-With `live` false no ticker runs, whatever `minute_tick`, `beats`, and `hourly` say, so the face shows 10:08 for as long as it runs. Starting from today's date and changing only the hour and the minute keeps the date line real. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+With `live` false no ticker runs, whatever `minute_tick`, `beats`, and `hourly` say, so the face shows 10:08 for as long as it runs. An init with `live` false also stops any ticker an earlier live init started. Starting from today's date and changing only the hour and the minute keeps the date line real. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
 
 ## Changing the Time Format
 
@@ -109,6 +109,8 @@ static void on_settings_changed(bool time_or_date_changed)
 }
 ```
 
-Reconfigure turns the minute tick on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With `live` false both tickers stop and the time stays at the last tick.
+Reconfigure turns the minute tick on or off to match. A .beats timer that is already running is left alone, so the next beat still lands on its boundary rather than one timer later. One that is no longer wanted is cancelled. With `live` false both tickers stop and the time stays at the last tick. A store its init started with `live` false stays on its pinned time whatever a reconfigure passes, so a settings save never brings the real time back. `time_config_reconfigured` in [`time_config.h`](../../src/c/core/clock/time_config.h) holds `live` off for it.
 
-Reconfigure never touches the time the store holds and never redraws. The settings handler rebuilds the screen anyway, and the next tick brings the time up to date.
+Rules that run the same tickers as the ones running change nothing, and reconfigure returns straight away. It compares what would run, so with the minute tick on a change to `hourly` alone counts as no change, and with `live` false nothing runs whatever the rest say. Most saves leave the tickers alone, and subscribing the tick again would make PebbleOS send a first tick at once, which repaints the face and gives every store another poll check for nothing. A save still starts a .beats timer that should be running and is not. The timer sets itself again on each beat, so a set that fails for want of memory ends the chain until something starts it. `time_config_same_tickers` in [`time_config.h`](../../src/c/core/clock/time_config.h) makes the check, beside `TimeConfig` itself.
+
+Reconfigure never touches the time the store holds. The settings handler rebuilds the screen anyway, and the next tick brings the time up to date.

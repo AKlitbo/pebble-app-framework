@@ -13,7 +13,7 @@ calendar_store_init((CalendarConfig){.live = true, .poll_min = 30, .persist_key 
 calendar_store_subscribe(redraw);
 ```
 
-`live`, `poll_min`, and `persist_key` mean the same as for every store, as [How the Stores Work](stores.md#the-shape-every-store-takes) covers, and a `CalendarSeed` pins a fixed agenda for screenshots.
+`live`, `poll_min`, and `persist_key` mean the same as for every store, as [How the Stores Work](stores.md#the-shape-every-store-takes) covers, and a `CalendarSeed` pins a fixed agenda for screenshots. A store started with `live` false keeps that agenda, even one the face started live before.
 
 On the phone, the face lists `calendar` in the `features` it passes to `startPebbleApp` (see [The Phone Side](phone-side.md#features)), and declares the `CALENDAR_STRIP`, `CALENDAR_REQUEST`, and `CALENDAR_ICS_URL` message keys. The settings page's calendar section has one field for the link, with directions for finding it in Google, iCloud, and Outlook. Anyone holding that link can read the calendar, and the page tells the wearer to treat it like a password.
 
@@ -125,4 +125,6 @@ static const CalendarEvent *next_event(time_t now)
 
 **Saved to Flash.** Six events do not fit in a single persist key, which holds 256 bytes, so the store saves the first four and the time they arrived. A relaunch shows those four straight away, and the first ask brings the full six back. A change that only touches the fifth or sixth event leaves the saved four the same, so it writes nothing. The restore gives every title and place a closing zero, so a damaged copy cannot send a panel past the end of the text. A failed write waits for the next agenda that differs, for the reason in [How the Stores Work](stores.md#skipping-unchanged-writes).
 
-**How Old It Is.** `calendar_store_age_s` gives the seconds since the last agenda arrived, or -1 for none. A face can pass it to `store_poll_reconnect_due` to catch up after the phone reconnects, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) shows.
+**After a Lost Connection.** When the phone comes back, a live store asks again only for an agenda at least its own interval old, or when it holds none, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) covers. A drop keeps the agenda on show.
+
+**How Old It Is.** `calendar_store_age_s` gives the seconds since the last agenda arrived, or -1 for none.

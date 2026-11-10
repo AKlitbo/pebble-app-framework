@@ -7,8 +7,7 @@ It lives in [`weather_store.h`](../../src/c/pebble/io/stores/weather_store.h) an
 ## Setting It Up
 
 ```c
-weather_store_init((WeatherConfig){.live = true, .poll_min = WEATHER_POLL_MIN,
-                                   .persist_key = WEATHER_STORE_KEY}, NULL);
+weather_store_init((WeatherConfig){.live = true, .poll_min = 30, .persist_key = WEATHER_STORE_KEY}, NULL);
 weather_store_subscribe(engine_mark_dirty);
 ```
 
@@ -21,6 +20,8 @@ seed.temp = 23;
 seed.cond = "CLEAR";
 weather_store_init((WeatherConfig){.live = false}, &seed);
 ```
+
+A store started with `live` false keeps its seed and takes nothing from the phone, even one the face started live before. It draws the seed exactly as written, so write the temperatures in the wearer's unit.
 
 ## From Launch to the First Reading
 
@@ -45,6 +46,8 @@ sequenceDiagram
 ```
 
 **Asking While the Phone Starts.** On a cold launch the phone's PebbleKit JS can take several seconds to come up, and a request that arrives before it is ready is lost. So until the phone answers, the store asks again every 3 seconds, up to 8 times. It stops as soon as any answer arrives, even one for a failed fetch, since asking again would only start the same failing fetch on the phone. A store that restored a reading from flash stops after the first ask, since it already has something to show and the phone fetches weather on its own once its code starts.
+
+**After a Lost Connection.** When the phone comes back, a live store asks again only for a reading at least its own interval old, or when it holds none, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) covers. It is a single ask rather than the launch re-asks, and a drop keeps the reading on show.
 
 ## One Redraw and One Save per Message
 

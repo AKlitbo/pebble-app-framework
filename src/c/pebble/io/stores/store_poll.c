@@ -9,12 +9,20 @@
  */
 #include "io/stores/store_poll.h"
 
+#include "io/store_live.h"
+
+bool store_poll_start(StorePoll *poll, int poll_min, bool live, time_t now)
+{
+    poll->pinned = !live;
+    return store_poll_set(poll, poll_min, live, now);
+}
+
 bool store_poll_set(StorePoll *poll, int poll_min, bool live, time_t now)
 {
     poll->poll_min = poll_min;
-    poll->live = live;
+    poll->live = store_live_after_reconfigure(live, poll->pinned);
 
-    if (!live || poll_min <= 0)
+    if (!poll->live || poll_min <= 0)
     {
         return false;
     }
@@ -26,4 +34,9 @@ bool store_poll_set(StorePoll *poll, int poll_min, bool live, time_t now)
 bool store_poll_turn(StorePoll *poll, time_t now)
 {
     return poll->live && store_poll_due(poll->poll_min, &poll->next, now);
+}
+
+bool store_poll_reconnect(const StorePoll *poll, int age_s)
+{
+    return poll->live && store_poll_reconnect_due(age_s, poll->poll_min);
 }

@@ -5,7 +5,7 @@
  * The system store hands each reading of the link here and acts on the answer. The first reading
  * after the store starts only seeds, so a face never buzzes or catches up at launch. A reading that
  * matches the one before is no change either. Only a real drop or a real return reaches the face's
- * buzz, its reconnect catch-up, and the stores listening for the link.
+ * buzz, its reconnect callback, and the stores listening for the link.
  *
  * @ingroup lib_core
  */

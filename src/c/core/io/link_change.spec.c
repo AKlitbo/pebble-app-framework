@@ -2,7 +2,7 @@
  * @file link_change.spec.c
  * @brief Host tests for telling a real change of the phone link from a reading that changes nothing.
  *
- * The system store buzzes, runs the face's reconnect catch-up, and wakes the stores listening for
+ * The system store buzzes, runs the face's reconnect callback, and wakes the stores listening for
  * the link only on what this calls a change. Calling a repeat a change buzzes the wearer for nothing
  * and spends a refetch on every flap, and calling the launch reading one buzzes at every start. A
  * real drop or return missed leaves the face silent and its phone readings stale. A face that adds

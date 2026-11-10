@@ -32,6 +32,22 @@ bool callback_list_add(CallbackList *list, CallbackListFn cb)
     return true;
 }
 
+void callback_list_remove(CallbackList *list, CallbackListFn cb)
+{
+    for (int i = 0; i < list->count; i++)
+    {
+        if (list->entries[i] == cb)
+        {
+            for (int j = i + 1; j < list->count; j++)
+            {
+                list->entries[j - 1] = list->entries[j];
+            }
+            list->count--;
+            return;
+        }
+    }
+}
+
 void callback_list_fire(const CallbackList *list)
 {
     for (int i = 0; i < list->count; i++)

@@ -30,11 +30,9 @@ static BtVibePolicy s_vibe;       ///< What to buzz when the phone connects or d
 static void (*s_reconnect)(void); ///< Fired on a real change from disconnected to connected
 
 #if defined(SYSTEM_STORE_LINK_LISTENERS)
-/// Room for the stores that listen for the link, phone battery and now playing
-#define LINK_LISTENERS_MAX 2
-
-static CallbackListFn s_link_listener_entries[LINK_LISTENERS_MAX]; ///< The stores listening for the link, in the order they were added
-static CallbackList s_link_listeners = {s_link_listener_entries, LINK_LISTENERS_MAX, 0}; ///< The list over that storage
+// one slot for each store the face has that listens, and one for a listener of the face's own
+static CallbackListFn s_link_listener_entries[SYSTEM_STORE_LINK_LISTENER_SLOTS]; ///< The stores listening for the link, in the order they were added
+static CallbackList s_link_listeners = {s_link_listener_entries, SYSTEM_STORE_LINK_LISTENER_SLOTS, 0}; ///< The list over that storage
 #endif
 
 /**
@@ -67,15 +65,16 @@ static void set_bluetooth(bool connected)
         s_vibe(connected);
     }
 
-    // the phone app just came back. let the face catch up its phone-backed readouts now instead
-    // of waiting out each store's poll
+    // the phone app just came back, so the face can run its own extra work. the stores catch
+    // their readings up through the link listeners below
     if (change == LINK_RECONNECTED && s_reconnect)
     {
         s_reconnect();
     }
 
 #if defined(SYSTEM_STORE_LINK_LISTENERS)
-    // the stores that only hold what the phone just said clear on a drop and ask again on a return
+    // the stores that only hold what the phone just said clear on a drop and ask again on a return.
+    // the polling stores ask on a return for a reading that went stale while the phone was away
     if (change != LINK_SAME)
     {
         callback_list_fire(&s_link_listeners);
@@ -128,10 +127,21 @@ void system_store_add_link_listener(void (*listener)(void))
         APP_LOG(APP_LOG_LEVEL_ERROR, "link listener list full, dropping a listener");
     }
 }
+
+void system_store_remove_link_listener(void (*listener)(void))
+{
+    callback_list_remove(&s_link_listeners, listener);
+}
 #endif
 
 void system_store_init(SystemConfig cfg, const SystemSeed *seed)
 {
+    // only a live store takes the services, as stores.md covers under Seeded for Screenshots
+    if (s_live && !cfg.live)
+    {
+        system_store_deinit();
+    }
+
     s_state.battery_level = 0;
     s_state.charging = false;
     s_state.link = (LinkState){0};

@@ -8,28 +8,12 @@
  */
 #pragma once
 #include <pebble.h>
+#include "clock/time_config.h"
 
 /**
  * @addtogroup lib_stores
  * @{
  */
-
-/**
- * @brief The rules a face hands the store, built from its own settings so the store names no
- * SETTING_*.
- *
- * The minute tick and the beats timer are independent, so a face can run either or both. One face
- * might run exactly one when its time format is a single exclusive choice. Another runs the minute
- * tick always plus the beats timer whenever a live .beats module is on screen. With the minute tick
- * off, hourly adds the SDK's hour tick, so a face still wakes at the top of the hour.
- */
-typedef struct
-{
-    bool live;        ///< True runs the tickers and false freezes the clock for screenshots
-    bool minute_tick; ///< Run the minute tick (clock date and most readouts)
-    bool beats;       ///< Also run the 86.4 second .beats timer for a live .beats readout
-    bool hourly;      ///< With the minute tick off, still wake at the top of each hour, such as for an hourly buzz
-} TimeConfig;
 
 /**
  * @brief Start the store with its rules. Pass seed = NULL to start from the current time.
@@ -40,7 +24,11 @@ typedef struct
 void time_store_init(TimeConfig cfg, const struct tm *seed);
 
 /**
- * @brief Re-apply the rules (e.g. the time format changed). Swaps the ticker to match.
+ * @brief Re-apply the rules (e.g. the time format changed). Swaps the ticker to match. Rules that
+ * run the same tickers as the ones running do nothing, so a face can call it on every settings save.
+ * Only init decides whether the store is live, so one init started with live = false keeps its
+ * pinned time whatever cfg says, and one never started ignores it. TimeConfig and the decisions
+ * live in clock/time_config.h.
  *
  * @param cfg The new rules.
  */

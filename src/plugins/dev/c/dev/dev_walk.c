@@ -15,6 +15,10 @@
 #include "io/stores/health_store.h"
 #include "io/stores/system_store.h"
 #include "io/stores/location_store.h"
+#include "io/stores/stock_store.h"
+#include "io/stores/calendar_store.h"
+#include "io/stores/phone_store.h"
+#include "io/stores/music_store.h"
 #include "io/appmessage/appmessage_features.h"
 #include "system/settings/settings.h"
 #include "ui/engine/engine.h"
@@ -48,7 +52,7 @@ static const struct
  */
 typedef struct
 {
-    int16_t     temp;       ///< Temperature reading
+    int16_t     temp;       ///< Temperature reading, in Celsius
     const char *cond;       ///< Weather condition code, such as `PCLDY`
     int         hr;         ///< Heart rate reading
     int         steps;      ///< Step count
@@ -81,12 +85,36 @@ static uint8_t s_theme;             ///< The theme the walk is on
 static int s_hour;                  ///< The hour the face pinned the clock to
 static int s_minute;                ///< The minute the face pinned the clock to
 
+#if defined(APPMESSAGE_HAS_WEATHER)
+/**
+ * @brief A shot's temperature in the wearer's unit, rounded the way the weather store converts a
+ * reading, so the number matches the C or F the readout puts beside it.
+ *
+ * A seed is drawn as written, so this runs on every seed and every tap draws the same numbers.
+ *
+ * @param celsius The shot's temperature, in Celsius.
+ * @return The temperature in the unit the settings hold.
+ */
+static int16_t shot_temp(int16_t celsius)
+{
+    if (!settings_u8(SETTING_TEMPERATURE_UNIT))
+    {
+        return celsius;
+    }
+
+    // nearest whole degree, halves away from zero
+    int scaled = celsius * 9;
+    return (int16_t)((scaled + (scaled < 0 ? -2 : 2)) / 5 + 32);
+}
+#endif
+
 /**
  * @brief Seed the clock, weather, health, and system stores from one shot. A face without weather
  * gets an empty weather store, so it never boots the harness with a reading it cannot show.
  *
- * The stores are only ever seeded here with live off, and none of them takes a subscription on
- * that path, so seeding again on a tap re-seeds rather than stacking handlers.
+ * Every store here starts with live off, which lets go of any channel, service, or link listener a
+ * live start took and takes none of its own, so seeding again on a tap re-seeds rather than stacking
+ * handlers. The weather seed is in the wearer's unit as the settings hold it at the time.
  *
  * @param shot The shot to seed from.
  */
@@ -108,7 +136,7 @@ static void seed_shot(const DevShot *shot)
     // unnamed copy in the file's shared .data, which the SDK's linker keeps in every build
     static const WeatherSeed s_empty = WEATHER_SEED_EMPTY;
     WeatherSeed wx = s_empty;
-    wx.temp = shot->temp;
+    wx.temp = shot_temp(shot->temp);
     wx.cond = shot->cond;
     weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, &wx);
 #else
@@ -175,6 +203,25 @@ void dev_walk_seed_stores(int hour, int min)
     location_store_init((LocationConfig){.live = false}, &location);
 #else
     location_store_init((LocationConfig){.live = false}, NULL);
+#endif
+
+    // the stock and calendar stores start empty and pinned, so a settings save that reconfigures
+    // them live leaves them alone rather than fetching real quotes and agendas. a face without their
+    // keys skips them here, so the harness never drags their buffers into its dev build
+#if defined(HAS_MESSAGE_KEY_STOCK_STRIP)
+    stock_store_init((StockConfig){.live = false, .poll_min = 0}, NULL);
+#endif
+#if defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
+    calendar_store_init((CalendarConfig){.live = false, .poll_min = 0}, NULL);
+#endif
+
+    // the phone battery and now playing stores start empty and pinned too. the seeded system store
+    // hears no link change, so a live one would hold its reading through a drop
+#if defined(APPMESSAGE_HAS_PHONE)
+    phone_store_init((PhoneConfig){.live = false}, NULL);
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+    music_store_init((MusicConfig){.live = false}, NULL);
 #endif
 }
 

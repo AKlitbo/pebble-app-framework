@@ -120,6 +120,8 @@ typedef void (*CustomColorsProvider)(char *out, size_t n);
  */
 typedef void (*InboxCompleteHandler)(void);
 
+// each channel holds one handler, and a later call replaces it. NULL clears it, so the channel's
+// messages are dropped
 void appmessage_on_weather(WeatherHandler cb);                   /**< @brief One weather message, every group it carried */
 void appmessage_on_coords(CoordsHandler cb);                     /**< @brief Latitude and longitude */
 void appmessage_on_settings_changed(SettingsChangedHandler cb);  /**< @brief A setting changed on the phone */

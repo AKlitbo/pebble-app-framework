@@ -13,6 +13,7 @@
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
 #include "io/stores/store_fetch.h"
+#include "io/stores/system_store.h"
 
 /**
  * @brief Delay before the first fetch after launch, in ms.
@@ -148,6 +149,14 @@ static void cadence_poll(void)
     store_fetch_turn(&s_fetch, time(NULL));
 }
 
+#if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
+/** @brief The phone link really dropped or came back. A return catches the agenda up if it went stale. */
+static void on_link(void)
+{
+    store_fetch_on_link(&s_fetch, calendar_store_age_s());
+}
+#endif
+
 // --- public API ---
 
 void calendar_store_subscribe(void (*cb)(void))
@@ -165,12 +174,23 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed)
     // the live flag is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
 
+    // only a live store takes its channel and the link, as stores.md and store_poll_start set out
     if (cfg.live)
     {
-        // the store owns the calendar channel and claims it here, so a face that turns polling on
-        // later through reconfigure still gets the reply to its poll. a face seeding fixtures passes
-        // live = false and stays unsubscribed, so a real push cannot overwrite what it pinned
+        // a face that turns polling on later through reconfigure still gets the reply to its poll
         appmessage_on_calendar_strip(on_calendar_strip);
+#if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
+        // the link list is only built for a face with a request key, and a face without this one
+        // has nothing to ask the phone for anyway
+        system_store_add_link_listener(on_link);
+#endif
+    }
+    else
+    {
+        appmessage_on_calendar_strip(NULL);
+#if defined(HAS_MESSAGE_KEY_CALENDAR_REQUEST)
+        system_store_remove_link_listener(on_link);
+#endif
     }
 
     if (seed)

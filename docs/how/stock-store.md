@@ -13,7 +13,7 @@ stock_store_init((StockConfig){.live = true, .poll_min = 15, .persist_key = STOC
 stock_store_subscribe(redraw);
 ```
 
-`live`, `poll_min`, and `persist_key` mean the same as for every store, as [How the Stores Work](stores.md#the-shape-every-store-takes) covers, and a `StockSeed` pins a fixed strip for screenshots.
+`live`, `poll_min`, and `persist_key` mean the same as for every store, as [How the Stores Work](stores.md#the-shape-every-store-takes) covers, and a `StockSeed` pins a fixed strip for screenshots. A store started with `live` false keeps that strip, even one the face started live before.
 
 On the phone, the face lists the feature when it starts:
 
@@ -137,4 +137,6 @@ The phone kills its PebbleKit JS whenever it likes, and the gate above is only w
 
 **Saved to Flash.** The store saves the whole strip and the time it arrived to the face's persist key, and a relaunch shows the last strip straight away. The restore pins a count above four to an empty list and gives every label a closing zero, so a damaged copy cannot send a panel past the end of the slots. A failed write waits for the next strip that differs, for the reason in [How the Stores Work](stores.md#skipping-unchanged-writes).
 
-**How Old It Is.** `stock_store_age_s` gives the seconds since the last strip arrived, or -1 for none. A face can pass it to `store_poll_reconnect_due` to catch up after the phone reconnects, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) shows.
+**After a Lost Connection.** When the phone comes back, a live store asks again only for a strip at least its own interval old, or when it holds none, as [How the Stores Work](stores.md#polling-on-wall-clock-deadlines) covers. That ask is a routine one, so the phone's gate above holds it the same as any other, and bluetooth dropping in and out spends no more of a provider's quota than the polling would.
+
+**How Old It Is.** `stock_store_age_s` gives the seconds since the last strip arrived, or -1 for none.

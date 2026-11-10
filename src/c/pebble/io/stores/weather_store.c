@@ -17,6 +17,7 @@
 #include "io/stores/store_cadence.h"
 #include "io/stores/store_persist.h"
 #include "io/stores/store_fetch.h"
+#include "io/stores/system_store.h"
 #include "text/cstring_fit.h"
 #include "weather/forecast_age.h"
 #include "weather/weather_reading.h"
@@ -284,6 +285,14 @@ static void cadence_poll(void)
     store_fetch_turn(&s_fetch, time(NULL));
 }
 
+#if defined(HAS_MESSAGE_KEY_WEATHER_REQUEST)
+/** @brief The phone link really dropped or came back. A return catches the reading up if it went stale. */
+static void on_link(void)
+{
+    store_fetch_on_link(&s_fetch, weather_store_age_s());
+}
+#endif
+
 // --- public API ---
 
 void weather_store_subscribe(void (*cb)(void))
@@ -293,7 +302,7 @@ void weather_store_subscribe(void (*cb)(void))
 
 void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
 {
-    s_fetch.poll.live = false; // only a live store goes live, see store_poll_set below
+    s_fetch.poll.live = false; // only a live store goes live, see store_poll_start below
     s_fetch.request = appmessage_request_weather;
     s_fetch.first_ms = WEATHER_FIRST_POLL_MS;
     s_persist_key = cfg.persist_key;
@@ -301,15 +310,28 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
     // the live flag is the gate the cadence turn reads, so registering here is harmless either way
     store_cadence_register(cadence_poll);
 
+    // only a live store takes its channels and the link, as stores.md and store_poll_start set out
     if (cfg.live)
     {
-        // the store owns every weather channel and claims them here, so a face that turns polling on
-        // later through reconfigure still gets the reply to its poll. a face seeding fixtures passes
-        // live = false and stays unsubscribed, so a real push cannot overwrite it
+        // a face that turns polling on later through reconfigure still gets the reply to its poll
         appmessage_on_weather(on_weather);
         appmessage_on_unit_changed(on_unit_changed);
         // one repaint and one save per inbox, once every handler has run
         appmessage_add_inbox_complete(inbox_done);
+#if defined(HAS_MESSAGE_KEY_WEATHER_REQUEST)
+        // the link list is only built for a face with a request key, and a face without this one
+        // has nothing to ask the phone for anyway
+        system_store_add_link_listener(on_link);
+#endif
+    }
+    else
+    {
+        // inbox_done stays on its list, and with both channels cleared it finds nothing to do
+        appmessage_on_weather(NULL);
+        appmessage_on_unit_changed(NULL);
+#if defined(HAS_MESSAGE_KEY_WEATHER_REQUEST)
+        system_store_remove_link_listener(on_link);
+#endif
     }
 
     s_boot_retries = 0;  // fresh cold-boot re-ask budget
@@ -359,7 +381,7 @@ void weather_store_init(WeatherConfig cfg, const WeatherSeed *seed)
     // matching reconfigure. this is store_fetch_start written out, since the first timer runs the
     // boot re-asks rather than a plain fetch, and a callback slot in StoreFetch for it would cost
     // bytes on every store
-    bool polling = store_poll_set(&s_fetch.poll, cfg.poll_min, cfg.live, time(NULL));
+    bool polling = store_poll_start(&s_fetch.poll, cfg.poll_min, cfg.live, time(NULL));
     store_fetch_stop(&s_fetch);
     if (polling)
     {

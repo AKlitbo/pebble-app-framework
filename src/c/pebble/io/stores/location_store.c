@@ -134,10 +134,9 @@ void location_store_init(LocationConfig cfg, const LocationSeed *seed)
         }
     }
 
-    if (cfg.live)
-    {
-        appmessage_on_coords(set);  // the store owns its channel
-    }
+    // the store owns its channel, and only a live store takes it, as stores.md and store_poll_start
+    // set out
+    appmessage_on_coords(cfg.live ? set : NULL);
 }
 
 const char *location_store_lat(void) { return s_state.lat; }

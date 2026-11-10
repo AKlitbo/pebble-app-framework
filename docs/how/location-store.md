@@ -78,4 +78,4 @@ LocationSeed seed = {.lat = "43.653", .lon = "-79.383"};
 location_store_init((LocationConfig){.live = false}, &seed);
 ```
 
-The framework's dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. A live store takes a seed too. The seed then takes the place of restoring the last real fix, shows until the phone sends coordinates, and is never saved. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+The framework's dev plugin seeds it this way for a face that declares the coordinate keys, and starts it empty for one that does not. A store started with `live` false keeps its seed and takes no fix from the phone, even one the face started live before. A live store takes a seed too. The seed then takes the place of restoring the last real fix, shows until the phone sends coordinates, and is never saved. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.

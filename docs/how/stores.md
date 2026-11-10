@@ -38,11 +38,11 @@ weather_store_subscribe(engine_mark_dirty);
 
 **Getters with No-Data Values.** Each reading has its own getter, and a reading that can be missing has a value that says so: -1 for a count or a percent, `WEATHER_NO_TEMP` for a temperature, and an empty string for text. A temperature needs its own value, since it can be negative and 0 is a real one. A panel checks for it and draws dashes, so a watch that has not heard from the phone yet never shows a 0 that looks real.
 
-**Reconfigure.** The time, weather, stock, and calendar stores take new rules after launch through their `_reconfigure` call, which a face runs from its settings handler. It swaps the time store's ticker, or changes how often a store polls, without losing the reading it holds. The other stores take nothing from settings once they start. The system store's buzz on a connection change reads its settings at the moment it buzzes, so it needs no reconfigure either.
+**Reconfigure.** The time, weather, stock, and calendar stores take new rules after launch through their `_reconfigure` call, which a face runs from its settings handler. It swaps the time store's ticker, or changes how often a store polls, without losing the reading it holds. Only init decides whether a store is live. A reconfigure can switch a live store off and on again. A store its init started with `live` false stays seeded whatever `live` the reconfigure passes, so a face hands a reconfigure the same rules in a screenshot build as in a release. A store whose init never ran ignores a reconfigure. The other stores take nothing from settings once they start. The system store's buzz on a connection change reads its settings at the moment it buzzes, so it needs no reconfigure either.
 
 ## Seeded for Screenshots
 
-A store started with `live` false and a seed shows the seed and nothing else. It claims no messages and subscribes to no services, so a real reading arriving from the phone has nowhere to land and cannot overwrite it. It never polls and never saves, so a screenshot build never writes its fixtures into the flash of a watch that later runs the real face. The time store runs no ticker, so the clock stays where it was pinned.
+A store started with `live` false and a seed shows the seed and nothing else, even when the face started it live before. Its init takes no message, service, or link listener a reading could arrive on, and lets go of any a live start took, so a real reading has nowhere to land and cannot overwrite it. It never polls and never saves, so a screenshot build never writes its fixtures into the flash of a watch that later runs the real face. The time store runs no ticker, so the clock stays where it was pinned. A settings save leaves all of that in place, since a reconfigure never turns a seeded store live. A seed is drawn exactly as written, so a face writes a weather seed in the wearer's temperature unit.
 
 That makes every run of a screenshot build draw the same picture, down to the battery level and the minute. The dev plugin seeds the stores from one fixture this way, as [Fixed Readings for Screenshots](dev-plugin.md#fixed-readings-for-screenshots) covers.
 
@@ -101,21 +101,13 @@ The epoch is counted in UTC, so the deadlines fall on UTC's hours. In a time zon
 
 **The First Fetch.** A store that polls also asks once shortly after launch, so it is not blank until the first deadline comes round. The weather store asks after 500 ms, the stocks after 700 ms, and the calendar after 1.1 seconds. The first wait lets the face open its AppMessage connection, and the stagger keeps the three requests from leaving at the same moment. The weather store also asks again while the phone's side is starting up, which [The Weather Store](weather-store.md#from-launch-to-the-first-reading) covers.
 
-**Changing the Interval.** A reconfigure takes the new interval and moves the deadline to its next boundary. A store with nothing to show asks right away. One that already holds a reading waits for the deadline, so a save that only changed a colour never spends a request, which matters on a provider with a daily limit. A save can bring a poll nearer, but polls never come faster than the interval. A fetch still waiting from launch is kept, so a settings push in the first second does not cancel it. Turning `live` off, or setting the interval to 0, stops the store asking and cancels any fetch still waiting.
+**Changing the Interval.** A reconfigure takes the new interval and moves the deadline to its next boundary. A store with nothing to show asks right away. One that already holds a reading waits for the deadline, so a save that only changed a colour never spends a request, which matters on a provider with a daily limit. A save can bring a poll nearer, but polls never come faster than the interval. A fetch still waiting from launch is kept, so a settings push in the first second does not cancel it. Turning `live` off, or setting the interval to 0, stops the store asking and cancels any fetch still waiting. Turning `live` on again starts polling only on a store its init started live.
 
-**After a Lost Connection.** The phone's PebbleKit JS may be closed the whole time the phone is away, so a reading can go stale while the watch waits. A face can catch up when the phone comes back, using the reconnect callback from the [system store](system-store.md). `store_poll_reconnect_due` says yes only when there is no reading, or the reading is at least one interval old, so bluetooth dropping in and out never fetches faster than the normal polling:
+**A Face's Own Polling Store.** A polling store of the face's own calls `store_poll_start` from its init and `store_poll_set` from its reconfigure. `store_poll_start` is where `live` is decided, so a store it starts with `live` false stays off whatever a later `store_poll_set` asks. A `StorePoll` has to start zeroed, as a static one does, or go through `store_poll_start` first. The pin only covers asking. A store that also takes pushes or listens for the link registers its handler and its listener only when its init starts it live. An init that starts it with `live` false clears the handler and removes the listener with `system_store_remove_link_listener`, so a store started live and then seeded takes no push over its seed.
 
-```c
-static void on_phone_reconnected(void)
-{
-    if (store_poll_reconnect_due(weather_store_age_s(), WEATHER_POLL_MIN))
-    {
-        appmessage_request_weather();
-    }
-}
+**After a Lost Connection.** The phone's PebbleKit JS may be closed the whole time the phone is away, so a reading can go stale while the watch waits. Each polling store catches itself up when the phone comes back. Its init adds it as a link listener on the [system store](system-store.md#the-phone-connection), and on a return it asks for its reading only when there is none, or the reading is at least the store's own interval old. So bluetooth dropping in and out never fetches faster than the normal polling, which matters most for a stock provider with a daily limit. The face writes nothing for it.
 
-system_store_on_reconnect(on_phone_reconnected);
-```
+`store_poll_reconnect` in `store_poll.h` decides, on the interval the store holds now, so a settings save that changes the interval moves the check with it. A store that is not live never asks, so a seeded store keeps its fixture, and a store whose polling is off stays quiet. The catch-up leaves the deadline where it was. `store_poll_reconnect_due` holds the age check alone, for a face's own polling that wants the same rule.
 
 A clock set back can make a saved reading's age negative. That counts as no reading, so the reconnect asks once and the answer puts the age right.
 

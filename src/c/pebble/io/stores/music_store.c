@@ -105,10 +105,17 @@ void music_store_init(MusicConfig cfg, const MusicSeed *seed)
         music_track_set(&s_track, seed->title, seed->artist, seed->playing);
     }
 
-    // a face seeding fixtures passes live = false and stays off the channel, so a real track cannot
-    // overwrite what it pinned
+    // only a live store takes its channel and the link, as stores.md and store_poll_start set out
     if (!cfg.live)
     {
+        appmessage_on_music(NULL);
+        system_store_remove_link_listener(on_link);
+        // a first ask still waiting is called off, so the store never asks
+        if (s_ask_timer)
+        {
+            app_timer_cancel(s_ask_timer);
+            s_ask_timer = NULL;
+        }
         return;
     }
 

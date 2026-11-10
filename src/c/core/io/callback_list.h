@@ -37,6 +37,18 @@ typedef struct
 bool callback_list_add(CallbackList *list, CallbackListFn cb);
 
 /**
+ * @brief Takes a callback off the list. The ones after it move up, so the rest keep their order.
+ * Removing one that is not there does nothing.
+ *
+ * A callback that removes itself or another from inside callback_list_fire makes that run skip the
+ * one that moves into its place, so remove from outside a run.
+ *
+ * @param list The list.
+ * @param cb The callback.
+ */
+void callback_list_remove(CallbackList *list, CallbackListFn cb);
+
+/**
  * @brief Runs every callback in the order it was added.
  *
  * @param list The list.

@@ -2,7 +2,8 @@
  * @file callback_list.spec.c
  * @brief Host tests for the fixed callback list.
  *
- * The store cadence and the transport's end-of-message work both run through one of these. A fault
+ * The store cadence, the transport's end-of-message work, and the system store's link listeners all
+ * run through one of these. A fault
  * here is not one store misbehaving but every store behind the list quietly stopping, with the face
  * still drawing the last thing it had. Each test builds its own list, so none of them share state.
  */
@@ -41,6 +42,15 @@ static void second(void)
     if (s_order_len < 3)
     {
         s_order[s_order_len++] = 2;
+    }
+}
+
+// a third callback that only notes its turn, so a removal from the middle has one on each side
+static void third(void)
+{
+    if (s_order_len < 3)
+    {
+        s_order[s_order_len++] = 3;
     }
 }
 
@@ -104,6 +114,68 @@ void test_null_is_ignored(void)
     TEST_ASSERT_EQUAL_INT(0, list.count);
 }
 
+/**
+ * @brief Removing a callback stops it running and keeps the rest in order.
+ *
+ * A store started live and then seeded takes its link listener off. If the one after it lost its
+ * place or its turn, a store still live would stop catching up when the phone came back.
+ */
+void test_remove_drops_one_and_keeps_the_order(void)
+{
+    CallbackListFn entries[3];
+    CallbackList list = {entries, 3, 0};
+    callback_list_add(&list, first);
+    callback_list_add(&list, second);
+    callback_list_add(&list, third);
+
+    callback_list_remove(&list, second);
+
+    callback_list_fire(&list);
+    TEST_ASSERT_EQUAL_INT(2, s_order_len);
+    TEST_ASSERT_EQUAL_INT(1, s_order[0]);
+    TEST_ASSERT_EQUAL_INT(3, s_order[1]);
+    TEST_ASSERT_EQUAL_INT(0, s_second_calls);
+}
+
+/**
+ * @brief Removing a callback that is not on the list leaves the list as it was.
+ *
+ * A store seeded from the start removes a listener it never added.
+ */
+void test_remove_of_one_not_there_changes_nothing(void)
+{
+    CallbackListFn entries[2];
+    CallbackList list = {entries, 2, 0};
+    callback_list_add(&list, first);
+
+    callback_list_remove(&list, second);
+
+    callback_list_fire(&list);
+    TEST_ASSERT_EQUAL_INT(1, list.count);
+    TEST_ASSERT_EQUAL_INT(1, s_first_calls);
+}
+
+/**
+ * @brief A removal frees its slot for the next add.
+ *
+ * The link list has one slot per store. A store started live, then seeded, then live again has to
+ * fit back in, or it never hears the link again.
+ */
+void test_remove_frees_the_slot(void)
+{
+    CallbackListFn entries[1];
+    CallbackList list = {entries, 1, 0};
+    callback_list_add(&list, first);
+    callback_list_remove(&list, first);
+
+    bool result = callback_list_add(&list, second);
+
+    callback_list_fire(&list);
+    TEST_ASSERT_TRUE(result);
+    TEST_ASSERT_EQUAL_INT(0, s_first_calls);
+    TEST_ASSERT_EQUAL_INT(1, s_second_calls);
+}
+
 int main(void)
 {
     UNITY_BEGIN();
@@ -111,5 +183,8 @@ int main(void)
     RUN_TEST(test_adding_twice_keeps_one);
     RUN_TEST(test_a_full_list_refuses_and_keeps_what_it_has);
     RUN_TEST(test_null_is_ignored);
+    RUN_TEST(test_remove_drops_one_and_keeps_the_order);
+    RUN_TEST(test_remove_of_one_not_there_changes_nothing);
+    RUN_TEST(test_remove_frees_the_slot);
     return UNITY_END();
 }

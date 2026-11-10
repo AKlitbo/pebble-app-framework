@@ -15,9 +15,8 @@ static struct tm s_tm;          ///< The current time, as of the last tick
 static void (*s_cb)(void);      ///< Called whenever the time moves, so the face can redraw
 
 static AppTimer *s_beats_timer; ///< The .beats ticker. NULL when it isn't running
-static bool s_minute;           ///< Whether the minute tick is on
-static bool s_beats;            ///< Whether the .beats timer is on
-static bool s_hourly;           ///< Whether to wake on the hour when the minute tick is off
+static TimeConfig s_cfg;        ///< The rules running now, live included
+static bool s_started_live;     ///< True when init started it live, so a reconfigure may run it
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed);
 
@@ -68,11 +67,11 @@ static void beats_fire(void *data)
  */
 static void start_ticker(void)
 {
-    if (s_minute)
+    if (s_cfg.minute_tick)
     {
         tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
     }
-    else if (s_hourly)
+    else if (s_cfg.hourly)
     {
         // a face that needs only the top of the hour, such as an hourly buzz on a .beats clock,
         // wakes once an hour rather than every minute. the .beats timer alone lands in minute 0 of
@@ -84,7 +83,7 @@ static void start_ticker(void)
         tick_timer_service_unsubscribe();
     }
 
-    if (s_beats)
+    if (s_cfg.beats)
     {
         if (!s_beats_timer)
         {
@@ -118,9 +117,8 @@ void time_store_subscribe(void (*cb)(void))
 
 void time_store_init(TimeConfig cfg, const struct tm *seed)
 {
-    s_minute = cfg.minute_tick;
-    s_beats = cfg.beats;
-    s_hourly = cfg.hourly;
+    s_cfg = cfg;
+    s_started_live = cfg.live;
 
     // seed the current time (or the pinned one) so the first paint has something to draw.
     // s_cb is NULL until the face subscribes so this doesn't redraw
@@ -134,19 +132,40 @@ void time_store_init(TimeConfig cfg, const struct tm *seed)
         s_tm = *localtime(&now);
     }
 
+    // a store started again on its seed stops whatever an earlier live start left running, or that
+    // ticker would keep moving the pinned time with nothing left to stop it
     if (cfg.live)
     {
         start_ticker();
+    }
+    else
+    {
+        stop_ticker();
     }
 }
 
 void time_store_reconfigure(TimeConfig cfg)
 {
-    s_minute = cfg.minute_tick;
-    s_beats = cfg.beats;
-    s_hourly = cfg.hourly;
+    // a store started on a pinned time stays on it, so a settings save in a screenshot build never
+    // brings the real time back at the next tick. one never started counts as pinned too, so a save
+    // cannot start tickers for a store the face never set up
+    bool changed = time_config_reconfigure(&s_cfg, cfg, !s_started_live);
+    bool beats_stopped = s_cfg.live && s_cfg.beats && !s_beats_timer;
 
-    if (cfg.live)
+    // a face calls this on every settings save, and most saves leave the tickers as they are, so
+    // rules that run the same tickers return straight away. PebbleOS sends a first tick on every
+    // subscribe, and skipping it saves a second repaint and another round of store poll checks.
+    // the cost is that the time the store holds is not refreshed by the save, so the face's own
+    // repaint draws a time up to one tick old, as it is between any two ticks.
+    // the skip does not apply when the .beats timer should be running and is not. it sets itself
+    // again on each beat, and a set that fails for want of memory ends the chain, so a save starts it
+    // again
+    if (!changed && !beats_stopped)
+    {
+        return;
+    }
+
+    if (s_cfg.live)
     {
         start_ticker();  // swaps to the right cadence
     }

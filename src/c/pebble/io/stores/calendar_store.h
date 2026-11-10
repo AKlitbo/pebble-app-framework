@@ -47,7 +47,9 @@ void calendar_store_init(CalendarConfig cfg, const CalendarSeed *seed);
 
 /**
  * @brief Re-apply the rules (e.g. the poll interval changed). Moves the next poll to the new
- * interval, and switching the store off here stops it asking the phone.
+ * interval, and switching the store off here stops it asking the phone. Only init decides whether
+ * the store is live, so one init started with live = false stays on its seed whatever cfg says,
+ * and one never started ignores the call.
  *
  * @param cfg The new rules.
  */

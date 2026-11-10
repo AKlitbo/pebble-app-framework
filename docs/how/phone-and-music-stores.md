@@ -67,4 +67,4 @@ phone_store_init((PhoneConfig){.live = false}, &(PhoneSeed){.battery = 72});
 music_store_init((MusicConfig){.live = false}, &(MusicSeed){.title = "Clocks", .artist = "Coldplay", .playing = true});
 ```
 
-A store that is not live keeps its seed, takes nothing from the phone, and never asks. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+A store that is not live keeps its seed, takes nothing from the phone, and never asks. That holds for a store the face started live and then again with `live` false. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
