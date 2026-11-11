@@ -55,7 +55,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">FaceStart</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#defaults">defaults</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#hooks">hooks</a><span class="tsd-signature-symbol">:</span> <a href="pkjs_feature.FeatureHooks.html" class="tsd-signature-type tsd-kind-interface">FeatureHooks</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#options">options</a><span class="tsd-signature-symbol">:</span> <a href="pkjs_app.StartOptions.html" class="tsd-signature-type tsd-kind-interface">StartOptions</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#providers">providers</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-keyword">readonly</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#fallbackpage-1">fallbackPage</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#launchsettled-1">launchSettled</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#seedsettled-1">seedSettled</a><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L862">pkjs/app.ts:862</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L862">pkjs/app.ts:862</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -83,28 +83,28 @@
 <div class="tsd-comment tsd-typography"><p>The defaults that page declares, with each listed kind's provider default filled in.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L866">pkjs/app.ts:866</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L866">pkjs/app.ts:866</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="hooks"><span>hooks</span><a href="#hooks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">hooks</span><span class="tsd-signature-symbol">:</span> <a href="pkjs_feature.FeatureHooks.html" class="tsd-signature-type tsd-kind-interface">FeatureHooks</a><span class="tsd-signature-symbol">[]</span></div>
 <div class="tsd-comment tsd-typography"><p>The providers' own hooks, which run after every feature's. Empty for a face that lists none.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L870">pkjs/app.ts:870</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L870">pkjs/app.ts:870</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="options"><span>options</span><a href="#options" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">options</span><span class="tsd-signature-symbol">:</span> <a href="pkjs_app.StartOptions.html" class="tsd-signature-type tsd-kind-interface">StartOptions</a></div>
 <div class="tsd-comment tsd-typography"><p>The face's options, with its settings page narrowed to the providers it lists.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L864">pkjs/app.ts:864</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L864">pkjs/app.ts:864</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="providers"><span>providers</span><a href="#providers" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">providers</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-keyword">readonly</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></div>
 <div class="tsd-comment tsd-typography"><p>The lists every feature reads from its context, or null for a face that lists none.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L868">pkjs/app.ts:868</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L868">pkjs/app.ts:868</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -123,7 +123,7 @@ the start narrowed it. A face that lists none gets that page back with only its 
 <li><span><span class="tsd-kind-parameter">config</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L885">pkjs/app.ts:885</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L885">pkjs/app.ts:885</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="launchsettled"><span>launch<wbr/>Settled</span><a href="#launchsettled" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -135,7 +135,7 @@ own settings still has to hear. Asking clears it. Always false for a face that l
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L880">pkjs/app.ts:880</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L880">pkjs/app.ts:880</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="seedsettled"><span>seed<wbr/>Settled</span><a href="#seedsettled" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -147,7 +147,7 @@ changed, which the watch then has to hear. Asking clears it. Always false for a 
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/63ea9a913c122ec3cd3097bf72a99292799c68a0/src/ts/pkjs/app.ts#L875">pkjs/app.ts:875</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L875">pkjs/app.ts:875</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
