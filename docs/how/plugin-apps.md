@@ -2,7 +2,7 @@
 
 A plugin app is a Pebble app plugin of your own, built with the framework. It has no watch code. It runs in the Pebble app on the phone and serves data to every watchface that reads its kind of data, not only yours. [Pebble App Plugins](plugin-sources.md) covers the other side, a face reading a plugin.
 
-Plugins are a Core Devices preview. The Pebble app keeps them off until the wearer turns them on, and Core asks that nothing using them goes to the appstore yet. Building one needs Pebble SDK 4.44 or later and pebble-tool 5.1.2 or later.
+Plugins are still a Core Devices preview in the Pebble app, which keeps them off until the wearer turns them on under Settings, Plugins, Plugins / permissions preview. A plugin app publishes to the appstore with `pebble publish` like any other app. Building one needs Pebble SDK 4.44 or later and pebble-tool 5.1.2 or later.
 
 ## What One Looks Like
 
