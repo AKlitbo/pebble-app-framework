@@ -128,7 +128,7 @@
           <h1>Plugin Apps</h1>
           
           <div class="readme"><p>A plugin app is a Pebble app plugin of your own, built with the framework. It has no watch code. It runs in the Pebble app on the phone and serves data to every watchface that reads its kind of data, not only yours. <a href="../../how/plugin-sources/">Pebble App Plugins</a> covers the other side, a face reading a plugin.</p>
-<p>Plugins are a Core Devices preview. The Pebble app keeps them off until the wearer turns them on, and Core asks that nothing using them goes to the appstore yet. Building one needs Pebble SDK 4.44 or later and pebble-tool 5.1.2 or later.</p>
+<p>Plugins are still a Core Devices preview in the Pebble app, which keeps them off until the wearer turns them on under Settings, Plugins, Plugins / permissions preview. A plugin app publishes to the appstore with <code>pebble publish</code> like any other app. Building one needs Pebble SDK 4.44 or later and pebble-tool 5.1.2 or later.</p>
 <h2 id="what-one-looks-like">What One Looks Like</h2>
 <p>A plugin app is a face folder whose appinfo says it is a plugin. A repo of them keeps each one as a unit under <code>plugins/</code>, which paf finds the way it finds <code>watchfaces/</code> and <code>watchapps/</code>, and each one pins framework 6 or later.</p>
 <pre><code>plugins/calendar-ical/
