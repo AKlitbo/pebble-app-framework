@@ -1,7 +1,7 @@
 /**
  * @file plugin_source.h
- * @brief The struct the framework keeps the weather and calendar source choice in, for a face built
- * with a plugin define, and the checks that decide which of the two it keeps.
+ * @brief The struct the framework keeps the weather, calendar, and stock source choices in, for a face
+ * built with a plugin define, and the checks that decide which of them it keeps.
  *
  * The watch never reads the choice. It stores what the settings page saves and sends it back when the
  * phone asks for the watch's settings, so a wearer who picked the Pebble app's plugin still has it
@@ -11,10 +11,10 @@
  *
  * A kind keeps its choice when its define is on and the face declares its select key. The build
  * refuses the select key beside a plugin only providers list, so a plugin only kind keeps nothing.
- * The build also writes each kept kind's default as PLUGIN_SOURCE_WEATHER_DEFAULT or
- * PLUGIN_SOURCE_CALENDAR_DEFAULT, from the face's providers list, so the watch's default is always
- * the settings page's. The build stops when the face's own picker does not offer it, or when the
- * page opens on another source.
+ * The build also writes each kept kind's default as PLUGIN_SOURCE_WEATHER_DEFAULT,
+ * PLUGIN_SOURCE_CALENDAR_DEFAULT, or PLUGIN_SOURCE_STOCK_DEFAULT, from the face's providers list,
+ * so the watch's default is always the settings page's. The build stops when the face's own picker
+ * does not offer it, or when the page opens on another source.
  *
  * @ingroup lib_settings
  */
@@ -43,8 +43,15 @@
 #define PLUGIN_SOURCE_KEEPS_CALENDAR 0
 #endif
 
+/// 1 when the watch keeps the stock source choice, for a face with PLUGIN_STOCKS and STOCK_PROVIDER
+#if defined(PLUGIN_STOCKS) && PLUGIN_STOCKS && defined(HAS_MESSAGE_KEY_STOCK_PROVIDER)
+#define PLUGIN_SOURCE_KEEPS_STOCK 1
+#else
+#define PLUGIN_SOURCE_KEEPS_STOCK 0
+#endif
+
 /// The watch keeps at least one source choice, so the framework's schema joins the chain
-#define PLUGIN_SOURCE_KEEPS_ANY (PLUGIN_SOURCE_KEEPS_WEATHER || PLUGIN_SOURCE_KEEPS_CALENDAR)
+#define PLUGIN_SOURCE_KEEPS_ANY (PLUGIN_SOURCE_KEEPS_WEATHER || PLUGIN_SOURCE_KEEPS_CALENDAR || PLUGIN_SOURCE_KEEPS_STOCK)
 
 /**
  * @brief The size of the weather source buffer. `weatherapi` is the longest value the settings page
@@ -58,26 +65,36 @@
  */
 #define PLUGIN_SOURCE_CALENDAR_LEN 8
 
-#define PLUGIN_SOURCE_VERSION    1   ///< The schema's version, raised by one with each appended field
+/**
+ * @brief The size of the stock source buffer. `alphavantage` is the longest value the settings page
+ * saves, and its 12 characters plus its end leave one byte spare.
+ */
+#define PLUGIN_SOURCE_STOCK_LEN 14
+
+#define PLUGIN_SOURCE_VERSION    2   ///< The schema's version, raised by one with each appended field
 #define PLUGIN_SOURCE_FIRST_SIZE 21  ///< The struct's size in its first release, which never changes
 
 /**
  * @brief The saved choices, version byte first.
  *
- * Both buffers are always there, whichever kinds the face keeps. A face that turns its second kind on
- * in a later release then reads the same saved blob, and the new kind starts on its default.
+ * Every buffer is always there, whichever kinds the face keeps. A face that turns another kind on
+ * in a later release then reads the same saved blob, and the new kind starts on its default. A
+ * version 1 blob is the first 21 bytes and ends before the stock buffer, so reading one leaves the
+ * stock choice on the default it was given before the read.
  */
 typedef struct
 {
     uint8_t version;                            ///< The schema version this blob was saved at
     char    weather[PLUGIN_SOURCE_WEATHER_LEN];   ///< What the weather's Data Source select saved
     char    calendar[PLUGIN_SOURCE_CALENDAR_LEN]; ///< What the Calendar Source select saved
+    char    stock[PLUGIN_SOURCE_STOCK_LEN];       ///< What the stocks' Data Source select saved
 } PluginSourceSettings;
 
 // a saved choice is read back from these offsets, so moving a field would read the other kind's
 // bytes into it after an update. a new field goes on the end
 _Static_assert(offsetof(PluginSourceSettings, weather) == 1, "the weather source moved, so older saves would read wrong");
 _Static_assert(offsetof(PluginSourceSettings, calendar) == 13, "the calendar source moved, so older saves would read wrong");
+_Static_assert(offsetof(PluginSourceSettings, stock) == PLUGIN_SOURCE_FIRST_SIZE, "the stock source has to start where a first release blob ends");
 
 #if PLUGIN_SOURCE_KEEPS_WEATHER
 #ifndef PLUGIN_SOURCE_WEATHER_DEFAULT
@@ -94,6 +111,14 @@ _Static_assert(sizeof("" PLUGIN_SOURCE_WEATHER_DEFAULT) > 1 && sizeof("" PLUGIN_
 #endif
 _Static_assert(sizeof("" PLUGIN_SOURCE_CALENDAR_DEFAULT) > 1 && sizeof("" PLUGIN_SOURCE_CALENDAR_DEFAULT) <= PLUGIN_SOURCE_CALENDAR_LEN,
                "the default calendar source has to be 1 to 7 characters, which is as much as the watch keeps");
+#endif
+
+#if PLUGIN_SOURCE_KEEPS_STOCK
+#ifndef PLUGIN_SOURCE_STOCK_DEFAULT
+#error "PLUGIN_STOCKS keeps the stock source on the watch, so it needs PLUGIN_SOURCE_STOCK_DEFAULT. Build the face with paf build, which writes it from the providers list"
+#endif
+_Static_assert(sizeof("" PLUGIN_SOURCE_STOCK_DEFAULT) > 1 && sizeof("" PLUGIN_SOURCE_STOCK_DEFAULT) <= PLUGIN_SOURCE_STOCK_LEN,
+               "the default stock source has to be 1 to 13 characters, which is as much as the watch keeps");
 #endif
 
 /**
@@ -126,8 +151,18 @@ _Static_assert(sizeof("" PLUGIN_SOURCE_CALENDAR_DEFAULT) > 1 && sizeof("" PLUGIN
 #define PLUGIN_SOURCE_CALENDAR_FIELD
 #endif
 
+/**
+ * @brief The field the framework keeps the stock source in, with a comma after it, or nothing when
+ * the watch keeps no stock choice. It works as the weather one does.
+ */
+#if PLUGIN_SOURCE_KEEPS_STOCK
+#define PLUGIN_SOURCE_STOCK_FIELD     { .id = SETTING_COUNT, .message_key = &MESSAGE_KEY_STOCK_PROVIDER, .type = SETTING_CSTRING,       .offset = offsetof(PluginSourceSettings, stock), .size = PLUGIN_SOURCE_STOCK_LEN,       .default_str = PLUGIN_SOURCE_STOCK_DEFAULT },
+#else
+#define PLUGIN_SOURCE_STOCK_FIELD
+#endif
+
 /// The framework schema's whole field table, for inside its braces
-#define PLUGIN_SOURCE_FIELDS PLUGIN_SOURCE_WEATHER_FIELD PLUGIN_SOURCE_CALENDAR_FIELD
+#define PLUGIN_SOURCE_FIELDS PLUGIN_SOURCE_WEATHER_FIELD PLUGIN_SOURCE_CALENDAR_FIELD PLUGIN_SOURCE_STOCK_FIELD
 
 /**
  * @brief Whether a save has to write the choices to flash.

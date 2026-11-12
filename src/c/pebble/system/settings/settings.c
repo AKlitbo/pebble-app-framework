@@ -31,7 +31,7 @@ static const SettingField *s_by_id[SETTING_COUNT];
 static const SettingsSchema *s_owner_by_id[SETTING_COUNT];
 
 #if PLUGIN_SOURCE_KEEPS_ANY
-/// The weather and calendar source choice, kept for the phone and never read on the watch
+/// The weather, calendar, and stock source choices, kept for the phone and never read on the watch
 static PluginSourceSettings s_plugin_source;
 
 /// The fields of the framework's own schema, one for each kind whose choice the watch keeps
@@ -436,6 +436,13 @@ static void take_plugin_source(const SettingsSchema *head)
     if (settings_chain_has_field(head, &MESSAGE_KEY_CALENDAR_SOURCE))
     {
         APP_LOG(APP_LOG_LEVEL_ERROR, "settings: the framework keeps CALENDAR_SOURCE, so take the face's own field on it out");
+    }
+#endif
+
+#if PLUGIN_SOURCE_KEEPS_STOCK
+    if (settings_chain_has_field(head, &MESSAGE_KEY_STOCK_PROVIDER))
+    {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "settings: the framework keeps STOCK_PROVIDER, so take the face's own field on it out");
     }
 #endif
 }

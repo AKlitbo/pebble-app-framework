@@ -100,13 +100,13 @@ typedef struct SettingsSchema
 } SettingsSchema;
 
 /**
- * @brief The persist key the framework keeps the weather and calendar source choice on, so a face
- * leaves it free.
+ * @brief The persist key the framework keeps the weather, calendar, and stock source choices on, so
+ * a face leaves it free.
  *
- * Only a face built with `PLUGIN_WEATHER` or `PLUGIN_CALENDAR` that offers the choice writes it. Every
- * face leaves it free anyway, for its settings and its stores, since turning a define on in a later
- * release would otherwise land the choice on top of whatever the face kept there. settings_init
- * catches a settings schema on it but cannot see a store's key.
+ * Only a face built with `PLUGIN_WEATHER`, `PLUGIN_CALENDAR`, or `PLUGIN_STOCKS` that offers the
+ * choice writes it. Every face leaves it free anyway, for its settings and its stores, since turning
+ * a define on in a later release would otherwise land the choice on top of whatever the face kept
+ * there. settings_init catches a settings schema on it but cannot see a store's key.
  */
 #define SETTINGS_PLUGIN_SOURCE_KEY 249
 
@@ -202,8 +202,8 @@ typedef struct
  * schema over the 256 bytes one persist key holds is logged as an error, since it can never be saved
  * whole. SETTINGS_BLOB stops the build for one, so the log catches a schema written without it.
  *
- * A face built with `PLUGIN_WEATHER` or `PLUGIN_CALENDAR` that declares the kind's select key also
- * gets the framework's schema for the source choice, walked after its own and saved under
+ * A face built with `PLUGIN_WEATHER`, `PLUGIN_CALENDAR`, or `PLUGIN_STOCKS` that declares the kind's
+ * select key also gets the framework's schema for the source choice, walked after its own and saved under
  * SETTINGS_PLUGIN_SOURCE_KEY. The choice is only kept once this has run, so a face with no settings
  * of its own still has to call it, as settings_init(NULL), or a reset of the Pebble app drops the
  * wearer's pick. The pick only reaches the phone in the settings reply, so the build adds
