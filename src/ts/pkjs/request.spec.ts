@@ -17,7 +17,7 @@
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { request, safeParse, cacheBust, requestJson, guardRequest } from './request';
+import { request, safeParse, cacheBust, requestJson, guardRequest, NETWORK_ERROR } from './request';
 import type { RequestFn } from './request';
 import { installFakeXhr } from '../testing/xhr';
 
@@ -251,7 +251,7 @@ describe('guardRequest', () => {
     guardRequest(throwing)('https://x', (err) => seen.push(err));
     late();
 
-    expect(seen).toEqual(['network error']);
+    expect(seen).toEqual([NETWORK_ERROR]);
   });
 
   /** A request that answered and then threw took the rest of a run down, so the other places were never asked. */

@@ -3,7 +3,7 @@
  *
  * The shapes follow the mobile app's own classes, so a field here is one the phone really sends.
  * Nothing the phone hands over is trusted, so every field read off a plugin list, an update, or an
- * error is typed as possibly missing and the readers in shapes.ts check each one.
+ * error is typed as possibly missing and the readers in ts/plugin-shapes/shapes.ts check each one.
  *
  * The features reach this file with `import type` only. A value import from outside the folder
  * would leave a require behind for a file a face built without plugin sources does not have.

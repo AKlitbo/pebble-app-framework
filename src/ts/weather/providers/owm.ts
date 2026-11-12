@@ -12,6 +12,7 @@ import type { RequestFn, DoneFn, WeatherOpts, WeatherResult, WeatherCoords } fro
 import type { OpenMeteoResponse } from './openmeteo';
 import { fetchPairedReading } from './paired-reading';
 import type { ProviderCurrent } from './paired-reading';
+import type { SendHook } from '../../pkjs/request';
 import { readingStatus, valueOrGap } from '../reading';
 import type { ReadingCondition, ReadingResult, ReadingStatus } from '../reading';
 
@@ -252,13 +253,14 @@ function parseOwmCurrent(err: string | null, json: OwmResponse | null): Provider
  * @param key The wearer's OpenWeatherMap key.
  * @param request The function that performs the actual network request.
  * @param done Called once with a reading or a status for each place, in the order asked.
+ * @param onSend Hears each request go out, so a plugin can stamp it then, as `fetchPairedReading` says.
  */
-export function fetchReading(places: Array<WeatherCoords | null | undefined>, key: string, request: RequestFn, done: (results: ReadingResult[]) => void): void {
+export function fetchReading(places: Array<WeatherCoords | null | undefined>, key: string, request: RequestFn, done: (results: ReadingResult[]) => void, onSend?: SendHook): void {
   fetchPairedReading<OwmResponse>({
     source: 'owm',
     urlFor: (coords, apiKey) => `${OWM_WEATHER_API}?lat=${coords.lat}&lon=${coords.lon}&units=metric&appid=${encodeURIComponent(apiKey)}`,
     parse: parseOwmCurrent,
-  }, places, key, request, done);
+  }, places, key, request, done, onSend);
 }
 
 export default { fetch, fetchReading };

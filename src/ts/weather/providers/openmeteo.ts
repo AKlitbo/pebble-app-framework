@@ -8,7 +8,8 @@
 import util from '../util';
 import conditions from '../conditions';
 import type { RequestFn, DoneFn, WeatherOpts, WeatherCoords, HourlyStrip, DailyStrip, ForecastCols } from '../util';
-import { guardRequest, requestJson as requestWithError } from '../../pkjs/request';
+import { guardRequest, heardRequest, requestJson as requestWithError } from '../../pkjs/request';
+import type { SendHook } from '../../pkjs/request';
 import { READING_DAYS, READING_HOURS, readingStatus, valueOrGap } from '../reading';
 import type { DailySeries, HourlySeries, ReadingCondition, ReadingResult, WeatherReading } from '../reading';
 
@@ -805,8 +806,9 @@ function parseReading(json: OpenMeteoReadingResponse | null | undefined): Readin
  * @param places Each place's coordinates, in the order the readings come back.
  * @param request The function that performs the actual network request.
  * @param done Called once with a reading or a status for each place, in the order asked.
+ * @param onSend Hears the batch go out as `openmeteo`, its places as its calls, at `READING_WEIGHT` each.
  */
-export function fetchReading(places: Array<WeatherCoords | null | undefined>, request: RequestFn, done: (results: ReadingResult[]) => void): void {
+export function fetchReading(places: Array<WeatherCoords | null | undefined>, request: RequestFn, done: (results: ReadingResult[]) => void, onSend?: SendHook): void {
   const results: ReadingResult[] = places.map(() => readingStatus('No Location'));
   const asked = places.map((place, index) => index).filter((index) => validCoords(places[index]));
 
@@ -823,7 +825,9 @@ export function fetchReading(places: Array<WeatherCoords | null | undefined>, re
 
   const url = readingUrl(asked.map((index) => places[index] as WeatherCoords));
 
-  requestWithError<OpenMeteoReadingResponse | OpenMeteoReadingResponse[]>(url, guardRequest(request), (err, json) => {
+  const get = heardRequest(guardRequest(request), onSend, { source: 'openmeteo', calls: asked.length, weight: READING_WEIGHT });
+
+  requestWithError<OpenMeteoReadingResponse | OpenMeteoReadingResponse[]>(url, get, (err, json) => {
     // the rate limit answer can carry a JSON body of its own, so the status is read first
     if (err === 'http 429') {
       return fill(() => readingStatus('Rate Limit'));

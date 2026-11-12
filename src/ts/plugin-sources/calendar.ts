@@ -22,7 +22,7 @@ import { horizonFor, upcomingWindow } from '../calendar/window';
 import type { CalendarEvent } from '../calendar/ical';
 import { phoneDayNumber, phoneMidnight, phoneOffsetMinutes } from '../pkjs/phone-clock';
 import type { PhoneOffset } from '../pkjs/phone-clock';
-import { flag, instancesOf, propertiesOf, text, timestamp } from './shapes';
+import { flag, instancesOf, propertiesOf, text, timestamp } from '../plugin-shapes/shapes';
 import { PLUGINS_OFF_TEXT } from './page';
 import type { PluginSourceTexts } from './page';
 import { createCalendarDriver } from './calendar-driver';

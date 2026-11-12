@@ -8,8 +8,8 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { addStamp, allowance, keepStamps, ledgerPrint, loadStamps, saveStamps, takeBack } from './ledger';
-import type { LedgerStorage, QuotaPlan, Stamp } from './ledger';
+import { addStamp, allowance, keepStamps, ledgerPrint, loadStamps, saveStamps, takeBack, windowOpensAt } from './ledger';
+import type { LedgerStorage, QuotaLimit, QuotaPlan, Stamp } from './ledger';
 
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
@@ -194,6 +194,40 @@ describe('a rolling window beside a clock window', () => {
     const result = allowance(plan, sent, { calls: 4 }, Date.UTC(2026, 6, 1, 2, 0));
 
     expect(result).toEqual({ room: 2, retryAtMs: Date.UTC(2026, 6, 1, 23, 1, 1) });
+  });
+});
+
+// the last moment of 2026 in UTC, where every clock window turns over at once
+const YEAR_END = Date.UTC(2026, 11, 31, 23, 59, 59, 999);
+
+/** The limits and moments a provider's own RATE LIMIT can come at, and when each opens again. */
+const OPENINGS: Array<[string, QuotaLimit, number, number]> = [
+  ['a clock minute', { calls: 8, window: 'minute', follows: 'clock' }, NOW, Date.UTC(2026, 6, 1, 14, 31, 1)],
+  ['a clock minute at its last moment', { calls: 8, window: 'minute', follows: 'clock' }, YEAR_END, Date.UTC(2027, 0, 1, 0, 0, 1)],
+  ['a clock hour', { calls: 5000, window: 'hour', follows: 'clock' }, NOW, Date.UTC(2026, 6, 1, 15, 1)],
+  ['a clock day at its last moment', { calls: 800, window: 'day', follows: 'clock' }, YEAR_END, Date.UTC(2027, 0, 1, 0, 1)],
+  ['a clock month at its last moment', { calls: 100000, window: 'month', follows: 'clock' }, YEAR_END, Date.UTC(2027, 0, 1, 0, 1)],
+  ['a clock month in a leap February', { calls: 100000, window: 'month', follows: 'clock' }, Date.UTC(2028, 1, 29, 12), Date.UTC(2028, 2, 1, 0, 1)],
+  ['a rolling minute', { calls: 600, window: 'minute', follows: 'rolling' }, NOW, NOW + MINUTE + 1000],
+  ['a rolling day', { calls: 25, window: 'day', follows: 'rolling' }, NOW, NOW + 24 * HOUR + 1000],
+  ['a rolling month', { calls: 300000, window: 'month', follows: 'rolling' }, NOW, NOW + 31 * 24 * HOUR + 1000],
+];
+
+describe('windowOpensAt', () => {
+  /** A provider's own RATE LIMIT held it past its window, or let it try again a moment before the window opened. */
+  test.each(OPENINGS)('opens %s on time', (_label, limit, nowMs, opens) => {
+    const result = windowOpensAt(limit, nowMs);
+
+    expect(result).toBe(opens);
+  });
+
+  /** A stop set by a provider's answer and one set by the ledger's own count have to lift at the same moment, or one outlasts the other. */
+  test.each(OPENINGS)('opens %s when allowance says a full limit does', (_label, limit, nowMs) => {
+    const full = allowance({ keyed: true, limits: [limit] }, [[nowMs, limit.calls]], { calls: 1 }, nowMs).retryAtMs;
+
+    const result = windowOpensAt(limit, nowMs);
+
+    expect(result).toBe(full);
   });
 });
 

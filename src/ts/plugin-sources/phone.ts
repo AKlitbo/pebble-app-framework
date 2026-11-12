@@ -11,7 +11,7 @@
  * The page hook's wording lives here too, so a face built without `PLUGIN_PHONE` carries none of it.
  */
 
-import { firstProperties, numeric } from './shapes';
+import { firstProperties, numeric } from '../plugin-shapes/shapes';
 import type { PluginSourceTexts } from './page';
 import { PHONE_STANDARD } from './standard';
 import { createReadingDriver } from './reading-driver';

@@ -14,8 +14,8 @@
 import stockUtil from '../stock/util';
 import type { StockQuote } from '../stock/util';
 import wire from '../pkjs/wire';
-import { instancesOf, numeric, propertiesOf, text, timestamp } from './shapes';
-import type { InstanceProperties } from './shapes';
+import { instancesOf, numeric, propertiesOf, text, timestamp } from '../plugin-shapes/shapes';
+import type { InstanceProperties } from '../plugin-shapes/shapes';
 import { NO_PLUGIN } from './subscription';
 import type { PluginSourceTexts } from './page';
 import { createStockDriver } from './stock-driver';

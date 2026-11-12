@@ -9,6 +9,7 @@
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { pluginRequest, fetchText } from './request';
+import { NETWORK_ERROR } from '../pkjs/request';
 
 /** Runs the request with a stand-in fetch and returns what the callback heard. */
 async function heard(fake: () => Promise<unknown>): Promise<{ err: string | null; body?: string }> {
@@ -48,6 +49,23 @@ describe('pluginRequest', () => {
     const result = await heard(() => Promise.reject(new TypeError('Failed to fetch')));
 
     expect(result).toEqual({ err: 'network error', body: undefined });
+  });
+
+  /** A plugin takes a stamp back off on this text, so the request has to answer it exactly as the constant names it. */
+  test('answers a failed fetch with NETWORK_ERROR', async () => {
+    const result = (await heard(() => Promise.reject(new TypeError('Failed to fetch')))).err;
+
+    expect(result).toBe(NETWORK_ERROR);
+  });
+
+  /** A body lost after the host answered was answered NETWORK_ERROR, so a ledger took back a call the provider had counted. */
+  test.each([
+    ['a 200', 200, 'http 200'],
+    ['a 429', 429, 'http 429'],
+  ])('answers a body that cannot be read after %s with its status and no body', async (_label, status, err) => {
+    const result = await heard(() => Promise.resolve({ ok: status < 300, status, text: () => Promise.reject(new TypeError('stream lost')) }));
+
+    expect(result).toEqual({ err, body: undefined });
   });
 
   /** A fetch the timeout gave up is told apart, so it is not counted as the host refusing. */

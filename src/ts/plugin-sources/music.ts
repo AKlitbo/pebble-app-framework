@@ -17,7 +17,7 @@
  * The page hook's wording lives here too, so a face built without `PLUGIN_MUSIC` carries none of it.
  */
 
-import { firstProperties, flag, text } from './shapes';
+import { firstProperties, flag, text } from '../plugin-shapes/shapes';
 import { uuidKey } from './escape';
 import type { PluginSourceTexts } from './page';
 import { MUSIC_STANDARD } from './standard';

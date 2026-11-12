@@ -13,7 +13,7 @@
 
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import owm, { OWM_WMO } from './owm';
 import weatherApi, { WEATHERAPI_WMO } from './weatherapi';
 import { fetchReading as fetchOpenMeteoReading } from './openmeteo';
@@ -21,6 +21,8 @@ import util from '../util';
 import { fetchRequest } from '../../testing/fetch-request';
 import { routing } from '../../testing/routing';
 import type { ReadingResult, ReadingStatus, WeatherReading } from '../reading';
+import { NETWORK_ERROR } from '../../pkjs/request';
+import type { ReadingSend, SendHook } from '../../pkjs/request';
 import type { RequestFn, WeatherCoords, WeatherResult } from '../util';
 
 /** A fixture's text. */
@@ -223,6 +225,92 @@ describe('WeatherAPI.com fetchReading', () => {
     const result = [delhi.ok, delhi.temperature, delhi.utcOffset, delhi.hourly.time.length, delhi.seriesStatus];
 
     expect(result).toEqual([true, 23.7, 19800, 0, 'NET ERROR']);
+  });
+});
+
+/** A send hook that records what goes out and how each request answered. */
+function recordingHook() {
+  const sends: ReadingSend[] = [];
+  const answers: Array<[string, string | null]> = [];
+  const hook: SendHook = (send) => {
+    sends.push(send);
+
+    return (err) => answers.push([send.source, err]);
+  };
+
+  return { hook, sends, answers };
+}
+
+describe('the send hook', () => {
+  /**
+   * A plugin stamps its ledger as each request goes out, so the hook has to name every request and what
+   * it counts as. A place with bad coordinates sends nothing, and the batch counts each place in it.
+   */
+  test('hears the Open-Meteo batch and each provider call as they go out', () => {
+    const { hook, sends } = recordingHook();
+
+    owm.fetchReading([DELHI, { lat: 95, lon: 0 }, HONOLULU], 'k', stub({ body: OPEN_METEO }, { body: OWM_DELHI }, { body: OWM_HONOLULU }), () => {}, hook);
+
+    expect(sends).toEqual([
+      { source: 'openmeteo', calls: 2, weight: 3.9 },
+      { source: 'owm', calls: 1, weight: 1 },
+      { source: 'owm', calls: 1, weight: 1 },
+    ]);
+  });
+
+  /** A request that never left the phone spent nothing, so its stamps come back off, and the plugin has to hear which one that was. */
+  test('tells the hook how each request answered, a throw as NETWORK_ERROR', () => {
+    const { hook, answers } = recordingHook();
+    const request = stub({ body: OPEN_METEO }, { body: WEATHERAPI_DELHI }, {});
+    const failing: RequestFn = (url, callback) => {
+      if (url.includes('weatherapi') && url.includes('21.3069')) {
+        throw new Error('no network stack');
+      }
+
+      request(url, callback);
+    };
+
+    weatherApi.fetchReading(PLACES, 'k', failing, () => {}, hook);
+
+    expect(answers).toEqual([
+      ['openmeteo', null],
+      ['weatherapi', null],
+      ['weatherapi', NETWORK_ERROR],
+    ]);
+  });
+
+  /** A hook that threw on one request dropped that request and left the run's done never called. */
+  test('keeps the run going when the hook or its answer throws', () => {
+    let done = 0;
+    let sends = 0;
+    const hook: SendHook = () => {
+      sends++;
+
+      if (sends === 2) {
+        throw new Error('hook boom');
+      }
+
+      return () => {
+        throw new Error('answer boom');
+      };
+    };
+
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    owm.fetchReading(PLACES, 'k', stub({ body: OPEN_METEO }, { body: OWM_DELHI }, { body: OWM_HONOLULU }), (results) => {
+      done += results.filter((reading) => reading.ok).length;
+    }, hook);
+
+    expect([sends, done]).toEqual([3, 2]);
+  });
+
+  /** With no key nothing is sent, so nothing may be stamped. */
+  test('hears nothing when no key means no request', () => {
+    const { hook, sends } = recordingHook();
+
+    owm.fetchReading(PLACES, '', stub({ body: OPEN_METEO }, {}, {}), () => {}, hook);
+
+    expect(sends).toEqual([]);
   });
 });
 

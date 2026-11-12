@@ -7,7 +7,8 @@
  * a place.
  */
 
-import { guardRequest, requestJson } from '../../pkjs/request';
+import { guardRequest, heardRequest, requestJson } from '../../pkjs/request';
+import type { SendHook } from '../../pkjs/request';
 import { joinCalls } from '../../pkjs/providers';
 import { fetchReading as fetchOpenMeteoReading, validCoords } from './openmeteo';
 import { emptyDaily, emptyHourly, readingStatus } from '../reading';
@@ -101,8 +102,10 @@ function pair(source: string, current: ProviderCurrent, series: ReadingResult): 
  * @param key The wearer's API key for the provider.
  * @param request The function that performs the actual network request.
  * @param done Called once with a reading or a status for each place, in the order asked.
+ * @param onSend Hears each request go out: the Open-Meteo batch as `openmeteo`, and each place's call to
+ *   the provider under its `source`, as one call of weight 1.
  */
-export function fetchPairedReading<T>(provider: PairedProvider<T>, places: Array<WeatherCoords | null | undefined>, key: string, request: RequestFn, done: (results: ReadingResult[]) => void): void {
+export function fetchPairedReading<T>(provider: PairedProvider<T>, places: Array<WeatherCoords | null | undefined>, key: string, request: RequestFn, done: (results: ReadingResult[]) => void, onSend?: SendHook): void {
   if (!key) {
     return done(places.map(() => readingStatus('No API Key')));
   }
@@ -130,10 +133,12 @@ export function fetchPairedReading<T>(provider: PairedProvider<T>, places: Array
   fetchOpenMeteoReading(asked.map((index) => places[index]), get, (answered) => {
     series = answered;
     finish();
-  });
+  }, onSend);
+
+  const heard = heardRequest(get, onSend, { source: provider.source, calls: 1, weight: 1 });
 
   asked.forEach((index, position) => {
-    requestJson<T>(provider.urlFor(places[index] as WeatherCoords, key), get, (err, json) => {
+    requestJson<T>(provider.urlFor(places[index] as WeatherCoords, key), heard, (err, json) => {
       currents[position] = provider.parse(err, json);
       finish();
     });

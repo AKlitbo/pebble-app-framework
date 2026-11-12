@@ -233,15 +233,34 @@ function inWindow(limit: QuotaLimit, atMs: number, nowMs: number): boolean {
 }
 
 /**
- * When a spent limit has room for the calls asked for.
+ * When a limit that is full now has room again, for a provider that answered `RATE LIMIT` on its own.
  *
  * A clock window opens a second past the next minute, or a minute past the next hour, midnight, or
- * 1st, since the provider's clock can sit a little behind the phone's. A rolling one opens a second
- * after enough of its oldest calls have aged out.
+ * 1st in UTC, since the provider's clock can sit a little behind the phone's. A rolling window opens a
+ * second after a call made now ages out, a whole window from now. These are the moments `allowance`
+ * gives for the same limit filled now.
+ *
+ * @param limit The limit.
+ * @param nowMs Now, in epoch milliseconds.
+ * @return When the limit opens, in epoch milliseconds.
+ */
+export function windowOpensAt(limit: QuotaLimit, nowMs: number): number {
+  if (limit.follows === 'clock') {
+    return clockNext(limit.window, nowMs) + (limit.window === 'minute' ? SECOND_MS : MINUTE_MS);
+  }
+
+  return nowMs + WINDOW_MS[limit.window] + SECOND_MS;
+}
+
+/**
+ * When a spent limit has room for the calls asked for.
+ *
+ * A clock window opens when `windowOpensAt` says. A rolling one opens a second after enough of its
+ * oldest calls have aged out.
  */
 function opensAt(limit: QuotaLimit, inside: Stamp[], over: number, nowMs: number): number {
   if (limit.follows === 'clock') {
-    return clockNext(limit.window, nowMs) + (limit.window === 'minute' ? SECOND_MS : MINUTE_MS);
+    return windowOpensAt(limit, nowMs);
   }
 
   const windowMs = WINDOW_MS[limit.window];

@@ -3,6 +3,12 @@
  * plus the JSON handling the weather and stock providers put on top of it.
  */
 
+/**
+ * The error a request answers when it never reached the host, such as no network or a request that
+ * threw. A call that answers with it spent nothing, so a ledger takes its stamp back off.
+ */
+export const NETWORK_ERROR = 'network error';
+
 /** An HTTP GET the caller supplies, so the specs can swap in a fake. */
 export type RequestFn = (url: string, callback: (err: string | null, body?: string) => void) => void;
 
@@ -50,7 +56,7 @@ export function request(url: string, callback: (err: string | null, body?: strin
   };
 
   xhr.onerror = () => {
-    finish('network error');
+    finish(NETWORK_ERROR);
   };
 
   xhr.ontimeout = () => {
@@ -125,6 +131,61 @@ export function requestJson<T = unknown>(url: string, get: RequestFn, onJson: (e
   });
 }
 
+/** A request about to go out for a weather reading, as a send hook hears it. */
+export interface ReadingSend {
+  /** The provider the request goes to: `openmeteo`, `owm`, or `weatherapi`. */
+  source: string;
+  /** How many calls it counts as, one for each place an Open-Meteo batch asks for. */
+  calls: number;
+  /** What each call weighs against the provider's limits. */
+  weight: number;
+}
+
+/**
+ * Hears each request a reading sends as it goes out, so a plugin can stamp it in its ledger then.
+ * It can hand back a function, which hears the request's error once it answers, null for none, so a
+ * request that answers `NETWORK_ERROR` can have its stamps taken back off.
+ */
+export type SendHook = (send: ReadingSend) => ((err: string | null) => void) | void;
+
+/**
+ * Wraps a request so a send hook hears it go out, and hears how it answered.
+ *
+ * @param get The HTTP GET to wrap, which should answer once and never throw, as `guardRequest` makes it.
+ * @param onSend The hook, or undefined for none, which hands back `get` as it is.
+ * @param send What the request counts as.
+ * @return The GET, telling the hook about each request.
+ */
+export function heardRequest(get: RequestFn, onSend: SendHook | undefined, send: ReadingSend): RequestFn {
+  if (!onSend) {
+    return get;
+  }
+
+  // a hook that throws is the plugin's own code failing. it is logged and passed over, so one throw
+  // cannot drop the request or stop the run from finishing
+  return (url, callback) => {
+    let answered: ((err: string | null) => void) | void = undefined;
+
+    try {
+      answered = onSend(send);
+    } catch (error) {
+      console.error(`a send hook threw: ${String(error)}`);
+    }
+
+    get(url, (err, body) => {
+      if (answered) {
+        try {
+          answered(err);
+        } catch (error) {
+          console.error(`a send hook's answer threw: ${String(error)}`);
+        }
+      }
+
+      callback(err, body);
+    });
+  };
+}
+
 /**
  * Wraps a request so it answers once, and so one that throws answers `network error` rather than
  * throwing out of the caller.
@@ -163,7 +224,7 @@ export function guardRequest(get: RequestFn): RequestFn {
         throw error;
       }
 
-      answer('network error');
+      answer(NETWORK_ERROR);
     }
   };
 }

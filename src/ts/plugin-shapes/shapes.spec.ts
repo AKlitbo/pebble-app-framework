@@ -11,7 +11,7 @@
 
 import { describe, test, expect } from 'vitest';
 import { firstProperties, flag, instancesOf, numeric, propertiesOf, seriesIndex, seriesValue, text, timestamp } from './shapes';
-import type { SeriesShape, SourceEnvelope, SourceProperty } from './types';
+import type { SeriesShape, SourceEnvelope, SourceProperty } from '../plugin-sources/types';
 
 // an hourly series from 2026-07-10 00:00 UTC with four points, the shape the built-in weather sends
 const SERIES_START = Math.floor(Date.UTC(2026, 6, 10, 0, 0) / 1000);

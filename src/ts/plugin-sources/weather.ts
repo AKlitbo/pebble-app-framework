@@ -16,8 +16,9 @@ import conditions from '../weather/conditions';
 import type { DailyStrip, HourlyStrip, WeatherResult } from '../weather/util';
 import wire from '../pkjs/wire';
 import { phoneDayOf, phoneOffsetMinutes } from '../pkjs/phone-clock';
-import { firstProperties, instancesOf, numeric, seriesIndex, seriesValue, text, timestamp } from './shapes';
-import type { NumericReading } from './shapes';
+import { firstProperties, instancesOf, numeric, seriesIndex, seriesValue, text, timestamp } from '../plugin-shapes/shapes';
+import { appFahrenheit, temperatureScale } from '../plugin-shapes/units';
+import type { NumericReading } from '../plugin-shapes/shapes';
 import { NO_PLUGIN } from './subscription';
 import { PLUGINS_OFF_TEXT } from './page';
 import type { PluginSourceTexts } from './page';
@@ -155,21 +156,6 @@ function boundedReading(property: SourceProperty | undefined, ownBounds = true):
 /** A number inside the bounds a field can hold, or undefined. */
 function within(value: number | undefined, low: number, high: number): number | undefined {
   return value !== undefined && value >= low && value <= high ? value : undefined;
-}
-
-/** Whether a temperature unit is °C, °F, or neither. */
-function temperatureScale(unit: string | undefined): 'C' | 'F' | undefined {
-  const plain = String(unit || '').replace(/[°º\s]/g, '').toUpperCase();
-
-  if (plain === 'C' || plain === '℃' || plain === 'CELSIUS') {
-    return 'C';
-  }
-
-  if (plain === 'F' || plain === '℉' || plain === 'FAHRENHEIT') {
-    return 'F';
-  }
-
-  return undefined;
 }
 
 /**
@@ -527,22 +513,7 @@ export function weatherFromUpdate(envelope: SourceEnvelope | null | undefined, o
   return result;
 }
 
-/**
- * Whether the Pebble app's `preferences/units` update says °F.
- *
- * The Pebble app's built-in Preferences plugin serves the wearer's units as text, one instance
- * with `temperature` reading `°C` or `°F`. It asks for no permission. An update the unit cannot be
- * read from says nothing, so the weather keeps the unit it had.
- *
- * @param envelope One update from `preferences/units`, which may be missing or carry anything.
- * @return True for °F, false for °C, or undefined when the update gives neither.
- */
-export function appFahrenheit(envelope: SourceEnvelope | null | undefined): boolean | undefined {
-  const properties = firstProperties(envelope);
-  const scale = properties ? temperatureScale(text(properties.temperature, 'short')) : undefined;
-
-  return scale === undefined ? undefined : scale === 'F';
-}
+export { appFahrenheit };
 
 /**
  * The properties the weather subscription asks for.

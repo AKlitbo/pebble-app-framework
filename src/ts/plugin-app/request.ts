@@ -8,6 +8,7 @@
  * `AbortSignal.timeout` where the runtime has it. Without it the Pebble app ends the run on its own.
  */
 
+import { NETWORK_ERROR } from '../pkjs/request';
 import type { RequestFn } from '../pkjs/request';
 
 /** How long a fetch may take before it is given up, under the Pebble app's own limit on a run. */
@@ -30,8 +31,9 @@ function timedOut(error: unknown): boolean {
  *
  * A 2xx answers with null and the body. Any other status answers with `http <status>` and the body,
  * so a provider still reads its own error JSON and a 429 still reads as a rate limit. A fetch that
- * never reaches the host answers `network error`, and one given up after the timeout answers
- * `timeout`, with no body either way.
+ * never reaches the host answers `NETWORK_ERROR`, and one given up after the timeout answers
+ * `timeout`, with no body either way. A body that cannot be read after the host answered gives the
+ * status with no body.
  *
  * @param url The address to fetch.
  * @param callback Called once with an error, or with null and the body.
@@ -50,12 +52,16 @@ export const pluginRequest: RequestFn = (url, callback) => {
     }
   }
 
-  fetch(url, signal ? { signal } : undefined)
-    .then((response) => response.text().then((body) => ({ err: response.ok ? null : `http ${response.status}`, body })))
-    .then(
-      (reply) => answer(reply.err, reply.body),
-      (error: unknown) => answer(timedOut(error) ? 'timeout' : 'network error')
-    );
+  // only a fetch that fails reached no host. one whose body cannot be read after the host answered
+  // was counted by the provider, so it answers its status with no body rather than NETWORK_ERROR,
+  // and a ledger keeps its stamp
+  fetch(url, signal ? { signal } : undefined).then(
+    (response) => response.text().then(
+      (body) => answer(response.ok ? null : `http ${response.status}`, body),
+      (error: unknown) => answer(timedOut(error) ? 'timeout' : `http ${response.status}`)
+    ),
+    (error: unknown) => answer(timedOut(error) ? 'timeout' : NETWORK_ERROR)
+  );
 };
 
 /**
