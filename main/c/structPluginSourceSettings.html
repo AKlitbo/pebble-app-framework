@@ -211,10 +211,13 @@ char&#160;</td><td class="memItemRight"><b>weather</b> [<a class="el" href="grou
 <tr class="memitem:a75f039697f416740c7eac0c5653862da" id="r_a75f039697f416740c7eac0c5653862da"><td class="memItemLeft"><a id="a75f039697f416740c7eac0c5653862da" name="a75f039697f416740c7eac0c5653862da"></a>
 char&#160;</td><td class="memItemRight"><b>calendar</b> [<a class="el" href="group__lib__settings.html#gab2dda1ab7a5b7a83f3f2923e285d2306">PLUGIN_SOURCE_CALENDAR_LEN</a>]</td></tr>
 <tr class="memdesc:a75f039697f416740c7eac0c5653862da"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the Calendar Source select saved. <br /></td></tr>
+<tr class="memitem:a2ac1d5d394b4124b63283d1d1c6186ca" id="r_a2ac1d5d394b4124b63283d1d1c6186ca"><td class="memItemLeft"><a id="a2ac1d5d394b4124b63283d1d1c6186ca" name="a2ac1d5d394b4124b63283d1d1c6186ca"></a>
+char&#160;</td><td class="memItemRight"><b>stock</b> [<a class="el" href="group__lib__settings.html#gab7b533cd87d097621a76ce43e2fa7b82">PLUGIN_SOURCE_STOCK_LEN</a>]</td></tr>
+<tr class="memdesc:a2ac1d5d394b4124b63283d1d1c6186ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">What the stocks' Data Source select saved. <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The saved choices, version byte first. </p>
-<p>Both buffers are always there, whichever kinds the face keeps. A face that turns its second kind on in a later release then reads the same saved blob, and the new kind starts on its default. </p>
+<p>Every buffer is always there, whichever kinds the face keeps. A face that turns another kind on in a later release then reads the same saved blob, and the new kind starts on its default. A version 1 blob is the first 21 bytes and ends before the stock buffer, so reading one leaves the stock choice on the default it was given before the read. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/c/pebble/system/settings/<a class="el" href="plugin__source_8h_source.html">plugin_source.h</a></li>
 </ul>

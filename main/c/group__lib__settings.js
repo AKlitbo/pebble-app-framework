@@ -8,6 +8,7 @@ var group__lib__settings =
     [ "settings_chain.h", "settings__chain_8h.html", null ],
     [ "PluginSourceSettings", "structPluginSourceSettings.html", [
       [ "calendar", "structPluginSourceSettings.html#a75f039697f416740c7eac0c5653862da", null ],
+      [ "stock", "structPluginSourceSettings.html#a2ac1d5d394b4124b63283d1d1c6186ca", null ],
       [ "version", "structPluginSourceSettings.html#a409a10e68ff84095c7161fca52377e1c", null ],
       [ "weather", "structPluginSourceSettings.html#a2b47841bbff1c8c327755fcc07dc4fd4", null ]
     ] ],
@@ -59,7 +60,10 @@ var group__lib__settings =
     [ "PLUGIN_SOURCE_FIRST_SIZE", "group__lib__settings.html#gaf0cade985b8b365b66441618bc5085a0", null ],
     [ "PLUGIN_SOURCE_KEEPS_ANY", "group__lib__settings.html#ga256177eefe8ca85558ab1950faeb5d0b", null ],
     [ "PLUGIN_SOURCE_KEEPS_CALENDAR", "group__lib__settings.html#ga54d7afa30c1599cabdaefe00ebe5e667", null ],
+    [ "PLUGIN_SOURCE_KEEPS_STOCK", "group__lib__settings.html#ga4527c503f4a0ba228febe0f9985ad28f", null ],
     [ "PLUGIN_SOURCE_KEEPS_WEATHER", "group__lib__settings.html#ga7519f9e335dac1caa4af7e098ba595df", null ],
+    [ "PLUGIN_SOURCE_STOCK_FIELD", "group__lib__settings.html#ga107f6bcaca5337f26612fb0e0848e169", null ],
+    [ "PLUGIN_SOURCE_STOCK_LEN", "group__lib__settings.html#gab7b533cd87d097621a76ce43e2fa7b82", null ],
     [ "PLUGIN_SOURCE_VERSION", "group__lib__settings.html#ga2443bbd036bbbdda30abfa06a473bdd0", null ],
     [ "PLUGIN_SOURCE_WEATHER_FIELD", "group__lib__settings.html#gadefc10b23da283a35b2957a7e6e6082c", null ],
     [ "PLUGIN_SOURCE_WEATHER_LEN", "group__lib__settings.html#ga990cbb3116efef955c98d6f789302b35", null ],

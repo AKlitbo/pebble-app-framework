@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('group__lib__se
 <tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
 Files</h2></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Fsettings_2Fplugin_5Fsource_2Eh" id="r_src_2Fc_2Fpebble_2Fsystem_2Fsettings_2Fplugin_5Fsource_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="plugin__source_8h.html">src/c/pebble/system/settings/plugin_source.h</a></td></tr>
-<tr class="memdesc:plugin__source_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The struct the framework keeps the weather and calendar source choice in, for a face built with a plugin define, and the checks that decide which of the two it keeps. <br /></td></tr>
+<tr class="memdesc:plugin__source_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">The struct the framework keeps the weather, calendar, and stock source choices in, for a face built with a plugin define, and the checks that decide which of them it keeps. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Fsettings_2Fsetting_5Fvalues_2Eh" id="r_src_2Fc_2Fpebble_2Fsystem_2Fsettings_2Fsetting_5Fvalues_2Eh"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="setting__values_8h.html">src/c/pebble/system/settings/setting_values.h</a></td></tr>
 <tr class="memdesc:setting__values_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Named values for the multi-choice settings. <br /></td></tr>
 <tr class="memitem:src_2Fc_2Fpebble_2Fsystem_2Fsettings_2Fsettings_2Ec" id="r_src_2Fc_2Fpebble_2Fsystem_2Fsettings_2Fsettings_2Ec"><td class="memItemLeft">file &#160;</td><td class="memItemRight"><a class="el" href="settings_8c.html">src/c/pebble/system/settings/settings.c</a></td></tr>
@@ -232,8 +232,11 @@ Macros</h2></td></tr>
 <tr class="memitem:ga54d7afa30c1599cabdaefe00ebe5e667" id="r_ga54d7afa30c1599cabdaefe00ebe5e667"><td class="memItemLeft"><a id="ga54d7afa30c1599cabdaefe00ebe5e667" name="ga54d7afa30c1599cabdaefe00ebe5e667"></a>
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_CALENDAR</b>&#160;&#160;&#160;0</td></tr>
 <tr class="memdesc:ga54d7afa30c1599cabdaefe00ebe5e667"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 when the watch keeps the calendar source choice, for a face with PLUGIN_CALENDAR and CALENDAR_SOURCE <br /></td></tr>
+<tr class="memitem:ga4527c503f4a0ba228febe0f9985ad28f" id="r_ga4527c503f4a0ba228febe0f9985ad28f"><td class="memItemLeft"><a id="ga4527c503f4a0ba228febe0f9985ad28f" name="ga4527c503f4a0ba228febe0f9985ad28f"></a>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_STOCK</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga4527c503f4a0ba228febe0f9985ad28f"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 when the watch keeps the stock source choice, for a face with PLUGIN_STOCKS and STOCK_PROVIDER <br /></td></tr>
 <tr class="memitem:ga256177eefe8ca85558ab1950faeb5d0b" id="r_ga256177eefe8ca85558ab1950faeb5d0b"><td class="memItemLeft"><a id="ga256177eefe8ca85558ab1950faeb5d0b" name="ga256177eefe8ca85558ab1950faeb5d0b"></a>
-#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_ANY</b>&#160;&#160;&#160;(<a class="el" href="#ga7519f9e335dac1caa4af7e098ba595df">PLUGIN_SOURCE_KEEPS_WEATHER</a> || <a class="el" href="#ga54d7afa30c1599cabdaefe00ebe5e667">PLUGIN_SOURCE_KEEPS_CALENDAR</a>)</td></tr>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_ANY</b>&#160;&#160;&#160;(<a class="el" href="#ga7519f9e335dac1caa4af7e098ba595df">PLUGIN_SOURCE_KEEPS_WEATHER</a> || <a class="el" href="#ga54d7afa30c1599cabdaefe00ebe5e667">PLUGIN_SOURCE_KEEPS_CALENDAR</a> || <a class="el" href="#ga4527c503f4a0ba228febe0f9985ad28f">PLUGIN_SOURCE_KEEPS_STOCK</a>)</td></tr>
 <tr class="memdesc:ga256177eefe8ca85558ab1950faeb5d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The watch keeps at least one source choice, so the framework's schema joins the chain. <br /></td></tr>
 <tr class="memitem:ga990cbb3116efef955c98d6f789302b35" id="r_ga990cbb3116efef955c98d6f789302b35"><td class="memItemLeft"><a id="ga990cbb3116efef955c98d6f789302b35" name="ga990cbb3116efef955c98d6f789302b35"></a>
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_WEATHER_LEN</b>&#160;&#160;&#160;12</td></tr>
@@ -241,8 +244,11 @@ Macros</h2></td></tr>
 <tr class="memitem:gab2dda1ab7a5b7a83f3f2923e285d2306" id="r_gab2dda1ab7a5b7a83f3f2923e285d2306"><td class="memItemLeft"><a id="gab2dda1ab7a5b7a83f3f2923e285d2306" name="gab2dda1ab7a5b7a83f3f2923e285d2306"></a>
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_CALENDAR_LEN</b>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:gab2dda1ab7a5b7a83f3f2923e285d2306"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of the calendar source buffer. <span class="tt">plugin</span> is the longest value the settings page saves, and its 6 characters plus its end leave one byte spare. <br /></td></tr>
+<tr class="memitem:gab7b533cd87d097621a76ce43e2fa7b82" id="r_gab7b533cd87d097621a76ce43e2fa7b82"><td class="memItemLeft"><a id="gab7b533cd87d097621a76ce43e2fa7b82" name="gab7b533cd87d097621a76ce43e2fa7b82"></a>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_STOCK_LEN</b>&#160;&#160;&#160;14</td></tr>
+<tr class="memdesc:gab7b533cd87d097621a76ce43e2fa7b82"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of the stock source buffer. <span class="tt">alphavantage</span> is the longest value the settings page saves, and its 12 characters plus its end leave one byte spare. <br /></td></tr>
 <tr class="memitem:ga2443bbd036bbbdda30abfa06a473bdd0" id="r_ga2443bbd036bbbdda30abfa06a473bdd0"><td class="memItemLeft"><a id="ga2443bbd036bbbdda30abfa06a473bdd0" name="ga2443bbd036bbbdda30abfa06a473bdd0"></a>
-#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_VERSION</b>&#160;&#160;&#160;1</td></tr>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_VERSION</b>&#160;&#160;&#160;2</td></tr>
 <tr class="memdesc:ga2443bbd036bbbdda30abfa06a473bdd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The schema's version, raised by one with each appended field. <br /></td></tr>
 <tr class="memitem:gaf0cade985b8b365b66441618bc5085a0" id="r_gaf0cade985b8b365b66441618bc5085a0"><td class="memItemLeft"><a id="gaf0cade985b8b365b66441618bc5085a0" name="gaf0cade985b8b365b66441618bc5085a0"></a>
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_FIRST_SIZE</b>&#160;&#160;&#160;21</td></tr>
@@ -252,11 +258,14 @@ Macros</h2></td></tr>
 <tr class="memitem:gaed0d9a6d4a3165af7fd1c790795ca7fb" id="r_gaed0d9a6d4a3165af7fd1c790795ca7fb"><td class="memItemLeft"><a id="gaed0d9a6d4a3165af7fd1c790795ca7fb" name="gaed0d9a6d4a3165af7fd1c790795ca7fb"></a>
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_CALENDAR_FIELD</b></td></tr>
 <tr class="memdesc:gaed0d9a6d4a3165af7fd1c790795ca7fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The field the framework keeps the calendar source in, with a comma after it, or nothing when the watch keeps no calendar choice. It works as the weather one does. <br /></td></tr>
+<tr class="memitem:ga107f6bcaca5337f26612fb0e0848e169" id="r_ga107f6bcaca5337f26612fb0e0848e169"><td class="memItemLeft"><a id="ga107f6bcaca5337f26612fb0e0848e169" name="ga107f6bcaca5337f26612fb0e0848e169"></a>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_STOCK_FIELD</b></td></tr>
+<tr class="memdesc:ga107f6bcaca5337f26612fb0e0848e169"><td class="mdescLeft">&#160;</td><td class="mdescRight">The field the framework keeps the stock source in, with a comma after it, or nothing when the watch keeps no stock choice. It works as the weather one does. <br /></td></tr>
 <tr class="memitem:ga172fb13323b731d043aefa0d66a751ce" id="r_ga172fb13323b731d043aefa0d66a751ce"><td class="memItemLeft"><a id="ga172fb13323b731d043aefa0d66a751ce" name="ga172fb13323b731d043aefa0d66a751ce"></a>
-#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_FIELDS</b>&#160;&#160;&#160;<a class="el" href="#gadefc10b23da283a35b2957a7e6e6082c">PLUGIN_SOURCE_WEATHER_FIELD</a> <a class="el" href="#gaed0d9a6d4a3165af7fd1c790795ca7fb">PLUGIN_SOURCE_CALENDAR_FIELD</a></td></tr>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_FIELDS</b>&#160;&#160;&#160;<a class="el" href="#gadefc10b23da283a35b2957a7e6e6082c">PLUGIN_SOURCE_WEATHER_FIELD</a> <a class="el" href="#gaed0d9a6d4a3165af7fd1c790795ca7fb">PLUGIN_SOURCE_CALENDAR_FIELD</a> <a class="el" href="#ga107f6bcaca5337f26612fb0e0848e169">PLUGIN_SOURCE_STOCK_FIELD</a></td></tr>
 <tr class="memdesc:ga172fb13323b731d043aefa0d66a751ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The framework schema's whole field table, for inside its braces. <br /></td></tr>
 <tr class="memitem:ga23404e19f790c5308f720b0237438e4f" id="r_ga23404e19f790c5308f720b0237438e4f"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga23404e19f790c5308f720b0237438e4f">SETTINGS_PLUGIN_SOURCE_KEY</a>&#160;&#160;&#160;249</td></tr>
-<tr class="memdesc:ga23404e19f790c5308f720b0237438e4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist key the framework keeps the weather and calendar source choice on, so a face leaves it free.  <br /></td></tr>
+<tr class="memdesc:ga23404e19f790c5308f720b0237438e4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">The persist key the framework keeps the weather, calendar, and stock source choices on, so a face leaves it free.  <br /></td></tr>
 <tr class="memitem:ga9f418302396c6aa0b9d2bc9a2e75a9b0" id="r_ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga9f418302396c6aa0b9d2bc9a2e75a9b0">SETTINGS_BLOB_SIZE</a>(blob)</td></tr>
 <tr class="memdesc:ga9f418302396c6aa0b9d2bc9a2e75a9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of a settings struct, and a build that stops when the struct is too big to save. SETTINGS_BLOB uses it for a schema's <span class="tt">blob_size</span>.  <br /></td></tr>
 <tr class="memitem:ga3af4893cdd074306b3fcc30df1cb8a00" id="r_ga3af4893cdd074306b3fcc30df1cb8a00"><td class="memItemLeft">#define&#160;</td><td class="memItemRight"><a class="el" href="#ga3af4893cdd074306b3fcc30df1cb8a00">SETTINGS_BLOB</a>(settings,  first)</td></tr>
@@ -1127,8 +1136,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The persist key the framework keeps the weather and calendar source choice on, so a face leaves it free. </p>
-<p>Only a face built with <span class="tt">PLUGIN_WEATHER</span> or <span class="tt">PLUGIN_CALENDAR</span> that offers the choice writes it. Every face leaves it free anyway, for its settings and its stores, since turning a define on in a later release would otherwise land the choice on top of whatever the face kept there. settings_init catches a settings schema on it but cannot see a store's key. </p>
+<p>The persist key the framework keeps the weather, calendar, and stock source choices on, so a face leaves it free. </p>
+<p>Only a face built with <span class="tt">PLUGIN_WEATHER</span>, <span class="tt">PLUGIN_CALENDAR</span>, or <span class="tt">PLUGIN_STOCKS</span> that offers the choice writes it. Every face leaves it free anyway, for its settings and its stores, since turning a define on in a later release would otherwise land the choice on top of whatever the face kept there. settings_init catches a settings schema on it but cannot see a store's key. </p>
 
 </div>
 </div>
@@ -1640,7 +1649,7 @@ Functions</h2></td></tr>
 
 <p>Load a face's settings from their saved blobs, applying defaults first. </p>
 <p>Walks the companion chain so every schema in it is loaded. A saved blob is read only when its size and version fit the schema, or when the schema's migrate hook takes it, and every field read back is cleaned. A blob that fits neither is dropped and the schema stays on its defaults. A schema over the 256 bytes one persist key holds is logged as an error, since it can never be saved whole. SETTINGS_BLOB stops the build for one, so the log catches a schema written without it.</p>
-<p>A face built with <span class="tt">PLUGIN_WEATHER</span> or <span class="tt">PLUGIN_CALENDAR</span> that declares the kind's select key also gets the framework's schema for the source choice, walked after its own and saved under SETTINGS_PLUGIN_SOURCE_KEY. The choice is only kept once this has run, so a face with no settings of its own still has to call it, as settings_init(NULL), or a reset of the Pebble app drops the wearer's pick. The pick only reaches the phone in the settings reply, so the build adds SETTINGS_REQUEST and SETTINGS_FRESH to such a face's keys. Call it before appmessage_open, which sizes the outbox from the settings reply. Called after, every settings reply goes out empty and a reinstall restores nothing. A face schema on SETTINGS_PLUGIN_SOURCE_KEY is logged as an error and the framework's schema is left out. A face field on a select key the framework keeps is logged too.</p>
+<p>A face built with <span class="tt">PLUGIN_WEATHER</span>, <span class="tt">PLUGIN_CALENDAR</span>, or <span class="tt">PLUGIN_STOCKS</span> that declares the kind's select key also gets the framework's schema for the source choice, walked after its own and saved under SETTINGS_PLUGIN_SOURCE_KEY. The choice is only kept once this has run, so a face with no settings of its own still has to call it, as settings_init(NULL), or a reset of the Pebble app drops the wearer's pick. The pick only reaches the phone in the settings reply, so the build adds SETTINGS_REQUEST and SETTINGS_FRESH to such a face's keys. Call it before appmessage_open, which sizes the outbox from the settings reply. Called after, every settings reply goes out empty and a reinstall restores nothing. A face schema on SETTINGS_PLUGIN_SOURCE_KEY is logged as an error and the framework's schema is left out. A face field on a select key the framework keeps is logged too.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">schema</td><td>The head schema defining the face's settings, or NULL for a face with none. </td></tr>

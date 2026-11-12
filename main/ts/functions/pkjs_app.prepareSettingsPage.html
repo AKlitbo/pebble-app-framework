@@ -57,19 +57,21 @@
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Gets the Clay page ready to open, the way the phone does each time the wearer opens the settings.</p>
 <p>Each feature's configOpened runs first, while the old settings are still the saved ones. Then,
-when any feature has a page hook, the page goes through foldFeatures and Clay gets the result.
-Clay writes the page from clay.config and clay.customFn on every generateUrl, so both are set here
-rather than building Clay again. The folds always start from the face's own page, which the
-defaults and the settings restore also read. With no page hook the page is left as Clay built it.</p>
+when any feature has a page hook or the page has an API key row, the page goes through
+foldFeatures, each key row gets the key held for every provider of its select, and Clay gets the
+result. Clay writes the page from clay.config and clay.customFn on every generateUrl, so both are
+set here rather than building Clay again. The folds always start from the face's own page, which
+the defaults and the settings restore also read. With neither the page is left as Clay built it.</p>
 <p>A feature can hand over the Clay components its page hook's rows need, as the plugin sources do
 for their notes. Each one is registered for a page that uses it, and taken off again on an open
 whose page does not, so a page without those rows never carries their code. The hidden store is
 registered for a folded page that gains a hiddenStore row, and the builder's intro drops its
 mention of weather when the fold leaves no Weather section. The custom function
 is put together again on every open from that open's page, the framework's show and hide when it
-has a visibleWhen row and then the face's customClay, so no open keeps the one an earlier open
-needed. A fold that throws, or that needs a component nothing registers, opens the page Clay was
-built with, since a settings page that will not build is worse than one without the features' rows.</p>
+has a visibleWhen row, the key for each provider when it has a key row, and then the face's
+customClay, so no open keeps the one an earlier open needed. A fold that throws, or that needs a
+component nothing registers, opens the page Clay was built with, since a settings page that will
+not build is worse than one without the features' rows.</p>
 <p>startPebbleApp calls this on every showConfiguration, and the dev plugin's clay-preview calls it
 too, so the preview opens the page the phone would.</p>
 </div>
@@ -90,7 +92,7 @@ too, so the preview opens the page the phone would.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/pkjs/app.ts#L191">pkjs/app.ts:191</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/pkjs/app.ts#L202">pkjs/app.ts:202</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

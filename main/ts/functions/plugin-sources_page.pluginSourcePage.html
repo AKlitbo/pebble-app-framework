@@ -63,7 +63,8 @@ the feature brings one and the page has none.</li>
 otherwise put a setting the watch cannot map into the save.</li>
 <li>It adds the Preferred Source option when a plugin on the phone serves the item. When none does
 and the plugin is the saved choice, the option stays as Preferred Source (Plugins Off), so a save
-keeps the choice and the plugin answers again once the wearer turns plugins back on.
+keeps the choice and the plugin answers again once the wearer turns plugins back on. A kind with
+a <code>notInstalledLabel</code> takes that label instead while the phone lists other plugins.
 A plugin list the phone will not give offers the option as usual.</li>
 <li>It drops a select left with one option, which is no choice at all.</li>
 <li>With no select left on the page, it takes the select's marks off every row, drops the lead line
@@ -78,7 +79,8 @@ sources. It hides each marked row while a plugin is picked, and a section whose 
 goes with them.</li>
 <li>It then puts the feature's note on where the data comes from under the select, and the warning
 rows the saved state calls for after it. A plugin choice kept with plugins off gets the one row
-saying how to turn them on in place of the warnings.</li>
+saying how to turn them on in place of the warnings, or the kind's <code>noPlugin</code> row while the phone
+lists other plugins.</li>
 </ol>
 <p>Once the select has passed step 2, a feature that asks for it also gets the supported plugins
 panel at the foot of the page, whatever steps 3 to 7 made of the select.</p>
@@ -100,7 +102,7 @@ the face marks with <code>pluginSourceRows</code> for the kind, or at the foot o
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The page, changed.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/6e871db1455998b04a2611573df49c475458fba0/src/ts/plugin-sources/page.ts#L496">plugin-sources/page.ts:496</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/page.ts#L518">plugin-sources/page.ts:518</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

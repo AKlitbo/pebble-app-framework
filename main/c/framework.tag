@@ -7733,6 +7733,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_STOCK</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4527c503f4a0ba228febe0f9985ad28f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>PLUGIN_SOURCE_KEEPS_ANY</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga256177eefe8ca85558ab1950faeb5d0b</anchor>
@@ -7750,6 +7757,13 @@
       <name>PLUGIN_SOURCE_CALENDAR_LEN</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gab2dda1ab7a5b7a83f3f2923e285d2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_STOCK_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab7b533cd87d097621a76ce43e2fa7b82</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -7778,6 +7792,13 @@
       <name>PLUGIN_SOURCE_CALENDAR_FIELD</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gaed0d9a6d4a3165af7fd1c790795ca7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_STOCK_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga107f6bcaca5337f26612fb0e0848e169</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -11270,6 +11291,13 @@
       <anchorfile>structPluginSourceSettings.html</anchorfile>
       <anchor>a75f039697f416740c7eac0c5653862da</anchor>
       <arglist>[PLUGIN_SOURCE_CALENDAR_LEN]</arglist>
+    </member>
+    <member kind="variable">
+      <type>char</type>
+      <name>stock</name>
+      <anchorfile>structPluginSourceSettings.html</anchorfile>
+      <anchor>a2ac1d5d394b4124b63283d1d1c6186ca</anchor>
+      <arglist>[PLUGIN_SOURCE_STOCK_LEN]</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -15633,6 +15661,13 @@
     </member>
     <member kind="define">
       <type>#define</type>
+      <name>PLUGIN_SOURCE_KEEPS_STOCK</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga4527c503f4a0ba228febe0f9985ad28f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
       <name>PLUGIN_SOURCE_KEEPS_ANY</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>ga256177eefe8ca85558ab1950faeb5d0b</anchor>
@@ -15650,6 +15685,13 @@
       <name>PLUGIN_SOURCE_CALENDAR_LEN</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gab2dda1ab7a5b7a83f3f2923e285d2306</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_STOCK_LEN</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>gab7b533cd87d097621a76ce43e2fa7b82</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -15678,6 +15720,13 @@
       <name>PLUGIN_SOURCE_CALENDAR_FIELD</name>
       <anchorfile>group__lib__settings.html</anchorfile>
       <anchor>gaed0d9a6d4a3165af7fd1c790795ca7fb</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="define">
+      <type>#define</type>
+      <name>PLUGIN_SOURCE_STOCK_FIELD</name>
+      <anchorfile>group__lib__settings.html</anchorfile>
+      <anchor>ga107f6bcaca5337f26612fb0e0848e169</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">

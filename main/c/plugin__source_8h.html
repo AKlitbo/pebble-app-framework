@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded',() => { initNavTree('plugin__source
 </div><!--header-->
 <div class="contents">
 
-<p>The struct the framework keeps the weather and calendar source choice in, for a face built with a plugin define, and the checks that decide which of the two it keeps.  
+<p>The struct the framework keeps the weather, calendar, and stock source choices in, for a face built with a plugin define, and the checks that decide which of them it keeps.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="settings_8h_source.html">system/settings/settings.h</a>&quot;</code><br />
 <code>#include &lt;stddef.h&gt;</code><br />
@@ -216,8 +216,11 @@ Macros</h2></td></tr>
 <tr class="memitem:ga54d7afa30c1599cabdaefe00ebe5e667" id="r_ga54d7afa30c1599cabdaefe00ebe5e667"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_CALENDAR</b>&#160;&#160;&#160;0</td></tr>
 <tr class="memdesc:ga54d7afa30c1599cabdaefe00ebe5e667"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 when the watch keeps the calendar source choice, for a face with PLUGIN_CALENDAR and CALENDAR_SOURCE <br /></td></tr>
+<tr class="memitem:ga4527c503f4a0ba228febe0f9985ad28f" id="r_ga4527c503f4a0ba228febe0f9985ad28f"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_STOCK</b>&#160;&#160;&#160;0</td></tr>
+<tr class="memdesc:ga4527c503f4a0ba228febe0f9985ad28f"><td class="mdescLeft">&#160;</td><td class="mdescRight">1 when the watch keeps the stock source choice, for a face with PLUGIN_STOCKS and STOCK_PROVIDER <br /></td></tr>
 <tr class="memitem:ga256177eefe8ca85558ab1950faeb5d0b" id="r_ga256177eefe8ca85558ab1950faeb5d0b"><td class="memItemLeft">
-#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_ANY</b>&#160;&#160;&#160;(<a class="el" href="group__lib__settings.html#ga7519f9e335dac1caa4af7e098ba595df">PLUGIN_SOURCE_KEEPS_WEATHER</a> || <a class="el" href="group__lib__settings.html#ga54d7afa30c1599cabdaefe00ebe5e667">PLUGIN_SOURCE_KEEPS_CALENDAR</a>)</td></tr>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_KEEPS_ANY</b>&#160;&#160;&#160;(<a class="el" href="group__lib__settings.html#ga7519f9e335dac1caa4af7e098ba595df">PLUGIN_SOURCE_KEEPS_WEATHER</a> || <a class="el" href="group__lib__settings.html#ga54d7afa30c1599cabdaefe00ebe5e667">PLUGIN_SOURCE_KEEPS_CALENDAR</a> || <a class="el" href="group__lib__settings.html#ga4527c503f4a0ba228febe0f9985ad28f">PLUGIN_SOURCE_KEEPS_STOCK</a>)</td></tr>
 <tr class="memdesc:ga256177eefe8ca85558ab1950faeb5d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The watch keeps at least one source choice, so the framework's schema joins the chain. <br /></td></tr>
 <tr class="memitem:ga990cbb3116efef955c98d6f789302b35" id="r_ga990cbb3116efef955c98d6f789302b35"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_WEATHER_LEN</b>&#160;&#160;&#160;12</td></tr>
@@ -225,8 +228,11 @@ Macros</h2></td></tr>
 <tr class="memitem:gab2dda1ab7a5b7a83f3f2923e285d2306" id="r_gab2dda1ab7a5b7a83f3f2923e285d2306"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_CALENDAR_LEN</b>&#160;&#160;&#160;8</td></tr>
 <tr class="memdesc:gab2dda1ab7a5b7a83f3f2923e285d2306"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of the calendar source buffer. <span class="tt">plugin</span> is the longest value the settings page saves, and its 6 characters plus its end leave one byte spare. <br /></td></tr>
+<tr class="memitem:gab7b533cd87d097621a76ce43e2fa7b82" id="r_gab7b533cd87d097621a76ce43e2fa7b82"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_STOCK_LEN</b>&#160;&#160;&#160;14</td></tr>
+<tr class="memdesc:gab7b533cd87d097621a76ce43e2fa7b82"><td class="mdescLeft">&#160;</td><td class="mdescRight">The size of the stock source buffer. <span class="tt">alphavantage</span> is the longest value the settings page saves, and its 12 characters plus its end leave one byte spare. <br /></td></tr>
 <tr class="memitem:ga2443bbd036bbbdda30abfa06a473bdd0" id="r_ga2443bbd036bbbdda30abfa06a473bdd0"><td class="memItemLeft">
-#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_VERSION</b>&#160;&#160;&#160;1</td></tr>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_VERSION</b>&#160;&#160;&#160;2</td></tr>
 <tr class="memdesc:ga2443bbd036bbbdda30abfa06a473bdd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The schema's version, raised by one with each appended field. <br /></td></tr>
 <tr class="memitem:gaf0cade985b8b365b66441618bc5085a0" id="r_gaf0cade985b8b365b66441618bc5085a0"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_FIRST_SIZE</b>&#160;&#160;&#160;21</td></tr>
@@ -236,8 +242,11 @@ Macros</h2></td></tr>
 <tr class="memitem:gaed0d9a6d4a3165af7fd1c790795ca7fb" id="r_gaed0d9a6d4a3165af7fd1c790795ca7fb"><td class="memItemLeft">
 #define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_CALENDAR_FIELD</b></td></tr>
 <tr class="memdesc:gaed0d9a6d4a3165af7fd1c790795ca7fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The field the framework keeps the calendar source in, with a comma after it, or nothing when the watch keeps no calendar choice. It works as the weather one does. <br /></td></tr>
+<tr class="memitem:ga107f6bcaca5337f26612fb0e0848e169" id="r_ga107f6bcaca5337f26612fb0e0848e169"><td class="memItemLeft">
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_STOCK_FIELD</b></td></tr>
+<tr class="memdesc:ga107f6bcaca5337f26612fb0e0848e169"><td class="mdescLeft">&#160;</td><td class="mdescRight">The field the framework keeps the stock source in, with a comma after it, or nothing when the watch keeps no stock choice. It works as the weather one does. <br /></td></tr>
 <tr class="memitem:ga172fb13323b731d043aefa0d66a751ce" id="r_ga172fb13323b731d043aefa0d66a751ce"><td class="memItemLeft">
-#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_FIELDS</b>&#160;&#160;&#160;<a class="el" href="group__lib__settings.html#gadefc10b23da283a35b2957a7e6e6082c">PLUGIN_SOURCE_WEATHER_FIELD</a> <a class="el" href="group__lib__settings.html#gaed0d9a6d4a3165af7fd1c790795ca7fb">PLUGIN_SOURCE_CALENDAR_FIELD</a></td></tr>
+#define&#160;</td><td class="memItemRight"><b>PLUGIN_SOURCE_FIELDS</b>&#160;&#160;&#160;<a class="el" href="group__lib__settings.html#gadefc10b23da283a35b2957a7e6e6082c">PLUGIN_SOURCE_WEATHER_FIELD</a> <a class="el" href="group__lib__settings.html#gaed0d9a6d4a3165af7fd1c790795ca7fb">PLUGIN_SOURCE_CALENDAR_FIELD</a> <a class="el" href="group__lib__settings.html#ga107f6bcaca5337f26612fb0e0848e169">PLUGIN_SOURCE_STOCK_FIELD</a></td></tr>
 <tr class="memdesc:ga172fb13323b731d043aefa0d66a751ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">The framework schema's whole field table, for inside its braces. <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
@@ -246,9 +255,9 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga54bef5368ed91eec6a9cfef4521c6e02"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether a save has to write the choices to flash.  <br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The struct the framework keeps the weather and calendar source choice in, for a face built with a plugin define, and the checks that decide which of the two it keeps. </p>
+<div class="textblock"><p>The struct the framework keeps the weather, calendar, and stock source choices in, for a face built with a plugin define, and the checks that decide which of them it keeps. </p>
 <p>The watch never reads the choice. It stores what the settings page saves and sends it back when the phone asks for the watch's settings, so a wearer who picked the Pebble app's plugin still has it after the Pebble app is reinstalled. <a class="el" href="settings_8c.html" title="The persist API implementation.">settings.c</a> builds its schema from PLUGIN_SOURCE_FIELDS and walks it after the face's own, on SETTINGS_PLUGIN_SOURCE_KEY, so the face writes no field of its own for it. A save skips the write while flash already holds the choices.</p>
-<p>A kind keeps its choice when its define is on and the face declares its select key. The build refuses the select key beside a plugin only providers list, so a plugin only kind keeps nothing. The build also writes each kept kind's default as PLUGIN_SOURCE_WEATHER_DEFAULT or PLUGIN_SOURCE_CALENDAR_DEFAULT, from the face's providers list, so the watch's default is always the settings page's. The build stops when the face's own picker does not offer it, or when the page opens on another source. </p>
+<p>A kind keeps its choice when its define is on and the face declares its select key. The build refuses the select key beside a plugin only providers list, so a plugin only kind keeps nothing. The build also writes each kept kind's default as PLUGIN_SOURCE_WEATHER_DEFAULT, PLUGIN_SOURCE_CALENDAR_DEFAULT, or PLUGIN_SOURCE_STOCK_DEFAULT, from the face's providers list, so the watch's default is always the settings page's. The build stops when the face's own picker does not offer it, or when the page opens on another source. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <div id="page-nav" class="page-nav-panel">

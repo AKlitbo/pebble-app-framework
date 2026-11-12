@@ -232,7 +232,8 @@
 <ul>
 <li><code>WEATHER_REQUEST</code>, <code>WEATHER_TEMPERATURE</code>, <code>WEATHER_CONDITIONS</code>, and <code>WEATHER_OK</code> when it passes <code>weather</code> or sets <code>PLUGIN_WEATHER</code>.</li>
 <li><code>STOCK_REQUEST</code> and <code>STOCK_STRIP</code> when it passes <code>stocks</code>, and <code>CALENDAR_REQUEST</code> and <code>CALENDAR_STRIP</code> when it passes <code>calendar</code>. A face that passes either with one of the two keys gets both.</li>
-<li><code>CALENDAR_STRIP</code> for <code>PLUGIN_CALENDAR</code>, and <code>WEATHER_PROVIDER</code> or <code>CALENDAR_SOURCE</code> for the two weather and calendar defines unless the kind&#39;s list is plugin only, with <code>SETTINGS_REQUEST</code> and <code>SETTINGS_FRESH</code> beside either.</li>
+<li><code>STOCK_STRIP</code> and <code>STOCK_REQUEST</code> for <code>PLUGIN_STOCKS</code>, and <code>CALENDAR_STRIP</code> for <code>PLUGIN_CALENDAR</code>.</li>
+<li><code>WEATHER_PROVIDER</code>, <code>STOCK_PROVIDER</code>, or <code>CALENDAR_SOURCE</code> for the weather, stock, and calendar defines unless the kind&#39;s list is plugin only, with <code>SETTINGS_REQUEST</code> and <code>SETTINGS_FRESH</code> beside any of them.</li>
 <li>The music keys for <code>PLUGIN_MUSIC</code>, and the phone keys for <code>PLUGIN_PHONE</code>.</li>
 <li><code>&quot;sdkVersion&quot;: &quot;3&quot;</code>, <code>&quot;enableMultiJS&quot;: true</code>, and <code>location</code> and <code>configurable</code> from <code>capabilities</code>.</li>
 </ul>
