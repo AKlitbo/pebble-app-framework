@@ -61,8 +61,9 @@ A round with a good quote where another ticker answered RATE LIMIT, timed out, o
 network moves only the time, since the day is not held for that
 ticker and Alpha Vantage would otherwise wait until tomorrow to ask for it. A round the provider
 answered with nothing good, such as NO SYMBOL for a mistyped ticker or RATE LIMIT, still moves the
-time, since each of those answers spent a call on a metered plan. A round the provider never answered,
-a network blip, moves nothing, so it tries again on the next poll.</p>
+time, since each of those answers spent a call on a metered plan. So does a round whose calls were
+lost to the network but kept their stamps, marked <code>spent</code>. A round that spent nothing moves nothing,
+so it tries again on the next poll.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -76,7 +77,7 @@ a network blip, moves nothing, so it tries again on the next poll.</p>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/stock_quotes.RoundStamps.html" class="tsd-signature-type tsd-kind-interface">RoundStamps</a></h4><p>The stamps to move, empty when the round spent nothing.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/stock/quotes.ts#L40">stock/quotes.ts:40</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/stock/quotes.ts#L48">stock/quotes.ts:48</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

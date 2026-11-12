@@ -57,6 +57,9 @@
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Fetches a URL with an HTTP GET and reports the result through a callback rather
 than a promise, since that is what the fetch layer expects everywhere else.</p>
+<p>A 2xx answers null and the body, and any other status <code>http &lt;status&gt;</code> and the body. A request
+that times out answers <code>timeout</code>, and one whose error event fires answers <code>FETCH_FAILED</code>, since it
+may have reached the provider. Only a request that threw before it went out answers <code>NETWORK_ERROR</code>.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -69,7 +72,7 @@ than a promise, since that is what the fetch layer expects everywhere else.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/pkjs/request.ts#L16">pkjs/request.ts:16</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/pkjs/request.ts#L34">pkjs/request.ts:34</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

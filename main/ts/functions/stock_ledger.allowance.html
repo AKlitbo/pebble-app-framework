@@ -53,12 +53,11 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="allowance"><span class="tsd-kind-call-signature">allowance</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">provider</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">sentMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">calls</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">force</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">paid</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">nowMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/stock_ledger.Allowance.html" class="tsd-signature-type tsd-kind-interface">Allowance</a><a href="#allowance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="allowance"><span class="tsd-kind-call-signature">allowance</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">provider</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">sentMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">calls</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">force</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">paid</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">nowMs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/quota_ledger.Allowance.html" class="tsd-signature-type tsd-kind-interface">Allowance</a><a href="#allowance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>How many of the calls asked for fit inside a provider's free plan now.</p>
-<p>Twelve Data counts its clock minute and its UTC day, as Twelve Data does. Alpha Vantage counts the
-last 24 hours, 20 for a routine fetch and 25 for a save. Yahoo, Finnhub, and any paid plan have
-nothing counted here, and their own RATE LIMIT answers set the waits.</p>
+<p>Twelve Data and Alpha Vantage are held to their plans in <code>STOCK_QUOTA_PLANS</code>. Yahoo, Finnhub, and
+any paid plan have nothing counted here, and their own RATE LIMIT answers set the waits.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -81,10 +80,10 @@ nothing counted here, and their own RATE LIMIT answers set the waits.</p>
 <li><span><span class="tsd-kind-parameter">nowMs</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>Now, in epoch milliseconds.</p>
 </div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="../interfaces/stock_ledger.Allowance.html" class="tsd-signature-type tsd-kind-interface">Allowance</a></h4><p>How many fit now, and when the rest would.</p>
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/quota_ledger.Allowance.html" class="tsd-signature-type tsd-kind-interface">Allowance</a></h4><p>How many fit now, and when the rest would.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/stock/ledger.ts#L101">stock/ledger.ts:101</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/stock/ledger.ts#L91">stock/ledger.ts:91</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

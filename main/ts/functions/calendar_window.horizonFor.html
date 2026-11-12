@@ -53,13 +53,15 @@
 <section class="tsd-panel">
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="horizonfor"><span class="tsd-kind-call-signature">horizonFor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">nowSeconds</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">offsetAt</span><span class="tsd-signature-symbol">?:</span> <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#horizonfor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="horizonfor"><span class="tsd-kind-call-signature">horizonFor</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">nowSeconds</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a> <span class="tsd-signature-symbol">|</span> <a href="../interfaces/calendar_window.HorizonOptions.html" class="tsd-signature-type tsd-kind-interface">HorizonOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><a href="#horizonfor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>The last second of the week the agenda shows.</p>
-<p>The window runs to the end of the sixth day ahead on the phone's clock, the last second before
-that day's midnight. Six days on from now would cut the last day at whatever time the calendar
-was read, keeping a morning event on it and dropping an evening one. The day is counted on the
-calendar rather than in hours, so a clock change inside the week still ends it on midnight.</p>
+<div class="tsd-comment tsd-typography"><p>The last second of the window the agenda shows, the week unless told otherwise.</p>
+<p>The window runs to the end of its last day on the phone's clock, the last second before that day's
+midnight. The week is today and the next six days. With <code>days</code> it holds that many days, today
+counted, so <code>{ days: 1 }</code> ends at today's last second. Six days on from now would cut the last day
+at whatever time the calendar was read, keeping a morning event on it and dropping an evening one.
+The day is counted on the calendar rather than in hours, so a clock change inside the window still
+ends it on midnight.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -67,16 +69,17 @@ calendar rather than in hours, so a clock change inside the week still ends it o
 <li><span><span class="tsd-kind-parameter">nowSeconds</span>: <span class="tsd-signature-type">number</span></span>
 <div class="tsd-comment tsd-typography"><p>The moment to treat as now, as epoch seconds.</p>
 </div></li>
-<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">offsetAt</span>: <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a></span>
-<div class="tsd-comment tsd-typography"><p>Reads the phone's offset, passed only by a spec that stands the phone in another
-zone. The days are then counted from the offset at each midnight, which ends the week an hour
-short in a zone whose clocks change at midnight, such as Chile's. Left out, the days are counted
-on the phone's own clock, which is what every reader does on a real phone.</p>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="../types/pkjs_phone-clock.PhoneOffset.html" class="tsd-signature-type tsd-kind-type-alias">PhoneOffset</a> <span class="tsd-signature-symbol">|</span> <a href="../interfaces/calendar_window.HorizonOptions.html" class="tsd-signature-type tsd-kind-interface">HorizonOptions</a></span>
+<div class="tsd-comment tsd-typography"><p>How many days the window holds, and how its days are counted, or the offset reader
+alone. The offset reader is passed only by a spec that stands the phone in another zone. The
+days are then counted from the offset at each midnight, which ends the window an hour short in a
+zone whose clocks change at midnight, such as Chile's. Left out, the days are counted on the
+phone's own clock, which is what every reader does on a real phone.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4><p>The window's last second, as epoch seconds.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/calendar/window.ts#L32">calendar/window.ts:32</a></li></ul></aside></div></li></ul></section></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/calendar/window.ts#L60">calendar/window.ts:60</a></li></ul></aside></div></li></ul></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

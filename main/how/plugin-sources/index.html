@@ -128,7 +128,7 @@
           <h1>Pebble App Plugins</h1>
           
           <div class="readme"><p>The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app&#39;s own weather list, the events in the phone&#39;s calendars, stock quotes, what the phone is playing, and the phone&#39;s battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well. <a href="../../how/plugin-apps/">Plugin Apps</a> covers building a plugin of your own.</p>
-<p>The phone code lives under <code>src/ts/plugin-sources/</code>, and the rest of the phone code reaches it only through <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/index.ts"><code>index.ts</code></a>. The shared parts are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/subscription.ts"><code>subscription.ts</code></a>, which keeps one live subscription per kind, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/page.ts"><code>page.ts</code></a>, which adds the plugin choice and its notes to the settings page, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/standard.ts"><code>standard.ts</code></a>, which checks what a plugin says it serves. Each kind has a file that turns a plugin&#39;s update into what the watch takes, such as <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/weather.ts"><code>weather.ts</code></a>, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/stocks.ts"><code>stocks.ts</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/calendar.ts"><code>calendar.ts</code></a>. The build side is the table of kinds in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/tools/manifest/plugin-kinds.ts"><code>plugin-kinds.ts</code></a>, the providers list in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/tools/manifest/providers.ts"><code>providers.ts</code></a>, and the swap in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/tools/pkjs/build-pkjs.ts"><code>build-pkjs.ts</code></a>.</p>
+<p>The phone code lives under <code>src/ts/plugin-sources/</code>, and the rest of the phone code reaches it only through <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/index.ts"><code>index.ts</code></a>. The shared parts are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/subscription.ts"><code>subscription.ts</code></a>, which keeps one live subscription per kind, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/page.ts"><code>page.ts</code></a>, which adds the plugin choice and its notes to the settings page, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/standard.ts"><code>standard.ts</code></a>, which checks what a plugin says it serves. Each kind has a file that turns a plugin&#39;s update into what the watch takes, such as <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/weather.ts"><code>weather.ts</code></a>, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/stocks.ts"><code>stocks.ts</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/calendar.ts"><code>calendar.ts</code></a>. The build side is the table of kinds in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/tools/manifest/plugin-kinds.ts"><code>plugin-kinds.ts</code></a>, the providers list in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/tools/manifest/providers.ts"><code>providers.ts</code></a>, and the swap in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/tools/pkjs/build-pkjs.ts"><code>build-pkjs.ts</code></a>.</p>
 <h2 id="turning-it-on">Turning It On</h2>
 <p>A face turns plugins on one kind of data at a time, in its appinfo&#39;s <code>defines</code>. For the weather, stocks, and the calendar it lists the <code>weather</code>, <code>stocks</code>, and <code>calendar</code> features in <code>startPebbleApp</code> as it would without plugins. Now playing and the phone&#39;s battery have no feature without plugins, so a face lists <code>music</code> from <code>ts/music/feature</code> and <code>phone</code> from <code>ts/phone/feature</code> for those two:</p>
 <pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"defines"</span><span style="color:var(--code-foreground)">: {</span></span>
@@ -200,11 +200,11 @@
 <p>Now playing and the phone&#39;s battery only ever run the third way, so their list is <code>[&quot;plugin&quot;]</code> or left out.</p>
 <p><strong>What Each Mode Brings.</strong> Every mode brings the kind&#39;s keys from the table, which the build adds to the face&#39;s message keys after its own. The select key comes with no list or a mixed list, along with <code>SETTINGS_REQUEST</code> and <code>SETTINGS_FRESH</code>, and is refused beside a plugin only list, since a plugin only kind keeps no choice. A face moving a kind to <code>[&quot;plugin&quot;]</code> that lists <code>WEATHER_PROVIDER</code>, <code>STOCK_PROVIDER</code>, or <code>CALENDAR_SOURCE</code> itself takes it out of <code>messageKeys</code> and builds with <code>--clean</code>.</p>
 <p><strong>What the Build Refuses.</strong> The list and the define have to agree. <code>plugin</code> in a list needs the kind&#39;s define on, and a define on beside a list for its kind needs <code>plugin</code> in that list. <a href="../../how/phone-side/#what-the-phone-lets-it-reach">What the Build Refuses</a> lists the rest of the checks on the providers list, and <a href="../../how/settings-page/#offering-fewer-providers">Offering Fewer Providers</a> covers what each list does to the page.</p>
-<p><strong>A Face That Shows Coordinates.</strong> A plugin&#39;s places carry no coordinates. So a face started with <code>weather.withCoords</code> and no list or a mixed list is offered no plugin choice, and fetches as a face without the define does. It warns once when its list holds <code>plugin</code>. With a plugin only list it reads the plugin anyway, since it asked for nothing else, and warns that its coordinate readouts show no fix.</p>
+<p><strong>A Face That Shows Coordinates.</strong> A face started with <code>weather.withCoords</code> is offered the plugin choice in every mode. Its coordinate readouts take the <code>latitude</code> and <code>longitude</code> a plugin serves, and show no fix with a plugin that serves none, so the note saying where the weather comes from adds that the coordinates show only from a plugin that serves them. <a href="../../how/fetching-the-weather/#from-a-pebble-app-plugin">Fetching the Weather</a> covers the reading.</p>
 <h2 id="what-the-wearer-sees">What the Wearer Sees</h2>
 <p>With no list or a mixed list, the weather&#39;s Data Source select gains <strong>Pebble App: Preferred Source</strong> when a plugin on the phone serves the weather. Picking it reads the weather from the plugin the wearer prefers in the Pebble app. The page puts the select first in its section, under the heading and its lead line, and moves the Location Settings section up to sit right after it when that section only holds rows for a fetch, so picking the plugin never makes rows above the wearer&#39;s finger vanish. While it is picked, the rows only a fetch needs hide, such as the API key and the location rows, and a note under the select says the weather comes from the first location in the Pebble app&#39;s weather settings.</p>
 <p>The stocks&#39; Data Source select gains Preferred Source the same way when a plugin on the phone serves <code>finance/stock</code>. Picking it reads the quotes from the stock plugin the wearer prefers, which keeps its own list of tickers. The select goes first in its section, under the heading, and while it is picked the lead line, the API key, Paid Plan, and the tickers hide, and a note under the select says the watch shows the first four tickers the plugin sends.</p>
-<p>The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads <strong>Pebble App: Preferred Source (No Stock Plugin)</strong>, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel says under Stocks that the phone lists no stock plugin.</p>
+<p>The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads <strong>Pebble App: Preferred Source (No Stock Plugin)</strong>, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel lists Stocks + Crypto under Stocks, with its store listing.</p>
 <p>The calendar&#39;s page has no source select of its own, since without plugins it would hold one option. The calendar adds a <strong>Calendar Source</strong> select, with <strong>iCal Link</strong> and Preferred Source, under the leading heading and text rows of the section holding the iCal link. A phone with no plugin serving the events leaves it one option, so the select goes and the page shows the link as it would without the define.</p>
 <p>With a plugin only list, the page shows notes where the select or the iCal link would sit: where the data comes from, and while nothing on the phone serves the kind, how to turn plugins on. Now playing and the phone&#39;s battery always get their notes this way, as <a href="../../how/phone-and-music-stores/#on-the-settings-page">The Phone and Music Stores</a> covers.</p>
 <p><strong>Warnings under the Choice.</strong> While the plugin is picked, the page reads what the plugin source saved last and adds a note for each thing that went wrong. A plugin that answered and does not send the readings the face needs gets one, as <a href="#preferred-source-and-the-standard-check">Preferred Source and the Standard Check</a> covers. A wearer who has not allowed the permission gets one saying to allow it for this watchface in the Pebble app. A stock update with no tickers gets a calmer note saying the phone may have been offline, or the plugin may have no tickers set up in its own settings. A calendar update that held no events gets a calmer note saying the Pebble app may need permission to read the phone&#39;s calendars, or that those calendars may be switched off in its calendar settings.</p>
@@ -218,7 +218,7 @@
 </ul>
 <p>A Pebble app from before plugins has no plugin calls at all, and the page reads it as a phone with plugins off. The one difference is a settings restore after a reset, which drops a saved plugin choice back to the page&#39;s default, since that phone can never answer it.</p>
 <h2 id="each-kind">Each Kind</h2>
-<p><strong>Weather.</strong> A weather plugin serves one place per location in the Pebble app&#39;s weather list, and the face shows the first. Its update becomes the same reading an Open-Meteo fetch gives, so the watch reads it through the keys it already has. The plugin keeps its reading fresh by itself, so a watch ask only resends the last update as of now. The watch shows <code>No Location</code> for an update with no places, <code>No Wx Data</code> for a first place with no temperature it can use, <code>No Plugin</code> when nothing on the phone serves the weather, and <code>No Permission</code> until the wearer allows Location. <a href="../../how/fetching-the-weather/#from-a-pebble-app-plugin">Fetching the Weather</a> covers the reading.</p>
+<p><strong>Weather.</strong> A weather plugin serves one place per location in the Pebble app&#39;s weather list, and the face shows the first. Its update becomes the same reading an Open-Meteo fetch gives, so the watch reads it through the keys it already has, with the pressure, the dew point, and the finer sky too from a plugin that serves them. The plugin keeps its reading fresh by itself, so a watch ask only resends the last update as of now. The watch shows <code>No Location</code> for an update with no places, <code>No Wx Data</code> for a first place with no temperature it can use, <code>No Plugin</code> when nothing on the phone serves the weather, and <code>No Permission</code> until the wearer allows Location. <a href="../../how/fetching-the-weather/#from-a-pebble-app-plugin">Fetching the Weather</a> covers the reading.</p>
 <p><strong>Stocks.</strong> A stock plugin serves one instance per ticker, and the strip shows the first four in the plugin&#39;s order. Each becomes the same quote a provider round gives, so the watch reads it through the strip it already has, and no provider call or quota is spent. A ticker the plugin has no price for keeps its slot with the plugin&#39;s status word, or <code>NO DATA</code>. An update with no tickers clears the strip only when it is the first since the plugin was picked or since the phone ended it, since an offline phone answers with none, and a watch ask resends the last update sent to the watch. <a href="../../how/stock-store/#from-a-pebble-app-plugin">The Stock Store</a> covers the reading.</p>
 <p><strong>The Calendar.</strong> A calendar plugin serves one instance per event in the phone&#39;s calendars. Its events go through the same week the iCal reader keeps, so the agenda reads the same from either source. An update with no events sends an empty agenda, since that is how the watch hears every event was deleted. An error sends nothing, since the watch has no status line for the calendar. <a href="../../how/calendar-store/#from-a-pebble-app-plugin">The Calendar Store</a> covers the reading and the agenda hold after a reset.</p>
 <p><strong>Now Playing and the Phone&#39;s Battery.</strong> Both come only from plugins, so their stores on the watch clear when no plugin answers. <a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a> covers both.</p>
@@ -274,7 +274,77 @@
 <li><strong>Plugins the Table Does Not Know.</strong> A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as <strong>Unnamed Plugin</strong> when it has none, and reads <strong>Installed</strong>.</li>
 <li><strong>Plugins Off.</strong> When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.</li>
 </ul>
-<p>The table of known plugins is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-sources/directory.ts"><code>directory.ts</code></a>. It is copied by hand from the appstore, so it ages, and each framework release refreshes it. It holds no stock plugin, so the Stocks heading lists only the stock plugins on the phone.</p>
+<p>The panel&#39;s headings are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/directory.ts"><code>directory.ts</code></a>, and the plugins it knows are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/known-plugins.json"><code>known-plugins.json</code></a>, which the table below is written from. A kind a plugin serves that the panel has no heading for, such as <code>finance/crypto</code>, is left off the panel.</p>
+<h3 id="supported-plugins">Supported Plugins</h3>
+<p>These are the plugins the panel knows, by the kinds they serve. <strong>What It Serves</strong> is what each serves for the kind, where the standard fields are the ones the Pebble app&#39;s own plugin of that kind serves. <a href="../../how/fetching-the-weather/#from-a-pebble-app-plugin">Fetching the Weather</a> covers which of a weather plugin&#39;s fields a face reads.</p>
+<!-- known-plugins:start --><table>
+<thead>
+<tr>
+<th align="left">Kind</th>
+<th align="left">Plugin</th>
+<th align="left">Maker</th>
+<th align="left">What It Serves</th>
+<th align="left">Last Verified</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>weather/location</code></td>
+<td align="left">Weather</td>
+<td align="left">Pebble</td>
+<td align="left">The standard fields</td>
+<td align="left">Built In, 10 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>weather/location</code></td>
+<td align="left"><a href="https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e">MET Norway Weather</a></td>
+<td align="left">Pebble</td>
+<td align="left">The standard fields</td>
+<td align="left">1.0.5, 12 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>calendar/event</code></td>
+<td align="left">Calendar</td>
+<td align="left">Pebble</td>
+<td align="left">The standard fields</td>
+<td align="left">Built In, 10 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>calendar/event</code></td>
+<td align="left"><a href="https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660">Calendar + iCal</a></td>
+<td align="left">Null Syntax</td>
+<td align="left">The standard fields, with the events of up to two iCal links merged into the agenda</td>
+<td align="left">1.0.1, 12 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>music/track</code></td>
+<td align="left">Music (Android Only)</td>
+<td align="left">Pebble</td>
+<td align="left">The standard fields</td>
+<td align="left">Built In, 10 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>phone/phone_state</code></td>
+<td align="left">Phone</td>
+<td align="left">Pebble</td>
+<td align="left">The standard fields</td>
+<td align="left">Built In, 10 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>finance/stock</code></td>
+<td align="left"><a href="https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7">Stocks + Crypto</a></td>
+<td align="left">Null Syntax</td>
+<td align="left">Pebble&#39;s five stock fields, and the currency, the quote time, the source, and the market state</td>
+<td align="left">1.0.0, 12 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>finance/crypto</code></td>
+<td align="left"><a href="https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7">Stocks + Crypto</a></td>
+<td align="left">Null Syntax</td>
+<td align="left">Crypto pairs</td>
+<td align="left">1.0.0, 12 Nov 2026</td>
+</tr>
+</tbody></table>
+<!-- known-plugins:end --><p>The list is copied by hand from the Pebble appstore, so it ages as plugins are published. Each entry in <code>known-plugins.json</code> records the version it was last checked against in <code>verifiedVersion</code>, <code>Built In</code> for one built into the Pebble app, and the date in <code>verifiedOn</code>. Update both whenever an entry is checked again against a new version of the plugin. After a change to the file, <code>npm --prefix docs run plugin-table</code> writes the table again, and a docs spec fails while the table and the file differ.</p>
 <p><strong>Links.</strong> A plain link on a Clay page would load inside the settings web view and lose the wearer&#39;s unsaved settings. The Pebble app gives a settings page <code>Pebble.openUrl</code> while plugins are on, which asks before opening the link in the phone&#39;s browser. So a store plugin&#39;s name is a link only when the page has <code>Pebble.openUrl</code>, and is plain text with the listing&#39;s address under it otherwise.</p>
 <p>The panel is drawn with <code>&lt;details&gt;</code>, so the web view opens and closes it with no script. Every name in it is escaped before it reaches the page, so a plugin&#39;s name can never become markup or code.</p>
 <h2 id="marks-on-the-page">Marks on the Page</h2>

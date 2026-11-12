@@ -53,9 +53,12 @@
 <div class="tsd-signature"><span class="tsd-kind-variable">pluginRequest</span><span class="tsd-signature-symbol">:</span> <a href="../types/pkjs_request.RequestFn.html" class="tsd-signature-type tsd-kind-type-alias">RequestFn</a><span class="tsd-signature-symbol"> = ...</span></div>
 <div class="tsd-comment tsd-typography"><p>Fetches a URL with an HTTP GET, in the shape the framework's providers call.</p>
 <p>A 2xx answers with null and the body. Any other status answers with <code>http &lt;status&gt;</code> and the body,
-so a provider still reads its own error JSON and a 429 still reads as a rate limit. A fetch that
-never reaches the host answers <code>network error</code>, and one given up after the timeout answers
-<code>timeout</code>, with no body either way.</p>
+so a provider still reads its own error JSON and a 429 still reads as a rate limit. A fetch given
+up after the timeout answers <code>timeout</code>. A fetch refused before it left, for a site the wearer has
+not allowed, answers <code>NETWORK_ERROR</code>, and any other failed fetch answers <code>FETCH_FAILED</code>, with no
+body in each case. A body that cannot be read after the host answered gives a non-2xx's status with
+no body, and <code>FETCH_FAILED</code> after a 2xx.
+Only <code>NETWORK_ERROR</code> is known never to have reached the provider, so only it takes a stamp back.</p>
 </div>
 <div class="tsd-comment tsd-typography">
 <div class="tsd-tag-param">
@@ -65,7 +68,7 @@ never reaches the host answers <code>network error</code>, and one given up afte
 <h4 class="tsd-anchor-link" id="param-callback">Param: callback<a href="#param-callback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Called once with an error, or with null and the body.</p>
 </div></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/9bccf271004e4a503b0da1df675f9c476e119feb/src/ts/plugin-app/request.ts#L39">plugin-app/request.ts:39</a></li></ul></aside></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-app/request.ts#L73">plugin-app/request.ts:73</a></li></ul></aside></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
