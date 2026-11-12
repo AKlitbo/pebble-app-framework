@@ -93,6 +93,59 @@ describe('runStockRound', () => {
     expect(state.lastFetchMs).toBe(500);
   });
 
+  /**
+   * A rate limited first ticker after a backoff would only be followed by more rate limits, so the
+   * round ends on it with one call spent. The others carry the limit it named, or a burst limit would
+   * lose its short wait and the tickers would read RATE LIMIT until the floor.
+   */
+  test('ends a probing round on a first ticker that answers RATE LIMIT, keeping its limit', () => {
+    const state = freshState();
+    const fetchQuote = vi.fn((symbol: string, done: (quote: StockQuote) => void) => done({ symbol, price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'RATE LIMIT', limit: 'second' }));
+    const sendStocks = vi.fn();
+    const deps = { fetchQuote, sendStocks, now: () => 500, timeoutMs: 1000, probeFirst: true };
+
+    runStockRound(state, ['AAPL', 'MSFT', 'TSLA'], false, deps);
+
+    expect(fetchQuote).toHaveBeenCalledTimes(1);
+    expect(sendStocks.mock.calls[0][0].map((quote: StockQuote) => [quote.symbol, quote.status, quote.limit])).toEqual([['AAPL', 'RATE LIMIT', 'second'], ['MSFT', 'RATE LIMIT', 'second'], ['TSLA', 'RATE LIMIT', 'second']]);
+  });
+
+  /** A first ticker that keeps timing out on its own must not hold the healthy ones back, so the ticker that goes first moves on each round. */
+  test('sends a different ticker first on the next probing round', () => {
+    const state = freshState();
+    const firsts: string[] = [];
+    const timeout = (symbol: string): StockQuote => ({ symbol, price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'TIMEOUT' });
+    const fetchQuote = (symbol: string, done: (quote: StockQuote) => void) => {
+      firsts.push(symbol);
+      done(timeout(symbol));
+    };
+    const deps = { fetchQuote, sendStocks: vi.fn(), now: () => 500, timeoutMs: 1000, probeFirst: true };
+
+    runStockRound(state, ['AAPL', 'MSFT', 'TSLA'], false, deps);
+    runStockRound(state, ['AAPL', 'MSFT', 'TSLA'], false, deps);
+
+    expect(firsts).toHaveLength(2);
+    expect(firsts[0]).not.toBe(firsts[1]);
+  });
+
+  /** Alpha Vantage refuses a call within a second of the last, so a spaced probe still has to wait out the gap from the round before. */
+  test('keeps the first delay before a spaced probe', () => {
+    vi.useFakeTimers();
+    const state = freshState();
+    const fetchQuote = vi.fn();
+    const deps = { fetchQuote, sendStocks: vi.fn(), now: () => 500, timeoutMs: 1000, probeFirst: true, spacingMs: 1100, firstDelayMs: 1100 };
+
+    runStockRound(state, ['AAPL', 'MSFT'], false, deps);
+    const before = fetchQuote.mock.calls.length;
+
+    vi.advanceTimersByTime(1100);
+
+    const result = [before, fetchQuote.mock.calls.length];
+
+    vi.useRealTimers();
+    expect(result).toEqual([0, 1]);
+  });
+
   /** A network blip never reached the provider and spent nothing, so the next poll must be free to retry. */
   test('leaves a round the provider never answered unrecorded', () => {
     const state = freshState();

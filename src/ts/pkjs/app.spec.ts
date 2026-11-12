@@ -41,6 +41,7 @@ import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
 import type { Feature, FeatureHooks } from './feature';
 import type { ClayConfigItem } from '../clay/types';
 import { installFakeXhr } from '../testing/xhr';
+import type { FakeXhr } from '../testing/xhr';
 import { stubModuleLoad } from '../testing/module-load';
 import { withFakePebble } from '../testing/pebble';
 import type { FakePebble } from '../testing/pebble';
@@ -2014,17 +2015,172 @@ describe('startPebbleApp stock and calendar', () => {
     expect(result).toEqual([0, 4]);
   });
 
-  /** A call that never left the phone spent nothing, and counting it let a network outage spend the free key's day. */
-  test('takes the stamp back off for a call that never reached the host', () => {
+  /** A call whose send threw never left the phone and spent nothing, so counting it took a call of the free key's day. */
+  test('takes the stamp back off for a call that never left the phone', () => {
+    sent = installFakeXhr(() => {
+      throw new Error('blocked');
+    });
     localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
     app.startPebbleApp({ clayConfig: [], features: [stocks] });
-    pebble.fire('ready');
 
-    sent[0].fail();
+    pebble.fire('ready');
 
     const result = JSON.parse(localStorage.getItem('stock-ledger') as string).alphavantage[keyPrint('k')] ?? [];
 
     expect(result).toEqual([]);
+  });
+
+  /**
+   * An XHR error also fires for an answer lost after Alpha Vantage counted the call, and a timeout can
+   * land after it did too. Both took the stamp back, so lost answers let a free key past its 25 a day.
+   */
+  test.each([
+    ['an XHR error', (request: FakeXhr) => request.fail()],
+    ['a timeout', (request: FakeXhr) => request.timeOut()],
+  ])('keeps the stamp for a call that ends in %s', (_label, end) => {
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+
+    end(sent[0]);
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).alphavantage[keyPrint('k')];
+
+    expect(result).toEqual([Date.now()]);
+  });
+
+  /**
+   * A lost round moves the fetch time, and Twelve Data's floor with the market shut is three hours, so
+   * a phone back online could read NET ERROR long after its backoff ended. The backoff's wait has to
+   * decide the next try alone.
+   */
+  test('fetches Twelve Data again once the backoff ends after the phone comes back online', () => {
+    // Saturday 2026-07-04 16:00 UTC, with the market shut
+    vi.setSystemTime(Date.UTC(2026, 6, 4, 16, 0));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    const startMs = Date.now();
+    const seen = new Set<FakeXhr>();
+    const answerNew = (answer: (request: FakeXhr) => void) => sent.filter((request) => !seen.has(request)).forEach((request) => {
+      seen.add(request);
+      answer(request);
+    });
+    const reply = JSON.stringify({ symbol: 'IBM', close: '150', change: '1', percent_change: '0.5', datetime: '2026-07-03' });
+
+    // offline for the first 30 minutes, asked every 5, then back online
+    pebble.fire('ready');
+    answerNew((request) => request.fail());
+
+    for (let ask = 1; ask <= 12; ask++) {
+      vi.advanceTimersByTime(5 * 60 * 1000);
+      pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+      answerNew((request) => (ask <= 6 ? request.fail() : request.respond(200, reply)));
+    }
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).twelvedata[keyPrint('k')].map((ms: number) => (ms - startMs) / 60000);
+
+    // lost at 0 and 15, then fetched at 45 when the 30 minute wait ends, not three hours on
+    expect(result).toEqual([0, 15, 45]);
+  });
+
+  /**
+   * A call lost to the network keeps its stamp, and with no wait after it every ask spent another, so
+   * a phone offline a few hours filled a free key's day. It backs off as a timed out call does, 15
+   * minutes and then 30, while the wearer still reads NET ERROR.
+   */
+  test('spends one call a wait, not one an ask, on a phone that is offline', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 22, 0));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    const startMs = Date.now();
+    const failed = new Set<FakeXhr>();
+    // every call fails as an offline phone's does
+    const failNew = () => sent.filter((request) => !failed.has(request)).forEach((request) => {
+      failed.add(request);
+      request.fail();
+    });
+
+    pebble.fire('ready');
+    failNew();
+
+    // the watch asks every 5 minutes for an hour
+    for (let ask = 1; ask < 12; ask++) {
+      vi.advanceTimersByTime(5 * 60 * 1000);
+      pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+      failNew();
+    }
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).alphavantage[keyPrint('k')].map((ms: number) => (ms - startMs) / 60000);
+
+    expect(result).toEqual([0, 15, 45]);
+  });
+
+  /**
+   * Each try after a lost round stamped one call a ticker, so a watchlist of four on a free Alpha
+   * Vantage key spent its whole day in an eight hour outage and read a day late once the phone was
+   * back. After a round that left a backoff, the first ticker goes alone, and its loss ends the try.
+   */
+  test('asks for one ticker a try while a phone with four tickers is offline', () => {
+    // Saturday 2026-07-04 16:00 UTC, with the market shut
+    vi.setSystemTime(Date.UTC(2026, 6, 4, 16, 0));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM,AAPL,MSFT,TSLA' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    const startMs = Date.now();
+    const failed = new Set<FakeXhr>();
+    const failNew = () => sent.filter((request) => !failed.has(request)).forEach((request) => {
+      failed.add(request);
+      request.fail();
+    });
+
+    pebble.fire('ready');
+    failNew();
+
+    for (let ask = 1; ask < 12; ask++) {
+      vi.advanceTimersByTime(5 * 60 * 1000);
+      pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+      failNew();
+    }
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).twelvedata[keyPrint('k')].map((ms: number) => (ms - startMs) / 60000);
+
+    // the first round asks for all four, then each try asks for the first alone
+    expect(result).toEqual([0, 0, 0, 0, 15, 45]);
+  });
+
+  /** A first ticker answered after an outage has to bring the rest in the same round, or they wait out a floor of up to three hours. */
+  test('asks for the other tickers once the first is answered after an outage', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 4, 16, 0));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM,AAPL,MSFT,TSLA' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    const startMs = Date.now();
+    const seen = new Set<FakeXhr>();
+    const reply = JSON.stringify({ symbol: 'IBM', close: '150', change: '1', percent_change: '0.5', datetime: '2026-07-03' });
+    // an answer can send the next call, so keep answering until nothing new is out
+    const answerAll = (answer: (request: FakeXhr) => void) => {
+      let fresh = sent.filter((request) => !seen.has(request));
+
+      while (fresh.length) {
+        fresh.forEach((request) => {
+          seen.add(request);
+          answer(request);
+        });
+        fresh = sent.filter((request) => !seen.has(request));
+      }
+    };
+
+    pebble.fire('ready');
+    answerAll((request) => request.fail());
+
+    // offline until the try at 15 minutes, then back online for the try at 45
+    for (let ask = 1; ask <= 9; ask++) {
+      vi.advanceTimersByTime(5 * 60 * 1000);
+      pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+      answerAll((request) => (ask <= 3 ? request.fail() : request.respond(200, reply)));
+    }
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).twelvedata[keyPrint('k')].map((ms: number) => (ms - startMs) / 60000);
+
+    expect(result).toEqual([0, 0, 0, 0, 15, 45, 45, 45, 45]);
   });
 
   /**
@@ -2107,21 +2263,22 @@ describe('startPebbleApp stock and calendar', () => {
   });
 
   /**
-   * A part round whose calls were lost to the network took their stamps back off, but the wait worked
-   * out before the round stood, so the left out tickers waited 21 hours for room that was already free.
+   * A part round whose calls never left the phone took their stamps back off, but the wait worked out
+   * before the round stood, so the left out tickers waited 21 hours for room that was already free.
    */
-  test('works the ledger wait out again after a part round lost to the network', () => {
+  test('works the ledger wait out again after a part round that never left the phone', () => {
     vi.setSystemTime(Date.UTC(2026, 6, 1, 22, 0));
     const earlier = Array.from({ length: 18 }, (_unused, index) => Date.now() - (index + 1) * 10 * 60 * 1000);
 
     localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,D' }));
     localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-06-30', lastFetchMs: Date.now() - 3 * 60 * 60 * 1000, strip: null, provider: 'alphavantage' }));
     localStorage.setItem('stock-ledger', JSON.stringify({ alphavantage: { [keyPrint('k')]: earlier } }));
+    sent = installFakeXhr(() => {
+      throw new Error('blocked');
+    });
     app.startPebbleApp({ clayConfig: [], features: [stocks] });
     pebble.fire('ready');
-    sent[0].fail();
     vi.advanceTimersByTime(1100);
-    sent[1].fail();
 
     const result = JSON.parse(localStorage.getItem('stock-cache') as string).retryAtMs;
 

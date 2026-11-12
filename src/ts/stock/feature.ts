@@ -19,13 +19,13 @@ import schedule from './schedule';
 import stockCache from './cache';
 import stockUtil from './util';
 import { parseSymbols as parseSymbolList } from './symbols';
-import { roundStamps, UNANSWERED } from './quotes';
+import { PROBE_STOPS, roundStamps, UNANSWERED } from './quotes';
 import { ONE_A_SECOND_GAP_MS, onPaidPlan } from './limits';
 import { allowance, COUNTED, keepSent, keyPrint, loadLedger, saveLedger } from './ledger';
 import type { StockQuote } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
-import { request } from '../pkjs/request';
+import { NETWORK_ERROR, request } from '../pkjs/request';
 import { getConfig, readBool, readText, readValue, watchSettings } from '../pkjs/settings-store';
 import { STOCK_FALLBACK } from '../pkjs/providers';
 import type { Feature } from '../pkjs/feature';
@@ -66,6 +66,12 @@ export interface StockDeps {
    * again rather than waiting out the floor, and spends a call on it alone.
    */
   retriesLost?: boolean;
+  /**
+   * True when the round should ask for its first ticker alone and the rest only once that one is
+   * answered, as after a round that left a backoff. A first call lost to the network, timed out, or
+   * rate limited ends the round there, with the other tickers carrying the same status unspent.
+   */
+  probeFirst?: boolean;
 }
 
 /** The stock settings that mean a refetch is worth it after the config closes. */
@@ -175,7 +181,8 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
   // in-flight flag would stay stuck and block every future fetch so force the round closed
   // after a cap. packing tolerates the missing slots as failed quotes. spaced calls go one after
   // another, so the cap gives each its full time and its gap
-  const watchdogMs = spacingMs > 0 ? firstDelayMs + (deps.timeoutMs + spacingMs) * Math.max(1, toFetch.length) : deps.timeoutMs;
+  const probing = Boolean(deps.probeFirst) && toFetch.length > 1;
+  const watchdogMs = spacingMs > 0 ? firstDelayMs + (deps.timeoutMs + spacingMs) * Math.max(1, toFetch.length) : deps.timeoutMs * (probing ? 2 : 1);
   const watchdog = setTimeout(closeRound, watchdogMs);
 
   /** Takes a ticker's answer into its slot, and closes the round once the last is in. */
@@ -230,8 +237,38 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
     return;
   }
 
+  // after a round that left a backoff, one ticker goes first and the rest only once it is answered.
+  // while the phone is offline each try then spends one call rather than one a ticker, so a watchlist
+  // of four on a free Alpha Vantage key keeps most of its day through a long outage. the cost is one
+  // call's wait before the rest go out once the provider answers again. the ticker that goes first
+  // moves on each round, so one that keeps timing out on its own cannot hold the others back
+  const lead = probing ? round % toFetch.length : 0;
+  const order = probing ? [toFetch[lead], ...toFetch.filter((_index, position) => position !== lead)] : toFetch;
+
+  // a lost or rate limited first call ends the round, and the other tickers carry its status unspent,
+  // with the limit it named so a burst limit still gets its short wait
+  function probeStopped(): boolean {
+    const probe = results[order[0]];
+
+    if (probe.ok || !PROBE_STOPS.includes(probe.status || '')) {
+      return false;
+    }
+
+    order.slice(1).forEach((index) => answer(index, { ...stockUtil.status(probe.status || 'ERR'), symbol: symbols[index], ...(probe.limit ? { limit: probe.limit } : {}) }));
+    return true;
+  }
+
   if (spacingMs <= 0) {
-    toFetch.forEach((index) => ask(index, () => {}));
+    if (!probing) {
+      order.forEach((index) => ask(index, () => {}));
+      return;
+    }
+
+    ask(order[0], () => {
+      if (!probeStopped()) {
+        order.slice(1).forEach((index) => ask(index, () => {}));
+      }
+    });
     return;
   }
 
@@ -239,11 +276,15 @@ export function runStockRound(state: StockState, symbols: string[], force: boole
   // four at once came back as one quote and three RATE LIMITs. each call waits for the one before
   // it to answer and then for the gap, so a slow answer can never bunch two calls together
   function askFrom(position: number) {
-    if (position >= toFetch.length) {
+    if (position >= order.length) {
       return;
     }
 
-    ask(toFetch[position], () => {
+    ask(order[position], () => {
+      if (probing && position === 0 && probeStopped()) {
+        return;
+      }
+
       setTimeout(() => askFrom(position + 1), spacingMs);
     });
   }
@@ -462,7 +503,7 @@ const stocks: Feature = (context) => {
     }
 
     // tickers left out for want of room wait for the ledger, worked out again from the stamps as they
-    // stand now, so a call lost to the network that took its stamp back off frees its room at once.
+    // stand now, so a call known never to have left that took its stamp back off frees its room at once.
     // the round's own close clears a wait it did not set, so this comes after it
     if (leftOut.size && ledger.provider === provider && COUNTED.includes(provider)) {
       const room = allowance(provider, keepSent(ledger.sentMs, Date.now()), leftOut.size, forced, false, Date.now());
@@ -676,8 +717,9 @@ const stocks: Feature = (context) => {
 
         // each call to a counted provider is stamped and saved as its request goes out, so a round
         // the phone kills partway through still counts what it sent, and an answer the provider code
-        // gives with no request, such as NO API KEY, counts nothing. a call that never reached the
-        // host spent nothing either, so its stamp comes back off
+        // gives with no request, such as NO API KEY, counts nothing. a call known never to have left
+        // spent nothing either, so its stamp comes back off. a timeout or an XHR error keeps its stamp,
+        // since the provider may have counted it
         let stamp = 0;
         let reached = false;
 
@@ -690,9 +732,14 @@ const stocks: Feature = (context) => {
           }
 
           request(url, (err, body) => {
-            reached = err !== 'network error';
+            // a call that keeps its stamp counts as spent, so a round lost to the network backs off as a
+            // timed out one does. an offline phone asked every few minutes then spends a call each wait,
+            // not one an ask. the round moves the fetch time as well, which on its own would hold the next
+            // try to a floor of up to three hours, but the backoff's wait decides alone while it is set,
+            // so the first ask after it fetches however long the floor is
+            reached = err !== NETWORK_ERROR;
 
-            if (counted && err === 'network error') {
+            if (counted && err === NETWORK_ERROR) {
               const index = ledger.sentMs.indexOf(stamp);
 
               if (index !== -1) {
@@ -720,6 +767,8 @@ const stocks: Feature = (context) => {
       reuse,
       paid,
       retriesLost: Boolean(tradingDay),
+      // a save asks for every ticker, since the wearer just changed something
+      probeFirst: counted && !force && (stockState.backoffMs || 0) > 0,
     });
     return true;
   }

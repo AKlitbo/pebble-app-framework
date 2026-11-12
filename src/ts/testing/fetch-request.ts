@@ -3,9 +3,11 @@
  *
  * Matches request() in ts/pkjs/request.ts. A 2xx passes (null, body), and a non-2xx
  * passes ('http ' + status, body) so providers can still read the error JSON the
- * upstreams return. A failed fetch comes back as a transport error. Backed by
+ * upstreams return. A failed fetch comes back as `FETCH_FAILED`, as an XHR error does. Backed by
  * Node's global fetch.
  */
+
+import { FETCH_FAILED } from '../pkjs/request';
 
 /**
  * Performs an HTTP GET, shaped like request() in ts/pkjs/request.ts so the
@@ -17,5 +19,5 @@
 export function fetchRequest(url: string, callback: (err: string | null, body?: string) => void): void {
   fetch(url)
     .then((res) => res.text().then((body) => callback(res.ok ? null : 'http ' + res.status, body)))
-    .catch(() => callback('network error'));
+    .catch(() => callback(FETCH_FAILED));
 }

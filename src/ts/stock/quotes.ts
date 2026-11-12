@@ -2,7 +2,8 @@
  * Quotes for a list of tickers, and the rule for which answers count against a provider's quota.
  *
  * `fetchQuotes` fetches a round as a promise, with no timer of its own. `roundStamps` decides when a
- * finished round moves the quota stamps, and `UNANSWERED` lists the statuses that spent no call.
+ * finished round moves the quota stamps, `UNANSWERED` lists the statuses that carry no answer, and
+ * `PROBE_STOPS` the ones that end a round sent one ticker first.
  */
 
 import stock from './stock';
@@ -11,10 +12,16 @@ import type { RequestFn, StockOpts, StockQuote } from './util';
 
 /**
  * The statuses a quote carries when the provider gave no answer to read. A round of only these moves
- * no stamp. Whether the call was spent is the ledger's business, which knows if the request reached
- * the host.
+ * no stamp unless a call among them is marked `spent`, since one that may have reached the provider
+ * keeps its ledger stamp and counts as a fetch the way a timeout does.
  */
 export const UNANSWERED = ['ERR', 'NET ERROR'];
+
+/**
+ * The statuses that end a round sent one ticker first, after a round that left a backoff. The other
+ * tickers would only get the same answer, so they carry it unspent and the try costs one call.
+ */
+export const PROBE_STOPS = ['NET ERROR', 'TIMEOUT', 'RATE LIMIT'];
 
 /** What a finished round moves: when the fetch was, and the trading day of its first good quote. */
 export interface RoundStamps {
@@ -30,8 +37,9 @@ export interface RoundStamps {
  * network moves only the time, since the day is not held for that
  * ticker and Alpha Vantage would otherwise wait until tomorrow to ask for it. A round the provider
  * answered with nothing good, such as NO SYMBOL for a mistyped ticker or RATE LIMIT, still moves the
- * time, since each of those answers spent a call on a metered plan. A round the provider never answered,
- * a network blip, moves nothing, so it tries again on the next poll.
+ * time, since each of those answers spent a call on a metered plan. So does a round whose calls were
+ * lost to the network but kept their stamps, marked `spent`. A round that spent nothing moves nothing,
+ * so it tries again on the next poll.
  *
  * @param results The round's quotes.
  * @param nowMs When the round finished, in epoch milliseconds.
@@ -55,7 +63,7 @@ export function roundStamps(results: StockQuote[], nowMs: number): RoundStamps {
     return { lastFetchMs: nowMs };
   }
 
-  const answered = results.some((quote) => quote && (quote.ok || !UNANSWERED.includes(quote.status || '')));
+  const answered = results.some((quote) => quote && (quote.ok || quote.spent === true || !UNANSWERED.includes(quote.status || '')));
 
   return answered ? { lastFetchMs: nowMs } : {};
 }

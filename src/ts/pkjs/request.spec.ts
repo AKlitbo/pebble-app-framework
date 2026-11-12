@@ -17,7 +17,7 @@
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { request, safeParse, cacheBust, requestJson, guardRequest, NETWORK_ERROR } from './request';
+import { request, safeParse, cacheBust, requestJson, guardRequest, FETCH_FAILED, NETWORK_ERROR } from './request';
 import type { RequestFn } from './request';
 import { installFakeXhr } from '../testing/xhr';
 
@@ -91,9 +91,10 @@ describe('request', () => {
 
   /**
    * A malformed URL or a send the phone blocks throws before anything is in flight. Letting it out
-   * kills the round that called it, so the fetch never completes and nothing retries.
+   * kills the round that called it, so the fetch never completes and nothing retries. Nothing went
+   * out, so it is the one face request a ledger takes back.
    */
-  test('reports a send that throws rather than letting it escape', () => {
+  test('reports a send that throws as NETWORK_ERROR rather than letting it escape', () => {
     installFakeXhr(() => {
       throw new Error('blocked');
     });
@@ -102,7 +103,7 @@ describe('request', () => {
     const attempt = () => request('https://example', callback);
 
     expect(attempt).not.toThrow();
-    expect(callback).toHaveBeenCalledWith('send error');
+    expect(callback).toHaveBeenCalledWith(NETWORK_ERROR);
   });
 });
 
@@ -129,15 +130,18 @@ describe('request callbacks', () => {
     expect(callback).toHaveBeenCalledWith('http 404', '{"cod":404}');
   });
 
-  /** A transport failure must surface as a network error, never a silent success. */
-  test('reports a transport failure as a network error', () => {
+  /**
+   * An error event also fires for an answer lost on its way back, after the provider counted the
+   * call. Answered NETWORK_ERROR, the stock ledger took it back, and a free key ran past its day.
+   */
+  test('reports a transport failure as FETCH_FAILED', () => {
     const sent = installFakeXhr();
     const callback = vi.fn();
 
     request('https://example', callback);
     sent[0].fail();
 
-    expect(callback).toHaveBeenCalledWith('network error');
+    expect(callback).toHaveBeenCalledWith(FETCH_FAILED);
   });
 
   /** A timeout must surface distinctly so the caller can show a clear status. */

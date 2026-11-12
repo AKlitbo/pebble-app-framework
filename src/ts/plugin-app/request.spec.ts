@@ -8,7 +8,7 @@
  */
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { pluginRequest, fetchText } from './request';
+import { FETCH_FAILED, pluginRequest, fetchText } from './request';
 import { NETWORK_ERROR } from '../pkjs/request';
 
 /** Runs the request with a stand-in fetch and returns what the callback heard. */
@@ -44,25 +44,45 @@ describe('pluginRequest', () => {
     expect(result).toEqual({ err: 'http 429', body: 'Too Many Requests' });
   });
 
-  /** A refused host or a dropped connection is a network fault, with nothing to read. */
-  test('answers a failed fetch as a network error with no body', async () => {
-    const result = await heard(() => Promise.reject(new TypeError('Failed to fetch')));
+  /**
+   * The Pebble app's fetch rejects each failure as a TypeError named only by its message, and every
+   * one read as NETWORK_ERROR, so a ledger took back a call the provider had counted. That let a
+   * timed out Alpha Vantage call go uncounted against its 25 a day. Only the refusal of a site the
+   * wearer has not allowed is known never to have left, so only it takes the stamp back.
+   */
+  test.each([
+    ['a host timeout', new TypeError('fetch timeout: https://example.com/quote'), 'timeout'],
+    ['an abort from the plugin timeout', new TypeError('fetch abort: https://example.com/quote'), 'timeout'],
+    ['a failure the host cannot place', new TypeError('fetch failed: https://example.com/quote'), FETCH_FAILED],
+    ['a site the wearer has not allowed', Object.assign(new Error('fetch not allowed: https://example.com/quote'), { name: 'NotAllowedError' }), NETWORK_ERROR],
+  ])('answers the Pebble app fetch rejecting for %s as the call it spent', async (_label, error, err) => {
+    const result = await heard(() => Promise.reject(error));
 
-    expect(result).toEqual({ err: 'network error', body: undefined });
+    expect(result).toEqual({ err, body: undefined });
   });
 
-  /** A plugin takes a stamp back off on this text, so the request has to answer it exactly as the constant names it. */
-  test('answers a failed fetch with NETWORK_ERROR', async () => {
+  /** A runtime's own failed fetch may have reached the host, so it keeps its stamp too. */
+  test('answers a failed fetch with no shim message as FETCH_FAILED', async () => {
     const result = (await heard(() => Promise.reject(new TypeError('Failed to fetch')))).err;
 
-    expect(result).toBe(NETWORK_ERROR);
+    expect(result).toBe(FETCH_FAILED);
   });
 
-  /** A body lost after the host answered was answered NETWORK_ERROR, so a ledger took back a call the provider had counted. */
+  /** A host timeout while reading the body is a timeout, not the status the host had answered. */
+  test('answers a body read the host timed out as a timeout', async () => {
+    const result = await heard(() => Promise.resolve({ ok: true, status: 200, text: () => Promise.reject(new TypeError('fetch timeout: https://example.com/quote')) }));
+
+    expect(result.err).toBe('timeout');
+  });
+
+  /**
+   * A body lost after the host answered was answered NETWORK_ERROR, so a ledger took back a call the
+   * provider had counted. After a 2xx it answered http 200, an error that read as the call working.
+   */
   test.each([
-    ['a 200', 200, 'http 200'],
+    ['a 200', 200, FETCH_FAILED],
     ['a 429', 429, 'http 429'],
-  ])('answers a body that cannot be read after %s with its status and no body', async (_label, status, err) => {
+  ])('answers a body that cannot be read after %s as a call spent, with no body', async (_label, status, err) => {
     const result = await heard(() => Promise.resolve({ ok: status < 300, status, text: () => Promise.reject(new TypeError('stream lost')) }));
 
     expect(result).toEqual({ err, body: undefined });

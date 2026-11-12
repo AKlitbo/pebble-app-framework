@@ -229,6 +229,8 @@ describe('bodyless', () => {
     ['http 429', 'RATE LIMIT'],
     ['timeout', 'TIMEOUT'],
     ['network error', 'NET ERROR'],
+    // an XHR error keeps its stamp, and the wearer reads it as no connection
+    ['fetch failed', 'NET ERROR'],
   ])('reads %s as %s', (err, word) => {
     const result = util.bodyless(err);
 

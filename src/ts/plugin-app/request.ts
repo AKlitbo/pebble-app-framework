@@ -8,7 +8,7 @@
  * `AbortSignal.timeout` where the runtime has it. Without it the Pebble app ends the run on its own.
  */
 
-import { NETWORK_ERROR } from '../pkjs/request';
+import { FETCH_FAILED, NETWORK_ERROR } from '../pkjs/request';
 import type { RequestFn } from '../pkjs/request';
 
 /** How long a fetch may take before it is given up, under the Pebble app's own limit on a run. */
@@ -19,21 +19,53 @@ function timeoutSignal(): AbortSignal | undefined {
   return typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(PLUGIN_FETCH_TIMEOUT_MS) : undefined;
 }
 
-/** True for the error a fetch throws when its timeout signal gives it up. */
-function timedOut(error: unknown): boolean {
-  const name = error instanceof Error || (typeof error === 'object' && error !== null) ? (error as { name?: unknown }).name : undefined;
+// what a fetch that fails answers when the request may have reached the provider, the same text the
+// face's XHR request answers for its error event
+export { FETCH_FAILED };
 
-  return name === 'TimeoutError' || name === 'AbortError';
+/** The name and the message of whatever a fetch rejected with, empty where it has none. */
+function errorParts(error: unknown): { name: string; message: string } {
+  const parts = typeof error === 'object' && error !== null ? (error as { name?: unknown; message?: unknown }) : {};
+
+  return { name: typeof parts.name === 'string' ? parts.name : '', message: typeof parts.message === 'string' ? parts.message : '' };
+}
+
+/**
+ * The answer for a fetch that rejected.
+ *
+ * The Pebble app's own fetch rejects every failure as a `TypeError` whose message is `fetch failed:`,
+ * `fetch timeout:`, or `fetch abort:` and the URL, with no `TimeoutError` or `AbortError` name, so the
+ * message is read as well as the name. A timeout or an abort answers `timeout`. Its refusal of a site
+ * the wearer has not allowed is an `Error` named `NotAllowedError`, raised before the request leaves,
+ * so only that answers `NETWORK_ERROR`. A plain `fetch failed:` comes both from a request that never
+ * left and from a body the host could not read after the provider answered, and nothing tells the two
+ * apart. It answers `FETCH_FAILED`, which keeps the stamp, since counting a call that never left costs
+ * one call of room where missing one the provider counted can run a plan past its limit.
+ */
+function rejection(error: unknown): string {
+  const { name, message } = errorParts(error);
+
+  if (name === 'NotAllowedError') {
+    return NETWORK_ERROR;
+  }
+
+  if (name === 'TimeoutError' || name === 'AbortError' || /^fetch (timeout|abort):/.test(message)) {
+    return 'timeout';
+  }
+
+  return FETCH_FAILED;
 }
 
 /**
  * Fetches a URL with an HTTP GET, in the shape the framework's providers call.
  *
  * A 2xx answers with null and the body. Any other status answers with `http <status>` and the body,
- * so a provider still reads its own error JSON and a 429 still reads as a rate limit. A fetch that
- * never reaches the host answers `NETWORK_ERROR`, and one given up after the timeout answers
- * `timeout`, with no body either way. A body that cannot be read after the host answered gives the
- * status with no body.
+ * so a provider still reads its own error JSON and a 429 still reads as a rate limit. A fetch given
+ * up after the timeout answers `timeout`. A fetch refused before it left, for a site the wearer has
+ * not allowed, answers `NETWORK_ERROR`, and any other failed fetch answers `FETCH_FAILED`, with no
+ * body in each case. A body that cannot be read after the host answered gives a non-2xx's status with
+ * no body, and `FETCH_FAILED` after a 2xx.
+ * Only `NETWORK_ERROR` is known never to have reached the provider, so only it takes a stamp back.
  *
  * @param url The address to fetch.
  * @param callback Called once with an error, or with null and the body.
@@ -52,15 +84,22 @@ export const pluginRequest: RequestFn = (url, callback) => {
     }
   }
 
-  // only a fetch that fails reached no host. one whose body cannot be read after the host answered
-  // was counted by the provider, so it answers its status with no body rather than NETWORK_ERROR,
-  // and a ledger keeps its stamp
+  // a failed fetch answers what rejection() makes of it. a body that cannot be read after the host
+  // answered was counted by the provider, so it keeps its stamp too. a non-2xx keeps its status, so a
+  // 429 still reads as a rate limit, and a 2xx answers FETCH_FAILED, since a provider handed an error
+  // of http 200 would read a failure that says it worked
   fetch(url, signal ? { signal } : undefined).then(
     (response) => response.text().then(
       (body) => answer(response.ok ? null : `http ${response.status}`, body),
-      (error: unknown) => answer(timedOut(error) ? 'timeout' : `http ${response.status}`)
+      (error: unknown) => {
+        if (rejection(error) === 'timeout') {
+          answer('timeout');
+        } else {
+          answer(response.ok ? FETCH_FAILED : `http ${response.status}`);
+        }
+      }
     ),
-    (error: unknown) => answer(timedOut(error) ? 'timeout' : NETWORK_ERROR)
+    (error: unknown) => answer(rejection(error))
   );
 };
 

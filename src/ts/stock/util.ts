@@ -245,8 +245,8 @@ function rateLimit(message: unknown): StockQuote {
 
 /**
  * The status for a request that left nothing to read: RATE LIMIT for a bodyless 429, TIMEOUT for a
- * request given up after its timeout, which may have reached the provider and spent a call, and NET
- * ERROR for one that never reached it.
+ * request given up after its timeout, and NET ERROR for any other failure. Either can have reached the
+ * provider and spent a call, which is the ledger's business rather than the status's.
  *
  * @param err The request's error.
  * @return The status result.

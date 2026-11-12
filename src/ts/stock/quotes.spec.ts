@@ -95,6 +95,13 @@ describe('roundStamps', () => {
 
     expect(result).toEqual({});
   });
+
+  /** A call lost on its way back kept its ledger stamp, and a round that counted none of it let the next ask fetch at once. */
+  test('moves the time for a lost call that kept its stamp', () => {
+    const result = roundStamps([{ ...stockUtil.status('NET ERROR'), spent: true }], NOW);
+
+    expect(result).toEqual({ lastFetchMs: NOW });
+  });
 });
 
 describe('roundStamps with a rate limit or a held quote', () => {

@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Fixed
 
 - Fixed a clear polar night from a weather plugin showing a sun, for a plugin that serves an hourly day flag.
+- Fixed a face or a stock or weather plugin not counting a call that timed out, or whose answer was lost, against its provider's limits. The Pebble app's `fetch` names every failure by its message alone, and `pluginRequest` answered each one as `NETWORK_ERROR`, so the plugin took the call back off its ledger. The face's request answered an XHR error the same way. Both now answer `timeout` or `FETCH_FAILED`, which keep the stamp. Only a request known never to have left answers `NETWORK_ERROR`, a site the wearer has not allowed on a plugin or a send that threw on a face. A face offline on a metered stock key spends one call each time its wait runs out, 15 minutes and then doubling up to two hours, and still shows `NET ERROR`.
 - Fixed every launch fetching the weather and the calendar twice, once as the phone came up and again for the watch's ask a moment after. An ask within a minute of a good fetch now resends that reading, kept by `ASK_GAP_MS` in `ts/pkjs/asks.ts`.
 
 ## [6.1.0] - 2026-11-11

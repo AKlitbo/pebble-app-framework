@@ -4,10 +4,18 @@
  */
 
 /**
- * The error a request answers when it never reached the host, such as no network or a request that
- * threw. A call that answers with it spent nothing, so a ledger takes its stamp back off.
+ * The error a request answers when it is known never to have reached the provider, such as a request
+ * that threw before it went out, or a plugin's fetch the wearer has not allowed. A call that answers
+ * with it spent nothing, so a ledger takes its stamp back off. Every other error keeps the stamp.
  */
 export const NETWORK_ERROR = 'network error';
+
+/**
+ * The error a request answers when it failed and may still have reached the provider, such as an
+ * XHR error event or a plugin's failed fetch. The provider can have counted the call, so a ledger
+ * keeps its stamp.
+ */
+export const FETCH_FAILED = 'fetch failed';
 
 /** An HTTP GET the caller supplies, so the specs can swap in a fake. */
 export type RequestFn = (url: string, callback: (err: string | null, body?: string) => void) => void;
@@ -15,6 +23,10 @@ export type RequestFn = (url: string, callback: (err: string | null, body?: stri
 /**
  * Fetches a URL with an HTTP GET and reports the result through a callback rather
  * than a promise, since that is what the fetch layer expects everywhere else.
+ *
+ * A 2xx answers null and the body, and any other status `http <status>` and the body. A request
+ * that times out answers `timeout`, and one whose error event fires answers `FETCH_FAILED`, since it
+ * may have reached the provider. Only a request that threw before it went out answers `NETWORK_ERROR`.
  *
  * @param url The URL to fetch.
  * @param callback Called once with an error, or with null and the response body on success.
@@ -55,8 +67,13 @@ export function request(url: string, callback: (err: string | null, body?: strin
     }
   };
 
+  // an error event comes both from a request that never left and from an answer lost on its way
+  // back, and nothing here tells the two apart. it answers FETCH_FAILED, so a ledger keeps the call.
+  // a phone that is truly offline then spends a stamp each time its round's wait runs out, which the
+  // stock round keeps to one call a try. missing a call the provider counted could run a 25 a day plan
+  // out early
   xhr.onerror = () => {
-    finish(NETWORK_ERROR);
+    finish(FETCH_FAILED);
   };
 
   xhr.ontimeout = () => {
@@ -66,12 +83,13 @@ export function request(url: string, callback: (err: string | null, body?: strin
   xhr.timeout = 15000;
 
   // a malformed url or a blocked send can throw synchronously, which would otherwise kill the
-  // fetch before any result is delivered. treat it as a failed request so the caller recovers
+  // fetch before any result is delivered. nothing went out, so it answers NETWORK_ERROR, the one
+  // case the face knows the request never left
   try {
     xhr.open('GET', url);
     xhr.send();
   } catch (error) {
-    finish('send error');
+    finish(NETWORK_ERROR);
   }
 }
 
