@@ -1,0 +1,12 @@
+var searchData=
+[
+  ['units_5fdistance_5funit_0',['units_distance_unit',['../group__lib__system.html#ga6c4edc61ad14869972212cf59a4f7d47',1,'units_distance_unit(bool miles):&#160;units.c'],['../group__lib__system.html#ga6c4edc61ad14869972212cf59a4f7d47',1,'units_distance_unit(bool miles):&#160;units.c']]],
+  ['units_5fformat_5fdistance_1',['units_format_distance',['../group__lib__system.html#ga94c81ab17362b08d64e0b2497730bbd5',1,'units_format_distance(char *buffer, size_t size, int meters, bool miles):&#160;units.c'],['../group__lib__system.html#ga94c81ab17362b08d64e0b2497730bbd5',1,'units_format_distance(char *buffer, size_t size, int meters, bool miles):&#160;units.c']]],
+  ['units_5fformat_5fdistance_5fvalue_2',['units_format_distance_value',['../group__lib__system.html#ga4132ffc49e378387d53b1a1171fd2b05',1,'units_format_distance_value(char *buffer, size_t size, int meters, bool miles):&#160;units.c'],['../group__lib__system.html#ga4132ffc49e378387d53b1a1171fd2b05',1,'units_format_distance_value(char *buffer, size_t size, int meters, bool miles):&#160;units.c']]],
+  ['units_5fms_5funtil_5fnext_5fbeat_3',['units_ms_until_next_beat',['../group__lib__system.html#ga85d3000cf6b4ab6360ff3df4e97add8e',1,'units_ms_until_next_beat(void):&#160;units.c'],['../group__lib__system.html#ga85d3000cf6b4ab6360ff3df4e97add8e',1,'units_ms_until_next_beat(void):&#160;units.c']]],
+  ['units_5fswatch_5fbeats_4',['units_swatch_beats',['../group__lib__system.html#ga6abe1f5f8efd60ddf21617822f0f6fd6',1,'units_swatch_beats(void):&#160;units.c'],['../group__lib__system.html#ga6abe1f5f8efd60ddf21617822f0f6fd6',1,'units_swatch_beats(void):&#160;units.c']]],
+  ['unload_5ffont_5',['unload_font',['../fonts_8c.html#a82bf9753020d031688b7e8bcd073fb8f',1,'fonts.c']]],
+  ['uv_5fband_6',['uv_band',['../group__lib__core.html#gad6f91a09bcfc296da7c32fe552d9999b',1,'uv_band(int uv):&#160;uv_band.c'],['../group__lib__core.html#gad6f91a09bcfc296da7c32fe552d9999b',1,'uv_band(int uv):&#160;uv_band.c']]],
+  ['uv_5fband_5fname_7',['uv_band_name',['../group__lib__core.html#ga807386d3788e5e0b340cc8dc8b361115',1,'uv_band_name(UvBand band):&#160;uv_band.c'],['../group__lib__core.html#ga807386d3788e5e0b340cc8dc8b361115',1,'uv_band_name(UvBand band):&#160;uv_band.c']]],
+  ['uv_5fband_5fshort_5fname_8',['uv_band_short_name',['../group__lib__core.html#ga794ee07e02945524a05f36a787b60717',1,'uv_band_short_name(UvBand band):&#160;uv_band.c'],['../group__lib__core.html#ga794ee07e02945524a05f36a787b60717',1,'uv_band_short_name(UvBand band):&#160;uv_band.c']]]
+];
