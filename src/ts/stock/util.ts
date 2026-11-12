@@ -19,6 +19,28 @@ export interface StockQuote {
   asOf: string;
   ok: boolean;
   status?: string;
+  /** The instrument's name as the provider gives it, such as Apple Inc., when it gives one. */
+  name?: string;
+  /** The currency the price is in, as its code, such as USD or GBp for pence, when the provider says. */
+  currency?: string;
+  /** When the provider's price is from, in epoch seconds, when it says. */
+  asOfEpoch?: number;
+  /** On a RATE LIMIT, the limit the provider says was hit, when it says. */
+  limit?: RateLimitKind;
+  /** When the phone got this quote, in epoch milliseconds, kept on a held quote only. */
+  fetchedAtMs?: number;
+  /** True on a failed quote whose call reached the provider and was counted against its free plan. */
+  spent?: boolean;
+}
+
+/** Which of a provider's limits a refused call hit: its calls a second, a minute, or a day. */
+export type RateLimitKind = 'second' | 'minute' | 'day';
+
+/** What a provider knows about a quote beyond its numbers, each left out when the provider does not say. */
+export interface QuoteDetails {
+  name?: unknown;
+  currency?: unknown;
+  asOfEpoch?: unknown;
 }
 
 /** The lookup options a face hands the dispatcher and each provider. */
@@ -76,11 +98,12 @@ function requestJson<T = unknown>(url: string, request: RequestFn, done: DoneFn,
  * @param change The raw change value from the provider, not yet checked.
  * @param changePercent The raw change percent value from the provider, not yet checked.
  * @param asOf The trading day or timestamp the quote is as of, when the provider sends one.
+ * @param details The name, currency, and quote time, when the provider sends them.
  * @return The finished quote, or a "NO DATA" status result when price does not parse to a real number.
  */
 // the numbers arrive straight off a parsed provider payload, so they are untrusted until
 // the Number()/isFinite guards below run. saying `number` here would be a lie
-function ok(symbol: string, price: unknown, change: unknown, changePercent: unknown, asOf?: string): StockQuote {
+function ok(symbol: string, price: unknown, change: unknown, changePercent: unknown, asOf?: string, details: QuoteDetails = {}): StockQuote {
   const value = Number(price);
 
   if (!Number.isFinite(value)) {
@@ -91,7 +114,7 @@ function ok(symbol: string, price: unknown, change: unknown, changePercent: unkn
   const abs = Number(change);
   const pct = Number(changePercent);
 
-  return {
+  const quote: StockQuote = {
     symbol: String(symbol || '').toUpperCase(),
     price: value,
     change: Number.isFinite(abs) ? abs : 0,
@@ -99,6 +122,28 @@ function ok(symbol: string, price: unknown, change: unknown, changePercent: unkn
     asOf: asOf ? String(asOf) : '',
     ok: true,
   };
+
+  // each detail goes on only when the provider gave a usable one, so a quote with no name never
+  // carries the ticker a second time in its place
+  const name = typeof details.name === 'string' ? details.name.trim() : '';
+  // the case stays as the provider gives it, since GBp (pence) and ZAc (cents) are not GBP and ZAC
+  const currency = typeof details.currency === 'string' ? details.currency.trim() : '';
+  const asOfEpoch = Number(details.asOfEpoch);
+
+  if (name) {
+    quote.name = name;
+  }
+
+  // three letters for a currency, or up to five for a coin a crypto pair is priced in, such as USDT
+  if (/^[A-Za-z]{3,5}$/.test(currency)) {
+    quote.currency = currency;
+  }
+
+  if (details.asOfEpoch !== undefined && details.asOfEpoch !== null && Number.isFinite(asOfEpoch) && asOfEpoch > 0) {
+    quote.asOfEpoch = Math.floor(asOfEpoch);
+  }
+
+  return quote;
 }
 
 /**
@@ -173,6 +218,50 @@ function isoDateFromUnix(unixSeconds: unknown): string {
 }
 
 /**
+ * Builds a RATE LIMIT result, with the limit the provider's message names when it names one.
+ *
+ * @param message The provider's own words, read for `second`, `minute`, or `day`.
+ * @return The RATE LIMIT status, with `limit` set when the message says which.
+ */
+function rateLimit(message: unknown): StockQuote {
+  const text = String(message || '').toLowerCase();
+  const quote = status('Rate Limit');
+
+  // the exact phrases go first. Alpha Vantage's burst reply asks for "1 request per second" and then
+  // names the free key's "25 requests per day", and a Twelve Data daily reply can mention its plans'
+  // credits per minute, so a loose match on day or minute alone would read either one wrong
+  if (text.indexOf('per second') !== -1) {
+    quote.limit = 'second';
+  } else if (text.indexOf('current minute') !== -1) {
+    quote.limit = 'minute';
+  } else if (text.indexOf('per day') !== -1 || text.indexOf('for the day') !== -1 || text.indexOf('daily') !== -1) {
+    quote.limit = 'day';
+  } else if (text.indexOf('minute') !== -1) {
+    quote.limit = 'minute';
+  }
+
+  return quote;
+}
+
+/**
+ * The status for a request that left nothing to read: RATE LIMIT for a bodyless 429, TIMEOUT for a
+ * request given up after its timeout, which may have reached the provider and spent a call, and NET
+ * ERROR for one that never reached it.
+ *
+ * @param err The request's error.
+ * @return The status result.
+ */
+function bodyless(err: string | null): StockQuote {
+  const text = String(err || '');
+
+  if (text.indexOf('429') !== -1) {
+    return rateLimit('');
+  }
+
+  return status(text === 'timeout' ? 'Timeout' : 'Net Error');
+}
+
+/**
  * Builds a status/error result that carries no live reading.
  *
  * @param text The status text to show, upper cased.
@@ -197,4 +286,6 @@ export default {
   deriveChange,
   ok,
   status,
+  rateLimit,
+  bodyless,
 };

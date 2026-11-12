@@ -168,3 +168,22 @@ describe('twelvedata provider', () => {
     });
   });
 });
+
+describe('a rate limit with no body', () => {
+  /**
+   * A 429 with an empty body read as NET ERROR, which spends nothing, so the next poll a minute later
+   * asked again and spent more of the free tier's calls.
+   */
+  test('reads a bodyless 429 as a rate limit', () => {
+    const result = run(BASE, (url, callback) => callback('http 429', ''));
+
+    expect(result.status).toBe('RATE LIMIT');
+  });
+
+  /** A server error with no body is still a fault on the provider's side, not a call that hit the limit. */
+  test('reads a bodyless 503 as a network error', () => {
+    const result = run(BASE, (url, callback) => callback('http 503', ''));
+
+    expect(result.status).toBe('NET ERROR');
+  });
+});

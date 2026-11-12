@@ -4,6 +4,33 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Added `fetchQuotes` and `roundStamps` in `ts/stock/quotes.ts`, and `parseSymbols(raw, max)` in `ts/stock/symbols.ts`, so a plugin app fetches quotes and keeps a provider's quota the way the stock feature does.
+- Added `FREE_PLANS` and `onPaidPlan` in `ts/stock/limits.ts`, each stock provider's free plan in one place, and `allowance`, `keepSent`, `loadLedger`, and `saveLedger` in `ts/stock/ledger.ts`, which count the calls sent against it.
+- Added `rateLimitWait`, `roundWait`, and `currentTradingDay` to `ts/stock/schedule.ts`, and `util.rateLimit` and `util.bodyless` to `ts/stock/util.ts`. `shouldThrottleStockFetch` takes a rate limit's `retryAtMs` after `now`.
+- Added a Paid Plan toggle for the stock settings, on `STOCK_PAID_PLAN`. Pass `stocks: { paidPlan: true }` to `buildConfig` and declare the key. With it on, the phone drops the free plan's floors and counts for a keyed provider, and `shouldThrottleStockFetch` takes a `paid` argument for the same.
+- Added `name`, `currency`, and `asOfEpoch` to `StockQuote`, filled from Yahoo and Twelve Data where they send them, and the quote time from Finnhub. A `RATE LIMIT` quote carries `limit`, the `second`, `minute`, or `day` limit the provider named.
+
+### Wearer-Visible Changes
+
+#### Changed
+
+- A quote that timed out now shows `TIMEOUT` rather than `NET ERROR`, since the call may have reached the provider. The phone then waits for the provider's next fetch rather than asking again at once.
+
+#### Fixed
+
+- Fixed Finnhub showing `INVALID KEY` for a ticker its free plan does not cover, such as `^GSPC`, while the same key priced the others. It now shows `NO ACCESS`.
+- Fixed Alpha Vantage showing `RATE LIMIT` in most slots until the next evening. Its free key refuses calls closer than a second apart, so the phone now asks for one ticker at a time, 1.1 seconds after each answer, and asks again only for the tickers it was refused.
+- Fixed a settings save under Alpha Vantage spending a call for every ticker. It now asks only for tickers without a current quote.
+- Fixed a `RATE LIMIT` replacing the last good quotes on the watch. A refused slot keeps its last price. Twelve Data asks again after the next clock minute, or after midnight UTC for its daily limit, and Finnhub and Yahoo wait 15 minutes, doubling up to two hours.
+- Fixed Twelve Data and Alpha Vantage going past their free plans' limits after quick saves, a restart partway through a fetch, or a rate limit with no explanation from the provider. The phone now counts every call it sends, and holds Twelve Data to 8 a minute and 800 a day and Alpha Vantage to 25 a day.
+- Fixed Finnhub and Yahoo fetching twice on some launches. The phone now leaves 45 seconds between their fetches.
+
 ## [6.0.0] - 2026-11-10
 
 ### Framework Changes
@@ -574,6 +601,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.0.0...HEAD
 [6.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.6.0...v5.0.0
 [4.6.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.5.0...v4.6.0

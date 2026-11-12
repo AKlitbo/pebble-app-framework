@@ -525,3 +525,12 @@ describe('buildConfig plugin source marks', () => {
     expect(result).toEqual(['WEATHER_API_KEY']);
   });
 });
+
+describe('the Paid Plan toggle', () => {
+  /** A face that does not declare STOCK_PAID_PLAN would put a key the phone cannot map into every settings save. */
+  test('stays off the page unless the face asks for it', () => {
+    const result = [buildConfig({ stocks: {} }), buildConfig({ stocks: { paidPlan: true } })].map((config) => Boolean(findItemByKey(config, 'STOCK_PAID_PLAN')));
+
+    expect(result).toEqual([false, true]);
+  });
+});

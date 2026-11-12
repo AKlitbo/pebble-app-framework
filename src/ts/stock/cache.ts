@@ -17,14 +17,25 @@
  * Kept next to the stock layer it serves rather than in the pkjs bootstrap, same as schedule.ts.
  */
 
-/** What survives a restart: the two throttle stamps plus the last strip worth showing, and whose they are. */
+import type { StockQuote } from './util';
+
+/** What survives a restart: the throttle stamps plus the last strip worth showing, and whose they are. */
 export interface StockCache {
   lastAsOf: string;
   lastFetchMs: number;
   strip: number[] | null;
   /** The provider the stamps and the strip came from, by its lowercase name, such as `finnhub`. */
   provider: string;
+  /** When a rate limit said to try again, as epoch milliseconds, or 0 for none. */
+  retryAtMs?: number;
+  /** The wait the last rate limit left, which the next one doubles. */
+  backoffMs?: number;
+  /** The last good quote for each ticker, so a save under Alpha Vantage asks only for new tickers. */
+  quotes?: StockQuote[];
 }
+
+/** The most tickers whose last good quote is kept. */
+const QUOTES_KEPT_MAX = 8;
 
 /** The slice of localStorage this needs, passed in so the specs can hand it a fake. */
 export interface CacheStorage {
@@ -53,6 +64,32 @@ function readStrip(value: unknown): number[] | null {
   return value as number[];
 }
 
+/** A whole number of milliseconds of at least 0, or 0 for anything else. */
+function readMs(value: unknown): number {
+  return typeof value === 'number' && isFinite(value) && value > 0 ? value : 0;
+}
+
+/** The kept quotes, keeping only those that are whole good quotes under a ticker. */
+function readQuotes(value: unknown): StockQuote[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((quote) => quote && typeof quote === 'object' && quote.ok === true
+    && typeof quote.symbol === 'string' && quote.symbol !== '' && typeof quote.asOf === 'string'
+    && [quote.price, quote.change, quote.changePercent].every((number) => typeof number === 'number' && isFinite(number)))
+    .slice(0, QUOTES_KEPT_MAX)
+    .map((quote) => ({
+      symbol: quote.symbol,
+      price: quote.price,
+      change: quote.change,
+      changePercent: quote.changePercent,
+      asOf: quote.asOf,
+      ok: true,
+      ...(typeof quote.fetchedAtMs === 'number' && isFinite(quote.fetchedAtMs) ? { fetchedAtMs: quote.fetchedAtMs } : {}),
+    }));
+}
+
 /**
  * Reads the cache back, falling back to empty for anything that does not look right.
  *
@@ -71,7 +108,7 @@ function readStrip(value: unknown): number[] | null {
  */
 function load(storage: CacheStorage, provider: string): StockCache {
   const name = provider.toLowerCase();
-  const empty: StockCache = { lastAsOf: '', lastFetchMs: 0, strip: null, provider: name };
+  const empty: StockCache = { lastAsOf: '', lastFetchMs: 0, strip: null, provider: name, retryAtMs: 0, backoffMs: 0, quotes: [] };
 
   try {
     const saved = JSON.parse(storage.getItem(CACHE_KEY) as string);
@@ -89,6 +126,9 @@ function load(storage: CacheStorage, provider: string): StockCache {
       lastFetchMs: typeof saved.lastFetchMs === 'number' && isFinite(saved.lastFetchMs) ? saved.lastFetchMs : 0,
       strip: readStrip(saved.strip),
       provider: name,
+      retryAtMs: readMs(saved.retryAtMs),
+      backoffMs: readMs(saved.backoffMs),
+      quotes: readQuotes(saved.quotes),
     };
   } catch (error) {
     return empty;

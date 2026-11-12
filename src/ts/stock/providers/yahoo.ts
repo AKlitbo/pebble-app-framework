@@ -16,6 +16,9 @@ interface YahooMeta {
   chartPreviousClose?: number;
   symbol?: string;
   regularMarketTime?: number;
+  shortName?: string;
+  longName?: string;
+  currency?: string;
 }
 
 interface YahooChartInner {
@@ -49,11 +52,7 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     // Yahoo puts rate faults in the HTTP status with a non-JSON body so a null
     // json plus an error is all there is to branch on
     if (!json) {
-      if (err && String(err).indexOf('429') !== -1) {
-        return done(util.status('Rate Limit'));
-      }
-
-      return done(util.status('Net Error'));
+      return done(util.bodyless(err));
     }
 
     // an unknown or delisted symbol comes back with result null and an error block
@@ -70,7 +69,10 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     // Yahoo has no change field so work it out from the previous close
     const derived = util.deriveChange(price, prevClose);
 
-    done(util.ok(meta.symbol || symbol, price, derived.change, derived.changePercent, util.isoDateFromUnix(meta.regularMarketTime)));
+    // the name falls back from the short one to the long one, as Pebble's own Stocks plugin reads it
+    const details = { name: meta.shortName || meta.longName, currency: meta.currency, asOfEpoch: meta.regularMarketTime };
+
+    done(util.ok(meta.symbol || symbol, price, derived.change, derived.changePercent, util.isoDateFromUnix(meta.regularMarketTime), details));
   });
 }
 

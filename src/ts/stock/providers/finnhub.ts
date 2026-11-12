@@ -55,20 +55,25 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
         return done(util.status('No Access'));
       }
 
-      return done(util.status('Net Error'));
+      return done(util.bodyless(err));
     }
 
     if (!json) {
-      return done(util.status('Net Error'));
+      return done(util.bodyless(err));
     }
 
-    // some request wrappers hand back a 200 with the trouble in the body instead
-    // of an HTTP status so read the error text too. a mention of a limit is the
-    // rate cap otherwise treat it as a bad key
+    // Finnhub can answer 200 with the trouble in the body, so the error text is read too. a limit is
+    // the rate cap and a key or token is a bad key. anything else, such as "Market data subscription
+    // required for CFD indices." for ^GSPC on a free key, is a symbol the plan does not cover, and a
+    // working key must not read as a bad one
     if (json.error) {
       const message = String(json.error).toLowerCase();
 
-      return done(util.status(message.indexOf('limit') !== -1 ? 'Rate Limit' : 'Invalid Key'));
+      if (message.indexOf('limit') !== -1) {
+        return done(util.status('Rate Limit'));
+      }
+
+      return done(util.status(message.indexOf('key') !== -1 || message.indexOf('token') !== -1 ? 'Invalid Key' : 'No Access'));
     }
 
     // an unknown symbol comes back all zeros. no current and no previous close
@@ -95,7 +100,8 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
       changePercent = derived.changePercent;
     }
 
-    done(util.ok(symbol, current, change, changePercent, util.isoDateFromUnix(json.t)));
+    // Finnhub's quote carries no name or currency, only when the price is from
+    done(util.ok(symbol, current, change, changePercent, util.isoDateFromUnix(json.t), { asOfEpoch: json.t }));
   });
 }
 

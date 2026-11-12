@@ -26,10 +26,18 @@ function fakeStorage(seed?: string): CacheStorage & { written: string | null } {
   };
 }
 
-const FULL: StockCache = { lastAsOf: '2026-07-01', lastFetchMs: 1750000000000, strip: [1, 0, 57, 48], provider: 'finnhub' };
+const FULL: StockCache = {
+  lastAsOf: '2026-07-01',
+  lastFetchMs: 1750000000000,
+  strip: [1, 0, 57, 48],
+  provider: 'finnhub',
+  retryAtMs: 1750000900000,
+  backoffMs: 900000,
+  quotes: [{ symbol: 'AAPL', price: 187.42, change: 0.97, changePercent: 0.52, asOf: '2026-07-01', ok: true }],
+};
 
 // what a cache that holds nothing usable reads as, for the provider loading it
-const EMPTY: StockCache = { lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'finnhub' };
+const EMPTY: StockCache = { lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'finnhub', retryAtMs: 0, backoffMs: 0, quotes: [] };
 
 describe('stock cache round trip', () => {
   /** If the stamps did not survive the trip the throttle reopens and the quota burns again. */
@@ -206,7 +214,7 @@ describe('stock cache provider', () => {
 
     const result = cache.load(storage, 'alphavantage');
 
-    expect(result).toEqual({ ...FULL, provider: 'alphavantage' });
+    expect(result).toEqual({ ...FULL, provider: 'alphavantage', retryAtMs: 0, backoffMs: 0, quotes: [] });
   });
 });
 

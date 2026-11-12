@@ -34,6 +34,7 @@ import { SETTINGS_ASK_RETRIES, SETTINGS_ASK_RETRY_MS } from './settings-ask';
 import { SEND_RETRIES, SEND_RETRY_MS } from './send-queue';
 import { WIRE_CAPS } from './wire';
 import stocks from '../stock/feature';
+import { keyPrint } from '../stock/ledger';
 import calendar from '../calendar/feature';
 import weather, { GPS_WATCHDOG_MS } from '../weather/feature';
 import type { Feature, FeatureHooks } from './feature';
@@ -1581,7 +1582,7 @@ describe('startPebbleApp stock and calendar', () => {
 
     const result = JSON.parse(localStorage.getItem('stock-cache') as string);
 
-    expect(result).toEqual({ lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'finnhub' });
+    expect(result).toEqual({ lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'finnhub', retryAtMs: 0, backoffMs: 0, quotes: [] });
   });
 
   /**
@@ -1618,7 +1619,7 @@ describe('startPebbleApp stock and calendar', () => {
 
     const result = JSON.parse(localStorage.getItem('stock-cache') as string);
 
-    expect(result).toEqual({ lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'alphavantage' });
+    expect(result).toEqual({ lastAsOf: '', lastFetchMs: 0, strip: null, provider: 'alphavantage', retryAtMs: 0, backoffMs: 0, quotes: [] });
     expect(sendsOf('STOCK_STRIP')).not.toContainEqual(SAVED_STRIP);
   });
 
@@ -1809,6 +1810,363 @@ describe('startPebbleApp stock and calendar', () => {
     expect(sendsOf('STOCK_STRIP')).toEqual([]);
     expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
     expect(sent).toEqual([]);
+  });
+
+  /** A Yahoo answer for the ticker in a request's URL, at a price. */
+  function yahooReply(url: string, price: number): string {
+    const symbol = decodeURIComponent(url.split('/chart/')[1].split('?')[0]);
+
+    return JSON.stringify({ chart: { result: [{ meta: { symbol, regularMarketPrice: price, chartPreviousClose: price } }], error: null } });
+  }
+
+  /** A round with one ticker refused for a rate limit put RATE LIMIT in the kept strip, which every held ask then pushed again. */
+  test('keeps the last good price in a slot refused for a rate limit', () => {
+    start({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL,MSFT' }, null, [stocks]);
+    pebble.fire('ready');
+    sent.forEach((request) => request.respond(200, yahooReply(request.url, 100)));
+    const before = JSON.parse(localStorage.getItem('stock-cache') as string).strip;
+    const firstRound = sent.length;
+
+    vi.advanceTimersByTime(60 * 1000);
+    pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+    sent.slice(firstRound).forEach((request) => (request.url.includes('AAPL') ? request.respond(429, '') : request.respond(200, yahooReply(request.url, 100))));
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).strip;
+
+    expect(result).toEqual(before);
+  });
+
+  /** A routine round and two saves inside one clock minute sent 12 Twelve Data calls against the free key's 8. */
+  test('holds a Twelve Data save that would pass 8 calls in a minute until the next minute', () => {
+    const reply = (url: string) => JSON.stringify({ symbol: new URL(url).searchParams.get('symbol'), close: '150', change: '1', percent_change: '0.5', datetime: '2026-07-01' });
+    const save = (symbols: string) => {
+      pebble.fire('showConfiguration');
+      localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: symbols }));
+      pebble.fire('webviewclosed', { response: '{}' });
+      vi.advanceTimersByTime(1000);
+      sent.forEach((request) => request.respond(200, reply(request.url)));
+    };
+
+    start({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,D' }, null, [stocks]);
+    pebble.fire('ready');
+    sent.forEach((request) => request.respond(200, reply(request.url)));
+    const counts = [sent.length];
+
+    save('A,B,C,E');
+    counts.push(sent.length);
+    save('A,B,C,F');
+    counts.push(sent.length);
+    vi.advanceTimersByTime(60 * 1000);
+    counts.push(sent.length);
+
+    const result = counts;
+
+    expect(result).toEqual([4, 8, 8, 12]);
+  });
+
+  /** A wearer paying for Twelve Data was held to the free key's 8 calls a minute, so a save went out a minute late. */
+  test('lets a Twelve Data save past 8 calls a minute on a paid plan', () => {
+    const reply = (url: string) => JSON.stringify({ symbol: new URL(url).searchParams.get('symbol'), close: '150', change: '1', percent_change: '0.5', datetime: '2026-07-01' });
+    const settings = { STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_PAID_PLAN: true };
+
+    start({ ...settings, STOCK_SYMBOLS: 'A,B,C,D' }, null, [stocks]);
+    pebble.fire('ready');
+    sent.forEach((request) => request.respond(200, reply(request.url)));
+    ['A,B,C,E', 'A,B,C,F'].forEach((symbols) => {
+      pebble.fire('showConfiguration');
+      localStorage.setItem('clay-settings', JSON.stringify({ ...settings, STOCK_SYMBOLS: symbols }));
+      pebble.fire('webviewclosed', { response: '{}' });
+      vi.advanceTimersByTime(1000);
+      sent.forEach((request) => request.respond(200, reply(request.url)));
+    });
+
+    const result = sent.length;
+
+    expect(result).toBe(12);
+  });
+
+  /** An Alpha Vantage answer for the ticker in a request's URL, from one trading day. */
+  function avReply(url: string, day: string): string {
+    const symbol = new URL(url).searchParams.get('symbol');
+
+    return JSON.stringify({ 'Global Quote': { '01. symbol': symbol, '05. price': '100', '09. change': '1', '10. change percent': '1%', '07. latest trading day': day } });
+  }
+
+  /** A paid Alpha Vantage key reused the session's first quotes on every poll, so the prices froze until the close. */
+  test('fetches every ticker on every Alpha Vantage poll on a paid plan', () => {
+    start({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_PAID_PLAN: true, STOCK_SYMBOLS: 'A,B' }, null, [stocks]);
+    pebble.fire('ready');
+    sent.forEach((request) => request.respond(200, avReply(request.url, '2026-07-01')));
+    const first = sent.length;
+
+    vi.advanceTimersByTime(60 * 1000);
+    pebble.fire('appmessage', { payload: { STOCK_REQUEST: 1 } });
+
+    const result = [first, sent.length];
+
+    expect(result).toEqual([2, 4]);
+  });
+
+  /**
+   * The key the held quotes came with started unknown on every launch, so the first save of a session
+   * asked Alpha Vantage for every ticker, four calls where adding one ticker needed one.
+   */
+  test('asks Alpha Vantage only for the added ticker on the first save after a launch', () => {
+    const held = ['A', 'B', 'C'].map((symbol) => ({ symbol, price: 1, change: 0, changePercent: 0, asOf: '2026-06-30', ok: true }));
+
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-06-30', lastFetchMs: Date.now() - 60000, strip: null, provider: 'alphavantage', quotes: held }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,D' }));
+    pebble.fire('webviewclosed', { response: '{}' });
+    vi.advanceTimersByTime(1000);
+
+    const result = sent.map((request) => new URL(request.url).searchParams.get('symbol'));
+
+    expect(result).toEqual(['D']);
+  });
+
+  /**
+   * A burst refusal in the evening, before the close was out, retried every ticker, since yesterday's
+   * quotes the round had just fetched were not current. Two retries spent 12 calls for one try.
+   */
+  test('retries only the ticker Alpha Vantage refused for its burst limit', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 22, 30));
+    start({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B' }, null, [stocks]);
+    pebble.fire('ready');
+    sent[0].respond(200, avReply(sent[0].url, '2026-06-30'));
+    vi.advanceTimersByTime(1100);
+    sent[1].respond(200, JSON.stringify({ Information: 'Please consider spreading out your free API requests more sparingly (1 request per second).' }));
+
+    vi.advanceTimersByTime(6000);
+
+    const result = sent.map((request) => new URL(request.url).searchParams.get('symbol'));
+
+    expect(result).toEqual(['A', 'B', 'B']);
+  });
+
+  /** Answers every Alpha Vantage request still out, one at a time as the spacing lets each go, all from one trading day. */
+  function answerAlphaVantage(day: string) {
+    const answered = new Set<unknown>();
+
+    for (let step = 0; step < 40; step++) {
+      sent.filter((request) => !answered.has(request)).forEach((request) => {
+        answered.add(request);
+        request.respond(200, avReply(request.url, day));
+      });
+      vi.advanceTimersByTime(1100);
+    }
+  }
+
+  /**
+   * Saves in an evening before the close was out each asked for every ticker, since none held today's
+   * close, and six of them spent 28 of the free key's 25 calls. Spaced past the reuse window, each still
+   * asks for all four, and the ledger stops them at 25, the last save asking for the one that fits.
+   */
+  test('holds a free Alpha Vantage key to 25 calls a day through many evening saves', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 20, 5));
+    start({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,D' }, null, [stocks]);
+    pebble.fire('ready');
+    answerAlphaVantage('2026-06-30');
+
+    ['E', 'F', 'G', 'H', 'I', 'J'].forEach((fourth) => {
+      vi.advanceTimersByTime(21 * 60 * 1000);
+      pebble.fire('showConfiguration');
+      localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: `A,B,C,${fourth}` }));
+      pebble.fire('webviewclosed', { response: '{}' });
+      vi.advanceTimersByTime(300);
+      answerAlphaVantage('2026-06-30');
+    });
+
+    const result = sent.length;
+
+    expect(result).toBe(25);
+  });
+
+  /** A routine try is held at 20 calls in a day, so the wearer's saves still have calls left after a busy day of tries. */
+  test('holds a routine Alpha Vantage try at 20 calls a day and lets a save through', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 22, 30));
+    const earlier = Array.from({ length: 20 }, (_unused, index) => Date.now() - (index + 1) * 60 * 60 * 1000);
+
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,D' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-06-30', lastFetchMs: Date.now() - 3 * 60 * 60 * 1000, strip: null, provider: 'alphavantage' }));
+    localStorage.setItem('stock-ledger', JSON.stringify({ alphavantage: { [keyPrint('k')]: earlier } }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    const routine = sent.length;
+
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,E' }));
+    pebble.fire('webviewclosed', { response: '{}' });
+    vi.advanceTimersByTime(300);
+    answerAlphaVantage('2026-07-01');
+
+    const result = [routine, sent.length];
+
+    expect(result).toEqual([0, 4]);
+  });
+
+  /** A call that never left the phone spent nothing, and counting it let a network outage spend the free key's day. */
+  test('takes the stamp back off for a call that never reached the host', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+
+    sent[0].fail();
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).alphavantage[keyPrint('k')] ?? [];
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * A first Alpha Vantage round that timed out counted as a fetch, and with no close held the gate then
+   * waited for a weekday evening, so a Friday night install showed TIMEOUT until Monday.
+   */
+  test('waits 15 minutes after an Alpha Vantage round that timed out, not until the evening', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 4, 2, 30));
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    sent[0].timeOut();
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).retryAtMs;
+
+    expect(result).toBe(Date.now() + 15 * 60 * 1000);
+  });
+
+  /**
+   * A routine Twelve Data round with room for only some tickers armed a retry that the 15 minute floor
+   * then held, so the ticker left out waited three hours on a Saturday.
+   */
+  test('keeps the retry the ledger sets as the wait the gate holds to, past the floor', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 4, 16, 0, 10));
+    const reply = (url: string) => JSON.stringify({ symbol: new URL(url).searchParams.get('symbol'), close: '150', change: '1', percent_change: '0.5', datetime: '2026-07-03' });
+
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C' }));
+    localStorage.setItem('stock-ledger', JSON.stringify({ twelvedata: { [keyPrint('k')]: Array.from({ length: 6 }, () => Date.now() - 5000) } }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    sent.forEach((request) => request.respond(200, reply(request.url)));
+    const first = sent.length;
+
+    vi.advanceTimersByTime(60 * 1000);
+    sent.slice(first).forEach((request) => request.respond(200, reply(request.url)));
+
+    const result = sent.map((request) => new URL(request.url).searchParams.get('symbol'));
+
+    expect(result).toEqual(['A', 'B', 'C']);
+  });
+
+  /**
+   * Stamps from a clock that ran ahead were clamped in memory only, so each launch clamped them again to
+   * its own later now, and a day's count lasted the skew plus a day.
+   */
+  test('saves the clamp on stamps from a clock that ran ahead', () => {
+    const ahead = Array.from({ length: 3 }, () => Date.now() + 72 * 60 * 60 * 1000);
+
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-07-01', lastFetchMs: Date.now() - 60000, strip: null, provider: 'alphavantage' }));
+    localStorage.setItem('stock-ledger', JSON.stringify({ alphavantage: { [keyPrint('k')]: ahead } }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'MSFT' }));
+    pebble.fire('webviewclosed', { response: '{}' });
+    vi.advanceTimersByTime(300);
+
+    const result = JSON.parse(localStorage.getItem('stock-ledger') as string).alphavantage[keyPrint('k')].every((ms: number) => ms <= Date.now());
+
+    expect(result).toBe(true);
+  });
+
+  /**
+   * A wait the old key's ledger set stayed after the wearer pasted a fresh key, so with a blip on the
+   * save's fetch the new key, with all 25 calls free, was not tried for 21 hours.
+   */
+  test('drops a wait from the old key when the wearer saves a new one', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'old', STOCK_SYMBOLS: 'IBM' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs: Date.now() - 60000, strip: null, provider: 'alphavantage', retryAtMs: Date.now() + 21 * 60 * 60 * 1000 }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('showConfiguration');
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'new', STOCK_SYMBOLS: 'IBM' }));
+
+    pebble.fire('webviewclosed', { response: '{}' });
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).retryAtMs;
+
+    expect(result).toBe(0);
+  });
+
+  /**
+   * A part round whose calls were lost to the network took their stamps back off, but the wait worked
+   * out before the round stood, so the left out tickers waited 21 hours for room that was already free.
+   */
+  test('works the ledger wait out again after a part round lost to the network', () => {
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 22, 0));
+    const earlier = Array.from({ length: 18 }, (_unused, index) => Date.now() - (index + 1) * 10 * 60 * 1000);
+
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'A,B,C,D' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '2026-06-30', lastFetchMs: Date.now() - 3 * 60 * 60 * 1000, strip: null, provider: 'alphavantage' }));
+    localStorage.setItem('stock-ledger', JSON.stringify({ alphavantage: { [keyPrint('k')]: earlier } }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    sent[0].fail();
+    vi.advanceTimersByTime(1100);
+    sent[1].fail();
+
+    const result = JSON.parse(localStorage.getItem('stock-cache') as string).retryAtMs;
+
+    expect(result).toBe(0);
+  });
+
+  /** An answer the provider code gives with no request, such as NO API KEY, sent nothing, and counting it took the day's room. */
+  test('stamps nothing for a fetch that never sends a request', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: '', STOCK_SYMBOLS: 'IBM' }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+
+    pebble.fire('ready');
+
+    const result = localStorage.getItem('stock-ledger');
+
+    expect(result).not.toContain(String(Date.now()));
+  });
+
+  /** A relaunch while an Alpha Vantage call was out forgot when it went, and the next call followed it 300 ms later and was refused. */
+  test('keeps the Alpha Vantage gap from a call sent before a relaunch', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    localStorage.setItem('stock-ledger', JSON.stringify({ alphavantage: { [keyPrint('k')]: [Date.now() - 300] } }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+    pebble.fire('ready');
+    const before = sent.length;
+
+    vi.advanceTimersByTime(800);
+
+    const result = [before, sent.length];
+
+    expect(result).toEqual([0, 1]);
+  });
+
+  /**
+   * A wait that had passed stayed saved, so a launch killed partway through a round left it for the
+   * next launch, which spent Alpha Vantage's calls again with nothing counting them.
+   */
+  test('lets a passed wait go and stamps the call in the ledger as it goes out', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ STOCK_PROVIDER: 'alphavantage', STOCK_API_KEY: 'k', STOCK_SYMBOLS: 'IBM' }));
+    localStorage.setItem('stock-cache', JSON.stringify({ lastAsOf: '', lastFetchMs: Date.now() - 60000, strip: null, provider: 'alphavantage', retryAtMs: Date.now() - 1000 }));
+    app.startPebbleApp({ clayConfig: [], features: [stocks] });
+
+    pebble.fire('ready');
+
+    const cache = JSON.parse(localStorage.getItem('stock-cache') as string);
+    const ledger = JSON.parse(localStorage.getItem('stock-ledger') as string);
+
+    const result = [cache.retryAtMs, ledger.alphavantage[keyPrint('k')]];
+
+    expect(result).toEqual([0, [Date.now()]]);
   });
 });
 

@@ -1,9 +1,9 @@
 /**
  * Twelve Data stock quote provider (requires an API key).
  *
- * The free tier is 800 calls a day across global markets, so this is the option
- * for non-US tickers. Change and percent come back ready to use. One call per
- * symbol.
+ * The free tier allows 8 calls a minute and 800 a day, and covers US markets only. A paid plan
+ * adds 20+ markets, and a ticker outside the plan answers 403, read as NO ACCESS.
+ * Change and percent come back ready to use. One call per symbol.
  */
 
 import util from '../util';
@@ -21,6 +21,9 @@ interface TwelveDataQuote {
   percent_change?: string;
   symbol?: string;
   datetime?: string;
+  name?: string;
+  currency?: string;
+  last_quote_at?: number;
 }
 
 /**
@@ -41,9 +44,9 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const url = `${TWELVEDATA_QUOTE_API}?symbol=${encodeURIComponent(symbol)}&apikey=${start.encodedKey}`;
 
   util.requestJson<TwelveDataQuote>(url, request, done, (err, json) => {
-    // a bodyless error arrives with no json to read so there's nothing to diagnose
+    // nothing to read: a bodyless 429, a timeout, or a call that never reached the host
     if (!json) {
-      return done(util.status('Net Error'));
+      return done(util.bodyless(err));
     }
 
     // Twelve Data answers 200 for a good read and puts the trouble in a
@@ -54,7 +57,7 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
       const code = Number(json.code);
 
       if (code === 429 || message.indexOf('limit') !== -1 || message.indexOf('credits') !== -1) {
-        return done(util.status('Rate Limit'));
+        return done(util.rateLimit(message));
       }
 
       // a server error says nothing about the key, so it reads as a round that was not answered and
@@ -86,7 +89,7 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     // datetime is the bar date or a full timestamp intraday so keep the day part
     const asOf = String(json.datetime || '').slice(0, 10);
 
-    done(util.ok(json.symbol || symbol, price, change, changePercent, asOf));
+    done(util.ok(json.symbol || symbol, price, change, changePercent, asOf, { name: json.name, currency: json.currency, asOfEpoch: json.last_quote_at }));
   });
 }
 

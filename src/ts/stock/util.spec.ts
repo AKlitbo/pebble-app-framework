@@ -43,6 +43,31 @@ describe('stock util ok', () => {
     expect(result.changePercent).toBe(0);
     expect(result.ok).toBe(true);
   });
+
+  /** A plugin serves the name, currency, and quote time beside the price, so the ones a provider gives have to land. */
+  test('keeps the name, currency, and quote time a provider gives', () => {
+    const result = util.ok('AAPL', 261.74, 1.24, 0.47, '2026-07-01', { name: ' Apple Inc. ', currency: 'USD', asOfEpoch: 1719849600.9 });
+
+    expect(result.name).toBe('Apple Inc.');
+    expect(result.currency).toBe('USD');
+    expect(result.asOfEpoch).toBe(1719849600);
+  });
+
+  /** A London price in pence comes as GBp, and reading it as GBP would show it 100 times too high in pounds. */
+  test('keeps a currency in pence apart from pounds', () => {
+    const result = util.ok('VOD.L', 7050, 12, 0.17, '', { currency: 'GBp' });
+
+    expect(result.currency).toBe('GBp');
+  });
+
+  /** A face shows the ticker when there is no name, so a blank one must be left out rather than sent in its place. */
+  test('leaves out a blank name, an odd currency, and a quote time of zero', () => {
+    const result = util.ok('AAPL', 261.74, 1.24, 0.47, '', { name: '  ', currency: 'dollars', asOfEpoch: 0 });
+
+    expect(result).not.toHaveProperty('name');
+    expect(result).not.toHaveProperty('currency');
+    expect(result).not.toHaveProperty('asOfEpoch');
+  });
 });
 
 describe('stock util status', () => {
@@ -152,5 +177,70 @@ describe('stock util requestJson', () => {
     util.requestJson('https://x?symbol=AAPL', request, () => {}, () => {});
 
     expect(requested).toMatch(/[?&]_=\d+/);
+  });
+});
+
+describe('rateLimit', () => {
+  /** Each limit resets on its own clock, so the wait depends on reading which one the provider named. */
+  test.each([
+    ['Thank you for using Alpha Vantage! Please consider spreading out your free API requests more sparingly (1 request per second).', 'second'],
+    ['You have run out of API credits for the current minute. 9 API credits were used, with the current limit being 8.', 'minute'],
+    ['You have run out of API credits for the day.', 'day'],
+    ['Our standard API rate limit is 25 requests per day.', 'day'],
+  ])('reads %s as a %s limit', (message, limit) => {
+    const result = util.rateLimit(message);
+
+    expect([result.status, result.limit]).toEqual(['RATE LIMIT', limit]);
+  });
+
+  /** A message naming no limit must still read as a rate limit, with no wait it cannot back up. */
+  test('leaves the limit out when the message names none', () => {
+    const result = util.rateLimit('Too Many Requests');
+
+    expect([result.status, result.limit]).toEqual(['RATE LIMIT', undefined]);
+  });
+});
+
+describe('rateLimit when a daily message mentions a minute', () => {
+  /** Reading a daily refusal as the minute limit sent four refused calls every minute until midnight. */
+  test('reads it as the daily limit', () => {
+    const result = util.rateLimit('You have run out of API credits for the day. Upgrade for more credits per minute.');
+
+    expect(result.limit).toBe('day');
+  });
+});
+
+describe('rateLimit on Alpha Vantage burst reply', () => {
+  /**
+   * The burst reply names the free key's 25 a day too, and reading that as the daily limit lost the
+   * five second retry. This is Alpha Vantage's reply word for word, from two calls sent together on
+   * 10 November 2026.
+   */
+  test('reads the burst reply as the second limit despite its daily tail', () => {
+    const result = util.rateLimit('Thank you for using Alpha Vantage! Please consider spreading out your free API requests more sparingly (1 request per second). You may subscribe to any of the premium plans at https://www.alphavantage.co/premium/ to lift the free key rate limit (25 requests per day), raise the per-second burst limit, and instantly unlock all premium endpoints');
+
+    expect(result.limit).toBe('second');
+  });
+});
+
+describe('bodyless', () => {
+  /** A timed out call may have reached the provider, so it reads apart from one that never left the phone. */
+  test.each([
+    ['http 429', 'RATE LIMIT'],
+    ['timeout', 'TIMEOUT'],
+    ['network error', 'NET ERROR'],
+  ])('reads %s as %s', (err, word) => {
+    const result = util.bodyless(err);
+
+    expect(result.status).toBe(word);
+  });
+});
+
+describe('ok with a coin as the currency', () => {
+  /** A crypto pair priced in a coin, such as USDT, lost its currency and went out with no code before the price. */
+  test('keeps a four letter coin code as the currency', () => {
+    const result = util.ok('BTC-USDT', 100, 0, 0, '', { currency: 'USDT' });
+
+    expect(result.currency).toBe('USDT');
   });
 });

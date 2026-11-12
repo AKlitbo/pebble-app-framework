@@ -207,3 +207,192 @@ describe('runStockRound', () => {
     expect(state.lastAsOf).toBe('2026-07-01');
   });
 });
+
+describe('runStockRound for a provider with limits', () => {
+  const good = (symbol: string): StockQuote => ({ symbol, price: 1, change: 0, changePercent: 0, asOf: '2026-11-10', ok: true });
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  /** Alpha Vantage refuses a second call within about a second, and four at once came back as one quote and three RATE LIMITs. */
+  test('starts each call a spacing after the one before answers', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '' };
+    const asked: string[] = [];
+    const deps = {
+      fetchQuote: (symbol: string, done: (quote: StockQuote) => void) => { asked.push(symbol); done(good(symbol)); },
+      sendStocks: vi.fn(), now: () => 0, timeoutMs: 30000, spacingMs: 1100,
+    };
+
+    runStockRound(state, ['A', 'B', 'C'], false, deps);
+    const counts = [asked.length];
+
+    vi.advanceTimersByTime(1100);
+    counts.push(asked.length);
+    vi.advanceTimersByTime(1100);
+    counts.push(asked.length);
+
+    const result = counts;
+
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  /** A slow answer followed by a fast call reached Alpha Vantage under a second apart, so the gap runs from the answer. */
+  test('holds the next call until the one before has answered', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '' };
+    const asked: string[] = [];
+    const pendingDone: ((quote: StockQuote) => void)[] = [];
+    const deps = {
+      fetchQuote: (symbol: string, done: (quote: StockQuote) => void) => { asked.push(symbol); pendingDone.push(done); },
+      sendStocks: vi.fn(), now: () => 0, timeoutMs: 30000, spacingMs: 1100,
+    };
+
+    runStockRound(state, ['A', 'B'], false, deps);
+    vi.advanceTimersByTime(5000);
+    const beforeAnswer = asked.length;
+
+    pendingDone[0](good('A'));
+    vi.advanceTimersByTime(1100);
+
+    const result = [beforeAnswer, asked.length];
+
+    expect(result).toEqual([1, 2]);
+  });
+
+  /** A save that only removed a ticker must spend no Alpha Vantage calls on the tickers it already holds. */
+  test('fills a held ticker without calling the provider', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '' };
+    const asked: string[] = [];
+    const sendStocks = vi.fn();
+    const deps = {
+      fetchQuote: (symbol: string, done: (quote: StockQuote) => void) => { asked.push(symbol); done(good(symbol)); },
+      sendStocks, now: () => 0, timeoutMs: 30000,
+      reuse: (symbol: string) => (symbol === 'A' ? good('A') : null),
+    };
+
+    runStockRound(state, ['A', 'B'], true, deps);
+
+    expect([asked, sendStocks.mock.calls[0][0].map((quote: StockQuote) => quote.symbol)]).toEqual([['B'], ['A', 'B']]);
+  });
+
+  /** A round refused for a rate limit has to leave its wait behind, or Yahoo is asked again on the next minute's poll. */
+  test('leaves the wait a rate limit sets', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '', retryAtMs: 0, backoffMs: 0 };
+    const limited: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'RATE LIMIT' };
+    const deps = { fetchQuote: (_symbol: string, done: (quote: StockQuote) => void) => done(limited), sendStocks: vi.fn(), now: () => 1000, timeoutMs: 30000, provider: 'yahoo' };
+
+    runStockRound(state, ['AAPL'], false, deps);
+
+    expect([state.retryAtMs, state.backoffMs]).toEqual([1000 + 15 * 60 * 1000, 15 * 60 * 1000]);
+  });
+
+  /** A spaced call whose turn comes after a forced round took over must not go out, or the old list spends a call. */
+  test('drops a spaced call once the round is taken over', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '' };
+    const asked: string[] = [];
+    const deps = {
+      fetchQuote: (symbol: string, done: (quote: StockQuote) => void) => { asked.push(symbol); done(good(symbol)); },
+      sendStocks: vi.fn(), now: () => 0, timeoutMs: 30000, spacingMs: 1100,
+    };
+
+    runStockRound(state, ['A', 'B'], false, deps);
+    runStockRound(state, ['C'], true, deps);
+    vi.advanceTimersByTime(5000);
+
+    expect(asked).toEqual(['A', 'C']);
+  });
+
+  /** A blip during a rate limit's wait says nothing about the limit, and clearing the wait sent polls straight back into it. */
+  test('leaves a rate limit wait alone after a round nothing answered', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '', retryAtMs: 9999999, backoffMs: 7200000 };
+    const netError: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'NET ERROR' };
+    const deps = { fetchQuote: (_symbol: string, done: (quote: StockQuote) => void) => done(netError), sendStocks: vi.fn(), now: () => 1000, timeoutMs: 30000, provider: 'yahoo' };
+
+    runStockRound(state, ['AAPL'], true, deps);
+
+    expect([state.retryAtMs, state.backoffMs]).toEqual([9999999, 7200000]);
+  });
+
+  /** A save that only reordered held tickers spent nothing, and moving the time cut that evening's tries for the close. */
+  test('leaves the fetch time alone when every ticker was reused', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 77, lastAsOf: '' };
+    const deps = { fetchQuote: vi.fn(), sendStocks: vi.fn(), now: () => 1000, timeoutMs: 30000, reuse: (symbol: string) => good(symbol) };
+
+    runStockRound(state, ['A', 'B'], true, deps);
+
+    expect([state.lastFetchMs, state.lastAsOf]).toEqual([77, '2026-11-10']);
+  });
+
+  /**
+   * Three held closes beside one call lost to the network read as a good round, and the day moved to
+   * today. The lost ticker then showed yesterday's close until the next evening. Now neither the time
+   * nor the day moves, so the next ask tries the lost ticker again.
+   */
+  test('counts a lost call beside held quotes as a blip that keeps the day', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '2026-11-09', retryAtMs: 0, backoffMs: 0, shortRetries: 0 };
+    const netError: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'NET ERROR' };
+    const deps = {
+      fetchQuote: (_symbol: string, done: (quote: StockQuote) => void) => done(netError),
+      sendStocks: vi.fn(), now: () => 1000, timeoutMs: 30000, provider: 'alphavantage',
+      reuse: (symbol: string) => (symbol === 'D' ? null : good(symbol)),
+    };
+
+    runStockRound(state, ['A', 'B', 'C', 'D'], false, deps);
+
+    expect([state.lastFetchMs, state.lastAsOf]).toEqual([0, '2026-11-09']);
+  });
+
+  /** A phone clock that stepped back an hour made the first call wait an hour, and every ask meanwhile was dropped. */
+  test('holds the first spaced call no longer than one gap', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '' };
+    const asked: string[] = [];
+    const deps = { fetchQuote: (symbol: string) => asked.push(symbol), sendStocks: vi.fn(), now: () => 0, timeoutMs: 30000, spacingMs: 1100, firstDelayMs: 60 * 60 * 1000 };
+
+    runStockRound(state, ['A'], false, deps);
+    vi.advanceTimersByTime(1100);
+
+    expect(asked).toEqual(['A']);
+  });
+
+
+  /**
+   * A 5xx or a broken answer reached the provider and was counted, but read as never answered, so
+   * every poll spent another call. Twelve Data's 800 a day went in 200 minutes of a one minute poll.
+   */
+  test('waits 15 minutes, doubling, after a counted call that gave nothing usable', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '', retryAtMs: 0, backoffMs: 0 };
+    const broken: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'NET ERROR', spent: true };
+    const deps = { fetchQuote: (_symbol: string, done: (quote: StockQuote) => void) => done(broken), sendStocks: vi.fn(), now: () => 1000, timeoutMs: 30000, provider: 'twelvedata' };
+    const waits: number[] = [];
+
+    runStockRound(state, ['AAPL'], false, deps);
+    waits.push(state.retryAtMs - 1000);
+    runStockRound(state, ['AAPL'], false, deps);
+    waits.push(state.retryAtMs - 1000);
+
+    const result = waits;
+
+    expect(result).toEqual([15 * 60 * 1000, 30 * 60 * 1000]);
+  });
+
+  /**
+   * One ticker answering 500 doubled the wait for the whole list, so the three good tickers refreshed
+   * every 2 hours rather than on the 15 minute floor.
+   */
+  test('sets no doubling wait when good quotes came back beside a broken one', () => {
+    const state = { inFlight: false, round: 0, lastFetchMs: 0, lastAsOf: '', retryAtMs: 0, backoffMs: 0 };
+    const broken: StockQuote = { symbol: '', price: 0, change: 0, changePercent: 0, asOf: '', ok: false, status: 'NET ERROR', spent: true };
+    const deps = {
+      fetchQuote: (symbol: string, done: (quote: StockQuote) => void) => done(symbol === 'D' ? broken : good(symbol)),
+      sendStocks: vi.fn(), now: () => 1000, timeoutMs: 30000, provider: 'twelvedata',
+    };
+
+    runStockRound(state, ['A', 'B', 'C', 'D'], false, deps);
+
+    expect([state.retryAtMs, state.backoffMs, state.lastFetchMs]).toEqual([0, 0, 1000]);
+  });
+});

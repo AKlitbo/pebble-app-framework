@@ -180,3 +180,29 @@ describe('finnhub provider', () => {
     });
   });
 });
+
+describe('an error Finnhub sends in the body', () => {
+  /**
+   * Finnhub answers ^GSPC on a free key with a 200 and "Market data subscription required for CFD
+   * indices.", read live on 11 November 2026. That read as INVALID KEY while the same key priced AAPL.
+   */
+  test('reads a plan it does not cover as no access, not a bad key', () => {
+    const result = run(BASE, replying({ err: null, body: '{"error":"Market data subscription required for CFD indices."}' }, []));
+
+    expect(result.status).toBe('NO ACCESS');
+  });
+
+  /** A body that names the key is still a bad key, which the wearer has to fix. */
+  test('reads an error about the key as an invalid key', () => {
+    const result = run(BASE, replying({ err: null, body: '{"error":"Invalid API key"}' }, []));
+
+    expect(result.status).toBe('INVALID KEY');
+  });
+
+  /** A body that names a limit is the rate cap, so the wait after it applies. */
+  test('reads an error about a limit as a rate limit', () => {
+    const result = run(BASE, replying({ err: null, body: '{"error":"API limit reached. Please try again later."}' }, []));
+
+    expect(result.status).toBe('RATE LIMIT');
+  });
+});

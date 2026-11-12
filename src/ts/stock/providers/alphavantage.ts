@@ -43,9 +43,9 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
   const url = `${ALPHAVANTAGE_API}?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(symbol)}&apikey=${start.encodedKey}`;
 
   util.requestJson<AlphaVantageResponse>(url, request, done, (err, json) => {
-    // a bodyless error arrives with no json to read so there's nothing to diagnose
+    // nothing to read: a bodyless 429, a timeout, or a call that never reached the host
     if (!json) {
-      return done(util.status('Net Error'));
+      return done(util.bodyless(err));
     }
 
     // Alpha Vantage always answers 200 and puts the trouble in the body. check
@@ -56,7 +56,7 @@ function fetch(opts: StockOpts, request: RequestFn, done: DoneFn): void {
     }
 
     if (json.Information || json.Note) {
-      return done(util.status('Rate Limit'));
+      return done(util.rateLimit(json.Information || json.Note));
     }
 
     // an unknown symbol comes back as an empty Global Quote object

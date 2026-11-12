@@ -51,8 +51,9 @@ export interface ConfigBuilderOptions {
   wind?: unknown;
   battery?: { label?: string; description?: string };
   /** Stock quotes: the data source, its key, and the tickers. description replaces the lead line, and
-   * items adds a face's own controls under the tickers, such as a refresh interval its watch reads. */
-  stocks?: { description?: string; items?: ClayConfigItem[] };
+   * items adds a face's own controls under the tickers, such as a refresh interval its watch reads.
+   * paidPlan adds the Paid Plan toggle under the key, on STOCK_PAID_PLAN, which the face declares. */
+  stocks?: { description?: string; items?: ClayConfigItem[]; paidPlan?: boolean };
   /** The calendar feed: the private iCal link. description replaces the lead line, and items adds a
    * face's own controls under it, such as reminders its watch buzzes for. */
   calendar?: { description?: string; items?: ClayConfigItem[] };
@@ -553,7 +554,7 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'type': 'select',
         'messageKey': 'STOCK_PROVIDER',
         'label': 'Data Source',
-        'description': 'Finnhub gives real-time US quotes. Yahoo is real-time too and needs no key, with the widest market coverage, but it is an unofficial feed that can change without notice. Twelve Data adds global markets on a free key. Alpha Vantage is end-of-day only, so it grabs the day\'s close once after the closing bell.',
+        'description': 'Finnhub gives real-time US quotes. Yahoo is real-time too and needs no key, with the widest market coverage, but it is an unofficial feed that can change without notice. Twelve Data covers US markets on a free key that allows 800 quotes a day, and 20+ markets on a paid plan. Alpha Vantage is end-of-day only, with 25 quotes a day on a free key, so it grabs the day\'s close once after the closing bell.',
         'defaultValue': 'finnhub',
         // the sources are listed here rather than read from ts/stock, since this file is in every face's
         // phone bundle and importing the stock feature would bundle its providers into faces without
@@ -561,7 +562,7 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'options': [
           { 'label': 'Finnhub (Real-Time, Free Key)', 'value': 'finnhub' },
           { 'label': 'Yahoo (Real-Time, No Key)', 'value': 'yahoo' },
-          { 'label': 'Twelve Data (Global, Free Key)', 'value': 'twelvedata' },
+          { 'label': 'Twelve Data (Free Key)', 'value': 'twelvedata' },
           { 'label': 'Alpha Vantage (End-of-Day, Free Key)', 'value': 'alphavantage' },
         ],
       },
@@ -577,6 +578,14 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
           'maxlength': 64,
         },
       },
+      ...(options.stocks.paidPlan ? [{
+        'type': 'toggle',
+        'messageKey': 'STOCK_PAID_PLAN',
+        'label': 'Paid Plan',
+        'visibleWhen': { 'key': 'STOCK_PROVIDER', 'notIn': [...KEYLESS_STOCKS] },
+        'description': 'Turn on if your key is on a paid plan. The face then fetches on your watch\'s interval rather than holding to the free plan\'s limits.',
+        'defaultValue': false,
+      }] : []),
       {
         'type': 'input',
         'messageKey': 'STOCK_SYMBOLS',

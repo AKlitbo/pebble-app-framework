@@ -94,6 +94,24 @@ describe('yahoo provider', () => {
 
       expect(result.asOf).toBe('2024-07-01');
     });
+
+    /** A stock plugin serves the name and currency beside the price, the way Pebble's own Stocks plugin reads them from Yahoo. */
+    test('reads the currency and quote time from the meta block', () => {
+      const result = run(BASE, replying({ body: QUOTE_OK }, []));
+
+      expect(result.currency).toBe('USD');
+      expect(result.asOfEpoch).toBe(1719849600);
+    });
+
+    /** Yahoo's short name is the one a face has room for, and its long name stands in when the short one is missing. */
+    test('takes the short name, or the long name when there is no short one', () => {
+      const withShort = JSON.stringify({ chart: { result: [{ meta: { symbol: 'AAPL', regularMarketPrice: 1, shortName: 'Apple Inc.', longName: 'Apple Incorporated' } }], error: null } });
+      const withLong = JSON.stringify({ chart: { result: [{ meta: { symbol: 'AAPL', regularMarketPrice: 1, longName: 'Apple Incorporated' } }], error: null } });
+
+      const result = [run(BASE, replying({ body: withShort }, [])).name, run(BASE, replying({ body: withLong }, [])).name];
+
+      expect(result).toEqual(['Apple Inc.', 'Apple Incorporated']);
+    });
   });
 
   describe('errors', () => {

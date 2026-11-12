@@ -285,3 +285,190 @@ describe('shouldThrottleStockFetch', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('the wait after a rate limit', () => {
+  // Wednesday 1 July 2026, 14:30:20 UTC, mid-session in New York
+  const NOW = Date.UTC(2026, 6, 1, 14, 30, 20);
+  const limited = (limit?: string) => [{ status: 'RATE LIMIT', limit }];
+
+  /** Twelve Data's minute limit resets on the clock minute, and waiting out the 15-minute floor left RATE LIMIT up for no reason. */
+  test('waits a Twelve Data minute limit out to just past the next clock minute', () => {
+    const result = schedule.rateLimitWait('twelvedata', limited('minute'), 0, NOW);
+
+    expect(result.retryAtMs).toBe(Date.UTC(2026, 6, 1, 14, 31, 1));
+  });
+
+  /** Twelve Data's daily credits come back at midnight UTC, and asking before then is refused every time. */
+  test('waits a Twelve Data daily limit out to midnight UTC', () => {
+    const result = schedule.rateLimitWait('twelvedata', limited('day'), 0, NOW);
+
+    expect(result.retryAtMs).toBe(Date.UTC(2026, 6, 2, 0, 1));
+  });
+
+  /** Alpha Vantage's one call a second limit clears in seconds, so its tickers are worth asking for again soon. */
+  test('waits an Alpha Vantage burst limit out for a few seconds', () => {
+    const result = schedule.rateLimitWait('alphavantage', limited('second'), 0, NOW);
+
+    expect(result.retryAtMs).toBe(NOW + 5000);
+  });
+
+  /** Alpha Vantage's daily cap is left to its own evening window, which already spaces the tries two hours apart. */
+  test('sets no wait for an Alpha Vantage daily limit', () => {
+    const result = schedule.rateLimitWait('alphavantage', limited('day'), 0, NOW);
+
+    expect(result.retryAtMs).toBe(0);
+  });
+
+  /** Asking Yahoo again every minute while it blocks can stretch the block, so each limit in a row waits twice as long. */
+  test('backs Yahoo off from 15 minutes, doubling up to two hours', () => {
+    const first = schedule.rateLimitWait('yahoo', limited(), 0, NOW);
+    const second = schedule.rateLimitWait('yahoo', limited(), first.backoffMs, NOW);
+    const capped = schedule.rateLimitWait('yahoo', limited(), 120 * 60 * 1000, NOW);
+
+    const result = [first.retryAtMs - NOW, second.retryAtMs - NOW, capped.retryAtMs - NOW];
+
+    expect(result).toEqual([15 * 60 * 1000, 30 * 60 * 1000, 120 * 60 * 1000]);
+  });
+
+  /** A round that got through has to clear the wait and the backoff, or the next limit starts at two hours. */
+  test('clears the wait and the backoff after a round with no rate limit', () => {
+    const result = schedule.rateLimitWait('yahoo', [{ status: 'NO SYMBOL' }], 60 * 60 * 1000, NOW);
+
+    expect(result).toEqual({ retryAtMs: 0, backoffMs: 0 });
+  });
+});
+
+describe('the gate with a rate limit wait', () => {
+  // Wednesday 1 July 2026, 14:30 UTC, mid-session in New York
+  const NOW = Date.UTC(2026, 6, 1, 14, 30);
+
+  /** A wait from a rate limit holds even a provider with no floor, or Yahoo is asked again while it blocks. */
+  test('holds Yahoo until its wait is up', () => {
+    const result = [
+      schedule.shouldThrottleStockFetch('yahoo', false, 0, '', NOW, NOW + 1000),
+      schedule.shouldThrottleStockFetch('yahoo', false, 0, '', NOW + 1000, NOW + 1000),
+    ];
+
+    expect(result).toEqual([true, false]);
+  });
+
+  /** Twelve Data's minute wait is shorter than its 15-minute floor, and the wait is the one that decides. */
+  test('lets Twelve Data through once its minute wait is up, inside the floor', () => {
+    const result = schedule.shouldThrottleStockFetch('twelvedata', false, NOW - 60 * 1000, '', NOW, NOW - 1);
+
+    expect(result).toBe(false);
+  });
+
+  /** A wait more than a day out means the phone's clock went back, and holding to it would shut the gate for days. */
+  test('lets go of a wait more than a day away', () => {
+    const result = schedule.shouldThrottleStockFetch('yahoo', false, 0, '', NOW, NOW + 25 * 60 * 60 * 1000);
+
+    expect(result).toBe(false);
+  });
+
+  /** A launch asks on ready and again five seconds later, and the second must not spend a second round. */
+  test('holds Finnhub inside the short gap after a round', () => {
+    const result = [
+      schedule.shouldThrottleStockFetch('finnhub', false, NOW - 5000, '', NOW),
+      schedule.shouldThrottleStockFetch('finnhub', false, NOW - 60 * 1000, '', NOW),
+    ];
+
+    expect(result).toEqual([true, false]);
+  });
+});
+
+describe('currentTradingDay', () => {
+  /** Alpha Vantage's free key has yesterday's close until today's is out, so a quote from yesterday is current in the morning. */
+  test.each([
+    ['a weekday morning', Date.UTC(2026, 6, 1, 14, 0), '2026-06-30'],
+    ['a weekday evening', Date.UTC(2026, 6, 1, 21, 0), '2026-07-01'],
+    ['a Monday morning', Date.UTC(2026, 6, 6, 14, 0), '2026-07-03'],
+    ['a Sunday', Date.UTC(2026, 6, 5, 18, 0), '2026-07-03'],
+  ])('reads %s as the close a quote has to be from', (_name, now, day) => {
+    const result = schedule.currentTradingDay(now);
+
+    expect(result).toBe(day);
+  });
+});
+
+describe('a Twelve Data daily limit just after midnight UTC', () => {
+  /** A phone clock a little fast read the old day's refusal as a new day's, and waited a whole day for nothing. */
+  test('tries again after the next minute rather than the next midnight', () => {
+    const now = Date.UTC(2026, 6, 2, 0, 0, 30);
+
+    const result = schedule.rateLimitWait('twelvedata', [{ status: 'RATE LIMIT', limit: 'day' }], 0, now);
+
+    expect(result.retryAtMs).toBe(Date.UTC(2026, 6, 2, 0, 1, 1));
+  });
+});
+
+describe('the gate on a paid plan', () => {
+  // Wednesday 1 July 2026, 14:30 UTC, mid-session in New York
+  const NOW = Date.UTC(2026, 6, 1, 14, 30);
+
+  /** A wearer paying for Twelve Data or Alpha Vantage was held to the free plan's floors, a quote every 15 minutes or once an evening. */
+  test('leaves the free plan floors out and keeps the short gap', () => {
+    const result = [
+      schedule.shouldThrottleStockFetch('twelvedata', false, NOW - 60 * 1000, '', NOW, 0, true),
+      schedule.shouldThrottleStockFetch('alphavantage', false, NOW - 60 * 1000, '2026-07-01', NOW, 0, true),
+      schedule.shouldThrottleStockFetch('twelvedata', false, NOW - 5000, '', NOW, 0, true),
+    ];
+
+    expect(result).toEqual([false, false, true]);
+  });
+
+  /** A paid plan has limits of its own, so a RATE LIMIT's wait still holds. */
+  test('still holds to a rate limit wait', () => {
+    const result = schedule.shouldThrottleStockFetch('twelvedata', false, 0, '', NOW, NOW + 30 * 1000, true);
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('the wait after an Alpha Vantage limit on a paid plan', () => {
+  /** A free key with Paid Plan on has no evening window to fall back on, and spent four refused calls on every poll. */
+  test('backs off from 15 minutes', () => {
+    const now = Date.UTC(2026, 6, 1, 14, 30);
+
+    const result = schedule.rateLimitWait('alphavantage', [{ status: 'RATE LIMIT', limit: 'day' }], 0, now, true);
+
+    expect(result).toEqual({ retryAtMs: now + 15 * 60 * 1000, backoffMs: 15 * 60 * 1000 });
+  });
+});
+
+describe('roundWait', () => {
+  const NOW = Date.UTC(2026, 6, 1, 14, 30);
+  const broken = { ok: false, status: 'NET ERROR', spent: true };
+  const good = { ok: true };
+
+  /** A round that never reached the provider says nothing about a limit, so a wait already set must stand. */
+  test('leaves the wait alone after a round nothing answered and nothing spent', () => {
+    const result = schedule.roundWait('twelvedata', [{ ok: false, status: 'NET ERROR' }], false, false, 0, NOW);
+
+    expect(result).toBeNull();
+  });
+
+  /** A provider answering every call with a broken page is not well, and asking each minute would spend its day. */
+  test('waits 15 minutes and then doubles when nothing in the round was good', () => {
+    const first = schedule.roundWait('twelvedata', [broken], false, false, 0, NOW);
+    const second = schedule.roundWait('twelvedata', [broken], false, false, first?.backoffMs || 0, NOW);
+
+    const result = [first?.retryAtMs, second?.retryAtMs];
+
+    expect(result).toEqual([NOW + 15 * 60 * 1000, NOW + 30 * 60 * 1000]);
+  });
+
+  /** One broken ticker beside good ones doubled the wait for the whole list, so the good ones refreshed every 2 hours. */
+  test('sets no wait for a broken ticker beside good ones', () => {
+    const result = schedule.roundWait('twelvedata', [good, broken], true, false, 0, NOW);
+
+    expect(result).toEqual({ retryAtMs: 0, backoffMs: 0 });
+  });
+
+  /** When the time was left alone for the lost ticker, the next try still has to wait a little, or it asks every minute. */
+  test('waits a flat 15 minutes when the time was left alone for the troubled ticker', () => {
+    const result = schedule.roundWait('alphavantage', [good, broken], true, true, 30 * 60 * 1000, NOW);
+
+    expect(result).toEqual({ retryAtMs: NOW + 15 * 60 * 1000, backoffMs: 30 * 60 * 1000 });
+  });
+});
