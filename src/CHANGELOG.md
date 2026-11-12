@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `fetchReading` to the Open-Meteo, OpenWeatherMap, and WeatherAPI.com providers, which reads several places into a `WeatherReading` on each place's own clock. Its `onSend` hook hears each request as it goes out, so a plugin stamps its ledger then and takes the stamp back on `NETWORK_ERROR`.
 - Added `ts/plugin-app/weather.ts`, which serves a `WeatherReading` from a plugin app as `weather/location`, with each place's `latitude` and `longitude` for a request that names them, and reads the wearer's places and units from the Pebble app.
 - Added the `pf-footer` class, which centres a text row under Save with no style of the page's own.
+- Added an optional number of days to `horizonFor` in `ts/calendar/window.ts`, for a window other than the week. `horizonFor(now, { days: 1 })` ends at the last second of today on the phone's clock, and a value that is not a whole number from 1 up gives the week. `parseIcal` takes the same count as its third argument, so its recurring events fill the longer window.
 
 #### Changed
 

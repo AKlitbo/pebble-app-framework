@@ -235,6 +235,22 @@ describe('parseIcal recurring events', () => {
     expect(result[0].startEpoch).toBe(Math.floor(Date.UTC(2026, 6, 13, 9, 0, 0) / 1000));
   });
 
+  /**
+   * A plugin that lets the wearer look two weeks ahead walked its rules only to the week, so a weekly
+   * meeting on days 8 to 14 never showed while a one-off on those days did.
+   */
+  test('expands a weekly rule across a two week window', () => {
+    const source = feed(
+      'BEGIN:VEVENT\r\nDTSTART:20240108T090000Z\r\nDTEND:20240108T093000Z\r\n' +
+      'RRULE:FREQ=WEEKLY;BYDAY=MO\r\nSUMMARY:Standup\r\nEND:VEVENT\r\n'
+    );
+
+    const result = (ical.parseIcal(source, NOW, 14) || []).map((event) => event.startEpoch);
+
+    // 2026-07-10 (a Friday) and the next 13 days catch Monday the 13th and Monday the 20th
+    expect(result).toEqual([Math.floor(Date.UTC(2026, 6, 13, 9, 0, 0) / 1000), Math.floor(Date.UTC(2026, 6, 20, 9, 0, 0) / 1000)]);
+  });
+
   /** A daily rule must fill the window, not stop at one. */
   test('expands a daily rule across the whole window', () => {
     const source = feed(

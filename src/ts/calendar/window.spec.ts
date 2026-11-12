@@ -8,7 +8,7 @@
  */
 
 import { describe, test, expect } from 'vitest';
-import { horizonFor } from './window';
+import { horizonFor, MAX_WINDOW_DAYS } from './window';
 import { phoneOffsetMinutes } from '../pkjs/phone-clock';
 
 describe('horizonFor', () => {
@@ -52,5 +52,57 @@ describe('horizonFor', () => {
     const result = horizonFor(now, phoneOffsetMinutes);
 
     expect(result).toBe(Math.floor(Date.UTC(2026, 10, 4, 5, 0) / 1000) - 1);
+  });
+});
+
+describe('horizonFor with a number of days', () => {
+  // Wednesday 2026-10-28 12:00 in Toronto, still on summer time
+  const NOW = Math.floor(Date.UTC(2026, 9, 28, 16, 0) / 1000);
+
+  // the last second of Tuesday 2026-11-03 in Toronto, the week's end
+  const WEEK_END = Math.floor(Date.UTC(2026, 10, 4, 5, 0) / 1000) - 1;
+
+  /** A wearer who wants today alone still saw tomorrow's events, since the window ran a whole day past midnight. */
+  test.each([
+    ['the phone clock', undefined],
+    ['the offset reader', phoneOffsetMinutes],
+  ])('ends a one day window at the last second of today on %s', (_label, offsetAt) => {
+    const result = horizonFor(NOW, { days: 1, offsetAt });
+
+    // the last second of Wednesday 2026-10-28 in Toronto, on summer time
+    expect(result).toBe(Math.floor(Date.UTC(2026, 9, 29, 4, 0) / 1000) - 1);
+  });
+
+  /** A month counted in hours would end an hour early across the clocks going back, and drop that last evening's hour. */
+  test.each([
+    ['the phone clock', undefined],
+    ['the offset reader', phoneOffsetMinutes],
+  ])('ends a 30 day window on midnight 29 days on, across a clock change, on %s', (_label, offsetAt) => {
+    const result = horizonFor(NOW, { days: 30, offsetAt });
+
+    // the last second of Thursday 2026-11-26 in Toronto, on winter time
+    expect(result).toBe(Math.floor(Date.UTC(2026, 10, 27, 5, 0) / 1000) - 1);
+  });
+
+  /** A setting saved as 0, a negative, or half a day would end the window before now or partway through a day. */
+  test.each([[0], [-3], [2.5], [Number.NaN], [Number.POSITIVE_INFINITY]])('falls back to the week for %s days', (days) => {
+    const result = horizonFor(NOW, { days });
+
+    expect(result).toBe(WEEK_END);
+  });
+
+  /** A count of a billion days made an invalid date, so the horizon read NaN and the agenda went empty. */
+  test('holds a huge count of days to the most a window holds', () => {
+    const result = [horizonFor(NOW, { days: 1e9 }), horizonFor(NOW, { days: MAX_WINDOW_DAYS })];
+
+    // the last second of Thursday 2027-10-28 in Toronto, 365 days on, on summer time
+    expect(result).toEqual([Math.floor(Date.UTC(2027, 9, 29, 4, 0) / 1000) - 1, Math.floor(Date.UTC(2027, 9, 29, 4, 0) / 1000) - 1]);
+  });
+
+  /** Every face's agenda reads the week, so the window with no days given must not move. */
+  test('ends on the week with no days given', () => {
+    const result = [horizonFor(NOW), horizonFor(NOW, {}), horizonFor(NOW, { offsetAt: phoneOffsetMinutes })];
+
+    expect(result).toEqual([WEEK_END, WEEK_END, WEEK_END]);
   });
 });

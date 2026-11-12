@@ -236,7 +236,7 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
   }
 
   if (!finished) {
-    console.log('calendar: a repeating event ran out of steps before this week, so it is left off');
+    console.log('calendar: a repeating event ran out of steps before the window, so it is left off');
   }
 
   // an occurrence whose own slot the walk never reached can still have been moved into the window.
@@ -260,14 +260,17 @@ function occurrencesOf(event: ICAL.Event, now: number, horizon: number): Calenda
  * @param text The feed's raw .ics text.
  * @param nowEpoch The instant to treat as now, as epoch seconds. Injectable so tests stay
  * deterministic. Defaults to the real now.
+ * @param days How many days the window holds, today counted, as `horizonFor` takes them. Left out,
+ * the window is the week. A rule's walk stops at the same day, so a weekly event past the week
+ * still shows in a longer window.
  * @return The upcoming events in the window, soonest first. An empty list means the feed read clean
  * with nothing coming up. Null means the text was not a calendar at all, such as an error page,
  * which says nothing about what is on.
  */
-function parseIcal(text: string, nowEpoch?: number): CalendarEvent[] | null {
+function parseIcal(text: string, nowEpoch?: number, days?: number): CalendarEvent[] | null {
   const now = nowEpoch || Math.floor(Date.now() / 1000);
   // a rule's walk stops at the window's last second, and upcomingWindow is handed the same one
-  const horizon = horizonFor(now);
+  const horizon = horizonFor(now, { days });
 
   let root: ICAL.Component;
 
