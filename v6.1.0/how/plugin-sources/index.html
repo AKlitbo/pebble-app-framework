@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pebble App Plugins · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v6.1.0" selected>v6.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li class="current"><a href="../../how/plugin-sources/" aria-current="page">Pebble App Plugins</a></li>
+<li><a href="../../how/plugin-apps/">Plugin Apps</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Pebble App Plugins</h1>
+          
+          <div class="readme"><p>The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app&#39;s own weather list, the events in the phone&#39;s calendars, stock quotes, what the phone is playing, and the phone&#39;s battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well. <a href="../../how/plugin-apps/">Plugin Apps</a> covers building a plugin of your own.</p>
+<p>The phone code lives under <code>src/ts/plugin-sources/</code>, and the rest of the phone code reaches it only through <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/index.ts"><code>index.ts</code></a>. The shared parts are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/subscription.ts"><code>subscription.ts</code></a>, which keeps one live subscription per kind, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/page.ts"><code>page.ts</code></a>, which adds the plugin choice and its notes to the settings page, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/standard.ts"><code>standard.ts</code></a>, which checks what a plugin says it serves. Each kind has a file that turns a plugin&#39;s update into what the watch takes, such as <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/weather.ts"><code>weather.ts</code></a>, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/stocks.ts"><code>stocks.ts</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/calendar.ts"><code>calendar.ts</code></a>. The build side is the table of kinds in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/tools/manifest/plugin-kinds.ts"><code>plugin-kinds.ts</code></a>, the providers list in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/tools/manifest/providers.ts"><code>providers.ts</code></a>, and the swap in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/tools/pkjs/build-pkjs.ts"><code>build-pkjs.ts</code></a>.</p>
+<h2 id="turning-it-on">Turning It On</h2>
+<p>A face turns plugins on one kind of data at a time, in its appinfo&#39;s <code>defines</code>. For the weather, stocks, and the calendar it lists the <code>weather</code>, <code>stocks</code>, and <code>calendar</code> features in <code>startPebbleApp</code> as it would without plugins. Now playing and the phone&#39;s battery have no feature without plugins, so a face lists <code>music</code> from <code>ts/music/feature</code> and <code>phone</code> from <code>ts/phone/feature</code> for those two:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"defines"</span><span style="color:var(--code-foreground)">: {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "PLUGIN_WEATHER"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "PLUGIN_CALENDAR"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> 1</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-constant)">app</span><span style="color:var(--code-token-function)">.startPebbleApp</span><span style="color:var(--code-foreground)">({ clayConfig</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [weather</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> calendar] });</span></span></code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">Define</th>
+<th align="left">What It Reads</th>
+<th align="left">Keys It Brings</th>
+<th align="left">Select Key</th>
+<th align="left">Permission</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>PLUGIN_WEATHER</code></td>
+<td align="left"><code>weather/location</code></td>
+<td align="left"><code>WEATHER_REQUEST</code>, <code>WEATHER_TEMPERATURE</code>, <code>WEATHER_CONDITIONS</code>, <code>WEATHER_OK</code></td>
+<td align="left"><code>WEATHER_PROVIDER</code></td>
+<td align="left"><code>Location</code>, which every weather face lists</td>
+</tr>
+<tr>
+<td align="left"><code>PLUGIN_STOCKS</code></td>
+<td align="left"><code>finance/stock</code></td>
+<td align="left"><code>STOCK_STRIP</code>, <code>STOCK_REQUEST</code></td>
+<td align="left"><code>STOCK_PROVIDER</code></td>
+<td align="left">none</td>
+</tr>
+<tr>
+<td align="left"><code>PLUGIN_CALENDAR</code></td>
+<td align="left"><code>calendar/event</code></td>
+<td align="left"><code>CALENDAR_STRIP</code></td>
+<td align="left"><code>CALENDAR_SOURCE</code></td>
+<td align="left"><code>Calendar</code></td>
+</tr>
+<tr>
+<td align="left"><code>PLUGIN_MUSIC</code></td>
+<td align="left"><code>music/track</code></td>
+<td align="left"><code>MUSIC_TITLE</code>, <code>MUSIC_ARTIST</code>, <code>MUSIC_PLAYING</code>, <code>MUSIC_REQUEST</code></td>
+<td align="left">none</td>
+<td align="left"><code>ReadMusic</code></td>
+</tr>
+<tr>
+<td align="left"><code>PLUGIN_PHONE</code></td>
+<td align="left"><code>phone/phone_state</code></td>
+<td align="left"><code>PHONE_BATTERY</code>, <code>PHONE_REQUEST</code></td>
+<td align="left">none</td>
+<td align="left">none</td>
+</tr>
+</tbody></table>
+<p>Each define decides its own kind and nothing else. It puts that kind&#39;s plugin code in the phone bundle, adds that kind&#39;s choice and notes to the settings page, and adds its permission to the manifest, as <a href="../../how/phone-side/#what-the-phone-lets-it-reach">What the Phone Lets It Reach</a> covers. A face can take plugin weather and keep its calendar on the iCal link alone, with no calendar choice on its page and no <code>Calendar</code> prompt, by setting <code>PLUGIN_WEATHER</code> alone. A define set to <code>0</code> is off, the same as one left out. The defines also reach the watch C as <code>-DPLUGIN_WEATHER=1</code> and so on. There the weather, stock, and calendar defines keep the wearer&#39;s choice on the watch, as <a href="#keeping-the-choice-through-a-reset">Keeping the Choice through a Reset</a> covers, and <code>PLUGIN_WEATHER</code> on a face with no unit key drops the unit letter, as <a href="#units-from-the-pebble-app">Units from the Pebble App</a> covers.</p>
+<p><strong>The Watch Needs settings_init.</strong> With the weather, stock, or calendar define on and the select key declared, the watch keeps the wearer&#39;s choice in the framework&#39;s own settings schema, so a reset of the Pebble app brings it back. That only happens once <code>settings_init</code> has run. A face with settings of its own already calls it. A face with no settings of its own has to call <code>settings_init(NULL)</code> at launch, before <code>appmessage_open</code>, or it keeps nothing and a reset drops the wearer&#39;s pick. The outbox is sized from the settings reply when it opens, so a call after it leaves every settings reply empty, and a reinstall restores nothing. The build cannot tell whether a face calls it, so nothing warns. The choice only goes back to the phone in the settings reply, so the build adds <code>SETTINGS_REQUEST</code> and <code>SETTINGS_FRESH</code> to such a face&#39;s keys, even one with no settings of its own. <a href="../../how/settings-on-the-watch/#keeping-a-plugin-source">Keeping a Plugin Source</a> covers the rest, including key 249, which every face leaves free.</p>
+<p><strong>Each Define Needs Its Keys.</strong> The build stops on a define without the keys its kind needs, so the mistake shows at build time rather than as a lost save or a subscription with nowhere to send. The select key is the one the plugin choice saves under. The calendar&#39;s select is one the page adds, and Clay saves a setting to the watch under its key&#39;s number, so the face declares <code>CALENDAR_SOURCE</code> even though its own page has no such row. A new key needs a <code>--clean</code> build. Now playing and the phone&#39;s battery have no other source, so the build also stops on their keys without their define, since nothing on the phone would ever answer them.</p>
+<h2 id="the-list-beside-the-define">The List beside the Define</h2>
+<p>The define puts the code in. The <code>providers</code> list in the appinfo, beside <code>defines</code>, says what the settings page offers for the kind:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"providers"</span><span style="color:var(--code-foreground)">: {</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "weather"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">"plugin"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> "openmeteo"</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "calendar"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">"plugin"</span><span style="color:var(--code-foreground)">]</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>With the define on, weather, stocks, and the calendar each run in one of three modes:</p>
+<ul>
+<li><strong>No List.</strong> The source select offers every custom provider, and Preferred Source joins it when a plugin on the phone serves the kind.</li>
+<li><strong>The Plugin and Custom Providers,</strong> such as <code>[&quot;plugin&quot;, &quot;openmeteo&quot;]</code>. The select offers the listed custom providers, and Preferred Source joins it the same way. The first custom provider listed is the default, wherever <code>plugin</code> sits.</li>
+<li><strong>The Plugin Alone,</strong> <code>[&quot;plugin&quot;]</code>. The page has no select and none of the rows only a custom provider needs, and the feature always reads from the plugin, whatever is saved.</li>
+</ul>
+<p>Now playing and the phone&#39;s battery only ever run the third way, so their list is <code>[&quot;plugin&quot;]</code> or left out.</p>
+<p><strong>What Each Mode Brings.</strong> Every mode brings the kind&#39;s keys from the table, which the build adds to the face&#39;s message keys after its own. The select key comes with no list or a mixed list, along with <code>SETTINGS_REQUEST</code> and <code>SETTINGS_FRESH</code>, and is refused beside a plugin only list, since a plugin only kind keeps no choice. A face moving a kind to <code>[&quot;plugin&quot;]</code> that lists <code>WEATHER_PROVIDER</code>, <code>STOCK_PROVIDER</code>, or <code>CALENDAR_SOURCE</code> itself takes it out of <code>messageKeys</code> and builds with <code>--clean</code>.</p>
+<p><strong>What the Build Refuses.</strong> The list and the define have to agree. <code>plugin</code> in a list needs the kind&#39;s define on, and a define on beside a list for its kind needs <code>plugin</code> in that list. <a href="../../how/phone-side/#what-the-phone-lets-it-reach">What the Build Refuses</a> lists the rest of the checks on the providers list, and <a href="../../how/settings-page/#offering-fewer-providers">Offering Fewer Providers</a> covers what each list does to the page.</p>
+<p><strong>A Face That Shows Coordinates.</strong> A plugin&#39;s places carry no coordinates. So a face started with <code>weather.withCoords</code> and no list or a mixed list is offered no plugin choice, and fetches as a face without the define does. It warns once when its list holds <code>plugin</code>. With a plugin only list it reads the plugin anyway, since it asked for nothing else, and warns that its coordinate readouts show no fix.</p>
+<h2 id="what-the-wearer-sees">What the Wearer Sees</h2>
+<p>With no list or a mixed list, the weather&#39;s Data Source select gains <strong>Pebble App: Preferred Source</strong> when a plugin on the phone serves the weather. Picking it reads the weather from the plugin the wearer prefers in the Pebble app. The page puts the select first in its section, under the heading and its lead line, and moves the Location Settings section up to sit right after it when that section only holds rows for a fetch, so picking the plugin never makes rows above the wearer&#39;s finger vanish. While it is picked, the rows only a fetch needs hide, such as the API key and the location rows, and a note under the select says the weather comes from the first location in the Pebble app&#39;s weather settings.</p>
+<p>The stocks&#39; Data Source select gains Preferred Source the same way when a plugin on the phone serves <code>finance/stock</code>. Picking it reads the quotes from the stock plugin the wearer prefers, which keeps its own list of tickers. The select goes first in its section, under the heading, and while it is picked the lead line, the API key, Paid Plan, and the tickers hide, and a note under the select says the watch shows the first four tickers the plugin sends.</p>
+<p>The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads <strong>Pebble App: Preferred Source (No Stock Plugin)</strong>, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel says under Stocks that the phone lists no stock plugin.</p>
+<p>The calendar&#39;s page has no source select of its own, since without plugins it would hold one option. The calendar adds a <strong>Calendar Source</strong> select, with <strong>iCal Link</strong> and Preferred Source, under the leading heading and text rows of the section holding the iCal link. A phone with no plugin serving the events leaves it one option, so the select goes and the page shows the link as it would without the define.</p>
+<p>With a plugin only list, the page shows notes where the select or the iCal link would sit: where the data comes from, and while nothing on the phone serves the kind, how to turn plugins on. Now playing and the phone&#39;s battery always get their notes this way, as <a href="../../how/phone-and-music-stores/#on-the-settings-page">The Phone and Music Stores</a> covers.</p>
+<p><strong>Warnings under the Choice.</strong> While the plugin is picked, the page reads what the plugin source saved last and adds a note for each thing that went wrong. A plugin that answered and does not send the readings the face needs gets one, as <a href="#preferred-source-and-the-standard-check">Preferred Source and the Standard Check</a> covers. A wearer who has not allowed the permission gets one saying to allow it for this watchface in the Pebble app. A stock update with no tickers gets a calmer note saying the phone may have been offline, or the plugin may have no tickers set up in its own settings. A calendar update that held no events gets a calmer note saying the Pebble app may need permission to read the phone&#39;s calendars, or that those calendars may be switched off in its calendar settings.</p>
+<h3 id="with-plugins-off">With Plugins Off</h3>
+<p>A current Pebble app always has the plugin calls, and with plugins off <code>Pebble.enumeratePlugins()</code> lists nothing. That reads the same as a plugin the wearer removed, so the face treats the two alike.</p>
+<ul>
+<li><strong>No Define.</strong> Nothing changes, since the face has no plugin code.</li>
+<li><strong>No List or a Mixed List, Plugin Not Picked.</strong> The select offers only the custom providers, and the calendar has no select. The face fetches as it would without the define. The supported plugins panel opens on a line saying to turn plugins on.</li>
+<li><strong>A Saved Plugin Choice.</strong> The option stays, as <strong>Pebble App: Preferred Source (Plugins Off)</strong>, with a note saying to turn plugins on, so a save keeps the choice and the plugin answers again once they are back. The weather panel on the watch shows <code>No Plugin</code>, and the stock strip shows <code>NO PLUGIN</code> in its first slot. The calendar sends nothing, so the watch keeps the agenda it holds.</li>
+<li><strong>The Plugin Alone.</strong> The page shows the note saying to turn plugins on, or leaves it to the panel when the panel opens on the same line. The weather shows <code>No Plugin</code>, the stock strip shows <code>NO PLUGIN</code>, and the calendar keeps what it holds.</li>
+</ul>
+<p>A Pebble app from before plugins has no plugin calls at all, and the page reads it as a phone with plugins off. The one difference is a settings restore after a reset, which drops a saved plugin choice back to the page&#39;s default, since that phone can never answer it.</p>
+<h2 id="each-kind">Each Kind</h2>
+<p><strong>Weather.</strong> A weather plugin serves one place per location in the Pebble app&#39;s weather list, and the face shows the first. Its update becomes the same reading an Open-Meteo fetch gives, so the watch reads it through the keys it already has. The plugin keeps its reading fresh by itself, so a watch ask only resends the last update as of now. The watch shows <code>No Location</code> for an update with no places, <code>No Wx Data</code> for a first place with no temperature it can use, <code>No Plugin</code> when nothing on the phone serves the weather, and <code>No Permission</code> until the wearer allows Location. <a href="../../how/fetching-the-weather/#from-a-pebble-app-plugin">Fetching the Weather</a> covers the reading.</p>
+<p><strong>Stocks.</strong> A stock plugin serves one instance per ticker, and the strip shows the first four in the plugin&#39;s order. Each becomes the same quote a provider round gives, so the watch reads it through the strip it already has, and no provider call or quota is spent. A ticker the plugin has no price for keeps its slot with the plugin&#39;s status word, or <code>NO DATA</code>. An update with no tickers clears the strip only when it is the first since the plugin was picked or since the phone ended it, since an offline phone answers with none, and a watch ask resends the last update sent to the watch. <a href="../../how/stock-store/#from-a-pebble-app-plugin">The Stock Store</a> covers the reading.</p>
+<p><strong>The Calendar.</strong> A calendar plugin serves one instance per event in the phone&#39;s calendars. Its events go through the same week the iCal reader keeps, so the agenda reads the same from either source. An update with no events sends an empty agenda, since that is how the watch hears every event was deleted. An error sends nothing, since the watch has no status line for the calendar. <a href="../../how/calendar-store/#from-a-pebble-app-plugin">The Calendar Store</a> covers the reading and the agenda hold after a reset.</p>
+<p><strong>Now Playing and the Phone&#39;s Battery.</strong> Both come only from plugins, so their stores on the watch clear when no plugin answers. <a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a> covers both.</p>
+<h2 id="the-build-swap">The Build Swap</h2>
+<p>The phone bundle only carries what the face&#39;s entry reaches through <code>require</code>, so the define has to cut the require graph rather than skip code at runtime. Every kind&#39;s code sits in its own file under <code>plugin-sources/</code>, and <code>index.ts</code> exports one name per kind, such as <code>weatherPlugins</code>, typed as possibly <code>null</code>. The features import that name and run exactly as they would without plugins when it is <code>null</code>.</p>
+<p>After the phone code compiles, the build writes its own <code>plugin-sources/index.js</code> over the compiled one. A kind whose define is on is required from its own file, and a kind whose define is off is <code>null</code>:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">'use strict'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">Object</span><span style="color:var(--code-token-function)">.defineProperty</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-string-expression)"> '__esModule'</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> { value</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> });</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-foreground)">.weatherPlugins </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-function)"> require</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-string-expression)">'./weather'</span><span style="color:var(--code-foreground)">).weatherPlugins;</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-foreground)">.stockPlugins </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-foreground)">.calendarPlugins </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-foreground)">.musicPlugins </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"><span style="color:var(--code-token-constant)">exports</span><span style="color:var(--code-foreground)">.phonePlugins </span><span style="color:var(--code-token-keyword)">=</span><span style="color:var(--code-token-constant)"> null</span><span style="color:var(--code-foreground)">;</span></span></code></pre>
+<p>With every kind off, the build also deletes the rest of the emitted <code>plugin-sources/</code> files, so the emit tree shows plainly that the face built without plugins. The build log says which way it went, as <code>with plugin weather, calendar</code> or <code>without plugins</code>. A face&#39;s own code that requires a file in <code>plugin-sources/</code> other than its index stops the build, since that require would reach a file the swap can leave out.</p>
+<p>Turning a define on or off needs no <code>--clean</code>. The phone code compiles into an emptied emit tree on every build, and the define&#39;s C flag rebuilds the C side on its own. So does the default the build writes for the choice the watch keeps, which changes with the <code>providers</code> list. Its keys still need one when they are new.</p>
+<h2 id="preferred-source-and-the-standard-check">Preferred Source and the Standard Check</h2>
+<p>The face never names a plugin. It subscribes to the kind, such as <code>weather/location</code>, and the Pebble app routes it to the plugin the wearer prefers for that kind, under Preferred Sources in the Pebble app. So one face works with the Pebble app&#39;s own plugins and with any store plugin that serves the same data.</p>
+<p>The Pebble app only holds a plugin to its own manifest, so a weather plugin that names its reading <code>temp</code> rather than <code>temperature</code> still reaches the face, which then finds nothing it can use. So the settings page reads the manifest of the plugin that answered last and checks it declares what the face needs:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Kind</th>
+<th align="left">What a Plugin Has to Declare</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">weather</td>
+<td align="left"><code>temperature</code> as a <code>numericValue</code>, and <code>condition_code</code> as a <code>longText</code></td>
+</tr>
+<tr>
+<td align="left">stocks</td>
+<td align="left"><code>ticker</code> as a <code>shortText</code> or a <code>longText</code>, and <code>price</code> as a <code>shortText</code>, a <code>longText</code>, or a <code>numericValue</code></td>
+</tr>
+<tr>
+<td align="left">calendar</td>
+<td align="left"><code>name</code> as a <code>shortText</code> or a <code>longText</code>, and <code>starts_at</code> as a <code>timestamp</code></td>
+</tr>
+<tr>
+<td align="left">now playing</td>
+<td align="left"><code>title</code> as a <code>shortText</code> or a <code>longText</code>, and <code>playing</code> as a <code>boolean</code></td>
+</tr>
+<tr>
+<td align="left">phone battery</td>
+<td align="left"><code>battery_level</code> as a <code>numericValue</code></td>
+</tr>
+</tbody></table>
+<p>A plugin that fails gets a note on the page naming it, saying it sends data this watchface cannot read, and pointing the wearer at Preferred Sources in the Pebble app, or at another source on the face&#39;s own select. Everything else a plugin sends is optional, and leaving it out only leaves that readout on its dashes.</p>
+<h2 id="the-supported-plugins-panel">The Supported Plugins Panel</h2>
+<p>A face built with any plugin define gets one more row at the foot of its settings page once one of its kinds offers a plugin: a closed panel titled <strong>Plugins This Watchface Supports</strong>. Opened, it lists under a heading for each kind the face has on the plugins known to serve it, and where to get them.</p>
+<ul>
+<li><strong>The Pebble App&#39;s Own.</strong> Each built-in plugin reads <strong>Built Into the Pebble App</strong>, with <strong>Off</strong> after it when the phone&#39;s plugin list leaves that one out, as it leaves every one out with plugins off. The music plugin is built in on Android only, and says so.</li>
+<li><strong>Store Plugins.</strong> A store plugin links to its listing on the Pebble appstore, and reads <strong>Installed</strong> when the phone lists it.</li>
+<li><strong>Plugins the Table Does Not Know.</strong> A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as <strong>Unnamed Plugin</strong> when it has none, and reads <strong>Installed</strong>.</li>
+<li><strong>Plugins Off.</strong> When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.</li>
+</ul>
+<p>The table of known plugins is <a href="https://github.com/AKlitbo/pebble-app-framework/blob/816ebdd86853aa6ab366d09fb768169641e75204/src/ts/plugin-sources/directory.ts"><code>directory.ts</code></a>. It is copied by hand from the appstore, so it ages, and each framework release refreshes it. It holds no stock plugin, so the Stocks heading lists only the stock plugins on the phone.</p>
+<p><strong>Links.</strong> A plain link on a Clay page would load inside the settings web view and lose the wearer&#39;s unsaved settings. The Pebble app gives a settings page <code>Pebble.openUrl</code> while plugins are on, which asks before opening the link in the phone&#39;s browser. So a store plugin&#39;s name is a link only when the page has <code>Pebble.openUrl</code>, and is plain text with the listing&#39;s address under it otherwise.</p>
+<p>The panel is drawn with <code>&lt;details&gt;</code>, so the web view opens and closes it with no script. Every name in it is escaped before it reaches the page, so a plugin&#39;s name can never become markup or code.</p>
+<h2 id="marks-on-the-page">Marks on the Page</h2>
+<p>The settings page is built on the phone from the face&#39;s own config, and the builder cannot see the defines. So the builder marks its rows on every face, and only a face built with a plugin define acts on the marks. Clay ignores fields it does not know, so on any other face the marks do nothing.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Mark</th>
+<th align="left">Goes On</th>
+<th align="left">What a Face with the Define Does with It</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>pluginSource: { category, item }</code></td>
+<td align="left">the select a plugin choice joins</td>
+<td align="left">adds Preferred Source to it</td>
+</tr>
+<tr>
+<td align="left"><code>pluginSourceHides: &#39;&lt;select key&gt;&#39;</code></td>
+<td align="left">a row that means nothing while the plugin is picked</td>
+<td align="left">hides it while the plugin is picked, and takes it off the page in plugin only mode</td>
+</tr>
+<tr>
+<td align="left"><code>pluginSourceLead: &#39;&lt;select key&gt;&#39;</code></td>
+<td align="left">a line that leads into the select</td>
+<td align="left">keeps it showing with the select, and takes it away with the select</td>
+</tr>
+<tr>
+<td align="left"><code>pluginSourceRows: &#39;&lt;kind&gt;&#39;</code></td>
+<td align="left">a row the face wants a kind&#39;s notes under, by the kind&#39;s name in the providers list, such as <code>&#39;music&#39;</code> or <code>&#39;stocks&#39;</code></td>
+<td align="left">puts the notes for a kind with no select straight after it, rather than at the foot of the page</td>
+</tr>
+</tbody></table>
+<p><code>buildConfig</code> marks its own rows: <code>WEATHER_PROVIDER</code> and <code>STOCK_PROVIDER</code> carry <code>pluginSource</code>, the weather lead line carries <code>pluginSourceLead</code>, and the weather&#39;s API key, the Location Settings heading and its three rows, the stocks&#39; lead line, API key, Paid Plan, and tickers, the iCal lead line, and the iCal link carry <code>pluginSourceHides</code>. A face that builds its own weather, stock, or calendar section marks its own rows the same way. A select that carries no mark is still found by its message key when it has <code>options</code>, so a weather select from a family core gets Preferred Source with nothing added. A row that already has a <code>visibleWhen</code> keeps it, and the hide joins it as one more condition that has to hold.</p>
+<p><strong>A Section with Every Row Hidden.</strong> Clay draws a section as a card it cannot hide, so a section whose rows all hide would leave an empty card behind. The page marks such a section <code>hideWhenEmpty</code>, and the framework&#39;s show and hide then hides the card while every row in it is hidden. A face can put <code>hideWhenEmpty</code> on a section of its own for the same reason, as long as a row inside it has a message key.</p>
+<p><strong>When There Is No Choice.</strong> When a plugin choice has nothing to join, such as a weather select the face left out or a calendar select left with one option, the page takes the marks naming that select off every row, and the lead line marked for it goes with the select. A section the two leave holding only headings goes too, so no card stands empty under its heading. A <code>visibleWhen</code> naming the select is settled against the one option left, so a row whose condition holds shows and a row whose condition fails stays hidden. Without that, a condition on a missing control would hide its row for good.</p>
+<h3 id="the-page-hook">The <code>page</code> Hook</h3>
+<p>The features add all of this through <code>page</code>, a hook any feature can supply, as <a href="../../how/phone-side/#features">Features</a> lists. Each time the wearer opens the settings, after <code>configOpened</code>, the app passes the page through each feature&#39;s <code>page</code> hook in turn and opens the result:</p>
+<ul>
+<li><strong>It Starts from the Face&#39;s Page.</strong> Each open starts again from the face&#39;s own page, which the defaults and the settings restore also read, so a hook keeps nothing from one open to the next.</li>
+<li><strong>It Gets Its Own Copy.</strong> Each hook gets its own copy of the page so far and hands back the page to open. It can change that copy in place.</li>
+<li><strong>One Hook Cannot Break the Page.</strong> A hook that throws, or hands back something that is not a page, is skipped and logged, and the page the hooks before it made goes on.</li>
+<li><strong>Components Ride Along.</strong> A feature lists the Clay components its rows are drawn with as <code>components</code>, and the app registers each one only for a page that holds its rows. A face without the define never carries their code.</li>
+<li><strong>The Show and Hide Comes First.</strong> The page&#39;s custom function is put together again on every open. The framework&#39;s show and hide for <code>visibleWhen</code> rows runs first, and the face&#39;s own <code>customClay</code> after it, so a face&#39;s function can still change a row the plugin page showed or hid.</li>
+</ul>
+<p>A face with no feature that supplies a <code>page</code> hook, and no API key row, opens exactly the page Clay built from its config. A page with a key row gets the key for each provider, as <a href="../../how/settings-page/#a-key-for-each-provider">A Key for Each Provider</a> covers.</p>
+<h2 id="the-quick-retry">The Quick Retry</h2>
+<p>A plugin subscription lasts as long as the phone code&#39;s session, so the feature starts it afresh on every <code>ready</code>. While the plugin is picked and nothing is live, such as with plugins off or no plugin installed, the feature tries again every 2 minutes, so a plugin the wearer has just installed or turned on shows up within minutes. Reading the phone&#39;s plugin list is a local call, so a retry costs nothing on the network.</p>
+<p>The quick retry runs 15 times, about 30 minutes, and then leaves it to the slow refresh every 30 minutes or so. Starting the subscription, opening the settings page, and a save while the plugin is picked each give it the full 15 again. A retry is only spent while nothing is live, so a subscription that ends hours later, as when the wearer turns plugins off, still has its retries then and catches plugins coming back on.</p>
+<p>Every kind waiting on a retry shares one 2 minute timer, so a face with weather and the calendar from plugins wakes the phone code once on each beat rather than once for each kind. Each kind keeps its own 15 retries, and the timer stops once no kind has any left. A kind that starts waiting while the timer already runs takes its first retry on the timer&#39;s next beat, which can come sooner than 2 minutes. A subscription with no quick retry, such as the one to the Pebble app&#39;s units, stays off the timer.</p>
+<h2 id="units-from-the-pebble-app">Units from the Pebble App</h2>
+<p>A face built with <code>PLUGIN_WEATHER</code> and no <code>WEATHER_TEMPERATURE_UNIT</code> key has no unit setting of its own. The phone sends all of its weather, from the plugin and from a fetch alike, in the unit the wearer picked in the Pebble app, read from the Pebble app&#39;s <code>preferences/units</code>, which needs no permission. Until the Pebble app has given a unit, the weather goes in Celsius. The watch has no unit to convert to, so <code>readout_weather_temp</code> writes the number with no letter, as <a href="../../how/readouts/#weather">Readouts</a> covers. A face with the key keeps its own setting. <a href="../../how/fetching-the-weather/#units-and-values">Fetching the Weather</a> covers when the unit is read and what a change sends.</p>
+<h2 id="keeping-the-choice-through-a-reset">Keeping the Choice through a Reset</h2>
+<p>When the Pebble app is reinstalled, or its saved settings for the face are cleared, the phone fills its settings back in from what the watch sends, as <a href="../../how/life-of-a-setting/#after-a-reinstall">The Life of a Setting</a> shows. The watch only sends what it keeps. So on a face that offers the plugin choice, the framework keeps it on the watch in a schema of its own, with a default the build writes from the <code>providers</code> list, as <a href="../../how/settings-on-the-watch/#keeping-a-plugin-source">Keeping a Plugin Source</a> covers. The face adds nothing to its own settings for it.</p>
+<p>The features&#39; <code>seeded</code> hooks then check what came back. A plugin choice comes back on any phone with the plugin calls, plugins off included, and comes out on a Pebble app from before plugins. A weather provider that needs an API key comes out when the phone holds no key, since the key never reaches the watch, and the face falls back to its default provider rather than showing <code>No API Key</code>.</p>
+<h2 id="a-face-with-no-settings-page">A Face with No Settings Page</h2>
+<p>A face with no settings of its own passes an empty page, and takes its weather from the plugin alone:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"defines"</span><span style="color:var(--code-foreground)">: { </span><span style="color:var(--code-token-keyword)">"PLUGIN_WEATHER"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> 1</span><span style="color:var(--code-foreground)"> },</span></span>
+<span class="line"><span style="color:var(--code-token-string-expression)">"providers"</span><span style="color:var(--code-foreground)">: { </span><span style="color:var(--code-token-keyword)">"weather"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">"plugin"</span><span style="color:var(--code-foreground)">] }</span></span></code></pre>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-constant)">app</span><span style="color:var(--code-token-function)">.startPebbleApp</span><span style="color:var(--code-foreground)">({ clayConfig</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> []</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> features</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [weather] });</span></span></code></pre>
+<p>The define and the weather feature bring the four weather keys, so it lists no message keys of its own. Its page holds only the weather&#39;s notes and the supported plugins panel. It has no unit setting, so it shows the weather in the unit the wearer picked in the Pebble app, and keeps nothing on the watch for a reset, since it has no choice to keep.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/settings-page/"><span>Previous</span>The Settings Page</a>
+<a class="page-step page-step-next" rel="next" href="../../how/plugin-apps/"><span>Next</span>Plugin Apps</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v6.1.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>

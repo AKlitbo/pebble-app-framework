@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plugin Apps · Pebble App Framework</title>
+    <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+    <script src="../../theme.js"></script>
+    <script src="../../versions.js"></script>
+    <script src="../../diagrams.js" defer></script>
+    <script src="../../side-nav.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap"
+    />
+    <link rel="stylesheet" href="../../site.css" />
+    <link rel="stylesheet" href="../../site-bar.css" />
+  </head>
+  <body>
+    <nav class="site-bar" aria-label="Docs site">
+  <a class="site-bar-home" href="../../index.html">
+    <img src="../../logo.svg" alt="" width="22" height="22" />
+    <span>Pebble App Framework</span>
+  </a>
+  <select class="site-bar-version" aria-label="Docs version" data-root="../../" disabled>
+    <option value="v6.1.0" selected>v6.1.0</option>
+  </select>
+  <div class="site-bar-links">
+    <a data-section="how" aria-current="location" href="../../how/index.html">How It Works</a>
+    <a data-section="paf" href="../../paf/index.html">CLI</a>
+    <a data-section="c" href="../../c/index.html">Device API</a>
+    <a data-section="ts" href="../../ts/index.html">Phone API</a>
+    <a data-section="coverage-c" href="../../coverage/c/index.html">C Coverage</a>
+    <a data-section="coverage-ts" href="../../coverage/ts/index.html">TS Coverage</a>
+  </div>
+  <a class="site-bar-github" href="https://github.com/AKlitbo/pebble-app-framework">
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+      <path
+        d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"
+      />
+    </svg>
+    <span>GitHub</span>
+  </a>
+  <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <rect class="edge" x="0.75" y="0.75" width="12.5" height="12.5" />
+    <rect class="theme-toggle-lit" x="3" y="3" width="4" height="8" />
+  </svg>
+  <span class="theme-toggle-label">Theme</span>
+</button>
+
+</nav>
+
+    <div class="wrap">
+      <div class="page-layout">
+        <details class="side-nav" open>
+<summary>Pages</summary>
+<nav aria-label="How It Works pages">
+<a class="side-nav-index" href="../../how/">How It Works</a>
+<h3>Settings and Messages</h3>
+<ul>
+<li><a href="../../how/life-of-a-setting/">The Life of a Setting</a></li>
+<li><a href="../../how/phone-side/">The Phone Side</a></li>
+<li><a href="../../how/settings-page/">The Settings Page</a></li>
+<li><a href="../../how/plugin-sources/">Pebble App Plugins</a></li>
+<li class="current"><a href="../../how/plugin-apps/" aria-current="page">Plugin Apps</a></li>
+<li><a href="../../how/settings-on-the-watch/">Settings on the Watch</a></li>
+<li><a href="../../how/talking-to-the-phone/">Talking to the Phone</a></li>
+<li><a href="../../how/message-formats/">The Message Formats</a></li>
+</ul>
+<h3>Stores</h3>
+<ul>
+<li><a href="../../how/stores/">How the Stores Work</a></li>
+<li><a href="../../how/time-store/">The Time Store</a></li>
+<li><a href="../../how/system-store/">The System Store</a></li>
+<li><a href="../../how/location-store/">The Location Store</a></li>
+<li><a href="../../how/weather-store/">The Weather Store</a></li>
+<li><a href="../../how/weather-readings/">Weather Readings</a></li>
+<li><a href="../../how/fetching-the-weather/">Fetching the Weather</a></li>
+<li><a href="../../how/stock-store/">The Stock Store</a></li>
+<li><a href="../../how/calendar-store/">The Calendar Store</a></li>
+<li><a href="../../how/health-store/">The Health Store</a></li>
+<li><a href="../../how/phone-and-music-stores/">The Phone and Music Stores</a></li>
+</ul>
+<h3>Clock and Sky</h3>
+<ul>
+<li><a href="../../how/moon/">The Moon</a></li>
+<li><a href="../../how/beats/">.beats</a></li>
+<li><a href="../../how/julian-date/">The Julian Date</a></li>
+<li><a href="../../how/sunrise-and-sunset/">Sunrise and Sunset</a></li>
+<li><a href="../../how/tides/">Tides</a></li>
+<li><a href="../../how/time-zones/">Time Zones</a></li>
+<li><a href="../../how/time-bands/">Time Bands and Night Hours</a></li>
+<li><a href="../../how/dates-and-durations/">Dates and Durations</a></li>
+</ul>
+<h3>Drawing</h3>
+<ul>
+<li><a href="../../how/engine/">The Engine</a></li>
+<li><a href="../../how/readouts/">Readouts</a></li>
+<li><a href="../../how/fonts/">Fonts</a></li>
+<li><a href="../../how/icons/">Icons</a></li>
+<li><a href="../../how/layout-strings/">Layout Strings</a></li>
+</ul>
+<h3>Text, Numbers, and Feedback</h3>
+<ul>
+<li><a href="../../how/fitting-text/">Fitting Text</a></li>
+<li><a href="../../how/numbers-and-units/">Numbers and Units</a></li>
+<li><a href="../../how/vibrations/">Vibrations</a></li>
+</ul>
+<h3>Plugins</h3>
+<ul>
+<li><a href="../../how/icons-plugin/">The Icons Plugin</a></li>
+<li><a href="../../how/frame-plugin/">The Frame Plugin</a></li>
+<li><a href="../../how/thumbnails-plugin/">The Thumbnails Plugin</a></li>
+<li><a href="../../how/dev-plugin/">The Dev Plugin</a></li>
+</ul>
+<h3>CI</h3>
+<ul>
+<li><a href="../../how/ci-builds/">Building in CI</a></li>
+<li><a href="../../how/ci-memory/">Memory Reports</a></li>
+<li><a href="../../how/ci-releases/">Releases</a></li>
+</ul>
+</nav>
+</details>
+        <main class="page">
+          <h1>Plugin Apps</h1>
+          
+          <div class="readme"><p>A plugin app is a Pebble app plugin of your own, built with the framework. It has no watch code. It runs in the Pebble app on the phone and serves data to every watchface that reads its kind of data, not only yours. <a href="../../how/plugin-sources/">Pebble App Plugins</a> covers the other side, a face reading a plugin.</p>
+<p>Plugins are still a Core Devices preview in the Pebble app, which keeps them off until the wearer turns them on under Settings, Plugins, Plugins / permissions preview. A plugin app publishes to the appstore with <code>pebble publish</code> like any other app. Building one needs Pebble SDK 4.44 or later and pebble-tool 5.1.2 or later.</p>
+<h2 id="what-one-looks-like">What One Looks Like</h2>
+<p>A plugin app is a face folder whose appinfo says it is a plugin. A repo of them keeps each one as a unit under <code>plugins/</code>, which paf finds the way it finds <code>watchfaces/</code> and <code>watchapps/</code>, and each one pins framework 6 or later.</p>
+<pre><code>plugins/calendar-ical/
+  paf.config.json       the framework tag and the plugins the unit lists
+  package.json          with workspaces: [&quot;paf&quot;, &quot;paf/plugins/*&quot;]
+  pebble.appinfo.json   with &quot;projectType&quot;: &quot;plugin&quot;
+  src/plugin/index.ts   the plugin&#39;s script, where it starts
+  src/config/index.ts   its settings page, when it has one</code></pre>
+<h2 id="the-appinfo">The Appinfo</h2>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-foreground)">{</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "name"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "calendar-ical"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "displayName"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "Calendar + iCal"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "uuid"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "…"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "version"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "1.0.0"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "sdkVersion"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "3"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "projectType"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "plugin"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "configPage"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "config.html"</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "usesPermissions"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [{ </span><span style="color:var(--code-token-keyword)">"name"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "Calendar"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "reason"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "To merge your phone's calendars"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "required"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-constant)"> true</span><span style="color:var(--code-foreground)"> }]</span><span style="color:var(--code-token-punctuation)">,</span></span>
+<span class="line"><span style="color:var(--code-token-keyword)">  "plugin"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> { </span><span style="color:var(--code-token-keyword)">"description"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-token-string-expression)"> "…"</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-token-keyword)"> "sources"</span><span style="color:var(--code-token-punctuation)">:</span><span style="color:var(--code-foreground)"> [ … ] }</span></span>
+<span class="line"><span style="color:var(--code-foreground)">}</span></span></code></pre>
+<p>The <code>plugin</code> block is the Pebble SDK&#39;s own, and goes into the pbw as written. A plugin app&#39;s <code>usesPermissions</code> go in as written too, each with its <code>reason</code> and <code>required</code> flag, where a face&#39;s are worked out from its keys. The build writes the plugin&#39;s script as <code>plugin.js</code> and its settings page as <code>config.html</code>, so a plugin block naming another script, or a <code>configPage</code> other than <code>config.html</code>, is refused. <code>&quot;configPage&quot;: &quot;config.html&quot;</code> is what builds the settings page, so a plugin app without it gets no page, even with a <code>src/config/index.ts</code>.</p>
+<p>A plugin app has no watch code, so the fields only watch code uses are refused, naming the field: <code>messageKeys</code>, <code>resources</code>, <code>defines</code>, <code>textDefines</code>, <code>providers</code>, <code>targets</code>, <code>watchapp</code>, <code>watchface</code>, <code>menuIcon</code>, <code>targetPlatforms</code>, and <code>enableMultiJS</code>. The build also refuses a <code>projectType</code> other than <code>plugin</code> or <code>native</code>, which is what <code>pebble new-project</code> writes for a watchface, so a misspelled plugin app does not build as a face. A plugin app has no features and no message keys, so the build reads no features from it and fills in none of the fields it fills in for a face, as <a href="../../how/talking-to-the-phone/#the-keys-a-face-does-not-list">The Fields the Build Fills In</a> covers. Its <code>sdkVersion</code> and any <code>capabilities</code> go in as the appinfo writes them.</p>
+<h2 id="the-build">The Build</h2>
+<p><code>paf build &lt;plugin app&gt;</code> writes the plugin app&#39;s sandbox under <code>targets/</code>, bundles its script into <code>plugin.js</code>, builds its settings page into <code>config.html</code>, and runs <code>pebble build</code> there. It runs none of a face&#39;s phone build, settings page check, or header. The sandbox gets the SDK&#39;s own plugin wscript, which builds no watch code. With no watch code there is nothing for the <code>dev</code> plugin&#39;s dev mode to change, so <code>--dev</code> stops the build.</p>
+<p>The script is bundled with esbuild from <code>src/plugin/index.ts</code> into one file, since the Pebble app loads a plugin&#39;s script as one. It imports the framework by relative path from <code>paf/</code>, as a face does, and everything it reaches goes into the bundle. The framework&#39;s iCal reader brings ical.js with it, with its MPL licence header kept at the top of its part of the bundle, and a build stops on an ical.js that does not open with that header rather than shipping without it. The bundle targets ES2017, the plugin runtime has <code>fetch</code> but no timers and no <code>XMLHttpRequest</code>, and esbuild&#39;s warnings print with the build.</p>
+<h2 id="the-settings-page">The Settings Page</h2>
+<p>A plugin app&#39;s settings page is a Clay page, written as a Clay config the way a face writes one. <code>src/config/index.ts</code> exports <code>clayConfig</code>, and can export a <code>customClay</code> written with the <code>function</code> keyword. It is bundled the way the script is, so its imports resolve the same way.</p>
+<p>The page&#39;s storage is not the plugin&#39;s, so the page asks the plugin for the saved settings when it opens and hands them back on Save, and the plugin keeps them. The build adds what that takes:</p>
+<ul>
+<li><strong>The Framework&#39;s Page Code</strong> runs ahead of the plugin&#39;s <code>customClay</code>, after the framework&#39;s show and hide for <code>visibleWhen</code> rows. It loads the saved settings once the plugin is ready, and turns Save on only once they have loaded, so a page still on its defaults cannot save over the wearer&#39;s. Save closes the page only when the plugin answers that it kept them.</li>
+<li><strong>A Status Row</strong> sits above the Save button, where a load or a save that fails, or that the plugin has not answered after five seconds, says why.</li>
+<li><strong>A Save Button</strong> goes at the foot of a page with none.</li>
+</ul>
+<p>A row that names watch capabilities is refused, since a plugin&#39;s page opens with no watch behind it.</p>
+<p>On the plugin side, <code>handleSettings</code> from <code>ts/plugin-app/settings.ts</code> answers the page, and <code>readSettings</code> reads the settings back in a source handler:</p>
+<pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-keyword)">import</span><span style="color:var(--code-foreground)"> { handleSettings } </span><span style="color:var(--code-token-keyword)">from</span><span style="color:var(--code-token-string-expression)"> '../../paf/ts/plugin-app/settings'</span><span style="color:var(--code-foreground)">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-keyword)">const</span><span style="color:var(--code-token-constant)"> OPTIONS</span><span style="color:var(--code-token-keyword)"> =</span><span style="color:var(--code-foreground)"> { secret</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">'FEED1_URL'</span><span style="color:var(--code-foreground)">]</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> defaults</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> { REFRESH</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-token-string-expression)"> '30'</span><span style="color:var(--code-foreground)"> }</span><span style="color:var(--code-token-punctuation)">,</span><span style="color:var(--code-foreground)"> refresh</span><span style="color:var(--code-token-keyword)">:</span><span style="color:var(--code-foreground)"> [</span><span style="color:var(--code-token-string-expression)">'calendar/event'</span><span style="color:var(--code-foreground)">] };</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:var(--code-token-function)">handleSettings</span><span style="color:var(--code-foreground)">(</span><span style="color:var(--code-token-constant)">OPTIONS</span><span style="color:var(--code-foreground)">);</span></span></code></pre>
+<p>A key marked secret, such as a private iCal link, goes to <code>Pebble.secureStorage</code>, which the phone encrypts and only the plugin can read, and the rest go to <code>localStorage</code>. A save writes the secrets first, so one that fails leaves the other settings as they were, and then has the Pebble app read the sources in <code>refresh</code> again. A secret that cannot be read fails the page&#39;s load, so the next save cannot delete it, and keeps its default in a source handler. <code>ts/plugin-app/runtime.ts</code> types the plugin runtime&#39;s <code>Pebble</code> through <code>pluginPebble()</code>.</p>
+<p><code>paf tool &lt;plugin app&gt; clay-preview</code> builds the same page for a desktop browser. A stand-in for the Pebble app loads the values a <code>--settings</code> file holds, and a Save shows in the console what it would have sent.</p>
+<h2 id="serving-calendar-events">Serving Calendar Events</h2>
+<p><code>ts/plugin-app/calendar.ts</code> serves the framework&#39;s <code>CalendarEvent</code>s as the standard <code>calendar/event</code> source, in the shapes the Pebble app&#39;s built-in Calendar plugin uses, so every face that reads the built-in reads a plugin app the same way. <code>eventInstance(event, instanceId)</code> makes one instance. The texts go out as both <code>shortText</code> and <code>longText</code>, apart from the end&#39;s label, which is <code>shortText</code> only, as the built-in sends them. The start and end each carry a label beside their timestamp, the time on the phone&#39;s clock as <code>HH:MM</code> or <code>All day</code>, and a blank location is left out.</p>
+<p><code>CALENDAR_EVENT_SOURCE</code> is the source&#39;s declaration. The appinfo is JSON, so copy it into the plugin block&#39;s <code>sources</code> as written. The Pebble app drops any property or shape the block does not declare, and nothing checks the copy, so a spec comparing the two keeps them together. It asks <code>Calendar</code> of its callers, which the Pebble app requires of a plugin that reads the phone&#39;s calendars through the built-in.</p>
+<p>An all-day event goes out from UTC midnight of its first day to UTC midnight after its last, as the built-in sends one on Android, and a face&#39;s reader rounds that to the phone&#39;s own midnight. On a phone at UTC+13 or further east, such as New Zealand in summer, UTC midnight is past local noon, so an all-day event reads a day late there, as the built-in&#39;s own do.</p>
+<p><code>CalendarEvent</code> carries a feed&#39;s <code>uid</code> from the iCal reader and a calendar&#39;s name from the plugin reader, for a plugin that merges several sources. Every occurrence of a repeating event shares its series&#39; <code>uid</code>, so the <code>uid</code> and the start together pick out one meeting.</p>
+<h2 id="serving-stock-quotes">Serving Stock Quotes</h2>
+<p><code>ts/plugin-app/stocks.ts</code> serves the framework&#39;s <code>StockQuote</code>s as <code>finance/stock</code>, modelled on Pebble&#39;s own Stocks plugin, with properties of our own added. <code>stockInstance(quote, instanceId, extras)</code> writes Pebble&#39;s five properties, <code>ticker</code>, <code>name</code>, <code>price</code>, <code>day_change</code>, and <code>day_change_percent</code>, in exactly Pebble&#39;s text, such as <code>$187.42</code>, <code>$187.42  +0.52%</code> for the long price, <code>-$1.20</code>, and <code>+0.52%</code>, so a face written against Pebble&#39;s reads a plugin app with no change. A quote from a provider that sends no currency, such as Finnhub, goes out with no sign. A price in pence stays <code>GBp</code>, written as its code. Pebble&#39;s works the day&#39;s change out from Yahoo&#39;s <code>previousClose</code>, while the framework&#39;s Yahoo provider uses <code>chartPreviousClose</code>, so the two can differ by a little on the same ticker.</p>
+<p>On top of Pebble&#39;s five, an instance carries the price and both changes as numbers, the quote&#39;s <code>currency</code> code, when the quote is from as <code>updated</code>, and the <code>source</code> and <code>market</code> a plugin passes in <code>extras</code>. A ticker with no price goes out with its ticker, its name, and its status word in <code>status</code>, such as <code>NO ACCESS</code>, rather than being left out. A face reading only Pebble&#39;s five properties shows its own dash for the missing price.</p>
+<p><code>STOCK_SOURCE</code> is the source&#39;s declaration, to copy into the plugin block&#39;s <code>sources</code> as written.</p>
+<h2 id="fetching-from-a-plugin-app">Fetching from a Plugin App</h2>
+<p>A plugin app&#39;s runtime has no <code>XMLHttpRequest</code> and no timers, so the face&#39;s request in <code>ts/pkjs/request.ts</code> cannot run there. <code>pluginRequest</code> in <code>ts/plugin-app/request.ts</code> is the same call on the runtime&#39;s <code>fetch</code>, so the framework&#39;s weather and stock providers take it unchanged. It reports a non-2xx answer as <code>http &lt;status&gt;</code> with its body, so a 429 still reads as a rate limit, and gives a fetch up after 8 seconds with <code>AbortSignal.timeout</code> where the runtime has it. <code>fetchText</code> is the same fetch for a whole document, such as an iCal feed.</p>
+<p><code>fetchQuotes(symbols, opts, request)</code> in <code>ts/stock/quotes.ts</code> fetches a quote for each ticker from one provider and answers them in order, with a ticker whose fetch or provider throws answered as <code>ERR</code>. A failed quote carries no ticker, so read the answers by their order. Every ticker starts at once, and the runtime has no timers to space them, so under Alpha Vantage&#39;s free key ask for one ticker a run and serve the quotes held for the rest. Without <code>AbortSignal.timeout</code> a fetch that never answers holds the round until the Pebble app ends the run. <code>roundStamps(results, nowMs)</code> is the rule the stock feature uses for which rounds count against a provider&#39;s quota, and <code>roundWait</code>, <code>rateLimitWait</code>, and <code>shouldThrottleStockFetch</code> in <code>ts/stock/schedule.ts</code> are its waits and floors, so a plugin keeps a metered plan to the same count a face does. <code>allowance</code> in <code>ts/stock/ledger.ts</code> says how many calls fit inside a free plan, from the time each call went out, and <code>keepSent</code>, <code>loadLedger</code>, and <code>saveLedger</code> keep those times, per provider and per key by its <code>keyPrint</code>. <code>COUNTED</code> names the providers it counts. Stamp each call and save the stamps as it goes out, since the Pebble app can end a run partway through. A plugin and a face on the same key each keep their own stamps, so together they spend the key twice. <code>parseSymbols(raw, max)</code> in <code>ts/stock/symbols.ts</code> parses the wearer&#39;s ticker list with a cap of the caller&#39;s choosing.</p>
+</div>
+          <nav class="page-steps" aria-label="Previous and next pages">
+<a class="page-step page-step-prev" rel="prev" href="../../how/plugin-sources/"><span>Previous</span>Pebble App Plugins</a>
+<a class="page-step page-step-next" rel="next" href="../../how/settings-on-the-watch/"><span>Next</span>Settings on the Watch</a>
+</nav>
+        </main>
+      </div>
+
+      <footer class="site-foot">
+  <div class="foot-cols">
+    <div class="foot-col">
+      <div class="section-label">Project</div>
+      <a href="../../changelog/"><span>Changelog</span><span>CHANGELOG.md</span></a>
+      <a href="../../notices/"><span>Third-Party Notices</span><span>NOTICES.md</span></a>
+    </div>
+    <div class="foot-col">
+      <div class="section-label">Licence Options (Choose One)</div>
+      <a href="../../licences/agpl-3.0-or-later/"><span>GNU Affero GPL</span><span>3.0-or-later</span></a>
+      <a href="../../licences/polyform-noncommercial-1.0.0/"><span>PolyForm Noncommercial</span><span>1.0.0</span></a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <a href="https://github.com/AKlitbo/pebble-app-framework">AKlitbo/pebble-app-framework</a>
+    <span>Built from v6.1.0</span>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>
