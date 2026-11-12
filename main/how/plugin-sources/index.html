@@ -128,7 +128,7 @@
           <h1>Pebble App Plugins</h1>
           
           <div class="readme"><p>The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app&#39;s own weather list, the events in the phone&#39;s calendars, stock quotes, what the phone is playing, and the phone&#39;s battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well. <a href="../../how/plugin-apps/">Plugin Apps</a> covers building a plugin of your own.</p>
-<p>The phone code lives under <code>src/ts/plugin-sources/</code>, and the rest of the phone code reaches it only through <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/index.ts"><code>index.ts</code></a>. The shared parts are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/subscription.ts"><code>subscription.ts</code></a>, which keeps one live subscription per kind, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/page.ts"><code>page.ts</code></a>, which adds the plugin choice and its notes to the settings page, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/standard.ts"><code>standard.ts</code></a>, which checks what a plugin says it serves. Each kind has a file that turns a plugin&#39;s update into what the watch takes, such as <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/weather.ts"><code>weather.ts</code></a>, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/stocks.ts"><code>stocks.ts</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/calendar.ts"><code>calendar.ts</code></a>. The build side is the table of kinds in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/tools/manifest/plugin-kinds.ts"><code>plugin-kinds.ts</code></a>, the providers list in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/tools/manifest/providers.ts"><code>providers.ts</code></a>, and the swap in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/tools/pkjs/build-pkjs.ts"><code>build-pkjs.ts</code></a>.</p>
+<p>The phone code lives under <code>src/ts/plugin-sources/</code>, and the rest of the phone code reaches it only through <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/index.ts"><code>index.ts</code></a>. The shared parts are <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/subscription.ts"><code>subscription.ts</code></a>, which keeps one live subscription per kind, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/page.ts"><code>page.ts</code></a>, which adds the plugin choice and its notes to the settings page, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/standard.ts"><code>standard.ts</code></a>, which checks what a plugin says it serves. Each kind has a file that turns a plugin&#39;s update into what the watch takes, such as <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/weather.ts"><code>weather.ts</code></a>, <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/stocks.ts"><code>stocks.ts</code></a>, and <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/calendar.ts"><code>calendar.ts</code></a>. The build side is the table of kinds in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/tools/manifest/plugin-kinds.ts"><code>plugin-kinds.ts</code></a>, the providers list in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/tools/manifest/providers.ts"><code>providers.ts</code></a>, and the swap in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/tools/pkjs/build-pkjs.ts"><code>build-pkjs.ts</code></a>.</p>
 <h2 id="turning-it-on">Turning It On</h2>
 <p>A face turns plugins on one kind of data at a time, in its appinfo&#39;s <code>defines</code>. For the weather, stocks, and the calendar it lists the <code>weather</code>, <code>stocks</code>, and <code>calendar</code> features in <code>startPebbleApp</code> as it would without plugins. Now playing and the phone&#39;s battery have no feature without plugins, so a face lists <code>music</code> from <code>ts/music/feature</code> and <code>phone</code> from <code>ts/phone/feature</code> for those two:</p>
 <pre class="shiki site" style="background-color:var(--code-background);color:var(--code-foreground)" tabindex="0"><code><span class="line"><span style="color:var(--code-token-string-expression)">"defines"</span><span style="color:var(--code-foreground)">: {</span></span>
@@ -274,7 +274,7 @@
 <li><strong>Plugins the Table Does Not Know.</strong> A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as <strong>Unnamed Plugin</strong> when it has none, and reads <strong>Installed</strong>.</li>
 <li><strong>Plugins Off.</strong> When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.</li>
 </ul>
-<p>The panel&#39;s headings are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/plugin-sources/directory.ts"><code>directory.ts</code></a>, and the plugins it knows are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/known-plugins.json"><code>known-plugins.json</code></a>, which the table below is written from. A kind a plugin serves that the panel has no heading for, such as <code>finance/crypto</code>, is left off the panel.</p>
+<p>The panel&#39;s headings are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/plugin-sources/directory.ts"><code>directory.ts</code></a>, and the plugins it knows are in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/known-plugins.json"><code>known-plugins.json</code></a>, which the table below is written from. A kind a plugin serves that the panel has no heading for, such as <code>finance/crypto</code>, is left off the panel.</p>
 <h3 id="supported-plugins">Supported Plugins</h3>
 <p>These are the plugins the panel knows, by the kinds they serve. <strong>What It Serves</strong> is what each serves for the kind, where the standard fields are the ones the Pebble app&#39;s own plugin of that kind serves. <a href="../../how/fetching-the-weather/#from-a-pebble-app-plugin">Fetching the Weather</a> covers which of a weather plugin&#39;s fields a face reads.</p>
 <!-- known-plugins:start --><table>
@@ -302,6 +302,20 @@
 <td align="left">1.0.5, 12 Nov 2026</td>
 </tr>
 <tr>
+<td align="left"><code>weather/location</code></td>
+<td align="left"><a href="https://apps.repebble.com/weather_48e0d519c06b49e284612dc5">Weather+</a></td>
+<td align="left">Eric McCormick</td>
+<td align="left">The standard fields, and hourly series of the dew point, the WMO weather code, and the UV</td>
+<td align="left">1.0.0, 12 Nov 2026</td>
+</tr>
+<tr>
+<td align="left"><code>weather/location</code></td>
+<td align="left"><a href="https://apps.repebble.com/weather-enhanced_f62c8e74dd3c4157abf09a49">Weather Enhanced</a></td>
+<td align="left">Null Syntax</td>
+<td align="left">The standard fields, with pressure, the dew point, the WMO weather code, hourly and daily series, and the coordinates for a request that names them</td>
+<td align="left">1.0.0, 12 Nov 2026</td>
+</tr>
+<tr>
 <td align="left"><code>calendar/event</code></td>
 <td align="left">Calendar</td>
 <td align="left">Pebble</td>
@@ -313,7 +327,7 @@
 <td align="left"><a href="https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660">Calendar + iCal</a></td>
 <td align="left">Null Syntax</td>
 <td align="left">The standard fields, with the events of up to two iCal links merged into the agenda</td>
-<td align="left">1.0.1, 12 Nov 2026</td>
+<td align="left">1.1.0, 12 Nov 2026</td>
 </tr>
 <tr>
 <td align="left"><code>music/track</code></td>
@@ -334,14 +348,14 @@
 <td align="left"><a href="https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7">Stocks + Crypto</a></td>
 <td align="left">Null Syntax</td>
 <td align="left">Pebble&#39;s five stock fields, and the currency, the quote time, the source, and the market state</td>
-<td align="left">1.0.0, 12 Nov 2026</td>
+<td align="left">1.0.1, 12 Nov 2026</td>
 </tr>
 <tr>
 <td align="left"><code>finance/crypto</code></td>
 <td align="left"><a href="https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7">Stocks + Crypto</a></td>
 <td align="left">Null Syntax</td>
 <td align="left">Crypto pairs</td>
-<td align="left">1.0.0, 12 Nov 2026</td>
+<td align="left">1.0.1, 12 Nov 2026</td>
 </tr>
 </tbody></table>
 <!-- known-plugins:end --><p>The list is copied by hand from the Pebble appstore, so it ages as plugins are published. Each entry in <code>known-plugins.json</code> records the version it was last checked against in <code>verifiedVersion</code>, <code>Built In</code> for one built into the Pebble app, and the date in <code>verifiedOn</code>. Update both whenever an entry is checked again against a new version of the plugin. After a change to the file, <code>npm --prefix docs run plugin-table</code> writes the table again, and a docs spec fails while the table and the file differ.</p>

@@ -55,7 +55,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">FaceProviders</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#lists">lists</a><span class="tsd-signature-symbol">:</span> <a href="../types/pkjs_feature.ProviderLists.html" class="tsd-signature-type tsd-kind-type-alias">ProviderLists</a><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#defaults-1">defaults</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">defaults</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">narrowed</span><span class="tsd-signature-symbol">:</span> <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#narrow-1">narrow</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#page-1">page</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#settle-1">settle</a><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">saved</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">pages</span><span class="tsd-signature-symbol">:</span> <a href="face-providers_narrow.SettlePages.html" class="tsd-signature-type tsd-kind-interface">SettlePages</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-call-signature" href="#start-1">start</a><span class="tsd-signature-symbol">(</span><br/>        <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">:</span> <a href="pkjs_app.StartOptions.html" class="tsd-signature-type tsd-kind-interface">StartOptions</a><span class="tsd-signature-symbol">,</span><br/>        <span class="tsd-kind-parameter">collect</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">items</span><span class="tsd-signature-symbol">:</span> <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="pkjs_app.FaceStart.html" class="tsd-signature-type tsd-kind-interface">FaceStart</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L87">face-providers/narrow.ts:87</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L87">face-providers/narrow.ts:87</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -82,7 +82,7 @@
 <div class="tsd-comment tsd-typography"><p>Each kind's list, as the build wrote it, for the features to read through their context.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L89">face-providers/narrow.ts:89</a></li></ul></aside></section></section></details>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L89">face-providers/narrow.ts:89</a></li></ul></aside></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -107,7 +107,7 @@ has no picker for it. A plugin only kind gets no default.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L115">face-providers/narrow.ts:115</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L115">face-providers/narrow.ts:115</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="narrow"><span>narrow</span><a href="#narrow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -126,7 +126,7 @@ provider needs a key, and takes off the custom rows of a plugin only kind.</p>
 <h4 class="tsd-returns-title">Returns <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>A new page.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L106">face-providers/narrow.ts:106</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L106">face-providers/narrow.ts:106</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="page"><span>page</span><a href="#page" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -146,7 +146,7 @@ section left with nothing but headings goes with them.</p>
 <h4 class="tsd-returns-title">Returns <a href="clay_types.ClayConfigItem.html" class="tsd-signature-type tsd-kind-interface">ClayConfigItem</a><span class="tsd-signature-symbol">[]</span></h4><p>The page, changed.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L134">face-providers/narrow.ts:134</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L134">face-providers/narrow.ts:134</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="settle"><span>settle</span><a href="#settle" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -169,7 +169,7 @@ empties the stock cache when the stock provider the face really uses moves.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><p>True when it changed the settings, so the caller knows to save them.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L125">face-providers/narrow.ts:125</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L125">face-providers/narrow.ts:125</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="start"><span>start</span><a href="#start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -191,7 +191,7 @@ and saved when that changed them, and the hooks that run after every feature's.<
 <h4 class="tsd-returns-title">Returns <a href="pkjs_app.FaceStart.html" class="tsd-signature-type tsd-kind-interface">FaceStart</a></h4><p>What the app starts with.</p>
 <aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/face-providers/narrow.ts#L98">face-providers/narrow.ts:98</a></li></ul></aside></div></li></ul></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/face-providers/narrow.ts#L98">face-providers/narrow.ts:98</a></li></ul></aside></div></li></ul></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">

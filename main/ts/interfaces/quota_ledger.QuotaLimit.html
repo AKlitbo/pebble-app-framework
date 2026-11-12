@@ -55,7 +55,7 @@
 </div></section>
 <div class="tsd-signature"><span class="tsd-signature-keyword">interface</span> <span class="tsd-kind-interface">QuotaLimit</span> <span class="tsd-signature-symbol">{</span><br/>    <a class="tsd-kind-property" href="#calls">calls</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#follows">follows</a><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;clock&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;rolling&quot;</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#routinemax">routineMax</a><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">;</span><br/>    <a class="tsd-kind-property" href="#window">window</a><span class="tsd-signature-symbol">:</span> <a href="../types/quota_ledger.QuotaWindow.html" class="tsd-signature-type tsd-kind-type-alias">QuotaWindow</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/quota/ledger.ts#L19">quota/ledger.ts:19</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/quota/ledger.ts#L19">quota/ledger.ts:19</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -77,7 +77,7 @@
 <div class="tsd-comment tsd-typography"><p>The most calls the window allows, counted by weight.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/quota/ledger.ts#L21">quota/ledger.ts:21</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/quota/ledger.ts#L21">quota/ledger.ts:21</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="follows"><span>follows</span><a href="#follows" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">follows</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;clock&quot;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">&quot;rolling&quot;</span></div>
@@ -85,7 +85,7 @@
 <code>rolling</code> counts back from now, and a rolling month is the last 31 days.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/quota/ledger.ts#L33">quota/ledger.ts:33</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/quota/ledger.ts#L33">quota/ledger.ts:33</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="routinemax"><code class="tsd-tag">Optional</code><span>routine<wbr/>Max</span><a href="#routinemax" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">routineMax</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
@@ -93,14 +93,14 @@
 Left out, a routine call may use all of <code>calls</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/quota/ledger.ts#L26">quota/ledger.ts:26</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/quota/ledger.ts#L26">quota/ledger.ts:26</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="window"><span>window</span><a href="#window" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">window</span><span class="tsd-signature-symbol">:</span> <a href="../types/quota_ledger.QuotaWindow.html" class="tsd-signature-type tsd-kind-type-alias">QuotaWindow</a></div>
 <div class="tsd-comment tsd-typography"><p>The window the limit counts over.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/2a664cf997159bba4037343cc86ca41deebfdc00/src/ts/quota/ledger.ts#L28">quota/ledger.ts:28</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/AKlitbo/pebble-app-framework/blob/c5648dd48666f31fa26a713592c79a2e2f14fa75/src/ts/quota/ledger.ts#L28">quota/ledger.ts:28</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
