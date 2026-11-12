@@ -53,5 +53,5 @@ export const ONE_A_SECOND_GAP_MS = 1100;
  * @return True for a keyed provider with Paid Plan on.
  */
 export function onPaidPlan(provider: string, paidPlan: boolean | undefined): boolean {
-  return Boolean(paidPlan) && Boolean(FREE_PLANS[provider] && FREE_PLANS[provider].keyed);
+  return Boolean(paidPlan) && Object.prototype.hasOwnProperty.call(FREE_PLANS, provider) && FREE_PLANS[provider].keyed;
 }

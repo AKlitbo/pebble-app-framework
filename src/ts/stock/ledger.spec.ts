@@ -77,6 +77,13 @@ describe('allowance for Alpha Vantage', () => {
 
     expect(result).toEqual({ room: 0, retryAtMs: sent[1] + 24 * HOUR + 1000 });
   });
+
+  /** Asking for more than the routine 20 with nothing spent gave a wait of NaN, which no gate can hold to. */
+  test('waits a day past now when more is asked than the day allows and nothing is spent', () => {
+    const result = allowance('alphavantage', [], 21, false, false, NOW);
+
+    expect(result).toEqual({ room: 20, retryAtMs: NOW + 24 * HOUR + 1000 });
+  });
 });
 
 describe('allowance with nothing to count', () => {
@@ -87,6 +94,13 @@ describe('allowance with nothing to count', () => {
     const result = [allowance('yahoo', full, 4, false, false, NOW), allowance('finnhub', full, 4, false, false, NOW), allowance('alphavantage', full, 4, false, true, NOW)].map((room) => room.room);
 
     expect(result).toEqual([4, 4, 4]);
+  });
+
+  /** A saved provider id such as `constructor` found a function on every object and threw before any fetch. */
+  test.each(['constructor', '__proto__'])('lets every call through for an id of %s', (provider) => {
+    const result = allowance(provider, [], 1, false, false, NOW);
+
+    expect(result).toEqual({ room: 1, retryAtMs: 0 });
   });
 });
 
@@ -166,6 +180,19 @@ describe('the saved ledger', () => {
     const result = loadLedger(storage, 'alphavantage', keyPrint('k'), NOW);
 
     expect(result).toEqual([NOW]);
+  });
+
+  /** 900 weighted pairs under the stock key pushed out the 25 real stamps, and Alpha Vantage's day read as unspent. */
+  test('reads only plain times under the stock key', () => {
+    const storage = fakeStorage();
+    const real = Array.from({ length: 25 }, (_unused, index) => NOW - HOUR - index * 1000);
+    const pairs = Array.from({ length: 900 }, (_unused, index) => [NOW - index, 2]);
+
+    storage.items[LEDGER_KEY] = JSON.stringify({ alphavantage: { [keyPrint('k')]: [...real, ...pairs] } });
+
+    const result = loadLedger(storage, 'alphavantage', keyPrint('k'), NOW).length;
+
+    expect(result).toBe(25);
   });
 
   /** A damaged ledger must read as empty rather than take the phone's code down. */

@@ -4,6 +4,14 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Added a shared call ledger in `ts/quota/ledger.ts` for any metered provider, with limits per minute, hour, day, or month, each on the UTC clock or rolling, and a weight per call. The stock ledger keeps its exports and counts with it through the new `STOCK_QUOTA_PLANS`, and stamps saved by 6.1.0 read in as they are.
+
 ## [6.1.0] - 2026-11-11
 
 ### Framework Changes
@@ -610,6 +618,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.1.0...HEAD
 [6.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.6.0...v5.0.0
