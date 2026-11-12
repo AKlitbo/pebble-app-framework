@@ -25,6 +25,7 @@ import { createRequire } from 'node:module';
 import esbuild from 'esbuild';
 import { combineCustomFns } from '../../ts/clay/custom-fn.ts';
 import dependentVisibility from '../../ts/clay/dependent-visibility.ts';
+import pageStyleComponent from '../../ts/clay/page-style-component.ts';
 import pluginSettingsPage from '../../ts/plugin-app/page.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
 import { ENGINE, icaljsBundle, WORKSPACE } from '../shared/paths.ts';
@@ -114,8 +115,13 @@ export function renderPluginPage(source: PluginPageSource, name: string): string
   const restoreLoad = stubModuleLoad((id) => (id === 'message_keys' ? {} : undefined));
 
   try {
-    const Clay = createRequire(path.join(ENGINE, 'package.json'))('@rebble/clay/src/js/index') as new (config: unknown, customFn: unknown, options: unknown) => { meta: unknown; generateUrl(): string };
+    const Clay = createRequire(path.join(ENGINE, 'package.json'))('@rebble/clay/src/js/index') as new (config: unknown, customFn: unknown, options: unknown) => { meta: unknown; generateUrl(): string; registerComponent(component: unknown): void };
     const clay = new Clay(items, customFn, { autoHandleEvents: false });
+
+    // the framework's rules for the whole page, the same ones a face's page carries. without them the
+    // Pebble Android app's head script puts Clay's component styles ahead of its base sheet, and a select
+    // row keeps the base padding, a gap under its value and at each side
+    clay.registerComponent(pageStyleComponent);
 
     // a plugin's page opens with no watch behind it
     clay.meta = { activeWatchInfo: null, accountToken: '', watchToken: '', userData: {} };

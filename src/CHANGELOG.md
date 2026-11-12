@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Fixed
 
+- Fixed a gap under every dropdown on a plugin app's settings page in the Pebble Android app. The page now carries the same style rules a watchface's page does.
 - Fixed Finnhub showing `INVALID KEY` for a ticker its free plan does not cover, such as `^GSPC`, while the same key priced the others. It now shows `NO ACCESS`.
 - Fixed Alpha Vantage showing `RATE LIMIT` in most slots until the next evening. Its free key refuses calls closer than a second apart, so the phone now asks for one ticker at a time, 1.1 seconds after each answer, and asks again only for the tickers it was refused.
 - Fixed a settings save under Alpha Vantage spending a call for every ticker. It now asks only for tickers without a current quote.

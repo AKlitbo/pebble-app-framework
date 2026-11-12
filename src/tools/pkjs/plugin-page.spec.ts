@@ -352,3 +352,18 @@ describe('readPluginPage', () => {
     await expect(result).rejects.toThrow('empty-plugin names config.html as its settings page but has no src/config/index.ts');
   });
 });
+
+describe('the plugin settings page style', () => {
+  /**
+   * A plugin's page carried none of the framework's page rules, so in the Pebble Android app, whose head
+   * script puts Clay's component styles ahead of its base sheet, every select row showed a gap under
+   * its value and at each side.
+   */
+  test('carries the framework page rules a face page carries', async () => {
+    const html = renderPluginPage(await readPluginPage(FIXTURE, 'fixture-plugin'), 'fixture-plugin');
+
+    const result = html.includes('.section > .component.component-select');
+
+    expect(result).toBe(true);
+  });
+});
