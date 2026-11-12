@@ -46,6 +46,11 @@ export interface PluginPebble {
   readSource(request: SourceRequest): Promise<SourceEnvelope>;
   refreshSources(sources: string[]): void;
   secureStorage: SecureStorage;
+  /**
+   * Asks whether the wearer granted a permission the appinfo lists, such as `Internet/finnhub.io`. It
+   * answers `granted`, `denied`, or `prompt`. Left out on a Pebble app too old to have it.
+   */
+  permissions?: { query(permission: string): Promise<string> };
 }
 
 /**

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Added
 
+- Added `stockInstance` and `STOCK_SOURCE` in `ts/plugin-app/stocks.ts`, which serve `StockQuote`s from a plugin app as `finance/stock` in the text Pebble's own Stocks plugin uses.
+- Added `pluginRequest` and `fetchText` in `ts/plugin-app/request.ts`, the framework's request on the plugin runtime's `fetch`, for a plugin app to fetch with the framework's providers. `PluginPebble` gains `permissions.query`.
 - Added `fetchQuotes` and `roundStamps` in `ts/stock/quotes.ts`, and `parseSymbols(raw, max)` in `ts/stock/symbols.ts`, so a plugin app fetches quotes and keeps a provider's quota the way the stock feature does.
 - Added `FREE_PLANS` and `onPaidPlan` in `ts/stock/limits.ts`, each stock provider's free plan in one place, and `allowance`, `keepSent`, `loadLedger`, and `saveLedger` in `ts/stock/ledger.ts`, which count the calls sent against it.
 - Added `rateLimitWait`, `roundWait`, and `currentTradingDay` to `ts/stock/schedule.ts`, and `util.rateLimit` and `util.bodyless` to `ts/stock/util.ts`. `shouldThrottleStockFetch` takes a rate limit's `retryAtMs` after `now`.
