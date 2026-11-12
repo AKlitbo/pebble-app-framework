@@ -7,6 +7,7 @@
  * than being left out, so a face can say why.
  */
 
+import { shortName } from './short-text';
 import { phoneOffsetMinutes } from '../pkjs/phone-clock';
 import type { PhoneOffset } from '../pkjs/phone-clock';
 import type { StockQuote } from '../stock/util';
@@ -30,7 +31,7 @@ export const STOCK_SOURCE = {
     day_change_percent: ['shortText', 'longText', 'numericValue'],
     currency: ['shortText'],
     updated: ['timestamp', 'shortText'],
-    source: ['shortText'],
+    source: ['shortText', 'longText'],
     market: ['shortText'],
     status: ['shortText'],
   },
@@ -38,12 +39,15 @@ export const STOCK_SOURCE = {
   suggestedRefreshIntervalSec: 300,
 } satisfies SourceDeclaration & { supportsMultiple: boolean; suggestedRefreshIntervalSec: number };
 
+/** Each provider's short name for a `shortText`, by its full name. */
+const SOURCE_SHORT_NAMES: Record<string, string> = { 'Alpha Vantage': 'AlphaV', 'Twelve Data': '12Data' };
+
 /** The signs Pebble's Stocks writes before a price. Any other currency is written out as its code and a space. */
 const CURRENCY_SIGNS: Record<string, string> = { USD: '$', GBP: '£', EUR: '€', JPY: '¥' };
 
 /** What a plugin app knows about a quote beyond the quote itself. */
 export interface StockExtras {
-  /** The provider's name, to credit beside the price, such as Yahoo. */
+  /** The provider's name, to credit beside the price, such as Yahoo. It goes out whole in `longText` and cut to fit in `shortText`. */
   source?: string;
   /** New York's market state, `open`, `postclose`, or `closed`. */
   market?: string;
@@ -107,6 +111,9 @@ export function stockInstance(quote: StockQuote, instanceId: string, extras: Sto
     properties.day_change = { ...textProperty(signed(quote.change, prefix)), numericValue: { value: quote.change, ...(quote.currency ? { unit: quote.currency } : {}) } };
     properties.day_change_percent = { ...textProperty(percent), numericValue: { value: quote.changePercent, unit: '%' } };
   } else {
+    // the status words run past SHORT_TEXT_MAX, such as RATE LIMIT and INVALID KEY. they go out whole,
+    // since a face matches on the word, and a cut one would read as no status at all. the Pebble app
+    // warns on them, which costs a log line on a ticker that has no price
     properties.status = { shortText: { text: quote.status || 'ERR' } };
   }
 
@@ -119,9 +126,10 @@ export function stockInstance(quote: StockQuote, instanceId: string, extras: Sto
   }
 
   if (extras.source) {
-    properties.source = { shortText: { text: extras.source } };
+    properties.source = { shortText: { text: shortName(extras.source, SOURCE_SHORT_NAMES) }, longText: { text: extras.source } };
   }
 
+  // postclose runs past SHORT_TEXT_MAX too, and goes out whole for the same reason as the status
   if (extras.market) {
     properties.market = { shortText: { text: extras.market } };
   }

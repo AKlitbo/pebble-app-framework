@@ -15,6 +15,7 @@ import conditions from '../weather/conditions';
 import { validCoords } from '../weather/providers/openmeteo';
 import { firstProperties, flag, instancesOf, numeric, propertiesOf, text } from '../plugin-shapes/shapes';
 import { appFahrenheit } from '../plugin-shapes/units';
+import { SHORT_TEXT_MAX, shortName } from './short-text';
 import { phoneOffsetMinutes } from '../pkjs/phone-clock';
 import type { PhoneOffset } from '../pkjs/phone-clock';
 import type { ReadingCondition, WeatherReading } from '../weather/reading';
@@ -54,14 +55,14 @@ export const WEATHER_LOCATION_SOURCE = {
     utc_offset: ['numericValue'],
     sunrise: ['timestamp'],
     sunset: ['timestamp'],
-    latitude: ['numericValue', 'shortText'],
-    longitude: ['numericValue', 'shortText'],
+    latitude: ['numericValue', 'shortText', 'longText'],
+    longitude: ['numericValue', 'shortText', 'longText'],
     hourly_temperature: ['series.numericValue', 'series.shortText'],
-    hourly_condition: ['series.shortText'],
+    hourly_condition: ['series.shortText', 'series.longText'],
     hourly_condition_code: ['series.longText'],
     daily_high: ['series.numericValue', 'series.shortText'],
     daily_low: ['series.numericValue', 'series.shortText'],
-    daily_condition: ['series.shortText'],
+    daily_condition: ['series.shortText', 'series.longText'],
     daily_condition_code: ['series.longText'],
     daily_precipitation: ['series.numericValue', 'series.shortText'],
     daily_sunrise: ['series.timestamp'],
@@ -89,10 +90,10 @@ export const WEATHER_LOCATION_SOURCE = {
     daily_snowfall: ['series.numericValue'],
     daily_uv_index: ['series.numericValue'],
     daily_precipitation_amount: ['series.numericValue'],
-    pressure: ['numericValue', 'shortText'],
+    pressure: ['numericValue', 'shortText', 'longText'],
     dew_point: ['numericValue', 'shortText'],
     weather_code: ['numericValue'],
-    source: ['shortText'],
+    source: ['shortText', 'longText'],
     updated: ['timestamp', 'shortText'],
   },
   supportsMultiple: true,
@@ -131,6 +132,9 @@ export interface WeatherPlace {
 
 /** The provider ids a reading carries, against the name a wearer knows them by. */
 const SOURCE_NAMES: Record<string, string> = { openmeteo: 'Open-Meteo', owm: 'OpenWeatherMap', weatherapi: 'WeatherAPI.com' };
+
+/** Each provider's short name for a `shortText`, by its id. */
+const SOURCE_SHORT_NAMES: Record<string, string> = { openmeteo: 'OpenMet', owm: 'OWM', weatherapi: 'WxAPI' };
 
 /**
  * The standard's nine condition codes, from the framework's condition tokens. Fog has no code of its
@@ -180,13 +184,24 @@ export function conditionCode(token: string): string {
 }
 
 /**
- * The short words for a sky where the framework's own run past 12 characters. The Pebble app cuts a
- * condition's `shortText` to 12 for the timeline pins, which made `Partly Cloud` of the full words.
+ * The short words for every sky the framework names, each `SHORT_TEXT_MAX` or fewer, for a sky's
+ * `shortText`. Each is a plain word that is still true, or an abbreviation a wearer reads at a glance,
+ * such as `Pt Cldy`. The freezing skies keep `Fz` so the ice still shows, and snow showers read Snow,
+ * while the `longText` keeps the showers. A sky the table does not name reads `Unknown`.
  */
 export const SHORT_LABELS: Record<string, string> = {
-  PCLDY: 'Partly Cldy',
-  FZDZ: 'Frz Drizzle',
-  FZRN: 'Frz Rain',
+  CLEAR: 'Clear',
+  PCLDY: 'Pt Cldy',
+  CLDY: 'Cloudy',
+  FOGGY: 'Fog',
+  DRZL: 'Drizzle',
+  FZDZ: 'Fz Drzl',
+  RAIN: 'Rain',
+  FZRN: 'Fz Rain',
+  SNOW: 'Snow',
+  SHWR: 'Showers',
+  SNSH: 'Snow',
+  STRM: 'T-Storm',
 };
 
 /** The framework's words for a sky. */
@@ -196,9 +211,29 @@ function conditionLabel(condition: ReadingCondition): string {
   return entry ? entry.labelLong : conditions.fallback.labelLong;
 }
 
-/** The framework's words for a sky in 12 characters or fewer, for a `shortText`. */
+/**
+ * The words of 12 characters or fewer for the skies whose framework words run longer, for a sky
+ * series' `longText`. Every other sky goes out in the framework's own words. The Pebble app takes
+ * each day's phrase from `daily_condition`'s `longText` and cuts it at 12.
+ */
+export const PHRASE_LABELS: Record<string, string> = {
+  PCLDY: 'Partly Cldy',
+  FZDZ: 'Frz Drizzle',
+  FZRN: 'Frz Rain',
+};
+
+/** The short words for a sky, for a `shortText`. */
 function shortLabel(condition: ReadingCondition): string {
-  return Object.prototype.hasOwnProperty.call(SHORT_LABELS, condition.token) ? SHORT_LABELS[condition.token] : conditionLabel(condition);
+  return Object.prototype.hasOwnProperty.call(SHORT_LABELS, condition.token) ? SHORT_LABELS[condition.token] : conditions.fallback.labelLong;
+}
+
+/** The words for a sky in 12 characters or fewer, for a sky series' `longText`. */
+function phraseLabel(condition: ReadingCondition): string {
+  if (Object.prototype.hasOwnProperty.call(PHRASE_LABELS, condition.token)) {
+    return PHRASE_LABELS[condition.token];
+  }
+
+  return conditionLabel(condition);
 }
 
 /** A temperature in °C in the unit served. */
@@ -224,20 +259,24 @@ function pressureIn(hpa: number | null, units: WeatherUnits): number | null {
   return units.pressure === 'inHg' ? hpa * INHG_PER_HPA : hpa;
 }
 
-/**
- * The short text the built-in writes for a temperature, such as `24°C`, a wind, such as `12 km/h`,
- * or a pressure, such as `1016 hPa` or `30.01 inHg`.
- */
+/** The short text the built-in writes for a temperature, such as `24°C`. */
 function temperatureText(value: number, units: WeatherUnits): string {
   return `${Math.round(value)}${units.temperature}`;
 }
 
+/**
+ * The short text for a wind, such as `12 km/h` as the built-in writes it. Knots read as `kn`, and a
+ * wind of 100 or more drops the space, so it fits a `shortText` in every unit.
+ */
 function windText(value: number, units: WeatherUnits): string {
-  return `${Math.round(value)} ${units.windSpeed}`;
+  const words = `${Math.round(value)} ${units.windSpeed === 'knots' ? 'kn' : units.windSpeed}`;
+
+  return words.length > SHORT_TEXT_MAX ? words.replace(' ', '') : words;
 }
 
-function pressureText(value: number, units: WeatherUnits): string {
-  return units.pressure === 'inHg' ? `${value.toFixed(2)} inHg` : `${Math.round(value)} hPa`;
+/** A pressure's number alone, such as `1016` or `30.01`, since its unit rides beside it. */
+function pressureNumber(value: number, units: WeatherUnits): string {
+  return units.pressure === 'inHg' ? value.toFixed(2) : String(Math.round(value));
 }
 
 /** A moment's time on the phone's clock, as HH:MM. */
@@ -285,6 +324,11 @@ function numberSeries(times: number[], stepSec: number, values: Array<number | n
 /** A series of texts in one shape. */
 function textSeries(times: number[], stepSec: number, shape: 'shortText' | 'longText', values: string[]): SourceProperty | undefined {
   return times.length ? { series: { start: times[0], stepSec, [shape]: { values } } } : undefined;
+}
+
+/** A series of skies, in short words and in words of 12 characters or fewer. */
+function skySeries(times: number[], stepSec: number, skies: ReadingCondition[]): SourceProperty | undefined {
+  return times.length ? { series: { start: times[0], stepSec, shortText: { values: skies.map(shortLabel) }, longText: { values: skies.map(phraseLabel) } } } : undefined;
 }
 
 /** A series of moments. */
@@ -368,10 +412,12 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
 
     const rounded = Number(value.toFixed(COORD_DECIMALS));
 
-    return { numericValue: { value: rounded, unit: '°' }, shortText: { text: rounded.toFixed(COORD_DECIMALS) } };
+    // two decimals is about 1 km, which fits a shortText. the number and the long text keep all four
+    return { numericValue: { value: rounded, unit: '°' }, shortText: { text: rounded.toFixed(2) }, longText: { text: rounded.toFixed(COORD_DECIMALS) } };
   };
 
   const builders: Record<string, () => SourceProperty | undefined> = {
+    // a place's name is as long as it is, as the built-in sends it, so it is left uncut
     name: () => (place.name ? { shortText: { text: place.name } } : undefined),
     temperature: () => temperatureProperty(reading.temperature, units),
     feels_like: () => temperatureProperty(reading.feelsLike, units),
@@ -392,11 +438,11 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
     latitude: () => coordinate(place.lat),
     longitude: () => coordinate(place.lon),
     hourly_temperature: () => numberSeries(hourly.time, HOUR_SECONDS, hourlyTemperatures(hourly.temperature), units.temperature, temperature),
-    hourly_condition: () => textSeries(hourly.time, HOUR_SECONDS, 'shortText', hourly.condition.map(shortLabel)),
+    hourly_condition: () => skySeries(hourly.time, HOUR_SECONDS, hourly.condition),
     hourly_condition_code: () => textSeries(hourly.time, HOUR_SECONDS, 'longText', hourly.condition.map((sky) => conditionCode(sky.token))),
     daily_high: () => numberSeries(daily.time, DAY_SECONDS, dailyTemperatures(daily.high), units.temperature, temperature),
     daily_low: () => numberSeries(daily.time, DAY_SECONDS, dailyTemperatures(daily.low), units.temperature, temperature),
-    daily_condition: () => textSeries(daily.time, DAY_SECONDS, 'shortText', daily.condition.map(shortLabel)),
+    daily_condition: () => skySeries(daily.time, DAY_SECONDS, daily.condition),
     daily_condition_code: () => textSeries(daily.time, DAY_SECONDS, 'longText', daily.condition.map((sky) => conditionCode(sky.token))),
     daily_precipitation: () => numberSeries(daily.time, DAY_SECONDS, daily.precipitationChance, '%', percent),
     daily_sunrise: () => timestampSeries(daily.time, daily.sunrise),
@@ -424,14 +470,18 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
     daily_snowfall: () => numberSeries(daily.time, DAY_SECONDS, daily.snowfall, 'cm'),
     daily_uv_index: () => numberSeries(daily.time, DAY_SECONDS, daily.uvIndex),
     daily_precipitation_amount: () => numberSeries(daily.time, DAY_SECONDS, daily.precipitationAmount, 'mm'),
-    pressure: () => numberProperty(pressureIn(reading.pressure, units), units.pressure, (value) => pressureText(value, units)),
+    pressure: () => {
+      const property = numberProperty(pressureIn(reading.pressure, units), units.pressure, (value) => pressureNumber(value, units));
+
+      return property && { ...property, longText: { text: `${property.shortText?.text} ${units.pressure}` } };
+    },
     dew_point: () => {
       const value = temperatureIn(reading.dewPoint, units);
 
       return value === null ? undefined : { numericValue: { value, unit: units.temperature }, shortText: { text: temperature(value) } };
     },
     weather_code: () => code(reading.condition.wmo),
-    source: () => ({ shortText: { text: SOURCE_NAMES[reading.source] || reading.source } }),
+    source: () => ({ shortText: { text: shortName(reading.source, SOURCE_SHORT_NAMES) }, longText: { text: Object.prototype.hasOwnProperty.call(SOURCE_NAMES, reading.source) ? SOURCE_NAMES[reading.source] : reading.source } }),
     updated: () => ({ timestamp: { value: reading.time }, shortText: { text: clockLabel(reading.time, offsetAt) } }),
   };
 

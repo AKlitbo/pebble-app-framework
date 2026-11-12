@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 #### Changed
 
+- `stockInstance` now cuts the `source` to 7 characters in its `shortText`, such as `AlphaV` for Alpha Vantage, and sends the whole name as a `longText`. The Pebble app warns on a `shortText` longer than that. `STOCK_SOURCE` declares the new `longText`, so copy it into the plugin's appinfo again.
 - A face started with `weather.withCoords` is now offered the weather plugin choice. Its coordinates come from a plugin's `latitude` and `longitude`, and show no fix from a plugin that serves none.
 
 ### Wearer-Visible Changes

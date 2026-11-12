@@ -16,7 +16,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, test, expect } from 'vitest';
-import { conditionCode, DEFAULT_UNITS, locationInstance, NO_UNITS, pebbleAppUnits, readPebbleAppUnits, unitsFrom, WEATHER_LOCATION_SOURCE, weatherLocations } from './weather';
+import { conditionCode, DEFAULT_UNITS, locationInstance, NO_UNITS, pebbleAppUnits, PHRASE_LABELS, readPebbleAppUnits, SHORT_LABELS, unitsFrom, WEATHER_LOCATION_SOURCE, weatherLocations } from './weather';
+import { SHORT_TEXT_MAX } from './short-text';
 import conditions from '../weather/conditions';
 import type { WeatherUnits } from './weather';
 import { fetchReading as fetchOpenMeteoReading } from '../weather/providers/openmeteo';
@@ -212,8 +213,8 @@ describe('the coordinates', () => {
     const result = [properties?.latitude, properties?.longitude];
 
     expect(result).toEqual([
-      { numericValue: { value: 28.6139, unit: '°' }, shortText: { text: '28.6139' } },
-      { numericValue: { value: -77.209, unit: '°' }, shortText: { text: '-77.2090' } },
+      { numericValue: { value: 28.6139, unit: '°' }, shortText: { text: '28.61' }, longText: { text: '28.6139' } },
+      { numericValue: { value: -77.209, unit: '°' }, shortText: { text: '-77.21' }, longText: { text: '-77.2090' } },
     ]);
   });
 
@@ -282,16 +283,51 @@ describe('uv_index', () => {
 });
 
 describe('the tables', () => {
-  /** The Pebble app cuts a condition's short text to 12 characters for its timeline pins, which made Partly Cloud of Partly Cloudy. */
-  test('keeps every short label to 12 characters', () => {
+  /** The Pebble app warns on a sky's short text over seven characters, as it did for every hour of Partly Cloudy. */
+  test('keeps every sky to seven characters in its short text and whole in its long text', () => {
     const tokens = [...conditions.conditions.map((entry) => entry.token), 'UNKNOWN'];
     const reading = readings('openmeteo')[0];
 
     const result = tokens.filter((token) => {
-      const served = locationInstance({ ...reading, condition: { token, wmo: null, isDay: true } }, PLACE, DEFAULT_UNITS, [], NOW * 1000)?.properties?.condition?.shortText?.text as string;
+      const served = locationInstance({ ...reading, condition: { token, wmo: null, isDay: true } }, PLACE, DEFAULT_UNITS, [], NOW * 1000)?.properties?.condition;
+      const words = conditions.conditions.find((entry) => entry.token === token)?.labelLong ?? conditions.fallback.labelLong;
 
-      return served.length > 12;
+      return (served?.shortText?.text as string).length > SHORT_TEXT_MAX || served?.longText?.text !== words;
     });
+
+    expect(result).toEqual([]);
+  });
+
+  /**
+   * The Pebble app cuts each day's phrase from a sky series' long text at 12 and the current sky's long
+   * phrase at 32, so the full words made Partly Cloud of Partly Cloudy on the watch's own forecast.
+   */
+  test('keeps every sky series long text to 12 characters and every sky long text to 32', () => {
+    const tokens = [...conditions.conditions.map((entry) => entry.token), 'UNKNOWN'];
+    const reading = readings('openmeteo')[0];
+    const asked = ['hourly_condition', 'daily_condition'];
+
+    const result = tokens.filter((token) => {
+      const sky = { token, wmo: null, isDay: true };
+      const properties = locationInstance({ ...reading, condition: sky, hourly: { ...reading.hourly, condition: reading.hourly.condition.map(() => sky) }, daily: { ...reading.daily, condition: reading.daily.condition.map(() => sky) } }, PLACE, DEFAULT_UNITS, asked, NOW * 1000)?.properties;
+      const series = asked.flatMap((name) => (properties?.[name]?.series?.longText?.values || []) as string[]);
+
+      return series.length === 0 || series.some((words) => words.length > 12) || (properties?.condition?.longText?.text as string).length > 32;
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  /** A sky left out of the short words read Unknown, and a word of seven or fewer cannot show the gap in a length check. */
+  test('names every sky the framework knows in SHORT_LABELS', () => {
+    const result = Object.keys(SHORT_LABELS).sort();
+
+    expect(result).toEqual(conditions.conditions.map((entry) => entry.token).sort());
+  });
+
+  /** A phrase written out for a sky whose own words already fit would drift from them the next time those change. */
+  test('keeps a PHRASE_LABELS entry only for a sky whose own words run past 12', () => {
+    const result = Object.keys(PHRASE_LABELS).filter((token) => (conditions.conditions.find((entry) => entry.token === token)?.labelLong ?? '').length <= 12);
 
     expect(result).toEqual([]);
   });
@@ -314,9 +350,9 @@ describe('the tables', () => {
     [{ windSpeed: 'km/h' }, 'wind_speed', { value: 36, unit: 'km/h' }, '36 km/h'],
     [{ windSpeed: 'mph' }, 'wind_speed', { value: 36 / 1.609344, unit: 'mph' }, '22 mph'],
     [{ windSpeed: 'm/s' }, 'wind_speed', { value: 10, unit: 'm/s' }, '10 m/s'],
-    [{ windSpeed: 'knots' }, 'wind_speed', { value: 36 / 1.852, unit: 'knots' }, '19 knots'],
-    [{ pressure: 'hPa' }, 'pressure', { value: 1016, unit: 'hPa' }, '1016 hPa'],
-    [{ pressure: 'inHg' }, 'pressure', { value: 1016 * 0.0295299830714, unit: 'inHg' }, '30.00 inHg'],
+    [{ windSpeed: 'knots' }, 'wind_speed', { value: 36 / 1.852, unit: 'knots' }, '19 kn'],
+    [{ pressure: 'hPa' }, 'pressure', { value: 1016, unit: 'hPa' }, '1016'],
+    [{ pressure: 'inHg' }, 'pressure', { value: 1016 * 0.0295299830714, unit: 'inHg' }, '30.00'],
   ] as const)('serves %o as its number and its label', (units, name, number, label) => {
     const reading = { ...readings('openmeteo')[0], temperature: 20, windSpeed: 36, pressure: 1016 };
     const served = locationInstance(reading, PLACE, { ...DEFAULT_UNITS, ...units } as WeatherUnits, [name], NOW * 1000)?.properties?.[name];
@@ -326,6 +362,52 @@ describe('the tables', () => {
     expect(result[0]).toBe(number.unit);
     expect(result[1]).toBeCloseTo(number.value, 9);
     expect(result[2]).toBe(label);
+  });
+});
+
+describe('the short texts', () => {
+  // every unit set the plugin can serve in
+  const UNIT_SETS = (['°C', '°F'] as const).flatMap((temperature) =>
+    (['km/h', 'mph', 'm/s', 'knots'] as const).flatMap((windSpeed) => (['hPa', 'inHg'] as const).map((pressure) => ({ temperature, windSpeed, pressure })))
+  );
+
+  // the name is the one left longer, as the built-in sends it
+  const UNCUT = ['name'];
+
+  /** Every short text in an instance, single and series, by the property it came from. */
+  function shortTexts(instance: SourceInstance | null): Array<[string, string]> {
+    return Object.entries(instance?.properties || {}).flatMap(([name, property]) => {
+      const single = property.shortText ? [property.shortText.text] : [];
+      const series = (property.series?.shortText?.values || []).filter((text): text is string => typeof text === 'string');
+
+      return [...single, ...series].map((text): [string, string] => [name, text]);
+    });
+  }
+
+  /**
+   * The Pebble app warns on a shortText over seven characters, since the tight spots that read it
+   * cut it off. Coordinates, a pressure, and a provider's name all ran past it.
+   */
+  test.each(['openmeteo', 'owm', 'weatherapi'] as const)('keeps every short text from %s to seven characters in every unit set', (provider) => {
+    // a gale, a deep cold, and a place far south and west, so each text is as long as it gets
+    const reading = { ...readings(provider)[0], temperature: -40, feelsLike: -52, dewPoint: -45, windSpeed: 160, pressure: 1084 };
+    const place = { ...PLACE, lat: -89.99999, lon: -179.99999 };
+
+    const result = UNIT_SETS.flatMap((units) => shortTexts(locationInstance(reading, place, units, Object.keys(WEATHER_LOCATION_SOURCE.properties), NOW * 1000))).filter(
+      ([name, text]) => !UNCUT.includes(name) && text.length > SHORT_TEXT_MAX
+    );
+
+    expect(result).toEqual([]);
+  });
+
+  /** A face that has the room still reads the whole value, so cutting the short text must not lose it. */
+  test('keeps the whole value in the number and the long text', () => {
+    const reading = { ...readings('owm')[0], pressure: 1016 };
+    const properties = locationInstance(reading, { ...PLACE, lat: 51.04472, lon: -114.07188 }, { ...DEFAULT_UNITS, pressure: 'inHg' }, ['latitude', 'longitude'], NOW * 1000)?.properties;
+
+    const result = [properties?.longitude?.numericValue?.value, properties?.longitude?.longText?.text, properties?.pressure?.longText?.text, properties?.source?.shortText?.text, properties?.source?.longText?.text];
+
+    expect(result).toEqual([-114.0719, '-114.0719', '30.00 inHg', 'OWM', 'OpenWeatherMap']);
   });
 });
 

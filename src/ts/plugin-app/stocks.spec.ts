@@ -101,3 +101,22 @@ describe('stockInstance', () => {
     expect(result).toEqual([]);
   });
 });
+
+describe('the source', () => {
+  /** The Pebble app warns on a shortText over seven characters, and Alpha Vantage and Twelve Data both ran past it. */
+  test.each([
+    ['Alpha Vantage', 'AlphaV'],
+    ['Twelve Data', '12Data'],
+    ['Finnhub', 'Finnhub'],
+    ['Yahoo', 'Yahoo'],
+    ['A Provider Not Known Yet', 'A Provi'],
+    // a name that is also a property of every object, which a plain lookup read as a short form
+    ['constructor', 'constru'],
+  ])('serves %s as %s in its short text and whole in its long text', (source, short) => {
+    const instance = stockInstance(stockUtil.ok('AAPL', 1, 1, 1, '', { currency: 'USD' }), 'AAPL', { source });
+
+    const result = [instance.properties.source?.shortText?.text, instance.properties.source?.longText?.text];
+
+    expect(result).toEqual([short, source]);
+  });
+});
