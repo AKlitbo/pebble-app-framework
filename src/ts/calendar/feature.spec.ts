@@ -365,6 +365,43 @@ describe('calendar plugin mode', () => {
     expect(fetches).toHaveLength(1);
   });
 
+  /** Every launch downloaded the feed twice, once as the phone came up and again for the watch's ask a moment after. */
+  test('answers the ask that follows a launch with the agenda it just downloaded', () => {
+    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    const { hooks, sends } = startFace({ ready: true });
+
+    fetches[0].respond(200, EMPTY_FEED);
+    vi.advanceTimersByTime(2000);
+    hooks.message?.({ CALENDAR_REQUEST: 1 });
+
+    expect(fetches).toHaveLength(1);
+    expect(stripCounts(sends)).toEqual([0, 0]);
+  });
+
+  /** The watch's own poll after the gap has to download, or an edited event never reaches the watch. */
+  test('downloads for an ask a minute after the last download', () => {
+    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    const { hooks } = startFace({ ready: true });
+
+    fetches[0].respond(200, EMPTY_FEED);
+    vi.advanceTimersByTime(60 * 1000);
+    hooks.message?.({ CALENDAR_REQUEST: 1 });
+
+    expect(fetches).toHaveLength(2);
+  });
+
+  /** A save with a new link has to download it, however soon after the last download it lands. */
+  test('downloads for a save just after a download', () => {
+    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    const { hooks } = startFace({ ready: true });
+
+    fetches[0].respond(200, EMPTY_FEED);
+    saveFromPage(hooks, { CALENDAR_ICS_URL: 'https://example.com/other.ics' });
+    vi.advanceTimersByTime(250);
+
+    expect(fetches).toHaveLength(2);
+  });
+
   /** A download still out for the feed would land after the switch and put the feed's events over the plugin's. */
   test('subscribes for a switch to the plugin and drops the round still out', () => {
     saveSettings({ CALENDAR_ICS_URL: FEED_URL });

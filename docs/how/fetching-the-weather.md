@@ -80,7 +80,7 @@ flowchart TD
 
 ## A Fetch Round
 
-Each fetch is a round, and weather keeps to the rules every fetching feature shares. A round starts when the phone code starts, when the watch asks, on the slow tick when nothing has asked since the last one, and 250 ms after a save that changed a weather setting, as [The Background Refresh](phone-side.md#the-background-refresh) and [After a Save](phone-side.md#after-a-save) cover.
+Each fetch is a round, and weather keeps to the rules every fetching feature shares. A round starts when the phone code starts, when the watch asks, on the slow tick when nothing has asked since the last one, and 250 ms after a save that changed a weather setting, as [The Background Refresh](phone-side.md#the-background-refresh) and [After a Save](phone-side.md#after-a-save) cover. A watch ask within a minute of a good reading resends it rather than starting a round.
 
 Until its first reading lands, the watch asks again every few seconds, as [The Weather Store](weather-store.md) covers. The phone drops an ask that arrives while a round is out, so it never starts a second GPS fix or spends a second provider call. A save shuts out a round that is still running, so a reading in the old unit or for the old city cannot reach the watch after it. [The Phone Side](phone-side.md#after-a-save) covers both.
 

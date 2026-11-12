@@ -138,6 +138,8 @@ While the phone code runs, a timer ticks every 5 minutes. Each tick sends any se
 
 Weather, stocks, and the calendar act only on the slow ticks. The watch asks for each on the interval the wearer picked, so the watch leads. The slow tick only fetches when nothing has asked since the last one. A watch ask, or the phone code starting, marks the feature as asked, so a feature the watch is polling never fetches on the tick as well.
 
+**An Ask Just after a Fetch.** The phone fetches as its code starts, and the watch's own ask lands a moment after that round has finished. Weather and the calendar keep a gap of a minute, `ASK_GAP_MS`, after a fetch that brought a good reading, and an ask inside it resends that reading rather than fetching again. A launch fetches once and the watch still gets its answer. A failed fetch opens no gap, so the next ask tries again. A save that changed a setting still fetches inside the gap, and the slow tick is unchanged. Stocks keep their own gap, as [The Stock Store](stock-store.md) covers.
+
 **The Same Answer Is Not Sent Twice.** Each feature keeps the last message the watch took from it, and a refresh that brings back exactly the same one sends nothing. Every send wakes the watch's radio whether or not the reading moved. When a send fails every retry, the feature forgets what it kept, so the next one goes out. A watch ask and the phone code starting both forget it too, so the watch always gets an answer when it asks.
 
 ## After a Save

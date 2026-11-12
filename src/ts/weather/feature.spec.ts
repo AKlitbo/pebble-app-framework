@@ -882,6 +882,60 @@ describe('weather plugin mode', () => {
     expect(sends).toHaveLength(0);
   });
 
+  /** Every launch fetched twice, once as the phone came up and again for the watch's ask a moment after. */
+  test('answers the ask that follows a launch with the reading it just fetched', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo' });
+    const { hooks, sends } = startFace({ ready: true });
+
+    fetches[0].respond(200, JSON.stringify({ current: { temperature_2m: 30, weather_code: 0, is_day: 1 } }));
+    vi.advanceTimersByTime(2000);
+    hooks.message?.({ WEATHER_REQUEST: 1 });
+
+    expect(fetches).toHaveLength(1);
+    expect(sends).toHaveLength(2);
+    expect(sends[1]).toEqual(sends[0]);
+  });
+
+  /** The watch's own poll after the gap has to fetch, or the reading never moves on. */
+  test('fetches for an ask a minute after the last fetch', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo' });
+    const { hooks } = startFace({ ready: true });
+
+    fetches[0].respond(200, JSON.stringify({ current: { temperature_2m: 30, weather_code: 0, is_day: 1 } }));
+    vi.advanceTimersByTime(60 * 1000);
+    hooks.message?.({ WEATHER_REQUEST: 1 });
+
+    expect(fetches).toHaveLength(2);
+  });
+
+  /** A save that changes the place has to fetch the new one, however soon after the last fetch it lands. */
+  test('fetches for a save just after a fetch', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo' });
+    const { hooks } = startFace({ ready: true });
+
+    fetches[0].respond(200, JSON.stringify({ current: { temperature_2m: 30, weather_code: 0, is_day: 1 } }));
+    saveFromPage(hooks, { WEATHER_PROVIDER: 'openmeteo', LOCATION_USE_GPS: false, LOCATION_NAME: JSON.stringify({ lat: 51.05, lon: -114.07, label: 'Calgary' }) });
+    vi.advanceTimersByTime(250);
+
+    expect(fetches).toHaveLength(2);
+  });
+
+  /** A failed fetch has nothing worth resending, so the watch's ask tries again. */
+  test('fetches for an ask just after a failed fetch', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo' });
+    const { hooks } = startFace({ ready: true });
+
+    // the first try and both retries fail, which ends the round about 20 seconds in
+    for (const waitMs of [...WEATHER_RETRY_DELAYS_MS, 0]) {
+      fetches[fetches.length - 1].respond(500, 'down');
+      vi.advanceTimersByTime(waitMs);
+    }
+
+    hooks.message?.({ WEATHER_REQUEST: 1 });
+
+    expect(fetches).toHaveLength(WEATHER_RETRY_DELAYS_MS.length + 2);
+  });
+
   /** A face with the define and Open-Meteo picked has to fetch exactly as one without it does. */
   test('fetches with the provider picked while it is a fetching one', () => {
     saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo' });

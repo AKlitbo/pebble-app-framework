@@ -20,7 +20,7 @@ import { createDedupedSender } from '../pkjs/send-queue';
 import { request, cacheBust } from '../pkjs/request';
 import { getConfig, readText, watchSettings } from '../pkjs/settings-store';
 import type { Feature } from '../pkjs/feature';
-import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
+import { ASK_GAP_MS, askShouldFetch, createAsks, fetchFinished, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 import { createRound, finishRound, shutOutRound, startRound } from '../pkjs/round';
 import { calendarPlugins } from '../plugin-sources/index';
 import type { CalendarDriver } from '../plugin-sources/types';
@@ -45,8 +45,12 @@ const calendar: Feature = (context) => {
   // call within its watchdog, so a round always ends
   const state = createRound();
 
-  // who asked lately, so a slow tick or a watch ask does not fetch what another just did
-  const asks = createAsks();
+  // who asked lately, so a slow tick or a watch ask does not fetch what another just did. the gap
+  // has the watch's ask at launch resend the agenda the phone fetched as it came up
+  const asks = createAsks(ASK_GAP_MS);
+
+  // the events the last good download sent, which an ask inside the gap sends again
+  let lastEvents: CalendarEvent[] = [];
 
   // the strip the watch holds, so an unchanged refresh skips the redundant BLE wake. forgotten on
   // ready and on a watch-initiated request so the watch always gets a fresh answer
@@ -59,6 +63,12 @@ const calendar: Feature = (context) => {
     // a Subscribe link, such as an iCloud public calendar, starts webcal://, which is https to
     // every calendar app. the phone's request knows no such scheme and fails on it every time
     return url.replace(/^webcal:\/\//i, 'https://');
+  }
+
+  /** Sends the last good download's events again, for an ask inside the gap. */
+  function resendCalendar() {
+    console.log('Calendar: fetched a moment ago, so the watch gets that agenda again');
+    sendCalendar(lastEvents);
   }
 
   /** Sends the packed agenda to the watch, unless the watch holds it already. An empty list clears it. */
@@ -141,6 +151,9 @@ const calendar: Feature = (context) => {
         console.log('Calendar: next is "' + events[0].title + '" at ' + new Date(events[0].startEpoch * 1000).toString());
       }
 
+      lastEvents = events;
+      fetchFinished(asks, Date.now());
+
       // an empty list still goes, since that is how the watch hears every event was deleted
       sendCalendar(events);
     });
@@ -155,7 +168,7 @@ const calendar: Feature = (context) => {
       shutOut: () => shutOutRound(state),
       fetch: (force) => getCalendar(force),
       askFetch: () => {
-        if (askShouldFetch(asks)) {
+        if (askShouldFetch(asks, Date.now(), resendCalendar)) {
           getCalendar();
         }
       },
@@ -177,7 +190,7 @@ const calendar: Feature = (context) => {
       // clear the dedupe cache so a watch that just rebooted with an empty store gets a fresh send
       sender.forget();
 
-      if (askShouldFetch(asks)) {
+      if (askShouldFetch(asks, Date.now(), resendCalendar)) {
         getCalendar();
       }
     },
@@ -186,7 +199,7 @@ const calendar: Feature = (context) => {
       if (payload[messageKeys.CALENDAR_REQUEST]) {
         sender.forget();
 
-        if (askShouldFetch(asks)) {
+        if (askShouldFetch(asks, Date.now(), resendCalendar)) {
           getCalendar();
         }
       }

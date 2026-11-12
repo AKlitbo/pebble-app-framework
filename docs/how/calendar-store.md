@@ -100,7 +100,7 @@ A face built with `PLUGIN_CALENDAR` can also read the events in the phone's own 
 
 **A Bad Strip Changes Nothing.** A count above six is pinned to six, and a message that runs short is refused whole, so the store keeps the agenda it had rather than half of a new one.
 
-**When the Phone Sends.** The phone sends an agenda when its code starts, whenever the watch asks, and when the link changes. Its slow refresh fills in when the watch has not asked, as [The Phone Side](phone-side.md#the-background-refresh) covers.
+**When the Phone Sends.** The phone sends an agenda when its code starts, whenever the watch asks, and when the link changes. A watch ask within a minute of a good download resends that agenda rather than downloading the feed again. Its slow refresh fills in when the watch has not asked, as [The Phone Side](phone-side.md#the-background-refresh) covers.
 
 ## On the Watch
 

@@ -33,7 +33,7 @@ import { phoneZone } from '../pkjs/timezone';
 import conditions from './conditions';
 
 export { validCoord } from '../pkjs/place';
-import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
+import { ASK_GAP_MS, askShouldFetch, createAsks, fetchFinished, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 import { createRound, finishRound, roundIsCurrent, shutOutRound, startRound } from '../pkjs/round';
 import type { RoundState } from '../pkjs/round';
 
@@ -271,8 +271,12 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
   // weather round state mutated in place by runWeatherRound
   const state: WeatherState = createRound();
 
-  // who asked lately, so a slow tick or a watch ask does not fetch what another just did
-  const asks = createAsks();
+  // who asked lately, so a slow tick or a watch ask does not fetch what another just did. the gap
+  // has the watch's ask at launch resend the reading the phone fetched as it came up
+  const asks = createAsks(ASK_GAP_MS);
+
+  // the last good reading a fetch sent, which an ask inside the gap sends again
+  let lastReading: any = null;
 
   // the weather dict the watch holds, so an unchanged refresh skips the redundant BLE wake.
   // forgotten on ready and on a watch-initiated request so the watch always gets a fresh answer
@@ -445,9 +449,23 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
   function getWeather(force?: boolean) {
     runWeatherRound(state, Boolean(force), {
       fetchWeather: fetchWeatherOnce,
-      sendWeather: sendWeather,
+      sendWeather: (result) => {
+        // only a good reading opens the gap, so an ask after a failed fetch still fetches
+        if (result.ok) {
+          lastReading = result;
+          fetchFinished(asks, Date.now());
+        }
+
+        sendWeather(result);
+      },
       timeoutMs: WEATHER_ROUND_TIMEOUT_MS,
     });
+  }
+
+  /** Sends the last good reading again, for an ask inside the gap. */
+  function resendWeather() {
+    console.log('Weather: fetched a moment ago, so the watch gets that reading again');
+    sendWeather(lastReading);
   }
 
   // a face built with PLUGIN_WEATHER runs its plugin mode, which runs the fetch above whenever the
@@ -458,7 +476,7 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
     shutOut: () => shutOutRound(state),
     fetch: (force) => getWeather(force),
     askFetch: () => {
-      if (askShouldFetch(asks)) {
+      if (askShouldFetch(asks, Date.now(), resendWeather)) {
         getWeather();
       }
     },
@@ -491,7 +509,7 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
       // clear the dedupe cache so a watch that just rebooted with empty stores gets a fresh send
       sender.forget();
 
-      if (askShouldFetch(asks)) {
+      if (askShouldFetch(asks, Date.now(), resendWeather)) {
         getWeather();
       }
     },
@@ -502,7 +520,7 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
       if (payload[messageKeys.WEATHER_REQUEST]) {
         sender.forget();
 
-        if (askShouldFetch(asks)) {
+        if (askShouldFetch(asks, Date.now(), resendWeather)) {
           getWeather();
         }
       }

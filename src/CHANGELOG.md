@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Fixed
 
 - Fixed a clear polar night from a weather plugin showing a sun, for a plugin that serves an hourly day flag.
+- Fixed every launch fetching the weather and the calendar twice, once as the phone came up and again for the watch's ask a moment after. An ask within a minute of a good fetch now resends that reading, kept by `ASK_GAP_MS` in `ts/pkjs/asks.ts`.
 
 ## [6.1.0] - 2026-11-11
 

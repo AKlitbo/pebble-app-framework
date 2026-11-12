@@ -26,6 +26,7 @@ import hiddenStoreComponent from '../clay/hidden-store-component';
 import pageStyleComponent from '../clay/page-style-component';
 import dependentVisibility from '../clay/dependent-visibility';
 import noteComponent from '../plugin-sources/note-component';
+import { ASK_GAP_MS } from './asks';
 import buildConfig from './config-builder';
 import { select } from './config-rows';
 import { pluginSourcePage } from '../plugin-sources/page';
@@ -1248,7 +1249,8 @@ describe('startPebbleApp weather', () => {
   /**
    * A watch that rebooted has empty stores and asks again while the phone still holds the dict it
    * last sent. Without the dedupe cache forgotten on that ask, the same reading would be skipped
-   * and the rebooted watch would sit on placeholders.
+   * and the rebooted watch would sit on placeholders. An ask this soon after the fetch resends the
+   * reading rather than fetching it again.
    */
   test('sends the same reading again when the watch asks for it', () => {
     start([weather]);
@@ -1256,9 +1258,9 @@ describe('startPebbleApp weather', () => {
     sent[0].respond(200, currentBody(21));
 
     askForWeather();
-    sent[1].respond(200, currentBody(21));
 
     expect(weatherSends()).toHaveLength(2);
+    expect(sent).toHaveLength(1);
   });
 
   /**
@@ -1272,7 +1274,11 @@ describe('startPebbleApp weather', () => {
     fire('ready');
     sent[0].respond(200, currentBody(21));
 
+    // past the gap after a fetch, so the ask fetches rather than resends
+    const now = vi.spyOn(Date, 'now').mockReturnValue(Date.now() + ASK_GAP_MS);
+
     askForWeather();
+    now.mockRestore();
 
     expect(sent).toHaveLength(2);
   });
@@ -1284,7 +1290,6 @@ describe('startPebbleApp weather', () => {
     sent[0].respond(200, currentBody(21));
 
     fire('ready');
-    sent[1].respond(200, currentBody(21));
 
     expect(weatherSends()).toHaveLength(2);
   });

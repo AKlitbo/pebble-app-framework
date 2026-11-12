@@ -7,7 +7,7 @@
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from './asks';
+import { ASK_GAP_MS, askShouldFetch, createAsks, fetchFinished, refetchAfterSave, slowTickShouldFetch } from './asks';
 
 describe('askShouldFetch', () => {
   /**
@@ -15,7 +15,9 @@ describe('askShouldFetch', () => {
    * the watch asked as well once it took the new unit, each with its own gps fix and provider call.
    */
   test('folds a watch ask into the refetch a settings save has pending', () => {
-    const asks = { sinceSlowTick: false, savePending: true };
+    const asks = createAsks();
+
+    asks.savePending = true;
 
     const result = askShouldFetch(asks);
 
@@ -27,6 +29,73 @@ describe('askShouldFetch', () => {
     const asks = createAsks();
 
     const result = askShouldFetch(asks);
+
+    expect(result).toBe(true);
+  });
+});
+
+describe('askShouldFetch with a gap', () => {
+  // a fetch that finished at 16:20 UTC on 1 July 2026
+  const FETCHED = Date.UTC(2026, 6, 1, 16, 20);
+
+  /** A gapped ask state whose last fetch finished at FETCHED. */
+  function fetchedAsks() {
+    const asks = createAsks(ASK_GAP_MS);
+
+    fetchFinished(asks, FETCHED);
+
+    return asks;
+  }
+
+  /** Every launch fetched twice, once as the phone came up and again for the watch's ask a moment after. */
+  test('resends rather than fetches for an ask just after a fetch', () => {
+    const asks = fetchedAsks();
+    const resend = vi.fn();
+
+    const result = askShouldFetch(asks, FETCHED + 2000, resend);
+
+    expect(result).toBe(false);
+    expect(resend).toHaveBeenCalledTimes(1);
+  });
+
+  /** The watch's own poll after the gap has to fetch, or the reading never moves on. */
+  test('fetches for an ask once the gap has passed', () => {
+    const asks = fetchedAsks();
+    const resend = vi.fn();
+
+    const result = askShouldFetch(asks, FETCHED + ASK_GAP_MS, resend);
+
+    expect(result).toBe(true);
+    expect(resend).not.toHaveBeenCalled();
+  });
+
+  /** A clock set back would otherwise hold every ask inside a gap that never ends. */
+  test('fetches for an ask that reads as earlier than the fetch', () => {
+    const asks = fetchedAsks();
+
+    const result = askShouldFetch(asks, FETCHED - 1000, vi.fn());
+
+    expect(result).toBe(true);
+  });
+
+  /** The save's refetch answers the ask, and a resend first would put the old setting's reading back on the watch. */
+  test('folds an ask inside the gap into a pending save without a resend', () => {
+    const asks = fetchedAsks();
+    const resend = vi.fn();
+
+    asks.savePending = true;
+
+    const result = askShouldFetch(asks, FETCHED + 2000, resend);
+
+    expect(result).toBe(false);
+    expect(resend).not.toHaveBeenCalled();
+  });
+
+  /** Before any fetch has finished there is nothing to resend, so the ask fetches. */
+  test('fetches for an ask before any fetch has finished', () => {
+    const asks = createAsks(ASK_GAP_MS);
+
+    const result = askShouldFetch(asks, FETCHED, vi.fn());
 
     expect(result).toBe(true);
   });
@@ -102,5 +171,43 @@ describe('refetchAfterSave', () => {
 
     expect(result).toBe(true);
     expect(refetch).toHaveBeenCalledTimes(1);
+  });
+
+  /**
+   * A calendar link cleared and saved a few seconds after a download, then a watch ask inside the
+   * minute, resent the removed feed's events. A new weather city whose fetch failed resent the old
+   * city's reading the same way. The save has to close the gap.
+   */
+  test('closes the gap so an ask after a save fetches rather than resends', () => {
+    const fetched = Date.UTC(2026, 6, 1, 16, 20);
+    const asks = createAsks(ASK_GAP_MS);
+    const resend = vi.fn();
+
+    vi.setSystemTime(fetched);
+    fetchFinished(asks, fetched);
+    refetchAfterSave(asks, 250, () => {});
+    vi.advanceTimersByTime(250);
+
+    const result = askShouldFetch(asks, fetched + 41 * 1000, resend);
+
+    expect(result).toBe(true);
+    expect(resend).not.toHaveBeenCalled();
+  });
+
+  /** A round from before the save that lands while the refetch waits carries the old reading, so it must not reopen the gap. */
+  test('opens no gap for a fetch that finishes while the refetch waits', () => {
+    const fetched = Date.UTC(2026, 6, 1, 16, 20);
+    const asks = createAsks(ASK_GAP_MS);
+    const resend = vi.fn();
+
+    vi.setSystemTime(fetched);
+    refetchAfterSave(asks, 250, () => {});
+    fetchFinished(asks, fetched + 100);
+    vi.advanceTimersByTime(250);
+
+    const result = askShouldFetch(asks, fetched + 41 * 1000, resend);
+
+    expect(result).toBe(true);
+    expect(resend).not.toHaveBeenCalled();
   });
 });
