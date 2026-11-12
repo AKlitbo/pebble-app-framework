@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `FREE_PLANS` and `onPaidPlan` in `ts/stock/limits.ts`, each stock provider's free plan in one place, and `allowance`, `keepSent`, `loadLedger`, and `saveLedger` in `ts/stock/ledger.ts`, which count the calls sent against it.
 - Added `rateLimitWait`, `roundWait`, and `currentTradingDay` to `ts/stock/schedule.ts`, and `util.rateLimit` and `util.bodyless` to `ts/stock/util.ts`. `shouldThrottleStockFetch` takes a rate limit's `retryAtMs` after `now`.
 - Added a Paid Plan toggle for the stock settings, on `STOCK_PAID_PLAN`. Pass `stocks: { paidPlan: true }` to `buildConfig` and declare the key. With it on, the phone drops the free plan's floors and counts for a keyed provider, and `shouldThrottleStockFetch` takes a `paid` argument for the same.
+- Added the `PLUGIN_STOCKS` define, which reads stock quotes from a Pebble app plugin serving `finance/stock`. The build adds `STOCK_STRIP` and `STOCK_REQUEST`, and `STOCK_PROVIDER` unless `providers.stocks` is `["plugin"]`. A face that lists `providers.stocks` puts `plugin` in it. The plugin source schema on key 249 moves to version 2, and an older blob reads in with the stock choice on its default.
 - Added `name`, `currency`, and `asOfEpoch` to `StockQuote`, filled from Yahoo and Twelve Data where they send them, and the quote time from Finnhub. A `RATE LIMIT` quote carries `limit`, the `second`, `minute`, or `day` limit the provider named.
 
 ### Wearer-Visible Changes

@@ -41,7 +41,7 @@ export default buildConfig({
 | Location Settings | `location` | phone GPS, a fallback, and a manual place |
 | Weather | `weather`, `temperature`, or `wind` | the temperature unit, the wind speed unit with `wind`, and the provider with its key |
 | Calendar Preferences | `calendar` | the iCal link, then the face's own `items` |
-| Stock Preferences | `stocks` | the provider, its key, and the tickers, then the face's own `items` |
+| Stock Preferences | `stocks` | the provider, its key, and the tickers, then the face's own `items`. A face built with `PLUGIN_STOCKS` gets Preferred Source in the provider select |
 
 **Each Section Brings Its Keys.** Every message key a section uses has to be declared in the face's `pebble.appinfo.json`, and each one adds to the inbox the face sizes, as [Opening the Connection](talking-to-the-phone.md#opening-the-connection) covers. Bluetooth and Clock are always on the page, so their keys are always needed. An optional section that is left out brings no keys, which is why Health returns nothing at all, not even a heading, for a face that shows neither steps nor battery.
 
@@ -278,9 +278,9 @@ Put `visibleWhen` on a control, not a `section`, since Clay gives a section no r
 
 ## Rows a Plugin Choice Acts On
 
-`buildConfig` marks some of its rows on every face: the weather's Data Source select, the rows only a weather fetch or an iCal link needs, and the weather's lead line. Clay ignores the marks, so they change nothing on a face built without a plugin define. On a face built with `PLUGIN_WEATHER` or `PLUGIN_CALENDAR`, the feature's `page` hook reads them as the page opens. It adds **Pebble App: Preferred Source** to the marked select, hides the marked rows while it is picked, and adds the notes that go with it.
+`buildConfig` marks some of its rows on every face: the weather's and the stocks' Data Source selects, the rows only a weather fetch, a stock provider, or an iCal link needs, and the weather's lead line. Clay ignores the marks, so they change nothing on a face built without a plugin define. On a face built with `PLUGIN_WEATHER`, `PLUGIN_STOCKS`, or `PLUGIN_CALENDAR`, the feature's `page` hook reads them as the page opens. It adds **Pebble App: Preferred Source** to the marked select, hides the marked rows while it is picked, and adds the notes that go with it.
 
-A face that builds its own weather or calendar section marks its own rows the same way, with `pluginSourceHides` on a row that means nothing while the plugin is picked, and `pluginSourceLead` on its own line about choosing a provider. A face with now playing or the phone's battery can mark the row it wants their notes under with `pluginSourceRows`. [Marks on the Page](plugin-sources.md#marks-on-the-page) lists each mark and the `page` hook behind them.
+A face that builds its own weather, stock, or calendar section marks its own rows the same way, with `pluginSourceHides` on a row that means nothing while the plugin is picked, and `pluginSourceLead` on its own line about choosing a provider. A face with now playing or the phone's battery can mark the row it wants their notes under with `pluginSourceRows`. [Marks on the Page](plugin-sources.md#marks-on-the-page) lists each mark and the `page` hook behind them.
 
 ## Offering Fewer Providers
 

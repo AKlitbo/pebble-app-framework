@@ -139,7 +139,8 @@ The build reads which features the face's compiled phone code passes `startPebbl
 
 * `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, and `WEATHER_OK` when it passes `weather` or sets `PLUGIN_WEATHER`.
 * `STOCK_REQUEST` and `STOCK_STRIP` when it passes `stocks`, and `CALENDAR_REQUEST` and `CALENDAR_STRIP` when it passes `calendar`. A face that passes either with one of the two keys gets both.
-* `CALENDAR_STRIP` for `PLUGIN_CALENDAR`, and `WEATHER_PROVIDER` or `CALENDAR_SOURCE` for the two weather and calendar defines unless the kind's list is plugin only, with `SETTINGS_REQUEST` and `SETTINGS_FRESH` beside either.
+* `STOCK_STRIP` and `STOCK_REQUEST` for `PLUGIN_STOCKS`, and `CALENDAR_STRIP` for `PLUGIN_CALENDAR`.
+* `WEATHER_PROVIDER`, `STOCK_PROVIDER`, or `CALENDAR_SOURCE` for the weather, stock, and calendar defines unless the kind's list is plugin only, with `SETTINGS_REQUEST` and `SETTINGS_FRESH` beside any of them.
 * The music keys for `PLUGIN_MUSIC`, and the phone keys for `PLUGIN_PHONE`.
 * `"sdkVersion": "3"`, `"enableMultiJS": true`, and `location` and `configurable` from `capabilities`.
 

@@ -1,12 +1,12 @@
 # Pebble App Plugins
 
-The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app's own weather list, the events in the phone's calendars, what the phone is playing, and the phone's battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well. [Plugin Apps](plugin-apps.md) covers building a plugin of your own.
+The Pebble app runs plugins on the phone that serve data to watchfaces: the weather for the places in the Pebble app's own weather list, the events in the phone's calendars, stock quotes, what the phone is playing, and the phone's battery. A face built with a plugin define reads that data through the Pebble app rather than fetching it, and a face built without one carries none of the code. Plugins only answer while the wearer has them turned on in the Pebble app, under Settings, Plugins, so every part of this is written for a phone where they are off as well. [Plugin Apps](plugin-apps.md) covers building a plugin of your own.
 
-The phone code lives under `src/ts/plugin-sources/`, and the rest of the phone code reaches it only through [`index.ts`](../../src/ts/plugin-sources/index.ts). The shared parts are [`subscription.ts`](../../src/ts/plugin-sources/subscription.ts), which keeps one live subscription per kind, [`page.ts`](../../src/ts/plugin-sources/page.ts), which adds the plugin choice and its notes to the settings page, and [`standard.ts`](../../src/ts/plugin-sources/standard.ts), which checks what a plugin says it serves. Each kind has a file that turns a plugin's update into what the watch takes, such as [`weather.ts`](../../src/ts/plugin-sources/weather.ts) and [`calendar.ts`](../../src/ts/plugin-sources/calendar.ts). The build side is the table of kinds in [`plugin-kinds.ts`](../../src/tools/manifest/plugin-kinds.ts), the providers list in [`providers.ts`](../../src/tools/manifest/providers.ts), and the swap in [`build-pkjs.ts`](../../src/tools/pkjs/build-pkjs.ts).
+The phone code lives under `src/ts/plugin-sources/`, and the rest of the phone code reaches it only through [`index.ts`](../../src/ts/plugin-sources/index.ts). The shared parts are [`subscription.ts`](../../src/ts/plugin-sources/subscription.ts), which keeps one live subscription per kind, [`page.ts`](../../src/ts/plugin-sources/page.ts), which adds the plugin choice and its notes to the settings page, and [`standard.ts`](../../src/ts/plugin-sources/standard.ts), which checks what a plugin says it serves. Each kind has a file that turns a plugin's update into what the watch takes, such as [`weather.ts`](../../src/ts/plugin-sources/weather.ts), [`stocks.ts`](../../src/ts/plugin-sources/stocks.ts), and [`calendar.ts`](../../src/ts/plugin-sources/calendar.ts). The build side is the table of kinds in [`plugin-kinds.ts`](../../src/tools/manifest/plugin-kinds.ts), the providers list in [`providers.ts`](../../src/tools/manifest/providers.ts), and the swap in [`build-pkjs.ts`](../../src/tools/pkjs/build-pkjs.ts).
 
 ## Turning It On
 
-A face turns plugins on one kind of data at a time, in its appinfo's `defines`. For the weather and the calendar it lists the `weather` and `calendar` features in `startPebbleApp` as it would without plugins. Now playing and the phone's battery have no feature without plugins, so a face lists `music` from `ts/music/feature` and `phone` from `ts/phone/feature` for those two:
+A face turns plugins on one kind of data at a time, in its appinfo's `defines`. For the weather, stocks, and the calendar it lists the `weather`, `stocks`, and `calendar` features in `startPebbleApp` as it would without plugins. Now playing and the phone's battery have no feature without plugins, so a face lists `music` from `ts/music/feature` and `phone` from `ts/phone/feature` for those two:
 
 ```json
 "defines": {
@@ -22,13 +22,14 @@ app.startPebbleApp({ clayConfig, features: [weather, calendar] });
 | Define | What It Reads | Keys It Brings | Select Key | Permission |
 | :-- | :-- | :-- | :-- | :-- |
 | `PLUGIN_WEATHER` | `weather/location` | `WEATHER_REQUEST`, `WEATHER_TEMPERATURE`, `WEATHER_CONDITIONS`, `WEATHER_OK` | `WEATHER_PROVIDER` | `Location`, which every weather face lists |
+| `PLUGIN_STOCKS` | `finance/stock` | `STOCK_STRIP`, `STOCK_REQUEST` | `STOCK_PROVIDER` | none |
 | `PLUGIN_CALENDAR` | `calendar/event` | `CALENDAR_STRIP` | `CALENDAR_SOURCE` | `Calendar` |
 | `PLUGIN_MUSIC` | `music/track` | `MUSIC_TITLE`, `MUSIC_ARTIST`, `MUSIC_PLAYING`, `MUSIC_REQUEST` | none | `ReadMusic` |
 | `PLUGIN_PHONE` | `phone/phone_state` | `PHONE_BATTERY`, `PHONE_REQUEST` | none | none |
 
-Each define decides its own kind and nothing else. It puts that kind's plugin code in the phone bundle, adds that kind's choice and notes to the settings page, and adds its permission to the manifest, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers. A face can take plugin weather and keep its calendar on the iCal link alone, with no calendar choice on its page and no `Calendar` prompt, by setting `PLUGIN_WEATHER` alone. A define set to `0` is off, the same as one left out. The defines also reach the watch C as `-DPLUGIN_WEATHER=1` and so on. There the weather and calendar defines keep the wearer's choice on the watch, as [Keeping the Choice through a Reset](#keeping-the-choice-through-a-reset) covers, and `PLUGIN_WEATHER` on a face with no unit key drops the unit letter, as [Units from the Pebble App](#units-from-the-pebble-app) covers.
+Each define decides its own kind and nothing else. It puts that kind's plugin code in the phone bundle, adds that kind's choice and notes to the settings page, and adds its permission to the manifest, as [What the Phone Lets It Reach](phone-side.md#what-the-phone-lets-it-reach) covers. A face can take plugin weather and keep its calendar on the iCal link alone, with no calendar choice on its page and no `Calendar` prompt, by setting `PLUGIN_WEATHER` alone. A define set to `0` is off, the same as one left out. The defines also reach the watch C as `-DPLUGIN_WEATHER=1` and so on. There the weather, stock, and calendar defines keep the wearer's choice on the watch, as [Keeping the Choice through a Reset](#keeping-the-choice-through-a-reset) covers, and `PLUGIN_WEATHER` on a face with no unit key drops the unit letter, as [Units from the Pebble App](#units-from-the-pebble-app) covers.
 
-**The Watch Needs settings_init.** With the weather or calendar define on and the select key declared, the watch keeps the wearer's choice in the framework's own settings schema, so a reset of the Pebble app brings it back. That only happens once `settings_init` has run. A face with settings of its own already calls it. A face with no settings of its own has to call `settings_init(NULL)` at launch, before `appmessage_open`, or it keeps nothing and a reset drops the wearer's pick. The outbox is sized from the settings reply when it opens, so a call after it leaves every settings reply empty, and a reinstall restores nothing. The build cannot tell whether a face calls it, so nothing warns. The choice only goes back to the phone in the settings reply, so the build adds `SETTINGS_REQUEST` and `SETTINGS_FRESH` to such a face's keys, even one with no settings of its own. [Keeping a Plugin Source](settings-on-the-watch.md#keeping-a-plugin-source) covers the rest, including key 249, which every face leaves free.
+**The Watch Needs settings_init.** With the weather, stock, or calendar define on and the select key declared, the watch keeps the wearer's choice in the framework's own settings schema, so a reset of the Pebble app brings it back. That only happens once `settings_init` has run. A face with settings of its own already calls it. A face with no settings of its own has to call `settings_init(NULL)` at launch, before `appmessage_open`, or it keeps nothing and a reset drops the wearer's pick. The outbox is sized from the settings reply when it opens, so a call after it leaves every settings reply empty, and a reinstall restores nothing. The build cannot tell whether a face calls it, so nothing warns. The choice only goes back to the phone in the settings reply, so the build adds `SETTINGS_REQUEST` and `SETTINGS_FRESH` to such a face's keys, even one with no settings of its own. [Keeping a Plugin Source](settings-on-the-watch.md#keeping-a-plugin-source) covers the rest, including key 249, which every face leaves free.
 
 **Each Define Needs Its Keys.** The build stops on a define without the keys its kind needs, so the mistake shows at build time rather than as a lost save or a subscription with nowhere to send. The select key is the one the plugin choice saves under. The calendar's select is one the page adds, and Clay saves a setting to the watch under its key's number, so the face declares `CALENDAR_SOURCE` even though its own page has no such row. A new key needs a `--clean` build. Now playing and the phone's battery have no other source, so the build also stops on their keys without their define, since nothing on the phone would ever answer them.
 
@@ -43,7 +44,7 @@ The define puts the code in. The `providers` list in the appinfo, beside `define
 }
 ```
 
-With the define on, weather and the calendar each run in one of three modes:
+With the define on, weather, stocks, and the calendar each run in one of three modes:
 
 * **No List.** The source select offers every custom provider, and Preferred Source joins it when a plugin on the phone serves the kind.
 * **The Plugin and Custom Providers,** such as `["plugin", "openmeteo"]`. The select offers the listed custom providers, and Preferred Source joins it the same way. The first custom provider listed is the default, wherever `plugin` sits.
@@ -51,7 +52,7 @@ With the define on, weather and the calendar each run in one of three modes:
 
 Now playing and the phone's battery only ever run the third way, so their list is `["plugin"]` or left out.
 
-**What Each Mode Brings.** Every mode brings the kind's keys from the table, which the build adds to the face's message keys after its own. The select key comes with no list or a mixed list, along with `SETTINGS_REQUEST` and `SETTINGS_FRESH`, and is refused beside a plugin only list, since a plugin only kind keeps no choice. A face moving a kind to `["plugin"]` that lists `WEATHER_PROVIDER` or `CALENDAR_SOURCE` itself takes it out of `messageKeys` and builds with `--clean`.
+**What Each Mode Brings.** Every mode brings the kind's keys from the table, which the build adds to the face's message keys after its own. The select key comes with no list or a mixed list, along with `SETTINGS_REQUEST` and `SETTINGS_FRESH`, and is refused beside a plugin only list, since a plugin only kind keeps no choice. A face moving a kind to `["plugin"]` that lists `WEATHER_PROVIDER`, `STOCK_PROVIDER`, or `CALENDAR_SOURCE` itself takes it out of `messageKeys` and builds with `--clean`.
 
 **What the Build Refuses.** The list and the define have to agree. `plugin` in a list needs the kind's define on, and a define on beside a list for its kind needs `plugin` in that list. [What the Build Refuses](phone-side.md#what-the-phone-lets-it-reach) lists the rest of the checks on the providers list, and [Offering Fewer Providers](settings-page.md#offering-fewer-providers) covers what each list does to the page.
 
@@ -61,11 +62,15 @@ Now playing and the phone's battery only ever run the third way, so their list i
 
 With no list or a mixed list, the weather's Data Source select gains **Pebble App: Preferred Source** when a plugin on the phone serves the weather. Picking it reads the weather from the plugin the wearer prefers in the Pebble app. The page puts the select first in its section, under the heading and its lead line, and moves the Location Settings section up to sit right after it when that section only holds rows for a fetch, so picking the plugin never makes rows above the wearer's finger vanish. While it is picked, the rows only a fetch needs hide, such as the API key and the location rows, and a note under the select says the weather comes from the first location in the Pebble app's weather settings.
 
+The stocks' Data Source select gains Preferred Source the same way when a plugin on the phone serves `finance/stock`. Picking it reads the quotes from the stock plugin the wearer prefers, which keeps its own list of tickers. The select goes first in its section, under the heading, and while it is picked the lead line, the API key, Paid Plan, and the tickers hide, and a note under the select says the watch shows the first four tickers the plugin sends.
+
+The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads **Pebble App: Preferred Source (No Stock Plugin)**, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel says under Stocks that the phone lists no stock plugin.
+
 The calendar's page has no source select of its own, since without plugins it would hold one option. The calendar adds a **Calendar Source** select, with **iCal Link** and Preferred Source, under the leading heading and text rows of the section holding the iCal link. A phone with no plugin serving the events leaves it one option, so the select goes and the page shows the link as it would without the define.
 
 With a plugin only list, the page shows notes where the select or the iCal link would sit: where the data comes from, and while nothing on the phone serves the kind, how to turn plugins on. Now playing and the phone's battery always get their notes this way, as [The Phone and Music Stores](phone-and-music-stores.md#on-the-settings-page) covers.
 
-**Warnings under the Choice.** While the plugin is picked, the page reads what the plugin source saved last and adds a note for each thing that went wrong. A plugin that answered and does not send the readings the face needs gets one, as [Preferred Source and the Standard Check](#preferred-source-and-the-standard-check) covers. A wearer who has not allowed the permission gets one saying to allow it for this watchface in the Pebble app. A calendar update that held no events gets a calmer note saying the Pebble app may need permission to read the phone's calendars, or that those calendars may be switched off in its calendar settings.
+**Warnings under the Choice.** While the plugin is picked, the page reads what the plugin source saved last and adds a note for each thing that went wrong. A plugin that answered and does not send the readings the face needs gets one, as [Preferred Source and the Standard Check](#preferred-source-and-the-standard-check) covers. A wearer who has not allowed the permission gets one saying to allow it for this watchface in the Pebble app. A stock update with no tickers gets a calmer note saying the phone may have been offline, or the plugin may have no tickers set up in its own settings. A calendar update that held no events gets a calmer note saying the Pebble app may need permission to read the phone's calendars, or that those calendars may be switched off in its calendar settings.
 
 ### With Plugins Off
 
@@ -73,14 +78,16 @@ A current Pebble app always has the plugin calls, and with plugins off `Pebble.e
 
 * **No Define.** Nothing changes, since the face has no plugin code.
 * **No List or a Mixed List, Plugin Not Picked.** The select offers only the custom providers, and the calendar has no select. The face fetches as it would without the define. The supported plugins panel opens on a line saying to turn plugins on.
-* **A Saved Plugin Choice.** The option stays, as **Pebble App: Preferred Source (Plugins Off)**, with a note saying to turn plugins on, so a save keeps the choice and the plugin answers again once they are back. The weather panel on the watch shows `No Plugin`. The calendar sends nothing, so the watch keeps the agenda it holds.
-* **The Plugin Alone.** The page shows the note saying to turn plugins on, or leaves it to the panel when the panel opens on the same line. The weather shows `No Plugin` and the calendar keeps what it holds.
+* **A Saved Plugin Choice.** The option stays, as **Pebble App: Preferred Source (Plugins Off)**, with a note saying to turn plugins on, so a save keeps the choice and the plugin answers again once they are back. The weather panel on the watch shows `No Plugin`, and the stock strip shows `NO PLUGIN` in its first slot. The calendar sends nothing, so the watch keeps the agenda it holds.
+* **The Plugin Alone.** The page shows the note saying to turn plugins on, or leaves it to the panel when the panel opens on the same line. The weather shows `No Plugin`, the stock strip shows `NO PLUGIN`, and the calendar keeps what it holds.
 
 A Pebble app from before plugins has no plugin calls at all, and the page reads it as a phone with plugins off. The one difference is a settings restore after a reset, which drops a saved plugin choice back to the page's default, since that phone can never answer it.
 
 ## Each Kind
 
 **Weather.** A weather plugin serves one place per location in the Pebble app's weather list, and the face shows the first. Its update becomes the same reading an Open-Meteo fetch gives, so the watch reads it through the keys it already has. The plugin keeps its reading fresh by itself, so a watch ask only resends the last update as of now. The watch shows `No Location` for an update with no places, `No Wx Data` for a first place with no temperature it can use, `No Plugin` when nothing on the phone serves the weather, and `No Permission` until the wearer allows Location. [Fetching the Weather](fetching-the-weather.md#from-a-pebble-app-plugin) covers the reading.
+
+**Stocks.** A stock plugin serves one instance per ticker, and the strip shows the first four in the plugin's order. Each becomes the same quote a provider round gives, so the watch reads it through the strip it already has, and no provider call or quota is spent. A ticker the plugin has no price for keeps its slot with the plugin's status word, or `NO DATA`. An update with no tickers clears the strip only when it is the first since the plugin was picked or since the phone ended it, since an offline phone answers with none, and a watch ask resends the last update sent to the watch. [The Stock Store](stock-store.md#from-a-pebble-app-plugin) covers the reading.
 
 **The Calendar.** A calendar plugin serves one instance per event in the phone's calendars. Its events go through the same week the iCal reader keeps, so the agenda reads the same from either source. An update with no events sends an empty agenda, since that is how the watch hears every event was deleted. An error sends nothing, since the watch has no status line for the calendar. [The Calendar Store](calendar-store.md#from-a-pebble-app-plugin) covers the reading and the agenda hold after a reset.
 
@@ -96,6 +103,7 @@ After the phone code compiles, the build writes its own `plugin-sources/index.js
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.weatherPlugins = require('./weather').weatherPlugins;
+exports.stockPlugins = null;
 exports.calendarPlugins = null;
 exports.musicPlugins = null;
 exports.phonePlugins = null;
@@ -114,6 +122,7 @@ The Pebble app only holds a plugin to its own manifest, so a weather plugin that
 | Kind | What a Plugin Has to Declare |
 | :-- | :-- |
 | weather | `temperature` as a `numericValue`, and `condition_code` as a `longText` |
+| stocks | `ticker` as a `shortText` or a `longText`, and `price` as a `shortText`, a `longText`, or a `numericValue` |
 | calendar | `name` as a `shortText` or a `longText`, and `starts_at` as a `timestamp` |
 | now playing | `title` as a `shortText` or a `longText`, and `playing` as a `boolean` |
 | phone battery | `battery_level` as a `numericValue` |
@@ -129,7 +138,7 @@ A face built with any plugin define gets one more row at the foot of its setting
 * **Plugins the Table Does Not Know.** A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as **Unnamed Plugin** when it has none, and reads **Installed**.
 * **Plugins Off.** When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.
 
-The table of known plugins is [`directory.ts`](../../src/ts/plugin-sources/directory.ts). It is copied by hand from the appstore, so it ages, and each framework release refreshes it.
+The table of known plugins is [`directory.ts`](../../src/ts/plugin-sources/directory.ts). It is copied by hand from the appstore, so it ages, and each framework release refreshes it. It holds no stock plugin, so the Stocks heading lists only the stock plugins on the phone.
 
 **Links.** A plain link on a Clay page would load inside the settings web view and lose the wearer's unsaved settings. The Pebble app gives a settings page `Pebble.openUrl` while plugins are on, which asks before opening the link in the phone's browser. So a store plugin's name is a link only when the page has `Pebble.openUrl`, and is plain text with the listing's address under it otherwise.
 
@@ -144,9 +153,9 @@ The settings page is built on the phone from the face's own config, and the buil
 | `pluginSource: { category, item }` | the select a plugin choice joins | adds Preferred Source to it |
 | `pluginSourceHides: '<select key>'` | a row that means nothing while the plugin is picked | hides it while the plugin is picked, and takes it off the page in plugin only mode |
 | `pluginSourceLead: '<select key>'` | a line that leads into the select | keeps it showing with the select, and takes it away with the select |
-| `pluginSourceRows: '<kind>'` | a row the face wants a kind's notes under, such as `'music'` | puts the notes for a kind with no select straight after it, rather than at the foot of the page |
+| `pluginSourceRows: '<kind>'` | a row the face wants a kind's notes under, by the kind's name in the providers list, such as `'music'` or `'stocks'` | puts the notes for a kind with no select straight after it, rather than at the foot of the page |
 
-`buildConfig` marks its own rows: `WEATHER_PROVIDER` carries `pluginSource`, the weather lead line carries `pluginSourceLead`, and the API key, the Location Settings heading and its three rows, the iCal lead line, and the iCal link carry `pluginSourceHides`. A face that builds its own weather or calendar section marks its own rows the same way. A select that carries no mark is still found by its message key when it has `options`, so a weather select from a family core gets Preferred Source with nothing added. A row that already has a `visibleWhen` keeps it, and the hide joins it as one more condition that has to hold.
+`buildConfig` marks its own rows: `WEATHER_PROVIDER` and `STOCK_PROVIDER` carry `pluginSource`, the weather lead line carries `pluginSourceLead`, and the weather's API key, the Location Settings heading and its three rows, the stocks' lead line, API key, Paid Plan, and tickers, the iCal lead line, and the iCal link carry `pluginSourceHides`. A face that builds its own weather, stock, or calendar section marks its own rows the same way. A select that carries no mark is still found by its message key when it has `options`, so a weather select from a family core gets Preferred Source with nothing added. A row that already has a `visibleWhen` keeps it, and the hide joins it as one more condition that has to hold.
 
 **A Section with Every Row Hidden.** Clay draws a section as a card it cannot hide, so a section whose rows all hide would leave an empty card behind. The page marks such a section `hideWhenEmpty`, and the framework's show and hide then hides the card while every row in it is hidden. A face can put `hideWhenEmpty` on a section of its own for the same reason, as long as a row inside it has a message key.
 
