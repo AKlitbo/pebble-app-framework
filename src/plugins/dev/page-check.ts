@@ -264,16 +264,18 @@ export const OFF_TAG = 'Off';
 
 // the store listings of the plugins the panel knows, from src/known-plugins.json
 export const MET_NORWAY_LISTING = 'https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e';
+export const WEATHER_PLUS_LISTING = 'https://apps.repebble.com/weather_48e0d519c06b49e284612dc5';
+export const WEATHER_ENHANCED_LISTING = 'https://apps.repebble.com/weather-enhanced_f62c8e74dd3c4157abf09a49';
 export const STOCKS_CRYPTO_LISTING = 'https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7';
 export const CALENDAR_ICAL_LISTING = 'https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660';
 
 // the panel's weather plugins on a phone that lists the built-in ones, and its calendar plugins
-const PANEL_WEATHER = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_TAG }, { name: 'MET Norway Weather', listing: MET_NORWAY_LISTING }] };
+const PANEL_WEATHER = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_TAG }, { name: 'MET Norway Weather', listing: MET_NORWAY_LISTING }, { name: 'Weather+', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', listing: WEATHER_ENHANCED_LISTING }] };
 const PANEL_CALENDAR = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_TAG }, { name: 'Calendar + iCal', listing: CALENDAR_ICAL_LISTING }] };
 
 // the same on a phone whose list leaves the built-in ones out, which the panel marks off
 const BUILT_IN_OFF = `${BUILT_IN_TAG}, ${OFF_TAG}`;
-const PANEL_WEATHER_OFF = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_OFF }, { name: 'MET Norway Weather', listing: MET_NORWAY_LISTING }] };
+const PANEL_WEATHER_OFF = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_OFF }, { name: 'MET Norway Weather', listing: MET_NORWAY_LISTING }, { name: 'Weather+', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', listing: WEATHER_ENHANCED_LISTING }] };
 const PANEL_CALENDAR_OFF = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_OFF }, { name: 'Calendar + iCal', listing: CALENDAR_ICAL_LISTING }] };
 
 // what marks the supported plugins panel on the page

@@ -150,12 +150,14 @@ These are the plugins the panel knows, by the kinds they serve. **What It Serves
 | :-- | :-- | :-- | :-- | :-- |
 | `weather/location` | Weather | Pebble | The standard fields | Built In, 10 Nov 2026 |
 | `weather/location` | [MET Norway Weather](https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e) | Pebble | The standard fields | 1.0.5, 12 Nov 2026 |
+| `weather/location` | [Weather+](https://apps.repebble.com/weather_48e0d519c06b49e284612dc5) | Eric McCormick | The standard fields, and hourly series of the dew point, the WMO weather code, and the UV | 1.0.0, 12 Nov 2026 |
+| `weather/location` | [Weather Enhanced](https://apps.repebble.com/weather-enhanced_f62c8e74dd3c4157abf09a49) | Null Syntax | The standard fields, with pressure, the dew point, the WMO weather code, hourly and daily series, and the coordinates for a request that names them | 1.0.0, 12 Nov 2026 |
 | `calendar/event` | Calendar | Pebble | The standard fields | Built In, 10 Nov 2026 |
-| `calendar/event` | [Calendar + iCal](https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660) | Null Syntax | The standard fields, with the events of up to two iCal links merged into the agenda | 1.0.1, 12 Nov 2026 |
+| `calendar/event` | [Calendar + iCal](https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660) | Null Syntax | The standard fields, with the events of up to two iCal links merged into the agenda | 1.1.0, 12 Nov 2026 |
 | `music/track` | Music (Android Only) | Pebble | The standard fields | Built In, 10 Nov 2026 |
 | `phone/phone_state` | Phone | Pebble | The standard fields | Built In, 10 Nov 2026 |
-| `finance/stock` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Pebble's five stock fields, and the currency, the quote time, the source, and the market state | 1.0.0, 12 Nov 2026 |
-| `finance/crypto` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Crypto pairs | 1.0.0, 12 Nov 2026 |
+| `finance/stock` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Pebble's five stock fields, and the currency, the quote time, the source, and the market state | 1.0.1, 12 Nov 2026 |
+| `finance/crypto` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Crypto pairs | 1.0.1, 12 Nov 2026 |
 
 <!-- known-plugins:end -->
 

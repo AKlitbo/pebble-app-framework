@@ -51,13 +51,26 @@
     "verifiedOn": "2026-11-12"
   },
   {
+    "name": "Weather+",
+    "uuid": "7f7b6c10-93e0-4f4c-9237-7e8204c5a121",
+    "storeId": "48e0d519c06b49e284612dc5",
+    "storeSlug": "weather",
+    "serves": ["weather/location"],
+    "maker": "Eric McCormick",
+    "verifiedVersion": "1.0.0",
+    "verifiedOn": "2026-11-12",
+    "gives": {
+      "weather/location": "The standard fields, and hourly series of the dew point, the WMO weather code, and the UV"
+    }
+  },
+  {
     "name": "Calendar + iCal",
     "uuid": "c6b7d0a7-32b5-47f2-9839-becd04965da2",
     "storeId": "22c2e12ca01244bfac7e2660",
     "storeSlug": "calendar-ical",
     "serves": ["calendar/event"],
     "maker": "Null Syntax",
-    "verifiedVersion": "1.0.1",
+    "verifiedVersion": "1.1.0",
     "verifiedOn": "2026-11-12",
     "gives": {
       "calendar/event": "The standard fields, with the events of up to two iCal links merged into the agenda"
@@ -70,11 +83,24 @@
     "storeSlug": "stocks-crypto",
     "serves": ["finance/stock", "finance/crypto"],
     "maker": "Null Syntax",
-    "verifiedVersion": "1.0.0",
+    "verifiedVersion": "1.0.1",
     "verifiedOn": "2026-11-12",
     "gives": {
       "finance/stock": "Pebble's five stock fields, and the currency, the quote time, the source, and the market state",
       "finance/crypto": "Crypto pairs"
+    }
+  },
+  {
+    "name": "Weather Enhanced",
+    "uuid": "55e15682-999f-4ffa-bc43-6798e11a4b26",
+    "storeId": "f62c8e74dd3c4157abf09a49",
+    "storeSlug": "weather-enhanced",
+    "serves": ["weather/location"],
+    "maker": "Null Syntax",
+    "verifiedVersion": "1.0.0",
+    "verifiedOn": "2026-11-12",
+    "gives": {
+      "weather/location": "The standard fields, with pressure, the dew point, the WMO weather code, hourly and daily series, and the coordinates for a request that names them"
     }
   }
 ]

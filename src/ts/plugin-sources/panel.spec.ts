@@ -19,8 +19,10 @@ const BUILT_IN_WEATHER: PluginSummary = { uuid: '00000000-0000-0000-0001-0000000
 const BUILT_IN_CALENDAR: PluginSummary = { uuid: '00000000-0000-0000-0001-000000000004', name: 'Calendar', sources: [{ category: 'calendar', items: ['event'] }] };
 const MET_NORWAY: PluginSummary = { uuid: '323dc117-55bd-455f-9ee4-4d0faba56ea1', name: 'MET Norway Weather', sources: [{ category: 'weather', items: ['location'] }] };
 
-// where MET Norway Weather's and Stocks + Crypto's listings are on the store
+// where MET Norway Weather's, Weather+'s, Weather Enhanced's, and Stocks + Crypto's listings are on the store
 const MET_NORWAY_LISTING = 'https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e';
+const WEATHER_PLUS_LISTING = 'https://apps.repebble.com/weather_48e0d519c06b49e284612dc5';
+const WEATHER_ENHANCED_LISTING = 'https://apps.repebble.com/weather-enhanced_f62c8e74dd3c4157abf09a49';
 const STOCKS_CRYPTO_LISTING = 'https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7';
 
 /** A page with a section and the save button at its foot, as the config builder lays one out. */
@@ -120,6 +122,20 @@ describe('what the panel lists', () => {
   });
 
   /** A wrong id or slug sends the wearer to a store page that does not exist. */
+  test('links Weather+ to its store listing', () => {
+    const result = panelFor([BUILT_IN_WEATHER]).kinds[0].entries.find((entry) => entry.name === 'Weather+');
+
+    expect(result).toEqual({ name: 'Weather+', tag: '', listing: WEATHER_PLUS_LISTING });
+  });
+
+  /** A wrong id or slug sends the wearer to a store page that does not exist. */
+  test('links Weather Enhanced to its store listing', () => {
+    const result = panelFor([BUILT_IN_WEATHER]).kinds[0].entries.find((entry) => entry.name === 'Weather Enhanced');
+
+    expect(result).toEqual({ name: 'Weather Enhanced', tag: '', listing: WEATHER_ENHANCED_LISTING });
+  });
+
+  /** A wrong id or slug sends the wearer to a store page that does not exist. */
   test('links MET Norway Weather to its store listing', () => {
     const result = panelFor([BUILT_IN_WEATHER]).kinds[0].entries.find((entry) => entry.name === 'MET Norway Weather');
 
@@ -153,7 +169,7 @@ describe('what the panel lists', () => {
   test('marks nothing installed or off when the plugin list cannot be read', () => {
     const result = panelFor(null).kinds[0].entries.map((entry) => entry.tag);
 
-    expect(result).toEqual([BUILT_IN_TAG, '']);
+    expect(result).toEqual([BUILT_IN_TAG, '', '', '']);
   });
 
   /** A plugin published after the directory was last refreshed still serves the face, and the wearer has it. */
@@ -180,7 +196,7 @@ describe('what the panel lists', () => {
 
     const result = panelFor([noUuid]).kinds[0].entries.map((entry) => entry.name);
 
-    expect(result).toEqual(['Weather', 'MET Norway Weather']);
+    expect(result).toEqual(['Weather', 'MET Norway Weather', 'Weather+', 'Weather Enhanced']);
   });
 
   /** A phone that lists one plugin twice would otherwise have the wearer read it twice. */
@@ -189,14 +205,14 @@ describe('what the panel lists', () => {
 
     const result = panelFor([own, { ...own, uuid: 'A5' }]).kinds[0].entries.map((entry) => entry.name);
 
-    expect(result).toEqual(['Weather', 'MET Norway Weather', 'Pirate Weather']);
+    expect(result).toEqual(['Weather', 'MET Norway Weather', 'Weather+', 'Weather Enhanced', 'Pirate Weather']);
   });
 
   /** A calendar plugin listed under weather would send the wearer to pick it for something it cannot answer. */
   test('leaves out a plugin the directory does not know that serves another kind', () => {
     const result = panelFor([BUILT_IN_WEATHER, BUILT_IN_CALENDAR, { uuid: 'a2', name: 'Agenda', sources: [{ category: 'calendar', items: ['event'] }] }]).kinds[0].entries.map((entry) => entry.name);
 
-    expect(result).toEqual(['Weather', 'MET Norway Weather']);
+    expect(result).toEqual(['Weather', 'MET Norway Weather', 'Weather+', 'Weather Enhanced']);
   });
 
   /** A plugin names itself, and a closing script tag in its name would end the block Clay writes the row into. */
