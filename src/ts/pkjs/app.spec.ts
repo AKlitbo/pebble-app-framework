@@ -2343,6 +2343,43 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
+   * The page sends every provider's key back beside the settings. Clay would send that field to the
+   * watch under a key the face never declared, which breaks the whole save, so it comes out first and
+   * the watch gets the picked provider's key alone, under the key row's own message key.
+   */
+  test('keeps the key of every provider on the phone and sends the watch the picked one alone', () => {
+    keys = { CLOCK_DATE_FORMAT: 'CLOCK_DATE_FORMAT', STOCK_PROVIDER: 'STOCK_PROVIDER', STOCK_API_KEY: 'STOCK_API_KEY' };
+    const stockRows: ClayConfigItem[] = [
+      { type: 'select', messageKey: 'STOCK_PROVIDER', defaultValue: 'finnhub', options: [{ label: 'Finnhub', value: 'finnhub' }, { label: 'Twelve Data', value: 'twelvedata' }] },
+      { type: 'input', messageKey: 'STOCK_API_KEY' },
+    ];
+
+    app.startPebbleApp({ clayConfig: stockRows });
+    pebble.fire('ready');
+    const pageKeys = encodeURIComponent(JSON.stringify({ STOCK_PROVIDER: { keys: { finnhub: 'fh-key', twelvedata: 'td-key' }, spare: '' } }));
+    const response = { CLOCK_DATE_FORMAT: { value: '%d.%m.%Y' }, STOCK_PROVIDER: { value: 'twelvedata' }, STOCK_API_KEY: { value: 'td-key' }, PF_PROVIDER_KEYS: { value: pageKeys } };
+
+    pebble.fire('webviewclosed', { response: encodeURIComponent(JSON.stringify(response)) });
+    const result = restoreSends();
+
+    expect(result).toEqual([{ CLOCK_DATE_FORMAT: '%d.%m.%Y', STOCK_PROVIDER: 'twelvedata', STOCK_API_KEY: 'td-key' }]);
+    expect(JSON.parse(localStorage.getItem('pf-provider-keys') as string).STOCK_PROVIDER.keys).toEqual({ finnhub: 'fh-key', twelvedata: 'td-key' });
+  });
+
+  /** A face with no API key row keeps no keys, so a save writes nothing for them. */
+  test('writes no provider keys on a save from a face with no key row', () => {
+    keys = { CLOCK_DATE_FORMAT: 'CLOCK_DATE_FORMAT', APPEARANCE_THEME: 'APPEARANCE_THEME' };
+    app.startPebbleApp({ clayConfig: [] });
+    pebble.fire('ready');
+
+    pebble.fire('webviewclosed', { response: JSON.stringify({ CLOCK_DATE_FORMAT: { value: '%d.%m.%Y' } }) });
+
+    const result = localStorage.getItem('pf-provider-keys');
+
+    expect(result).toBe(null);
+  });
+
+  /**
    * A factory reset watch stayed on its default theme until the wearer pressed Save. The phone app
    * keys the watch's reply by name alone, and the restore looked the marker up by number, so it
    * never saw the reply and nothing went back to the watch.
@@ -2873,16 +2910,36 @@ describe('startPebbleApp settings page hooks', () => {
   });
 
   /**
-   * The builder's marks sit on every face's page, and no feature brings a page hook yet. Opening the
-   * page has to hand Clay exactly what it was built with, or every face's page would change.
+   * The builder's marks sit on every face's page, and no feature brings a page hook yet. Opening a
+   * page with no API key row has to hand Clay exactly what it was built with, or every face's page
+   * would change.
    */
   test('leaves the page and the custom function Clay was built with when no feature has a page hook', () => {
-    openSettings(buildConfig({ location: {}, weather: {}, calendar: {} }), [() => ({})]);
+    openSettings(buildConfig({ location: {}, calendar: {} }), [() => ({})]);
 
     const result = PageClay.built[0];
 
     expect(result.config).toBe(result.builtConfig);
     expect(result.customFn).toBe(result.builtCustomFn);
+  });
+
+  /**
+   * One key row serves every provider of its select, so a page that opened without each provider's
+   * key would hand the old provider's key to the new one on a switch, and the watch would show
+   * INVALID KEY until the wearer pasted the right one.
+   */
+  test('opens a key row with the key held for each provider, even with no page hook', () => {
+    localStorage.setItem('clay-settings', JSON.stringify({ WEATHER_PROVIDER: 'owm', WEATHER_API_KEY: 'owm-key' }));
+    localStorage.setItem('pf-provider-keys', JSON.stringify({ WEATHER_PROVIDER: { keys: { weatherapi: 'wapi-key' }, spare: '' } }));
+    openSettings(buildConfig({ weather: {} }), [() => ({})]);
+    const opened = PageClay.opened[0];
+    const row = (opened.config as ClayConfigItem[]).flatMap((item) => [item, ...(item.items || [])]).find((item) => item.messageKey === 'WEATHER_API_KEY');
+
+    const result = JSON.parse(decodeURIComponent(String(row?.providerKeys?.keys)));
+
+    expect(row?.providerKeys?.select).toBe('WEATHER_PROVIDER');
+    expect(result).toEqual({ keys: { weatherapi: 'wapi-key', owm: 'owm-key' }, spare: '', owner: 'owm' });
+    expect(String(opened.customFn)).toContain('PF_PROVIDER_KEYS');
   });
 
   /** A fold from the last open's page would add the same rows again on every open. */

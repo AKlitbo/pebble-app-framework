@@ -1,0 +1,10 @@
+{
+  "STOCK_PROVIDER": {
+    "keys": {
+      "twelvedata": "TD-SAVED",
+      "finnhub": "FH-HELD"
+    },
+    "spare": "",
+    "owner": "twelvedata"
+  }
+}

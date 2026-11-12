@@ -19,10 +19,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added the `PLUGIN_STOCKS` define, which reads stock quotes from a Pebble app plugin serving `finance/stock`. The build adds `STOCK_STRIP` and `STOCK_REQUEST`, and `STOCK_PROVIDER` unless `providers.stocks` is `["plugin"]`. A face that lists `providers.stocks` puts `plugin` in it. The plugin source schema on key 249 moves to version 2, and an older blob reads in with the stock choice on its default.
 - Added `name`, `currency`, and `asOfEpoch` to `StockQuote`, filled from Yahoo and Twelve Data where they send them, and the quote time from Finnhub. A `RATE LIMIT` quote carries `limit`, the `second`, `minute`, or `day` limit the provider named.
 
+#### Changed
+
+- A page with a `WEATHER_API_KEY` or `STOCK_API_KEY` row beside its `WEATHER_PROVIDER` or `STOCK_PROVIDER` select now keeps a key for each provider. `prepareSettingsPage` runs for such a page even when no feature brings a page hook, and the page gains a `hiddenStore` row on `PF_PROVIDER_KEYS`, which a face's `customClay` sees in `getAllItems`. `PF_PROVIDER_KEYS` and the `pf-provider-keys` localStorage key are reserved, so a face uses neither.
+
 ### Wearer-Visible Changes
 
 #### Changed
 
+- Switching the weather or stock data source now shows that provider's own API key. Switching back no longer needs the key pasted again, and switching no longer hands one provider another provider's key. A key saved before the update stays with the provider saved beside it, and one left under a provider that needs no key, such as Yahoo, goes to the first provider picked that needs one.
 - A quote that timed out now shows `TIMEOUT` rather than `NET ERROR`, since the call may have reached the provider. The phone then waits for the provider's next fetch rather than asking again at once.
 
 #### Fixed

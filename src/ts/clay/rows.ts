@@ -5,7 +5,30 @@
  * page by finding rows wherever they sit, so they share these.
  */
 
-import type { ClayConfigItem, VisibilityCondition } from './types';
+import type { ClayConfigItem, ClayOption, VisibilityCondition } from './types';
+
+/**
+ * A select's options with Clay's option groups opened up, in the order the select lists them. Clay
+ * draws an option whose `value` is a list as a group of the options in that list.
+ *
+ * @param options The options a row carries, which may be missing or hold anything.
+ * @return Every option that saves a value, groups and all.
+ */
+export function flatOptions(options: unknown): ClayOption[] {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options.flatMap((option): ClayOption[] => {
+    if (!option || typeof option !== 'object') {
+      return [];
+    }
+
+    const value = (option as { value?: unknown }).value;
+
+    return Array.isArray(value) ? flatOptions(value) : [option as ClayOption];
+  });
+}
 
 /**
  * Every row on the page, sections and the rows inside them, in page order.

@@ -15,6 +15,7 @@ import themePreviewComponent from '../clay/theme-preview-component';
 import hiddenStoreComponent from '../clay/hidden-store-component';
 import pageStyleComponent from '../clay/page-style-component';
 import dependentVisibility from '../clay/dependent-visibility';
+import providerKeysFn from '../clay/provider-keys-fn';
 import { combineCustomFns, customClayShape } from '../clay/custom-fn';
 import { copyPage } from '../clay/copy-page';
 import { settleIntro } from '../clay/rows';
@@ -22,6 +23,7 @@ import timezone from './timezone';
 import { createSendQueue } from './send-queue';
 import { createSettingsAsk } from './settings-ask';
 import { getConfig, readValue } from './settings-store';
+import { addProviderKeys, fileSavedRows, forgetOwners, hasKeyRows, keysForOpen, loadProviderKeys, mergeProviderKeys, recordOwners, saveProviderKeys, takePageKeys } from './provider-keys';
 import { WIRE_CAPS } from './wire';
 import { faceProviders } from '../face-providers';
 import type { Feature, FeatureHooks, ProviderLists } from './feature';
@@ -87,14 +89,21 @@ export function hasVisibleWhen(items: ClayConfigItem[]): boolean {
   return items.some((item) => item.visibleWhen !== undefined || (item.items ? hasVisibleWhen(item.items) : false));
 }
 
+/** Whether any row on a page carries the keys for its provider select. */
+function hasProviderKeys(items: ClayConfigItem[]): boolean {
+  return items.some((item) => item.providerKeys !== undefined || (item.items ? hasProviderKeys(item.items) : false));
+}
+
 /**
  * The custom function Clay gets for one page. The framework's show and hide comes first when the
- * page has any visibleWhen row, and the face's customClay runs after it, so the face's code can still
- * change a row the framework showed or hid. A page with neither gets no custom function.
+ * page has any visibleWhen row, then the key for each provider when a key row carries them, and the
+ * face's customClay runs last, so the face's code can still change a row the framework showed or
+ * hid. A page with none of them gets no custom function.
  */
 function pageCustomFn(page: ClayConfigItem[], customClay: unknown): unknown {
   return combineCustomFns([
     { code: hasVisibleWhen(page) ? dependentVisibility : undefined, label: 'the framework\'s show and hide' },
+    { code: hasProviderKeys(page) ? providerKeysFn : undefined, label: 'the framework\'s key for each provider' },
     { code: customClay, label: 'the face\'s customClay' },
   ]);
 }
@@ -165,10 +174,11 @@ export interface BuiltPage {
  * Gets the Clay page ready to open, the way the phone does each time the wearer opens the settings.
  *
  * Each feature's configOpened runs first, while the old settings are still the saved ones. Then,
- * when any feature has a page hook, the page goes through foldFeatures and Clay gets the result.
- * Clay writes the page from clay.config and clay.customFn on every generateUrl, so both are set here
- * rather than building Clay again. The folds always start from the face's own page, which the
- * defaults and the settings restore also read. With no page hook the page is left as Clay built it.
+ * when any feature has a page hook or the page has an API key row, the page goes through
+ * foldFeatures, each key row gets the key held for every provider of its select, and Clay gets the
+ * result. Clay writes the page from clay.config and clay.customFn on every generateUrl, so both are
+ * set here rather than building Clay again. The folds always start from the face's own page, which
+ * the defaults and the settings restore also read. With neither the page is left as Clay built it.
  *
  * A feature can hand over the Clay components its page hook's rows need, as the plugin sources do
  * for their notes. Each one is registered for a page that uses it, and taken off again on an open
@@ -176,9 +186,10 @@ export interface BuiltPage {
  * registered for a folded page that gains a hiddenStore row, and the builder's intro drops its
  * mention of weather when the fold leaves no Weather section. The custom function
  * is put together again on every open from that open's page, the framework's show and hide when it
- * has a visibleWhen row and then the face's customClay, so no open keeps the one an earlier open
- * needed. A fold that throws, or that needs a component nothing registers, opens the page Clay was
- * built with, since a settings page that will not build is worse than one without the features' rows.
+ * has a visibleWhen row, the key for each provider when it has a key row, and then the face's
+ * customClay, so no open keeps the one an earlier open needed. A fold that throws, or that needs a
+ * component nothing registers, opens the page Clay was built with, since a settings page that will
+ * not build is worse than one without the features' rows.
  *
  * startPebbleApp calls this on every showConfiguration, and the dev plugin's clay-preview calls it
  * too, so the preview opens the page the phone would.
@@ -191,16 +202,23 @@ export interface BuiltPage {
 export function prepareSettingsPage(clay: InstanceType<ClayConstructor>, options: StartOptions, features: FeatureHooks[], built: BuiltPage): void {
   runFeatureHooks(features, 'configOpened', (feature) => feature.configOpened?.());
 
-  // a face whose features bring no page hook opens the page Clay was built with, untouched
-  if (!features.some((feature) => typeof feature.page === 'function')) {
+  const clayConfig = options.clayConfig;
+
+  // a face whose features bring no page hook, and whose page has no API key row to keep a key per
+  // provider in, opens the page Clay was built with, untouched
+  if (!features.some((feature) => typeof feature.page === 'function') && !hasKeyRows(clayConfig)) {
     return;
   }
 
-  const clayConfig = options.clayConfig;
   const brought = features.reduce((all: unknown[], feature) => all.concat(Array.isArray(feature.components) ? feature.components : []), []);
 
   try {
     const folded = settledPage(foldFeatures(clayConfig, features));
+
+    // each key row opens with the key the phone holds for every provider of its select. the saved
+    // row is filed under the provider it belongs to first, and a saved key with no entry of its own
+    // is filed under the provider saved beside it
+    addProviderKeys(folded, keysForOpen(loadProviderKeys(localStorage), getConfig(), collectDefaults(clayConfig), folded));
 
     fitComponents(clay, brought, folded);
 
@@ -944,6 +962,17 @@ function startPebbleApp(faceOptions: StartOptions): void {
   // the defaults declared in config.ts, with the provider defaults the face's list sets
   const DEFAULTS = start.defaults;
 
+  // whether the page has an API key row beside its provider select, so the phone keeps a key for each provider
+  const keyRows = hasKeyRows(clayConfig);
+
+  // a key row saved with no owner on record is the provider's saved beside it, or the default's. it is
+  // recorded now, so a later launch whose list moves the default moves the row from it
+  const owners = keyRows ? recordOwners(loadProviderKeys(localStorage), getConfig(), DEFAULTS, clayConfig) : null;
+
+  if (owners) {
+    saveProviderKeys(localStorage, owners);
+  }
+
   // the face's timezone fields, empty for a face that declares none
   const timezoneFields = timezoneFieldsIn(clayConfig, messageKeys);
 
@@ -1141,7 +1170,18 @@ function startPebbleApp(faceOptions: StartOptions): void {
     // the seed runs once, into a phone with nothing saved, and the same way whether the page is open
     // or closed, so it is written once here
     const seedFromWatch = (from: any) => {
+      // the watch sends a key row and its provider together, so the provider it sends owns the row,
+      // whatever the phone recorded. the owner goes before the seed, since the settle in it moves
+      // the row from its owner when the watch brings back a provider the face no longer offers
+      if (keyRows) {
+        saveProviderKeys(localStorage, forgetOwners(loadProviderKeys(localStorage)));
+      }
+
       seedConfigFromWatch(messageKeys, from, clayConfig, features);
+
+      if (keyRows) {
+        saveProviderKeys(localStorage, fileSavedRows(loadProviderKeys(localStorage), getConfig(), DEFAULTS, clayConfig));
+      }
 
       // the watch sent back a value the face's providers list no longer allows, such as a provider
       // it dropped, and the settle changed it on the phone. the watch keeps what it was last sent, so
@@ -1226,11 +1266,21 @@ function startPebbleApp(faceOptions: StartOptions): void {
     // localStorage happens inside clay.getSettings, which pageSettings calls. some phones close the
     // page with a response that is not the settings at all, such as CANCELLED, and getSettings
     // throws on it. nothing was saved then, so there is nothing for a feature to refetch either
+    // the keys for every provider come back beside the settings, and Clay would send them to the
+    // watch under a key the face never declared, so they come out first
+    const taken = takePageKeys(event.response);
+
     try {
-      sendPageSettings(event.response, false);
+      sendPageSettings(taken.response, false);
     } catch (error) {
       console.error('settings: page closed without settings', error);
       return;
+    }
+
+    // the keys the page sent go over the ones held, and the saved key row files the picked provider's.
+    // a face with no key row keeps nothing, so its saves write nothing here
+    if (keyRows) {
+      saveProviderKeys(localStorage, fileSavedRows(mergeProviderKeys(loadProviderKeys(localStorage), taken.keys), getConfig(), DEFAULTS, clayConfig));
     }
 
     // the save carries every setting, the ones the settle at launch changed included, so the settings

@@ -171,7 +171,7 @@ The features add all of this through `page`, a hook any feature can supply, as [
 * **Components Ride Along.** A feature lists the Clay components its rows are drawn with as `components`, and the app registers each one only for a page that holds its rows. A face without the define never carries their code.
 * **The Show and Hide Comes First.** The page's custom function is put together again on every open. The framework's show and hide for `visibleWhen` rows runs first, and the face's own `customClay` after it, so a face's function can still change a row the plugin page showed or hid.
 
-A face with no feature that supplies a `page` hook opens exactly the page Clay built from its config.
+A face with no feature that supplies a `page` hook, and no API key row, opens exactly the page Clay built from its config. A page with a key row gets the key for each provider, as [A Key for Each Provider](settings-page.md#a-key-for-each-provider) covers.
 
 ## The Quick Retry
 

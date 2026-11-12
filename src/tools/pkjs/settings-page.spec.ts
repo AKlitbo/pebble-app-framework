@@ -35,6 +35,7 @@ import { ENGINE } from '../shared/paths.ts';
 import { pluginSourceDefaults } from '../manifest/providers.ts';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
 import { stubModuleLoad } from '../../ts/testing/module-load.ts';
+import { PAGE_KEYS_FIELD } from '../../ts/pkjs/provider-keys.ts';
 import {
   captureStart,
   forgetCompiled,
@@ -50,6 +51,7 @@ import {
   pageDefaults,
   pageFacts,
   platformsOf,
+  PAGE_ONLY_KEYS,
   sandboxFingerprint,
   PEBBLE_PLATFORMS,
   settingsPageHeader,
@@ -100,6 +102,28 @@ function select(key: string, values: Array<string | number>, capabilities?: stri
 function findPython(): string | null {
   return ['python3', 'python'].find((name) => spawnSync(name, ['--version']).status === 0) ?? null;
 }
+
+describe('the rows the phone adds that never reach the watch', () => {
+  /**
+   * The phone adds the hidden store for each provider's API key to every page with a key row, and
+   * takes it out of the save. Counted as a control, it would read as a key the face never declared
+   * and stop the build.
+   */
+  test('leaves the provider keys store out of the controls the build reads', () => {
+    const page = [{ type: 'hiddenStore', messageKey: PAGE_KEYS_FIELD, defaultValue: '' }];
+
+    const result = pageFacts([{ platform: 'emery', clay: { config: page } }]).controls;
+
+    expect(result).toEqual([]);
+  });
+
+  /** The phone code and the build each write the name out, so one that drifted would count the store again. */
+  test('names the same store the phone adds', () => {
+    const result = PAGE_ONLY_KEYS;
+
+    expect(result).toEqual([PAGE_KEYS_FIELD]);
+  });
+});
 
 describe('choiceCounts', () => {
   /** A face could list its themes in any order on the page, and the count has to come out the same whatever the order. */

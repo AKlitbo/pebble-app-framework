@@ -146,6 +146,8 @@ export type Phone = {
   platform: string;
   /** A file of saved values to fill the page from, or null for a fresh install. */
   settings: string | null;
+  /** A file of the API key kept for each provider, as the phone keeps it under pf-provider-keys, or left out for none. */
+  providerKeys?: string | null;
 };
 
 /** A face's settings page as the phone would open it, and what the face started it with. */
@@ -494,6 +496,15 @@ export function installHost(phone: Phone, plugins: PhonePlugins | null): () => v
     store['clay-settings'] = fs.readFileSync(phone.settings, 'utf8');
   }
 
+  if (phone.providerKeys) {
+    if (!fs.existsSync(phone.providerKeys)) {
+      restore();
+      throw new ToolError(`the provider keys file ${phone.providerKeys} names no file`);
+    }
+
+    store['pf-provider-keys'] = fs.readFileSync(phone.providerKeys, 'utf8');
+  }
+
   Object.defineProperty(host, 'localStorage', {
     configurable: true,
     writable: true,
@@ -675,11 +686,9 @@ function loadPage(paths: FacePaths, entry: string, messageKeys: Record<string, n
     checkFeatureRequests(face, features, messageKeys);
   }
 
-  const hooks = [...features, ...start.hooks];
-
-  if (hooks.length) {
-    app.prepareSettingsPage(clay, start.options, hooks, built);
-  }
+  // the phone runs this on every open, page hooks or none, since it also gives each API key row the
+  // key held for every provider
+  app.prepareSettingsPage(clay, start.options, [...features, ...start.hooks], built);
 
   return { given, start, clay, built, features };
 }
@@ -749,6 +758,14 @@ function opensOn(type: string, defaultValue: unknown, options: unknown[]): unkno
   return CHOICE_TYPES.includes(type) && options.map(String).includes('') ? '' : undefined;
 }
 
+/**
+ * The message keys of rows the phone adds to every page that never reach the watch. The hidden store
+ * the settings page keeps each provider's API key in rides on `PF_PROVIDER_KEYS`, which the phone
+ * takes out of the save, so a face declares no such key and the watch holds no such setting. The
+ * name is written out again in ts/pkjs/provider-keys.ts, and a spec checks the two agree.
+ */
+export const PAGE_ONLY_KEYS: readonly string[] = ['PF_PROVIDER_KEYS'];
+
 /** Every control with a message key on one platform's page, sections opened up, in page order. */
 function readControls(items: unknown[], platform: string): PageControl[] {
   return items.flatMap((item): PageControl[] => {
@@ -760,7 +777,7 @@ function readControls(items: unknown[], platform: string): PageControl[] {
       return readControls(item.items, platform);
     }
 
-    if (typeof item.messageKey !== 'string') {
+    if (typeof item.messageKey !== 'string' || PAGE_ONLY_KEYS.includes(item.messageKey)) {
       return [];
     }
 

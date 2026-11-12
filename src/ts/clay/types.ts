@@ -93,10 +93,15 @@ export interface ClayConfigItem {
    * field. */
   pluginSourceLead?: string;
   /** The kind of Pebble app plugin data whose notes go straight after this row, by its name in the
-   * providers list, such as `music`, `phone`, `weather`, `stocks`, or `calendar`. A face built with that kind's plugin define puts the notes for
-   * a kind with no source choice here, such as the one saying to turn plugins on. Without the mark
-   * they go at the foot of the page. Clay ignores the field. */
+   * providers list, such as `music`, `phone`, `weather`, `stocks`, or `calendar`. A face built with
+   * that kind's plugin define puts the notes for a kind with no source choice here, such as the one
+   * saying to turn plugins on. Without the mark they go at the foot of the page. Clay ignores the
+   * field. */
   pluginSourceRows?: string;
+  /** An API key row only: the provider select it belongs to, and the key the phone holds for each of
+   * that select's providers, written by the phone each time the page opens. The page swaps the row's
+   * value as the select changes, as provider-keys-fn.ts covers. Clay ignores the field. */
+  providerKeys?: { select: string; keys: string };
   /** pluginNote only: `warning`, the default, with its "!" badge, or `info` for the calmer look. */
   tone?: 'warning' | 'info';
   /** pluginPanel only: what the supported plugins panel lists, every word in it HTML-escaped. */

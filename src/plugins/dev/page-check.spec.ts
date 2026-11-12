@@ -15,6 +15,7 @@ import { CALENDAR_TEXTS } from '../../ts/plugin-sources/calendar.ts';
 import { MUSIC_TEXTS } from '../../ts/plugin-sources/music.ts';
 import { PHONE_TEXTS } from '../../ts/plugin-sources/phone.ts';
 import { STOCK_TEXTS } from '../../ts/plugin-sources/stocks.ts';
+import { PAGE_KEYS_FIELD } from '../../ts/pkjs/provider-keys.ts';
 import { PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sources/page.ts';
 import panel from '../../ts/plugin-sources/panel.ts';
 import { KNOWN_PLUGINS, storeListing } from '../../ts/plugin-sources/directory.ts';
@@ -559,15 +560,19 @@ describe('the scenario table', () => {
     return JSON.parse(fs.readFileSync(path.join(scenarioFace(scenario), 'pebble.appinfo.json'), 'utf8'));
   }
 
-  /** Every message key one scenario asks the page about, on load and after each change. */
+  /**
+   * Every message key one scenario asks the page about, on load and after each change. The store the
+   * phone adds for each provider's API key is no face's, so a save asked about it counts for none.
+   */
   function keysAskedAbout(scenario: Scenario): string[] {
     return [scenario.load, ...(scenario.changes || [])].flatMap((expected) => [
       ...(expected.visible || []),
       ...(expected.hidden || []),
       ...(expected.options || []).map((option) => option.key),
       ...(expected.order || []),
+      ...Object.keys(expected.values || {}),
       ...[...(expected.textsAbove || []), ...(expected.textsBelow || [])].map((place) => place.key),
-    ]).concat((scenario.changes || []).map((change) => change.key), Object.keys(scenario.save || {}), Object.keys(scenario.saveNot || {}));
+    ]).concat((scenario.changes || []).map((change) => change.key), Object.keys(scenario.save || {}), Object.keys(scenario.saveNot || {})).filter((key) => key !== PAGE_KEYS_FIELD);
   }
 
   /** Each scenario builds into a folder named after it, so two with one name would check one page twice. */
@@ -589,6 +594,13 @@ describe('the scenario table', () => {
   /** A settings file that is missing stops the preview before its page is ever opened. */
   test.each(named)('%s names a settings file that is there, if any', (_name, scenario) => {
     const result = scenario.settings === undefined || fs.existsSync(path.join(SETTINGS_FILES, scenario.settings));
+
+    expect(result).toBe(true);
+  });
+
+  /** A provider keys file that is missing stops the preview before its page is ever opened. */
+  test.each(named)('%s names a provider keys file that is there, if any', (_name, scenario) => {
+    const result = scenario.providerKeys === undefined || fs.existsSync(path.join(SETTINGS_FILES, scenario.providerKeys));
 
     expect(result).toBe(true);
   });

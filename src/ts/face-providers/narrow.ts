@@ -30,8 +30,9 @@
 
 import { allItems, dropRow, dropRows, findRow, settleConditions } from '../clay/rows';
 import { copyPage } from '../clay/copy-page';
-import { getConfig, readValue } from '../pkjs/settings-store';
+import { getConfig, readText, readValue } from '../pkjs/settings-store';
 import { STOCK_FALLBACK } from '../pkjs/providers';
+import { KEYED_SELECTS, dropSelectKeys, loadProviderKeys, moveKeyRow, rowTakesKey, saveProviderKeys } from '../pkjs/provider-keys';
 import type { ClayConfigItem } from '../clay/types';
 import type { FaceStart, StartOptions } from '../pkjs/app';
 import type { FeatureHooks, ProviderLists } from '../pkjs/feature';
@@ -337,6 +338,18 @@ export function faceProvidersFor(written: WrittenProviders, stockCache?: StockCa
       }
     });
 
+    // a key row the face no longer offers takes the keys kept for each of its providers with it. a
+    // later list that offers the row again starts it blank, which costs a paste, where keeping them
+    // would leave keys on the phone for good with nothing on the page to change or clear them
+    KEYED_SELECTS.filter((pair) => !kept.has(pair.key)).forEach((pair) => {
+      const held = loadProviderKeys(localStorage);
+      const dropped = dropSelectKeys(held, pair.select);
+
+      if (JSON.stringify(dropped) !== JSON.stringify(held)) {
+        saveProviderKeys(localStorage, dropped);
+      }
+    });
+
     customKinds.forEach((kind) => {
       const key = KIND_ROWS[kind].picker;
       const list = listOf(kind);
@@ -348,6 +361,40 @@ export function faceProvidersFor(written: WrittenProviders, stockCache?: StockCa
       if (value !== undefined && !(lower(value) === PLUGIN ? list.offered.includes(PLUGIN) : offered.map(lower).includes(lower(value)))) {
         saved[key] = offered[0];
         changed = true;
+
+        // the key row still holds the dropped provider's key, so it goes back to that provider, and
+        // the row takes the new provider's own key or none, or the feature would fetch with the old one
+        if (KEYED_SELECTS.some((pair) => pair.select === key && kept.has(pair.key))) {
+          saveProviderKeys(localStorage, moveKeyRow(loadProviderKeys(localStorage), saved, key, String(value), String(offered[0]), pages.narrowed));
+        }
+      }
+
+      // a select never saved reads the face's default, which a new list can move, as from a page
+      // with Finnhub alone, which had no select to save, to one offering Twelve Data first. the key
+      // row still holds the provider the store says it belongs to, so it moves the same way. a blank
+      // owner, left by a default that moved to a provider taking no key, moves too, so a later
+      // default that takes a key gets that provider's own key back
+      const pair = KEYED_SELECTS.find((known) => known.select === key && kept.has(known.key));
+
+      if (value === undefined && pair) {
+        const held = loadProviderKeys(localStorage);
+        const owner = held[key] ? held[key].owner : undefined;
+        const now = String(pages.defaults[key] ?? '');
+
+        // a blank owner and a default that takes no key have nothing to move, unless the row still
+        // holds a key, so a launch with nothing changed writes nothing and sends the watch nothing
+        const moves = owner !== '' || rowTakesKey(pages.narrowed, key, pair.key, now) || readText(saved[pair.key], '').trim() !== '';
+
+        if (owner !== undefined && now && lower(owner) !== lower(now) && moves) {
+          const before = JSON.stringify(saved);
+          const moved = moveKeyRow(held, saved, key, owner, now, pages.narrowed);
+
+          if (JSON.stringify(moved) !== JSON.stringify(held)) {
+            saveProviderKeys(localStorage, moved);
+          }
+
+          changed = changed || JSON.stringify(saved) !== before;
+        }
       }
 
       if (kind === 'stocks' && stockCache) {

@@ -24,7 +24,7 @@ app.startPebbleApp({
 });
 ```
 
-A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as [The Phone Side](phone-side.md#features) covers. The feature brings the `STOCK_STRIP` and `STOCK_REQUEST` message keys, and the face declares `STOCK_PROVIDER`, `STOCK_API_KEY`, and `STOCK_SYMBOLS` for the settings. The settings page's stock section has a data source, an API key that hides for Yahoo, which needs none, and a comma list of tickers.
+A face that leaves it out does not carry the stock code or any of the providers in its phone bundle, as [The Phone Side](phone-side.md#features) covers. The feature brings the `STOCK_STRIP` and `STOCK_REQUEST` message keys, and the face declares `STOCK_PROVIDER`, `STOCK_API_KEY`, and `STOCK_SYMBOLS` for the settings. The settings page's stock section has a data source, an API key that hides for Yahoo, which needs none, and a comma list of tickers. The phone keeps a key for each provider, so switching the data source shows that provider's own key, as [A Key for Each Provider](settings-page.md#a-key-for-each-provider) covers.
 
 ## What the Watch Holds
 

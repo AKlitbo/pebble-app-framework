@@ -104,13 +104,15 @@ export interface Expectation {
   options?: Array<{ key: string; has?: string[]; lacks?: string[] }>;
   /** Rows, by message key, in the order they have to run down the page. Each has to be on the page. */
   order?: string[];
+  /** Controls, by message key, and the value each has to hold, as Clay reads it, such as an API key row's key. */
+  values?: Record<string, string>;
 }
 
-/** A select the wearer changes, and what the page has to show after it. */
+/** A select the wearer changes, or a text row the wearer types into, and what the page has to show after it. */
 export interface Change extends Expectation {
-  /** The select's message key. */
+  /** The control's message key, a select or a text input. */
   key: string;
-  /** The option value picked. */
+  /** The option value picked, or the text typed. */
   value: string;
 }
 
@@ -153,6 +155,11 @@ export interface Scenario {
    * holding `{ "WEATHER_PROVIDER": "plugin" }`. Left out, a fresh install.
    */
   settings?: string;
+  /**
+   * A file in fixtures/settings holding the API key the phone keeps for each provider, as it sits in
+   * localStorage under `pf-provider-keys` after an earlier save. Left out, the phone keeps none.
+   */
+  providerKeys?: string;
   /**
    * Whether starting the features and running their hooks, as the phone does on every open, must give
    * byte for byte the page the face builds with no features started.
@@ -833,12 +840,18 @@ export const SCENARIOS: Scenario[] = [
     providers: { weather: ['openmeteo', 'weatherapi'] },
     plugins: null,
     settings: 'owm-picked.json',
+    // OpenWeatherMap's key stays OpenWeatherMap's, so neither Open-Meteo nor WeatherAPI is handed it
     load: {
       visible: ['WEATHER_PROVIDER'],
       hidden: ['WEATHER_API_KEY'],
       options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'weatherapi'], lacks: ['owm'] }],
+      values: { WEATHER_API_KEY: '' },
     },
-    save: { WEATHER_PROVIDER: 'openmeteo' },
+    changes: [
+      { key: 'WEATHER_PROVIDER', value: 'weatherapi', visible: ['WEATHER_API_KEY'], values: { WEATHER_API_KEY: '' } },
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', hidden: ['WEATHER_API_KEY'] },
+    ],
+    save: { WEATHER_PROVIDER: 'openmeteo', WEATHER_API_KEY: '' },
   },
   {
     // a face offering Open-Meteo and the Pebble app's weather. the select offers the two, with no key
@@ -979,6 +992,33 @@ export const SCENARIOS: Scenario[] = [
       { key: 'STOCK_PROVIDER', value: 'alphavantage', visible: ['STOCK_API_KEY'] },
     ],
     save: { STOCK_PROVIDER: 'alphavantage' },
+  },
+  {
+    // a returning wearer on Twelve Data whose phone also keeps a Finnhub key. each switch shows that
+    // provider's own key, a provider with none shows a blank row, a key typed for it stays with it,
+    // and the save carries every provider's key beside the settings
+    name: 'stock-key-per-provider',
+    face: 'stock-face',
+    defines: {},
+    plugins: null,
+    settings: 'stock-keys-saved.json',
+    providerKeys: 'stock-keys-held.json',
+    load: {
+      visible: ['STOCK_API_KEY'],
+      values: { STOCK_API_KEY: 'TD-SAVED' },
+    },
+    changes: [
+      { key: 'STOCK_PROVIDER', value: 'finnhub', values: { STOCK_API_KEY: 'FH-HELD' } },
+      { key: 'STOCK_PROVIDER', value: 'alphavantage', values: { STOCK_API_KEY: '' } },
+      { key: 'STOCK_API_KEY', value: 'AV-TYPED', values: { STOCK_API_KEY: 'AV-TYPED' } },
+      { key: 'STOCK_PROVIDER', value: 'yahoo', hidden: ['STOCK_API_KEY'] },
+      { key: 'STOCK_PROVIDER', value: 'twelvedata', visible: ['STOCK_API_KEY'], values: { STOCK_API_KEY: 'TD-SAVED' } },
+    ],
+    save: {
+      STOCK_PROVIDER: 'twelvedata',
+      STOCK_API_KEY: 'TD-SAVED',
+      PF_PROVIDER_KEYS: encodeURIComponent('{"STOCK_PROVIDER":{"keys":{"twelvedata":"TD-SAVED","finnhub":"FH-HELD","alphavantage":"AV-TYPED"},"spare":""}}'),
+    },
   },
   {
     // the stock fixture built with PLUGIN_STOCKS on a phone with a stock plugin. its own section
@@ -1253,6 +1293,8 @@ export interface Observed {
   options: Record<string, string[] | null>;
   /** The rows asked about for their order that are on the page, top to bottom, by message key. */
   order: string[];
+  /** Each control asked about for its value, with the value Clay reads off it, or null when it is not on the page. */
+  values?: Record<string, string | null>;
 }
 
 /**
@@ -1349,6 +1391,16 @@ export function expectationProblems(observed: Observed, expected: Expectation, w
 
   (expected.textsAbove || []).forEach(placed('above'));
   (expected.textsBelow || []).forEach(placed('below'));
+
+  Object.entries(expected.values || {}).forEach(([key, value]) => {
+    const held = observed.values ? observed.values[key] : undefined;
+
+    if (held === null || held === undefined) {
+      problems.push(`${when}, ${key} is not on the page to read`);
+    } else if (held !== value) {
+      problems.push(`${when}, ${key} holds ${JSON.stringify(held)}, not ${JSON.stringify(value)}`);
+    }
+  });
 
   if (expected.order && JSON.stringify(observed.order) !== JSON.stringify(expected.order)) {
     problems.push(`${when}, the rows run ${observed.order.join(' then ') || 'nowhere'}, not ${expected.order.join(' then ')}`);
@@ -1769,8 +1821,9 @@ const CAPTURE_CLAY = `(() => {
 })();`;
 
 /** The keys, texts, notes, selects, and places one expectation asks about, so the browser reads only those. */
-function askedAbout(expected: Expectation): { keys: string[]; texts: string[]; notes: string[]; selects: string[]; order: string[]; places: Array<{ text: string; key: string }> } {
+function askedAbout(expected: Expectation): { keys: string[]; texts: string[]; notes: string[]; selects: string[]; order: string[]; places: Array<{ text: string; key: string }>; values: string[] } {
   return {
+    values: Object.keys(expected.values || {}),
     order: expected.order || [],
     keys: [...(expected.visible || []), ...(expected.hidden || [])],
     texts: [...(expected.textsVisible || []), ...(expected.textsHidden || [])],
@@ -1782,8 +1835,8 @@ function askedAbout(expected: Expectation): { keys: string[]; texts: string[]; n
 
 /** Reads off the page what one expectation asks about. */
 async function observe(page: Page, expected: Expectation): Promise<Observed> {
-  return page.evaluate(({ keys, texts, notes, selects, order, places }) => {
-    type Item = { $element?: HTMLElement[]; $manipulatorTarget?: HTMLSelectElement[] };
+  return page.evaluate(({ keys, texts, notes, selects, order, places, values }) => {
+    type Item = { $element?: HTMLElement[]; $manipulatorTarget?: HTMLSelectElement[]; get?: () => unknown };
     const clay = (window as unknown as { __pageCheckClay: { getItemByMessageKey(key: string): Item | undefined } }).__pageCheckClay;
     const shows = (element: Element | undefined): boolean => Boolean(element) && (element as Element).isConnected && (element as Element).checkVisibility();
     const observed: Observed = { keys: {}, texts: {}, notes: {}, options: {}, order: [], places: {} };
@@ -1843,6 +1896,14 @@ async function observe(page: Page, expected: Expectation): Promise<Observed> {
       const select = item && item.$manipulatorTarget ? item.$manipulatorTarget[0] : undefined;
 
       observed.options[key] = select && select.options ? Array.from(select.options).map((option) => option.value) : null;
+    });
+
+    observed.values = {};
+
+    values.forEach((key) => {
+      const item = clay.getItemByMessageKey(key);
+
+      (observed.values as Record<string, string | null>)[key] = item && item.get ? String(item.get()) : null;
     });
 
     return observed;
@@ -2186,11 +2247,19 @@ async function checkPage(browser: Browser, scenario: Scenario, html: string): Pr
       const element = select.asElement();
 
       if (!element) {
-        problems.push(`the ${change.key} select is not on the page to change`);
+        problems.push(`the ${change.key} control is not on the page to change`);
         break;
       }
 
-      await element.selectOption(change.value, { timeout: PAGE_WAIT_MS });
+      // a select takes the option picked, and a text row takes the words typed and then a change, as a
+      // phone's keyboard gives one when the row loses focus
+      if (await element.evaluate((target) => target.tagName === 'SELECT')) {
+        await element.selectOption(change.value, { timeout: PAGE_WAIT_MS });
+      } else {
+        await element.fill(change.value, { timeout: PAGE_WAIT_MS });
+        await element.dispatchEvent('change');
+      }
+
       problems.push(...expectationProblems(await observe(page, change), change, `after picking ${change.value} for ${change.key}`));
       problems.push(...emptyCardProblems(await emptyCards(page), `after picking ${change.value} for ${change.key}`));
     }
@@ -2259,7 +2328,7 @@ function renderScenario(scenario: Scenario, paths: FacePaths, messageKeys: Recor
   const settings = scenario.settings ? path.join(SETTINGS_FILES, scenario.settings) : null;
 
   forgetCompiled(paths);
-  installHost({ platform: 'emery', settings }, scenario.plugins === null ? null : readPluginsFile(path.join(PLUGIN_FILES, scenario.plugins)));
+  installHost({ platform: 'emery', settings, providerKeys: scenario.providerKeys ? path.join(SETTINGS_FILES, scenario.providerKeys) : null }, scenario.plugins === null ? null : readPluginsFile(path.join(PLUGIN_FILES, scenario.plugins)));
 
   scenarioKeys = messageKeys;
 
