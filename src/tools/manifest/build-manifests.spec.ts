@@ -537,6 +537,48 @@ describe('checkAppinfo', () => {
   });
 });
 
+describe('checkAppinfo for PLUGIN_STOCKS', () => {
+  // a face whose quotes come from a plugin alone, which declares neither the select nor a provider key
+  function stockFace(providers: unknown, messageKeys: string[] = ['STOCK_STRIP', 'STOCK_REQUEST']): SharedAppinfo & { name: string } {
+    return { ...makeConfig(), name: 'gridlock', messageKeys, defines: { PLUGIN_STOCKS: 1 }, providers };
+  }
+
+  /**
+   * A plugin only list is the define's whole point for a face that wants no provider at all. It has
+   * to build with no stock site on the install prompt and no choice kept on the watch.
+   */
+  test('builds a plugin only stock list with no site and no kept choice', () => {
+    const checked = checkAppinfo(stockFace({ stocks: ['plugin'] }), 'gridlock');
+
+    const result = { permissions: checked.permissions, textDefines: checked.textDefines };
+
+    expect(result).toEqual({ permissions: [], textDefines: {} });
+  });
+
+  /** A mixed list keeps the pick on the watch, so without the default the waf build has no string to give the C. */
+  test('works out the stock source default the watch keeps from a mixed list', () => {
+    const checked = checkAppinfo(stockFace({ stocks: ['plugin', 'yahoo'] }, ['STOCK_STRIP', 'STOCK_REQUEST', 'STOCK_PROVIDER']), 'gridlock');
+
+    const result = { permissions: checked.permissions, textDefines: checked.textDefines };
+
+    expect(result).toEqual({ permissions: [{ name: 'Internet', parameters: { domains: ['yahoo.com'] } }], textDefines: { PLUGIN_SOURCE_STOCK_DEFAULT: 'yahoo' } });
+  });
+
+  /** A plugin only list keeps no choice on the watch, so the select key a face lists itself would ride every save for nothing. */
+  test('refuses a plugin only stock list beside STOCK_PROVIDER', () => {
+    const call = () => checkAppinfo(stockFace({ stocks: ['plugin'] }, ['STOCK_STRIP', 'STOCK_REQUEST', 'STOCK_PROVIDER']), 'gridlock');
+
+    expect(call).toThrow("gridlock's appinfo lists providers.stocks as [\"plugin\"] and still declares STOCK_PROVIDER");
+  });
+
+  /** A define with no plugin in the list would ship the plugin code with nothing on the page to pick it. */
+  test('refuses PLUGIN_STOCKS beside a stock list without plugin', () => {
+    const call = () => checkAppinfo(stockFace({ stocks: ['yahoo'] }), 'gridlock');
+
+    expect(call).toThrow("gridlock's appinfo defines PLUGIN_STOCKS, but providers.stocks does not list plugin");
+  });
+});
+
 describe('prepareAppinfo', () => {
   /**
    * The build runs this before the phone build. A face that leaves the weather keys to the feature

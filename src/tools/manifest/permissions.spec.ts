@@ -322,6 +322,20 @@ describe('permissionsFor with a providers list', () => {
     expect(result).toEqual(['Location', { name: 'Internet', parameters: { domains: ['open-meteo.com'] } }]);
   });
 
+  /** A stock plugin fetches its own quotes, so a plugin only stock face still asking for the stock sites is the bug this catches. */
+  test('asks a plugin only stock face for no Internet', () => {
+    const result = permissionsFor(['STOCK_STRIP', 'STOCK_REQUEST'], undefined, 'face', { PLUGIN_STOCKS: 1 }, { stocks: ['plugin'] });
+
+    expect(result).toEqual([]);
+  });
+
+  /** A mixed stock list still fetches from the providers it lists when the wearer picks one, so their sites stay. */
+  test('asks a mixed stock face for the sites of the providers it lists alone', () => {
+    const result = permissionsFor(['STOCK_STRIP', 'STOCK_REQUEST'], undefined, 'face', { PLUGIN_STOCKS: 1 }, { stocks: ['plugin', 'finnhub'] });
+
+    expect(result).toEqual([{ name: 'Internet', parameters: { domains: ['finnhub.io'] } }]);
+  });
+
   /** A plugin only calendar face still showing "Connect to any website" is the bug this catches. */
   test('asks a plugin only calendar face for Calendar and no Internet', () => {
     const keys = ['CALENDAR_STRIP'];

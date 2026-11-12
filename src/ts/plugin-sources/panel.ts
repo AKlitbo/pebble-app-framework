@@ -125,7 +125,11 @@ export function addPluginsPanel(page: ClayConfigItem[], category: string, item: 
     return;
   }
 
-  const added: PluginPanelKind = { category, item, label: escapeHtml(kind.label), entries: entriesFor(category, item, plugins) };
+  const entries = entriesFor(category, item, plugins);
+  // the line saying no plugin is installed only holds while the phone lists plugins. with plugins off,
+  // or a list the phone will not give, the plugin may be installed and only not showing
+  const pluginsOn = Array.isArray(plugins) && plugins.length > 0;
+  const added: PluginPanelKind = { category, item, label: escapeHtml(kind.label), entries, ...(!entries.length && kind.none && pluginsOn ? { none: escapeHtml(kind.none) } : {}) };
   const off = Array.isArray(plugins) && plugins.length === 0 ? escapeHtml(PANEL_OFF_TEXT) : '';
   const existing = findRow(page, (row) => row.type === PANEL_TYPE && Boolean(row.panel));
 

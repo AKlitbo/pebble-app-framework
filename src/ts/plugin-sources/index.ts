@@ -15,15 +15,19 @@
 
 import { weatherPlugins as weatherMode } from './weather';
 import { calendarPlugins as calendarMode } from './calendar';
+import { stockPlugins as stockMode } from './stocks';
 import { musicPlugins as musicMode } from './music';
 import { phonePlugins as phoneMode } from './phone';
-import type { CalendarPlugins, MusicPlugins, PhonePlugins, WeatherPlugins } from './types';
+import type { CalendarPlugins, MusicPlugins, PhonePlugins, StockPlugins, WeatherPlugins } from './types';
 
 /** Plugin weather, or null on a face built without `PLUGIN_WEATHER`. */
 export const weatherPlugins: WeatherPlugins | null = weatherMode;
 
 /** Plugin calendar events, or null on a face built without `PLUGIN_CALENDAR`. */
 export const calendarPlugins: CalendarPlugins | null = calendarMode;
+
+/** Plugin stock quotes, or null on a face built without `PLUGIN_STOCKS`. */
+export const stockPlugins: StockPlugins | null = stockMode;
 
 /** What the phone is playing, or null on a face built without `PLUGIN_MUSIC`. */
 export const musicPlugins: MusicPlugins | null = musicMode;

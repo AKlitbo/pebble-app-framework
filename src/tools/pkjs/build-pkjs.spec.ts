@@ -186,7 +186,7 @@ describe('pluginIndexSource', () => {
 
     load(exports, (id: string) => ({ weatherPlugins: `the mode from ${id}` }));
 
-    expect(exports).toEqual({ weatherPlugins: 'the mode from ./weather', calendarPlugins: null, musicPlugins: null, phonePlugins: null });
+    expect(exports).toEqual({ weatherPlugins: 'the mode from ./weather', stockPlugins: null, calendarPlugins: null, musicPlugins: null, phonePlugins: null });
   });
 });
 

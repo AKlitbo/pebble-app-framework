@@ -59,9 +59,18 @@ export interface PluginSourceTexts {
   source?: string;
   /**
    * The row for a kind with no source choice while the plugin list read at page open has nothing
-   * serving it, which is also what a phone with plugins off reports. It says how to turn them on.
+   * serving it, which is also what a phone with plugins off reports. It says how to turn them on, or
+   * for a kind the Pebble app has no plugin of its own for, how to get one. A kind with a source choice
+   * shows it under the select too, in place of the line to turn plugins on, while the phone lists
+   * other plugins.
    */
   noPlugin?: string;
+  /**
+   * The option's label while the plugin is the saved choice and the phone lists plugins but none
+   * serving the kind, for a kind the Pebble app has no plugin of its own for. Left out, the option
+   * reads as Plugins Off.
+   */
+  notInstalledLabel?: string;
 }
 
 /** A select a feature adds because the face's page has none, and where it goes. */
@@ -81,6 +90,11 @@ export interface PluginSourceInputs {
   selectKey?: string;
   /** The category the feature subscribes to, such as `weather`. */
   category: string;
+  /**
+   * The kind as a face's `pluginSourceRows` mark names it, which is its name in the providers list,
+   * such as `stocks`. Left out, the category, which is the same name for every other kind.
+   */
+  rowKind?: string;
   /** The item inside it, such as `location`. */
   item: string;
   /**
@@ -356,8 +370,14 @@ function placeChoice(page: ClayConfigItem[], select: ClayConfigItem, inputs: Plu
   const keptOff = listed !== null && !offersPlugin && inputs.saved === PLUGIN_VALUE;
   const options = select.options || [];
 
+  // a phone that lists other plugins has them on, so a kind the Pebble app has no plugin of its own
+  // for is missing one rather than switched off
+  const pluginsOn = listed !== null && listed.length > 0;
+  const keptLabel = pluginsOn && inputs.texts.notInstalledLabel ? inputs.texts.notInstalledLabel : PLUGINS_OFF_LABEL;
+  const keptText = pluginsOn && inputs.texts.noPlugin ? inputs.texts.noPlugin : PLUGINS_OFF_TEXT;
+
   if ((offersPlugin || keptOff) && !options.some((option) => option.value === PLUGIN_VALUE)) {
-    select.options = [...options, { label: offersPlugin ? PLUGIN_LABEL : PLUGINS_OFF_LABEL, value: PLUGIN_VALUE }];
+    select.options = [...options, { label: offersPlugin ? PLUGIN_LABEL : keptLabel, value: PLUGIN_VALUE }];
   }
 
   // the face's own conditions on a select dropped with one option are settled against the value the
@@ -394,7 +414,7 @@ function placeChoice(page: ClayConfigItem[], select: ClayConfigItem, inputs: Plu
   const list = listHolding(page, (item) => item === select) as ClayConfigItem[];
   const note = inputs.texts.source ? [pluginOnlyRow(inputs.texts.source, selectKey, 'info')] : [];
   const whilePicked = (text: string, tone?: NoteTone) => pluginOnlyRow(text, selectKey, tone);
-  const rows = [...note, ...(keptOff ? [whilePicked(PLUGINS_OFF_TEXT)] : warningRows(inputs, whilePicked))];
+  const rows = [...note, ...(keptOff ? [whilePicked(keptText)] : warningRows(inputs, whilePicked))];
 
   list.splice(list.indexOf(select) + 1, 0, ...rows);
 }
@@ -442,7 +462,7 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
     return;
   }
 
-  const anchor = findRow(page, (row) => row.pluginSourceRows === inputs.category);
+  const anchor = findRow(page, (row) => row.pluginSourceRows === (inputs.rowKind || inputs.category));
   const panel = findRow(page, (row) => row.type === PANEL_TYPE);
 
   if (anchor) {
@@ -463,7 +483,8 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  *    otherwise put a setting the watch cannot map into the save.
  * 3. It adds the Preferred Source option when a plugin on the phone serves the item. When none does
  *    and the plugin is the saved choice, the option stays as Preferred Source (Plugins Off), so a save
- *    keeps the choice and the plugin answers again once the wearer turns plugins back on.
+ *    keeps the choice and the plugin answers again once the wearer turns plugins back on. A kind with
+ *    a `notInstalledLabel` takes that label instead while the phone lists other plugins.
  *    A plugin list the phone will not give offers the option as usual.
  * 4. It drops a select left with one option, which is no choice at all.
  * 5. With no select left on the page, it takes the select's marks off every row, drops the lead line
@@ -478,7 +499,8 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  *    goes with them.
  * 7. It then puts the feature's note on where the data comes from under the select, and the warning
  *    rows the saved state calls for after it. A plugin choice kept with plugins off gets the one row
- *    saying how to turn them on in place of the warnings.
+ *    saying how to turn them on in place of the warnings, or the kind's `noPlugin` row while the phone
+ *    lists other plugins.
  *
  * Once the select has passed step 2, a feature that asks for it also gets the supported plugins
  * panel at the foot of the page, whatever steps 3 to 7 made of the select.

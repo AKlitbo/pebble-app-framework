@@ -5,7 +5,8 @@
  * published, and each release refreshes it. A face cannot install a plugin itself, so the panel
  * points the wearer at a store plugin's listing. A plugin built into the Pebble app has no listing
  * and needs no install. A kind with no store plugin lists only the built-in one, which is now playing
- * and the phone's battery as of the date below.
+ * and the phone's battery as of the date below. The table has no stock plugin, so for stocks the panel
+ * lists only the ones on the phone, and says so when there are none.
  *
  * Last refreshed from the store on 2026-11-06.
  */
@@ -36,6 +37,11 @@ export interface KnownPlugin {
 export interface PanelKind extends ServedItem {
   /** The heading over the kind's plugins, such as `Weather`. */
   label: string;
+  /**
+   * The line under the heading while the panel has no plugin to list for the kind, for a kind the
+   * Pebble app has no plugin of its own for. Left out, a kind with nothing to list shows its heading alone.
+   */
+  none?: string;
 }
 
 /** The start of every store listing's address. */
@@ -45,10 +51,13 @@ export const STORE_ADDRESS = 'https://apps.repebble.com/';
 export const PANEL_KINDS: readonly PanelKind[] = [
   { category: 'weather', item: 'location', label: 'Weather' },
   { category: 'calendar', item: 'event', label: 'Calendar' },
+  { category: 'finance', item: 'stock', label: 'Stocks', none: 'The Pebble app lists no stock plugin on this phone. Get one from the Pebble app store.' },
   { category: 'music', item: 'track', label: 'Now Playing' },
   { category: 'phone', item: 'phone_state', label: 'Phone Battery' },
 ];
 
+// TODO: add the two stock plugins once their store listings are confirmed. Pebble's Stocks is
+// 2c4b7f10-9a3d-4e6b-8f21-5d0c7e9a1b34, and Stocks + Crypto is 77e6eeb3-340a-46f8-ba39-5e2000b6fce3
 /** Every plugin the panel knows, built-in ones first, then store ones. */
 export const KNOWN_PLUGINS: readonly KnownPlugin[] = [
   {

@@ -9,11 +9,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { ANDROID_ONLY, BUILT_IN_TAG, OFF_TAG, CALENDAR_EMPTY_TEXT, CALENDAR_NOT_STANDARD_TEXT, CALENDAR_PERMISSION_TEXT, CALENDAR_SOURCE_TEXT, DOLLAR_NAME, DOLLAR_NOT_STANDARD_TEXT, INSTALLED_TAG, MET_NORWAY_LISTING, MUSIC_NO_PLUGIN_TEXT, MUSIC_NOT_STANDARD_TEXT, MUSIC_PERMISSION_TEXT, NOT_STANDARD_TEXT, PANEL_OFF_TEXT, PANEL_TITLE, PERMISSION_TEXT, PHONE_NO_PLUGIN_TEXT, PLUGINS_OFF_TEXT, PLUGIN_FILES, SCENARIOS, SETTINGS_FILES, SOURCE_TEXT, customFnProblems, expectationProblems, locationFieldProblems, paddingProblems, themePickerProblems, panelProblems, pickScenarios, saveProblems, savedPayload, scenarioFace, withAndroidHead, type LocationField, type Observed, type ThemePicker, type ObservedPadding, type ObservedPanel, type PaddingRow, type PanelExpectation, type Scenario } from './page-check.ts';
+import { ANDROID_ONLY, BUILT_IN_TAG, OFF_TAG, CALENDAR_EMPTY_TEXT, CALENDAR_NOT_STANDARD_TEXT, CALENDAR_PERMISSION_TEXT, CALENDAR_SOURCE_TEXT, DOLLAR_NAME, DOLLAR_NOT_STANDARD_TEXT, INSTALLED_TAG, MET_NORWAY_LISTING, MUSIC_NO_PLUGIN_TEXT, MUSIC_NOT_STANDARD_TEXT, MUSIC_PERMISSION_TEXT, NOT_STANDARD_TEXT, STOCK_NO_PLUGIN_TEXT, STOCK_SOURCE_TEXT, PANEL_OFF_TEXT, PANEL_TITLE, PERMISSION_TEXT, PHONE_NO_PLUGIN_TEXT, PLUGINS_OFF_TEXT, PLUGIN_FILES, SCENARIOS, SETTINGS_FILES, SOURCE_TEXT, customFnProblems, expectationProblems, locationFieldProblems, paddingProblems, themePickerProblems, panelProblems, pickScenarios, saveProblems, savedPayload, scenarioFace, withAndroidHead, type LocationField, type Observed, type ThemePicker, type ObservedPadding, type ObservedPanel, type PaddingRow, type PanelExpectation, type Scenario } from './page-check.ts';
 import { WEATHER_TEXTS } from '../../ts/plugin-sources/weather.ts';
 import { CALENDAR_TEXTS } from '../../ts/plugin-sources/calendar.ts';
 import { MUSIC_TEXTS } from '../../ts/plugin-sources/music.ts';
 import { PHONE_TEXTS } from '../../ts/plugin-sources/phone.ts';
+import { STOCK_TEXTS } from '../../ts/plugin-sources/stocks.ts';
 import { PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sources/page.ts';
 import panel from '../../ts/plugin-sources/panel.ts';
 import { KNOWN_PLUGINS, storeListing } from '../../ts/plugin-sources/directory.ts';
@@ -277,6 +278,15 @@ describe('the words the scenarios look for', () => {
     const result = [MUSIC_NO_PLUGIN_TEXT, MUSIC_PERMISSION_TEXT, MUSIC_NOT_STANDARD_TEXT, PHONE_NO_PLUGIN_TEXT];
 
     expect(result).toEqual([MUSIC_TEXTS.noPlugin, MUSIC_TEXTS.permissionDenied, MUSIC_TEXTS.notStandard?.('Odd Music'), PHONE_TEXTS.noPlugin]);
+  });
+});
+
+describe('the stock words the scenarios look for', () => {
+  /** The same drift on the stock notes would have the check look for stock notes that never show. */
+  test('match the stock feature\'s own rows', () => {
+    const result = [STOCK_SOURCE_TEXT, STOCK_NO_PLUGIN_TEXT];
+
+    expect(result).toEqual([STOCK_TEXTS.source, STOCK_TEXTS.noPlugin]);
   });
 });
 

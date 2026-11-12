@@ -36,6 +36,16 @@ export const CALENDAR_STANDARD: StandardReadings = {
 };
 
 /**
+ * The readings a stock plugin needs for a quote to land on the strip, the ticker and the price, as
+ * Pebble's own Stocks plugin names them under `finance/stock`. The changes stay optional, and a
+ * plugin leaving them out only leaves the change at nothing.
+ */
+export const STOCK_STANDARD: StandardReadings = {
+  ticker: ['shortText', 'longText'],
+  price: ['shortText', 'longText', 'numericValue'],
+};
+
+/**
  * The reading a phone plugin needs for the face to show the phone's battery, as the Pebble app's own
  * Phone plugin names it under `phone/phone_state`.
  */
@@ -103,4 +113,4 @@ export function servesItem(plugins: PluginSummary[], category: string, item: str
   return Array.isArray(plugins) && plugins.some((plugin) => declarationsFor(plugin, category, item).length > 0);
 }
 
-export default { declaresStandard, servesItem, WEATHER_STANDARD, CALENDAR_STANDARD, PHONE_STANDARD, MUSIC_STANDARD };
+export default { declaresStandard, servesItem, WEATHER_STANDARD, CALENDAR_STANDARD, STOCK_STANDARD, PHONE_STANDARD, MUSIC_STANDARD };

@@ -52,8 +52,7 @@ function pluginRow(kind: ProviderKind, define: string): Provider {
  * Every provider the framework has.
  *
  * OpenWeatherMap and WeatherAPI borrow the readings they lack from Open-Meteo, so each lists
- * `open-meteo.com` too. A plugin calls no site, since its data comes through the Pebble app. Stocks
- * have no plugin kind yet, so they have no `plugin` row.
+ * `open-meteo.com` too. A plugin calls no site, since its data comes through the Pebble app.
  */
 export const PROVIDERS: readonly Provider[] = [
   { kind: 'weather', name: 'openmeteo', sites: ['open-meteo.com'], needsKey: false },
@@ -64,6 +63,7 @@ export const PROVIDERS: readonly Provider[] = [
   { kind: 'stocks', name: 'finnhub', sites: ['finnhub.io'], needsKey: true },
   { kind: 'stocks', name: 'twelvedata', sites: ['twelvedata.com'], needsKey: true },
   { kind: 'stocks', name: 'yahoo', sites: ['yahoo.com'], needsKey: false },
+  pluginRow('stocks', 'PLUGIN_STOCKS'),
   { kind: 'calendar', name: 'ical', sites: [], anySite: true, needsKey: false },
   pluginRow('calendar', 'PLUGIN_CALENDAR'),
   pluginRow('music', 'PLUGIN_MUSIC'),
@@ -240,10 +240,6 @@ function checkNames(kind: ProviderKind, list: string[], face: string): void {
   }
 
   const prefix = `${face}'s appinfo providers.${kind} names ${unknown}`;
-
-  if (kind === 'stocks' && unknown === 'plugin') {
-    throw new ToolError(`${prefix}, but stocks have no plugin kind yet. The stock providers are ${sentenceList(names)}`);
-  }
 
   if (names.length === 1 && names[0] === 'plugin') {
     throw new ToolError(`${prefix}, but ${KIND_WORDS[kind]} comes only from a plugin, so its list can only be ["plugin"]`);

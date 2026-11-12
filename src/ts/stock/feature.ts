@@ -5,6 +5,14 @@
  * to the watch. The provider's quota gate and the strip kept for when it is shut both outlive a
  * restart, since PebbleKit JS is killed whenever the phone likes. A face without the STOCK_STRIP key
  * gets nothing from it, even when it opts in.
+ *
+ * A face built with `PLUGIN_STOCKS` can also take its quotes from a Pebble app plugin serving
+ * `finance/stock`. The saved `STOCK_PROVIDER` picks the mode, and `plugin` subscribes rather than
+ * running provider rounds, so it spends no quota. Each update goes through the same deduped sender a
+ * round uses. The page hook adds the plugin to the Data Source select, and the seeded hook checks a
+ * plugin choice the watch kept through a reset. All of that lives behind plugin-sources/index, so a
+ * face built without the define reads null there, carries none of it, and fetches exactly as it
+ * always has.
  */
 import stock from './stock';
 import schedule from './schedule';
@@ -24,6 +32,7 @@ import type { Feature } from '../pkjs/feature';
 import { askShouldFetch, createAsks, refetchAfterSave, slowTickShouldFetch } from '../pkjs/asks';
 import { finishRound, roundIsCurrent, shutOutRound, startRound } from '../pkjs/round';
 import type { RoundState } from '../pkjs/round';
+import { stockPlugins } from '../plugin-sources/index';
 
 /** Fetch state carried across stock rounds, mutated in place by runStockRound. */
 export interface StockState extends RoundState {
@@ -257,16 +266,27 @@ const KEEPS_HELD = [...UNANSWERED, 'TIMEOUT', 'RATE LIMIT'];
  * Starts the stock feature for a face.
  *
  * @param context What the app shares: the face's message keys, its config defaults, the send queue,
- *   and the refetch delay after a settings save.
+ *   the refetch delay after a settings save, and the providers the face lists.
  * @return The hooks the app calls on ready, on a watch message, on each refresh tick, and around the
  *   settings page.
  */
-const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) => {
+const stocks: Feature = (context) => {
+  const { messageKeys, defaults, queueSend, refetchDelayMs } = context;
   const stockSettings = watchSettings(STOCK_KEYS, defaults);
 
-  /** The provider some settings pick, lowercased once, since the provider lookup ignores case and the quota gate has to agree with it. */
+  /**
+   * The provider some settings pick, lowercased once, since the provider lookup ignores case and the
+   * quota gate has to agree with it.
+   *
+   * A face built without PLUGIN_STOCKS has no plugin to read, so a plugin choice still saved from a
+   * build with it reads as the face's default. Taken as it is, the lookup would fall back to Finnhub
+   * whatever the face's default, and the cache and the ledger would keep its stamps under plugin.
+   */
   function providerIn(config: Record<string, unknown>): string {
-    return String(readValue(config.STOCK_PROVIDER, defaults.STOCK_PROVIDER || STOCK_FALLBACK)).toLowerCase();
+    const fallback = String(defaults.STOCK_PROVIDER || STOCK_FALLBACK).toLowerCase();
+    const picked = String(readValue(config.STOCK_PROVIDER, fallback)).toLowerCase();
+
+    return picked === 'plugin' && !stockPlugins ? fallback : picked;
   }
 
   // fetch state carried across stock rounds and mutated in place by runStockRound. the two
@@ -702,6 +722,56 @@ const stocks: Feature = ({ messageKeys, defaults, queueSend, refetchDelayMs }) =
       retriesLost: Boolean(tradingDay),
     });
     return true;
+  }
+
+  // a face built with PLUGIN_STOCKS runs its plugin mode, which runs the rounds above whenever the
+  // plugin is not picked. a face that does not declare the strip key has nowhere to show its quotes.
+  // a launch with the plugin picked loads the cache under plugin, which reads as empty, so the first
+  // save back onto a provider starts with no held quotes and no rate limit wait. that save's refetch
+  // goes past the gate anyway, and the ledger that keeps a counted provider inside its free plan is
+  // kept apart from the cache, so the cost is one round with no held quotes to reuse
+  if (stockPlugins && messageKeys.STOCK_STRIP !== undefined) {
+    const stripKey = messageKeys.STOCK_STRIP;
+
+    return stockPlugins.driver(context, {
+      // the plugin's strip goes straight to the sender. the strip kept for a shut gate and the one
+      // last pushed hold only a round's, so a gate held after a switch back never hands the watch the
+      // plugin's quotes
+      send: (quotes) => {
+        const bytes = wire.packStockStrip(quotes);
+
+        if (bytes) {
+          sender.push({ [stripKey]: bytes });
+        }
+      },
+      forget: () => sender.forget(),
+      shutOut: () => {
+        shutOutRound(stockState);
+
+        // a retry the last round set would fetch over the plugin's strip once its time came
+        if (retryTimer) {
+          clearTimeout(retryTimer);
+          retryTimer = null;
+          retryForced = false;
+        }
+      },
+      fetch: (force) => {
+        getStocks(force);
+      },
+      askFetch: () => {
+        if (askShouldFetch(asks) && !getStocks()) {
+          pushStockBytes(savedStrip || lastStockBytes);
+        }
+      },
+      slowFetch: () => {
+        if (slowTickShouldFetch(asks)) {
+          getStocks();
+        }
+      },
+      afterSave: (run) => refetchAfterSave(asks, refetchDelayMs, run),
+      settingKeys: STOCK_KEYS,
+      forgetFetched: () => forgetStrip(providerIn(getConfig())),
+    });
   }
 
   return {

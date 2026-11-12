@@ -546,9 +546,13 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'type': 'heading',
         'defaultValue': 'Stock Preferences',
       },
+      // the lead line, the key, the plan, and the tickers only mean something for a provider, so all
+      // four hide while the quotes come from a Pebble app plugin, which keeps its own tickers. the
+      // select goes under the heading, above them
       {
         'type': 'text',
         'defaultValue': options.stocks.description || 'Set your ticker or tickers below. Most sources need a free API key, and Yahoo does not.',
+        'pluginSourceHides': 'STOCK_PROVIDER',
       },
       {
         'type': 'select',
@@ -556,6 +560,8 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'label': 'Data Source',
         'description': 'Finnhub gives real-time US quotes. Yahoo is real-time too and needs no key, with the widest market coverage, but it is an unofficial feed that can change without notice. Twelve Data covers US markets on a free key that allows 800 quotes a day, and 20+ markets on a paid plan. Alpha Vantage is end-of-day only, with 25 quotes a day on a free key, so it grabs the day\'s close once after the closing bell.',
         'defaultValue': 'finnhub',
+        // a face built with plugin sources adds the Pebble app's stocks to this list
+        'pluginSource': { 'category': 'finance', 'item': 'stock' },
         // the sources are listed here rather than read from ts/stock, since this file is in every face's
         // phone bundle and importing the stock feature would bundle its providers into faces without
         // stocks. a spec checks the list against the providers the feature has
@@ -570,6 +576,7 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'type': 'input',
         'messageKey': 'STOCK_API_KEY',
         'label': 'API Key',
+        'pluginSourceHides': 'STOCK_PROVIDER',
         // hidden only for a provider known to need no key, so a blank or unknown choice still shows it
         'visibleWhen': { 'key': 'STOCK_PROVIDER', 'notIn': [...KEYLESS_STOCKS] },
         'description': 'Grab a free key from your chosen provider and paste it here.',
@@ -582,6 +589,7 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'type': 'toggle',
         'messageKey': 'STOCK_PAID_PLAN',
         'label': 'Paid Plan',
+        'pluginSourceHides': 'STOCK_PROVIDER',
         'visibleWhen': { 'key': 'STOCK_PROVIDER', 'notIn': [...KEYLESS_STOCKS] },
         'description': 'Turn on if your key is on a paid plan. The face then fetches on your watch\'s interval rather than holding to the free plan\'s limits.',
         'defaultValue': false,
@@ -590,6 +598,7 @@ export function stocksSection(options: ConfigBuilderOptions): ClayConfigItem | n
         'type': 'input',
         'messageKey': 'STOCK_SYMBOLS',
         'label': 'Tickers',
+        'pluginSourceHides': 'STOCK_PROVIDER',
         'description': 'Up to four symbols, separated by commas (e.g. AAPL, MSFT, TSLA, NVDA).',
         'attributes': {
           'placeholder': 'AAPL, MSFT, TSLA, NVDA',
@@ -672,13 +681,14 @@ function introRow(options: ConfigBuilderOptions): ClayConfigItem {
  * It is the section builders above in their usual order, for a face that wants the whole page. A
  * face that needs its own sections in between calls the builders it wants and lays them out itself.
  *
- * Some rows carry plugin source marks on every face. The `WEATHER_PROVIDER` select carries a
- * `pluginSource` mark. The API key, the Location Settings heading and its three rows, the iCal lead
- * line, and the iCal link carry `pluginSourceHides`, naming `WEATHER_PROVIDER` or `CALENDAR_SOURCE`.
+ * Some rows carry plugin source marks on every face. The `WEATHER_PROVIDER` and `STOCK_PROVIDER`
+ * selects carry a `pluginSource` mark. The weather's API key, the Location Settings heading and its
+ * three rows, the stocks' lead line, API key, Paid Plan, and tickers, the iCal lead line, and the iCal
+ * link carry `pluginSourceHides`, naming `WEATHER_PROVIDER`, `STOCK_PROVIDER`, or `CALENDAR_SOURCE`.
  * The weather lead line carries `pluginSourceLead`, naming `WEATHER_PROVIDER`, since it stays above the
  * select while a plugin is picked and only goes on a page with no select.
  * Clay ignores both, so the page is unchanged on a face without plugin sources. On a face built with
- * them, the weather and calendar features turn the marks into the Preferred Source option and hide
+ * them, the weather, stock, and calendar features turn the marks into the Preferred Source option and hide
  * those rows while it is picked.
  *
  * Top-level fields:

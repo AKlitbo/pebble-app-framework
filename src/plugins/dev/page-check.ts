@@ -298,6 +298,14 @@ export const MUSIC_PERMISSION_TEXT = 'This watchface needs Music to show what yo
 export const MUSIC_NOT_STANDARD_TEXT = 'Odd Music sends music this watchface cannot read. Pick another music plugin under Preferred Sources in the Pebble app.';
 export const PHONE_NO_PLUGIN_TEXT = 'Phone battery comes from the Phone plugin built into the Pebble app. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
 
+// the stock notes, from STOCK_TEXTS in ts/plugin-sources/stocks.ts, copied for the same reason and
+// checked by the same spec
+export const STOCK_SOURCE_TEXT = 'Your watch shows the first 4 tickers your stock plugin sends, the ones set up in that plugin\'s own settings in the Pebble app.';
+export const STOCK_NO_PLUGIN_TEXT = 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, then pick it under Preferred Sources in the Pebble app.';
+
+// the panel's stock plugins on a phone that lists the stock fixture plugin
+const PANEL_STOCKS = { label: 'Stocks', plugins: [{ name: 'My Stocks', tag: 'Installed' }] };
+
 // where the Pebble app's music plugin runs, from the plugin directory in ts/plugin-sources/directory.ts
 export const ANDROID_ONLY = 'Android Only';
 
@@ -971,6 +979,75 @@ export const SCENARIOS: Scenario[] = [
       { key: 'STOCK_PROVIDER', value: 'alphavantage', visible: ['STOCK_API_KEY'] },
     ],
     save: { STOCK_PROVIDER: 'alphavantage' },
+  },
+  {
+    // the stock fixture built with PLUGIN_STOCKS on a phone with a stock plugin. its own section
+    // carries no marks, so picking the plugin hides nothing of its own and adds the note on where the
+    // quotes come from under the select
+    name: 'stock-plugin-choice',
+    face: 'stock-face',
+    defines: { PLUGIN_STOCKS: 1 },
+    plugins: 'stock.json',
+    load: {
+      visible: ['STOCK_PROVIDER', 'STOCK_SYMBOLS'],
+      options: [{ key: 'STOCK_PROVIDER', has: ['finnhub', 'yahoo', 'twelvedata', 'alphavantage', 'plugin'] }],
+      notesHidden: [STOCK_SOURCE_TEXT],
+    },
+    changes: [
+      { key: 'STOCK_PROVIDER', value: 'plugin', notesVisible: [STOCK_SOURCE_TEXT], unbadged: [STOCK_SOURCE_TEXT] },
+    ],
+    panel: { kinds: [PANEL_STOCKS], off: false },
+    save: { STOCK_PROVIDER: 'plugin' },
+  },
+  {
+    // the same face with the plugin saved on a phone whose plugins are on but hold no stock plugin,
+    // which is the usual state, since the Pebble app has none of its own. the choice is kept, and the
+    // note says where to get a stock plugin rather than to turn plugins on
+    name: 'stock-plugin-saved-none-installed',
+    face: 'stock-face',
+    defines: { PLUGIN_STOCKS: 1 },
+    plugins: 'phone-only.json',
+    settings: 'stock-plugin-picked.json',
+    load: {
+      options: [{ key: 'STOCK_PROVIDER', has: ['plugin'] }],
+      notesVisible: [STOCK_NO_PLUGIN_TEXT],
+      badged: [STOCK_NO_PLUGIN_TEXT],
+      notesHidden: [PLUGINS_OFF_TEXT],
+    },
+    panel: { kinds: [{ label: 'Stocks', plugins: [] }], off: false },
+  },
+  {
+    // a face whose quotes come from a plugin alone. the Data Source, the key, and the tickers come
+    // off the page, and the note on where the quotes come from stays in the Stock Preferences card,
+    // in the place the select held
+    name: 'plugin-only-stocks',
+    face: 'plugin-stock-face',
+    defines: { PLUGIN_STOCKS: 1 },
+    providers: { stocks: ['plugin'] },
+    plugins: 'stock.json',
+    load: {
+      hidden: ['STOCK_API_KEY', 'STOCK_SYMBOLS'],
+      textsVisible: ['Stock Preferences'],
+      notesVisible: [STOCK_SOURCE_TEXT],
+      notesHidden: [STOCK_NO_PLUGIN_TEXT],
+    },
+    absent: [FINNHUB_OPTION],
+    panel: { kinds: [PANEL_STOCKS], off: false },
+  },
+  {
+    // the same face on a phone with plugins on and no stock plugin. the card says where to get one
+    name: 'plugin-only-stocks-none-installed',
+    face: 'plugin-stock-face',
+    defines: { PLUGIN_STOCKS: 1 },
+    providers: { stocks: ['plugin'] },
+    plugins: 'phone-only.json',
+    load: {
+      textsVisible: ['Stock Preferences'],
+      notesVisible: [STOCK_NO_PLUGIN_TEXT],
+      badged: [STOCK_NO_PLUGIN_TEXT],
+      notesHidden: [STOCK_SOURCE_TEXT, PLUGINS_OFF_TEXT],
+    },
+    panel: { kinds: [{ label: 'Stocks', plugins: [] }], off: false },
   },
   {
     // a face with no settings page of its own, taking its weather from a plugin alone. the page holds

@@ -10,6 +10,7 @@
  */
 
 import type { CalendarEvent } from '../calendar/ical';
+import type { StockQuote } from '../stock/util';
 import type { WeatherResult } from '../weather/util';
 import type { FeatureContext, FeatureHooks } from '../pkjs/feature';
 
@@ -239,6 +240,18 @@ export interface WeatherControls extends FetchControls<WeatherResult> {
 /** What the calendar feature hands its plugin driver. */
 export type CalendarControls = FetchControls<CalendarEvent[]>;
 
+/** What the stock feature hands its plugin driver, beside the fetch controls. */
+export interface StockControls extends FetchControls<StockQuote[]> {
+  /** Every stock setting whose change is worth a refetch after a save, the feature's `STOCK_KEYS`. */
+  settingKeys: string[];
+  /**
+   * Lets go of the strip and the stamps kept for the provider's old settings, and drops a round still
+   * out, as a save that changed them does on a face without plugins. The forced refetch after it then
+   * goes past the quota gate.
+   */
+  forgetFetched(): void;
+}
+
 /**
  * What the weather feature gets from a face built with `PLUGIN_WEATHER`.
  *
@@ -278,6 +291,21 @@ export interface CalendarPlugins {
    * @return The hooks and the agenda hold.
    */
   driver(context: FeatureContext, controls: CalendarControls): CalendarDriver;
+}
+
+/**
+ * What the stock feature gets from a face built with `PLUGIN_STOCKS`. It is null in
+ * plugin-sources/index for a face built without the define, as weather's is.
+ */
+export interface StockPlugins {
+  /**
+   * Runs the stocks in plugin mode beside the feature's own provider rounds.
+   *
+   * @param context What the app shared with the feature.
+   * @param controls The feature's send and provider rounds.
+   * @return The hooks the feature hands the app.
+   */
+  driver(context: FeatureContext, controls: StockControls): FeatureHooks;
 }
 
 /**

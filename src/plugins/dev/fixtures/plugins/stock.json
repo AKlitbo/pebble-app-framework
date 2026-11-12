@@ -1,0 +1,40 @@
+{
+  "plugins": [
+    {
+      "uuid": "6b1f0c2e-4d3a-4f8e-9a21-7c5d0e3b9f14",
+      "name": "My Stocks",
+      "sources": [
+        {
+          "category": "finance",
+          "items": [
+            "stock"
+          ],
+          "properties": {
+            "ticker": [
+              "shortText"
+            ],
+            "name": [
+              "shortText"
+            ],
+            "price": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ],
+            "day_change": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ],
+            "day_change_percent": [
+              "shortText",
+              "longText",
+              "numericValue"
+            ]
+          }
+        }
+      ],
+      "actions": []
+    }
+  ]
+}

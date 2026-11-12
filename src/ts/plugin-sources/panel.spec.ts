@@ -227,6 +227,32 @@ describe('the kinds only a plugin serves', () => {
     expect(result).toBe(escapeHtml(`${BUILT_IN_TAG}, Android Only, ${OFF_TAG}`));
   });
 
+  /** The directory knows no stock plugin, so a stock plugin on the phone is the only thing that can fill the Stocks heading. */
+  test('lists a stock plugin on the phone under Stocks', () => {
+    const plugin = { uuid: 'stock-uuid', name: 'My Stocks', sources: [{ category: 'finance', items: ['stock'] }] };
+
+    const result = panelFor([plugin], [['finance', 'stock']]).kinds[0];
+
+    expect(result).toEqual({ category: 'finance', item: 'stock', label: 'Stocks', entries: [{ name: 'My Stocks', tag: INSTALLED_TAG, listing: '' }] });
+  });
+
+  /** The Pebble app has no stock plugin of its own, so a Stocks heading with nothing under it would read as broken. */
+  test('says under Stocks that the phone lists no stock plugin', () => {
+    const result = panelFor([BUILT_IN_PHONE], [['finance', 'stock']]).kinds[0];
+
+    expect(result).toMatchObject({ label: 'Stocks', entries: [], none: escapeHtml('The Pebble app lists no stock plugin on this phone. Get one from the Pebble app store.') });
+  });
+
+  /** With plugins off, or a list the phone will not give, the stock plugin may be installed, so saying none is would send the wearer to the store for one they have. */
+  test.each([
+    ['plugins off', []],
+    ['an unreadable list', null],
+  ])('leaves the Stocks line out with %s', (_label, plugins) => {
+    const result = panelFor(plugins, [['finance', 'stock']]).kinds[0].none;
+
+    expect(result).toBeUndefined();
+  });
+
   /** The kinds keep the directory's order whichever hook ran first, so every face lists them the same way. */
   test('lists every kind under its own heading in the directory order', () => {
     const kinds: Array<[string, string]> = [['phone', 'phone_state'], ['music', 'track'], ['calendar', 'event'], ['weather', 'location']];

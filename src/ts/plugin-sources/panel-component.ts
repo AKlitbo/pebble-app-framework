@@ -17,6 +17,7 @@
  *   .pf-plugins-title        the summary the wearer taps
  *   .pf-plugins-off          the line saying to turn plugins on, drawn as a warning callout
  *   .pf-plugins-kind         a kind's heading
+ *   .pf-plugins-none         the line under a heading with no plugin to list
  *   .pf-plugins-name         a plugin's name, as plain text
  *   .pf-plugins-link         a plugin's name, as a link to its listing
  *   .pf-plugins-tag          the word after a name, such as Installed
@@ -71,6 +72,7 @@ export default {
     '.pf-plugins-off { ' + CALLOUT_BOX + ' }',
     '.pf-plugins-off:before { ' + CALLOUT_BADGE + ' }',
     '.pf-plugins-kind { margin: 0.7rem 0 0; font-weight: 700; }',
+    '.pf-plugins-none { margin: 0.2rem 0 0; opacity: 0.7; }',
     '.pf-plugins-list { margin: 0.2rem 0 0; padding-left: 1.1rem; }',
     '.pf-plugins-entry { margin: 0.2rem 0; }',
     '.pf-plugins-link { ' + LINK + ' }',
@@ -158,6 +160,10 @@ export default {
 
     (Array.isArray(panel.kinds) ? panel.kinds : []).forEach(function (kind) {
       add(body, 'div', 'pf-plugins-kind', words(kind.label));
+
+      if (words(kind.none)) {
+        add(body, 'p', 'pf-plugins-none', words(kind.none));
+      }
 
       const list = add(body, 'ul', 'pf-plugins-list');
 

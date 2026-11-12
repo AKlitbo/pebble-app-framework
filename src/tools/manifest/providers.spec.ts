@@ -168,11 +168,18 @@ describe('readProviders', () => {
     expect(call).toThrow("my-face's appinfo providers.weather names openweather, which is not a weather provider. The weather providers are openmeteo, owm, weatherapi, and plugin");
   });
 
-  /** No plugin serves stock quotes, so a face offering one would offer a choice that never fills. */
-  test('refuses plugin for stocks', () => {
+  /** Without PLUGIN_STOCKS the phone code carries no stock plugin reader, so the choice it offered would never fill. */
+  test('refuses plugin for stocks without PLUGIN_STOCKS', () => {
     const call = () => readProviders(appinfo({ stocks: ['plugin', 'yahoo'] }), 'my-face', {});
 
-    expect(call).toThrow("my-face's appinfo providers.stocks names plugin, but stocks have no plugin kind yet. The stock providers are alphavantage, finnhub, twelvedata, and yahoo");
+    expect(call).toThrow("my-face's appinfo lists plugin in providers.stocks without PLUGIN_STOCKS turned on");
+  });
+
+  /** A face that takes its quotes from a plugin alone has to build, or the define has no plugin only use. */
+  test('takes a plugin only stock list with PLUGIN_STOCKS', () => {
+    const result = readProviders(appinfo({ stocks: ['plugin'] }, withoutSelects()), 'my-face', { PLUGIN_STOCKS: 1 });
+
+    expect(result).toEqual({ stocks: ['plugin'] });
   });
 
   /** Now playing and phone battery come only from a plugin, so any other name is one the phone has no code for. */
@@ -469,9 +476,24 @@ describe('pluginSourceDefaults', () => {
 
   /** A plugin only kind keeps no choice on the watch, so a default for it would ask the C for a field that is not there. */
   test('gives a plugin only kind no default', () => {
-    const result = pluginSourceDefaults({ PLUGIN_WEATHER: 1, PLUGIN_CALENDAR: 1 }, { weather: ['plugin'], calendar: ['plugin', 'ical'] });
+    const result = pluginSourceDefaults({ PLUGIN_WEATHER: 1, PLUGIN_CALENDAR: 1, PLUGIN_STOCKS: 1 }, { weather: ['plugin'], calendar: ['plugin', 'ical'], stocks: ['plugin'] });
 
     expect(result).toEqual({ PLUGIN_SOURCE_CALENDAR_DEFAULT: 'ical' });
+  });
+
+  /**
+   * The stocks' Data Source opens on Finnhub with no list, and on the first custom provider listed
+   * with one, so a watch that never got a save has to send back the same.
+   */
+  test.each([
+    [undefined, 'finnhub'],
+    [['plugin', 'yahoo'], 'yahoo'],
+    [['twelvedata', 'plugin'], 'twelvedata'],
+  ])('gives a stock list of %j the default the page shows', (list, expected) => {
+    const result = pluginSourceDefaults({ PLUGIN_STOCKS: 1 }, list ? { stocks: list } : {}).PLUGIN_SOURCE_STOCK_DEFAULT;
+
+    expect(result).toBe(expected);
+    expect(stocksSection({ stocks: {} })?.items?.find((item) => item.messageKey === 'STOCK_PROVIDER')?.defaultValue).toBe('finnhub');
   });
 
   /** A face without a kind's define keeps none of the framework's settings code, so it gets no default either. */
@@ -492,6 +514,7 @@ describe('pluginSourceDefaults', () => {
   test.each([
     ['weather', 'PLUGIN_SOURCE_WEATHER_LEN'],
     ['calendar', 'PLUGIN_SOURCE_CALENDAR_LEN'],
+    ['stocks', 'PLUGIN_SOURCE_STOCK_LEN'],
   ])('fits every %s value the page saves in the buffer the watch keeps it in', (kind, buffer) => {
     const size = watchBuffer(buffer);
 

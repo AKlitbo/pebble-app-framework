@@ -51,10 +51,11 @@ export interface PluginKind {
 /**
  * Every kind, in the order the phone build writes them.
  *
- * Weather needs the keys the weather feature will not run without, and the calendar needs its strip.
- * Each also has its select, `WEATHER_PROVIDER` for the weather and `CALENDAR_SOURCE` for the calendar,
- * which the plugin choice joins. Its page default is the one `buildConfig` gives the weather's Data
- * Source and the one the calendar's page hook gives its Calendar Source. Now playing and the phone's
+ * Weather needs the keys the weather feature will not run without, stocks need their strip and the
+ * watch's ask, and the calendar needs its strip. Each also has its select, `WEATHER_PROVIDER` for the
+ * weather, `STOCK_PROVIDER` for stocks, and `CALENDAR_SOURCE` for the calendar, which the plugin choice
+ * joins. Its page default is the one `buildConfig` gives the weather's and the stocks' Data Source and
+ * the one the calendar's page hook gives its Calendar Source. Now playing and the phone's
  * battery need every key their store on the watch reads and asks with, and since only their plugins
  * fill those keys, the build refuses the keys without the define as well.
  */
@@ -67,6 +68,15 @@ export const PLUGIN_KINDS: readonly PluginKind[] = [
     selectKey: 'WEATHER_PROVIDER',
     pageDefault: 'openmeteo',
     defaultDefine: 'PLUGIN_SOURCE_WEATHER_DEFAULT',
+  },
+  {
+    define: 'PLUGIN_STOCKS',
+    file: 'stocks',
+    exportName: 'stockPlugins',
+    keys: ['STOCK_STRIP', 'STOCK_REQUEST'],
+    selectKey: 'STOCK_PROVIDER',
+    pageDefault: 'finnhub',
+    defaultDefine: 'PLUGIN_SOURCE_STOCK_DEFAULT',
   },
   {
     define: 'PLUGIN_CALENDAR',

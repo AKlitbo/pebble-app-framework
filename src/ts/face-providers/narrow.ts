@@ -135,7 +135,7 @@ export interface FaceProviders {
 
 /** Where a kind's rows sit on a page, by message key. */
 interface KindRows {
-  /** The provider picker, and for weather and the calendar the select a plugin choice joins. */
+  /** The provider picker, which is also the select a plugin choice joins. */
   picker: string;
   /** The API key row, for a kind whose providers can need a key. */
   keyRow?: string;

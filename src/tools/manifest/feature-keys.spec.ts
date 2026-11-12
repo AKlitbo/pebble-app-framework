@@ -67,6 +67,24 @@ describe('pluginDefineKeys', () => {
     expect(result).toEqual(['CALENDAR_STRIP', 'CALENDAR_SOURCE', 'SETTINGS_REQUEST', 'SETTINGS_FRESH']);
   });
 
+  /**
+   * The stock driver sends the plugin's strip and answers the watch's ask, so the define needs both
+   * keys whatever the face passes. With no list the page has the Data Source, so its pick is kept
+   * under its key and goes back to the phone in the settings reply.
+   */
+  test('brings the stock strip, the ask, the select key, and the settings pair with no list', () => {
+    const result = pluginDefineKeys({ PLUGIN_STOCKS: 1 }, {});
+
+    expect(result).toEqual(['STOCK_STRIP', 'STOCK_REQUEST', 'STOCK_PROVIDER', 'SETTINGS_REQUEST', 'SETTINGS_FRESH']);
+  });
+
+  /** A plugin only stock list keeps no choice on the watch, so a select key here would be refused straight after. */
+  test('leaves the stock select key out for a plugin only list', () => {
+    const result = pluginDefineKeys({ PLUGIN_STOCKS: 1 }, { stocks: ['plugin'] });
+
+    expect(result).toEqual(['STOCK_STRIP', 'STOCK_REQUEST']);
+  });
+
   /** The music and phone stores ask and read with every one of their keys. */
   test('brings every music and phone key', () => {
     const result = pluginDefineKeys({ PLUGIN_MUSIC: 1, PLUGIN_PHONE: 1 }, {});
@@ -177,6 +195,16 @@ describe('fillAppinfo', () => {
     const result = fillAppinfo({ messageKeys: ['CLOCK_DATE_FORMAT'] }, 'gridlock', { started: false, featureKeys: [] }, {}, {});
 
     expect(result.capabilities).toBeUndefined();
+  });
+
+  /**
+   * A map numbers its keys by hand, so the build cannot add the stock keys to one. Building on would
+   * give a face whose watch never asks for quotes and has nowhere to put the plugin's strip.
+   */
+  test('refuses PLUGIN_STOCKS on a messageKeys map without the stock keys', () => {
+    const call = () => fillAppinfo({ messageKeys: { SETTINGS_REQUEST: 1, SETTINGS_FRESH: 2 } }, 'gridlock', { started: true, featureKeys: [] }, { PLUGIN_STOCKS: 1 }, { stocks: ['plugin'] });
+
+    expect(call).toThrow("gridlock's appinfo gives messageKeys as a map, which numbers each key by hand, so the build cannot add STOCK_STRIP and STOCK_REQUEST");
   });
 
   /** A face with the weather define and no weather feature still reads the weather, so it still needs location. */

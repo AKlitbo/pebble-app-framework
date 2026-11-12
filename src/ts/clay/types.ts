@@ -92,8 +92,8 @@ export interface ClayConfigItem {
    * found it, and only a page that takes the select away takes this row with it. Clay ignores the
    * field. */
   pluginSourceLead?: string;
-  /** The kind of Pebble app plugin data whose notes go straight after this row, such as `music`,
-   * `phone`, `weather`, or `calendar`. A face built with that kind's plugin define puts the notes for
+  /** The kind of Pebble app plugin data whose notes go straight after this row, by its name in the
+   * providers list, such as `music`, `phone`, `weather`, `stocks`, or `calendar`. A face built with that kind's plugin define puts the notes for
    * a kind with no source choice here, such as the one saying to turn plugins on. Without the mark
    * they go at the foot of the page. Clay ignores the field. */
   pluginSourceRows?: string;
@@ -129,6 +129,8 @@ export interface PluginPanelKind {
   /** The heading over its plugins, such as `Weather`. */
   label: string;
   entries: PluginPanelEntry[];
+  /** The line under the heading while no plugin serves the kind, or left out for none. */
+  none?: string;
 }
 
 /** What the supported plugins panel shows. Every word is HTML-escaped, since Clay writes the row into a script block. */
