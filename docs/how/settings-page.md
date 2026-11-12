@@ -206,6 +206,10 @@ Several of Clay's components take padding off their row in a card and let the la
 
 **A Face's Own Padding.** A face rule that sets the padding of one of these rows at Clay's weight, such as `.section .component-select`, loses to the framework's. Write it at `.section > .component.component-select` or higher. The framework registers its component ahead of the face's components, so a face rule of the same weight still wins. On a page where a feature's `page` hook adds the location search or the theme picker, Clay's text box or select style for it comes after the face's components.
 
+### A Line Under Save
+
+A text row whose markup carries the `pf-footer` class is centred, for a credit or a note under the Save button, as in `{ type: 'text', defaultValue: '<div class="pf-footer">Weather data by Open-Meteo.</div>' }`. The rule rides on the same `pafPageStyle` component, so every page carries it, a plugin app's included, with no style of the page's own. It sits at `.component-text .pf-footer`, a class more than Clay's own text rules, so it holds in either order.
+
 ## The Location Search
 
 `locationsearch` is a search box that finds places as the wearer types. After two characters and a short pause it asks Open-Meteo's free geocoder for five matches. Picking one saves the place as JSON, with its coordinates, its label, and its time zone:

@@ -6,7 +6,8 @@
  * pinning is that the rules match Clay's own, that they reach a page with no page code and land once,
  * that every row sits the same with the sheets in either order, and that in the usual order no row
  * moves. The location search and the theme picker borrow the classes of Clay's text box and select,
- * and the page brings Clay's own style for each with them wherever they are.
+ * and the page brings Clay's own style for each with them wherever they are. A text row marked
+ * `pf-footer` is centred in either order.
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
@@ -167,6 +168,15 @@ function ruleSheets(dom: JSDOM): Element[] {
 }
 
 describe('the page style', () => {
+  /** A credit line under Save sat to the left on every page that brought no rule of its own to centre it. */
+  test.each(['usual', 'android'] as const)('centres a pf-footer line in the %s order', (order) => {
+    const dom = buildPage(order, true, [{ type: 'submit', defaultValue: 'Save' }, { type: 'text', defaultValue: '<div class="pf-footer">Data from somewhere.</div>' }]);
+
+    const result = dom.window.getComputedStyle(all(dom, '.pf-footer')[0]).textAlign;
+
+    expect(result).toBe('center');
+  });
+
   /**
    * The rules copy Clay's own row padding. A Clay bump that changed one, or added one, would leave a
    * row the Android app pads again, or pad a row Clay no longer pads, with nothing else noticing.

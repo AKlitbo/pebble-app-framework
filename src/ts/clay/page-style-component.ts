@@ -21,6 +21,10 @@
  * a component's style only to a page that registers it, so createClay registers Clay's own text box
  * and select on any page holding one of those rows, unless the face passes its own. Clay's own rule
  * is then always there for them, and the rules here move no row in the usual order.
+ *
+ * A text row whose markup carries `pf-footer`, such as `<div class="pf-footer">`, is centred, so a
+ * page puts a credit or a note under Save with no style of its own. The rule outweighs Clay's own text
+ * rules by a class, so it holds in either order.
  */
 
 /**
@@ -42,6 +46,9 @@ export const CLAY_ROW_PADDING: Record<string, string> = {
 /** Each of Clay's row rules with one more class, so it wins whichever sheet comes later. */
 const ROW_PADDING = Object.keys(CLAY_ROW_PADDING).map((kind) => `.section > .component.${kind} { ${CLAY_ROW_PADDING[kind]} }`).join('');
 
+/** Centres the markup a text row marks with `pf-footer`, the line under Save. */
+const FOOTER = '.component-text .pf-footer { text-align: center; }';
+
 export default {
   /** The component type name. No row uses it, since the component is here only for its style. */
   name: 'pafPageStyle',
@@ -52,5 +59,5 @@ export default {
   manipulator: 'html',
 
   /** The rules for the whole page. */
-  style: ROW_PADDING,
+  style: ROW_PADDING + FOOTER,
 };
