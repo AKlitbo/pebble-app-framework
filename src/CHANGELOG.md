@@ -12,14 +12,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added a shared call ledger in `ts/quota/ledger.ts` for any metered provider, with minute, hour, day, and month limits, a weight per call, and `windowOpensAt` for when a full limit opens again. The stock ledger counts with it, and stamps saved by 6.1.0 read in as they are.
 - Added `fetchReading` to the Open-Meteo, OpenWeatherMap, and WeatherAPI.com providers, which reads several places into a `WeatherReading` on each place's own clock. Its `onSend` hook hears each request as it goes out, so a plugin stamps its ledger then and takes the stamp back on `NETWORK_ERROR`.
-- Added `ts/plugin-app/weather.ts`, which serves a `WeatherReading` from a plugin app as `weather/location` and reads the wearer's places and units from the Pebble app.
+- Added `ts/plugin-app/weather.ts`, which serves a `WeatherReading` from a plugin app as `weather/location`, with each place's `latitude` and `longitude` for a request that names them, and reads the wearer's places and units from the Pebble app.
 - Added the `pf-footer` class, which centres a text row under Save with no style of the page's own.
+
+#### Changed
+
+- A face started with `weather.withCoords` is now offered the weather plugin choice. Its coordinates come from a plugin's `latitude` and `longitude`, and show no fix from a plugin that serves none.
 
 ### Wearer-Visible Changes
 
 #### Added
 
+- Pressure, dew point, and a finer sky now show from a weather plugin that serves them.
 - The supported plugins panel now lists Calendar + iCal and Stocks + Crypto.
+- A face that shows coordinates now offers the Pebble app's weather, and shows the coordinates of a weather plugin that serves them.
+
+#### Changed
+
+- The UV from a weather plugin is now the current hour's when the plugin serves an hourly UV, as a face's own fetch shows it, rather than the day's peak.
+
+#### Fixed
+
+- Fixed a clear polar night from a weather plugin showing a sun, for a plugin that serves an hourly day flag.
 
 ## [6.1.0] - 2026-11-11
 

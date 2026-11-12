@@ -61,6 +61,20 @@ const UV_MAX = 20;
 const DEGREES_MAX = 360;
 const WIND_KMH_MAX = 400;
 
+// the pressures the ground really sees at sea level, in hPa. the records are about 870 and 1084
+const PRESSURE_MIN = 850;
+const PRESSURE_MAX = 1100;
+
+// a pressure's unit, lowercased with the spaces taken out, against how many hPa one of it is
+const HPA_PER_UNIT: Record<string, number> = {
+  hpa: 1,
+  mb: 1,
+  mbar: 1,
+  inhg: 33.8638866667,
+  mmhg: 1.333224,
+  kpa: 10,
+};
+
 // a utc offset further out than any real zone is bad data
 const OFFSET_LIMIT_MINUTES = 18 * 60;
 
@@ -91,24 +105,30 @@ const KMH_PER_UNIT: Record<string, number> = {
   knots: 1.852,
 };
 
-// each reading field a face can show, against the plugin property it comes from. pressure and dew
-// point are left out, since the weather category serves neither
-const FIELD_PROPERTIES: Record<string, string> = {
-  humidity: 'humidity',
-  windKmh: 'wind_speed',
-  windDir: 'wind_direction',
-  sunrise: 'sunrise',
-  sunset: 'sunset',
-  uvIndex: 'uv_index',
-  feelsLike: 'feels_like',
-  tempMax: 'high',
-  tempMin: 'low',
-  precipChance: 'precipitation',
+// each reading field a face can show, against the plugin properties it comes from. dew point and UV
+// can come as a single value or as an hourly series read at the current hour, since some plugins
+// serve only the series. pressure comes from the single value alone, since a plugin's hourly_pressure
+// can be the pressure at the ground, which reads about 120 hPa low in Calgary, where a face shows the
+// pressure at sea level
+const FIELD_PROPERTIES: Record<string, string[]> = {
+  humidity: ['humidity'],
+  windKmh: ['wind_speed'],
+  windDir: ['wind_direction'],
+  sunrise: ['sunrise'],
+  sunset: ['sunset'],
+  uvIndex: ['uv_index', 'hourly_uv_index'],
+  feelsLike: ['feels_like'],
+  pressure: ['pressure'],
+  dewPoint: ['dew_point', 'hourly_dew_point'],
+  tempMax: ['high'],
+  tempMin: ['low'],
+  precipChance: ['precipitation'],
 };
 
 // asked for on every subscription. the sun series are what the night check reads, and the utc
-// offset is what puts the daily columns on the right dates
-const ALWAYS_PROPERTIES = ['name', 'temperature', 'condition', 'condition_code', 'sunrise', 'sunset', 'daily_sunrise', 'daily_sunset', 'utc_offset'];
+// offset is what puts the daily columns on the right dates. the WMO code gives the finer sky, and the
+// hourly day flag is the night check where the sun times give nothing, as through a polar night
+const ALWAYS_PROPERTIES = ['name', 'temperature', 'condition', 'condition_code', 'sunrise', 'sunset', 'daily_sunrise', 'daily_sunset', 'utc_offset', 'weather_code', 'hourly_weather_code', 'hourly_is_day'];
 
 // asked for only by a face that shows the strips
 const FORECAST_PROPERTIES = ['hourly_temperature', 'hourly_condition_code', 'daily_high', 'daily_low', 'daily_condition_code'];
@@ -158,21 +178,37 @@ function within(value: number | undefined, low: number, high: number): number | 
   return value !== undefined && value >= low && value <= high ? value : undefined;
 }
 
+/** A temperature in kelvin or degrees Rankine as °C, or undefined for one in any other unit. */
+function absoluteCelsius(reading: NumericReading): number | undefined {
+  const plain = String(reading.unit || '').replace(/[°º\s]/g, '').toUpperCase();
+
+  if (plain === 'K' || plain === 'KELVIN') {
+    return reading.value - 273.15;
+  }
+
+  if (plain === 'R' || plain === 'RANKINE') {
+    return ((reading.value - 491.67) * 5) / 9;
+  }
+
+  return undefined;
+}
+
 /**
  * A temperature in the face's unit, rounded, or undefined when it cannot be used.
  *
- * The number is converted from the unit it says it is in, never read off the text. One with no
- * unit the scale can be read from is dropped rather than guessed at, and so is one outside the
- * bounds the watch holds a temperature to.
+ * The number is converted from the unit it says it is in, never read off the text: °C, °F, kelvin, or
+ * degrees Rankine. One with no unit the scale can be read from is dropped rather than guessed at, and
+ * so is one outside the bounds the watch holds a temperature to.
  */
 function faceTemperature(reading: NumericReading | undefined, fahrenheit: boolean): number | undefined {
-  const scale = reading ? temperatureScale(reading.unit) : undefined;
+  const absolute = reading ? absoluteCelsius(reading) : undefined;
+  const scale = absolute !== undefined ? 'C' : reading ? temperatureScale(reading.unit) : undefined;
 
   if (!reading || !scale) {
     return undefined;
   }
 
-  let value = reading.value;
+  let value = absolute !== undefined ? absolute : reading.value;
 
   if (scale === 'F' && !fahrenheit) {
     value = ((value - 32) * 5) / 9;
@@ -200,11 +236,23 @@ function conditionToken(code: string | undefined): string {
 }
 
 /**
+ * An hourly series' number for the hour holding a moment, the point whose stamp is at or before it.
+ * The point is found by its stamp, never by counting hours from the series' start, so a day the clocks
+ * change still reads the hour it says.
+ */
+function hourAt(properties: Properties, name: string, atSeconds: number): NumericReading | undefined {
+  const series = seriesOf(properties[name]);
+
+  return seriesValue(series, 'numericValue', seriesIndex(series, atSeconds));
+}
+
+/**
  * Whether a moment falls in daylight, on the place's own sunrise and sunset.
  *
  * It takes the day of the sun series that holds the moment and compares epoch seconds, so a place
- * whose sunrise falls before the phone's midnight still has its day the right way round. With no
- * series, or no reading for that day, it counts as day, so a clear sky never shows a moon by mistake.
+ * whose sunrise falls before the phone's midnight still has its day the right way round. With no sun
+ * times for that day, as through a polar night, it takes the plugin's `hourly_is_day` for that hour.
+ * With neither, it counts as day, so a clear sky never shows a moon by mistake.
  */
 function isDayAt(properties: Properties, atSeconds: number): boolean {
   const sunrise = seriesOf(properties.daily_sunrise);
@@ -213,10 +261,45 @@ function isDayAt(properties: Properties, atSeconds: number): boolean {
   const set = seriesValue(sunset, 'timestamp', seriesIndex(sunset, atSeconds));
 
   if (rise === undefined || set === undefined) {
-    return true;
+    const flag = hourAt(properties, 'hourly_is_day', atSeconds)?.value;
+
+    return flag !== 0;
   }
 
   return atSeconds >= rise && atSeconds < set;
+}
+
+/** A pressure in hPa, or undefined when its unit is not one the table knows or it is out of reach. */
+function pressureHpa(reading: NumericReading | undefined): number | undefined {
+  const unit = reading ? String(reading.unit || '').replace(/\s/g, '').toLowerCase() : '';
+  const factor = Object.prototype.hasOwnProperty.call(HPA_PER_UNIT, unit) ? HPA_PER_UNIT[unit] : undefined;
+
+  return within(reading && factor !== undefined ? reading.value * factor : undefined, PRESSURE_MIN, PRESSURE_MAX);
+}
+
+// the WMO codes Open-Meteo sends, the ones a plugin's weather_code is read as. any other number is
+// another scheme's code, such as an OpenWeatherMap id, and the standard's condition code stands
+const WMO_CODES = [0, 1, 2, 3, 45, 48, 51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 71, 73, 75, 77, 80, 81, 82, 85, 86, 95, 96, 99];
+
+/** A WMO code a plugin served, if it is one of Open-Meteo's. */
+function wmoCode(reading: NumericReading | undefined): number | undefined {
+  return reading && WMO_CODES.includes(reading.value) ? reading.value : undefined;
+}
+
+/**
+ * The sky now as a condition token, from the WMO code when the plugin serves one and else from the
+ * standard's condition code. The WMO code keeps the fog, drizzle, showers, and thunder the nine codes
+ * fold away. It is the single `weather_code`, or `hourly_weather_code` at the current hour, each taken
+ * only when it is one of Open-Meteo's codes.
+ */
+function skyToken(properties: Properties, nowSeconds: number): { token: string; fromWmo: boolean } {
+  const wmo = wmoCode(numeric(properties.weather_code)) ?? wmoCode(hourAt(properties, 'hourly_weather_code', nowSeconds));
+
+  if (wmo !== undefined) {
+    return { token: util.wmoToCondition(wmo), fromWmo: true };
+  }
+
+  return { token: conditionToken(text(properties.condition_code, 'long')), fromWmo: false };
 }
 
 /**
@@ -407,7 +490,8 @@ function sunMinutes(properties: Properties, seriesName: string, singleName: stri
 function plainLabel(property: SourceProperty | undefined, isDay: boolean): string | undefined {
   const label = property && typeof property === 'object' ? text({ shortText: property.shortText }, 'short') : undefined;
 
-  if (label === undefined || (!isDay && /sun/i.test(label))) {
+  // a label that is one of the standard's codes, such as partly_cloudy, is a code rather than words
+  if (label === undefined || (!isDay && /sun/i.test(label)) || Object.prototype.hasOwnProperty.call(CONDITION_TOKENS, label.trim().toLowerCase()) || label.trim().toLowerCase() === 'unknown') {
     return undefined;
   }
 
@@ -478,8 +562,25 @@ export function weatherFromUpdate(envelope: SourceEnvelope | null | undefined, o
     extra.sunset = sunMinutes(properties, 'daily_sunset', 'sunset', days);
   }
 
+  // a face's own fetch shows the UV now, and the standard's uv_index is the day's peak, so the hour
+  // now comes first and the peak only stands in for a plugin with no usable hourly UV.
+  //
+  // the hourly readings are read at the hour now, while the temperature is the one the update came
+  // with. an update held for hours would let the two drift apart, but the Pebble app runs a plugin
+  // again every 15 minutes, so that takes a phone offline or a plugin that keeps failing, and the hour
+  // now is still the better guess at the readings than the hour the update was made
   if (shown.has('uvIndex')) {
-    extra.uvIndex = within(boundedReading(properties.uv_index, false)?.value, 0, UV_MAX);
+    extra.uvIndex = within(hourAt(properties, 'hourly_uv_index', nowSeconds)?.value, 0, UV_MAX) ?? within(boundedReading(properties.uv_index, false)?.value, 0, UV_MAX);
+  }
+
+  if (shown.has('pressure')) {
+    extra.pressure = pressureHpa(numeric(properties.pressure));
+  }
+
+  // each candidate is put through its unit and range before the next is tried, so an unusable single
+  // value gives way to the hourly series as a missing one does
+  if (shown.has('dewPoint')) {
+    extra.dewPoint = faceTemperature(numeric(properties.dew_point), fahrenheit) ?? faceTemperature(hourAt(properties, 'hourly_dew_point', nowSeconds), fahrenheit);
   }
 
   if (shown.has('feelsLike')) {
@@ -498,9 +599,15 @@ export function weatherFromUpdate(envelope: SourceEnvelope | null | undefined, o
     extra.precipChance = within(boundedReading(properties.precipitation)?.value, 0, PERCENT_MAX);
   }
 
-  const condition = util.applyNight(conditionToken(text(properties.condition_code, 'long')), isDay);
-  const result = util.ok(temperature, condition, text(properties.name, 'short'), undefined, undefined, extra);
-  const label = plainLabel(properties.condition, isDay);
+  const sky = skyToken(properties, nowSeconds);
+  const condition = util.applyNight(sky.token, isDay);
+  // a plugin that serves the place's coordinates fills a coordinate face's readout the way a fetch's
+  // coordinates do, and one that serves none leaves it on its no fix state
+  const lat = within(numeric(properties.latitude)?.value, -90, 90);
+  const lon = within(numeric(properties.longitude)?.value, -180, 180);
+  const result = util.ok(temperature, condition, text(properties.name, 'short'), lat, lon, extra);
+  // a sky the WMO code decided is finer than the plugin's own words for it, so the token's words show
+  const label = sky.fromWmo ? undefined : plainLabel(properties.condition, isDay);
 
   if (label !== undefined) {
     result.conditionLabel = label;
@@ -521,14 +628,15 @@ export { appFahrenheit };
  * The phone takes the list as a hint and the built-in plugin only uses it to skip series nobody
  * asked for, so asking for a little more than the face shows is cheap and asking for less loses
  * data. The name, temperature, sky, and sun are always asked for, since the night check reads the
- * sun series even for a face that shows no sun times.
+ * sun series even for a face that shows no sun times. So are the WMO codes and the hourly day flag,
+ * which a plugin that serves them uses for a finer sky and a night check with no sun.
  *
  * @param fields The reading fields the face shows, named as on `WeatherResult`.
  * @param wantForecast Whether the face shows the forecast strips.
  * @return The property names, each once.
  */
 export function weatherProperties(fields: string[], wantForecast: boolean): string[] {
-  const wanted = (Array.isArray(fields) ? fields : []).map((field) => FIELD_PROPERTIES[field]).filter((name) => name !== undefined);
+  const wanted = (Array.isArray(fields) ? fields : []).flatMap((field) => (Object.prototype.hasOwnProperty.call(FIELD_PROPERTIES, field) ? FIELD_PROPERTIES[field] : []));
   const names = [...ALWAYS_PROPERTIES, ...wanted, ...(wantForecast ? FORECAST_PROPERTIES : [])];
 
   return names.filter((name, index) => names.indexOf(name) === index);
@@ -570,8 +678,11 @@ export const WEATHER_TEXTS: PluginSourceTexts = {
  * face built with `PLUGIN_WEATHER`. The weather plugins serve one instance per place under
  * `weather/location`.
  */
+/** The line added to the source note on a face that shows coordinates. */
+export const COORDS_TEXT = 'The coordinates show only from a weather plugin that serves them.';
+
 export const weatherPlugins: WeatherPlugins = {
-  driver: createWeatherDriver({ fromUpdate: weatherFromUpdate, appFahrenheit, properties: weatherProperties, errorStatus: weatherErrorStatus, texts: WEATHER_TEXTS }),
+  driver: createWeatherDriver({ fromUpdate: weatherFromUpdate, appFahrenheit, properties: weatherProperties, errorStatus: weatherErrorStatus, texts: WEATHER_TEXTS, coordsText: COORDS_TEXT }),
 };
 
 export default { weatherFromUpdate, appFahrenheit, weatherProperties, weatherErrorStatus, WEATHER_TEXTS };

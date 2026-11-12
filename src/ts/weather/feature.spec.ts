@@ -37,7 +37,7 @@ import type { Feature, FeatureContext, FeatureHooks, ProviderLists } from '../pk
 import type { ClayConfigItem } from '../clay/types';
 import { PLUGINS_OFF_TEXT } from '../plugin-sources/page';
 import { escapeHtml } from '../plugin-sources/escape';
-import { WEATHER_TEXTS } from '../plugin-sources/weather';
+import { COORDS_TEXT, WEATHER_TEXTS } from '../plugin-sources/weather';
 
 // a plugin serving neither the weather nor the calendar, so the phone's list is readable and not empty
 const OTHER_PLUGIN = { uuid: 'other-uuid', name: 'Other', sources: [{ category: 'music', items: ['track'] }] };
@@ -1186,19 +1186,6 @@ describe('weather plugin mode on a face with no unit setting', () => {
     expect(pebble.live().map((subscription) => subscription.request.category)).toEqual(['preferences']);
   });
 
-  /** A face showing coordinates is offered no plugin, but its watch still writes the number bare, so its fetches need the Pebble app's unit. */
-  test('fetches in the Pebble app\'s unit on a face showing coordinates that is offered no plugin', () => {
-    localStorage.setItem(APP_UNIT_STORE, 'true');
-    saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo' });
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-    const { hooks } = startFace({ feature: weather.withCoords(() => ({})), providers: { weather: ['openmeteo', 'plugin'] }, unit: 'none', ready: true });
-
-    expect(hooks.page).toBeUndefined();
-    expect(pebble.live().map((subscription) => subscription.request.category)).toEqual(['preferences']);
-    expect(fetches[0].url).toContain('temperature_unit=fahrenheit');
-  });
-
   /** Nothing on the watch waits on the units, so an error from them must not cover the weather with a status. */
   test('sends the watch nothing for an error from the Pebble app\'s units', () => {
     const { sends } = startFace({ providers: { weather: ['plugin'] }, unit: 'none', ready: true });
@@ -1250,8 +1237,17 @@ describe('weather plugin mode on a face with no unit setting', () => {
 describe('weather plugin mode for a face showing coordinates', () => {
   let pebble: FakePebble;
   let fetches: FakeXhr[];
-  let warn: ReturnType<typeof vi.spyOn>;
-  const coords = weather.withCoords(() => ({}));
+  let latitudes: Array<number | undefined>;
+  const coords = weather.withCoords((_keys, result) => {
+    latitudes.push(result.lat);
+
+    return {};
+  });
+
+  /** The live subscription for one category. */
+  function liveFor(category: string) {
+    return pebble.live().filter((subscription) => subscription.request.category === category)[0];
+  }
 
   beforeEach(() => {
     localStorage.clear();
@@ -1259,7 +1255,7 @@ describe('weather plugin mode for a face showing coordinates', () => {
     pebble = withFakePebble();
     pebble.plugins = [BUILT_IN_WEATHER];
     fetches = installFakeXhr();
-    warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    latitudes = [];
     vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
@@ -1268,36 +1264,55 @@ describe('weather plugin mode for a face showing coordinates', () => {
     vi.restoreAllMocks();
   });
 
-  /** A plugin's places carry no coordinates, so offering one would leave the coordinate readouts on no fix for as long as it is picked. */
+  /** A face that shows coordinates was offered no plugin at all, so its wearer could never pick the Pebble app's weather. */
   test.each([
     ['no list', null],
     ['a mixed list', { weather: ['plugin', 'openmeteo'] }],
-  ])('offers no plugin and fetches with %s', (_label, providers) => {
+  ])('offers the plugin and reads it with %s', (_label, providers) => {
     const { hooks } = startFace({ feature: coords, providers });
 
     hooks.ready?.();
 
-    expect(hooks.page).toBeUndefined();
-    expect(fetches).toHaveLength(1);
-    expect(pebble.subscriptions).toHaveLength(0);
+    expect(hooks.page).toBeDefined();
+    expect(fetches).toHaveLength(0);
+    expect(pebble.live().map((subscription) => subscription.request.category)).toContain('weather');
   });
 
-  /** A face that lists the plugin and quietly never offers it would leave its developer with no clue why. */
-  test('warns once when its list holds the plugin, and not with no list', () => {
-    startFace({ feature: coords, providers: null });
-    startFace({ feature: coords, providers: { weather: ['plugin', 'openmeteo'] } });
+  /** A plugin that serves the place's coordinates has to fill the face's coordinate readout, as a fetch's coordinates do. */
+  test('hands the face the coordinates a plugin serves', () => {
+    startFace({ feature: coords, providers: { weather: ['plugin', 'openmeteo'] }, ready: true });
 
-    expect(warn).toHaveBeenCalledTimes(1);
+    liveFor('weather').push(update(21, { latitude: { numericValue: { value: 28.6139, unit: '°' } }, longitude: { numericValue: { value: 77.209, unit: '°' } } }));
+
+    expect(latitudes).toEqual([28.6139]);
   });
 
-  /** A face that asked for the plugin alone gets it, and its developer learns why the coordinates read no fix. */
-  test('runs the plugin and warns with a plugin only list', () => {
+  /** A plugin that serves no coordinates, such as the built-in, must leave the readout on its no fix state rather than an old fix. */
+  test('hands the face no coordinates from a plugin that serves none', () => {
+    startFace({ feature: coords, providers: { weather: ['plugin', 'openmeteo'] }, ready: true });
+
+    liveFor('weather').push(update(21));
+
+    expect(latitudes).toEqual([undefined]);
+  });
+
+  /** The plugin has to be asked for the coordinates, or one that serves them only when asked would send none. */
+  test('asks the plugin for the coordinates', () => {
+    startFace({ feature: coords, providers: { weather: ['plugin', 'openmeteo'] }, ready: true });
+
+    const result = liveFor('weather').request.properties;
+
+    expect(result).toEqual(expect.arrayContaining(['latitude', 'longitude']));
+  });
+
+  /** A wearer who picks a plugin that serves no coordinates would see the readout go to no fix with nothing to say why. */
+  test('adds a line on coordinates to the source note', () => {
     const { hooks } = startFace({ feature: coords, providers: { weather: ['plugin'] } });
+    const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'weather' };
 
-    hooks.ready?.();
+    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
 
-    expect(pebble.live()).toHaveLength(1);
-    expect(warn).toHaveBeenCalledWith(expect.stringContaining('no fix'));
+    expect(result).toEqual([line, { type: 'pluginNote', tone: 'info', defaultValue: escapeHtml(`${WEATHER_TEXTS.source} ${COORDS_TEXT}`) }]);
   });
 });
 

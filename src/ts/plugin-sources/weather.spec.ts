@@ -637,19 +637,165 @@ describe('weatherFromUpdate daily strip', () => {
   });
 });
 
+/** An hourly series of numbers from a place's midnight, one value an hour, with a unit when given. */
+function hourly(start: number, values: Array<number | null>, unit?: string): SourceProperty {
+  return series(start, HOUR, { numericValue: { values, ...(unit ? { unit } : {}) } });
+}
+
+/** 48 hours whose value at each hour is worked out from the hour, so a reading says which hour it came from. */
+function hours(value: (hour: number) => number | null): Array<number | null> {
+  return Array.from({ length: 48 }, (_, hour) => value(hour));
+}
+
+describe('weatherFromUpdate extras', () => {
+  /** A plugin that serves pressure, dew point, and a WMO code had them dropped, so those panels stayed on dashes and fog read as cloud. */
+  test('reads the pressure, dew point, and finer sky a plugin serves', () => {
+    const served = { ...place(), pressure: { numericValue: { value: 1016.4, unit: 'hPa' } }, dew_point: { numericValue: { value: 12.6, unit: '°C' } }, weather_code: { numericValue: { value: 45 } } };
+
+    const result = weatherFromUpdate(update(served), options());
+
+    expect([result.pressure, result.dewPoint, result.condition]).toEqual([1016, 13, 'FOGGY']);
+  });
+
+  /** A pressure in inHg or a dew point in °F read as hPa and °C showed 30 hPa and a dew point of 55 on a Celsius face. */
+  test('converts the pressure and dew point by the unit each names', () => {
+    const served = { ...place(), pressure: { numericValue: { value: 30.01, unit: 'inHg' } }, dew_point: { numericValue: { value: 54.7, unit: '°F' } } };
+
+    const result = weatherFromUpdate(update(served), options());
+
+    expect([result.pressure, result.dewPoint]).toEqual([1016, 13]);
+  });
+
+  /**
+   * Weather+ serves its dew point, sky code, and UV as hourly series only, so they have to be read at
+   * the current hour. Its hourly_pressure is the pressure at the ground, which reads about 120 hPa low
+   * in Calgary beside a face's sea level pressure, so it is not read. The values here are worked out
+   * from the hour, so the reading says which hour it read. Now is 12:20 in Toronto, the twelfth hour
+   * from midnight.
+   */
+  test('reads the hourly extras at the current hour from a plugin that serves only those, but not its pressure', () => {
+    const weatherPlus = {
+      ...place(),
+      uv_index: undefined,
+      hourly_pressure: hourly(TORONTO_MIDNIGHT, hours((hour) => 1000 + hour), 'hPa'),
+      hourly_dew_point: hourly(TORONTO_MIDNIGHT, hours((hour) => hour / 2), '°C'),
+      hourly_weather_code: hourly(TORONTO_MIDNIGHT, hours((hour) => (hour === 12 ? 61 : 3))),
+      hourly_uv_index: hourly(TORONTO_MIDNIGHT, hours((hour) => hour / 4)),
+    };
+
+    const result = weatherFromUpdate(update(weatherPlus), options());
+
+    expect([result.pressure, result.dewPoint, result.condition, result.uvIndex]).toEqual([undefined, 6, 'RAIN', 3]);
+  });
+
+  /** Weather+ can serve its temperatures in kelvin or degrees Rankine, which read as No Wx Data until they were converted. */
+  test.each([
+    ['kelvin', 294.55, 'K'],
+    ['degrees Rankine', 530.19, '°R'],
+  ])('converts a temperature in %s', (_label, value, unit) => {
+    const result = weatherFromUpdate(update({ ...place(), temperature: { numericValue: { value, unit } } }), options()).temperature;
+
+    expect(result).toBe(21);
+  });
+
+  /** A pressure in mmHg read as a dash, though it is a unit a plugin can be set to. */
+  test('converts a pressure in mmHg', () => {
+    const result = weatherFromUpdate(update({ ...place(), pressure: { numericValue: { value: 762, unit: 'mmHg' } } }), options()).pressure;
+
+    expect(result).toBe(1016);
+  });
+
+  /** A number from another scheme, such as an OpenWeatherMap id, read as a WMO code drew fog or a storm for a clear sky. */
+  test.each([
+    ['an OpenWeatherMap id', 500],
+    ['a fraction', 2.5],
+    ['a negative', -1],
+    ['a code Open-Meteo never sends', 17],
+  ])('leaves the condition code standing for %s', (_label, value) => {
+    const result = weatherFromUpdate(update({ ...place(), weather_code: { numericValue: { value } } }), options()).condition;
+
+    expect(result).toBe('PCLDY');
+  });
+
+  /** A single value that cannot be used is no better than a missing one, so the hourly series stands in for either. */
+  test('falls back to the hourly series when the single value cannot be used', () => {
+    const served = {
+      ...place(),
+      dew_point: { numericValue: { value: 12, unit: 'furlongs' } },
+      hourly_dew_point: hourly(TORONTO_MIDNIGHT, hours((hour) => hour / 2), '°C'),
+      weather_code: { numericValue: { value: 500 } },
+      hourly_weather_code: hourly(TORONTO_MIDNIGHT, hours(() => 61)),
+      hourly_uv_index: hourly(TORONTO_MIDNIGHT, hours(() => 25)),
+    };
+
+    const result = weatherFromUpdate(update(served), options());
+
+    expect([result.dewPoint, result.condition, result.uvIndex]).toEqual([6, 'RAIN', 5]);
+  });
+
+  /** Weather+ puts its condition code in the label, so the watch read partly_cloudy, and a WMO sky beside it named another sky. */
+  test.each([
+    ['the WMO code decides the sky', { weather_code: { numericValue: { value: 45 } } }],
+    ['the label is a standard code', { condition: { shortText: { text: 'partly_cloudy' } } }],
+  ])('drops the plugin label when %s', (_label, extra) => {
+    const result = weatherFromUpdate(update({ ...place(), ...extra }), options()).conditionLabel;
+
+    expect(result).toBeUndefined();
+  });
+
+  /** A plugin that serves none of the extras, as the built-in does, must leave each on its dash rather than a made-up value. */
+  test('leaves the dashes for extras a plugin does not serve', () => {
+    const result = weatherFromUpdate(update(place()), options());
+
+    expect([result.pressure, result.dewPoint, result.condition]).toEqual([undefined, undefined, 'PCLDY']);
+  });
+
+  /** The standard's uv_index is the day's peak, and a face's own fetch shows the UV now, so a plugin's hourly UV comes first. */
+  test('reads the current UV from the hourly series before the day peak', () => {
+    const served = { ...place(), hourly_uv_index: hourly(TORONTO_MIDNIGHT, hours((hour) => (hour === 12 ? 2.2 : 9))) };
+
+    const result = weatherFromUpdate(update(served), options()).uvIndex;
+
+    expect(result).toBe(2);
+  });
+
+  /** Through a polar night nothing in the sun times says it is dark, so a clear sky drew a sun at noon in Longyearbyen's darkness. */
+  test('takes the hourly day flag when the sun times give nothing', () => {
+    const served = { ...place(), daily_sunrise: undefined, daily_sunset: undefined, condition_code: { longText: { text: 'sun' } }, hourly_is_day: hourly(TORONTO_MIDNIGHT, hours(() => 0)) };
+
+    const result = weatherFromUpdate(update(served), options()).condition;
+
+    expect(result).toBe('CLEAR_NIGHT');
+  });
+
+  /**
+   * On the day New York's clocks go back the series start an hour after the true midnight, on the new
+   * clock. The current hour is the point whose stamp is at or before now, which at 12:20 there is the
+   * twelfth from the series' start, whatever the true midnight was.
+   */
+  test('reads the current hour by its stamp on a day the clocks change', () => {
+    const start = utc(11, 1, 5);
+    const newYork = { ...place({ name: 'New York', start, offsetMinutes: -300, sunrise: 6 * HOUR + 30 * 60, sunset: 16 * HOUR + 55 * 60 }), hourly_dew_point: hourly(start, hours((hour) => hour), '°C') };
+
+    const result = weatherFromUpdate(update(newYork), options({ nowSeconds: utc(11, 1, 17, 20) })).dewPoint;
+
+    expect(result).toBe(12);
+  });
+});
+
 describe('weatherProperties', () => {
   /** The night check reads the sun series even for a face with no sun readout, so they are always asked for. */
   test('always asks for the reading, the sky, and the sun', () => {
     const result = weatherProperties([], false);
 
-    expect(result).toEqual(['name', 'temperature', 'condition', 'condition_code', 'sunrise', 'sunset', 'daily_sunrise', 'daily_sunset', 'utc_offset']);
+    expect(result).toEqual(['name', 'temperature', 'condition', 'condition_code', 'sunrise', 'sunset', 'daily_sunrise', 'daily_sunset', 'utc_offset', 'weather_code', 'hourly_weather_code', 'hourly_is_day']);
   });
 
   /** Asking for less than the face shows loses data, since the plugin may skip what it was not asked for. */
   test('adds the property behind each reading the face shows', () => {
     const result = weatherProperties(['humidity', 'windKmh', 'windDir', 'uvIndex', 'feelsLike', 'tempMax', 'tempMin', 'precipChance', 'pressure', 'dewPoint'], false);
 
-    expect(result.slice(9)).toEqual(['humidity', 'wind_speed', 'wind_direction', 'uv_index', 'feels_like', 'high', 'low', 'precipitation']);
+    expect(result.slice(12)).toEqual(['humidity', 'wind_speed', 'wind_direction', 'uv_index', 'hourly_uv_index', 'feels_like', 'high', 'low', 'precipitation', 'pressure', 'dew_point', 'hourly_dew_point']);
   });
 
   /** The built-in builds its series only when asked, so a face with the strips must name them. */
@@ -666,6 +812,9 @@ describe('weatherProperties', () => {
       'daily_sunrise',
       'daily_sunset',
       'utc_offset',
+      'weather_code',
+      'hourly_weather_code',
+      'hourly_is_day',
       'hourly_temperature',
       'hourly_condition_code',
       'daily_high',

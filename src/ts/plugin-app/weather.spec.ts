@@ -43,7 +43,7 @@ const HONOLULU = { lat: 21.3069, lon: -157.8583 };
 // Thursday 12 November 2026, 16:00 UTC
 const NOW = Date.UTC(2026, 10, 12, 16) / 1000;
 
-const PLACE = { key: '6a1c4d20-0000-4000-8000-000000000001', name: 'Home' };
+const PLACE = { key: '6a1c4d20-0000-4000-8000-000000000001', name: 'Home', lat: 28.6139, lon: 77.209 };
 
 const FACE_FIELDS = ['humidity', 'windKmh', 'windDir', 'feelsLike'];
 const ALL_FIELDS = [...FACE_FIELDS, 'uvIndex', 'sunrise', 'sunset', 'tempMax', 'tempMin', 'precipChance'];
@@ -117,7 +117,7 @@ describe('a reading served and read back', () => {
   test('shows what a face fetch shows from Open-Meteo', () => {
     const result = servedAndRead(readings('openmeteo')[0]);
 
-    expect([...currentView(result), ...dailyView(result)]).toEqual([24, 'sun', true, 64, 3, 'W', 25, 28, 18, 0, 1211, 419]);
+    expect([...currentView(result), result.uvIndex, ...dailyView(result)]).toEqual([24, 'sun', true, 64, 3, 'W', 25, 0, 28, 18, 0, 1211, 419]);
   });
 
   /** OpenWeatherMap's current values have to come back as the face's own OpenWeatherMap fetch shows them. */
@@ -131,7 +131,7 @@ describe('a reading served and read back', () => {
   test('shows what a face fetch shows from WeatherAPI.com', () => {
     const result = servedAndRead(readings('weatherapi')[1]);
 
-    expect(currentView(result)).toEqual(currentView(faceFetch(weatherApi, HONOLULU)));
+    expect([...currentView(result), result.uvIndex]).toEqual([...currentView(faceFetch(weatherApi, HONOLULU)), faceFetch(weatherApi, HONOLULU).uvIndex]);
   });
 });
 
@@ -204,6 +204,53 @@ describe('the offset', () => {
   });
 });
 
+describe('the coordinates', () => {
+  /** A coordinate face reads the place's coordinates from the plugin, and a fix finer than a weather place needs gives away more of the wearer's home than it adds. */
+  test('serves the place coordinates to four decimals', () => {
+    const properties = locationInstance(readings('openmeteo')[0], { ...PLACE, lat: 28.613949, lon: -77.20901 }, DEFAULT_UNITS, ['latitude', 'longitude'], NOW * 1000)?.properties;
+
+    const result = [properties?.latitude, properties?.longitude];
+
+    expect(result).toEqual([
+      { numericValue: { value: 28.6139, unit: '°' }, shortText: { text: '28.6139' } },
+      { numericValue: { value: -77.209, unit: '°' }, shortText: { text: '-77.2090' } },
+    ]);
+  });
+
+  /** A place with no coordinates of its own must not go out as 0, 0, which a coordinate face would show as a real fix. */
+  test('serves no coordinates for a place given none', () => {
+    const properties = locationInstance(readings('openmeteo')[0], { key: PLACE.key, name: PLACE.name }, DEFAULT_UNITS, ['latitude', 'longitude'], NOW * 1000)?.properties;
+
+    const result = [properties?.latitude, properties?.longitude];
+
+    expect(result).toEqual([undefined, undefined]);
+  });
+
+  /** The wearer's place went to every face that read the plugin, where only one that asked for it should get it. */
+  test.each([
+    ['names no properties', undefined],
+    ['names other properties', ['temperature', 'hourly_temperature']],
+  ])('serves no coordinates to a request that %s', (_label, asked) => {
+    const properties = locationInstance(readings('openmeteo')[0], PLACE, DEFAULT_UNITS, asked, NOW * 1000)?.properties;
+
+    const result = [properties?.latitude, properties?.longitude];
+
+    expect(result).toEqual([undefined, undefined]);
+  });
+
+  /** Half a place, or one out of range, read on a coordinate face as a real fix somewhere it is not. */
+  test.each([
+    ['a missing longitude', { lat: 33.4 }],
+    ['a longitude out of range', { lat: 33.4, lon: 456 }],
+  ])('serves neither coordinate for %s', (_label, coords) => {
+    const properties = locationInstance(readings('openmeteo')[0], { key: PLACE.key, name: PLACE.name, ...coords }, DEFAULT_UNITS, ['latitude', 'longitude'], NOW * 1000)?.properties;
+
+    const result = [properties?.latitude, properties?.longitude];
+
+    expect(result).toEqual([undefined, undefined]);
+  });
+});
+
 describe('what is asked', () => {
   /** Sending every series to a face that asked for one spent the run's time and the phone's memory on nothing. */
   test('sends only the series a request names', () => {
@@ -220,7 +267,8 @@ describe('what is asked', () => {
 
     const result = Object.keys(instance.properties as object).filter((name) => !/^(hourly|daily)_/.test(name)).length;
 
-    expect(result).toBe(Object.keys(WEATHER_LOCATION_SOURCE.properties).filter((name) => !/^(hourly|daily)_/.test(name)).length);
+    // the coordinates go only to a request that names them
+    expect(result).toBe(Object.keys(WEATHER_LOCATION_SOURCE.properties).filter((name) => !/^(hourly|daily)_/.test(name) && name !== 'latitude' && name !== 'longitude').length);
   });
 });
 
@@ -291,7 +339,7 @@ describe('the declaration', () => {
 
   /** A property declared but never sent, or sent in a shape the declaration leaves out, is one a face asks for and never gets. */
   test('sends every declared property in the declared shapes', () => {
-    const instance = locationInstance(readings('openmeteo')[0], PLACE, DEFAULT_UNITS, undefined, NOW * 1000) as SourceInstance;
+    const instance = locationInstance(readings('openmeteo')[0], PLACE, DEFAULT_UNITS, Object.keys(WEATHER_LOCATION_SOURCE.properties), NOW * 1000) as SourceInstance;
     const sent = Object.fromEntries(Object.entries(instance.properties as Record<string, SourceProperty>).map(([name, property]) => {
       const shapes = property.series ? Object.keys(property.series).filter((key) => key !== 'start' && key !== 'stepSec').map((key) => `series.${key}`) : Object.keys(property);
 

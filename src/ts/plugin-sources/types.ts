@@ -224,7 +224,7 @@ export interface WeatherControls extends FetchControls<WeatherResult> {
   fields: string[];
   /** Whether the face shows the forecast strips. */
   wantForecast: boolean;
-  /** Whether the face shows coordinates, which a plugin's places do not carry. */
+  /** Whether the face shows coordinates, which a weather plugin serves only as `latitude` and `longitude` when it has them. */
   withCoords: boolean;
   /** Every weather setting whose change is worth a refetch after a save, the feature's `WEATHER_KEYS`. */
   settingKeys: string[];

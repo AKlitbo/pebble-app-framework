@@ -100,6 +100,8 @@ export interface WeatherMapping {
   errorStatus(code: string | null | undefined): string | undefined;
   /** The page hook's wording. */
   texts: PluginSourceTexts;
+  /** The line the source note gains on a face that shows coordinates, which only some plugins serve. */
+  coordsText?: string;
 }
 
 /**
@@ -120,28 +122,12 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     const ownUnit = messageKeys.WEATHER_TEMPERATURE_UNIT !== undefined;
     let appUnit = ownUnit ? false : loadAppUnit();
 
-    // a plugin's places carry no coordinates, so a face that shows them is offered no plugin, unless
-    // its providers list is the plugin alone. that face asked for nothing else, so it runs the plugin
-    // and its coordinate readouts show no fix
-    const offered = !controls.withCoords || only;
-
-    if (!offered) {
-      if (Array.isArray(listed) && listed.includes(PLUGIN_VALUE)) {
-        console.warn('Weather: this face shows coordinates, which a Pebble app plugin does not serve, so it offers no plugin choice and fetches its weather');
-      }
-
-      // with a unit of its own it fetches as a face without the define does. without one its fetches
-      // still need the Pebble app's unit, so it keeps the hooks below with the plugin never picked
-      if (ownUnit) {
-        return null;
-      }
-    }
-
-    if (controls.withCoords && only) {
-      console.warn('Weather: this face takes its weather from a Pebble app plugin alone, which serves no coordinates, so its coordinate readouts show no fix');
-    }
-
     const { fields, wantForecast } = controls;
+
+    // a face that shows coordinates asks for the place's too, and its source note says only some
+    // plugins serve them. with one that serves none its coordinate readouts show no fix
+    const properties = [...mapping.properties(fields, wantForecast), ...(controls.withCoords ? ['latitude', 'longitude'] : [])];
+    const texts = controls.withCoords && mapping.coordsText ? { ...mapping.texts, source: [mapping.texts.source, mapping.coordsText].filter(Boolean).join(' ') } : mapping.texts;
 
     // a save is told apart by which of these moved. the provider switches between the plugin and a
     // fetch, the unit converts the kept update again, and the rest only mean something to a fetch
@@ -168,15 +154,15 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       }
     }
 
-    /** Whether some settings pick the plugin, which they never do on a face offered none. */
+    /** Whether some settings pick the plugin. */
     function pickedIn(config: Record<string, unknown>): boolean {
-      return offered && String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER || WEATHER_FALLBACK)).toLowerCase() === PLUGIN_VALUE;
+      return String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER || WEATHER_FALLBACK)).toLowerCase() === PLUGIN_VALUE;
     }
 
     const choice = followPluginChoice({
       category: 'weather',
       item: 'location',
-      properties: mapping.properties(fields, wantForecast),
+      properties,
       only,
       pickedIn,
       shutOut: controls.shutOut,
@@ -363,11 +349,6 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       },
     };
 
-    // a face offered no plugin has no page rows and no choice for the seed to check
-    if (!offered) {
-      return hooks;
-    }
-
     // the note and the supported plugins panel the page hook's rows are drawn with, which the app
     // registers only for a page holding them
     hooks.components = [noteComponent, panelComponent];
@@ -382,7 +363,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
         messageKeys,
         state: subscription.state(),
         standard: WEATHER_STANDARD,
-        texts: mapping.texts,
+        texts,
         panel: true,
       });
 
@@ -397,7 +378,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       messageKeys,
       state: subscription.state(),
       standard: WEATHER_STANDARD,
-      texts: mapping.texts,
+      texts,
       panel: true,
       saved: readValue(getConfig().WEATHER_PROVIDER, undefined),
       movesBelow: 'LOCATION_USE_GPS',

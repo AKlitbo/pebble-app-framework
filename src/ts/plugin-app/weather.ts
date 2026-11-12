@@ -31,8 +31,8 @@ export const BUILT_IN_PREFERENCES = '00000000-0000-0000-0001-000000000009';
  * The `weather/location` source as a plugin app declares it in its appinfo's plugin block.
  *
  * The standard properties are the built-in's, in its shapes, without its `icon` and `image`. The
- * extras are Weather+'s, in its shapes, and `pressure`, `dew_point`, `weather_code`, `source`, and
- * `updated` are the framework's. Every series is named `hourly_` or `daily_`, and nothing else is. It
+ * extras are Weather+'s, in its shapes, and `pressure`, `dew_point`, `weather_code`, `latitude`,
+ * `longitude`, `source`, and `updated` are the framework's. Every series is named `hourly_` or `daily_`, and nothing else is. It
  * asks `Location` of its callers and refreshes every 15 minutes, as the built-in does.
  */
 export const WEATHER_LOCATION_SOURCE = {
@@ -54,6 +54,8 @@ export const WEATHER_LOCATION_SOURCE = {
     utc_offset: ['numericValue'],
     sunrise: ['timestamp'],
     sunset: ['timestamp'],
+    latitude: ['numericValue', 'shortText'],
+    longitude: ['numericValue', 'shortText'],
     hourly_temperature: ['series.numericValue', 'series.shortText'],
     hourly_condition: ['series.shortText'],
     hourly_condition_code: ['series.longText'],
@@ -154,6 +156,13 @@ const WIND_PER_KMH: Record<WeatherUnits['windSpeed'], number> = { 'km/h': 1, mph
 
 /** How many inHg make a hPa. */
 const INHG_PER_HPA = 0.0295299830714;
+
+// four decimals is about 11 m, as fine as a weather place needs and no finer than the Pebble app's
+// own places, and the most MET Norway takes for a place
+const COORD_DECIMALS = 4;
+
+// the properties sent only to a request that names them
+const ASKED_FOR_ONLY = ['latitude', 'longitude'];
 
 const HOUR_SECONDS = 60 * 60;
 const DAY_SECONDS = 24 * HOUR_SECONDS;
@@ -312,7 +321,9 @@ function holdsTwoDays(reading: WeatherReading, today: number): boolean {
  * One place's reading as a `weather/location` instance.
  *
  * It sends every single value, and each series only when the request asks for it, or every series
- * when the request names none, as the built-in does. Temperatures, wind, and pressure go out in the units given, each with its unit and a
+ * when the request names none, as the built-in does. The place's `latitude` and `longitude` go out only
+ * to a request that names them, and only as a pair of real coordinates, since only a face that wants
+ * the wearer's place should get it. Temperatures, wind, and pressure go out in the units given, each with its unit and a
  * short text in the built-in's style. `utc_offset` is in minutes east of UTC, as the built-in sends
  * it. The series are the reading's own, so their stamps keep the reading's clock, and a reader places
  * each point by its stamp.
@@ -326,14 +337,14 @@ function holdsTwoDays(reading: WeatherReading, today: number): boolean {
  * built-in.
  *
  * @param reading The place's reading.
- * @param place The place, whose key the instance goes out under and whose name it carries.
+ * @param place The place, whose key the instance goes out under and whose name and coordinates it carries. Coordinates left out are not served.
  * @param units The units to serve in.
  * @param asked The property names the request asks for, which picks the series, or undefined for every series.
  * @param nowMs Now, in epoch milliseconds, for which day is the place's today.
  * @param offsetAt Reads the phone's offset, for the `updated` label. A spec stands the phone in another zone with it.
  * @return The instance, or null when the reading does not hold today and tomorrow.
  */
-export function locationInstance(reading: WeatherReading, place: Pick<WeatherPlace, 'key' | 'name'>, units: WeatherUnits, asked: readonly string[] | undefined, nowMs: number, offsetAt: PhoneOffset = phoneOffsetMinutes): SourceInstance | null {
+export function locationInstance(reading: WeatherReading, place: Pick<WeatherPlace, 'key' | 'name'> & Partial<Pick<WeatherPlace, 'lat' | 'lon'>>, units: WeatherUnits, asked: readonly string[] | undefined, nowMs: number, offsetAt: PhoneOffset = phoneOffsetMinutes): SourceInstance | null {
   const today = todayAt(reading, nowMs / 1000);
 
   if (!holdsTwoDays(reading, today)) {
@@ -348,6 +359,17 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
   const dailyTemperatures = (values: Array<number | null>) => values.map((value) => temperatureIn(value, units));
   const sun = (value: number | null) => (value === null ? undefined : { timestamp: { value } });
   const code = (wmo: number | null) => (wmo === null ? undefined : { numericValue: { value: wmo } });
+  // the coordinates go out as a pair, and only when both are real ones, so a face never shows half a place
+  const placed = validCoords({ lat: place.lat as number, lon: place.lon as number });
+  const coordinate = (value: number | undefined) => {
+    if (!placed || value === undefined) {
+      return undefined;
+    }
+
+    const rounded = Number(value.toFixed(COORD_DECIMALS));
+
+    return { numericValue: { value: rounded, unit: '°' }, shortText: { text: rounded.toFixed(COORD_DECIMALS) } };
+  };
 
   const builders: Record<string, () => SourceProperty | undefined> = {
     name: () => (place.name ? { shortText: { text: place.name } } : undefined),
@@ -367,6 +389,8 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
     utc_offset: () => ({ numericValue: { value: reading.utcOffset / 60, unit: 'min' } }),
     sunrise: () => sun(daily.sunrise[today]),
     sunset: () => sun(daily.sunset[today]),
+    latitude: () => coordinate(place.lat),
+    longitude: () => coordinate(place.lon),
     hourly_temperature: () => numberSeries(hourly.time, HOUR_SECONDS, hourlyTemperatures(hourly.temperature), units.temperature, temperature),
     hourly_condition: () => textSeries(hourly.time, HOUR_SECONDS, 'shortText', hourly.condition.map(shortLabel)),
     hourly_condition_code: () => textSeries(hourly.time, HOUR_SECONDS, 'longText', hourly.condition.map((sky) => conditionCode(sky.token))),
@@ -411,8 +435,16 @@ export function locationInstance(reading: WeatherReading, place: Pick<WeatherPla
     updated: () => ({ timestamp: { value: reading.time }, shortText: { text: clockLabel(reading.time, offsetAt) } }),
   };
 
-  // every single value always goes out, and a series only when asked for, as the built-in does
-  const names = Object.keys(builders).filter((name) => !/^(hourly|daily)_/.test(name) || !asked || asked.includes(name));
+  // every single value always goes out, and a series only when asked for, as the built-in does. the
+  // coordinates are the one exception and go out only when asked for by name, since only a face that
+  // wants the wearer's place should get it
+  const names = Object.keys(builders).filter((name) => {
+    if (ASKED_FOR_ONLY.includes(name)) {
+      return Boolean(asked && asked.includes(name));
+    }
+
+    return !/^(hourly|daily)_/.test(name) || !asked || asked.includes(name);
+  });
   const properties: Record<string, SourceProperty> = {};
 
   names.forEach((name) => {

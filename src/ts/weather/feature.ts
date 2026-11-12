@@ -58,11 +58,9 @@ export interface WeatherFeature extends Feature {
   /**
    * The weather feature for a face that shows coordinates.
    *
-   * A Pebble app plugin's places carry no coordinates, so on a face built with `PLUGIN_WEATHER` this
-   * form offers no plugin choice and never reads its weather from a plugin, and it warns when the
-   * face lists the plugin among other providers. A face whose providers list is the plugin alone asked
-   * for nothing else, so it reads from the plugin anyway, with a warning that its coordinate readouts
-   * show no fix. A face with no unit key still reads the Pebble app's unit for its fetches.
+   * On a face built with `PLUGIN_WEATHER` this form is offered the plugin like the plain one. Its
+   * formatter gets the `latitude` and `longitude` a weather plugin serves, and a reading with no
+   * coordinates from a plugin that serves none, so the readout shows its no fix text.
    *
    * @param formatCoords Builds the face's coordinate keys from each weather result.
    * @return A feature to pass to startPebbleApp in place of the plain one.

@@ -251,6 +251,7 @@ export const DOLLAR_NAME = 'Rain$\'Check $$SETTINGS$$';
 export const DOLLAR_NOT_STANDARD_TEXT = 'Rain$\'Check $$SETTINGS$$ sends weather this watchface cannot read. Pick another weather plugin under Preferred Sources in the Pebble app, or another data source here.';
 export const PERMISSION_TEXT = 'This watchface needs Location to read the Pebble app\'s weather. Allow it for this watchface in the Pebble app.';
 export const SOURCE_TEXT = 'Your watch shows the weather for the first location in the Pebble app\'s weather settings.';
+export const COORDS_TEXT = 'The coordinates show only from a weather plugin that serves them.';
 export const PLUGINS_OFF_TEXT = 'The Pebble app is not offering this source right now. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
 
 // the supported plugins panel's own words, from ts/plugin-sources/panel.ts, copied for the same
@@ -869,6 +870,23 @@ export const SCENARIOS: Scenario[] = [
     },
     changes: [
       { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: ['LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'], notesVisible: [SOURCE_TEXT] },
+    ],
+    save: { WEATHER_PROVIDER: 'plugin' },
+  },
+  {
+    // the same face showing coordinates. it is offered the plugin too, and the source note adds that
+    // the coordinates show only from a plugin that serves them
+    name: 'mixed-weather-coords',
+    face: 'coords-face',
+    defines: { PLUGIN_WEATHER: 1 },
+    providers: { weather: ['plugin', 'openmeteo'] },
+    plugins: 'built-in.json',
+    load: {
+      visible: ['WEATHER_PROVIDER', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'],
+      options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'plugin'], lacks: ['owm', 'weatherapi'] }],
+    },
+    changes: [
+      { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: ['LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'], notesVisible: [`${SOURCE_TEXT} ${COORDS_TEXT}`] },
     ],
     save: { WEATHER_PROVIDER: 'plugin' },
   },
