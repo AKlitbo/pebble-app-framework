@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Added
 
 - Added a shared call ledger in `ts/quota/ledger.ts` for any metered provider, with limits per minute, hour, day, or month, each on the UTC clock or rolling, and a weight per call. The stock ledger keeps its exports and counts with it through the new `STOCK_QUOTA_PLANS`, and stamps saved by 6.1.0 read in as they are.
+- Added `fetchReading` to the Open-Meteo provider, which reads several places in one request into a `WeatherReading` from `ts/weather/reading.ts`, each on its own clock with every extra a weather plugin serves. `READING_WEIGHT` is what each place costs against Open-Meteo's limits.
+- Added `fetchReading` to the OpenWeatherMap and WeatherAPI.com providers, which take each place's current values from the provider and its series from one batched Open-Meteo request. `OWM_WMO` and `WEATHERAPI_WMO` give each provider's conditions their nearest WMO code.
 
 ## [6.1.0] - 2026-11-11
 

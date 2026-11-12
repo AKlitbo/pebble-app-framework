@@ -12,10 +12,12 @@
  *
  * The JSON layer the providers share sits on top. It must hand every reply on with its error, since
  * a bodyless 401 or 429 is only readable off the error, and it must bust the cache on every call.
+ * `guardRequest` wraps a request a caller did not write, so it has to answer once whatever that
+ * request does.
  */
 
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { request, safeParse, cacheBust, requestJson } from './request';
+import { request, safeParse, cacheBust, requestJson, guardRequest } from './request';
 import type { RequestFn } from './request';
 import { installFakeXhr } from '../testing/xhr';
 
@@ -220,5 +222,48 @@ describe('requestJson', () => {
     requestJson('https://x?a=1', stub, () => {});
 
     expect(calls[0]).toMatch(/^https:\/\/x\?a=1&_=\d+$/);
+  });
+});
+
+describe('guardRequest', () => {
+  /** A request that answered twice finished a reading's join early, and the second answer read an empty slot and threw. */
+  test('passes on only the first of two answers', () => {
+    const seen: Array<string | undefined> = [];
+    const twice: RequestFn = (_url, callback) => {
+      callback(null, 'a');
+      callback(null, 'b');
+    };
+
+    guardRequest(twice)('https://x', (_err, body) => seen.push(body));
+
+    expect(seen).toEqual(['a']);
+  });
+
+  /** A request that threw and then answered late gave the caller two answers, the made-up one and the real one. */
+  test('drops a late answer after a throw', () => {
+    const seen: Array<string | null> = [];
+    let late: () => void = () => {};
+    const throwing: RequestFn = (_url, callback) => {
+      late = () => callback(null, 'late');
+      throw new Error('no network stack');
+    };
+
+    guardRequest(throwing)('https://x', (err) => seen.push(err));
+    late();
+
+    expect(seen).toEqual(['network error']);
+  });
+
+  /** A request that answered and then threw took the rest of a run down, so the other places were never asked. */
+  test('keeps a throw after the answer from reaching the caller', () => {
+    const seen: Array<string | undefined> = [];
+    const answerThenThrow: RequestFn = (_url, callback) => {
+      callback(null, 'a');
+      throw new Error('cleanup failed');
+    };
+
+    guardRequest(answerThenThrow)('https://x', (_err, body) => seen.push(body));
+
+    expect(seen).toEqual(['a']);
   });
 });

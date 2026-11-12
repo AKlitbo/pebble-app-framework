@@ -8,7 +8,11 @@
 import util from '../util';
 import { joinCalls } from '../../pkjs/providers';
 import openMeteo from './openmeteo';
-import type { RequestFn, DoneFn, WeatherOpts, WeatherResult, ForecastCols } from '../util';
+import type { RequestFn, DoneFn, WeatherOpts, WeatherResult, ForecastCols, WeatherCoords } from '../util';
+import { fetchPairedReading } from './paired-reading';
+import type { ProviderCurrent } from './paired-reading';
+import { readingStatus, valueOrGap } from '../reading';
+import type { ReadingCondition, ReadingResult, ReadingStatus } from '../reading';
 
 const WEATHER_API_URL = 'https://api.weatherapi.com/v1/forecast.json';
 
@@ -30,6 +34,29 @@ const WEATHERAPI_CODE: Record<number, string> = {
   1069: 'FZRN', 1198: 'FZRN', 1201: 'FZRN', 1204: 'FZRN', 1207: 'FZRN', 1249: 'FZRN', 1252: 'FZRN',
   1237: 'FZRN', 1261: 'FZRN', 1264: 'FZRN',
   1087: 'STRM', 1273: 'STRM', 1276: 'STRM', 1279: 'STRM', 1282: 'STRM',
+};
+
+/**
+ * The nearest WMO weather code for each condition code WeatherAPI publishes, from the codes
+ * Open-Meteo uses.
+ *
+ * Each code keeps to the token `WEATHERAPI_CODE` gives, so sleet and ice pellets read as freezing rain
+ * and snow with thunder as a thunderstorm. Haze, smoke, dust, sand, and smog take fog, the nearest sky
+ * that hides the view. The face has no token for most of those, so a reading takes fog's token with
+ * the code.
+ */
+export const WEATHERAPI_WMO: Record<number, number> = {
+  1000: 0, 1003: 2, 1006: 3, 1009: 3,
+  1012: 45, 1015: 45, 1018: 45, 1021: 45, 1024: 45, 1027: 45, 1030: 45, 1033: 45, 1036: 45, 1039: 45, 1042: 45, 1045: 45, 1048: 45,
+  1135: 45, 1147: 48,
+  1063: 61, 1180: 61, 1183: 61, 1186: 63, 1189: 63, 1192: 65, 1195: 65,
+  1240: 80, 1243: 81, 1246: 82,
+  1150: 51, 1153: 51,
+  1072: 56, 1168: 56, 1171: 57,
+  1066: 71, 1210: 71, 1213: 71, 1216: 73, 1219: 73, 1222: 75, 1225: 75, 1114: 73, 1117: 75,
+  1255: 85, 1258: 86,
+  1069: 66, 1198: 66, 1201: 67, 1204: 66, 1207: 67, 1249: 66, 1252: 67, 1237: 66, 1261: 66, 1264: 67,
+  1087: 95, 1273: 95, 1276: 95, 1279: 95, 1282: 95,
 };
 
 export interface WeatherApiDay {
@@ -67,9 +94,10 @@ export interface WeatherApiResponse {
   error?: { message?: string; code?: number };
   location?: { name?: string; lat?: number; lon?: number; localtime?: string; localtime_epoch?: number };
   current?: {
+    last_updated_epoch?: number;
     condition?: { code?: number; text?: string };
     temp_f?: number; temp_c?: number; is_day?: number;
-    humidity?: number; wind_kph?: number; wind_dir?: string; uv?: number;
+    humidity?: number; wind_kph?: number; wind_degree?: number; wind_dir?: string; uv?: number;
     feelslike_f?: number; feelslike_c?: number; pressure_mb?: number;
     dewpoint_f?: number; dewpoint_c?: number;
   };
@@ -211,4 +239,112 @@ function fetch(opts: WeatherOpts, request: RequestFn, done: DoneFn): void {
   }
 }
 
-export default { fetch, parseWeather };
+/** What one place costs against WeatherAPI.com's limits in `fetchReading`, one call. */
+export const READING_WEIGHT = 1;
+
+/**
+ * The place's offset from UTC in seconds, from its local time beside the UTC moment, or null. Every
+ * zone sits on a quarter hour, so the gap is rounded to 15 minutes, which also covers a local time a
+ * minute or so behind its moment.
+ */
+function offsetOf(localtime: unknown, epochSeconds: unknown): number | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2}) (\d{1,2}):(\d{2})$/.exec(String(localtime || ''));
+  const epoch = valueOrGap(epochSeconds);
+
+  if (!match || epoch === null) {
+    return null;
+  }
+
+  const wall = Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4]), Number(match[5]));
+
+  return Math.round((wall / 1000 - epoch) / 900) * 900;
+}
+
+/**
+ * The sky from WeatherAPI's current condition, read the way the face's fetch reads it. Where the face
+ * has no token but the code has a WMO code, the token is the code's, so the two never name different
+ * skies.
+ */
+function weatherApiCondition(condition: { code?: number; text?: string }, isDay: unknown): ReadingCondition {
+  const code = Number(condition.code);
+  const wmo = Object.prototype.hasOwnProperty.call(WEATHERAPI_WMO, code) ? WEATHERAPI_WMO[code] : null;
+
+  const token = util.applyNight(WEATHERAPI_CODE[code] || condition.text || '', true);
+
+  return {
+    token: token === 'UNKNOWN' && wmo !== null ? util.wmoToCondition(wmo) : token,
+    wmo,
+    isDay: isDay === 1 ? true : isDay === 0 ? false : null,
+  };
+}
+
+/**
+ * Reads a WeatherAPI answer, or its error, into a place's current values.
+ *
+ * A 429 is `RATE LIMIT` whatever the body says. An error body is read the way the face reads it, so
+ * an invalid or disabled key is `INVALID KEY` and a spent monthly quota is `RATE LIMIT` with its
+ * `limit` set to `month`.
+ */
+function parseWeatherApiCurrent(err: string | null, json: WeatherApiResponse | null): ProviderCurrent | ReadingStatus {
+  if (err === 'http 429') {
+    return readingStatus('Rate Limit');
+  }
+
+  if (!json) {
+    return readingStatus(err ? 'NET ERROR' : 'BAD WX DATA');
+  }
+
+  if (json.error) {
+    const status = readingStatus(parseWeather(json, {}).condition);
+
+    // 2007 is the month's calls spent, so the key answers nothing until the 1st
+    if (Number(json.error.code) === 2007) {
+      status.limit = 'month';
+    }
+
+    return status;
+  }
+
+  const current = json.current;
+  const temperature = valueOrGap(current?.temp_c);
+
+  if (!current || !current.condition || temperature === null) {
+    return readingStatus('No Wx Data');
+  }
+
+  return {
+    time: valueOrGap(current.last_updated_epoch) ?? valueOrGap(json.location?.localtime_epoch),
+    utcOffset: offsetOf(json.location?.localtime, json.location?.localtime_epoch),
+    temperature,
+    feelsLike: valueOrGap(current.feelslike_c),
+    condition: weatherApiCondition(current.condition, current.is_day),
+    humidity: valueOrGap(current.humidity),
+    windSpeed: valueOrGap(current.wind_kph),
+    windDirection: valueOrGap(current.wind_degree),
+    uvIndex: valueOrGap(current.uv),
+    pressure: valueOrGap(current.pressure_mb),
+    dewPoint: valueOrGap(current.dewpoint_c),
+  };
+}
+
+/**
+ * Fetches a reading for several places from WeatherAPI.com, with the series, the offset, and the
+ * sun times from one batched Open-Meteo request.
+ *
+ * It asks for one day of forecast, the least the forecast endpoint takes, since only the current
+ * values are read from it.
+ *
+ * @param places Each place's coordinates, in the order the readings come back.
+ * @param key The wearer's WeatherAPI.com key.
+ * @param request The function that performs the actual network request.
+ * @param done Called once with a reading or a status for each place, in the order asked.
+ */
+export function fetchReading(places: Array<WeatherCoords | null | undefined>, key: string, request: RequestFn, done: (results: ReadingResult[]) => void): void {
+  fetchPairedReading<WeatherApiResponse>({
+    source: 'weatherapi',
+    urlFor: (coords, apiKey) => `${WEATHER_API_URL}?key=${encodeURIComponent(apiKey)}&q=${encodeURIComponent(`${coords.lat},${coords.lon}`)}&days=1`,
+    parse: parseWeatherApiCurrent,
+  }, places, key, request, done);
+}
+
+export default { fetch, parseWeather, fetchReading };

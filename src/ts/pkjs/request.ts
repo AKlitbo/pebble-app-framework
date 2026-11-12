@@ -124,3 +124,46 @@ export function requestJson<T = unknown>(url: string, get: RequestFn, onJson: (e
     onJson(err, json ? (json as T) : null);
   });
 }
+
+/**
+ * Wraps a request so it answers once, and so one that throws answers `network error` rather than
+ * throwing out of the caller.
+ *
+ * Only the first answer goes through. A request that answers twice, or throws and then answers late,
+ * has the rest dropped. A throw from the callback itself is the caller's own code failing, so that is
+ * thrown on.
+ *
+ * @param get The HTTP GET to wrap.
+ * @return The same GET, answering once, with a throw read as a request that never reached the host.
+ */
+export function guardRequest(get: RequestFn): RequestFn {
+  return (url, callback) => {
+    let answered = false;
+    let callbackThrew = false;
+
+    const answer = (err: string | null, body?: string) => {
+      if (answered) {
+        return;
+      }
+
+      answered = true;
+
+      try {
+        callback(err, body);
+      } catch (error) {
+        callbackThrew = true;
+        throw error;
+      }
+    };
+
+    try {
+      get(url, answer);
+    } catch (error) {
+      if (callbackThrew) {
+        throw error;
+      }
+
+      answer('network error');
+    }
+  };
+}
