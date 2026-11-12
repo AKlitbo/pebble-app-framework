@@ -64,7 +64,7 @@ With no list or a mixed list, the weather's Data Source select gains **Pebble Ap
 
 The stocks' Data Source select gains Preferred Source the same way when a plugin on the phone serves `finance/stock`. Picking it reads the quotes from the stock plugin the wearer prefers, which keeps its own list of tickers. The select goes first in its section, under the heading, and while it is picked the lead line, the API key, Paid Plan, and the tickers hide, and a note under the select says the watch shows the first four tickers the plugin sends.
 
-The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads **Pebble App: Preferred Source (No Stock Plugin)**, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel says under Stocks that the phone lists no stock plugin.
+The Pebble app has no stock plugin of its own, so a phone with plugins on and no stock plugin installed is the usual state. On that phone the option a saved plugin choice keeps reads **Pebble App: Preferred Source (No Stock Plugin)**, and the note under it, or on a plugin only page the note in the stock card, says to get a stock plugin from the Pebble app store. The supported plugins panel lists Stocks + Crypto under Stocks, with its store listing.
 
 The calendar's page has no source select of its own, since without plugins it would hold one option. The calendar adds a **Calendar Source** select, with **iCal Link** and Preferred Source, under the leading heading and text rows of the section holding the iCal link. A phone with no plugin serving the events leaves it one option, so the select goes and the page shows the link as it would without the define.
 
@@ -138,7 +138,28 @@ A face built with any plugin define gets one more row at the foot of its setting
 * **Plugins the Table Does Not Know.** A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as **Unnamed Plugin** when it has none, and reads **Installed**.
 * **Plugins Off.** When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.
 
-The table of known plugins is [`directory.ts`](../../src/ts/plugin-sources/directory.ts). It is copied by hand from the appstore, so it ages, and each framework release refreshes it. It holds no stock plugin, so the Stocks heading lists only the stock plugins on the phone.
+The panel's headings are in [`directory.ts`](../../src/ts/plugin-sources/directory.ts), and the plugins it knows are in [`known-plugins.json`](../../src/known-plugins.json), which the table below is written from. A kind a plugin serves that the panel has no heading for, such as `finance/crypto`, is left off the panel.
+
+### Supported Plugins
+
+These are the plugins the panel knows, by the kinds they serve. **What It Serves** is what each serves for the kind, where the standard fields are the ones the Pebble app's own plugin of that kind serves. [Fetching the Weather](fetching-the-weather.md#from-a-pebble-app-plugin) covers which of a weather plugin's fields a face reads.
+
+<!-- known-plugins:start -->
+
+| Kind | Plugin | Maker | What It Serves | Last Verified |
+| :-- | :-- | :-- | :-- | :-- |
+| `weather/location` | Weather | Pebble | The standard fields | Built In, 10 Nov 2026 |
+| `weather/location` | [MET Norway Weather](https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e) | Pebble | The standard fields | 1.0.5, 12 Nov 2026 |
+| `calendar/event` | Calendar | Pebble | The standard fields | Built In, 10 Nov 2026 |
+| `calendar/event` | [Calendar + iCal](https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660) | Null Syntax | The standard fields, with the events of up to two iCal links merged into the agenda | 1.0.1, 12 Nov 2026 |
+| `music/track` | Music (Android Only) | Pebble | The standard fields | Built In, 10 Nov 2026 |
+| `phone/phone_state` | Phone | Pebble | The standard fields | Built In, 10 Nov 2026 |
+| `finance/stock` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Pebble's five stock fields, and the currency, the quote time, the source, and the market state | 1.0.0, 12 Nov 2026 |
+| `finance/crypto` | [Stocks + Crypto](https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7) | Null Syntax | Crypto pairs | 1.0.0, 12 Nov 2026 |
+
+<!-- known-plugins:end -->
+
+The list is copied by hand from the Pebble appstore, so it ages as plugins are published. Each entry in `known-plugins.json` records the version it was last checked against in `verifiedVersion`, `Built In` for one built into the Pebble app, and the date in `verifiedOn`. Update both whenever an entry is checked again against a new version of the plugin. After a change to the file, `npm --prefix docs run plugin-table` writes the table again, and a docs spec fails while the table and the file differ.
 
 **Links.** A plain link on a Clay page would load inside the settings web view and lose the wearer's unsaved settings. The Pebble app gives a settings page `Pebble.openUrl` while plugins are on, which asks before opening the link in the phone's browser. So a store plugin's name is a link only when the page has `Pebble.openUrl`, and is plain text with the listing's address under it otherwise.
 

@@ -12,8 +12,8 @@ A face builds in only the parts it uses. The phone fetches the weather, stock qu
 - Weather from OpenWeatherMap, WeatherAPI, or Open-Meteo, with forecasts.
 - Stock quotes from Yahoo, Finnhub, Twelve Data, or Alpha Vantage, held inside each provider's free plan unless the wearer has a paid one.
 - Calendars from iCal links, kept as one agenda for the week.
-- Readings from Pebble app plugins: the weather, stocks, the phone's calendars, now playing, and the phone's battery.
-- Plugin apps, Pebble app plugins with no watch code that serve data to any face.
+- Readings from Pebble app plugins: the weather, stocks, the phone's calendars, now playing, and the phone's battery. The [Supported Plugins](docs/how/plugin-sources.md#supported-plugins) table lists the plugins a face can read from.
+- Plugin apps, Pebble app plugins with no watch code that serve data to any face, including the weather from Open-Meteo, OpenWeatherMap, or WeatherAPI.com with each provider's calls counted against its plan.
 - Steps, heart rate, and heart rate variability from the watch's health service.
 - Sunrise and sunset, the moon, tides, time zones, and time bands, worked out on the watch with no phone.
 - A Clay settings page with a key for each provider, rows that show and hide with other settings, and a face's own components.
@@ -71,6 +71,7 @@ Everything a face gets lives under `src/`, which is the folder paf copies, witho
 | `src/waf/` | The waf helpers that stage and build a face, and the wscript template each build target gets. |
 | `src/plugins/` | What a face opts into, each with its own `package.json` and dependencies. |
 | `src/toolchain.json` | The SDK, pebble-tool, and Node the framework is built with. paf and `setup-pebble` read it from a unit's `paf/`. |
+| `src/known-plugins.json` | The Pebble app plugins the settings page's supported plugins panel knows, and the docs' Supported Plugins table is written from. |
 | `src/tsconfig*.json` | The compiler options a face's TypeScript builds with, and the ones its own spec and tools tsconfigs extend. |
 
 ## Plugins

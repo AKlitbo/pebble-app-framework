@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Weather",
+    "uuid": "00000000-0000-0000-0001-000000000002",
+    "storeId": null,
+    "storeSlug": null,
+    "serves": ["weather/location"],
+    "maker": "Pebble",
+    "verifiedVersion": "Built In",
+    "verifiedOn": "2026-11-10"
+  },
+  {
+    "name": "Calendar",
+    "uuid": "00000000-0000-0000-0001-000000000004",
+    "storeId": null,
+    "storeSlug": null,
+    "serves": ["calendar/event"],
+    "maker": "Pebble",
+    "verifiedVersion": "Built In",
+    "verifiedOn": "2026-11-10"
+  },
+  {
+    "name": "Music",
+    "uuid": "00000000-0000-0000-0001-000000000003",
+    "storeId": null,
+    "storeSlug": null,
+    "serves": ["music/track"],
+    "maker": "Pebble",
+    "where": "Android Only",
+    "verifiedVersion": "Built In",
+    "verifiedOn": "2026-11-10"
+  },
+  {
+    "name": "Phone",
+    "uuid": "00000000-0000-0000-0001-000000000001",
+    "storeId": null,
+    "storeSlug": null,
+    "serves": ["phone/phone_state"],
+    "maker": "Pebble",
+    "verifiedVersion": "Built In",
+    "verifiedOn": "2026-11-10"
+  },
+  {
+    "name": "MET Norway Weather",
+    "uuid": "323dc117-55bd-455f-9ee4-4d0faba56ea1",
+    "storeId": "6972cb1f33e343d69e5b788e",
+    "storeSlug": "met-norway-weather",
+    "serves": ["weather/location"],
+    "maker": "Pebble",
+    "verifiedVersion": "1.0.5",
+    "verifiedOn": "2026-11-12"
+  },
+  {
+    "name": "Calendar + iCal",
+    "uuid": "c6b7d0a7-32b5-47f2-9839-becd04965da2",
+    "storeId": "22c2e12ca01244bfac7e2660",
+    "storeSlug": "calendar-ical",
+    "serves": ["calendar/event"],
+    "maker": "Null Syntax",
+    "verifiedVersion": "1.0.1",
+    "verifiedOn": "2026-11-12",
+    "gives": {
+      "calendar/event": "The standard fields, with the events of up to two iCal links merged into the agenda"
+    }
+  },
+  {
+    "name": "Stocks + Crypto",
+    "uuid": "77e6eeb3-340a-46f8-ba39-5e2000b6fce3",
+    "storeId": "aabbca2fe4f441deb2b5ace7",
+    "storeSlug": "stocks-crypto",
+    "serves": ["finance/stock", "finance/crypto"],
+    "maker": "Null Syntax",
+    "verifiedVersion": "1.0.0",
+    "verifiedOn": "2026-11-12",
+    "gives": {
+      "finance/stock": "Pebble's five stock fields, and the currency, the quote time, the source, and the market state",
+      "finance/crypto": "Crypto pairs"
+    }
+  }
+]

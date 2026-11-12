@@ -19,8 +19,9 @@ const BUILT_IN_WEATHER: PluginSummary = { uuid: '00000000-0000-0000-0001-0000000
 const BUILT_IN_CALENDAR: PluginSummary = { uuid: '00000000-0000-0000-0001-000000000004', name: 'Calendar', sources: [{ category: 'calendar', items: ['event'] }] };
 const MET_NORWAY: PluginSummary = { uuid: '323dc117-55bd-455f-9ee4-4d0faba56ea1', name: 'MET Norway Weather', sources: [{ category: 'weather', items: ['location'] }] };
 
-// where MET Norway Weather's listing is on the store
+// where MET Norway Weather's and Stocks + Crypto's listings are on the store
 const MET_NORWAY_LISTING = 'https://apps.repebble.com/met-norway-weather_6972cb1f33e343d69e5b788e';
+const STOCKS_CRYPTO_LISTING = 'https://apps.repebble.com/stocks-crypto_aabbca2fe4f441deb2b5ace7';
 
 /** A page with a section and the save button at its foot, as the config builder lays one out. */
 function page(): ClayConfigItem[] {
@@ -227,20 +228,32 @@ describe('the kinds only a plugin serves', () => {
     expect(result).toBe(escapeHtml(`${BUILT_IN_TAG}, Android Only, ${OFF_TAG}`));
   });
 
-  /** The directory knows no stock plugin, so a stock plugin on the phone is the only thing that can fill the Stocks heading. */
-  test('lists a stock plugin on the phone under Stocks', () => {
+  /** A stock plugin on the phone the directory does not know still serves the face, so it is listed after the store one. */
+  test('lists a stock plugin on the phone under Stocks after Stocks + Crypto', () => {
     const plugin = { uuid: 'stock-uuid', name: 'My Stocks', sources: [{ category: 'finance', items: ['stock'] }] };
 
     const result = panelFor([plugin], [['finance', 'stock']]).kinds[0];
 
-    expect(result).toEqual({ category: 'finance', item: 'stock', label: 'Stocks', entries: [{ name: 'My Stocks', tag: INSTALLED_TAG, listing: '' }] });
+    expect(result).toEqual({
+      category: 'finance',
+      item: 'stock',
+      label: 'Stocks',
+      entries: [
+        { name: 'Stocks + Crypto', tag: '', listing: STOCKS_CRYPTO_LISTING },
+        { name: 'My Stocks', tag: INSTALLED_TAG, listing: '' },
+      ],
+    });
   });
 
-  /** The Pebble app has no stock plugin of its own, so a Stocks heading with nothing under it would read as broken. */
-  test('says under Stocks that the phone lists no stock plugin', () => {
+  /**
+   * The Pebble app has no stock plugin of its own, so a wearer with none installed is pointed at the
+   * store's. While the directory knows one, the Stocks heading always has it, and the line saying the
+   * phone lists none stays off.
+   */
+  test('points a phone with no stock plugin at Stocks + Crypto', () => {
     const result = panelFor([BUILT_IN_PHONE], [['finance', 'stock']]).kinds[0];
 
-    expect(result).toMatchObject({ label: 'Stocks', entries: [], none: escapeHtml('The Pebble app lists no stock plugin on this phone. Get one from the Pebble app store.') });
+    expect(result).toEqual({ category: 'finance', item: 'stock', label: 'Stocks', entries: [{ name: 'Stocks + Crypto', tag: '', listing: STOCKS_CRYPTO_LISTING }] });
   });
 
   /** With plugins off, or a list the phone will not give, the stock plugin may be installed, so saying none is would send the wearer to the store for one they have. */

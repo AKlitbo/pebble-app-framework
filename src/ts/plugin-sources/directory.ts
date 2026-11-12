@@ -1,15 +1,17 @@
 /**
  * The Pebble app plugins the framework knows of, for the supported plugins panel on the settings page.
  *
- * The table is copied by hand from the Pebble appstore, so it goes out of date as plugins are
- * published, and each release refreshes it. A face cannot install a plugin itself, so the panel
- * points the wearer at a store plugin's listing. A plugin built into the Pebble app has no listing
- * and needs no install. A kind with no store plugin lists only the built-in one, which is now playing
- * and the phone's battery as of the date below. The table has no stock plugin, so for stocks the panel
- * lists only the ones on the phone, and says so when there are none.
- *
- * Last refreshed from the store on 2026-11-06.
+ * The list lives in src/known-plugins.json, which the Supported Plugins table in the docs is built
+ * from too. It is copied by hand from the Pebble appstore, so it goes out of date as plugins are
+ * published, and each entry records the version it was last checked against and when. A face cannot
+ * install a plugin itself, so the panel points the wearer at a store plugin's listing. A plugin built
+ * into the Pebble app has no listing and needs no install. A kind with no store plugin lists only the
+ * built-in one, which is now playing and the phone's battery. The panel lists only the kinds in
+ * `PANEL_KINDS`, so a kind an entry serves that the panel has no heading for, such as `finance/crypto`,
+ * is left off the panel.
  */
+
+import knownPlugins from '../../known-plugins.json';
 
 /** One item a plugin serves, such as `weather/location`. */
 export interface ServedItem {
@@ -31,6 +33,27 @@ export interface KnownPlugin {
   serves: ServedItem[];
   /** A few words on where it runs, for one built in on only some phones, such as `Android Only`. */
   where?: string;
+  /** Who makes it, such as Pebble for one built into the Pebble app. */
+  maker: string;
+  /** The version it was last checked against, `Built In` for one built into the Pebble app, or null when it has not been re-checked. */
+  verifiedVersion: string | null;
+  /** When it was last checked, as YYYY-MM-DD, or null with `verifiedVersion`. */
+  verifiedOn: string | null;
+}
+
+/** One entry as src/known-plugins.json keeps it, with each item it serves as `category/item`. */
+export interface KnownPluginEntry {
+  name: string;
+  uuid: string;
+  storeId: string | null;
+  storeSlug: string | null;
+  serves: string[];
+  maker: string;
+  where?: string;
+  verifiedVersion: string | null;
+  verifiedOn: string | null;
+  /** What it serves for a kind, beyond the standard fields, for the docs' Supported Plugins table. */
+  gives?: Record<string, string>;
 }
 
 /** One kind of data the panel can list plugins for, and its heading in plain words. */
@@ -56,45 +79,44 @@ export const PANEL_KINDS: readonly PanelKind[] = [
   { category: 'phone', item: 'phone_state', label: 'Phone Battery' },
 ];
 
-// TODO: add the two stock plugins once their store listings are confirmed. Pebble's Stocks is
-// 2c4b7f10-9a3d-4e6b-8f21-5d0c7e9a1b34, and Stocks + Crypto is 77e6eeb3-340a-46f8-ba39-5e2000b6fce3
-/** Every plugin the panel knows, built-in ones first, then store ones. */
-export const KNOWN_PLUGINS: readonly KnownPlugin[] = [
-  {
-    name: 'Weather',
-    uuid: '00000000-0000-0000-0001-000000000002',
-    storeId: null,
-    serves: [{ category: 'weather', item: 'location' }],
-  },
-  {
-    name: 'Calendar',
-    uuid: '00000000-0000-0000-0001-000000000004',
-    storeId: null,
-    serves: [{ category: 'calendar', item: 'event' }],
-  },
-  {
-    // the Pebble app builds its music plugin into the Android app alone, and as of the date above no
-    // store plugin serves the track on iOS
-    name: 'Music',
-    uuid: '00000000-0000-0000-0001-000000000003',
-    storeId: null,
-    serves: [{ category: 'music', item: 'track' }],
-    where: 'Android Only',
-  },
-  {
-    name: 'Phone',
-    uuid: '00000000-0000-0000-0001-000000000001',
-    storeId: null,
-    serves: [{ category: 'phone', item: 'phone_state' }],
-  },
-  {
-    name: 'MET Norway Weather',
-    uuid: '323dc117-55bd-455f-9ee4-4d0faba56ea1',
-    storeId: '6972cb1f33e343d69e5b788e',
-    storeSlug: 'met-norway-weather',
-    serves: [{ category: 'weather', item: 'location' }],
-  },
-];
+/**
+ * The kinds a known plugin serves that the panel has no heading for yet, which it leaves off. A kind
+ * neither here nor in `PANEL_KINDS` is a typo in the data file.
+ */
+export const UNPANELLED_KINDS: readonly string[] = ['finance/crypto'];
+
+/**
+ * One entry from the data file as the panel reads it, with each item it serves split into its
+ * category and item.
+ *
+ * @param entry The entry as the file keeps it.
+ * @return The plugin.
+ */
+export function knownPlugin(entry: KnownPluginEntry): KnownPlugin {
+  const plugin: KnownPlugin = {
+    name: entry.name,
+    uuid: entry.uuid,
+    storeId: entry.storeId,
+    serves: entry.serves.map((kind) => ({ category: kind.slice(0, kind.indexOf('/')), item: kind.slice(kind.indexOf('/') + 1) })),
+    maker: entry.maker,
+    verifiedVersion: entry.verifiedVersion,
+    verifiedOn: entry.verifiedOn,
+  };
+
+  if (entry.storeSlug) {
+    plugin.storeSlug = entry.storeSlug;
+  }
+
+  if (entry.where) {
+    plugin.where = entry.where;
+  }
+
+  return plugin;
+}
+
+// TODO: add Pebble's Stocks, 2c4b7f10-9a3d-4e6b-8f21-5d0c7e9a1b34, once its store listing is confirmed
+/** Every plugin the panel knows, built-in ones first, then store ones, from src/known-plugins.json. */
+export const KNOWN_PLUGINS: readonly KnownPlugin[] = (knownPlugins as KnownPluginEntry[]).map(knownPlugin);
 
 /**
  * The address of a plugin's store listing.

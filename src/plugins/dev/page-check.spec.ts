@@ -9,9 +9,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { ANDROID_ONLY, BUILT_IN_TAG, OFF_TAG, CALENDAR_EMPTY_TEXT, CALENDAR_NOT_STANDARD_TEXT, CALENDAR_PERMISSION_TEXT, CALENDAR_SOURCE_TEXT, DOLLAR_NAME, DOLLAR_NOT_STANDARD_TEXT, INSTALLED_TAG, MET_NORWAY_LISTING, MUSIC_NO_PLUGIN_TEXT, MUSIC_NOT_STANDARD_TEXT, MUSIC_PERMISSION_TEXT, NOT_STANDARD_TEXT, STOCK_NO_PLUGIN_TEXT, STOCK_SOURCE_TEXT, PANEL_OFF_TEXT, PANEL_TITLE, PERMISSION_TEXT, PHONE_NO_PLUGIN_TEXT, PLUGINS_OFF_TEXT, PLUGIN_FILES, SCENARIOS, SETTINGS_FILES, SOURCE_TEXT, customFnProblems, expectationProblems, locationFieldProblems, paddingProblems, themePickerProblems, panelProblems, pickScenarios, saveProblems, savedPayload, scenarioFace, withAndroidHead, type LocationField, type Observed, type ThemePicker, type ObservedPadding, type ObservedPanel, type PaddingRow, type PanelExpectation, type Scenario } from './page-check.ts';
+import { ANDROID_ONLY, BUILT_IN_TAG, OFF_TAG, CALENDAR_EMPTY_TEXT, CALENDAR_NOT_STANDARD_TEXT, CALENDAR_PERMISSION_TEXT, CALENDAR_SOURCE_TEXT, DOLLAR_NAME, DOLLAR_NOT_STANDARD_TEXT, INSTALLED_TAG, MET_NORWAY_LISTING, STOCKS_CRYPTO_LISTING, MUSIC_NO_PLUGIN_TEXT, MUSIC_NOT_STANDARD_TEXT, MUSIC_PERMISSION_TEXT, NOT_STANDARD_TEXT, STOCK_NO_PLUGIN_TEXT, STOCK_SOURCE_TEXT, PANEL_OFF_TEXT, PANEL_TITLE, PERMISSION_TEXT, PHONE_NO_PLUGIN_TEXT, PLUGINS_OFF_TEXT, PLUGIN_FILES, SCENARIOS, SETTINGS_FILES, SOURCE_TEXT, customFnProblems, expectationProblems, locationFieldProblems, paddingProblems, themePickerProblems, panelProblems, pickScenarios, saveProblems, savedPayload, scenarioFace, withAndroidHead, type LocationField, type Observed, type ThemePicker, type ObservedPadding, type ObservedPanel, type PaddingRow, type PanelExpectation, type Scenario } from './page-check.ts';
 import { WEATHER_TEXTS } from '../../ts/plugin-sources/weather.ts';
 import { CALENDAR_TEXTS } from '../../ts/plugin-sources/calendar.ts';
+import { CALENDAR_ICAL_LISTING } from './page-check.ts';
 import { MUSIC_TEXTS } from '../../ts/plugin-sources/music.ts';
 import { PHONE_TEXTS } from '../../ts/plugin-sources/phone.ts';
 import { STOCK_TEXTS } from '../../ts/plugin-sources/stocks.ts';
@@ -307,10 +308,14 @@ describe('the words and addresses the panel scenarios look for', () => {
   });
 
   /** A copy that drifted from the directory would have the check pass links to a listing the panel no longer opens. */
-  test('match the directory\'s listing for MET Norway Weather', () => {
-    const result = storeListing(KNOWN_PLUGINS.find((plugin) => plugin.name === 'MET Norway Weather') as (typeof KNOWN_PLUGINS)[number]);
+  test.each([
+    ['MET Norway Weather', MET_NORWAY_LISTING],
+    ['Stocks + Crypto', STOCKS_CRYPTO_LISTING],
+    ['Calendar + iCal', CALENDAR_ICAL_LISTING],
+  ])('match the directory\'s listing for %s', (name, listing) => {
+    const result = storeListing(KNOWN_PLUGINS.find((plugin) => plugin.name === name) as (typeof KNOWN_PLUGINS)[number]);
 
-    expect(result).toBe(MET_NORWAY_LISTING);
+    expect(result).toBe(listing);
   });
 });
 

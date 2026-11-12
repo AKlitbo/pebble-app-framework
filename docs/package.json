@@ -14,7 +14,8 @@
     "format": "prettier --write \"site/**/*.{html,css,js}\" typedoc/pebble.css doxygen/pebble.css",
     "format:check": "prettier --check \"site/**/*.{html,css,js}\" typedoc/pebble.css doxygen/pebble.css",
     "ts": "typedoc --options typedoc.json",
-    "site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-site.ts"
+    "site": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/build-site.ts",
+    "plugin-table": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tools/plugin-table.ts"
   },
   "devDependencies": {
     "marked": "^18.1.2",
