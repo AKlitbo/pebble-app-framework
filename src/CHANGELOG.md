@@ -4,7 +4,7 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [6.2.0] - 2026-11-12
 
 ### Framework Changes
 
@@ -13,8 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a shared call ledger in `ts/quota/ledger.ts` for any metered provider, with minute, hour, day, and month limits, a weight per call, and `windowOpensAt` for when a full limit opens again. The stock ledger counts with it, and stamps saved by 6.1.0 read in as they are.
 - Added `fetchReading` to the Open-Meteo, OpenWeatherMap, and WeatherAPI.com providers, which reads several places into a `WeatherReading` on each place's own clock. Its `onSend` hook hears each request as it goes out, so a plugin stamps its ledger then and takes the stamp back on `NETWORK_ERROR`.
 - Added `ts/plugin-app/weather.ts`, which serves a `WeatherReading` from a plugin app as `weather/location`, with each place's `latitude` and `longitude` for a request that names them, and reads the wearer's places and units from the Pebble app.
+- Added `PROBE_STOPS` in `ts/stock/quotes.ts`, the statuses that end a round sent one ticker first after a backoff, for a plugin app that sends its tickers the way a face does.
 - Added the `pf-footer` class, which centres a text row under Save with no style of the page's own.
-- Added an optional number of days to `horizonFor` in `ts/calendar/window.ts`, for a window other than the week. `horizonFor(now, { days: 1 })` ends at the last second of today on the phone's clock, and a value that is not a whole number from 1 up gives the week. `parseIcal` takes the same count as its third argument, so its recurring events fill the longer window.
+- Added an optional number of days to `horizonFor` in `ts/calendar/window.ts` and to `parseIcal`, for a calendar window other than the week. Left out, the window stays the week. A count past 366 holds 366.
 
 #### Changed
 
@@ -36,8 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Fixed
 
 - Fixed a clear polar night from a weather plugin showing a sun, for a plugin that serves an hourly day flag.
-- Fixed a face or a stock or weather plugin not counting a call that timed out, or whose answer was lost, against its provider's limits. The Pebble app's `fetch` names every failure by its message alone, and `pluginRequest` answered each one as `NETWORK_ERROR`, so the plugin took the call back off its ledger. The face's request answered an XHR error the same way. Both now answer `timeout` or `FETCH_FAILED`, which keep the stamp. Only a request known never to have left answers `NETWORK_ERROR`, a site the wearer has not allowed on a plugin or a send that threw on a face. A face offline on a metered stock key spends one call each time its wait runs out, 15 minutes and then doubling up to two hours, and still shows `NET ERROR`.
-- Fixed every launch fetching the weather and the calendar twice, once as the phone came up and again for the watch's ask a moment after. An ask within a minute of a good fetch now resends that reading, kept by `ASK_GAP_MS` in `ts/pkjs/asks.ts`.
+- Fixed a face or a stock or weather plugin not counting a call that timed out, or whose answer was lost, against its provider's limits. Only a request known never to have left answers `NETWORK_ERROR` and is taken back. A face offline on a metered stock key still shows `NET ERROR`, and tries one ticker again after 15 minutes, doubling up to two hours.
+- Fixed every launch fetching the weather and the calendar twice. An ask within a minute of a good fetch now resends that reading.
 
 ## [6.1.0] - 2026-11-11
 
@@ -645,7 +646,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
-[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.1.0...HEAD
+[6.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.1.0...v6.2.0
 [6.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.0.0...v6.1.0
 [6.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v4.6.0...v5.0.0
