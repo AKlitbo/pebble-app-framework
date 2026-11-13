@@ -1,9 +1,12 @@
 {
   "name": "@paf/dev",
-  "description": "The screenshot harness and the Clay settings preview, for designing a face.",
+  "description": "The screenshot harness, the layout builder's panel pictures, and the Clay settings preview, for designing a face.",
   "author": "Null Syntax",
   "license": "AGPL-3.0-or-later OR PolyForm-Noncommercial-1.0.0",
   "private": true,
+  "dependencies": {
+    "sharp": "^0.35.5"
+  },
   "paf": {
     "gen": {},
     "check": [],
@@ -13,6 +16,9 @@
       },
       "tap-walk": {
         "script": "tap-walk.ts"
+      },
+      "thumbnails": {
+        "script": "thumbnails.ts"
       }
     }
   }

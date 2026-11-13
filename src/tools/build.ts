@@ -30,7 +30,9 @@ import { NO_START, type FaceStartFacts } from './manifest/feature-keys.ts';
 import { buildFace, describeBuild, type FaceBuild } from './pkjs/build-pkjs.ts';
 import { bundlePlugin } from './pkjs/build-plugin.ts';
 import { readPluginPage, renderPluginPage } from './pkjs/plugin-page.ts';
-import { checkPage, describePage, loadFacePage, pageFacts, readFaceStart, writeSettingsPage, type PlatformPage } from './pkjs/settings-page.ts';
+import { KNOWN_FIELDS, checkPage, describePage, loadFacePage, pageFacts, readFaceStart, writeSettingsPage, type PlatformPage } from './pkjs/settings-page.ts';
+import { appliedSettings } from './manifest/dev-header.ts';
+import { checkSettingTypes } from './manifest/dev-settings.ts';
 import { runPebble, type PebbleRun, type PebbleRunner } from './shared/pebble.ts';
 import { ToolError, reportFailure } from './shared/tool-error.ts';
 import { faceDir, listFaceNames } from './shared/faces.ts';
@@ -275,6 +277,16 @@ export async function buildOne(face: string, options: BuildOptions, steps: Build
   const facts = pageFacts(loaded);
 
   steps.check(face, loaded, facts, { messageKeys: written.messageKeys, textDefines: written.checked.textDefines });
+
+  // a dev build's settings go through the same catalogue as the page's, so each value is held to what
+  // the page offers on its key before the watch would quietly skip it or reset it
+  const devSwitches = prepared.info.devSwitches;
+
+  if (devSwitches) {
+    for (const { where, settings } of appliedSettings(devSwitches)) {
+      checkSettingTypes(settings, { counts: facts.counts, controls: facts.controls, known: KNOWN_FIELDS }, face, where);
+    }
+  }
 
   // a face's own key whose platforms open on different values gets no default, which a field reading it finds at compile
   facts.unsettled.forEach((key) => {

@@ -1,12 +1,14 @@
 /**
  * @file dev_walk.c
- * @brief The shared dev harness. It seeds the stores from a fixed fixture and
- * drives the theme walk. Compiled for any face that lists the dev plugin, and the linker drops
- * it from any face that never calls it, which is every release build.
+ * @brief The shared dev harness. It seeds the stores from a fixed fixture, or from the unit's
+ * paf.dev.config.json for a store the config seeds, and drives the theme walk or a walk the config
+ * lays out. Compiled for any face that lists the dev plugin, and the linker drops it from any face
+ * that never calls it, which is every release build.
  *
  * @ingroup lib_dev
  */
 #include "dev/dev_walk.h"
+#include "dev/dev_config.h"
 
 #include <time.h>
 
@@ -82,6 +84,7 @@ static const DevShot s_shots[] = {
 static DevWalkMode s_mode;          ///< Which walk is running
 static void (*s_apply_theme)(void); ///< The face's theme-apply hook, run before the engine rebuilds
 static uint8_t s_theme;             ///< The theme the walk is on
+static uint16_t s_step;             ///< The step a walk the config lays out is on
 static int s_hour;                  ///< The hour the face pinned the clock to
 static int s_minute;                ///< The minute the face pinned the clock to
 
@@ -116,8 +119,21 @@ static int16_t shot_temp(int16_t celsius)
  * live start took and takes none of its own, so seeding again on a tap re-seeds rather than stacking
  * handlers. The weather seed is in the wearer's unit as the settings hold it at the time.
  *
+ * A store the unit's paf.dev.config.json seeds takes the config's readings rather than the shot's, on
+ * every shot, so the theme walk only moves the stores the config leaves to the fixture. The clock
+ * takes the config's date too when it pins one.
+ *
  * @param shot The shot to seed from.
  */
+static void seed_shot(const DevShot *shot);
+
+/**
+ * @brief Seed the weather store from one shot.
+ *
+ * @param shot The shot to seed from.
+ */
+static void seed_shot_weather(const DevShot *shot);
+
 static void seed_shot(const DevShot *shot)
 {
     // the pinned clock, never ticking
@@ -126,8 +142,31 @@ static void seed_shot(const DevShot *shot)
     pinned.tm_hour = s_hour;
     pinned.tm_min = s_minute;
     pinned.tm_sec = 0;
+    dev_config_pin(&pinned);
     time_store_init((TimeConfig){.live = false, .minute_tick = false, .beats = false}, &pinned);
 
+    if (!dev_config_seed(DEV_STORE_WEATHER))
+    {
+        seed_shot_weather(shot);
+    }
+
+    if (!dev_config_seed(DEV_STORE_HEALTH))
+    {
+        HealthSeed health = {.hr = shot->hr, .steps = shot->steps, .calories = s_fixed.calories,
+                             .sleep_min = s_fixed.sleep_min, .active_min = s_fixed.active_min,
+                             .distance_m = s_fixed.distance_m};
+        health_store_init((HealthConfig){.live = false}, &health);
+    }
+
+    if (!dev_config_seed(DEV_STORE_SYSTEM))
+    {
+        SystemSeed system = {.battery = shot->battery, .charging = false, .bluetooth = shot->bluetooth};
+        system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
+    }
+}
+
+static void seed_shot_weather(const DevShot *shot)
+{
 #if defined(APPMESSAGE_HAS_WEATHER)
     // spread the empty seed so every reading the shot does not set (humidity, wind, uv, ...)
     // reads as "--" rather than a bogus 0
@@ -142,16 +181,9 @@ static void seed_shot(const DevShot *shot)
 #else
     // a face without weather can still link a weather readout, so the store is set up empty and
     // every reading shows dashes rather than the zeros an untouched store holds
+    (void)shot;
     weather_store_init((WeatherConfig){.live = false, .poll_min = 0}, NULL);
 #endif
-
-    HealthSeed health = {.hr = shot->hr, .steps = shot->steps, .calories = s_fixed.calories,
-                         .sleep_min = s_fixed.sleep_min, .active_min = s_fixed.active_min,
-                         .distance_m = s_fixed.distance_m};
-    health_store_init((HealthConfig){.live = false}, &health);
-
-    SystemSeed system = {.battery = shot->battery, .charging = false, .bluetooth = shot->bluetooth};
-    system_store_init((SystemConfig){.live = false, .vibe = NULL}, &system);
 }
 
 /**
@@ -178,7 +210,22 @@ static void apply_shot(uint8_t index)
  */
 static void tap_handler(AccelAxisType axis, int32_t direction)
 {
-    if (s_mode == DEV_WALK_THEMES)
+    if (s_mode == DEV_WALK_CONFIG)
+    {
+        uint16_t count = dev_config_walk_count();
+        s_step = count ? (uint16_t)((s_step + 1) % count) : 0;
+
+        // a step that switches the temperature unit seeds the weather again, the way a launch applies
+        // the settings before it seeds, so the readings match the new unit
+        if (dev_config_walk_show(s_step) && !dev_config_seed(DEV_STORE_WEATHER))
+        {
+            seed_shot_weather(&s_shots[0]);
+        }
+
+        if (s_apply_theme) s_apply_theme();
+        engine_rebuild();
+    }
+    else if (s_mode == DEV_WALK_THEMES)
     {
         uint8_t count = settings_enum_count(SETTING_THEME);
         s_theme = count ? (s_theme + 1) % count : 0;
@@ -198,30 +245,45 @@ void dev_walk_seed_stores(int hour, int min)
 
     seed_shot(&s_shots[0]);
 
+    if (!dev_config_seed(DEV_STORE_LOCATION))
+    {
 #if defined(APPMESSAGE_HAS_LOCATION)
-    LocationSeed location = {.lat = s_fixed.lat, .lon = s_fixed.lon};
-    location_store_init((LocationConfig){.live = false}, &location);
+        LocationSeed location = {.lat = s_fixed.lat, .lon = s_fixed.lon};
+        location_store_init((LocationConfig){.live = false}, &location);
 #else
-    location_store_init((LocationConfig){.live = false}, NULL);
+        location_store_init((LocationConfig){.live = false}, NULL);
 #endif
+    }
 
     // the stock and calendar stores start empty and pinned, so a settings save that reconfigures
     // them live leaves them alone rather than fetching real quotes and agendas. a face without their
     // keys skips them here, so the harness never drags their buffers into its dev build
 #if defined(HAS_MESSAGE_KEY_STOCK_STRIP)
-    stock_store_init((StockConfig){.live = false, .poll_min = 0}, NULL);
+    if (!dev_config_seed(DEV_STORE_STOCKS))
+    {
+        stock_store_init((StockConfig){.live = false, .poll_min = 0}, NULL);
+    }
 #endif
 #if defined(HAS_MESSAGE_KEY_CALENDAR_STRIP)
-    calendar_store_init((CalendarConfig){.live = false, .poll_min = 0}, NULL);
+    if (!dev_config_seed(DEV_STORE_CALENDAR))
+    {
+        calendar_store_init((CalendarConfig){.live = false, .poll_min = 0}, NULL);
+    }
 #endif
 
     // the phone battery and now playing stores start empty and pinned too. the seeded system store
     // hears no link change, so a live one would hold its reading through a drop
 #if defined(APPMESSAGE_HAS_PHONE)
-    phone_store_init((PhoneConfig){.live = false}, NULL);
+    if (!dev_config_seed(DEV_STORE_PHONE))
+    {
+        phone_store_init((PhoneConfig){.live = false}, NULL);
+    }
 #endif
 #if defined(APPMESSAGE_HAS_MUSIC)
-    music_store_init((MusicConfig){.live = false}, NULL);
+    if (!dev_config_seed(DEV_STORE_MUSIC))
+    {
+        music_store_init((MusicConfig){.live = false}, NULL);
+    }
 #endif
 }
 
@@ -230,11 +292,16 @@ void dev_walk_init(DevWalkMode mode, void (*apply_theme)(void))
     s_mode = mode;
     s_apply_theme = apply_theme;
     s_theme = 0;
+    s_step = 0;
 
     if (mode == DEV_WALK_THEMES)
     {
         settings_set_u8(SETTING_THEME, 0);
         apply_shot(0);
+    }
+    else if (mode == DEV_WALK_CONFIG && dev_config_walk_show(0) && !dev_config_seed(DEV_STORE_WEATHER))
+    {
+        seed_shot_weather(&s_shots[0]);
     }
 
     // re-colour the zones and swap the frame for the current theme, then repaint everything

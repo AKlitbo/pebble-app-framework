@@ -489,11 +489,16 @@ bool settings_was_fresh(void)
 
 void settings_save(void)
 {
+    // a dev build applies the dev config's settings and its walks' steps in memory, so any save on top
+    // of them, such as one from the emulator's phone or the time zone push on ready, would write them to
+    // flash over the wearer's own. a dev build never saves, which also drops a save made on its page,
+    // and costs nothing in a release build, where the build sets DEV_MODE to 0
+#if !(defined(DEV_MODE) && DEV_MODE)
     EACH_SCHEMA(schema)
     {
         save_schema(schema);
     }
-
+#endif
 }
 
 void settings_mark_restored(void)

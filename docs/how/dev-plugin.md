@@ -1,24 +1,24 @@
 # The Dev Plugin
 
-The `dev` plugin is for working on a face rather than wearing it. On the watch it has a harness that fills the stores with fixed readings and steps the face through its themes on a tap, so the same build draws the same screen every time it runs. On the computer, `clay-preview` builds the face's settings page into a file a browser opens, and `tap-walk` drives the emulator through the harness and saves a screenshot of every screen it reaches. A face lists the plugin once, `paf build <face> --dev` turns the harness on, and a file beside the unit's `paf.config.json` picks its walk and its clock. A build without `--dev` leaves the harness off, so none of it reaches a release.
+The `dev` plugin is for working on a face rather than wearing it. On the watch it has a harness that fills the stores with fixed readings and steps the face through its themes, its panels, or a list of screens on a tap, so the same build draws the same screen every time it runs. On the computer, `clay-preview` builds the face's settings page into a file a browser opens, `tap-walk` drives the emulator through the harness and saves a screenshot of every screen it reaches, and `thumbnails` crops the layout builder's panel pictures out of a walk. A face lists the plugin once, `paf build <face> --dev` turns the harness on, and a file beside the unit's `paf.config.json` picks its walk and its clock, and can set its settings, its readings, and walks of its own. A build without `--dev` leaves the harness off, so none of it reaches a release.
 
-The harness is [`dev_walk.h`](../../src/plugins/dev/c/dev/dev_walk.h) and [`dev_walk.c`](../../src/plugins/dev/c/dev/dev_walk.c) under `src/plugins/dev/c/dev/`, and a face calls it through the hooks in [`dev_hooks.h`](../../src/plugins/dev/c/dev/dev_hooks.h) beside them. The build reads the switches with [`dev-switches.ts`](../../src/tools/manifest/dev-switches.ts). The tools are [`clay-preview.ts`](../../src/plugins/dev/clay-preview.ts) and [`tap-walk.ts`](../../src/plugins/dev/tap-walk.ts) beside it. A face runs them with `paf tool <face> clay-preview` and `paf tool <face> tap-walk`, which [the paf commands](../paf/commands.md#paf-tool) cover. The framework repo also checks the settings page in a browser with `page-check.ts`, which [Checking the Page in a Browser](#checking-the-page-in-a-browser) covers.
+The harness is [`dev_walk.h`](../../src/plugins/dev/c/dev/dev_walk.h) and [`dev_walk.c`](../../src/plugins/dev/c/dev/dev_walk.c) under `src/plugins/dev/c/dev/`, with [`dev_config.h`](../../src/plugins/dev/c/dev/dev_config.h) and [`dev_config.c`](../../src/plugins/dev/c/dev/dev_config.c) beside them for what the file sets, and a face calls it through the hooks in [`dev_hooks.h`](../../src/plugins/dev/c/dev/dev_hooks.h). The build reads the switches with [`dev-switches.ts`](../../src/tools/manifest/dev-switches.ts), and writes the header the harness reads with [`dev-header.ts`](../../src/tools/manifest/dev-header.ts). The tools are [`clay-preview.ts`](../../src/plugins/dev/clay-preview.ts), [`tap-walk.ts`](../../src/plugins/dev/tap-walk.ts), and [`thumbnails.ts`](../../src/plugins/dev/thumbnails.ts) beside it. A face runs them with `paf tool <face> clay-preview`, `paf tool <face> tap-walk`, and `paf tool <face> thumbnails`, which [the paf commands](../paf/commands.md#paf-tool) cover. The framework repo also checks the settings page in a browser with `page-check.ts`, which [Checking the Page in a Browser](#checking-the-page-in-a-browser) covers.
 
 ## Listing the Plugin
 
-A unit lists the plugin under `plugins` in its `paf.config.json`, as `"dev": {}`. It takes no settings there, and the build stops on any, since the switches live in a file of their own that [Turning It On for a Dev Build](#turning-it-on-for-a-dev-build) covers. `paf` then copies it into the unit's `paf/plugins/dev/`, and both tools become available to every face in the unit.
+A unit lists the plugin under `plugins` in its `paf.config.json`, as `"dev": {}`. It takes no settings there, and the build stops on any, since the switches live in a file of their own that [Turning It On for a Dev Build](#turning-it-on-for-a-dev-build) covers. `paf` then copies it into the unit's `paf/plugins/dev/`, and its tools become available to every face in the unit.
 
 **The Harness Joins the Build.** The build stages each folder under a listed plugin's `c/` beside the framework's own C, so the plugin's `c/dev/` lands as `dev/` and a face includes `dev/dev_hooks.h`. A face can keep its own `src/c/dev/` folder, since only whole paths clash. A face with its own `dev/dev_walk.h` or `dev/dev_hooks.h` stops the build, which names both files rather than compile against whichever one the include path finds first.
 
 ## Fixed Readings for Screenshots
 
-`dev_walk_seed_stores(hour, minute)` starts the time, weather, health, system, and location stores from one fixture, with `live` false and the clock pinned. The `dev_seed_stores` hook calls it on the clock the switches pin, in place of those stores' live inits. The stock and calendar stores start empty with `live` false on a face that declares `STOCK_STRIP` or `CALENDAR_STRIP`, so a face that shows quotes or an agenda seeds its own after the call. The phone battery and now playing stores start empty the same way on a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after `settings_init`, since the weather seed takes the wearer's temperature unit. A seeded store shows its seed and nothing else, and [How the Stores Work](stores.md#seeded-for-screenshots) covers why nothing from the phone or the watch's services can replace it.
+`dev_walk_seed_stores(hour, minute)` starts the time, weather, health, system, and location stores from one fixture, with `live` false and the clock pinned. The `dev_seed_stores` hook calls it on the clock the switches pin, in place of those stores' live inits. The stock and calendar stores start empty with `live` false on a face that declares `STOCK_STRIP` or `CALENDAR_STRIP`, so a face that shows quotes or an agenda seeds its own after the call. The phone battery and now playing stores start empty the same way on a face that declares their keys, since the seeded system store tells them nothing about the link. Call it after `settings_init`, since the weather seed takes the wearer's temperature unit. A store the unit's `paf.dev.config.json` gives readings for takes those in place of the fixture, as [Readings from the Config](#readings-from-the-config) covers. A seeded store shows its seed and nothing else, and [How the Stores Work](stores.md#seeded-for-screenshots) covers why nothing from the phone or the watch's services can replace it.
 
 **The Fixture.** The readings come from a table of shots, one per step of the theme walk below, and the first shot is what a face shows with no walk running: 21 degrees Celsius and partly cloudy, a heart rate of 72, 8,431 steps, the battery at 64 percent, the phone connected, and the Quiet Time mark down. Every shot also carries the same 420 calories, 7 hours 11 minutes of sleep, 52 active minutes, and 5.3 km walked. The battery never reads as charging, and the system store has no next alarm. On a watch set to Fahrenheit each temperature goes in converted, so 21 degrees shows as 70F.
 
-**The Pinned Clock.** The time store gets the hour and minute the switches pin with the seconds at 0, and no ticker runs. The date is not pinned. It comes from the watch's clock when the stores are seeded, so a face that shows the date draws the day it runs, and a screenshot taken tomorrow differs in the date alone.
+**The Pinned Clock.** The time store gets the hour and minute the switches pin with the seconds at 0, and no ticker runs. Without a `date` in the file the date is not pinned. It comes from the watch's clock when the stores are seeded, so a face that shows the date draws the day it runs, and a screenshot taken tomorrow differs in the date alone. A `date` pins it too, as [Turning It On for a Dev Build](#turning-it-on-for-a-dev-build) covers.
 
-**Everything Else Reads as Missing.** The weather seed starts from `WEATHER_SEED_EMPTY` and sets only the temperature and the condition. Humidity, wind, UV, sunrise, sunset, the high and low, and the forecast all keep their no-data values, so a panel showing one draws dashes rather than a 0 that looks real. A face whose screenshots need those readings writes its own walk with a fuller fixture, as below.
+**Everything Else Reads as Missing.** The weather seed starts from `WEATHER_SEED_EMPTY` and sets only the temperature and the condition. Humidity, wind, UV, sunrise, sunset, the high and low, and the forecast all keep their no-data values, so a panel showing one draws dashes rather than a 0 that looks real. A face whose screenshots need those readings gives them in the file's `stores` block.
 
 **Only What the Face Declares.** The harness only fills the weather and location stores for a face that declares their message keys. [`appmessage_features.h`](../../src/c/pebble/io/appmessage/appmessage_features.h) defines `APPMESSAGE_HAS_WEATHER` when the face declares all four weather keys and `APPMESSAGE_HAS_LOCATION` when it declares both coordinate keys, which [Talking to the Phone](talking-to-the-phone.md) explains. Without them the harness still starts the store, empty and not live. A face without weather can still link a readout that reads the weather store, and an untouched store would hold zeros where a started one holds its no-data values.
 
@@ -42,9 +42,9 @@ flowchart LR
 
 **The Number of Themes.** The walk asks the settings layer how many values the theme setting allows, which is the same count that caps a theme sent from the phone. Every theme the watch accepts is in the walk, without the walk being told how many there are. A face with no theme setting gets a count of 0, so every tap redraws the first theme and the walk never moves.
 
-**Nothing Is Saved.** The harness writes the theme and the Quiet Time mark with `settings_set_u8`, which changes the value in memory and never touches flash. A walk on the emulator leaves the theme the face had saved there as it was. On a face that has no Quiet Time setting, the write does nothing.
+**Nothing Is Saved.** The harness writes the theme and the Quiet Time mark with `settings_set_u8`, which changes the value in memory and never touches flash. A dev build never saves settings at all, so a save that lands on top of the walk, such as one from the emulator's phone or the time zone push the phone sends when it is ready, leaves the settings the face had saved there as they were. A save made on the settings page against a dev build is not kept either. On a face that has no Quiet Time setting, the write does nothing.
 
-**A Face's Own Walks.** A walk is a tap handler that changes one thing and rebuilds, so a face can write its own beside the plugin's. A face with readout slots can step each slot through every readout it offers, with a fuller weather fixture so no slot shows dashes and a different clock on each step. A second walk can step the weather condition through every icon, day and night. Both live in the face's own `src/c/dev/` and seed the stores the same way, and `tap-walk` drives them like the theme walk. Each reads its own name from the build, as [A Face's Own Switches](#a-faces-own-switches) covers, so the unit or the face's own entry picks one by its name and the plugin's theme walk stays off.
+**A Face's Own Walks.** A walk through panels, layouts, or a list of settings is best laid out in the file, as [Walks the Config Lists](#walks-the-config-lists) covers, and leaves the face one small hook. A walk the file cannot express is a tap handler that changes one thing and rebuilds, so a face can still write its own beside the plugin's, such as one that steps the weather condition through every icon, day and night. It lives in the face's own `src/c/dev/` and seeds the stores the same way, and `tap-walk` drives it like the theme walk. It reads its own name from the build, as [A Face's Own Switches](#a-faces-own-switches) covers, so the unit or the face's own entry picks it by its name and the plugin's theme walk stays off.
 
 ## Turning It On for a Dev Build
 
@@ -60,19 +60,37 @@ A face repo commits the file, so anyone who checks out the repo takes the same s
 
 **`clock`:** the pinned time, as 24-hour `HH:MM`. Left out, it is `08:00`, which is a wide clock string.
 
-**`faces`:** an entry for each face that needs its own walk or clock, by the name `paf build <face>` takes. An entry takes `walk` and `clock`, and each one it leaves out comes from the top of the file. A face with no entry takes the top's settings, so a unit that holds one face needs no `faces` at all. A `"walk": null` in an entry turns the top's walk off for that face. A family whose faces walk differently commits one file for all of them:
+**`date`:** the pinned date, as `YYYY-MM-DD`. Left out, the date is the watch's own. The build works out the weekday and the day of the year, so a date panel draws the same day on every run.
+
+**`settings`:** settings the face starts on, by message key, as [Settings from the Config](#settings-from-the-config) covers.
+
+**`stores`:** readings in place of the fixture, store by store, as [Readings from the Config](#readings-from-the-config) covers.
+
+**`walks`:** walks laid out as lists, by name, which `walk` picks like any other, as [Walks the Config Lists](#walks-the-config-lists) covers.
+
+**`panels`:** what each panel and size is to the face's C, for a panel walk and the `thumbnails` tool, as [The Panels Block](#the-panels-block) covers.
+
+**`faces`:** an entry for each face that needs settings of its own, by the name `paf build <face>` takes. An entry takes everything the top takes but `faces`. A `walk`, `clock`, `date`, or `panels` it leaves out comes from the top of the file. Its `settings`, `stores`, and `walks` go on top of the top's one by one, so an entry that sets one setting keeps the rest of the top's. A face with no entry takes the top's settings, so a unit that holds one face needs no `faces` at all. A `"walk": null` in an entry turns the top's walk off for that face. A family whose faces walk differently commits one file for all of them:
 
 ```json
 { "walk": "themes", "faces": { "night-face": { "walk": "layouts", "clock": "20:42" } } }
 ```
 
-The build turns them into C defines for every face it builds. `DEV_MODE` is 1 with `--dev` and 0 without. With `--dev` it also sets `DEV_TIME_HOUR` and `DEV_TIME_MIN` from the clock, and `DEV_TAP_WALK_<NAME>` to 1 for the walk, so `"walk": "themes"` sets `DEV_TAP_WALK_THEMES`. A build without `--dev` gets `DEV_MODE` 0 and nothing else, in a unit that lists the plugin or not, so C that reads `DEV_MODE` as a value, such as `.live = !DEV_MODE`, compiles on every face. A face whose own header still says `#define DEV_MODE 0` builds as before, since a define repeated with the same value is allowed.
+The build turns them into C defines for every face it builds. `DEV_MODE` is 1 with `--dev` and 0 without. With `--dev` it also sets `DEV_TIME_HOUR` and `DEV_TIME_MIN` from the clock, and `DEV_TAP_WALK_<NAME>` to 1 for the walk, so `"walk": "themes"` sets `DEV_TAP_WALK_THEMES`. A walk the file lists sets `DEV_WALK_FROM_CONFIG` in its place, so a face's own C walk that reads the same name stays off and only one walk takes the taps. The date, the settings, the readings, and a listed walk's steps go into `page/dev_harness.h`, which the build writes into each of the face's sandboxes beside `settings_page.h` for a dev build, and takes away for any other. Only `dev_config.c` includes it. A build without `--dev` gets `DEV_MODE` 0 and nothing else, in a unit that lists the plugin or not, so C that reads `DEV_MODE` as a value, such as `.live = !DEV_MODE`, compiles on every face. A face whose own header still says `#define DEV_MODE 0` builds as before, since a define repeated with the same value is allowed.
 
 **What Stops a Build.** Every build, with `--dev` or without, stops on a `mode` anywhere in the file, a face's entry included, with a line saying to drop it and build with `--dev`, since the file cannot turn dev mode on. It also stops on settings left in the plugin's block in `paf.config.json`, and on a face's appinfo that sets one of these defines itself. A build without `--dev` checks nothing else in the file, so a slip in the harness never stops CI or a release, and a file that does not parse still builds. A build with `--dev` checks the whole file, every face's entry and not only the face being built, and stops with a line naming the problem on any of these:
 
 - a file that is not valid JSON, or that holds something other than an object
 - a setting the plugin does not read, at the top or in a face's entry
 - a walk that is not a lowercase name, or a clock that is not a 24-hour `HH:MM`, such as `8:00`
+- a date that is not a real day as `YYYY-MM-DD`, from 1970 to 2037
+- a setting on a key the face does not declare, or with a value that is not a whole number, true or false, or text
+- a setting whose value the face's settings page would not take, such as text for a colour, a number for a text box, or a choice past the ones the page offers
+- a store the plugin does not seed, a reading the store does not take, a number outside what the store holds, text longer than the watch keeps, or a weather condition the watch has no icon for
+- a store the face cannot show, such as stocks on a face without `STOCK_STRIP`, or HRV on a face built without `HEALTH_HRV`
+- an HRV reading after the pinned clock, or runs of them out of time order
+- a listed walk named `themes`, a step walk of fewer than two steps, or a panel walk with no panels block, a size the block does not list, or a panel it gives no id
+- a step walk whose later steps set a key that neither the settings nor its first step sets, or whose first step has no layout while a later one does
 - a `faces` that is not an object, or an entry in it that is not one
 - an entry for a name the unit has no face by, with a line listing the faces it has, since a renamed or mistyped face would otherwise take the top's settings without a word
 - a unit whose `paf.config.json` does not list the plugin as `"dev": {}`, since the harness only comes with it
@@ -97,7 +115,7 @@ window_stack_push(window, true);
 dev_start(apply_theme);
 ```
 
-`dev_stop()` goes in the face's deinit. `dev_seed_stores` seeds the stores on the pinned clock and returns true. `dev_start` runs the theme walk when the switches pick `themes`, and otherwise paints the fixture once and leaves the taps alone. `dev_force_time` sets a `struct tm`'s hour and minute to the pinned clock, for a panel that builds a time of its own, such as a second time zone, so every panel in a screenshot shows the same time.
+`dev_stop()` goes in the face's deinit. `dev_seed_stores` applies the file's settings, then seeds the stores on the pinned clock and returns true. `dev_start` runs the theme walk when the switches pick `themes`, runs a walk the file lists when they pick one, and otherwise paints the fixture once and leaves the taps alone. The hook it takes runs after each step of either walk, before the engine rebuilds, so a face that sets its window's background from the theme passes the same function its settings handler runs. `dev_force_time` sets a `struct tm`'s hour and minute to the pinned clock, and its date to a pinned date, for a panel that builds a time of its own, such as a second time zone, so every panel in a screenshot shows the same time and day.
 
 **One Set of Hooks.** A face that includes `dev/dev_hooks.h` deletes its own `dev_seed_stores`, `dev_start`, `dev_stop`, and `dev_force_time` everywhere, in every file and in its family core too. Two copies in one file stop the build, but each copy is `static`, so one left in a file that never includes the plugin's header builds without a word and runs its own switches in that file alone.
 
@@ -105,9 +123,117 @@ dev_start(apply_theme);
 
 **The Whole Unit.** The file belongs to the unit, so in a family one file holds every face's harness, and each face takes its own entry or the top's settings. `--dev` covers only the faces the build names, so `paf build <face> --dev` leaves the family's other faces as they last built. A face with a walk of its own that the unit did not pick still builds, with its walk off.
 
-**Out of a Release.** A release builds the face without `--dev`, so `DEV_MODE` is 0, `dev_seed_stores` returns false, the live inits run, and `dev_hooks.h` never includes the harness's header. `dev_walk.c` is still compiled for every face in a unit that lists the plugin. The Pebble SDK puts each function in its own section and has the linker drop any section nothing calls, so a face that never calls the harness ships none of it. A plain `#define DEV_MODE 1` left in a face's header clashes with the build's 0 and stops every build without `--dev`.
+**Out of a Release.** A release builds the face without `--dev`, so `DEV_MODE` is 0, `dev_seed_stores` returns false, the live inits run, and `dev_hooks.h` never includes the harness's header. The build takes away any `page/dev_harness.h` an earlier dev build left, and `dev_config.c` compiles to nothing. `dev_walk.c` is still compiled for every face in a unit that lists the plugin. The Pebble SDK puts each function in its own section and has the linker drop any section nothing calls, so a face that never calls the harness ships none of it. A plain `#define DEV_MODE 1` left in a face's header clashes with the build's 0 and stops every build without `--dev`.
 
 **A Settings Save Keeps the Stores Pinned.** Only a store's init decides whether it is live. The harness starts the time, weather, health, system, and location stores with `live` false, and the stock, calendar, phone battery, and now playing stores too on a face that declares their keys. A face's settings handler reconfigures its stores with `live` true, and each store the harness seeded stays seeded through that. A store nothing started, such as the stock store on a face without `STOCK_STRIP`, ignores the reconfigure. So a save from the settings page on the emulator's phone leaves the clock on its pinned time, and the weather, stock, and calendar stores fetch nothing and spend none of the provider's quota. The face's settings handler needs no check of its dev switch, and passes the same rules in a dev build as in a release.
+
+## Settings, Readings, and Walks from the Config
+
+The file can hold the rest of a face's screenshot setup, so a face needs no dev code of its own beyond a hook for a walk through its panels or layouts. Every block here is read only by a build with `--dev`, and checked against the face, so a slip stops the dev build with a line naming it rather than showing up as a screenshot that is quietly wrong.
+
+### Settings from the Config
+
+`settings` gives settings by message key, with the value the settings page sends: a number for a choice, a whole number, or a colour as `0xRRGGBB`, `true` or `false` for a toggle, and text for text:
+
+```json
+{ "settings": { "APPEARANCE_THEME": 1, "CLOCK_TIME_FORMAT": 2, "CLOCK_TIMEZONE_1": "0,Time Zone 1" } }
+```
+
+`dev_seed_stores` writes them into a dictionary and hands it to `settings_apply_inbox`, which is what a save from the phone runs through. So a face's own field takes its value the same way a shared one does, and the face writes no code to force a theme or a time format. A dev build never saves settings, so the settings on the emulator's flash stay as they were, as [Nothing Is Saved](#the-theme-walk) covers. A key the face does not declare stops the build. Once the build has read the settings page, it also stops on a value the catalogue would not take: text for a key the page shows as a colour, toggle, or choice, a number for a text box, and a choice past the ones the page offers. The watch would skip the first two and reset the last to its default, so each would show the wrong screen without a word. A key the page has no control for, and the framework does not keep, takes any value, since its type is the face's alone. A face that keeps something outside its settings table, such as a string it splits across two keys, sets it in its own `dev_show_layout` hook, below.
+
+### Readings from the Config
+
+`stores` gives readings in place of the fixture, store by store. A store the block names takes the block's readings on every step of every walk, the theme walk included, and a reading it leaves out reads as no reading on the watch, the way a phone message that left it out would. A store the block leaves out keeps the fixture, so the theme walk still moves it. Each store takes the fields its C seed has, named in camelCase:
+
+| Store | Fields |
+| :-- | :-- |
+| `weather` | `temp`, `cond`, `condLabel`, `humidity`, `windKmh`, `windDir`, `sunrise`, `sunset`, `uv`, `tempMax`, `tempMin`, `precipChance`, `feelsLike`, `pressure`, `dewPoint`, `hourly`, `daily` |
+| `health` | `hr`, `steps`, `calories`, `sleepMin`, `activeMin`, `distanceM`, `hrvMs`, `hrHistory`, `stepHourly`, `hrDay`, `hrvLog` |
+| `system` | `battery`, `charging`, `bluetooth`, `alarmIn` |
+| `phone` | `battery` |
+| `music` | `title`, `artist`, `playing` |
+| `stocks` | a list of quotes, each `{ "symbol": "NVDA", "price": 1180, "change": 3.4 }` with `ok` false for a status word in place of a ticker |
+| `calendar` | a list of events, each `{ "title": "Dentist", "location": "Downtown", "inMinutes": 60, "minutes": 30 }`, or `{ "title": "Birthday", "allDay": true, "inDays": 3 }` |
+| `location` | `lat`, `lon`, as the text the face's phone code formats |
+
+A temperature goes in the unit the settings hold, since the watch draws a seed as written. `sunrise` and `sunset` are `HH:MM`. `cond` is a condition from the shared list, such as `PCLDY`, with `_NIGHT` after it for the night glyph. `hourly` is `{ "from": 9, "every": 2, "columns": [["CLEAR", 21], ["RAIN_NIGHT", 18]] }`, the first column's hour, the hours between columns, and a sky and a temperature for each. `daily` is `{ "from": "sat", "columns": [["CLEAR", 31, 18]] }`, the first column's weekday and a sky, a high, and a low for each. `hrHistory` is up to 60 readings a minute apart, the last on the pinned clock, and `stepHourly` up to 24 hourly step counts from midnight. `hrDay` is a list of the readings in each hour from midnight. `alarmIn` is the minutes until the next alarm. The weather, phone, music, stock, calendar, and location stores need their keys on the face, and the HRV fields need `HEALTH_HRV` in its defines.
+
+`hrvLog` is runs of readings, each `{ "from": "00:00", "every": 5, "ms": [52, 54, 51], "state": "still", "asleep": true }`. A run lays its readings `every` minutes apart from `from`, and `state` is `still`, `busy`, or `walking`, one for the whole run or a list with one for each reading. The runs go in time order and end by the pinned clock, since the log files readings as they come.
+
+**Placed against the Real Clock.** The HRV panels, the calendar panels, and the next alarm work out an age or a countdown from the watch's real clock rather than the pinned one, so the harness places those readings against it when it seeds. An HRV reading lands as old as it sits before the pinned clock, an event starts its `inMinutes` from the moment the stores are seeded, and an all-day event falls `inDays` after today. A countdown then reads the same on every run, but the start time an agenda prints moves with the real clock, and an HRV age is only right inside the minute the face launched in.
+
+### Walks the Config Lists
+
+`walks` lays out walks as lists, by a lowercase name, and `walk` picks one the same way it picks `themes`. The build sets `DEV_WALK_FROM_CONFIG`, and `dev_start` shows the first step and moves to the next on each tap, then runs the face's hook and rebuilds. After the last step a tap comes back to the first, and draws exactly the first screen again. A walk is one of two kinds.
+
+**A Panel Walk.** `panels` names panels by size, or is `"all"`, and the watch shows one panel a step:
+
+```json
+{
+  "walk": "new",
+  "walks": {
+    "thumbnails": { "panels": "all" },
+    "new": { "panels": { "1x2": ["phone-battery", "battery-battery"], "2x2": ["phone-battery"] } }
+  }
+}
+```
+
+A panel goes by its thumbnail's name, so `phone-battery` at `1x2` is `phone-battery-1x2.png`. `"all"` is every picture in the face's `resources/thumbnails/` in a size the panels block lists, size by size in the block's order, and by name inside a size. A named list keeps its own order, which is the walk for a panel that has no picture yet. The face defines `dev_show_panel(panel, size)`, which gets the ids the panels block gives them and shows that one panel on its own:
+
+```c
+#if DEV_MODE
+void dev_show_panel(int panel, int size)
+{
+    static char s_layout[24];
+
+    snprintf(s_layout, sizeof(s_layout), "%d,0,0,%d,%d", panel, size_width(size), size_height(size));
+    face_set_layout(s_layout);
+}
+#endif
+```
+
+**A Step Walk.** `steps` lists screens, each with the settings it applies and a layout, either one optional. A walk of the starter layouts, or of day and night, is a step walk:
+
+```json
+{ "walks": { "presets": { "steps": [{ "settings": { "APPEARANCE_THEME": 1 }, "layout": "2,0,0,2,2;12,0,2,2,1" }, { "layout": "1,0,0,4,1" }] } } }
+```
+
+A step's settings go through the catalogue the way the launch settings do. A step with a layout hands it to the face's `dev_show_layout(layout)`, whose shape is the face's own, so a face can carry more than the layout in it, such as custom colours after a mark of its choosing. A step walk takes two steps or more, since a tap has to have somewhere to go.
+
+**Each Step Stands on Its Own.** The build gives every step every setting the walk touches, so a step draws the same screen whichever step came before it. A setting a step leaves out takes the launch setting, or the first step's value when the launch settings leave the key out too, since the build cannot know what the emulator had saved. So a key only later steps set stops the build, and so does a walk whose first step has no layout while a later one has one. A step with no layout shows the layout of the step before it.
+
+**A Step That Switches Units.** A step that changes the temperature unit seeds the weather again, the way a launch applies the settings before it seeds. The fixture converts on every seed, and the file's own readings are written in the unit the launch settings hold, so the harness converts them to the step's unit the way the store converts a reading in hand when the wearer switches.
+
+**A Walk's Own Clock.** A walk can carry `clock`, `date`, `settings`, and `stores` beside its panels or steps, and they stand in for the face's while the walk is picked. Its settings and stores go on top of the face's one by one. So pictures shot on a clock of their own, such as a face's clock panels, come from a walk that says so, and picking it is the one edit:
+
+```json
+{ "walks": { "clocks": { "clock": "10:09", "date": "2026-07-13", "panels": { "1x2": ["time"], "2x2": ["analog"] } } } }
+```
+
+A walk that pins a clock earlier than the face's HRV log stops the build, since the log would run into the future, so it gives a health store of its own. A slip in any walk stops a dev build of every face that takes the walk, picked or not.
+
+A dev build whose walk needs a hook the face does not define stops at the link, naming it. The hooks go in a file of the face's own inside `#if DEV_MODE`, so a release build carries neither.
+
+### The Panels Block
+
+`panels` says what each panel and size is to the face's C, and where a size sits on the screen when the face shows one panel of it on its own:
+
+```json
+{
+  "panels": {
+    "include": "engine/catalog.h",
+    "sizes": {
+      "1x2": { "id": "MSIZE_1x2", "crop": { "left": 4, "top": 94, "width": 94, "height": 40 } },
+      "2x2": { "id": "MSIZE_2x2", "crop": { "left": 4, "top": 72, "width": 94, "height": 83 } }
+    },
+    "ids": { "phone-battery": "MOD_SYSTEM_PHONE_BATTERY", "battery-battery": "MOD_SYSTEM_BATTERY_PAIR" }
+  }
+}
+```
+
+An id is a whole number or a C name, and `include` names the header the C names come from, as the face's own C includes it, or a list of them. A size's name has no dash, since a picture's size is what follows its last dash. The panels block goes whole, so a face's entry with one of its own replaces the top's.
+
+**The Crop.** Each size's crop is where the face's `dev_show_panel` shows that size. A face whose chrome keeps to the screen's own pixel grid, such as a checkered header, draws a panel differently once it moves an odd number of pixels, so the hook shows every panel of a size at the same place.
 
 ## Previewing the Settings Page
 
@@ -256,3 +382,26 @@ paf tool my-face tap-walk --install
 **A Stuck Emulator.** Each screenshot or tap gets 30 seconds before the tool stops, since both normally finish in well under one. The install and the first screenshot can boot the emulator, which on WSL can take a minute or more, so they get three minutes. `pebble` prints its own progress on stderr, and the tool holds that back and shows it only when a step fails, where it says why.
 
 **The Out Folder.** `--out=<folder>` names where the screenshots go, `.tmp/tap-walk-shots` in the unit by default. The tool empties the folder at the start of each walk, once the install has worked, so it only ever holds one walk's screenshots. That is also why the tool refuses a folder outside the unit, the unit itself, or one holding anything other than earlier screenshots and the files an operating system leaves when someone opens a folder, such as `Thumbs.db`. The default sits under `.tmp/`, so a repo that gitignores `.tmp/` keeps the screenshots out of its commits. Each screenshot lands in a temporary file first and only moves into the folder once it is kept, so a step that fails partway never leaves a half-written screenshot among the others.
+
+## Panel Pictures with `thumbnails`
+
+`thumbnails` makes the pictures a face's layout builder shows for its panels, the ones the `thumbnails` plugin inlines into the settings page. It needs a face whose walk is a panel walk, built with `--dev`, the emulator, and the Pebble SDK's `pebble` command, so it runs where `tap-walk` does:
+
+```sh
+paf build my-face --dev
+paf tool my-face thumbnails
+```
+
+It installs the face's dev build on the emulator, takes a screenshot of each step of the walk into `.tmp/thumbnail-shots`, crops each one where the panels block says its size sits, and writes it to the face's `resources/thumbnails/` as `<panel>-<size>.png`. Then it runs the `thumbnails` plugin's generator, the one `paf gen <face> thumbnails` runs, so the settings page carries the new pictures. A unit that does not list that plugin gets a line saying to list it and run the generator.
+
+**Every Step Is Shot.** The shots are matched to the walk's steps by their place in it, so the tool keeps a screenshot of every step, even one that draws the same as another, where `tap-walk` keeps each different screen once. It never compares one shot with another, since a panel that reads the real clock can draw differently from one moment to the next.
+
+**The Build It Checks Is the One It Installs.** The shots only land under the right names when the build walks the very steps the file lays out, so the tool always installs the build itself rather than shooting whatever the emulator runs. The build writes a fingerprint of what it shows into `page/dev_harness.h`, over the clock, the date, the settings, the readings, and the walk's steps, and the tool works it out again from the file. A build whose fingerprint differs was made before the file changed, and one whose `.pbw` is older than its header stopped partway, so the tool stops on either before it installs anything and says to build again with `--dev`. A check on the emulator's screen could only show the walk's length dividing the steps, and a stale build of another length can pass that.
+
+**Only What Changed.** A PNG encoder packs the same picture into different bytes, so the tool compares each crop's pixels with the picture already there and leaves a match alone. It prints `new`, `changed`, or `unchanged` for each, so a re-shoot of every panel shows in git as only the panels that look different.
+
+**Cropping Shots Already Taken.** `--shots=<folder>` crops a folder of screenshots rather than walking the emulator, named `shot_000.png` and on, one a step. It needs no emulator and no SDK, so a crop can be checked anywhere the unit's dependencies are installed. `--out=<folder>` writes the pictures to a folder of their own and leaves the generator alone, so a crop can be compared with the committed pictures before it replaces them. Both resolve from the unit.
+
+**One Walk, One Clock.** Every panel in a walk is drawn on the same pinned clock and date, and a panel that reads the real clock, such as a moon phase, an HRV age, or a countdown, draws what the real clock says. Pictures shot on another clock or another day differ in those panels. An HRV panel's age is only right inside the minute the face launched in, so a walk of the HRV panels alone, named in a list of its own, keeps them inside it. A walk of every panel takes a second or two a step.
+
+`--emulator=<name>` and `--target=<target>` work as they do for `tap-walk`, though the tool installs whether or not it is asked, and `-h` or `--help` prints the usage. `--target` is refused with `--shots`, which installs nothing.

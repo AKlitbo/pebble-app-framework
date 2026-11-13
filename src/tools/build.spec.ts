@@ -19,7 +19,7 @@ vi.mock(import('./pkjs/build-pkjs.ts'), async (original) => ({ ...(await origina
 
 /** A sandbox step's answer for one gridlock-face sandbox, with a checked appinfo holding the given defines. */
 function written(textDefines: Record<string, string> = {}, rekeyed: string[] = []): WrittenSandboxes {
-  const checked = { targets: ['gridlock-face'], defines: { PLUGIN_WEATHER: 1 }, providers: {}, permissions: [], textDefines, devDefines: { DEV_MODE: 0 }, warnings: [] } as CheckedAppinfo;
+  const checked = { targets: ['gridlock-face'], defines: { PLUGIN_WEATHER: 1 }, providers: {}, permissions: [], textDefines, devDefines: { DEV_MODE: 0 }, devSwitches: null, warnings: [] } as CheckedAppinfo;
 
   return { paths: ['/unit/targets/gridlock-face'], checked, messageKeys: ['WEATHER_REQUEST'], pluginApp: false, rekeyed };
 }

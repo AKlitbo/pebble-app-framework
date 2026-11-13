@@ -13,7 +13,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
 import { tempDir } from '../../ts/testing/temp-dir.ts';
-import { devDefines, isDevDefine, readDevHarness, switchesFor, unitDevDefines } from './dev-switches.ts';
+import { DEFAULTS, devDefines, isDevDefine, readDate, readDevHarness, switchesFor, unitDevDefines } from './dev-switches.ts';
 
 const FILE = 'mosaic/paf.dev.config.json';
 
@@ -39,28 +39,28 @@ describe('readDevHarness', () => {
   test('reads an empty file as no walk on the default clock', () => {
     const result = readDevHarness({}, FILE, () => FACES);
 
-    expect(result).toEqual({ unit: { walk: null, hour: 8, minute: 0 }, faces: {} });
+    expect(result).toEqual({ unit: { ...DEFAULTS, walk: null, hour: 8, minute: 0 }, faces: {} });
   });
 
   /** A clock written with a leading zero reads as a broken octal number in C, so the build hands over the plain number. */
   test('reads the clock as the hour and minute', () => {
     const result = readDevHarness({ walk: 'themes', clock: '09:08' }, FILE, () => FACES);
 
-    expect(result.unit).toEqual({ walk: 'themes', hour: 9, minute: 8 });
+    expect(result.unit).toEqual({ ...DEFAULTS, walk: 'themes', hour: 9, minute: 8 });
   });
 
   /** One committed file holds a family's harness, so a face with a walk and clock of its own needs an entry that keeps the rest. */
   test('reads a face entry over the unit\'s settings', () => {
     const result = readDevHarness({ walk: 'themes', faces: { gridlock: { walk: 'modules', clock: '20:42' }, sidereel: { clock: '10:10' } } }, FILE, () => FACES);
 
-    expect(result.faces).toEqual({ gridlock: { walk: 'modules', hour: 20, minute: 42 }, sidereel: { walk: 'themes', hour: 10, minute: 10 } });
+    expect(result.faces).toEqual({ gridlock: { ...DEFAULTS, walk: 'modules', hour: 20, minute: 42 }, sidereel: { ...DEFAULTS, walk: 'themes', hour: 10, minute: 10 } });
   });
 
   /** A face that takes screenshots without the unit's walk has to be able to turn it off in its own entry. */
   test('takes a face entry\'s null walk as no walk', () => {
     const result = readDevHarness({ walk: 'themes', faces: { gridlock: { walk: null } } }, FILE, () => FACES);
 
-    expect(result.faces.gridlock).toEqual({ walk: null, hour: 8, minute: 0 });
+    expect(result.faces.gridlock).toEqual({ ...DEFAULTS, walk: null, hour: 8, minute: 0 });
   });
 
   /** The file is committed, so a mode in it would read as dev mode on in every build while each one builds with it off. */
@@ -81,7 +81,7 @@ describe('readDevHarness', () => {
   test('refuses a setting the plugin does not read, naming the unit\'s file', () => {
     const call = () => readDevHarness({ wlak: 'themes' }, FILE, () => FACES);
 
-    expect(call).toThrow('mosaic/paf.dev.config.json sets wlak, which the dev plugin does not read. It reads walk, clock, faces');
+    expect(call).toThrow('mosaic/paf.dev.config.json sets wlak, which the dev plugin does not read. It reads walk, clock, date, settings, stores, walks, panels, faces');
   });
 
   /** A face entry takes no faces of its own, and a misspelt setting there would leave that face on the unit's walk. */
@@ -149,20 +149,20 @@ describe('readDevHarness', () => {
 });
 
 describe('switchesFor', () => {
-  const HARNESS = { unit: { walk: 'themes', hour: 8, minute: 0 }, faces: { gridlock: { walk: 'modules', hour: 20, minute: 42 } } };
+  const HARNESS = { unit: { ...DEFAULTS, walk: 'themes', hour: 8, minute: 0 }, faces: { gridlock: { ...DEFAULTS, walk: 'modules', hour: 20, minute: 42 } } };
 
   /** The face's own entry is the whole point of the faces block. */
   test('gives a face its own entry', () => {
     const result = switchesFor(HARNESS, 'gridlock');
 
-    expect(result).toEqual({ walk: 'modules', hour: 20, minute: 42 });
+    expect(result).toEqual({ ...DEFAULTS, walk: 'modules', hour: 20, minute: 42 });
   });
 
   /** A face with no entry, such as every face of a unit with no faces block, runs on the unit's settings. */
   test('gives a face with no entry the unit\'s settings', () => {
     const result = switchesFor(HARNESS, 'sidereel');
 
-    expect(result).toEqual({ walk: 'themes', hour: 8, minute: 0 });
+    expect(result).toEqual({ ...DEFAULTS, walk: 'themes', hour: 8, minute: 0 });
   });
 });
 
@@ -176,16 +176,93 @@ describe('devDefines', () => {
 
   /** The hooks pin the clock from these and start the walk named here. */
   test('gives the clock and the walk with switches', () => {
-    const result = devDefines({ walk: 'themes', hour: 10, minute: 42 });
+    const result = devDefines({ ...DEFAULTS, walk: 'themes', hour: 10, minute: 42 });
 
     expect(result).toEqual({ DEV_MODE: 1, DEV_TIME_HOUR: 10, DEV_TIME_MIN: 42, DEV_TAP_WALK_THEMES: 1 });
   });
 
   /** A face's own walk reads its own name, so the build must not keep to the walks the plugin knows. */
   test('names a face\'s own walk the same way', () => {
-    const result = devDefines({ walk: 'layouts', hour: 8, minute: 0 });
+    const result = devDefines({ ...DEFAULTS, walk: 'layouts', hour: 8, minute: 0 });
 
     expect(result).toEqual({ DEV_MODE: 1, DEV_TIME_HOUR: 8, DEV_TIME_MIN: 0, DEV_TAP_WALK_LAYOUTS: 1 });
+  });
+
+  /** A face's own C walk by the same name would take the taps too, and the two would fight over every step. */
+  test('marks a walk the file lists for the plugin alone', () => {
+    const switches = readDevHarness({ walk: 'presets', walks: { presets: { steps: [{ layout: 'a' }, { layout: 'b' }] } } }, FILE, () => []).unit;
+
+    const result = devDefines(switches);
+
+    expect(result).toEqual({ DEV_MODE: 1, DEV_TIME_HOUR: 8, DEV_TIME_MIN: 0, DEV_WALK_FROM_CONFIG: 1 });
+  });
+});
+
+describe('readDate', () => {
+  /** The watch's struct tm carries the weekday and the day of the year, and a date panel draws both. */
+  test('works out the weekday and the day of the year', () => {
+    const result = readDate('2026-07-13', FILE, '');
+
+    expect(result).toEqual({ year: 2026, month: 7, day: 13, weekday: 1, yearDay: 193 });
+  });
+
+  /** A leap day is a real date, and the day after it lands a day later than in any other year. */
+  test('takes a leap day', () => {
+    const result = readDate('2028-02-29', FILE, '');
+
+    expect(result).toEqual({ year: 2028, month: 2, day: 29, weekday: 2, yearDay: 59 });
+  });
+
+  /** A date that does not exist would land on the watch as a day the calendar panels cannot place. */
+  test('refuses a day the month does not have', () => {
+    const call = () => readDate('2026-02-29', FILE, "gridlock's ");
+
+    expect(call).toThrow(`${FILE} sets gridlock's date to "2026-02-29". It takes a real date as YYYY-MM-DD`);
+  });
+});
+
+describe('a face entry over the top of the file', () => {
+  /** A family shares one file, so a face that changes one setting or one store must keep the rest of the top's. */
+  test('takes each setting, store, and walk it leaves out from the top', () => {
+    const file = {
+      settings: { APPEARANCE_THEME: 1, CLOCK_TIME_FORMAT: 2 },
+      stores: { phone: { battery: 84 }, system: { battery: 64 } },
+      walks: { presets: { steps: [{ layout: 'a' }, { layout: 'b' }] } },
+      faces: { gridlock: { settings: { CLOCK_TIME_FORMAT: 1 }, stores: { phone: { battery: 20 } }, walks: { night: { steps: [{ layout: 'c' }, { layout: 'd' }] } } } },
+    };
+
+    const result = readDevHarness(file, FILE, () => ['gridlock']).faces.gridlock;
+
+    expect(result.settings).toEqual({ APPEARANCE_THEME: 1, CLOCK_TIME_FORMAT: 1 });
+    expect([result.stores.phone, result.stores.system]).toEqual([{ battery: 20 }, { battery: 64, charging: false, bluetooth: true, alarmIn: null }]);
+    expect(Object.keys(result.walks)).toEqual(['presets', 'night']);
+  });
+
+  /** Pictures shot on another clock come from a walk that carries it, so picking the walk is the one edit. */
+  test('puts a picked walk\'s own clock, date, and settings over the face\'s', () => {
+    const file = { faces: { gridlock: { walk: 'clocks', clock: '20:42', settings: { APPEARANCE_THEME: 1 }, walks: { clocks: { clock: '10:09', date: '2026-07-13', settings: { CLOCK_TIME_FORMAT: 1 }, panels: 'all' } } } } };
+
+    const result = switchesFor(readDevHarness(file, FILE, () => ['gridlock']), 'gridlock');
+
+    expect([result.hour, result.minute, result.date?.day, result.settings]).toEqual([10, 9, 13, { APPEARANCE_THEME: 1, CLOCK_TIME_FORMAT: 1 }]);
+  });
+
+  /** A walk nobody has picked yet still has to be right, or the slip only shows the day someone picks it. */
+  test('refuses a slip in a walk that is not picked', () => {
+    const file = { faces: { gridlock: { walks: { clocks: { clock: '10:9', panels: 'all' } } } } };
+
+    const call = () => readDevHarness(file, FILE, () => ['gridlock']);
+
+    expect(call).toThrow(`${FILE} sets gridlock's walks.clocks.clock to "10:9". It takes a 24-hour HH:MM`);
+  });
+
+  /** The HRV log has to end by the clock the face runs on, which its own entry can move later than the top's. */
+  test('checks a face\'s HRV log against the face\'s own clock', () => {
+    const file = { faces: { gridlock: { clock: '20:42', stores: { health: { hrvLog: [{ from: '20:00', ms: [40] }] } } } } };
+
+    const result = readDevHarness(file, FILE, () => ['gridlock']).faces.gridlock.stores.health?.hrvLog;
+
+    expect(result).toEqual([{ minute: 1200, ms: 40, state: 'still', asleep: false }]);
   });
 });
 

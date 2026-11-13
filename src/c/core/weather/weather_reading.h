@@ -135,6 +135,16 @@ typedef struct
 bool weather_reading_apply(WeatherState *state, const WeatherMessage *msg, const WeatherClock *clock);
 
 /**
+ * @brief Converts one temperature to the other unit, rounded to the nearest degree and held to the
+ * range the weather keeps. No data stays no data.
+ *
+ * @param value The temperature, or WEATHER_NO_TEMP for none.
+ * @param to_fahrenheit True to go from Celsius to Fahrenheit, false for the other way.
+ * @return The temperature in the other unit, or WEATHER_NO_TEMP.
+ */
+int weather_reading_convert_temp(int value, bool to_fahrenheit);
+
+/**
  * @brief Convert every temperature in the kept weather to the other unit.
  *
  * Runs when the wearer switches units, so the reading in hand matches the new letter until the

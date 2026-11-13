@@ -268,8 +268,13 @@ function shotLabel(index: number): string {
   return `shot_${String(index).padStart(3, '0')}`;
 }
 
-/** The file a state's shot is saved as, such as shot_000.png for the start. */
-function shotName(index: number): string {
+/**
+ * The file a state's shot is saved as.
+ *
+ * @param index The state's number, from 0 for the start.
+ * @return The file name, such as shot_000.png for the start.
+ */
+export function shotName(index: number): string {
   return `${shotLabel(index)}.png`;
 }
 
@@ -332,8 +337,12 @@ export function walk(io: WalkIo, maxTaps: number = MAX_TAPS): WalkResult {
  *
  * It installs rather than builds, since paf build is what knows when a message key or framework
  * change needs a clean build, and an incremental build here would miss that.
+ *
+ * @param face The face, which a refusal names.
+ * @param target The target whose .pbw goes on the emulator.
+ * @param emulator The emulator, such as emery.
  */
-function installFace(face: string, target: string, emulator: string): void {
+export function installFace(face: string, target: string, emulator: string): void {
   const pbw = pbwPath(target);
 
   if (!fs.existsSync(pbw)) {
@@ -377,8 +386,13 @@ function sleepSync(ms: number): void {
 /**
  * The pebble screenshot, tap, and file steps the real walk runs. Each screenshot lands in the
  * candidate file first and only reaches the out folder once the walk keeps it.
+ *
+ * @param emulator The emulator, such as emery.
+ * @param dir The out folder the shots are saved in.
+ * @param candidate Where each screenshot lands before the walk decides to keep it.
+ * @return The steps.
  */
-function emulatorIo(emulator: string, dir: string, candidate: string): WalkIo {
+export function emulatorIo(emulator: string, dir: string, candidate: string): WalkIo {
   const where = onEmulator(emulator);
   const step = pebbleRunner(STEP_TIMEOUT_MS);
   // the first shot boots the emulator when it is not running yet, so it gets the longer timeout

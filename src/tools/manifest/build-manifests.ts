@@ -25,7 +25,8 @@
  *
  * A face can also set C defines for its own build, such as a raised ENGINE_SLOTS_MAX. They are checked
  * here and carried into the manifest, where the waf build turns each one into a -D flag. The dev
- * plugin's switches join them, as dev-switches.ts covers. A plugin
+ * plugin's switches join them, as dev-switches.ts covers, and a dev build also gets the header
+ * dev-header.ts writes into each sandbox's page/ folder. A plugin
  * define, such as PLUGIN_WEATHER, brings the message keys its kind needs, and the keys only a plugin
  * fills, such as the music keys, are refused without their define. A face's
  * providers list, which names what it offers for each kind of data, is checked here too, against its
@@ -54,7 +55,9 @@ import { isObject } from '../shared/values.ts';
 import { ENGINE, ENGINE_REL, WORKSPACE } from '../shared/paths.ts';
 import { ToolError, reportFailure } from '../shared/tool-error.ts';
 import { isMainScript } from '../shared/entry.ts';
-import { isDevDefine, unitDevDefines } from './dev-switches.ts';
+import { renderDevHeader, writeDevHeader } from './dev-header.ts';
+import { devDefines, isDevDefine, unitDevSwitches, type DevSwitches } from './dev-switches.ts';
+import { thumbnailFiles } from './dev-walks.ts';
 import { checkKeyGroups } from './key-groups.ts';
 import { NO_START, fillAppinfo, type FaceStartFacts } from './feature-keys.ts';
 import { keyNames } from './message-keys.ts';
@@ -495,8 +498,10 @@ export function faceVersion(config: { version?: string }, rootPkg: { version?: s
 
 /** What the build reads and checks in a face's appinfo before the phone build, none of which needs the features. */
 export interface AppinfoPrep extends FaceBuildInfo {
-  /** The C defines from --dev and the unit's paf.dev.config.json, from unitDevDefines. */
+  /** The C defines from --dev and the unit's paf.dev.config.json, from devDefines. */
   devDefines: Defines;
+  /** The face's switches for a dev build, from unitDevSwitches, or null for a build without --dev. */
+  devSwitches: DevSwitches | null;
 }
 
 /** What the build reads and checks in a face's appinfo once, before it writes any target's sandbox. */
@@ -533,7 +538,7 @@ export function prepareAppinfo(config: Appinfo, face: string, unit: string = ROO
   // a plugin app has no keys, defines, providers, or dev switches, since it has no watch code. buildOne
   // stops a dev build of one, or passes over it in all --dev
   if (isPluginApp(config)) {
-    return { ...info, devDefines: {} };
+    return { ...info, devDefines: {}, devSwitches: null };
   }
 
   checkOwnPermissions(config.usesPermissions, face, info.providers);
@@ -541,7 +546,9 @@ export function prepareAppinfo(config: Appinfo, face: string, unit: string = ROO
   checkSelectKeys(info.providers, config.messageKeys, face);
   checkPluginKeys(info.defines, config.messageKeys, face);
 
-  return { ...info, devDefines: unitDevDefines(unit, face, dev) };
+  const devSwitches = unitDevSwitches(unit, face, dev);
+
+  return { ...info, devDefines: devDefines(devSwitches), devSwitches };
 }
 
 /**
@@ -581,7 +588,7 @@ export function checkAppinfo(config: Appinfo, face: string, unit: string = ROOT,
  *
  * @return The sandbox's absolute path.
  */
-function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target, checked: CheckedAppinfo): string {
+function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Target, checked: CheckedAppinfo, devHeader: string | null): string {
   // the root package.json still owns the author
   const version = faceVersion(config, rootPkg) as string;
   const pluginApp = isPluginApp(config);
@@ -596,6 +603,7 @@ function writeTarget(face: string, config: Appinfo, rootPkg: RootPkg, target: Ta
   fs.mkdirSync(outDir, { recursive: true });
   writeIfChanged(path.join(outDir, 'package.json'), JSON.stringify(manifest, null, 2) + '\n');
   writeIfChanged(path.join(outDir, 'wscript'), pluginApp ? fs.readFileSync(PLUGIN_WSCRIPT, 'utf8') : faceWscript(face, target));
+  writeDevHeader(outDir, devHeader);
 
   // stdout is kept for the sandbox paths the bare face prints, so the note goes to stderr
   console.error(`Sandbox targets/${target.name} is ready (source ${pluginApp ? `plugin app ${face} ${version}` : `face ${face} ${version}, watchface=${target.watchface}`}).`);
@@ -895,7 +903,10 @@ export function writeSandboxes(face: string, prepared: PreparedFace, start: Face
   // a plugin app has no message keys, so it never needs a clean for them
   const rekeyed = pluginApp ? [] : prepared.targets.map((target) => path.join(ROOT, 'targets', target.name)).filter((sandbox) => keysChanged(sandbox, config.messageKeys));
 
-  return { paths: prepared.targets.map((target) => writeTarget(face, config, rootPkg, target, checked)), checked, messageKeys: config.messageKeys, pluginApp, rekeyed };
+  // the header is the face's, so it is checked and written once for all its targets
+  const devHeader = checked.devSwitches ? renderDevHeader(checked.devSwitches, { face, keys: [...keyNames(config.messageKeys)], defines: checked.defines, thumbnails: thumbnailFiles(face) }) : null;
+
+  return { paths: prepared.targets.map((target) => writeTarget(face, config, rootPkg, target, checked, devHeader)), checked, messageKeys: config.messageKeys, pluginApp, rekeyed };
 }
 
 /**

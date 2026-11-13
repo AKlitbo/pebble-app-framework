@@ -268,7 +268,7 @@ For a stale face, run its generators again with `paf gen <face> all`.
 paf tool <face> <name> [args]
 ```
 
-Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, `-h` and `--` included. The `dev` plugin offers `clay-preview` and `tap-walk`:
+Runs a tool a listed plugin offers, with the face first and every argument after the name passed on exactly as typed, `-h` and `--` included. The `dev` plugin offers `clay-preview`, `tap-walk`, and `thumbnails`:
 
 ```sh
 paf tool gridlock clay-preview
@@ -278,7 +278,7 @@ An unknown name lists the tools the unit has:
 
 ```
 $ paf tool lcars-stardate nope
-paf: no tool called nope. What the unit lists offers clay-preview and tap-walk, and no plugin the unit leaves out offers it either
+paf: no tool called nope. What the unit lists offers clay-preview, tap-walk, and thumbnails, and no plugin the unit leaves out offers it either
 ```
 
 ## paf run

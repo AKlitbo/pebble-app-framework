@@ -1,12 +1,19 @@
 /**
- * The dev plugin's switches, turned on by `paf build <face> --dev` and handed to the C build as defines.
+ * The dev plugin's switches, turned on by `paf build <face> --dev` and handed to the C build as defines
+ * and a header.
  *
  * A unit lists the dev plugin in its paf.config.json as `"dev": {}`. The harness a dev build runs with
  * sits in a file of its own beside it, paf.dev.config.json, which the face repo commits so anyone can
- * take the same screenshots. The walk and the clock at the top are the unit's, and an entry under
- * `faces` sets them for one face, by the name `paf build` takes:
+ * take the same screenshots. The settings at the top are the unit's, and an entry under `faces` sets
+ * them for one face, by the name `paf build` takes:
  *
  *     { "walk": "themes", "faces": { "gridlock": { "walk": "modules", "clock": "20:42" } } }
+ *
+ * The walk and the clock become defines. The date, the settings, the store readings, and the walks the
+ * file lays out as lists go into a header the build writes for a dev build, which dev-header.ts writes.
+ * dev-settings.ts, dev-seeds.ts, and dev-walks.ts read those blocks. A face's entry takes each setting,
+ * each store, and each walk it leaves out from the top of the file, one by one, and the panels block
+ * whole.
  *
  * Every face builds with `DEV_MODE`, 1 on a build with `--dev` and 0 otherwise, including a face in a
  * unit that does not list the plugin, so C that reads `DEV_MODE` as a value always compiles. A face's
@@ -24,16 +31,34 @@ import path from 'node:path';
 import { listFaceNames } from '../shared/faces.ts';
 import { ToolError } from '../shared/tool-error.ts';
 import { isObject } from '../shared/values.ts';
+import { clockMinutes } from './dev-fields.ts';
+import { NO_STORES, STORE_NAMES, readStores, type DevStores } from './dev-seeds.ts';
+import { readSettings, type DevValue } from './dev-settings.ts';
+import { SCENE_KEYS, readPanels, readWalks, type DevPanels, type DevWalk } from './dev-walks.ts';
 
 /** The file beside a unit's paf.config.json that holds the dev harness. */
 export const DEV_CONFIG_FILE = 'paf.dev.config.json';
 
 
 /** The settings a face's entry takes, which the top of the file takes too. */
-const FACE_SETTINGS = ['walk', 'clock'];
+const FACE_SETTINGS = ['walk', 'clock', 'date', 'settings', 'stores', 'walks', 'panels'];
 
 /** The settings the top of the file takes. */
 const UNIT_SETTINGS = [...FACE_SETTINGS, 'faces'];
+
+/** A pinned date, with the month from 1 and the weekday and day of the year worked out from it. */
+export interface DevDate {
+  /** The year, such as 2026. */
+  year: number;
+  /** The month, 1 for January. */
+  month: number;
+  /** The day of the month. */
+  day: number;
+  /** The weekday, 0 for Sunday, as a struct tm counts it. */
+  weekday: number;
+  /** The day of the year, 0 for the first of January, as a struct tm counts it. */
+  yearDay: number;
+}
 
 /** What a dev build of one face runs with. */
 export interface DevSwitches {
@@ -43,10 +68,20 @@ export interface DevSwitches {
   hour: number;
   /** The pinned clock's minute, 0 to 59. */
   minute: number;
+  /** The pinned date, or null to take the watch's own. */
+  date: DevDate | null;
+  /** The settings it applies at launch, by message key. */
+  settings: Record<string, DevValue>;
+  /** The readings it seeds in place of the fixture, store by store. */
+  stores: DevStores;
+  /** The walks the file lays out as lists, by name. */
+  walks: Record<string, DevWalk>;
+  /** What each panel and size is to the face's C, for a panel walk and the thumbnails tool, or null for none. */
+  panels: DevPanels | null;
 }
 
 /** What a dev build runs with when the file leaves a setting out. The clock is 08:00, a wide clock string. */
-const DEFAULTS: DevSwitches = { walk: null, hour: 8, minute: 0 };
+export const DEFAULTS: DevSwitches = { walk: null, hour: 8, minute: 0, date: null, settings: {}, stores: NO_STORES, walks: {}, panels: null };
 
 /** The whole harness in a unit's paf.dev.config.json. */
 export interface DevHarness {
@@ -63,7 +98,42 @@ export interface DevHarness {
  * @return True for `DEV_MODE`, `DEV_TIME_HOUR`, `DEV_TIME_MIN`, and every `DEV_TAP_WALK_` name.
  */
 export function isDevDefine(name: string): boolean {
-  return name === 'DEV_MODE' || name === 'DEV_TIME_HOUR' || name === 'DEV_TIME_MIN' || name.startsWith('DEV_TAP_WALK_');
+  return name === 'DEV_MODE' || name === 'DEV_TIME_HOUR' || name === 'DEV_TIME_MIN' || name === DEV_WALK_FROM_CONFIG || name.startsWith('DEV_TAP_WALK_');
+}
+
+/** The define a dev build sets when its walk is one the file lays out as a list, which the dev plugin runs. */
+export const DEV_WALK_FROM_CONFIG = 'DEV_WALK_FROM_CONFIG';
+
+/** The days in each month of a year that is not a leap year. */
+const MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+/**
+ * Reads a pinned date, and works out its weekday and day of the year.
+ *
+ * The watch's struct tm carries both, and a date panel draws them, so the build works them out here
+ * once rather than the watch doing calendar maths on every launch.
+ *
+ * @param value The date as written, `YYYY-MM-DD`.
+ * @param file The file as a message names it.
+ * @param owner `gridlock's ` for a face's entry, or empty for the top of the file.
+ * @return The date with its weekday and day of the year.
+ */
+export function readDate(value: unknown, file: string, owner: string): DevDate {
+  const parts = typeof value === 'string' ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) : null;
+  const year = parts ? Number(parts[1]) : 0;
+  const month = parts ? Number(parts[2]) : 0;
+  const day = parts ? Number(parts[3]) : 0;
+  const leap = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  const days = month >= 1 && month <= 12 ? MONTH_DAYS[month - 1] + (month === 2 && leap ? 1 : 0) : 0;
+
+  // the watch's clock runs from 1970 and a 32-bit time_t stops in 2038, so a date outside them cannot be shown
+  if (!parts || year < 1970 || year > 2037 || day < 1 || day > days) {
+    throw new ToolError(`${file} sets ${owner}date to ${JSON.stringify(value)}. It takes a real date as YYYY-MM-DD, from 1970 to 2037, such as "2026-07-13"`);
+  }
+
+  const stamp = Date.UTC(year, month - 1, day);
+
+  return { year, month, day, weekday: new Date(stamp).getUTCDay(), yearDay: Math.round((stamp - Date.UTC(year, 0, 1)) / 86_400_000) };
 }
 
 /** The refusal for a `mode` in the file, at the top or in the owner's entry. */
@@ -99,17 +169,33 @@ function readBlock(block: Record<string, unknown>, file: string, owner: string, 
     throw new ToolError(`${file} sets ${owner}walk to ${JSON.stringify(walk)}. It takes the walk's name in lowercase, such as "themes"`);
   }
 
-  if (!('clock' in block)) {
-    return { walk: walkName, hour: fallback.hour, minute: fallback.minute };
+  let hour = fallback.hour;
+  let minute = fallback.minute;
+
+  if ('clock' in block) {
+    const minutes = clockMinutes(block.clock);
+
+    if (minutes === null) {
+      throw new ToolError(`${file} sets ${owner}clock to ${JSON.stringify(block.clock)}. It takes a 24-hour HH:MM, such as "08:00"`);
+    }
+
+    hour = Math.floor(minutes / 60);
+    minute = minutes % 60;
   }
 
-  const time = typeof block.clock === 'string' ? /^([01]\d|2[0-3]):([0-5]\d)$/.exec(block.clock) : null;
+  // the HRV log has to end by the clock, so the stores are read against the clock this block ends up with
+  const stores = 'stores' in block ? readStores(block.stores, hour * 60 + minute, file, owner) : NO_STORES;
 
-  if (!time) {
-    throw new ToolError(`${file} sets ${owner}clock to ${JSON.stringify(block.clock)}. It takes a 24-hour HH:MM, such as "08:00"`);
-  }
-
-  return { walk: walkName, hour: Number(time[1]), minute: Number(time[2]) };
+  return {
+    walk: walkName,
+    hour,
+    minute,
+    date: 'date' in block ? readDate(block.date, file, owner) : fallback.date,
+    settings: { ...fallback.settings, ...('settings' in block ? readSettings(block.settings, file, owner) : {}) },
+    stores: Object.fromEntries(STORE_NAMES.map((name) => [name, stores[name] ?? fallback.stores[name]])) as DevStores,
+    walks: { ...fallback.walks, ...('walks' in block ? readWalks(block.walks, file, owner) : {}) },
+    panels: 'panels' in block ? readPanels(block.panels, file, owner) : fallback.panels,
+  };
 }
 
 /**
@@ -156,7 +242,37 @@ export function readDevHarness(settings: unknown, file: string, faces: () => str
     byFace[name] = readBlock(entry, file, `${name}'s `, FACE_SETTINGS, unit);
   }
 
+  // a walk's own clock, settings, and stores go over a face's only once the walk is picked, but a
+  // slip in any of them stops the build now, against every face that takes the walk
+  for (const switches of [unit, ...Object.values(byFace)]) {
+    for (const walk of Object.values(switches.walks)) {
+      if (walk.scene) {
+        readBlock(walk.scene.block, walk.scene.file, walk.scene.owner, SCENE_KEYS, switches);
+      }
+    }
+  }
+
   return { unit, faces: byFace };
+}
+
+/**
+ * The switches with the picked walk's own clock, date, settings, and stores over them.
+ *
+ * A walk shot on a clock or a day of its own, such as one through the clock faces, carries them, so
+ * picking it is the one edit. Its settings and stores go on top of the face's one by one, the way a
+ * face's entry goes on top of the file's.
+ *
+ * @param switches A face's switches.
+ * @return The switches the dev build runs with.
+ */
+function withWalkScene(switches: DevSwitches): DevSwitches {
+  const walk = switches.walk !== null && Object.prototype.hasOwnProperty.call(switches.walks, switches.walk) ? switches.walks[switches.walk] : null;
+
+  if (!walk?.scene) {
+    return switches;
+  }
+
+  return readBlock(walk.scene.block, walk.scene.file, walk.scene.owner, SCENE_KEYS, switches);
 }
 
 /**
@@ -164,14 +280,18 @@ export function readDevHarness(settings: unknown, file: string, faces: () => str
  *
  * @param harness The unit's harness, from readDevHarness.
  * @param face The face's name.
- * @return The face's own entry, or the unit's settings for a face with none.
+ * @return The face's own entry, or the unit's settings for a face with none, with the picked walk's own over them.
  */
 export function switchesFor(harness: DevHarness, face: string): DevSwitches {
-  return Object.prototype.hasOwnProperty.call(harness.faces, face) ? harness.faces[face] : harness.unit;
+  return withWalkScene(Object.prototype.hasOwnProperty.call(harness.faces, face) ? harness.faces[face] : harness.unit);
 }
 
 /**
  * The C defines a build gives one face.
+ *
+ * A walk the file lays out as a list sets `DEV_WALK_FROM_CONFIG` in place of its own
+ * `DEV_TAP_WALK_<NAME>`, which is how the dev plugin's `dev_start` knows to run it. A face's own C
+ * walk that reads the same name stays off, so only one tap handler ever runs.
  *
  * @param switches The face's switches for a dev build, from switchesFor, or null for a build without `--dev`.
  * @return `DEV_MODE` 0 without switches, and with them `DEV_MODE` 1, the clock, and the walk.
@@ -181,11 +301,14 @@ export function devDefines(switches: DevSwitches | null): Record<string, number>
     return { DEV_MODE: 0 };
   }
 
+  const listed = switches.walk !== null && Object.prototype.hasOwnProperty.call(switches.walks, switches.walk);
+
   return {
     DEV_MODE: 1,
     DEV_TIME_HOUR: switches.hour,
     DEV_TIME_MIN: switches.minute,
-    ...(switches.walk ? { [`DEV_TAP_WALK_${switches.walk.toUpperCase()}`]: 1 } : {}),
+    ...(switches.walk && !listed ? { [`DEV_TAP_WALK_${switches.walk.toUpperCase()}`]: 1 } : {}),
+    ...(listed ? { [DEV_WALK_FROM_CONFIG]: 1 } : {}),
   };
 }
 
@@ -259,6 +382,19 @@ function readUnitFiles(unit: string, configLabel: string): UnitFiles {
 /**
  * The C defines for a build of one face, from `--dev` and the unit's paf.dev.config.json.
  *
+ * @param unit The unit's folder.
+ * @param face The face being built, by the name `paf build` takes.
+ * @param dev Whether the build was asked for with `--dev`.
+ * @param faces Gives the names of the unit's faces, the repo's own by default. Only asked when the file has an entry.
+ * @return Only `DEV_MODE` 0 without `--dev`, and with it the dev mode and the face's clock and walk.
+ */
+export function unitDevDefines(unit: string, face: string, dev: boolean, faces: () => string[] = listFaceNames): Record<string, number> {
+  return devDefines(unitDevSwitches(unit, face, dev, faces));
+}
+
+/**
+ * What a build of one face runs with, from `--dev` and the unit's paf.dev.config.json.
+ *
  * Settings left in the plugin's block in paf.config.json stop every build, since the build reads none
  * of them there. Without `--dev` the dev file is only searched for a `mode`. With it the whole file
  * is checked, and the build stops when paf.config.json does not list the dev plugin as an object,
@@ -268,9 +404,9 @@ function readUnitFiles(unit: string, configLabel: string): UnitFiles {
  * @param face The face being built, by the name `paf build` takes.
  * @param dev Whether the build was asked for with `--dev`.
  * @param faces Gives the names of the unit's faces, the repo's own by default. Only asked when the file has an entry.
- * @return Only `DEV_MODE` 0 without `--dev`, and with it the dev mode and the face's clock and walk.
+ * @return Null without `--dev`, and with it the face's switches.
  */
-export function unitDevDefines(unit: string, face: string, dev: boolean, faces: () => string[] = listFaceNames): Record<string, number> {
+export function unitDevSwitches(unit: string, face: string, dev: boolean, faces: () => string[] = listFaceNames): DevSwitches | null {
   const name = path.basename(path.resolve(unit));
   const configLabel = `${name}/paf.config.json`;
   const devLabel = `${name}/${DEV_CONFIG_FILE}`;
@@ -283,7 +419,7 @@ export function unitDevDefines(unit: string, face: string, dev: boolean, faces: 
 
   if (!dev) {
     refuseMode(files.devText, devLabel);
-    return devDefines(null);
+    return null;
   }
 
   if (!isObject(plugins.dev)) {
@@ -302,7 +438,7 @@ export function unitDevDefines(unit: string, face: string, dev: boolean, faces: 
     files.harness = readDevHarness(settings, devLabel, faces);
   }
 
-  return devDefines(switchesFor(files.harness, face));
+  return switchesFor(files.harness, face);
 }
 
 /** A file's text, or undefined when there is none. */

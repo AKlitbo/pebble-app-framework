@@ -786,7 +786,7 @@ describe('plugin apps', () => {
   test('prepares a plugin app with no dev defines and no key checks', () => {
     const result = prepareAppinfo(pluginConfig(), 'calendar-ical');
 
-    expect(result).toEqual({ targets: ['calendar-ical'], defines: {}, providers: {}, devDefines: {} });
+    expect(result).toEqual({ targets: ['calendar-ical'], defines: {}, providers: {}, devDefines: {}, devSwitches: null });
   });
 
   /** A plugin app has no paf.dev.config.json entry to read, so a dev build reads none, and buildOne decides what --dev does with it. */
@@ -878,6 +878,7 @@ describe('plugin apps', () => {
       permissions: [{ name: 'Calendar', reason: 'To merge your phone calendars', required: true }],
       textDefines: {},
       devDefines: {},
+      devSwitches: null,
       warnings: [],
     });
   });

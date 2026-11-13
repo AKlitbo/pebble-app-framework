@@ -120,7 +120,7 @@ Framework 4 ships these. List one under `plugins` to use it.
 | `icons` | the `icons` generator and its check. `sources` is the folder of icon SVGs, from the unit |
 | `thumbnails` | the `thumbnails` and `theme-previews` generators and their checks |
 | `frame` | the `background` generator, for faces with a `frame/frame.config.json` |
-| `dev` | the `clay-preview` and `tap-walk` tools. It takes no settings here. `paf build <face> --dev` builds a face in dev mode, with the harness in a committed `paf.dev.config.json` beside `paf.config.json`, as [the dev plugin](../how/dev-plugin.md#turning-it-on-for-a-dev-build) covers |
+| `dev` | the `clay-preview`, `tap-walk`, and `thumbnails` tools. It takes no settings here. `paf build <face> --dev` builds a face in dev mode, with the harness in a committed `paf.dev.config.json` beside `paf.config.json`, as [the dev plugin](../how/dev-plugin.md#turning-it-on-for-a-dev-build) covers |
 | `code-style` | `paf lint` and `paf format`. `"prettier": true` turns on Prettier for `paf format` |
 
 The framework itself, with no plugin listed, offers the `clay` generator, the check that its output is current, and the build.

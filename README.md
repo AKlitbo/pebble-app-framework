@@ -84,7 +84,7 @@ A unit lists the plugins it wants in its `paf.config.json`, and paf copies only 
 | `icons` | Turns a face's SVG glyphs into its icon PNGs, and checks the appinfo media block and each PNG's size are current. It reads the SVGs from `plugins.icons.sources`, relative to the unit, or from `ICON_SOURCES` when that names none. It needs `sharp`. |
 | `thumbnails` | Inlines a face's panel PNGs and theme previews as base64 for its settings page, and checks both are current. |
 | `code-style` | The ESLint style `paf lint` uses, and Prettier for a unit's CSS, JSON, and YAML through `paf format`, once the unit turns it on. |
-| `dev` | The screenshot harness in `c/dev/`, the settings preview in `clay-preview.ts`, and `tap-walk.ts`, which screenshots every state of a face's dev tap walk. |
+| `dev` | The screenshot harness in `c/dev/`, the settings preview in `clay-preview.ts`, `tap-walk.ts`, which screenshots every state of a face's dev tap walk, and `thumbnails.ts`, which crops a face's panel pictures out of a walk. |
 
 ## CI and Releases
 

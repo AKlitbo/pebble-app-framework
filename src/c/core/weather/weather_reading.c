@@ -120,8 +120,7 @@ static int div_nearest(int numerator, int denominator)
     return (numerator + (numerator < 0 ? -denominator : denominator) / 2) / denominator;
 }
 
-/** One temperature in the other unit, or no data left as it is. */
-static int convert_temp(int value, bool to_fahrenheit)
+int weather_reading_convert_temp(int value, bool to_fahrenheit)
 {
     if (value == WEATHER_NO_TEMP)
     {
@@ -134,20 +133,20 @@ static int convert_temp(int value, bool to_fahrenheit)
 
 void weather_reading_convert(WeatherState *state, bool to_fahrenheit)
 {
-    state->temp = (int16_t)convert_temp(state->temp, to_fahrenheit);
-    state->temp_max = convert_temp(state->temp_max, to_fahrenheit);
-    state->temp_min = convert_temp(state->temp_min, to_fahrenheit);
-    state->feels_like = convert_temp(state->feels_like, to_fahrenheit);
-    state->dew_point = convert_temp(state->dew_point, to_fahrenheit);
+    state->temp = (int16_t)weather_reading_convert_temp(state->temp, to_fahrenheit);
+    state->temp_max = weather_reading_convert_temp(state->temp_max, to_fahrenheit);
+    state->temp_min = weather_reading_convert_temp(state->temp_min, to_fahrenheit);
+    state->feels_like = weather_reading_convert_temp(state->feels_like, to_fahrenheit);
+    state->dew_point = weather_reading_convert_temp(state->dew_point, to_fahrenheit);
 
     for (uint8_t i = 0; i < state->hourly.count && i < WEATHER_FORECAST_COLS; i++)
     {
-        state->hourly.col[i].temp = (int16_t)convert_temp(state->hourly.col[i].temp, to_fahrenheit);
+        state->hourly.col[i].temp = (int16_t)weather_reading_convert_temp(state->hourly.col[i].temp, to_fahrenheit);
     }
 
     for (uint8_t i = 0; i < state->daily.count && i < WEATHER_FORECAST_COLS; i++)
     {
-        state->daily.col[i].temp_max = (int16_t)convert_temp(state->daily.col[i].temp_max, to_fahrenheit);
-        state->daily.col[i].temp_min = (int16_t)convert_temp(state->daily.col[i].temp_min, to_fahrenheit);
+        state->daily.col[i].temp_max = (int16_t)weather_reading_convert_temp(state->daily.col[i].temp_max, to_fahrenheit);
+        state->daily.col[i].temp_min = (int16_t)weather_reading_convert_temp(state->daily.col[i].temp_min, to_fahrenheit);
     }
 }

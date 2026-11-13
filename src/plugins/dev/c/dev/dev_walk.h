@@ -25,8 +25,9 @@
  */
 typedef enum
 {
-    DEV_WALK_NONE,  ///< Just pin the fixture, no tap handler
-    DEV_WALK_THEMES ///< A tap steps to the next theme
+    DEV_WALK_NONE,   ///< Just pin the fixture, no tap handler
+    DEV_WALK_THEMES, ///< A tap steps to the next theme
+    DEV_WALK_CONFIG  ///< A tap steps to the next step of the walk the unit's paf.dev.config.json lays out
 } DevWalkMode;
 
 /**
@@ -47,7 +48,8 @@ void dev_walk_seed_stores(int hour, int min);
 
 /**
  * @brief Starts the walk. A theme walk forces the first theme and subscribes the accelerometer
- * tap. Either mode then paints. Call after `engine_init`.
+ * tap, and a walk the config lays out shows its first step and subscribes it. Every mode then
+ * paints. Call after `engine_init`.
  *
  * @param mode Which walk to run.
  * @param apply_theme The face's own theme-apply hook. It re-colours the zones and swaps the
