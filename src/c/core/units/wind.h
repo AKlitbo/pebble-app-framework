@@ -30,7 +30,9 @@ typedef enum
 /**
  * @brief Convert a km/h wind speed into the chosen unit.
  *
- * Integer maths, truncated. An unknown unit falls back to km/h.
+ * Integer maths, rounded to the nearest whole number. The phone sends a plugin's wind as whole km/h,
+ * so rounding brings a speed such as 10 mph back to 10 rather than 9. An unknown unit falls back to
+ * km/h.
  *
  * @param kmh The wind speed in km/h.
  * @param unit The unit to convert into.

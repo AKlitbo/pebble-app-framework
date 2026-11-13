@@ -64,13 +64,13 @@ The rounding carries across the point, so 4,960 metres reads `5.0` km rather tha
 The weather store keeps the wind in km/h whichever provider it came from, rounded to a whole number on the phone. `wind_from_kmh(kmh, unit)` converts it on the watch, and `wind_unit_label` gives the label to show beside it, `KM/H`, `MPH`, `KTS`, or `M/S`:
 
 ```c
-case WIND_UNIT_MPH: return (kmh * 621) / 1000;
-case WIND_UNIT_KTS: return (kmh * 540) / 1000;
-case WIND_UNIT_MS:  return (kmh * 278) / 1000;
+case WIND_UNIT_MPH: return scale_rounded(kmh, 621);
+case WIND_UNIT_KTS: return scale_rounded(kmh, 540);
+case WIND_UNIT_MS:  return scale_rounded(kmh, 278);
 ```
 
-The factors are the real ones to three places, and the result is cut to a whole number rather than rounded. 30 km/h is 18.6 mph and reads 18, 16.2 knots and reads 16, and 8.3 m/s and reads 8. So a converted speed can read one below the nearest whole number, which is small next to how much the wind gusts.
+The factors are the real ones to three places, and `scale_rounded` multiplies, adds a half, and divides, so the result rounds to the nearest whole number. 30 km/h is 18.6 mph and reads 19, 16.2 knots and reads 16, and 8.3 m/s and reads 8. Rounding matters for a weather plugin's wind, which the phone sends as whole km/h. A plugin's 10 mph goes as 16 km/h, which is 9.9 mph and reads 10 again.
 
-**No Reading First.** The store's marker for no wind reading is -1, and -1 km/h converts to 0 mph, since the division rounds toward zero. A face checks for no reading before it converts, or a missing wind shows as calm.
+**No Reading First.** The store's marker for no wind reading is -1, and -1 km/h converts to -1 mph, since a half rounds away from zero. A face checks for no reading before it converts, or a missing wind shows as a number.
 
 **The Setting.** The units are numbered 0 for km/h, 1 for mph, 2 for knots, and 3 for m/s. `wind: {}` on `buildConfig` adds the select on `WEATHER_WIND_UNIT`, and `KNOWN_WIND_UNIT` keeps it on the watch, so a face passes `settings_u8(SETTING_WIND_UNIT)` straight in. A number outside that range reads as km/h.

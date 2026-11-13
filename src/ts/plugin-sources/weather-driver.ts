@@ -9,10 +9,17 @@
  * Whenever the plugin is not picked, the feature's own fetch runs through the controls it hands
  * over.
  *
- * The weather comes in the face's own temperature unit. A face that declares no
- * `WEATHER_TEMPERATURE_UNIT`, such as one with no settings page, gets the unit the wearer picked in
- * the Pebble app instead, read from the Pebble app's `preferences/units`, from the plugin and from a
- * fetch alike. Its watch has no unit to convert to, and shows the number as sent.
+ * Plugin weather comes in the plugin's own units, so the wearer sets them in one place for every
+ * face. Each reading carries them as the face's `WEATHER_TEMPERATURE_UNIT` and `WEATHER_WIND_UNIT`,
+ * which the watch takes as its unit settings, while the face's own saved units wait on the phone for
+ * a switch back to a fetch. A save or a restore sends the plugin's last units in place of the face's,
+ * so the watch never shows the face's units while the plugin is the source. A plugin the directory marks with `fixedUnits`, such as the Pebble app's
+ * built-in weather, sends fixed units whatever the wearer picked, so the units the wearer picked in
+ * the Pebble app are used in their place, read from the Pebble app's `preferences/units`.
+ *
+ * A fetch comes in the face's own temperature unit. A face that declares no
+ * `WEATHER_TEMPERATURE_UNIT`, such as one with no settings page, fetches in the unit picked in the
+ * Pebble app. Its watch has no unit to convert to, and shows the number as sent.
  *
  * It lives here rather than in the feature so a face built without the define carries none of it.
  * The feature keeps only a small hook through which a fetch takes the Pebble app's unit, and on a
@@ -29,8 +36,8 @@ import noteComponent from './note-component';
 import panelComponent from './panel-component';
 import kindsComponent from './kinds-component';
 import type { SourceEnvelope, WeatherPlugins } from './types';
-import type { WeatherMappingOptions } from './weather';
-import { getConfig, readFahrenheit, readText, readValue, watchSettings } from '../pkjs/settings-store';
+import type { AppUnits, ReadingUnits, WeatherMappingOptions } from './weather';
+import { getConfig, readText, readValue, watchSettings } from '../pkjs/settings-store';
 import { WEATHER_FALLBACK } from '../pkjs/providers';
 import type { FeatureHooks } from '../pkjs/feature';
 import weatherUtil from '../weather/util';
@@ -40,7 +47,7 @@ import type { WeatherResult } from '../weather/util';
 /** The setting that picks between a plugin and a fetch. */
 export const PROVIDER_KEYS = ['WEATHER_PROVIDER'];
 
-/** The setting a plugin's update is converted again for, with no fetch. */
+/** The face's own unit, which a fetch converts to and a plugin's reading leaves alone. */
 export const UNIT_KEYS = ['WEATHER_TEMPERATURE_UNIT'];
 
 /**
@@ -64,12 +71,15 @@ export function fetchKeys(settingKeys: string[]): string[] {
 export const KEYED_WEATHER_PROVIDERS: readonly string[] = ['owm', 'weatherapi'];
 
 /**
- * Where the phone keeps the last temperature unit the Pebble app gave, for a face with no unit
- * setting of its own. A new JS session sends its first reading in that unit, since the units update
- * can land after the weather's. A change made while the face's phone code was not running shows on
- * that first reading, and the units update corrects it straight after.
+ * Where the phone keeps the last temperature unit the Pebble app gave. A new JS session sends its
+ * first reading in that unit, since the units update can land after the weather's. A change made
+ * while the face's phone code was not running shows on that first reading, and the units update
+ * corrects it straight after.
  */
 export const APP_UNIT_STORE = 'pluginWeather:appFahrenheit';
+
+/** Where the phone keeps the last wind unit the Pebble app gave, as the watch's wind unit setting saves it. */
+export const APP_WIND_STORE = 'pluginWeather:appWindUnit';
 
 /** The last unit the Pebble app gave, true for °F, or Celsius when it never gave one or the store throws. */
 function loadAppUnit(): boolean {
@@ -80,12 +90,23 @@ function loadAppUnit(): boolean {
   }
 }
 
-/** Keeps the unit the Pebble app gave. A store that throws costs only the next session's first reading. */
-function saveAppUnit(fahrenheit: boolean): void {
+/** The last wind unit the Pebble app gave, or undefined when it never gave one or the store throws. */
+function loadAppWind(): number | undefined {
   try {
-    localStorage.setItem(APP_UNIT_STORE, String(fahrenheit));
+    const saved = localStorage.getItem(APP_WIND_STORE);
+
+    return saved !== null && /^[0-3]$/.test(saved) ? Number(saved) : undefined;
   } catch (error) {
-    console.log('Weather: could not save the Pebble app\'s unit');
+    return undefined;
+  }
+}
+
+/** Keeps a unit the Pebble app gave. A store that throws costs only the next session's first reading. */
+function saveAppUnit(store: string, value: boolean | number): void {
+  try {
+    localStorage.setItem(store, String(value));
+  } catch (error) {
+    console.log('Weather: could not save the Pebble app\'s units');
   }
 }
 
@@ -93,8 +114,12 @@ function saveAppUnit(fahrenheit: boolean): void {
 export interface WeatherMapping {
   /** Turns one update into the reading the watch takes. */
   fromUpdate(envelope: SourceEnvelope | null | undefined, options: WeatherMappingOptions): WeatherResult;
+  /** The units an update's reading shows in, from the update and the units picked in the Pebble app. */
+  units(envelope: SourceEnvelope | null | undefined, app: AppUnits): ReadingUnits;
   /** Whether a `preferences/units` update says °F, or undefined when it says neither. */
   appFahrenheit(envelope: SourceEnvelope | null | undefined): boolean | undefined;
+  /** The watch's wind unit for a `preferences/units` update, or undefined when it names none. */
+  appWindUnit(envelope: SourceEnvelope | null | undefined): number | undefined;
   /** The properties the subscription asks for, from the fields the face shows. */
   properties(fields: string[], wantForecast: boolean): string[];
   /** The status the watch shows for a subscription error code, or undefined for a code with none. */
@@ -116,12 +141,13 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     const listed = providers ? providers.weather : undefined;
     const only = pluginOnly(listed, PLUGIN_VALUE);
 
-    // a face that declares the unit key has a unit of its own, the one rule the watch goes by too. a
-    // face without it, such as one with no settings page, takes the unit the Pebble app last gave, and
-    // Celsius until it has given one. that holds for a fetch as well as the plugin, since its watch
-    // writes the number bare and the one number has to mean one unit
+    // a face that declares the unit key fetches in its own unit. a face without it, such as one with
+    // no settings page, fetches in the unit the Pebble app last gave, and Celsius until it has given
+    // one, since its watch writes the number bare. the Pebble app's units also stand in for a plugin
+    // that serves fixed ones
     const ownUnit = messageKeys.WEATHER_TEMPERATURE_UNIT !== undefined;
-    let appUnit = ownUnit ? false : loadAppUnit();
+    let appUnit = loadAppUnit();
+    let appWind = loadAppWind();
 
     const { fields, wantForecast } = controls;
 
@@ -136,14 +162,24 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     const unitSettings = watchSettings(UNIT_KEYS, defaults);
     const fetchSettings = watchSettings(fetchKeys(controls.settingKeys), defaults);
 
-    /** Turns an update into the reading the watch takes, in the face's unit and as of now. */
+    /**
+     * Turns an update into the reading the watch takes, in the plugin's units and as of now. A reading
+     * carries the units it is in, and a status has none to carry.
+     */
     function readingFrom(envelope: SourceEnvelope): WeatherResult {
-      return mapping.fromUpdate(envelope, {
-        fahrenheit: ownUnit ? readFahrenheit(getConfig(), defaults) : appUnit,
+      const units = mapping.units(envelope, { fahrenheit: appUnit, wind: appWind });
+      const reading = mapping.fromUpdate(envelope, {
+        fahrenheit: units.fahrenheit,
         nowSeconds: Math.floor(Date.now() / 1000),
         fields,
         wantForecast,
       });
+
+      if (reading.ok) {
+        reading.units = units;
+      }
+
+      return reading;
     }
 
     /** Sends the status an error code calls for, when it calls for one. */
@@ -183,15 +219,16 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     const { subscription } = choice;
 
     /**
-     * Sends the weather again in the Pebble app's new unit. With the plugin picked the kept update
-     * goes again, and with nothing kept the watch shows the plugin's status, which has no unit, so
-     * nothing goes. Otherwise one forced fetch runs, which replaces a round still out in the old unit.
-     * A save's refetch still waiting reads the unit when it runs, so it takes the new one and the
-     * change folds into it rather than spending a second provider call.
+     * Sends the weather again for the Pebble app's new units. With the plugin picked the kept update
+     * goes again, which changes it only for a plugin that takes the Pebble app's units, and with
+     * nothing kept the watch shows the plugin's status, which has no unit, so nothing goes. Otherwise
+     * a face with no unit of its own runs one forced fetch for a new temperature unit, which replaces
+     * a round still out in the old one. A save's refetch still waiting reads the unit when it runs, so
+     * it takes the new one and the change folds into it rather than spending a second provider call.
      */
-    function appUnitMoved(): void {
+    function appUnitsMoved(fahrenheitMoved: boolean): void {
       if (!choice.picked()) {
-        if (!controls.savePending()) {
+        if (!ownUnit && fahrenheitMoved && !controls.savePending()) {
           controls.fetch(true);
         }
 
@@ -205,24 +242,33 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       }
     }
 
-    // the Pebble app's units, read in either mode and only on a face with no unit of its own. the
-    // Preferences plugin asks for no permission. nothing on the watch waits on the units, so they run
-    // no quick retry and send the watch no status, and retry only with the weather and the slow tick
-    const units = ownUnit ? null : createSourceSubscription({
+    // the Pebble app's units, read in either mode. the Preferences plugin asks for no permission.
+    // nothing on the watch waits on the units, so they run no quick retry and send the watch no
+    // status, and retry only with the weather and the slow tick
+    const units = createSourceSubscription({
       category: 'preferences',
       item: 'units',
-      properties: ['temperature'],
+      properties: ['temperature', 'wind_speed'],
       quickRetry: false,
       onUpdate(envelope) {
         const fahrenheit = mapping.appFahrenheit(envelope);
+        const wind = mapping.appWindUnit(envelope);
+        const fahrenheitMoved = fahrenheit !== undefined && fahrenheit !== appUnit;
+        const windMoved = wind !== undefined && wind !== appWind;
 
-        if (fahrenheit === undefined || fahrenheit === appUnit) {
-          return;
+        if (fahrenheitMoved) {
+          appUnit = fahrenheit;
+          saveAppUnit(APP_UNIT_STORE, fahrenheit);
         }
 
-        appUnit = fahrenheit;
-        saveAppUnit(fahrenheit);
-        appUnitMoved();
+        if (windMoved) {
+          appWind = wind;
+          saveAppUnit(APP_WIND_STORE, wind);
+        }
+
+        if (fahrenheitMoved || windMoved) {
+          appUnitsMoved(fahrenheitMoved);
+        }
       },
       onError(error) {
         console.log(`Weather: the Pebble app's units sent ${error.code} ${error.message}`);
@@ -243,10 +289,10 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
     function follow(how: FollowOptions = {}): boolean {
       const picked = choice.follow(how);
 
-      if (units && (!unitsStarted || how.restart)) {
+      if (!unitsStarted || how.restart) {
         unitsStarted = true;
         units.start();
-      } else if (units && how.retry) {
+      } else if (how.retry) {
         units.retryIfIdle();
       }
 
@@ -311,7 +357,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
         // a wearer opening the settings may be setting up a plugin right now, so the quick retry gets
         // its whole window again while the plugin waits on one, and the units get one try
         subscription.retrySoon();
-        units?.retrySoon();
+        units.retrySoon();
       },
 
       configSaved() {
@@ -332,16 +378,8 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
           // setting one up right now
           subscription.retrySoon();
 
-          // the watch converts what it holds when the unit changes, so the kept update goes again in
-          // the new unit. the location and the key only feed a fetch, so they change nothing here. a
-          // first save of the plugin a fresh install already reads from keeps the same subscription,
-          // so it is no move
-          const latest = subscription.latest();
-
-          if (unitMoved && !pickMoved && latest) {
-            controls.send(readingFrom(latest));
-          }
-
+          // the save carried the plugin's units, and the location, the key, and the face's own units
+          // only feed a fetch, so they change nothing here
           return;
         }
 
@@ -355,6 +393,20 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
           });
         }
       },
+    };
+
+    /**
+     * Puts the plugin's last units into a save or a restore in place of the face's hidden unit rows,
+     * while the plugin is the source. With no reading yet the save goes as it is, and the first
+     * reading brings the units.
+     */
+    hooks.settingsOut = (dict) => {
+      const latest = subscription.latest();
+      const pluginUnits = latest && pickedIn(getConfig()) ? readingFrom(latest).units : undefined;
+
+      if (pluginUnits) {
+        weatherUtil.putUnits(dict, messageKeys, pluginUnits);
+      }
     };
 
     // the note, the supported plugins panel, and the plugin kinds row the page hook's rows are drawn with, which the app

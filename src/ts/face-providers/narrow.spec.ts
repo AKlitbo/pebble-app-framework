@@ -226,10 +226,9 @@ describe('narrow with the plugin alone', () => {
 
     const result = providers.narrow(builderPage());
 
-    expect(['WEATHER_PROVIDER', 'WEATHER_API_KEY', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'].filter((key) => rowWithKey(result, key))).toEqual([]);
+    expect(['WEATHER_PROVIDER', 'WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'].filter((key) => rowWithKey(result, key))).toEqual([]);
     expect(textsOf(result)).not.toContain(LEAD_LINE);
     expect(textsOf(result)).not.toContain('Location Settings');
-    expect(rowWithKey(result, 'WEATHER_TEMPERATURE_UNIT')).toBeDefined();
   });
 
   /** The plugin source page puts the kind's notes after the anchor, so one left anywhere else puts them far from the weather rows. */
@@ -238,9 +237,9 @@ describe('narrow with the plugin alone', () => {
 
     const result = providers.narrow(builderPage());
 
-    const weather = result.find((item) => item.items?.some((row) => row.messageKey === 'WEATHER_TEMPERATURE_UNIT'));
+    const weather = result.find((item) => item.items?.some((row) => row.pluginSourceRows === 'weather'));
 
-    expect(weather?.items).toEqual([heading('Weather'), expect.objectContaining({ messageKey: 'WEATHER_TEMPERATURE_UNIT' }), { type: 'text', pluginSourceRows: 'weather' }]);
+    expect(weather?.items).toEqual([heading('Weather'), { type: 'text', pluginSourceRows: 'weather' }]);
   });
 
   /** A location section left holding only its heading would stand over nothing. */
@@ -496,7 +495,7 @@ describe('settle', () => {
     const saved = Object.fromEntries(Object.entries(settings).filter(([key]) => onPage.has(key)));
 
     expect(changed).toBe(true);
-    expect(settings).toEqual({ WEATHER_TEMPERATURE_UNIT: 1 });
+    expect(settings).toEqual({});
     expect(saved).toEqual(settings);
   });
 

@@ -460,10 +460,12 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
     },
   ];
 
+  // a plugin's weather comes in the plugin's own units, so the unit rows hide while one is picked
   if (options.temperature) {
     weatherItems.push({
       'type': 'select',
       'messageKey': 'WEATHER_TEMPERATURE_UNIT',
+      'pluginSourceHides': 'WEATHER_PROVIDER',
       'label': 'Temperature Unit',
       'defaultValue': 0,
       'options': [
@@ -477,6 +479,7 @@ export function weatherSection(options: ConfigBuilderOptions): ClayConfigItem | 
     weatherItems.push({
       'type': 'select',
       'messageKey': 'WEATHER_WIND_UNIT',
+      'pluginSourceHides': 'WEATHER_PROVIDER',
       'label': 'Wind Speed Unit',
       'defaultValue': 0,
       'options': WIND_UNIT_OPTIONS,
@@ -682,8 +685,8 @@ function introRow(options: ConfigBuilderOptions): ClayConfigItem {
  * face that needs its own sections in between calls the builders it wants and lays them out itself.
  *
  * Some rows carry plugin source marks on every face. The `WEATHER_PROVIDER` and `STOCK_PROVIDER`
- * selects carry a `pluginSource` mark. The weather's API key, the Location Settings heading and its
- * three rows, the stocks' lead line, API key, Paid Plan, and tickers, the iCal lead line, and the iCal
+ * selects carry a `pluginSource` mark. The weather's API key and unit rows, the Location Settings
+ * heading and its three rows, the stocks' lead line, API key, Paid Plan, and tickers, the iCal lead line, and the iCal
  * link carry `pluginSourceHides`, naming `WEATHER_PROVIDER`, `STOCK_PROVIDER`, or `CALENDAR_SOURCE`.
  * The weather lead line carries `pluginSourceLead`, naming `WEATHER_PROVIDER`, since it stays above the
  * select while a plugin is picked and only goes on a page with no select.

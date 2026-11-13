@@ -79,7 +79,7 @@ Both counts are capped at the number of columns, so a strip from days ago emptie
 
 ## Switching Units
 
-When the wearer switches between Celsius and Fahrenheit, `weather_reading_convert` converts every temperature in the kept reading, including each column of both strips. The face shows the reading in hand in the new unit while the fetch in the new unit is on its way. Each value rounds to the nearest degree, and no-data stays no-data:
+When the wearer switches between Celsius and Fahrenheit, or a weather plugin's reading arrives in the other one, `weather_reading_convert` converts every temperature in the kept reading, including each column of both strips. The face shows the reading in hand in the new unit while the fetch in the new unit is on its way. A plugin's reading carries its unit in the same message, and the watch converts before it takes the reading, so the new reading lands as it is. Each value rounds to the nearest degree, and no-data stays no-data:
 
 ```
 23 °C → 23 × 9 / 5 + 32 = 73.4 → 73 °F

@@ -2,8 +2,9 @@
  * @file wind.spec.c
  * @brief Host tests for the wind-speed conversions and labels.
  *
- * Each unit has its own integer factor and the maths truncates rather than rounds, so
- * the factors, the truncation, and the km/h fallback are what these tests pin down.
+ * Each unit has its own integer factor and the maths rounds to the nearest whole number, so the
+ * factors, the rounding, and the km/h fallback are what these tests pin down. A plugin's wind reaches
+ * the watch as whole km/h, and truncating it back showed a plugin's 10 mph as 9.
  */
 #include "unity.h"
 
@@ -28,12 +29,12 @@ void test_wind_converts_kmh_to_knots(void)
     TEST_ASSERT_EQUAL_INT(54, result);
 }
 
-/** @brief 100 km/h is about 27 m/s, and the truncation must land on 27 not 28. */
+/** @brief 100 km/h is 27.8 m/s, which rounds to 28. */
 void test_wind_converts_kmh_to_metres_per_second(void)
 {
     int result = wind_from_kmh(100, WIND_UNIT_MS);
 
-    TEST_ASSERT_EQUAL_INT(27, result);
+    TEST_ASSERT_EQUAL_INT(28, result);
 }
 
 /** @brief km/h is the source unit so it must pass straight through untouched. */
@@ -44,8 +45,24 @@ void test_wind_passes_kmh_straight_through(void)
     TEST_ASSERT_EQUAL_INT(100, result);
 }
 
-/** @brief The maths truncates, so 10 km/h in mph must floor to 6 rather than round to 7. */
-void test_wind_truncates_toward_zero(void)
+/** @brief A plugin's 10 mph reaches the watch as 16 km/h, and has to show as 10 mph again, not 9. */
+void test_wind_rounds_a_plugin_mph_back_to_itself(void)
+{
+    int result = wind_from_kmh(16, WIND_UNIT_MPH);
+
+    TEST_ASSERT_EQUAL_INT(10, result);
+}
+
+/** @brief 35 km/h is 18.9 knots, which shows as 19 rather than the 18 a floor gives. */
+void test_wind_rounds_knots_to_the_nearest(void)
+{
+    int result = wind_from_kmh(35, WIND_UNIT_KTS);
+
+    TEST_ASSERT_EQUAL_INT(19, result);
+}
+
+/** @brief 10 km/h is 6.2 mph, so rounding still lands below a half on 6. */
+void test_wind_rounds_down_below_a_half(void)
 {
     int result = wind_from_kmh(10, WIND_UNIT_MPH);
 
@@ -90,7 +107,9 @@ int main(void)
     RUN_TEST(test_wind_converts_kmh_to_knots);
     RUN_TEST(test_wind_converts_kmh_to_metres_per_second);
     RUN_TEST(test_wind_passes_kmh_straight_through);
-    RUN_TEST(test_wind_truncates_toward_zero);
+    RUN_TEST(test_wind_rounds_a_plugin_mph_back_to_itself);
+    RUN_TEST(test_wind_rounds_knots_to_the_nearest);
+    RUN_TEST(test_wind_rounds_down_below_a_half);
     RUN_TEST(test_wind_labels_each_unit);
     RUN_TEST(test_wind_falls_back_to_kmh_for_an_unknown_unit);
 

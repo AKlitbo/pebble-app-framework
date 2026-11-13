@@ -23,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The phone battery and now playing features end the subscription when a store started not live sends `PHONE_REQUEST` or `MUSIC_REQUEST` as 0, and subscribe again when it sends 1. The phone keeps the last answer under a `pf-wanted-` key, which a face leaves alone, and subscribes at ready unless that answer was 0. Start each store live only while a panel shows its reading.
 - `dev_seed_stores` now applies the file's settings before it seeds the stores, and `dev_force_time` also sets the pinned date and zeroes the seconds.
 - A dev build now never saves settings, so a save on top of the dev settings leaves the emulator's own on flash.
+- `buildConfig`'s temperature and wind unit rows now carry `pluginSourceHides`. A face that builds its own Weather section adds `pluginSourceHides: 'WEATHER_PROVIDER'` to its unit selects so they hide while the plugin is picked.
+- The watch now applies a message's settings before its readings, so a reading that carries its own unit is not converted twice.
 
 ### Wearer-Visible Changes
 
@@ -35,10 +37,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Changed
 
 - A weather, stock, or calendar source the wearer has never saved now starts on a Pebble app plugin when one on the phone serves it, and the settings page opens with Preferred Source picked. A saved choice always stands, and a saved iCal link counts as choosing iCal. A choice never saved goes back to the face's default once nothing serves it.
+- While the weather comes from a Pebble app plugin, it now shows in the plugin's own temperature and wind units, and the settings page hides the face's unit rows along with the location rows. The built-in weather shows in the units picked in the Pebble app. Each plugin reading carries them as `WEATHER_TEMPERATURE_UNIT` and `WEATHER_WIND_UNIT`, and switching back to a fetch brings the face's own units back.
 
 #### Fixed
 
+- Fixed the weather, stock, or calendar Data Source showing its own words about the other sources under Preferred Source, such as which provider needs a key. A plugin page now moves a source select's `description` into a row under it that shows only while another source is picked.
 - Fixed a watchface built to show the phone's battery or what is playing waking the watch on every change while no panel on the layout shows it.
+- Fixed a wind speed in mph, knots, or m/s reading up to one below the nearest whole number, such as a plugin's 10 mph showing as 9. `wind_from_kmh` now rounds rather than truncates.
 
 ## [6.2.1] - 2026-11-12
 

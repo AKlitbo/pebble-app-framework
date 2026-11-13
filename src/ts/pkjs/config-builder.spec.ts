@@ -489,11 +489,14 @@ describe('buildConfig plugin source marks', () => {
     expect(result?.pluginSource).toEqual({ category: 'weather', item: 'location' });
   });
 
-  /** An unmarked row would stay on the page in plugin mode, asking for a city or a key nothing reads. */
+  /**
+   * An unmarked row would stay on the page in plugin mode, asking for a city, a key, or a unit nothing
+   * reads. A plugin's weather comes in the plugin's own units, so the unit rows only feed a fetch too.
+   */
   test('marks every row that only feeds a weather fetch, the Location Settings heading included', () => {
     const result = allRows(fullPage()).filter((row) => row.pluginSourceHides === 'WEATHER_PROVIDER');
 
-    expect(result.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME', 'WEATHER_API_KEY']);
+    expect(result.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME', 'WEATHER_TEMPERATURE_UNIT', 'WEATHER_API_KEY']);
   });
 
   /**

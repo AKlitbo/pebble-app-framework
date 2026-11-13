@@ -494,14 +494,37 @@ describe('weather plugin mode', () => {
     expect(fetches).toHaveLength(0);
   });
 
-  /** The watch takes plugin weather through the keys a fetch fills, so a reading that went anywhere else would never show. */
-  test('sends an update to the watch as a reading in the face\'s unit', () => {
+  /**
+   * The watch takes plugin weather through the keys a fetch fills, and labels it with the unit the
+   * reading brings. A reading that went anywhere else would never show.
+   */
+  test('sends an update to the watch as a reading with the unit it is in', () => {
     saveSettings({ WEATHER_PROVIDER: 'plugin' });
     const { sends } = startFace({ ready: true });
 
     pebble.live()[0].push(update(21));
 
-    expect(sends).toEqual([{ WEATHER_TEMPERATURE: 21, WEATHER_CONDITIONS: 'CLDY', WEATHER_OK: 1, WEATHER_CONDITION_LABEL: 'Cloudy' }]);
+    expect(sends).toEqual([{ WEATHER_TEMPERATURE: 21, WEATHER_CONDITIONS: 'CLDY', WEATHER_OK: 1, WEATHER_CONDITION_LABEL: 'Cloudy', WEATHER_TEMPERATURE_UNIT: 0 }]);
+  });
+
+  /** A wearer who set °F in a weather plugin would read °C off a face left on °C, which is the bug this stops. */
+  test('sends a plugin\'s °F reading in °F with its unit on a face set to °C', () => {
+    saveSettings({ WEATHER_PROVIDER: 'plugin', WEATHER_TEMPERATURE_UNIT: 0 });
+    const { sends } = startFace({ ready: true });
+
+    pebble.live()[0].push({ ...update(null, { temperature: { numericValue: { value: 70, unit: '°F' } } }), pluginUuid: 'a-store-plugin' });
+
+    expect(sends[0]).toMatchObject({ WEATHER_TEMPERATURE: 70, WEATHER_TEMPERATURE_UNIT: 1 });
+  });
+
+  /** A status has no unit, and one carrying the face's would flip the watch's unit for a reading it is not showing. */
+  test('sends a status with no unit', () => {
+    saveSettings({ WEATHER_PROVIDER: 'plugin' });
+    const { sends } = startFace({ ready: true });
+
+    pebble.live()[0].push(update(null));
+
+    expect(sends[0]).not.toHaveProperty('WEATHER_TEMPERATURE_UNIT');
   });
 
   /** The plugin's own words carry what a coarse token loses, so rain and snow must not read as freezing rain. */
@@ -818,19 +841,80 @@ describe('weather plugin mode', () => {
     expect(pebble.subscriptions).toHaveLength(0);
   });
 
-  /** The watch converts what it holds when the unit flips, so the phone has to send the kept update again in the new unit, and a fetch would be for nothing. */
-  test('converts the kept update again for a unit-only save, with no fetch', () => {
+  /**
+   * The face's unit rows are hidden but still saved. A save carrying their unit would flip the watch
+   * to it, so a plugin's °F reading would show as °C until the next reading.
+   */
+  test('puts the plugin\'s unit into a save in place of the face\'s', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'plugin', WEATHER_TEMPERATURE_UNIT: 0 });
+    const { hooks } = startFace({ ready: true });
+
+    pebble.live()[0].push({ ...update(null, { temperature: { numericValue: { value: 70, unit: '°F' } } }), pluginUuid: 'a-store-plugin' });
+    const dict: Record<string, number | string> = { WEATHER_TEMPERATURE_UNIT: 0 };
+
+    hooks.settingsOut?.(dict);
+
+    expect(dict.WEATHER_TEMPERATURE_UNIT).toBe(1);
+  });
+
+  /** With no plugin reading there is no unit to send, and the first reading brings it, so the save keeps the face's. */
+  test('leaves a save as it is before the plugin\'s first reading', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'plugin', WEATHER_TEMPERATURE_UNIT: 1 });
+    const { hooks } = startFace({ ready: true });
+    const dict: Record<string, number | string> = { WEATHER_TEMPERATURE_UNIT: 1 };
+
+    hooks.settingsOut?.(dict);
+
+    expect(dict).toEqual({ WEATHER_TEMPERATURE_UNIT: 1 });
+  });
+
+  /** A save that switches to a fetch has to bring the face's own unit back, so the plugin's must stay out of it. */
+  test('leaves a save switching away from the plugin with the face\'s unit', () => {
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'plugin' });
+    const { hooks } = startFace({ ready: true });
+
+    pebble.live()[0].push({ ...update(null, { temperature: { numericValue: { value: 70, unit: '°F' } } }), pluginUuid: 'a-store-plugin' });
+    saveSettings({ ...CITY, WEATHER_PROVIDER: 'openmeteo', WEATHER_TEMPERATURE_UNIT: 0 });
+    const dict: Record<string, number | string> = { WEATHER_TEMPERATURE_UNIT: 0 };
+
+    hooks.settingsOut?.(dict);
+
+    expect(dict.WEATHER_TEMPERATURE_UNIT).toBe(0);
+  });
+
+  /** Switching back to a fetch has to bring the face's own unit back, so a fetched reading carries it. */
+  test('sends a fetch after a switch away from the plugin with the face\'s own unit', () => {
     saveSettings({ ...CITY, WEATHER_PROVIDER: 'plugin' });
     const { hooks, sends } = startFace();
 
     hooks.ready?.();
     pebble.live()[0].push(update(21));
-
-    saveFromPage(hooks, { ...CITY, WEATHER_PROVIDER: 'plugin', WEATHER_TEMPERATURE_UNIT: 1 });
+    saveFromPage(hooks, { ...CITY, WEATHER_PROVIDER: 'openmeteo', WEATHER_TEMPERATURE_UNIT: 1 });
     vi.advanceTimersByTime(1000);
+    fetches[0].respond(200, JSON.stringify({ current: { temperature_2m: 30, weather_code: 0, is_day: 1 } }));
 
-    expect(sends.map((dict) => dict.WEATHER_TEMPERATURE)).toEqual([21, 70]);
-    expect(fetches).toHaveLength(0);
+    expect(fetches[0].url).toContain('temperature_unit=fahrenheit');
+    expect(sends[sends.length - 1]).toMatchObject({ WEATHER_TEMPERATURE: 30, WEATHER_TEMPERATURE_UNIT: 1 });
+  });
+
+  /**
+   * A wearer who follows a plugin and never saves the page has the plugin's unit on the watch. When
+   * plugins go off the face's default fetch takes over with no save, so a fetch carrying no unit
+   * would show a 20 °C reading as 20 °F.
+   */
+  test('sends the fallback fetch with the face\'s own unit once a followed plugin goes away', () => {
+    saveSettings(CITY);
+    localStorage.setItem(APP_UNIT_STORE, 'true');
+    const { sends } = startFace({ ready: true });
+
+    pebble.live()[0].push(update(20));
+    pebble.plugins = [];
+    pebble.live()[0].fail({ code: 'PLUGIN_UNAVAILABLE', message: 'gone' });
+    fetches[0].respond(200, JSON.stringify({ current: { temperature_2m: 20, weather_code: 0, is_day: 1 } }));
+
+    const result = sends.map((dict) => [dict.WEATHER_TEMPERATURE, dict.WEATHER_TEMPERATURE_UNIT]);
+
+    expect(result).toEqual([[68, 1], [20, 0]]);
   });
 
   /** A wearer who saves the plugin again after the phone ended it would otherwise wait for the slow tick, half an hour away. */
@@ -995,7 +1079,7 @@ describe('weather plugin mode with the provider never saved', () => {
 
     startFace({ ready: true });
 
-    expect(pebble.subscriptions).toHaveLength(0);
+    expect(pebble.subscriptions.filter((subscription) => subscription.request.category === 'weather')).toHaveLength(0);
     expect(fetches).toHaveLength(1);
   });
 
@@ -1059,7 +1143,7 @@ describe('weather plugin mode with the provider never saved', () => {
     hooks.refresh?.(true);
 
     expect(sends.map((dict) => dict.WEATHER_TEMPERATURE)).toEqual([21]);
-    expect(pebble.live()).toHaveLength(1);
+    expect(pebble.live().filter((subscription) => subscription.request.category === 'weather')).toHaveLength(1);
     expect(fetches).toHaveLength(0);
   });
 
@@ -1076,18 +1160,17 @@ describe('weather plugin mode with the provider never saved', () => {
     expect(pebble.enumeratePlugins.mock.calls.length).toBe(before);
   });
 
-  /** A first save of the plugin the face already reads is no switch, so a unit change in it has to convert the kept update. */
-  test('converts the kept update again for a first save onto the plugin that changes the unit', () => {
+  /** A fresh install already reads the plugin, so its first save carries the plugin's unit over the face's default. */
+  test('puts the plugin\'s unit into a first save while it follows a plugin', () => {
     saveSettings(CITY);
-    const { hooks, sends } = startFace({ ready: true });
+    const { hooks } = startFace({ ready: true });
 
-    pebble.live()[0].push(update(21));
-    saveFromPage(hooks, { ...CITY, WEATHER_PROVIDER: 'plugin', WEATHER_TEMPERATURE_UNIT: 1 });
-    vi.advanceTimersByTime(1000);
+    pebble.live()[0].push({ ...update(null, { temperature: { numericValue: { value: 70, unit: '°F' } } }), pluginUuid: 'a-store-plugin' });
+    const dict: Record<string, number | string> = { WEATHER_TEMPERATURE_UNIT: 0 };
 
-    expect(sends.map((dict) => dict.WEATHER_TEMPERATURE)).toEqual([21, 70]);
-    expect(pebble.subscriptions).toHaveLength(1);
-    expect(fetches).toHaveLength(0);
+    hooks.settingsOut?.(dict);
+
+    expect(dict.WEATHER_TEMPERATURE_UNIT).toBe(1);
   });
 });
 
@@ -1305,15 +1388,14 @@ describe('weather plugin mode on a face with no unit setting', () => {
     expect(temperatures(sends)).toEqual([70]);
   });
 
-  /** A face with its own unit shows that one, and must not wake the phone for a plugin it never reads. */
-  test('reads no Pebble app units on a face that declares the unit key', () => {
-    localStorage.setItem(APP_UNIT_STORE, 'true');
+  /** The built-in serves °C whatever the wearer picked, so a face with its own unit would read °C beside a Pebble app set to °F. */
+  test('sends the built-in\'s reading in the Pebble app\'s unit on a face that declares the unit key', () => {
     const { sends } = startFace({ providers: { weather: ['plugin'] }, unit: 'own', ready: true });
 
-    pebble.live()[0].push(update(21));
+    liveFor('preferences').push(unitsUpdate('°F'));
+    liveFor('weather').push(update(21));
 
-    expect(pebble.subscriptions.map((subscription) => subscription.request.category)).toEqual(['weather']);
-    expect(temperatures(sends)).toEqual([21]);
+    expect(sends.map((dict) => [dict.WEATHER_TEMPERATURE, dict.WEATHER_TEMPERATURE_UNIT])).toEqual([[70, 1]]);
   });
 
   /** The watch goes by the key alone, so a face with only a page default writes the number bare and has to get the Pebble app's unit. */

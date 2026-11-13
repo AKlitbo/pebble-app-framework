@@ -39,6 +39,12 @@ export interface KnownPlugin {
   verifiedVersion: string | null;
   /** When it was last checked, as YYYY-MM-DD, or null with `verifiedVersion`. */
   verifiedOn: string | null;
+  /**
+   * Whether the plugin sends fixed units whatever the wearer picked, so the units the wearer picked in
+   * the Pebble app are used in their place. The Pebble app's built-in weather is one, always sending °C
+   * and mph.
+   */
+  fixedUnits?: boolean;
 }
 
 /** One entry as src/known-plugins.json keeps it, with each item it serves as `category/item`. */
@@ -52,6 +58,7 @@ export interface KnownPluginEntry {
   where?: string;
   verifiedVersion: string | null;
   verifiedOn: string | null;
+  fixedUnits?: boolean;
   /** What it serves for a kind, beyond the standard fields, for the docs' Supported Plugins table. */
   gives?: Record<string, string>;
 }
@@ -109,6 +116,10 @@ export function knownPlugin(entry: KnownPluginEntry): KnownPlugin {
 
   if (entry.where) {
     plugin.where = entry.where;
+  }
+
+  if (entry.fixedUnits) {
+    plugin.fixedUnits = true;
   }
 
   return plugin;

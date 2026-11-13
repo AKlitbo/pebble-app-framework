@@ -37,24 +37,24 @@ sequenceDiagram
   alt the phone asks for the watch's settings
     AM->>Phone: queue the settings reply, and read nothing else
   else anything else
-    AM->>Stores: weather, stock strip, calendar strip, coordinates
     AM->>Settings: settings_apply_inbox
     Settings-->>AM: what moved
     AM->>Settings: settings_save, when it is allowed
     AM->>Face: on_settings_changed, when anything moved
-    AM->>Stores: unit changed, when the wearer switched it
+    AM->>Stores: unit changed, when it switched outside a restore
     AM->>Phone: a weather request, when the unit moved
+    AM->>Stores: weather, stock strip, calendar strip, coordinates
     AM->>Stores: inbox complete, once
   end
 ```
 
 **A Settings Request Stands Alone.** The phone asks for the watch's settings when its code starts, and again if the watch turned the first ask away, each time in a message of its own. The watch queues its reply and stops there. It queues the reply before it acks the ask, so an ack tells the phone the reply is on its way. A phone that already holds settings only needs to know whether the watch booted empty, so it can ask for just that, and the answer is one flag rather than the whole table.
 
-**The Readings Go First.** Weather, the stock and calendar strips, and the coordinates each go to the store that registered for them. A part nobody registered for is skipped.
+**Settings Go First.** `settings_apply_inbox` runs on every message, a weather reply included. Most carry no settings keys, and it finds nothing. When something did move, the layer saves the settings, except while the watch is waiting to be restored after a wipe, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains.
 
-**Settings Are Looked For in Every Message.** `settings_apply_inbox` runs on every message, a weather reply included. Most carry no settings keys, and it finds nothing. When something did move, the layer saves the settings, except while the watch is waiting to be restored after a wipe, which [Settings on the Watch](settings-on-the-watch.md#the-fresh-state) explains.
+**Then the Reactions.** The face's `on_settings_changed` runs when any setting moved. A change of temperature unit tells the weather store, which converts the reading it holds. That is the wearer switching on the settings page, or a weather plugin's reading carrying another unit, as [Fetching the Weather](fetching-the-weather.md#from-a-pebble-app-plugin) covers. A restore does not, since the reading on the watch was already fetched in the restored unit. A change that affects the weather also queues a weather request.
 
-**Then the Reactions.** The face's `on_settings_changed` runs when any setting moved. A change of temperature unit made by the wearer tells the weather store, which converts the reading it holds. A restore does not, since the reading on the watch was already fetched in the restored unit. A change that affects the weather also queues a weather request.
+**Then the Readings.** Weather, the stock and calendar strips, and the coordinates each go to the store that registered for them. A part nobody registered for is skipped. They come after the settings, so a reading that brings its own unit lands in it as it is, after the reading it replaces was converted.
 
 **Inbox Complete Comes Last.** Once every part of the message is handled, the layer runs each function on its inbox complete list, described below.
 

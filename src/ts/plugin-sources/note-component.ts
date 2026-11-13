@@ -4,13 +4,16 @@
  * It draws one note in a tinted box with a coloured left edge, the look of the location picker's own
  * notes. A note has a `tone`. `warning`, the default, carries a round "!" badge and the orange accent,
  * for something the wearer has to fix. `info` drops the badge and takes a calmer grey, for a plain
- * fact such as where the weather comes from.
+ * fact such as where the weather comes from. `plain` drops the box altogether and draws the words as
+ * Clay draws a select's description, with no separator above, so a select's own words can sit in a row
+ * of their own under it and hide while its plugin is picked.
  *
  * A face can restyle it from its own component CSS through these names, which stay as they are:
  *   .component-plugin-note   the row, which a visibleWhen hides and shows
  *   .pf-note                 the callout inside it
  *   .pf-note-warning         a warning callout, whose :before is the badge
  *   .pf-note-info            an info callout
+ *   .pf-note-plain           the row of a plain note, whose words sit in Clay's own .description
  *   .pf-note-text            the words
  *   --pf-note-accent         the warning's border, badge, and tint, #ff4700 unless set
  *   --pf-note-info-accent    the info's border and tint, #8a8a8a unless set
@@ -55,6 +58,12 @@ export default {
     '.pf-note { ' + CALLOUT_BOX + ' margin: 0; }',
     '.pf-note-warning:before { ' + CALLOUT_BADGE + ' }',
     '.pf-note-info { padding-left: 0.6rem; background: rgba(138, 138, 138, 0.12); background: color-mix(in srgb, var(--pf-note-info-accent, #8a8a8a) 12%, transparent); border-left-color: var(--pf-note-info-accent, #8a8a8a); }',
+    // a plain note reads as the description of the select above it, so it takes none of a row's own
+    // padding and none of the separator a section draws between rows
+    // the section in the selector outweighs Clay's own .section > .component padding whichever sheet
+    // loads last, since the Pebble Android app can load the component styles first
+    '.section > .component.component-plugin-note.pf-note-plain { padding: 0; margin-top: 0; }',
+    '.section > .component.component-plugin-note.pf-note-plain:after { display: none !important; }',
   ].join(''),
 
   manipulator: {
@@ -95,7 +104,8 @@ export default {
   },
 
   /**
-   * Gives the callout its tone's class, warning unless the row says info.
+   * Gives the callout its tone's class, warning unless the row says info or plain. A plain note swaps
+   * the callout for Clay's own description look.
    *
    * A `function` expression, never shorthand method syntax. Clay serializes a registered component
    * by writing `key:` followed by the function's own toString, and a shorthand method stringifies
@@ -103,9 +113,18 @@ export default {
    */
   initialize: function (this: PluginNoteContext): void {
     const note = this.$element[0].querySelector('.pf-note');
+    const tone = this.config && this.config.tone;
 
-    if (note) {
-      note.classList.add(this.config && this.config.tone === 'info' ? 'pf-note-info' : 'pf-note-warning');
+    if (!note) {
+      return;
     }
+
+    if (tone === 'plain') {
+      this.$element[0].classList.add('pf-note-plain');
+      note.className = 'description';
+      return;
+    }
+
+    note.classList.add(tone === 'info' ? 'pf-note-info' : 'pf-note-warning');
   },
 };

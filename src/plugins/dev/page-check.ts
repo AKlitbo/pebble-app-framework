@@ -203,15 +203,18 @@ export interface Scenario {
 // the location rows, which the location section marks to hide while the weather comes from a plugin
 const LOCATION_MARKED = ['LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'];
 
+// the unit row, which the weather section marks to hide while the weather comes in the plugin's units
+const UNIT_MARKED = ['WEATHER_TEMPERATURE_UNIT'];
+
 // the rows the location and weather sections mark to hide while the weather comes from a plugin. the
 // key row also hides for a provider that needs no key, such as Open-Meteo
-const WEATHER_MARKED = ['WEATHER_API_KEY', ...LOCATION_MARKED];
+const WEATHER_MARKED = ['WEATHER_API_KEY', ...UNIT_MARKED, ...LOCATION_MARKED];
 
 // rows the weather hook never hides, which every weather scenario on the fixture face expects on the page
-const ALWAYS_SHOWN = ['WEATHER_PROVIDER', 'WEATHER_TEMPERATURE_UNIT', 'CALENDAR_ICS_URL', 'CALENDAR_POLL'];
+const ALWAYS_SHOWN = ['WEATHER_PROVIDER', 'CALENDAR_ICS_URL', 'CALENDAR_POLL'];
 
 // what shows while Open-Meteo is picked on the fixture face, every row but the key row
-const OPEN_METEO_ROWS = { visible: [...ALWAYS_SHOWN, ...LOCATION_MARKED], hidden: ['WEATHER_API_KEY'] };
+const OPEN_METEO_ROWS = { visible: [...ALWAYS_SHOWN, ...UNIT_MARKED, ...LOCATION_MARKED], hidden: ['WEATHER_API_KEY'] };
 
 // the builder's lead line, the select's own lead line above it, which stays showing while the plugin
 // is picked so the select never moves under the wearer's finger
@@ -607,8 +610,8 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     // a face listing the plugin alone runs its weather from it whatever is saved, and offers no
-    // choice on the page. the Data Source select, its lead line, the key row, and the location rows
-    // are gone. the page says where the weather comes from, a plugin serves it so no other note
+    // choice on the page. the Data Source select, its lead line, the key row, the unit row, and the
+    // location rows are gone. the page says where the weather comes from, a plugin serves it so no other note
     // shows, and the panel lists the weather plugins
     name: 'plugin-only-weather',
     face: 'plugin-weather-face',
@@ -617,7 +620,7 @@ export const SCENARIOS: Scenario[] = [
     plugins: 'built-in.json',
     openUrl: true,
     load: {
-      visible: ['WEATHER_TEMPERATURE_UNIT', 'CALENDAR_ICS_URL'],
+      visible: ['CALENDAR_ICS_URL'],
       hidden: WEATHER_MARKED,
       textsHidden: [LEAD_LINE, 'Location Settings'],
       notesVisible: [SOURCE_TEXT],
@@ -1001,7 +1004,8 @@ export const SCENARIOS: Scenario[] = [
     providers: { weather: ['plugin'] },
     plugins: 'plugins-off.json',
     load: {
-      hidden: WEATHER_MARKED,
+      // the face has no unit row to hide
+      hidden: WEATHER_MARKED.filter((key) => !UNIT_MARKED.includes(key)),
       textsHidden: [LEAD_LINE, 'Weather', 'Location Settings'],
       notesHidden: [SOURCE_TEXT, PLUGINS_OFF_TEXT],
     },

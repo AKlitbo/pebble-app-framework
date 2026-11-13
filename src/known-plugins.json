@@ -6,6 +6,7 @@
     "storeSlug": null,
     "serves": ["weather/location"],
     "maker": "Pebble",
+    "fixedUnits": true,
     "verifiedVersion": "Built In",
     "verifiedOn": "2026-11-10"
   },

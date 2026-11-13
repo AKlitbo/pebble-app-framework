@@ -154,7 +154,7 @@ void readout_weather_temp(char *out, size_t n)
     }
 
 #if defined(PLUGIN_WEATHER) && PLUGIN_WEATHER && !defined(HAS_MESSAGE_KEY_WEATHER_TEMPERATURE_UNIT)
-    // a face with no unit key gets all its weather, plugin or fetched, in the unit picked in the Pebble app
+    // a face with no unit key gets plugin weather in the plugin's unit and a fetch in the Pebble app's
     // the watch never hears which one, so the number goes out bare rather than with a letter that can be wrong
     snprintf(out, n, "%d", temp);
 #else

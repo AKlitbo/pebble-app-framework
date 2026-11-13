@@ -85,8 +85,9 @@ void readout_steps(char *out, size_t n);
  * @brief Format the temperature with its unit letter, or "--" when there is no reading.
  *
  * A face built with `PLUGIN_WEATHER` and no `WEATHER_TEMPERATURE_UNIT` key gets the number alone,
- * such as "73". Its weather comes in the unit the wearer picked in the Pebble app, from the plugin and
- * from a fetch alike, and the watch never hears which unit that is, so a letter could be wrong.
+ * such as "73". Its plugin weather comes in the plugin's own unit and a fetch in the unit the wearer
+ * picked in the Pebble app, and with no unit key the watch never hears which unit that is, so a letter
+ * could be wrong.
  *
  * @param[out] out Output buffer.
  * @param n Buffer size.

@@ -1049,6 +1049,9 @@ function startPebbleApp(faceOptions: StartOptions): void {
   function pageSettings(json: string, restore: boolean): AppMessageDict {
     const dict = retimeSettings(clay.getSettings(json), messageKeys, clayConfig, Date.now());
 
+    // getSettings has saved the new settings, so each feature reads them as they now stand
+    eachFeature('settingsOut', (feature) => feature.settingsOut?.(dict));
+
     if (hasSettingsKeys) {
       dict[messageKeys.SETTINGS_FRESH] = restore ? 1 : 0;
     }

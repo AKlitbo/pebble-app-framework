@@ -59,6 +59,16 @@ export interface FeatureHooks {
   /** The settings page closed and its new settings are saved. */
   configSaved?(): void;
   /**
+   * Changes the settings a save or a restore sends the watch, after the phone has saved them.
+   *
+   * It is for a value the watch has to hold that the feature decides in place of the page, such as
+   * the weather's units while a plugin serves them. It changes the dict it is given, keyed by message
+   * key number. A throw skips this hook alone, and the settings still go.
+   *
+   * @param dict The settings about to go to the watch. Change them in place.
+   */
+  settingsOut?(dict: AppMessageDict): void;
+  /**
    * Changes the settings page just before it opens, such as adding a choice only this phone can offer.
    *
    * It runs every time the page opens, after configOpened. It gets its own copy of the face's page,

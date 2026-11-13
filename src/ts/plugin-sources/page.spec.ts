@@ -287,6 +287,50 @@ describe('pluginSourcePage the plugin choice', () => {
   });
 });
 
+// a weather select carrying words of its own about the providers, as a face's own select can
+const DESCRIBED = 'Open-Meteo needs no key.';
+
+/** The builder's weather page with a description on its select. */
+function describedWeatherPage(): ClayConfigItem[] {
+  const page = weatherPage();
+
+  (rowByKey(page, 'WEATHER_PROVIDER') as ClayConfigItem).description = DESCRIBED;
+
+  return page;
+}
+
+describe('pluginSourcePage the select description', () => {
+  /** Clay draws a description inside its select, so left there it would describe the other providers under the plugin choice too. */
+  test('moves the description into a plain note under the select, shown whenever the plugin is not picked', () => {
+    const result = pluginSourcePage(describedWeatherPage(), weatherInputs());
+
+    const rows = sectionItems(result, 'WEATHER_PROVIDER');
+    const below = rows[rows.findIndex((row) => row.messageKey === 'WEATHER_PROVIDER') + 1];
+
+    expect(rowByKey(result, 'WEATHER_PROVIDER')?.description).toBeUndefined();
+    expect(below).toEqual({ type: 'pluginNote', tone: 'plain', defaultValue: escapeHtml(DESCRIBED), visibleWhen: [{ key: 'WEATHER_PROVIDER', notIn: [PLUGIN_VALUE] }] });
+  });
+
+  /** Clay hid the description with its select, so a select a face hides behind another setting has to take its words with it. */
+  test('gives the moved description the conditions on its select too', () => {
+    const page = withVisibleWhen(describedWeatherPage(), 'WEATHER_PROVIDER', { key: 'WEATHER_ENABLED', in: [true] });
+
+    const result = pluginSourcePage(page, weatherInputs());
+
+    const plain = allRows(result).find((row) => row.tone === 'plain');
+
+    expect(plain?.visibleWhen).toEqual([{ key: 'WEATHER_ENABLED', in: [true] }, { key: 'WEATHER_PROVIDER', notIn: [PLUGIN_VALUE] }]);
+  });
+
+  /** With no plugin on offer the page is the face's own, so the description stays where the face put it. */
+  test('leaves the description on the select when no plugin serves the item', () => {
+    const result = pluginSourcePage(describedWeatherPage(), weatherInputs({ plugins: [] }));
+
+    expect(rowByKey(result, 'WEATHER_PROVIDER')?.description).toBe(DESCRIBED);
+    expect(allRows(result).some((row) => row.tone === 'plain')).toBe(false);
+  });
+});
+
 describe('pluginSourcePage the marked rows', () => {
   /** The heading needs it as well as its rows, or plugin mode leaves "Location Settings" standing over nothing. */
   test('hides every marked weather row while the plugin is picked', () => {
@@ -296,9 +340,9 @@ describe('pluginSourcePage the marked rows', () => {
 
     const pluginOff = { key: 'WEATHER_PROVIDER', in: ['openmeteo', 'owm', 'weatherapi'] };
 
-    expect(hidden.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME', 'WEATHER_API_KEY']);
+    expect(hidden.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Location Settings', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME', 'WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT']);
     // the key row keeps the builder's own condition for the keyed providers, and both have to hold
-    expect(hidden.map((row) => row.visibleWhen)).toEqual([...Array(4).fill([pluginOff]), [{ key: 'WEATHER_PROVIDER', notIn: ['openmeteo'] }, pluginOff]]);
+    expect(hidden.map((row) => row.visibleWhen)).toEqual([...Array(4).fill([pluginOff]), [{ key: 'WEATHER_PROVIDER', notIn: ['openmeteo'] }, pluginOff], [pluginOff]]);
   });
 
   /** Clay cannot hide a section, so with every row in it hidden the Location Settings card would sit empty. */

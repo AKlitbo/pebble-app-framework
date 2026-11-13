@@ -5,7 +5,8 @@
  * shows the wrong numbers with nothing to say why. The parts worth pinning are the ones a reader
  * cannot check by eye: the unit and wind conversions, the drop of a "no value" temperature, which
  * hour and which day the strips start on for a place in another zone, and the night check on epoch
- * seconds. The Pebble app's own unit, which a face with no unit setting shows, is read here too.
+ * seconds. The units a reading shows in, and the Pebble app's own units they can come from, are read
+ * here too.
  *
  * Vitest runs every spec on a Toronto phone, so each fixture keeps the phone there and puts the
  * place somewhere else when a case needs two zones. Every moment is fixed. The usual now is
@@ -15,7 +16,7 @@
  */
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { appFahrenheit, weatherFromUpdate, weatherProperties } from './weather';
+import { appFahrenheit, appWindUnit, readingUnits, weatherFromUpdate, weatherProperties } from './weather';
 import type { WeatherMappingOptions } from './weather';
 import type { SourceEnvelope, SourceProperty } from './types';
 
@@ -854,5 +855,72 @@ describe('appFahrenheit', () => {
     const result = appFahrenheit(envelope as SourceEnvelope | null);
 
     expect(result).toBeUndefined();
+  });
+});
+
+describe('appWindUnit', () => {
+  /** The built-in weather always serves mph, so a wearer who picked km/h in the Pebble app would read mph without this. */
+  test.each([
+    ['km/h', 0],
+    ['mph', 1],
+    ['knots', 2],
+    ['m/s', 3],
+  ])('reads %s', (unit, expected) => {
+    const envelope = { instances: [{ instanceId: 'units', properties: { wind_speed: { shortText: { text: unit } } } }] };
+
+    const result = appWindUnit(envelope);
+
+    expect(result).toBe(expected);
+  });
+});
+
+/** An update from a plugin that serves its readings in the units it names, with the temperature and the wind it gives. */
+function servedIn(temperatureUnit: string, windUnit?: string): SourceEnvelope {
+  const wind = windUnit ? { wind_speed: { numericValue: { value: 10, unit: windUnit } } } : {};
+
+  return {
+    pluginUuid: '55E15682-999F-4FFA-BC43-6798E11A4B26',
+    instances: [{ instanceId: '0', properties: { temperature: { numericValue: { value: 70, unit: temperatureUnit } }, ...wind } }],
+  };
+}
+
+describe('readingUnits', () => {
+  /** A wearer who picked °F in a weather plugin would read °C off a face still set to °C, which is the bug this stops. */
+  test('takes the units a plugin serves its reading in', () => {
+    const result = readingUnits(servedIn('°F', 'km/h'), { fahrenheit: false, wind: 1 });
+
+    expect(result).toEqual({ fahrenheit: true, wind: 0 });
+  });
+
+  /** The built-in serves °C and mph whatever the wearer picked, so its own units would ignore the Pebble app's settings. */
+  test('takes the Pebble app\'s units for the built-in weather', () => {
+    const builtIn = update({ temperature: temperature(21), wind_speed: { numericValue: { value: 10, unit: 'mph' } } });
+
+    const result = readingUnits(builtIn, { fahrenheit: true, wind: 2 });
+
+    expect(result).toEqual({ fahrenheit: true, wind: 2 });
+  });
+
+  /** Before the Pebble app has named its units, the built-in's own still give the wind a unit rather than leaving the face's. */
+  test('falls back to the built-in\'s own units before the Pebble app names any', () => {
+    const builtIn = update({ temperature: temperature(21), wind_speed: { numericValue: { value: 10, unit: 'mph' } } });
+
+    const result = readingUnits(builtIn, {});
+
+    expect(result).toEqual({ fahrenheit: false, wind: 1 });
+  });
+
+  /** A plugin that serves no wind leaves its wind unit to the Pebble app, so a wind panel fed by nothing still reads the wearer's unit. */
+  test('takes the Pebble app\'s wind unit for a plugin that serves no wind', () => {
+    const result = readingUnits(servedIn('°C'), { wind: 3 });
+
+    expect(result).toEqual({ fahrenheit: false, wind: 3 });
+  });
+
+  /** The watch has no kelvin, so a plugin serving it has to show in °C rather than °F from the Pebble app. */
+  test('shows a temperature in kelvin in °C', () => {
+    const result = readingUnits(servedIn('K'), { fahrenheit: true });
+
+    expect(result.fahrenheit).toBe(false);
   });
 });

@@ -102,8 +102,8 @@ export interface ClayConfigItem {
    * that select's providers, written by the phone each time the page opens. The page swaps the row's
    * value as the select changes, as provider-keys-fn.ts covers. Clay ignores the field. */
   providerKeys?: { select: string; keys: string };
-  /** pluginNote only: `warning`, the default, with its "!" badge, or `info` for the calmer look. */
-  tone?: 'warning' | 'info';
+  /** pluginNote only: `warning`, the default, with its "!" badge, `info` for the calmer look, or `plain` for a select's own description. */
+  tone?: 'warning' | 'info' | 'plain';
   /** pluginPanel only: what the supported plugins panel lists, every word in it HTML-escaped. */
   panel?: PluginPanelContent;
   /** section only: hides the whole card while every row in it is hidden, and shows it again once

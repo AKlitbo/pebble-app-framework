@@ -24,7 +24,7 @@ import type { WeatherResult } from './util';
 import wire from '../pkjs/wire';
 import { createDedupedSender } from '../pkjs/send-queue';
 import { request } from '../pkjs/request';
-import { getConfig, readBool, readFahrenheit, readText, readValue, watchSettings } from '../pkjs/settings-store';
+import { getConfig, readBool, readChoice, readFahrenheit, readText, readValue, watchSettings } from '../pkjs/settings-store';
 import { WEATHER_FALLBACK } from '../pkjs/providers';
 import type { Feature, FeatureContext, FeatureHooks } from '../pkjs/feature';
 import { weatherPlugins } from '../plugin-sources/index';
@@ -333,6 +333,13 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
       }
     }
 
+    // on a face built with plugins a reading brings the units it is in as the face's unit settings.
+    // the watch takes settings before readings, so it converts the reading it holds and then takes
+    // this one as it is
+    if (result.units) {
+      weatherUtil.putUnits(dict, messageKeys, result.units);
+    }
+
     // a failed result carries no coordinates, and the formatter still runs on it so the face can
     // show its own "no fix" text rather than keep the last one
     if (formatCoords) {
@@ -372,6 +379,14 @@ function startWeather(context: FeatureContext, formatCoords: CoordsFormatter | n
 
       weather.fetchWeather(opts, request, (result: any) => {
         console.log(`Weather: ${result.condition} ${result.temperature} (ok=${result.ok})`);
+
+        // a plugin's reading leaves its units on the watch, and a fetch can take over with no save
+        // between, such as when plugins go off. so on a face built with plugins a fetched reading
+        // carries the face's own units too, and the watch converts what it holds to them
+        if (weatherPlugins && result.ok) {
+          result.units = { fahrenheit: opts.fahrenheit, wind: readChoice(config.WEATHER_WIND_UNIT, readChoice(defaults.WEATHER_WIND_UNIT, 0)) };
+        }
+
         onResult(result);
       });
     };

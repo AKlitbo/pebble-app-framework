@@ -17,17 +17,19 @@ import type { DailyStrip, HourlyStrip, WeatherResult } from '../weather/util';
 import wire from '../pkjs/wire';
 import { phoneDayOf, phoneOffsetMinutes } from '../pkjs/phone-clock';
 import { firstProperties, instancesOf, numeric, seriesIndex, seriesValue, text, timestamp } from '../plugin-shapes/shapes';
-import { appFahrenheit, temperatureScale } from '../plugin-shapes/units';
+import { appFahrenheit, appWindUnit, temperatureScale, windUnit } from '../plugin-shapes/units';
 import type { NumericReading } from '../plugin-shapes/shapes';
 import { NO_PLUGIN } from './subscription';
 import { PLUGINS_OFF_TEXT } from './page';
+import { KNOWN_PLUGINS } from './directory';
+import { uuidKey } from './escape';
 import type { PluginSourceTexts } from './page';
 import { createWeatherDriver } from './weather-driver';
 import type { SeriesShape, SourceEnvelope, SourceProperty, WeatherPlugins } from './types';
 
 /** What the weather feature hands the mapping with each update. */
 export interface WeatherMappingOptions {
-  /** Whether the face shows °F, which every temperature is converted to. */
+  /** Whether the reading goes out in °F, which every temperature is converted to. */
   fahrenheit: boolean;
   /** The moment to treat as now, as epoch seconds. */
   nowSeconds: number;
@@ -194,7 +196,7 @@ function absoluteCelsius(reading: NumericReading): number | undefined {
 }
 
 /**
- * A temperature in the face's unit, rounded, or undefined when it cannot be used.
+ * A temperature in the unit the reading goes out in, rounded, or undefined when it cannot be used.
  *
  * The number is converted from the unit it says it is in, never read off the text: °C, °F, kelvin, or
  * degrees Rankine. One with no unit the scale can be read from is dropped rather than guessed at, and
@@ -518,7 +520,7 @@ function plainLabel(property: SourceProperty | undefined, isDay: boolean): strin
  * Everything else that is missing is left off the result, so the watch keeps its dash.
  *
  * @param envelope The update, which may be missing or carry anything.
- * @param options The face's unit, the moment to treat as now, the fields it shows, and whether it
+ * @param options The unit to send in, the moment to treat as now, the fields it shows, and whether it
  *   shows the strips.
  * @return The weather result, or a status result when there is nothing to show.
  */
@@ -620,7 +622,47 @@ export function weatherFromUpdate(envelope: SourceEnvelope | null | undefined, o
   return result;
 }
 
-export { appFahrenheit };
+export { appFahrenheit, appWindUnit };
+
+/** The units a plugin reading shows in, as the watch's unit settings save them. */
+export interface ReadingUnits {
+  /** Whether the temperatures are in °F. */
+  fahrenheit: boolean;
+  /** The wind speed unit as the watch's wind unit setting saves it, or undefined when nothing names one. */
+  wind?: number;
+}
+
+/** The units the wearer picked in the Pebble app, from its `preferences/units`. Each is undefined until it names one. */
+export interface AppUnits {
+  fahrenheit?: boolean;
+  wind?: number;
+}
+
+/**
+ * The units a plugin's reading shows in on the watch.
+ *
+ * They are the units the plugin serves the reading in, read off each value's own unit, so the watch
+ * shows what the plugin's own settings picked. A plugin the directory marks with `fixedUnits` sends
+ * fixed units whatever the wearer picked, as the Pebble app's built-in weather does with °C and mph,
+ * so the units the wearer picked in the Pebble app are used in their place. Either way, a unit one side
+ * leaves out is taken from the other, and °C stands in when neither names a temperature scale. A
+ * temperature in kelvin or degrees Rankine shows in °C.
+ *
+ * @param envelope The update, which may be missing or carry anything.
+ * @param app The units the wearer picked in the Pebble app, as far as it has said.
+ * @return The units the reading goes out in.
+ */
+export function readingUnits(envelope: SourceEnvelope | null | undefined, app: AppUnits): ReadingUnits {
+  const properties: Properties = firstProperties(envelope) || {};
+  const temperature = numeric(properties.temperature);
+  const scale = temperature && absoluteCelsius(temperature) !== undefined ? 'C' : temperatureScale(temperature?.unit);
+  const own: AppUnits = { fahrenheit: scale === undefined ? undefined : scale === 'F', wind: windUnit(numeric(properties.wind_speed)?.unit) };
+  const sender = uuidKey(envelope?.pluginUuid);
+  const fromApp = KNOWN_PLUGINS.some((plugin) => plugin.fixedUnits && uuidKey(plugin.uuid) === sender);
+  const [first, second] = fromApp ? [app, own] : [own, app];
+
+  return { fahrenheit: first.fahrenheit ?? second.fahrenheit ?? false, wind: first.wind ?? second.wind };
+}
 
 /**
  * The properties the weather subscription asks for.
@@ -682,7 +724,7 @@ export const WEATHER_TEXTS: PluginSourceTexts = {
 export const COORDS_TEXT = 'The coordinates show only from a weather plugin that serves them.';
 
 export const weatherPlugins: WeatherPlugins = {
-  driver: createWeatherDriver({ fromUpdate: weatherFromUpdate, appFahrenheit, properties: weatherProperties, errorStatus: weatherErrorStatus, texts: WEATHER_TEXTS, coordsText: COORDS_TEXT }),
+  driver: createWeatherDriver({ fromUpdate: weatherFromUpdate, units: readingUnits, appFahrenheit, appWindUnit, properties: weatherProperties, errorStatus: weatherErrorStatus, texts: WEATHER_TEXTS, coordsText: COORDS_TEXT }),
 };
 
-export default { weatherFromUpdate, appFahrenheit, weatherProperties, weatherErrorStatus, WEATHER_TEXTS };
+export default { weatherFromUpdate, readingUnits, appFahrenheit, appWindUnit, weatherProperties, weatherErrorStatus, WEATHER_TEXTS };

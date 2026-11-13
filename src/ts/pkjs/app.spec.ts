@@ -2702,6 +2702,28 @@ describe('startPebbleApp settings restore', () => {
   });
 
   /**
+   * A feature that decides a setting in place of the page, as the weather does for its units while a
+   * plugin is the source, has to reach the save. Otherwise the save sends the hidden row's value and
+   * the watch shows it until the feature's next reading.
+   */
+  test('lets each feature change the settings a save sends', () => {
+    const feature = () => ({
+      settingsOut: (dict: AppMessageDict) => {
+        dict.CLOCK_DATE_FORMAT = '%d.%m.%Y';
+      },
+    });
+
+    app.startPebbleApp({ clayConfig: [{ type: 'select', messageKey: 'CLOCK_DATE_FORMAT' }], features: [feature] });
+    pebble.fire('ready');
+    pebble.fire('showConfiguration');
+    pebble.fire('webviewclosed', { response: JSON.stringify({ CLOCK_DATE_FORMAT: { value: '%Y-%m-%d' } }) });
+
+    const result = restoreSends().map((dict) => dict.CLOCK_DATE_FORMAT);
+
+    expect(result).toEqual(['%d.%m.%Y']);
+  });
+
+  /**
    * The started features have to reach the seed, or no seeded hook runs on a real phone. The phone
    * app keys the reply by name, so the echo has to find a numbered key under its name as well.
    */

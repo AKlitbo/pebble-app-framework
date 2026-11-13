@@ -255,11 +255,11 @@ function leadsInto(item: ClayConfigItem, selectKey: string): boolean {
  * Puts the select first in its section, so the control that shows and hides rows comes before them.
  *
  * The section's own heading and opening text stay on top, and so does the lead line right above the
- * select. Then comes the select, then the rows that belong to it, then the section's other rows in
- * their own order. The rows that belong to it are the ones it hides, the ones whose visibleWhen names
- * it, and the ones that already sat under it, such as a family core's key row with no mark, so a key
- * row stays next to the Data Source it is for. A select outside any section is left where it is,
- * since moving it would move the page.
+ * select. Then comes the select, then the rows that already sat under it, then the rows from above it
+ * that belong to it, then the section's other rows in their own order. The rows under it stay next to
+ * it, such as a family core's key row with no mark, so a key row stays by the Data Source it is for.
+ * The rows from above that belong to it are the ones it hides and the ones whose visibleWhen names
+ * it. A select outside any section is left where it is, since moving it would move the page.
  */
 function putSelectFirst(page: ClayConfigItem[], select: ClayConfigItem, selectKey: string): void {
   const holder = sectionOf(page, select);
@@ -283,12 +283,12 @@ function putSelectFirst(page: ClayConfigItem[], select: ClayConfigItem, selectKe
   }
 
   const below = rows.slice(at + 1);
-  const rest = [...rows.slice(top, leadStart), ...below];
+  const above = rows.slice(top, leadStart);
   const belongs = (item: ClayConfigItem) => {
-    return item.pluginSourceHides === selectKey || below.includes(item) || conditionsOf(item).some((condition) => condition.key === selectKey);
+    return item.pluginSourceHides === selectKey || conditionsOf(item).some((condition) => condition.key === selectKey);
   };
 
-  rows.splice(0, rows.length, ...rows.slice(0, top), ...rows.slice(leadStart, at), select, ...rest.filter(belongs), ...rest.filter((item) => !belongs(item)));
+  rows.splice(0, rows.length, ...rows.slice(0, top), ...rows.slice(leadStart, at), select, ...below, ...above.filter(belongs), ...above.filter((item) => !belongs(item)));
 }
 
 /**
@@ -388,8 +388,11 @@ function hideMarkedRows(page: ClayConfigItem[], select: ClayConfigItem, selectKe
   });
 }
 
-/** The two looks a note takes. A warning carries the badge, and info is the calmer look for a plain fact. */
-type NoteTone = 'warning' | 'info';
+/**
+ * The looks a note takes. A warning carries the badge, info is the calmer look for a plain fact, and
+ * plain reads as a select's own description.
+ */
+type NoteTone = 'warning' | 'info' | 'plain';
 
 /** A note drawn by the pluginNote component, always shown. */
 function noteRow(text: string, tone: NoteTone = 'warning'): ClayConfigItem {
@@ -429,6 +432,23 @@ function warningRows(inputs: PluginSourceInputs, makeRow: (text: string, tone?: 
   }
 
   return rows;
+}
+
+/**
+ * Moves the select's own description into a plain note under it, shown whenever the plugin is not
+ * picked and the select itself shows. Clay draws a description as part of its select, so it would stay
+ * under the plugin choice too, describing providers the plugin has nothing to do with.
+ */
+function moveDescription(page: ClayConfigItem[], select: ClayConfigItem, selectKey: string): void {
+  if (typeof select.description !== 'string' || select.description === '') {
+    return;
+  }
+
+  const list = listHolding(page, (item) => item === select) as ClayConfigItem[];
+  const row = { ...noteRow(select.description, 'plain'), visibleWhen: [...conditionsOf(select), { key: selectKey, notIn: [PLUGIN_VALUE] }] };
+
+  delete select.description;
+  list.splice(list.indexOf(select) + 1, 0, row);
 }
 
 /** Offers the plugin choice on a select the face has, with the rows that go with it. Steps 3 to 7 of pluginSourcePage. */
@@ -496,6 +516,9 @@ function placeChoice(page: ClayConfigItem[], select: ClayConfigItem, inputs: Plu
   const rows = [...note, ...(keptOff ? [whilePicked(keptText)] : warningRows(inputs, whilePicked))];
 
   list.splice(list.indexOf(select) + 1, 0, ...rows);
+
+  // last, so the select's own words sit straight under it, ahead of the notes it never shows beside
+  moveDescription(page, select, selectKey);
 }
 
 /** Whether the supported plugins panel is on the page and opens on its line saying to turn plugins on. */

@@ -537,6 +537,93 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     }
 #endif
 
+    // the settings go in before any reading. a plugin's weather carries the units it is in as
+    // settings, so the reading in hand converts to them first and the new reading then lands as it is
+
+    // custom colours ride their own key, not the settings table: the combined "~3 colours | flags"
+    // string can exceed a persist key, so read it straight off the tuple and let the face split +
+    // store it into the two blobs
+    bool custom_changed = false;
+#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
+    Tuple *custom_colors_t = dict_find(iterator, MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS);
+    if (custom_colors_t && s_handlers.on_custom_colors)
+    {
+        // this string gets split straight into the two persist blobs, so an unterminated one
+        // would carry whatever followed it in the inbox all the way into flash
+        const char *custom = tuple_str_or(custom_colors_t, NULL);
+        if (custom && !custom_colors_match(custom))
+        {
+            s_handlers.on_custom_colors(custom);
+            custom_changed = true;
+        }
+    }
+#endif
+
+    // decode every settings field the message carries. the table owns which keys
+    // exist and how each encodes so this transport never names a field
+    // the unit the weather in hand was fetched in, to tell a switch from a save that kept it
+    uint8_t unit_before = settings_u8(SETTING_TEMPERATURE_UNIT);
+
+    SettingsInbound settings = settings_apply_inbox(iterator);
+    bool moved = settings.changed || custom_changed;
+
+    // a custom colour change saves too. a face keeps its colours in storage-only schemas in the
+    // chain, so the save is what writes them. every schema is rewritten, which costs a write per
+    // blob on a save the wearer made by hand, where a checksum per schema would cost bytes on every face
+    bool save = moved;
+    bool restoring = false;
+#if defined(APPMESSAGE_HAS_SETTINGS)
+    // the phone marks a save or a restore from its settings page by sending SETTINGS_FRESH along
+    // with it. while the watch is fresh only that message writes to flash, and it always does, since
+    // the key existing is what stops the watch asking to be restored on the next launch.
+    // anything else that lands first stays in memory. the time zone push on every ready carries a
+    // settings field too, and saving it would end fresh before the restore arrived. the phone would
+    // then see a watch with settings and never restore it
+    // the value tells a restore, 1, from a save on the page, 0. a restore brings the unit the
+    // reading in hand was fetched in, and a first save on a fresh watch is the wearer switching
+    Tuple *page_t = dict_find(iterator, MESSAGE_KEY_SETTINGS_FRESH);
+    bool page = page_t != NULL;
+    restoring = page && tuple_int_or(page_t, 0) == 1;
+    if (settings_was_fresh())
+    {
+        save = page;
+    }
+#endif
+
+    if (save)
+    {
+        settings_save();
+    }
+
+#if defined(APPMESSAGE_HAS_SETTINGS)
+    if (page)
+    {
+        settings_mark_restored();
+    }
+#endif
+
+    if (moved)
+    {
+        if (s_handlers.on_settings_changed)
+        {
+            s_handlers.on_settings_changed(settings.layout_changed);
+        }
+
+        // a restore brings the phone's unit, which is the unit any reading already here was fetched
+        // in. an edit on the page, or a plugin's reading in another unit, is a switch, so the
+        // reading in hand converts to match
+        uint8_t unit_after = settings_u8(SETTING_TEMPERATURE_UNIT);
+        if (unit_after != unit_before && !restoring && s_handlers.on_unit_changed)
+        {
+            s_handlers.on_unit_changed(unit_after != 0);
+        }
+
+        if (settings.weather_changed)
+        {
+            appmessage_request_weather();
+        }
+    }
+
     // a face that opts out of weather leaves this whole block out with its keys
 #if defined(APPMESSAGE_HAS_WEATHER)
     if (s_handlers.on_weather)
@@ -705,89 +792,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         s_handlers.on_coords(lat, lon);
     }
 #endif
-
-    // custom colours ride their own key, not the settings table: the combined "~3 colours | flags"
-    // string can exceed a persist key, so read it straight off the tuple and let the face split +
-    // store it into the two blobs
-    bool custom_changed = false;
-#if defined(HAS_MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS)
-    Tuple *custom_colors_t = dict_find(iterator, MESSAGE_KEY_APPEARANCE_CUSTOM_COLORS);
-    if (custom_colors_t && s_handlers.on_custom_colors)
-    {
-        // this string gets split straight into the two persist blobs, so an unterminated one
-        // would carry whatever followed it in the inbox all the way into flash
-        const char *custom = tuple_str_or(custom_colors_t, NULL);
-        if (custom && !custom_colors_match(custom))
-        {
-            s_handlers.on_custom_colors(custom);
-            custom_changed = true;
-        }
-    }
-#endif
-
-    // decode every settings field the message carries. the table owns which keys
-    // exist and how each encodes so this transport never names a field
-    // the unit the weather in hand was fetched in, to tell a switch from a save that kept it
-    uint8_t unit_before = settings_u8(SETTING_TEMPERATURE_UNIT);
-
-    SettingsInbound settings = settings_apply_inbox(iterator);
-    bool moved = settings.changed || custom_changed;
-
-    // a custom colour change saves too. a face keeps its colours in storage-only schemas in the
-    // chain, so the save is what writes them. every schema is rewritten, which costs a write per
-    // blob on a save the wearer made by hand, where a checksum per schema would cost bytes on every face
-    bool save = moved;
-    bool restoring = false;
-#if defined(APPMESSAGE_HAS_SETTINGS)
-    // the phone marks a save or a restore from its settings page by sending SETTINGS_FRESH along
-    // with it. while the watch is fresh only that message writes to flash, and it always does, since
-    // the key existing is what stops the watch asking to be restored on the next launch.
-    // anything else that lands first stays in memory. the time zone push on every ready carries a
-    // settings field too, and saving it would end fresh before the restore arrived. the phone would
-    // then see a watch with settings and never restore it
-    // the value tells a restore, 1, from a save on the page, 0. a restore brings the unit the
-    // reading in hand was fetched in, and a first save on a fresh watch is the wearer switching
-    Tuple *page_t = dict_find(iterator, MESSAGE_KEY_SETTINGS_FRESH);
-    bool page = page_t != NULL;
-    restoring = page && tuple_int_or(page_t, 0) == 1;
-    if (settings_was_fresh())
-    {
-        save = page;
-    }
-#endif
-
-    if (save)
-    {
-        settings_save();
-    }
-
-#if defined(APPMESSAGE_HAS_SETTINGS)
-    if (page)
-    {
-        settings_mark_restored();
-    }
-#endif
-
-    if (moved)
-    {
-        if (s_handlers.on_settings_changed)
-        {
-            s_handlers.on_settings_changed(settings.layout_changed);
-        }
-
-        // a restore brings the phone's unit, which is the unit any reading already here was fetched
-        // in. an edit on the page is the wearer switching, so the reading in hand converts to match
-        uint8_t unit_after = settings_u8(SETTING_TEMPERATURE_UNIT);
-        if (unit_after != unit_before && !restoring && s_handlers.on_unit_changed)
-        {
-            s_handlers.on_unit_changed(unit_after != 0);
-        }
-
-        if (settings.weather_changed)
-        {
-            appmessage_request_weather();
-        }
-    }
 
     // the whole message is dispatched: let a store that took several channels commit them
     // once (the weather store repaints and saves once here rather than once per channel)

@@ -66,6 +66,12 @@ export interface WeatherResult {
   precipChance?: number;
   forecastHourly?: HourlyStrip | null;
   forecastDaily?: DailyStrip | null;
+  /**
+   * The units the reading is in, which the watch takes as its unit settings. `wind` is the number the
+   * wind unit setting saves. A plugin's reading carries the plugin's, and a fetch on a face built with
+   * plugins carries the face's own. A face built without plugins leaves them out.
+   */
+  units?: { fahrenheit: boolean; wind?: number };
 }
 
 /** The lookup options a face hands the dispatcher and each provider. */
@@ -354,6 +360,24 @@ function minutesAtPhone(minutes: number | null, localtime: unknown, epochSeconds
   return shiftDayMinutes(minutes, phoneOffsetMinutes(epoch * 1000) - locationOffset);
 }
 
+/**
+ * Puts a reading's units into a dict for the watch as the face's unit settings, each only when the
+ * face declares its key.
+ *
+ * @param dict The dict going to the watch, changed in place.
+ * @param messageKeys The face's message keys, by name.
+ * @param units The units, as a plugin's reading carries them.
+ */
+export function putUnits(dict: Record<string, unknown>, messageKeys: Record<string, number>, units: NonNullable<WeatherResult['units']>): void {
+  if (messageKeys.WEATHER_TEMPERATURE_UNIT !== undefined) {
+    dict[messageKeys.WEATHER_TEMPERATURE_UNIT] = units.fahrenheit ? 1 : 0;
+  }
+
+  if (messageKeys.WEATHER_WIND_UNIT !== undefined && units.wind !== undefined) {
+    dict[messageKeys.WEATHER_WIND_UNIT] = units.wind;
+  }
+}
+
 /** Extras that ride as a whole number, the sun times included as minutes past midnight. */
 const ROUNDED_EXTRAS = [
   'humidity', 'windKmh', 'uvIndex', 'feelsLike', 'pressure', 'dewPoint', 'tempMax', 'tempMin',
@@ -533,4 +557,5 @@ export default {
   requestJson,
   ok,
   status,
+  putUnits,
 };
