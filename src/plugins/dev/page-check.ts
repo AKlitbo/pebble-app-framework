@@ -279,13 +279,13 @@ export const STOCKS_CRYPTO_LISTING = 'https://apps.repebble.com/stocks-crypto_aa
 export const CALENDAR_ICAL_LISTING = 'https://apps.repebble.com/calendar-ical_22c2e12ca01244bfac7e2660';
 
 // the panel's weather plugins on a phone that lists the built-in ones, and its calendar plugins
-const PANEL_WEATHER = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_TAG }, { name: 'MET Norway Weather', listing: MET_NORWAY_LISTING }, { name: 'Weather+', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', listing: WEATHER_ENHANCED_LISTING }] };
-const PANEL_CALENDAR = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_TAG }, { name: 'Calendar + iCal', listing: CALENDAR_ICAL_LISTING }] };
+const PANEL_WEATHER = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_TAG }, { name: 'MET Norway Weather', tag: 'v1.0.5', listing: MET_NORWAY_LISTING }, { name: 'Weather+', tag: 'v1.0.0', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', tag: 'v1.0.0', listing: WEATHER_ENHANCED_LISTING }] };
+const PANEL_CALENDAR = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_TAG }, { name: 'Calendar + iCal', tag: 'v1.1.0', listing: CALENDAR_ICAL_LISTING }] };
 
 // the same on a phone whose list leaves the built-in ones out, which the panel marks off
 const BUILT_IN_OFF = `${BUILT_IN_TAG}, ${OFF_TAG}`;
-const PANEL_WEATHER_OFF = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_OFF }, { name: 'MET Norway Weather', listing: MET_NORWAY_LISTING }, { name: 'Weather+', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', listing: WEATHER_ENHANCED_LISTING }] };
-const PANEL_CALENDAR_OFF = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_OFF }, { name: 'Calendar + iCal', listing: CALENDAR_ICAL_LISTING }] };
+const PANEL_WEATHER_OFF = { label: 'Weather', plugins: [{ name: 'Weather', tag: BUILT_IN_OFF }, { name: 'MET Norway Weather', tag: 'v1.0.5', listing: MET_NORWAY_LISTING }, { name: 'Weather+', tag: 'v1.0.0', listing: WEATHER_PLUS_LISTING }, { name: 'Weather Enhanced', tag: 'v1.0.0', listing: WEATHER_ENHANCED_LISTING }] };
+const PANEL_CALENDAR_OFF = { label: 'Calendar', plugins: [{ name: 'Calendar', tag: BUILT_IN_OFF }, { name: 'Calendar + iCal', tag: 'v1.1.0', listing: CALENDAR_ICAL_LISTING }] };
 
 // what marks the supported plugins panel on the page
 const PANEL_SELECTOR = '.pf-plugins';
@@ -329,7 +329,7 @@ export const STOCK_SOURCE_TEXT = 'Your watch shows the first 4 tickers your stoc
 export const STOCK_NO_PLUGIN_TEXT = 'This watchface needs a stock plugin, and the Pebble app has none built in. Get one from the Pebble app store, such as those listed under Plugins This Watchface Supports, then pick it under Preferred Sources in the Pebble app.';
 
 // the panel's stock plugins on a phone that lists the stock fixture plugin
-const PANEL_STOCKS = { label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }, { name: 'My Stocks', tag: 'Installed' }] };
+const PANEL_STOCKS = { label: 'Stocks', plugins: [{ name: 'Stocks', tag: 'v1.0.4', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', tag: 'v1.0.1', listing: STOCKS_CRYPTO_LISTING }, { name: 'My Stocks', tag: 'Installed' }] };
 
 // where the Pebble app's music plugin runs, from the plugin directory in ts/plugin-sources/directory.ts
 export const ANDROID_ONLY = 'Android Only';
@@ -1116,7 +1116,7 @@ export const SCENARIOS: Scenario[] = [
       badged: [STOCK_NO_PLUGIN_TEXT],
       notesHidden: [PLUGINS_OFF_TEXT],
     },
-    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
+    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', tag: 'v1.0.4', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', tag: 'v1.0.1', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
     pluginKinds: { stocks: 'missing' },
   },
   {
@@ -1150,7 +1150,7 @@ export const SCENARIOS: Scenario[] = [
       badged: [STOCK_NO_PLUGIN_TEXT],
       notesHidden: [STOCK_SOURCE_TEXT, PLUGINS_OFF_TEXT],
     },
-    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
+    panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', tag: 'v1.0.4', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', tag: 'v1.0.1', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
   },
   {
     // a face with no settings page of its own, taking its weather from a plugin alone. the page holds

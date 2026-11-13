@@ -135,9 +135,9 @@ A plugin that fails gets a note on the page naming it, saying it sends data this
 
 A face built with any plugin define gets one more row at the foot of its settings page once one of its kinds offers a plugin: a closed panel titled **Plugins This Watchface Supports**. Opened, it lists under a heading for each kind the face has on the plugins known to serve it, and where to get them.
 
-* **The Pebble App's Own.** Each built-in plugin reads **Built Into the Pebble App**, with **Off** after it when the phone's plugin list leaves that one out, as it leaves every one out with plugins off. The music plugin is built in on Android only, and says so.
-* **Store Plugins.** A store plugin links to its listing on the Pebble appstore, and reads **Installed** when the phone lists it.
-* **Plugins the Table Does Not Know.** A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as **Unnamed Plugin** when it has none, and reads **Installed**.
+* **The Pebble App's Own.** Each built-in plugin reads **Weather - Built Into the Pebble App**, and **Weather - Built Into the Pebble App, Off** when the phone's plugin list leaves that one out, as it leaves every one out with plugins off. The music plugin is built in on Android only, and says so.
+* **Store Plugins.** A store plugin links to its listing on the Pebble appstore, and carries the version tested with the face, the `verifiedVersion` in the table, as in **MET Norway Weather - v1.0.5**. It reads **MET Norway Weather - v1.0.5 - Installed** when the phone lists it. The panel's intro says the version is one tested with the face, which may not be the plugin's newest.
+* **Plugins the Table Does Not Know.** A plugin on the phone serving the kind that the table does not know is listed by its own name, cut to 40 characters, or as **Unnamed Plugin** when it has none, and reads **Pirate Weather - Installed**, with no version.
 * **Plugins Off.** When the phone lists no plugins at all, the panel opens on a line saying to turn plugins on in the Pebble app under Settings, Plugins, or to update the Pebble app.
 
 The panel's headings are in [`directory.ts`](../../src/ts/plugin-sources/directory.ts), and the plugins it knows are in [`known-plugins.json`](../../src/known-plugins.json), which the table below is written from. A kind a plugin serves that the panel has no heading for, such as `finance/crypto`, is left off the panel.

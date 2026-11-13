@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Added
 
 - The supported plugins panel now lists Pebble's own Stocks plugin beside Stocks + Crypto.
+- The supported plugins panel now shows the version of each store plugin tested with the watchface, as in MET Norway Weather - v1.0.5 - Installed.
 - The stock Data Source now offers a stock plugin while plugins are on and none is installed, as Preferred Source (No Stock Plugin), with a note saying where to get one. It showed only for a choice saved before.
 
 #### Changed

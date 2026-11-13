@@ -188,3 +188,31 @@ describe('the words', () => {
     expect(result).toBeNull();
   });
 });
+
+describe('the words after a name', () => {
+  /** The wearer reads a row as one line, so the name and the words after it need the same dash the words use between their own parts. */
+  test('draws a store plugin as its name, a dash, and its version and Installed', () => {
+    const panel = content();
+
+    panel.kinds[0].entries[1] = { name: 'MET Norway Weather', tag: 'v1.0.5 - Installed', listing: LISTING };
+
+    const root = showPanel(panel);
+
+    const result = (root.querySelectorAll('.pf-plugins-entry')[1].textContent || '').replace(/apps\.repebble\.com.*$/, '');
+
+    expect(result).toBe('MET Norway Weather - v1.0.5 - Installed');
+  });
+
+  /** A row with nothing after the name would otherwise end on a dash that leads nowhere. */
+  test('draws no dash for a plugin with nothing after its name', () => {
+    const panel = content();
+
+    panel.kinds[0].entries[1] = { name: 'MET Norway Weather', tag: '', listing: LISTING };
+
+    const root = showPanel(panel);
+
+    const result = root.querySelectorAll('.pf-plugins-entry')[1].querySelector('.pf-plugins-sep');
+
+    expect(result).toBeNull();
+  });
+});

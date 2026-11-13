@@ -20,7 +20,8 @@
  *   .pf-plugins-none         the line under a heading with no plugin to list
  *   .pf-plugins-name         a plugin's name, as plain text
  *   .pf-plugins-link         a plugin's name, as a link to its listing
- *   .pf-plugins-tag          the word after a name, such as Installed
+ *   .pf-plugins-sep          the dash between a name and the words after it
+ *   .pf-plugins-tag          the words after a name, such as v1.0.5 - Installed
  *   .pf-plugins-address      a listing's address, shown where it cannot be a link
  * It takes its colours from the note's --pf-note-accent and --pf-note-info-accent, and its store
  * links and focus ring from --pf-accent, as control-style.ts lists.
@@ -77,7 +78,7 @@ export default {
     '.pf-plugins-entry { margin: 0.2rem 0; }',
     '.pf-plugins-link { ' + LINK + ' }',
     '.pf-plugins-link:focus-visible { ' + FOCUS_RING + ' }',
-    '.pf-plugins-tag { margin-left: 0.4rem; opacity: 0.7; font-size: 0.9em; }',
+    '.pf-plugins-sep, .pf-plugins-tag { opacity: 0.7; font-size: 0.9em; }',
     '.pf-plugins-address { display: block; opacity: 0.7; font-size: 0.9em; word-break: break-all; }',
   ].join(''),
 
@@ -195,7 +196,9 @@ export default {
           add(row, 'span', 'pf-plugins-name', words(entry.name));
         }
 
+        // the separator is the same one the words after the name use between their own parts
         if (words(entry.tag)) {
+          add(row, 'span', 'pf-plugins-sep', ' - ');
           add(row, 'span', 'pf-plugins-tag', words(entry.tag));
         }
 

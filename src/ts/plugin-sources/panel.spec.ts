@@ -126,30 +126,33 @@ describe('what the panel lists', () => {
   test('links Weather+ to its store listing', () => {
     const result = panelFor([BUILT_IN_WEATHER]).kinds[0].entries.find((entry) => entry.name === 'Weather+');
 
-    expect(result).toEqual({ name: 'Weather+', tag: '', listing: WEATHER_PLUS_LISTING });
+    expect(result).toEqual({ name: 'Weather+', tag: 'v1.0.0', listing: WEATHER_PLUS_LISTING });
   });
 
   /** A wrong id or slug sends the wearer to a store page that does not exist. */
   test('links Weather Enhanced to its store listing', () => {
     const result = panelFor([BUILT_IN_WEATHER]).kinds[0].entries.find((entry) => entry.name === 'Weather Enhanced');
 
-    expect(result).toEqual({ name: 'Weather Enhanced', tag: '', listing: WEATHER_ENHANCED_LISTING });
+    expect(result).toEqual({ name: 'Weather Enhanced', tag: 'v1.0.0', listing: WEATHER_ENHANCED_LISTING });
   });
 
   /** A wrong id or slug sends the wearer to a store page that does not exist. */
   test('links MET Norway Weather to its store listing', () => {
     const result = panelFor([BUILT_IN_WEATHER]).kinds[0].entries.find((entry) => entry.name === 'MET Norway Weather');
 
-    expect(result).toEqual({ name: 'MET Norway Weather', tag: '', listing: MET_NORWAY_LISTING });
+    expect(result).toEqual({ name: 'MET Norway Weather', tag: 'v1.0.5', listing: MET_NORWAY_LISTING });
   });
 
-  /** A wearer who already has the plugin would otherwise go looking to install it again. */
-  test('marks a store plugin the phone lists as installed, whatever case its uuid is in', () => {
+  /**
+   * A wearer who already has the plugin would otherwise go looking to install it again. The tested
+   * version comes first, so a wearer on an older or newer one can see which was checked.
+   */
+  test('marks a store plugin the phone lists as installed after its tested version, whatever case its uuid is in', () => {
     const listed = { ...MET_NORWAY, uuid: MET_NORWAY.uuid?.toUpperCase() };
 
     const result = panelFor([BUILT_IN_WEATHER, listed]).kinds[0].entries.find((entry) => entry.name === 'MET Norway Weather');
 
-    expect(result?.tag).toBe(INSTALLED_TAG);
+    expect(result?.tag).toBe(`v1.0.5 - ${INSTALLED_TAG}`);
   });
 
   /** A built-in plugin the phone does not list is not running, and a wearer told it was built in would expect it to answer. */
@@ -170,7 +173,7 @@ describe('what the panel lists', () => {
   test('marks nothing installed or off when the plugin list cannot be read', () => {
     const result = panelFor(null).kinds[0].entries.map((entry) => entry.tag);
 
-    expect(result).toEqual([BUILT_IN_TAG, '', '', '']);
+    expect(result).toEqual([BUILT_IN_TAG, 'v1.0.5', 'v1.0.0', 'v1.0.0']);
   });
 
   /** A plugin published after the directory was last refreshed still serves the face, and the wearer has it. */
@@ -256,8 +259,8 @@ describe('the kinds only a plugin serves', () => {
       item: 'stock',
       label: 'Stocks',
       entries: [
-        { name: 'Stocks', tag: '', listing: PEBBLE_STOCKS_LISTING },
-        { name: 'Stocks + Crypto', tag: '', listing: STOCKS_CRYPTO_LISTING },
+        { name: 'Stocks', tag: 'v1.0.4', listing: PEBBLE_STOCKS_LISTING },
+        { name: 'Stocks + Crypto', tag: 'v1.0.1', listing: STOCKS_CRYPTO_LISTING },
         { name: 'My Stocks', tag: INSTALLED_TAG, listing: '' },
       ],
     });
@@ -276,8 +279,8 @@ describe('the kinds only a plugin serves', () => {
       item: 'stock',
       label: 'Stocks',
       entries: [
-        { name: 'Stocks', tag: '', listing: PEBBLE_STOCKS_LISTING },
-        { name: 'Stocks + Crypto', tag: '', listing: STOCKS_CRYPTO_LISTING },
+        { name: 'Stocks', tag: 'v1.0.4', listing: PEBBLE_STOCKS_LISTING },
+        { name: 'Stocks + Crypto', tag: 'v1.0.1', listing: STOCKS_CRYPTO_LISTING },
       ],
     });
   });
