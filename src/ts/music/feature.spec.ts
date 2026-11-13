@@ -15,6 +15,7 @@ import music from './feature';
 import { withFakePebble } from '../testing/pebble';
 import type { FakePebble } from '../testing/pebble';
 import type { FeatureContext } from '../pkjs/feature';
+import { wantedKey } from '../plugin-sources/reading-driver';
 
 // the plugin code a face built with PLUGIN_MUSIC finds, which a spec turns off to stand for a face
 // built without it. the build writes null into the index then, which is what the getter hands back
@@ -65,8 +66,14 @@ function update(title: string, artist: string, playing = true, progress = 0) {
   };
 }
 
-/** A face with the now playing keys and its sends recorded, each acked straight away, with ready run unless asked not to. */
+/**
+ * A face with the now playing keys and its sends recorded, each acked straight away, with ready run
+ * unless asked not to. The watch has already said it shows the track, so the feature subscribes on
+ * ready.
+ */
 function startFace(ready = true) {
+  localStorage.setItem(wantedKey('music', 'track'), '1');
+
   const sends: Record<string, unknown>[] = [];
   const queueSend = vi.fn((dict: Record<string, unknown>, onOk?: () => void) => {
     sends.push(dict);

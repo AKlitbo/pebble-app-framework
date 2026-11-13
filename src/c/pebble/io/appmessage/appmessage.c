@@ -99,6 +99,16 @@ void appmessage_add_inbox_complete(InboxCompleteHandler cb)
 /** @} */
 
 static OutboxQueue s_outbox;    ///< What is queued, what nacked, and what is in flight
+
+// whether the face shows the phone's battery and what is playing. the request carries it as 1 or 0,
+// read when the request is written rather than when it is queued, so an ask and a release that land
+// close together always leave the phone with the latest. one queued request carries either
+#if defined(APPMESSAGE_HAS_PHONE)
+static bool s_phone_shown = true; ///< PHONE_REQUEST says 1 while true and 0 once the face released it
+#endif
+#if defined(APPMESSAGE_HAS_MUSIC)
+static bool s_music_shown = true; ///< MUSIC_REQUEST says 1 while true and 0 once the face released it
+#endif
 static AppTimer *s_retry_timer; ///< Delay before the next retry pass
 static uint32_t  s_outbox_size; ///< The outbox buffer size appmessage_open asked for
 
@@ -178,12 +188,12 @@ static bool send_job(OutboxKind kind)
 #endif
 #if defined(APPMESSAGE_HAS_PHONE)
         case OUTBOX_PHONE:
-            dict_write_uint8(iter, MESSAGE_KEY_PHONE_REQUEST, 1);
+            dict_write_uint8(iter, MESSAGE_KEY_PHONE_REQUEST, s_phone_shown ? 1 : 0);
             break;
 #endif
 #if defined(APPMESSAGE_HAS_MUSIC)
         case OUTBOX_MUSIC:
-            dict_write_uint8(iter, MESSAGE_KEY_MUSIC_REQUEST, 1);
+            dict_write_uint8(iter, MESSAGE_KEY_MUSIC_REQUEST, s_music_shown ? 1 : 0);
             break;
 #endif
 #if defined(APPMESSAGE_HAS_SETTINGS)
@@ -319,6 +329,15 @@ void appmessage_request_calendar(void)
 void appmessage_request_phone(void)
 {
 #if defined(APPMESSAGE_HAS_PHONE)
+    s_phone_shown = true;
+    enqueue(OUTBOX_PHONE, REQUEST_RETRY_MAX);
+#endif
+}
+
+void appmessage_release_phone(void)
+{
+#if defined(APPMESSAGE_HAS_PHONE)
+    s_phone_shown = false;
     enqueue(OUTBOX_PHONE, REQUEST_RETRY_MAX);
 #endif
 }
@@ -326,6 +345,15 @@ void appmessage_request_phone(void)
 void appmessage_request_music(void)
 {
 #if defined(APPMESSAGE_HAS_MUSIC)
+    s_music_shown = true;
+    enqueue(OUTBOX_MUSIC, REQUEST_RETRY_MAX);
+#endif
+}
+
+void appmessage_release_music(void)
+{
+#if defined(APPMESSAGE_HAS_MUSIC)
+    s_music_shown = false;
     enqueue(OUTBOX_MUSIC, REQUEST_RETRY_MAX);
 #endif
 }

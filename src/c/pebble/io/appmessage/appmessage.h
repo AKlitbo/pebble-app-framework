@@ -190,9 +190,23 @@ void appmessage_request_calendar(void);
 void appmessage_request_phone(void);
 
 /**
+ * @brief Tells the phone the face no longer shows the phone's battery, so it ends its subscription and
+ * stops waking the watch on every change in the level. The phone battery store calls this when a face
+ * starts it not live. Goes out as PHONE_REQUEST 0, and does nothing on a face without the keys.
+ */
+void appmessage_release_phone(void);
+
+/**
  * @brief Asks the phone what it is playing. The now playing store calls this at launch and when the
  * phone comes back. Does nothing on a face that does not declare the four music keys.
  */
 void appmessage_request_music(void);
+
+/**
+ * @brief Tells the phone the face no longer shows what is playing, so it ends its subscription and
+ * stops waking the watch on every change of track. The now playing store calls this when a face starts
+ * it not live. Goes out as MUSIC_REQUEST 0, and does nothing on a face without the keys.
+ */
+void appmessage_release_music(void);
 
 /** @} */

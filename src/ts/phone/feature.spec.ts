@@ -15,6 +15,7 @@ import { withFakePebble } from '../testing/pebble';
 import type { FakePebble } from '../testing/pebble';
 import type { FeatureContext } from '../pkjs/feature';
 import type { ClayConfigItem } from '../clay/types';
+import { wantedKey } from '../plugin-sources/reading-driver';
 
 // the plugin code a face built with PLUGIN_PHONE finds, which a spec turns off to stand for a face
 // built without it. the build writes null into the index then, which is what the getter hands back
@@ -51,9 +52,14 @@ function update(level: number, wifi = true) {
 
 /**
  * A face with the phone keys, its sends recorded. Each send is acked unless `failNext` says to refuse
- * the next one, as a busy watch does.
+ * the next one, as a busy watch does. Unless `shown` says otherwise, the watch has already said it
+ * shows the battery, so the feature subscribes on ready.
  */
-function startFace(ready = true) {
+function startFace(ready = true, shown = true) {
+  if (shown) {
+    localStorage.setItem(wantedKey('phone', 'phone_state'), '1');
+  }
+
   const sends: Record<string, unknown>[] = [];
   const outcome = { failNext: false };
   const queueSend = vi.fn((dict: Record<string, unknown>, onOk?: () => void, onFail?: () => void) => {
@@ -180,6 +186,40 @@ describe('phone battery feature', () => {
     hooks.ready?.();
 
     expect(pebble.live()).toHaveLength(1);
+  });
+
+  /** Every change in the battery wakes the watch, so a face with no panel showing it must not subscribe. */
+  test('subscribes nothing on ready before the watch asks', () => {
+    startFace(true, false);
+
+    const result = pebble.live();
+
+    expect(result).toHaveLength(0);
+  });
+
+  /** The phone code restarts on its own, and a watch showing the battery must not lose its updates until it next asks. */
+  test('subscribes again on the next ready once the watch has asked', () => {
+    const { hooks } = startFace(true, false);
+
+    hooks.message?.({ PHONE_REQUEST: 1 });
+    startFace(true, false);
+
+    const result = pebble.subscriptions.length;
+
+    expect(result).toBe(2);
+  });
+
+  /** A face whose layout dropped the panel says so with a 0, and the phone has to stop waking the watch for it. */
+  test('ends the subscription and sends nothing when the watch no longer shows the battery', () => {
+    const { hooks, sends } = startFace();
+
+    hooks.message?.({ PHONE_REQUEST: 0 });
+    pebble.live()[0]?.push(update(84));
+    startFace(true, false);
+
+    const result = [pebble.live().length, levels(sends)];
+
+    expect(result).toEqual([0, []]);
   });
 
   /** Asking only for the battery keeps the phone from working out readings nothing reads. */

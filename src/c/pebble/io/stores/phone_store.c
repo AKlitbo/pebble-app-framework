@@ -25,7 +25,7 @@
 
 static int s_battery = PHONE_NO_LEVEL; ///< The phone's level, or PHONE_NO_LEVEL for none
 static void (*s_cb)(void);              ///< Called whenever the level changes, so the face can redraw
-static AppTimer *s_ask_timer;           ///< The first ask after launch, while it waits
+static AppTimer *s_ask_timer;           ///< The first ask or release after launch, while it waits
 
 /**
  * @brief Keep a level and tell the face, unless it is the level already held.
@@ -51,6 +51,18 @@ static void set_battery(int level)
 static void on_phone_battery(int level)
 {
     set_battery(level);
+}
+
+/**
+ * @brief The first word after launch from a store that is not live, telling the phone the face no
+ * longer shows this, so it ends its subscription.
+ *
+ * @param data The timer context (unused).
+ */
+static void first_release(void *data)
+{
+    s_ask_timer = NULL;
+    appmessage_release_phone();
 }
 
 /**
@@ -103,22 +115,26 @@ void phone_store_init(PhoneConfig cfg, const PhoneSeed *seed)
     {
         appmessage_on_phone_battery(NULL);
         system_store_remove_link_listener(on_link);
-        // a first ask still waiting is called off, so the store never asks
+        // a first ask still waiting is called off, so the store never asks. it tells the phone the
+        // face no longer shows this instead, once appmessage is open, since a phone that subscribed
+        // for an earlier layout keeps the subscription across its restarts
         if (s_ask_timer)
         {
             app_timer_cancel(s_ask_timer);
-            s_ask_timer = NULL;
         }
+        s_ask_timer = app_timer_register(PHONE_FIRST_ASK_MS, first_release, NULL);
         return;
     }
 
     appmessage_on_phone_battery(on_phone_battery);
     system_store_add_link_listener(on_link);
 
-    if (!s_ask_timer)
+    // a release still waiting from a not live start is replaced, so the phone hears the ask
+    if (s_ask_timer)
     {
-        s_ask_timer = app_timer_register(PHONE_FIRST_ASK_MS, first_ask, NULL);
+        app_timer_cancel(s_ask_timer);
     }
+    s_ask_timer = app_timer_register(PHONE_FIRST_ASK_MS, first_ask, NULL);
 #else
     (void)cfg;
     (void)seed;

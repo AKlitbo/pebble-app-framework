@@ -4,6 +4,24 @@ All notable changes to the Pebble App Framework are documented in this file. Eac
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Framework Changes
+
+#### Added
+
+- Added `appmessage_release_phone` and `appmessage_release_music`, which a phone or music store started not live calls to tell the phone the face no longer shows that reading.
+
+#### Changed
+
+- The phone battery and now playing features subscribe only once the watch asks, and end the subscription when a store started not live sends `PHONE_REQUEST` or `MUSIC_REQUEST` as 0. The phone keeps the last answer under a `pf-wanted-` key, which a face leaves alone. Start each store live only while a panel shows its reading.
+
+### Wearer-Visible Changes
+
+#### Fixed
+
+- Fixed a watchface built to show the phone's battery or what is playing waking the watch on every change while no panel on the layout shows it.
+
 ## [6.2.1] - 2026-11-12
 
 ### Wearer-Visible Changes
@@ -654,6 +672,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.2.1...HEAD
 [6.2.1]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.2.0...v6.2.1
 [6.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.1.0...v6.2.0
 [6.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.0.0...v6.1.0

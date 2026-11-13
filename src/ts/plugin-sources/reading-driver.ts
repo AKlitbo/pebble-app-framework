@@ -3,9 +3,13 @@
  * phone's battery, which plugin-sources/index hands its feature on a face built with the kind's
  * define.
  *
- * Such a kind has no other source and no choice on the page, so it is always in plugin mode. It
- * subscribes on every ready, sends each update through the feature's own deduped sender, and answers
- * the watch's ask with the last update, or with the empty reading before the first one. When no
+ * Such a kind has no other source and no choice on the page. It subscribes only while the watch shows
+ * it, which the watch says with its ask: 1 when a face starts the store live, and 0 when it starts it
+ * not live, such as for a layout with no panel that reads the kind. The phone keeps the last answer,
+ * so a restart of the phone code subscribes again only for a watch that shows the kind. A plugin
+ * sends on every change, so a subscription nobody reads would wake the watch for each one. While
+ * subscribed it sends each update through the feature's own deduped sender, and answers the watch's
+ * ask with the last update, or with the empty reading before the first one. When no
  * plugin serves the kind, or the phone ends the subscription, or the wearer has not allowed the
  * permission, it sends the empty reading so the watch clears its panel. The page hook adds the notes
  * saying what is wrong, with no select to hang them on, and lists the kind in the supported plugins
@@ -30,6 +34,40 @@ import type { FeatureContext, FeatureHooks } from '../pkjs/feature';
  * watch's panel, and the page explains it.
  */
 export const CLEARING_CODES: readonly string[] = [NO_PLUGIN, 'PLUGIN_UNAVAILABLE', 'PERMISSION_DENIED'];
+
+/**
+ * Where the phone keeps whether the watch shows a kind, so the phone code subscribes on a restart
+ * only for a watch that does.
+ *
+ * @param category The kind's category, such as `phone`.
+ * @param item The item inside it, such as `phone_state`.
+ * @return The localStorage key.
+ */
+export function wantedKey(category: string, item: string): string {
+  return `pf-wanted-${category}/${item}`;
+}
+
+/** Whether the watch last said it shows the kind, false when it has never said or storage fails. */
+function readWanted(key: string): boolean {
+  try {
+    return localStorage.getItem(key) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Keeps what the watch last said. A phone that refuses the write keeps it for this session only. */
+function saveWanted(key: string, wanted: boolean): void {
+  try {
+    if (wanted) {
+      localStorage.setItem(key, '1');
+    } else {
+      localStorage.removeItem(key);
+    }
+  } catch {
+    // the session still follows it, and the next ask from the watch says it again
+  }
+}
 
 /** What a kind's mapping hands its driver. */
 export interface ReadingMapping<Reading> {
@@ -60,14 +98,17 @@ export interface ReadingMapping<Reading> {
 export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): (context: FeatureContext, controls: ReadingControls<Reading>) => FeatureHooks {
   return ({ messageKeys }, controls) => {
     const { category, item } = mapping;
+    const key = wantedKey(category, item);
+    let wanted = readWanted(key);
 
-    // the kind has no other source, so the plugin is always the choice and there is no fetch to shut out
+    // the kind has no other source, so the choice is whether the watch shows it, and there is no
+    // fetch to shut out
     const choice = followPluginChoice({
       category,
       item,
       properties: mapping.properties,
-      only: true,
-      pickedIn: () => true,
+      only: false,
+      pickedIn: () => wanted,
       shutOut: () => {},
       onUpdate: (envelope) => controls.send(mapping.fromUpdate(envelope)),
       onError(error) {
@@ -97,21 +138,34 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
       ready() {
         controls.forget();
 
-        // a subscription costs nothing on the network and lasts the JS session, so it starts afresh
-        // on every ready. starting ends the one before, so one stays running
+        // a subscription lasts the JS session, so a watch that shows the kind gets it afresh on every
+        // ready. starting ends the one before, so one stays running
         choice.follow({ restart: true });
       },
 
       message(payload) {
-        if (!payload[messageKeys[mapping.requestKey]]) {
+        const ask = payload[messageKeys[mapping.requestKey]];
+
+        if (ask === undefined || ask === null) {
           return;
         }
 
+        const wants = Number(ask) !== 0;
+
+        if (wants !== wanted) {
+          wanted = wants;
+          saveWanted(key, wanted);
+        }
+
         // the watch asks after a reboot or when the phone comes back, holding nothing, so it gets an
-        // answer even when the sender thinks the watch already has it
+        // answer even when the sender thinks the watch already has it. a watch that no longer shows
+        // the kind gets nothing, and its subscription ends
         controls.forget();
         choice.follow();
-        sendLatest();
+
+        if (wanted) {
+          sendLatest();
+        }
       },
 
       refresh(slow) {
@@ -146,4 +200,4 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
   };
 }
 
-export default { createReadingDriver, CLEARING_CODES };
+export default { createReadingDriver, CLEARING_CODES, wantedKey };

@@ -32,6 +32,8 @@ phone_store_subscribe(redraw);
 music_store_subscribe(redraw);
 ```
 
+**Live Only While Shown.** A plugin sends on every change, so a subscription nobody reads wakes the watch for each one. Start each store live only while the face shows its reading, such as when a phone battery panel is on the wearer's layout, and start it again with `live` false when the layout drops the last one. A store started live asks the phone with `PHONE_REQUEST` or `MUSIC_REQUEST` set to 1, and the phone subscribes. A store started not live sends the same key set to 0, through `appmessage_release_phone` or `appmessage_release_music`, and the phone ends its subscription. The phone keeps the last answer under a `pf-wanted-` key in `localStorage`, so after its own restart it subscribes again only for a watch that shows the reading. A face that always starts both stores live behaves as before, at the cost of a wake on every change.
+
 **Built Only with the Keys.** Each store's code is built only for a face that declares all of its keys. A face that declares part of a set fails to build, with the missing key named. A face with none of them gets the public calls as stubs, so the battery reads -1, the track reads as nothing playing, and nothing runs.
 
 ## The Phone's Battery
@@ -67,4 +69,4 @@ phone_store_init((PhoneConfig){.live = false}, &(PhoneSeed){.battery = 72});
 music_store_init((MusicConfig){.live = false}, &(MusicSeed){.title = "Clocks", .artist = "Coldplay", .playing = true});
 ```
 
-A store that is not live keeps its seed, takes nothing from the phone, and never asks. That holds for a store the face started live and then again with `live` false. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
+A store that is not live keeps its seed and takes nothing from the phone. It never asks, and a moment after it starts it tells the phone the face no longer shows the reading, so the phone ends its subscription. That holds for a store the face started live and then again with `live` false. [How the Stores Work](stores.md#seeded-for-screenshots) covers the rest of seeding.
