@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [6.3.0] - 2026-11-13
+
 ### Framework Changes
 
 #### Added
@@ -695,7 +697,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - First release of the engine as its own repo, split out of the shared `lib/` in pebble-watchfaces.
 
-[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.2.1...HEAD
+[Unreleased]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.3.0...HEAD
+[6.3.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.2.1...v6.3.0
 [6.2.1]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.2.0...v6.2.1
 [6.2.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.1.0...v6.2.0
 [6.1.0]: https://github.com/AKlitbo/pebble-app-framework/compare/v6.0.0...v6.1.0
