@@ -26,6 +26,9 @@
 
 #define MUSIC_TEXT_LEN 33 ///< A now playing title or artist, 32 characters plus its terminator
 
+#define PHONE_NO_LEVEL (-1) ///< The phone's battery level for no reading
+#define WIRE_NO_PLUGIN (-2) ///< Sent in place of a plugin reading while nothing on the phone serves it
+
 #define WEATHER_FORECAST_COLS 8 ///< How many columns a forecast strip carries
 #define WEATHER_NO_TEMP (-1000) ///< A column with no reading, so the watch draws a placeholder
 

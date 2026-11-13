@@ -6,12 +6,16 @@
  * Such a kind has no other source and no choice on the page. It subscribes only while the watch shows
  * it, which the watch says with its ask: 1 when a face starts the store live, and 0 when it starts it
  * not live, such as for a layout with no panel that reads the kind. The phone keeps the last answer,
- * so a restart of the phone code subscribes again only for a watch that shows the kind. A plugin
+ * so a restart of the phone code subscribes again unless the watch last said it shows no such
+ * panel. A phone that has never heard an answer, as after an install or an upgrade, subscribes at
+ * ready rather than waiting on an ask that may run out of tries while the phone code starts. A store
+ * started not live sends its 0 at every launch, so a watch that shows no such panel ends that
+ * subscription a moment later. A plugin
  * sends on every change, so a subscription nobody reads would wake the watch for each one. While
  * subscribed it sends each update through the feature's own deduped sender, and answers the watch's
- * ask with the last update, or with the empty reading before the first one. When no
- * plugin serves the kind, or the phone ends the subscription, or the wearer has not allowed the
- * permission, it sends the empty reading so the watch clears its panel. The page hook adds the notes
+ * ask with the last update, or with the empty reading before the first one. When no plugin serves
+ * the kind, or the phone ends the subscription, or the wearer has not allowed the permission, it
+ * sends the reading for no plugin, so the watch clears its panel and can say why. The page hook adds the notes
  * saying what is wrong, with no select to hang them on, and lists the kind in the supported plugins
  * panel.
  *
@@ -25,13 +29,14 @@ import type { StandardReadings } from './standard';
 import { NO_PLUGIN } from './subscription';
 import noteComponent from './note-component';
 import panelComponent from './panel-component';
+import kindsComponent from './kinds-component';
 import type { ReadingControls, SourceEnvelope } from './types';
 import type { FeatureContext, FeatureHooks } from '../pkjs/feature';
 
 /**
  * The error codes that leave the watch with nothing it can trust. No plugin serves the kind, the
- * phone has ended the subscription, or the wearer has not allowed the permission. Each one clears the
- * watch's panel, and the page explains it.
+ * phone has ended the subscription, or the wearer has not allowed the permission. Each one sends the
+ * reading for no plugin, which clears the watch's panel, and the page explains it.
  */
 export const CLEARING_CODES: readonly string[] = [NO_PLUGIN, 'PLUGIN_UNAVAILABLE', 'PERMISSION_DENIED'];
 
@@ -47,23 +52,19 @@ export function wantedKey(category: string, item: string): string {
   return `pf-wanted-${category}/${item}`;
 }
 
-/** Whether the watch last said it shows the kind, false when it has never said or storage fails. */
+/** Whether the watch shows the kind, false only when it last said it does not. Never said, or storage failing, reads as shown. */
 function readWanted(key: string): boolean {
   try {
-    return localStorage.getItem(key) === '1';
+    return localStorage.getItem(key) !== '0';
   } catch {
-    return false;
+    return true;
   }
 }
 
 /** Keeps what the watch last said. A phone that refuses the write keeps it for this session only. */
 function saveWanted(key: string, wanted: boolean): void {
   try {
-    if (wanted) {
-      localStorage.setItem(key, '1');
-    } else {
-      localStorage.removeItem(key);
-    }
+    localStorage.setItem(key, wanted ? '1' : '0');
   } catch {
     // the session still follows it, and the next ask from the watch says it again
   }
@@ -81,8 +82,14 @@ export interface ReadingMapping<Reading> {
   requestKey: string;
   /** Turns one update into the reading the watch takes. */
   fromUpdate(envelope: SourceEnvelope | null | undefined): Reading;
-  /** The reading for nothing to show, which the watch clears its panel to. */
+  /** The reading for nothing to show yet, which the watch clears its panel to. */
   empty: Reading;
+  /**
+   * The reading for no plugin serving the kind, which the watch clears its panel to as well and can
+   * tell apart from `empty`. It goes for a clearing error and for a plugin list with nothing serving
+   * the kind. Left out, `empty` stands in.
+   */
+  noPlugin?: Reading;
   /** The readings a plugin has to declare for the face to read it. */
   standard: StandardReadings;
   /** The page hook's wording. */
@@ -98,6 +105,7 @@ export interface ReadingMapping<Reading> {
 export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): (context: FeatureContext, controls: ReadingControls<Reading>) => FeatureHooks {
   return ({ messageKeys }, controls) => {
     const { category, item } = mapping;
+    const noPlugin = mapping.noPlugin === undefined ? mapping.empty : mapping.noPlugin;
     const key = wantedKey(category, item);
     let wanted = readWanted(key);
 
@@ -113,7 +121,7 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
       onUpdate: (envelope) => controls.send(mapping.fromUpdate(envelope)),
       onError(error) {
         if (CLEARING_CODES.includes(error.code)) {
-          controls.send(mapping.empty);
+          controls.send(noPlugin);
         }
       },
     });
@@ -123,13 +131,21 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
     /**
      * Sends what the watch should show now. The kept update stands only while no error since it
      * has cleared the panel, so a watch that rebooted after the wearer took the permission away gets
-     * the empty reading rather than an old song.
+     * the reading for no plugin rather than an old song. With nothing kept, a plugin list with nothing
+     * serving the kind sends the reading for no plugin too, and anything else the empty reading, since
+     * an update may still be on its way.
      */
     function sendLatest(): void {
       const latest = subscription.latest();
       const cleared = CLEARING_CODES.includes(subscription.state().lastError || '');
 
-      controls.send(latest && !cleared ? mapping.fromUpdate(latest) : mapping.empty);
+      if (latest && !cleared) {
+        controls.send(mapping.fromUpdate(latest));
+      } else if (cleared || !choice.couldAnswer()) {
+        controls.send(noPlugin);
+      } else {
+        controls.send(mapping.empty);
+      }
     }
 
     return {
@@ -193,9 +209,9 @@ export function createReadingDriver<Reading>(mapping: ReadingMapping<Reading>): 
         panel: true,
       }),
 
-      // the note and the supported plugins panel the page hook's rows are drawn with, which the app
+      // the note, the supported plugins panel, and the plugin kinds row the page hook's rows are drawn with, which the app
       // registers only for a page holding them
-      components: [noteComponent, panelComponent],
+      components: [noteComponent, panelComponent, kindsComponent],
     };
   };
 }

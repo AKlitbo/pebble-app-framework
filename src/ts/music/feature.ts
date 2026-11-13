@@ -3,14 +3,26 @@
  *
  * It reads the track from a music plugin and sends the watch `MUSIC_TITLE` and `MUSIC_ARTIST` as
  * ASCII text, and `MUSIC_PLAYING` as 1 or 0, all three together. Nothing playing sends both lines
- * empty and playing off. The watch asks again with `MUSIC_REQUEST`. A face turns it on with
+ * empty and playing off. While no plugin serves now playing, both lines go empty and `MUSIC_PLAYING`
+ * carries -2, so the watch can tell the two apart. The watch asks again with `MUSIC_REQUEST`. A face turns it on with
  * `PLUGIN_MUSIC` in its appinfo's defines and lists the feature in startPebbleApp. All of the plugin
  * code lives behind plugin-sources/index, so a face built without the define reads null there and
  * carries none of it. Listed without the define, the feature logs why and does nothing.
  */
 import { createDedupedSender } from '../pkjs/send-queue';
 import type { Feature } from '../pkjs/feature';
+import { WIRE_CAPS } from '../pkjs/wire';
 import { musicPlugins } from '../plugin-sources/index';
+import type { MusicTrack } from '../plugin-sources/types';
+
+/** What `MUSIC_PLAYING` carries for a track: 1 playing, 0 paused or nothing, or the no plugin marker. */
+function playingValue(track: MusicTrack): number {
+  if (track.noPlugin) {
+    return WIRE_CAPS.NO_PLUGIN_MARKER;
+  }
+
+  return track.playing ? 1 : 0;
+}
 
 /**
  * Starts the now playing feature for a face.
@@ -35,7 +47,7 @@ const music: Feature = (context) => {
     send: (track) => sender.push({
       [messageKeys.MUSIC_TITLE]: track.title,
       [messageKeys.MUSIC_ARTIST]: track.artist,
-      [messageKeys.MUSIC_PLAYING]: track.playing ? 1 : 0,
+      [messageKeys.MUSIC_PLAYING]: playingValue(track),
     }),
     forget: () => sender.forget(),
   });

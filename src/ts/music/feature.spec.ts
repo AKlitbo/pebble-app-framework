@@ -50,6 +50,9 @@ const BUILT_IN_MUSIC = {
 // the empty state the watch clears its panel to
 const NOTHING_PLAYING = { MUSIC_TITLE: '', MUSIC_ARTIST: '', MUSIC_PLAYING: 0 };
 
+// what the watch hears while no plugin serves now playing, both lines empty and playing as the marker
+const NO_PLUGIN = { MUSIC_TITLE: '', MUSIC_ARTIST: '', MUSIC_PLAYING: -2 };
+
 /** One update from a music plugin, with a progress reading such as a polling plugin sends beside the track. */
 function update(title: string, artist: string, playing = true, progress = 0) {
   return {
@@ -172,28 +175,32 @@ describe('now playing feature', () => {
     expect(sends).toEqual([NOTHING_PLAYING]);
   });
 
-  /** With plugins off, or on an iPhone with no music plugin, the panel shows its empty state rather than an old song. */
-  test('clears the panel when no plugin serves the music', () => {
+  /**
+   * With plugins off, or on an iPhone with no music plugin, the panel shows its empty state rather
+   * than an old song. Playing carries -2, so a face can say no plugin serves it rather than show
+   * nothing playing.
+   */
+  test('clears the panel with the no plugin marker when no plugin serves the music', () => {
     pebble.plugins = [];
 
     const { sends } = startFace();
 
-    expect(sends).toEqual([NOTHING_PLAYING]);
+    expect(sends).toEqual([NO_PLUGIN]);
   });
 
   /** A wearer who has not allowed music gets the empty panel, and the settings page says why. */
-  test('clears the panel on PERMISSION_DENIED', () => {
+  test('clears the panel with the no plugin marker on PERMISSION_DENIED', () => {
     const { sends } = startFace();
 
     pebble.live()[0].push(update('Clocks', 'Coldplay'));
 
     pebble.live()[0].fail({ code: 'PERMISSION_DENIED', message: 'not allowed' });
 
-    expect(sends[1]).toEqual(NOTHING_PLAYING);
+    expect(sends[1]).toEqual(NO_PLUGIN);
   });
 
   /** The kept song is from before the wearer took music away, so a rebooted watch must not get it back. */
-  test('answers a MUSIC_REQUEST after PERMISSION_DENIED with the empty state', () => {
+  test('answers a MUSIC_REQUEST after PERMISSION_DENIED with the no plugin marker', () => {
     const { hooks, sends } = startFace();
 
     pebble.live()[0].push(update('Clocks', 'Coldplay'));
@@ -201,7 +208,7 @@ describe('now playing feature', () => {
 
     hooks.message?.({ MUSIC_REQUEST: 1 });
 
-    expect(sends[2]).toEqual(NOTHING_PLAYING);
+    expect(sends[2]).toEqual(NO_PLUGIN);
   });
 
   /** Artwork costs the plugin a bitmap per track and progress wakes the watch, so neither is asked for. */

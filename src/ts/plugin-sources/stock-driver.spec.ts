@@ -333,6 +333,104 @@ describe('stock plugin mode', () => {
   });
 });
 
+describe('stock plugin mode with the provider never saved', () => {
+  let pebble: FakePebble;
+  let fetches: FakeXhr[];
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.UTC(2026, 10, 11, 17));
+    localStorage.clear();
+    pluginCode.off = false;
+    pebble = withFakePebble();
+    pebble.plugins = [STOCK_PLUGIN];
+    fetches = installFakeXhr();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    pebble.restore();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  /** A fresh install on a phone that already has a stock plugin would otherwise spend a provider's quota the wearer never chose. */
+  test('subscribes rather than calling a provider while a plugin serves the quotes', () => {
+    saveSettings({ STOCK_SYMBOLS: 'AAPL' });
+
+    startFace({ defaults: { STOCK_PROVIDER: 'yahoo' }, ready: true });
+
+    expect(pebble.live()).toHaveLength(1);
+    expect(fetches).toHaveLength(0);
+  });
+
+  /** A list the phone will not give says nothing about what is installed, so a fresh install keeps the face's default. */
+  test('calls the face\'s default provider while the plugin list cannot be read', () => {
+    pebble.enumeratePlugins.mockImplementation(() => {
+      throw new Error('bridge broke');
+    });
+    saveSettings({ STOCK_SYMBOLS: 'AAPL' });
+
+    startFace({ defaults: { STOCK_PROVIDER: 'yahoo' }, ready: true });
+
+    expect(pebble.subscriptions).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** A wearer who saved a provider while the plugin was on offer has chosen, and the plugin must not take the strip back. */
+  test('keeps a saved provider while a plugin serves the quotes', () => {
+    saveSettings({ STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' });
+
+    startFace({ ready: true });
+
+    expect(pebble.subscriptions).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** A wearer who never chose the plugin would otherwise sit on old quotes once plugins go off. */
+  test('ends the subscription and calls the face\'s default on a slow tick once plugins go off', () => {
+    saveSettings({ STOCK_SYMBOLS: 'AAPL' });
+    const { hooks } = startFace({ defaults: { STOCK_PROVIDER: 'yahoo' }, ready: true });
+
+    pebble.plugins = [];
+    vi.advanceTimersByTime(60 * 60 * 1000);
+    hooks.refresh?.(true);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** A wearer who never chose the plugin would otherwise keep the plugin's last quotes until the slow tick. */
+  test('calls the face\'s default at once when the phone stops serving the quotes', () => {
+    saveSettings({ STOCK_SYMBOLS: 'AAPL' });
+    startFace({ defaults: { STOCK_PROVIDER: 'yahoo' }, ready: true });
+
+    pebble.plugins = [];
+    pebble.live()[0].fail({ code: 'PLUGIN_UNAVAILABLE', message: 'plugins turned off' });
+
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /**
+   * A page that opened on the plugin for a provider never saved, then saved the face's default, leaves
+   * the saved provider reading the same as before. Without counting the move the watch would keep the
+   * plugin's quotes until the slow tick.
+   */
+  test('forces a provider round for a first save onto the face\'s default from a page that opened on the plugin', () => {
+    saveSettings({ STOCK_SYMBOLS: 'AAPL' });
+    const { hooks } = startFace({ defaults: { STOCK_PROVIDER: 'yahoo' }, ready: true });
+
+    saveFromPage(hooks, { STOCK_PROVIDER: 'yahoo', STOCK_SYMBOLS: 'AAPL' });
+    vi.advanceTimersByTime(250);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+});
+
 describe('stock plugin page', () => {
   let pebble: FakePebble;
 
@@ -356,6 +454,25 @@ describe('stock plugin page', () => {
     const result = rowOf(openedPage(hooks), 'STOCK_PROVIDER')?.options?.find((option) => option.value === 'plugin');
 
     expect(result).toEqual({ label: PLUGIN_LABEL, value: 'plugin' });
+  });
+
+  /** The face reads a provider never saved as a plugin that serves the quotes, so a page opening on the face's default would show a source the watch is not getting. */
+  test('opens the Data Source on the plugin with nothing saved while a plugin serves the quotes', () => {
+    const { hooks } = startFace();
+
+    const result = rowOf(openedPage(hooks), 'STOCK_PROVIDER')?.defaultValue;
+
+    expect(result).toBe('plugin');
+  });
+
+  /** A saved choice always stands, and the page has to keep the face's default under it. */
+  test('keeps the face\'s default on the Data Source for a saved provider', () => {
+    saveSettings({ STOCK_PROVIDER: 'yahoo' });
+    const { hooks } = startFace();
+
+    const result = rowOf(openedPage(hooks), 'STOCK_PROVIDER')?.defaultValue;
+
+    expect(result).not.toBe('plugin');
   });
 
   /** A face built without the define has no plugin code, so a plugin choice on its page would save a source that never fills. */
@@ -540,6 +657,20 @@ describe('stock plugin seed', () => {
     hooks.seeded?.(config, () => undefined);
 
     expect(config.STOCK_PROVIDER).toBe('plugin');
+  });
+
+  /**
+   * The watch keeps the face's default for a choice nobody ever made. Writing it back would pin a
+   * wearer who never chose to the default provider after every reset, even with a stock plugin on the phone.
+   */
+  test('leaves out a restored default, so the choice reads as never saved', () => {
+    pebble = withFakePebble();
+    const { hooks } = startFace();
+    const config: Record<string, unknown> = { STOCK_PROVIDER: 'finnhub' };
+
+    hooks.seeded?.(config, () => undefined);
+
+    expect(config.STOCK_PROVIDER).toBeUndefined();
   });
 
   /** A Pebble app from before plugins can never answer, so a restored plugin would leave the strip empty for good. */

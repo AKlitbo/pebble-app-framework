@@ -12,13 +12,14 @@
  * It lives here rather than in the feature so a face built without the define carries none of it.
  */
 
-import { followPluginChoice, pluginOnly } from './driver';
+import { followPluginChoice, freshPlugin, pluginOnly, readSourceChoice } from './driver';
 import type { FollowOptions } from './driver';
 import { pluginSourcePage, PLUGIN_VALUE } from './page';
 import type { PluginSourceTexts } from './page';
 import { STOCK_STANDARD } from './standard';
 import noteComponent from './note-component';
 import panelComponent from './panel-component';
+import kindsComponent from './kinds-component';
 import type { SourceEnvelope, StockPlugins } from './types';
 import { getConfig, readValue, watchSettings } from '../pkjs/settings-store';
 import { STOCK_FALLBACK } from '../pkjs/providers';
@@ -65,9 +66,9 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       }
     }
 
-    /** Whether some settings pick the plugin. */
+    /** Whether some settings pick the plugin, a choice never saved included while a plugin serves the quotes. */
     function pickedIn(config: Record<string, unknown>): boolean {
-      return String(readValue(config.STOCK_PROVIDER, defaults.STOCK_PROVIDER || STOCK_FALLBACK)).toLowerCase() === PLUGIN_VALUE;
+      return readSourceChoice(config, 'STOCK_PROVIDER', String(defaults.STOCK_PROVIDER || STOCK_FALLBACK), () => choice.serves()) === PLUGIN_VALUE;
     }
 
     // the update the watch was last handed, which a watch ask resends
@@ -105,6 +106,13 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       only,
       pickedIn,
       shutOut: controls.shutOut,
+      // a choice never saved that loses its plugin goes to the face's default provider straight away,
+      // and the plugin's quotes are let go as they are when a save leaves it
+      onLeft: () => {
+        shown = null;
+        hadQuotes = false;
+        controls.fetch(false);
+      },
       onUpdate: sendUpdate,
       onError(error) {
         // with an update kept the strip on the watch still stands. with nothing kept it is out of date,
@@ -187,6 +195,7 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       configOpened() {
         providerSettings.opened();
         fetchSettings.opened();
+        choice.opened();
 
         // a wearer opening the settings may be setting up a plugin right now, so the quick retry gets
         // its whole window again while the plugin waits on one
@@ -194,14 +203,15 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       },
 
       configSaved() {
-        // each watch is read so its snapshot is let go, whichever one decides. a plugin only face has
-        // no provider choice, so whatever a save holds for it switches nothing
-        const providerMoved = providerSettings.changed() && !only;
-        const fetchMoved = fetchSettings.changed();
-
         // a save onto the plugin starts it unless something already has, such as the seed, and starts
         // one the phone ended again. a save off it stops a started one
         const picked = follow({ retry: true });
+
+        // each watch is read so its snapshot is let go, whichever one decides. a plugin only face has
+        // no provider choice, so whatever a save holds for it switches nothing. a choice never saved can
+        // move off the plugin with the saved provider still reading as the default, so that move counts
+        const providerMoved = (providerSettings.changed() || choice.pickMoved(picked)) && !only;
+        const fetchMoved = fetchSettings.changed();
 
         // the key, the tickers, and the plan only feed a provider round, so they change nothing here
         if (picked) {
@@ -222,9 +232,9 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       },
     };
 
-    // the note and the supported plugins panel the page hook's rows are drawn with, which the app
+    // the note, the supported plugins panel, and the plugin kinds row the page hook's rows are drawn with, which the app
     // registers only for a page holding them
-    hooks.components = [noteComponent, panelComponent];
+    hooks.components = [noteComponent, panelComponent, kindsComponent];
 
     // a plugin only face has no select for the page hook to add the plugin to, so the page gets the
     // notes alone, and keeps no choice on the watch for the seed to check
@@ -248,6 +258,7 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       selectKey: 'STOCK_PROVIDER',
       category: 'finance',
       item: 'stock',
+      rowKind: 'stocks',
       plugins: subscription.plugins(),
       messageKeys,
       state: subscription.state(),
@@ -255,6 +266,7 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       texts: mapping.texts,
       panel: true,
       saved: readValue(getConfig().STOCK_PROVIDER, undefined),
+      pluginByDefault: freshPlugin(getConfig(), 'STOCK_PROVIDER', () => choice.serves()),
     });
 
     /**
@@ -273,6 +285,15 @@ export function createStockDriver(mapping: StockMapping): StockPlugins['driver']
       }
 
       const restored = String(readValue(config.STOCK_PROVIDER, '')).toLowerCase();
+
+      // the watch keeps the face's default for a choice nobody ever made, so a restored default reads
+      // as never saved and a plugin on the phone takes it, as on a fresh install. a wearer who saved the
+      // default on purpose while a plugin was on offer moves onto the plugin after a reset, which costs
+      // less than every wearer who never chose being pinned to the default by every reset
+      if (restored === String(defaults.STOCK_PROVIDER || STOCK_FALLBACK).toLowerCase()) {
+        delete config.STOCK_PROVIDER;
+        return;
+      }
 
       if (restored === PLUGIN_VALUE && !choice.hasPluginCalls()) {
         delete config.STOCK_PROVIDER;

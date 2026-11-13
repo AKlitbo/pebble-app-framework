@@ -23,14 +23,14 @@
  */
 #define PHONE_FIRST_ASK_MS 1200
 
-static int s_battery = PHONE_NO_LEVEL; ///< The phone's level, or PHONE_NO_LEVEL for none
+static int s_battery = PHONE_NO_LEVEL; ///< The phone's level, PHONE_NO_LEVEL for none, or WIRE_NO_PLUGIN
 static void (*s_cb)(void);              ///< Called whenever the level changes, so the face can redraw
 static AppTimer *s_ask_timer;           ///< The first ask or release after launch, while it waits
 
 /**
  * @brief Keep a level and tell the face, unless it is the level already held.
  *
- * @param level The level from 0 to 100, or PHONE_NO_LEVEL.
+ * @param level The level from 0 to 100, PHONE_NO_LEVEL, or WIRE_NO_PLUGIN.
  */
 static void set_battery(int level)
 {
@@ -46,7 +46,7 @@ static void set_battery(int level)
 /**
  * @brief Phone battery channel. The transport has already read the level off the wire.
  *
- * @param level The level from 0 to 100, or PHONE_NO_LEVEL.
+ * @param level The level from 0 to 100, PHONE_NO_LEVEL, or WIRE_NO_PLUGIN.
  */
 static void on_phone_battery(int level)
 {
@@ -144,8 +144,18 @@ void phone_store_init(PhoneConfig cfg, const PhoneSeed *seed)
 int phone_store_battery(void)
 {
 #if defined(APPMESSAGE_HAS_PHONE)
-    return s_battery;
+    // the no plugin marker is kept beside the level, and reads as no level here
+    return s_battery < 0 ? PHONE_NO_LEVEL : s_battery;
 #else
     return PHONE_NO_LEVEL;
+#endif
+}
+
+bool phone_store_no_plugin(void)
+{
+#if defined(APPMESSAGE_HAS_PHONE)
+    return s_battery == WIRE_NO_PLUGIN;
+#else
+    return false;
 #endif
 }

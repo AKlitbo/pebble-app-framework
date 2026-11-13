@@ -317,7 +317,8 @@ export interface PhonePlugins {
    * Reads the phone's battery from the Pebble app's Phone plugin.
    *
    * @param context What the app shared with the feature.
-   * @param controls The feature's send, which takes the level from 0 to 100, or -1 for none.
+   * @param controls The feature's send, which takes the level from 0 to 100, -1 for none, or -2 while no
+   *   plugin serves the battery.
    * @return The hooks the feature hands the app.
    */
   driver(context: FeatureContext, controls: ReadingControls<number>): FeatureHooks;
@@ -331,6 +332,8 @@ export interface MusicTrack {
   artist: string;
   /** Whether it is playing rather than paused. */
   playing: boolean;
+  /** Whether no plugin on the phone serves now playing, which the watch hears as its own state. */
+  noPlugin?: boolean;
 }
 
 /**

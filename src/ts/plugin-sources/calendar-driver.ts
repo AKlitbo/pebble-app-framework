@@ -12,14 +12,15 @@
  * It lives here rather than in the feature so a face built without the define carries none of it.
  */
 
-import { followPluginChoice, pluginOnly } from './driver';
+import { followPluginChoice, freshPlugin, pluginOnly, readSourceChoice } from './driver';
 import { pluginSourcePage, PLUGIN_VALUE } from './page';
 import type { PluginSourceTexts } from './page';
 import { CALENDAR_STANDARD } from './standard';
 import noteComponent from './note-component';
 import panelComponent from './panel-component';
+import kindsComponent from './kinds-component';
 import type { CalendarDriver, CalendarPlugins, SourceEnvelope } from './types';
-import { getConfig, readValue, watchSettings } from '../pkjs/settings-store';
+import { getConfig, readText, readValue, watchSettings } from '../pkjs/settings-store';
 import type { FeatureHooks } from '../pkjs/feature';
 import type { CalendarEvent } from '../calendar/ical';
 import type { ClayConfigItem } from '../clay/types';
@@ -122,9 +123,23 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
       }, AGENDA_HOLD_MS);
     }
 
-    /** Whether some settings pick the plugin. */
+    /**
+     * The settings as the choice reads them. The Calendar Source select is on the page only while a
+     * plugin is on offer, so a save made with plugins off, or on a face from before plugin sources,
+     * holds the iCal link and no source. A saved link is a choice of the iCal feed, so it reads as one,
+     * and a calendar plugin turning up later never takes the wearer's feed away.
+     */
+    function choiceView(config: Record<string, unknown>): Record<string, unknown> {
+      if (config.CALENDAR_SOURCE !== undefined || readText(config.CALENDAR_ICS_URL, '').trim() === '') {
+        return config;
+      }
+
+      return { ...config, CALENDAR_SOURCE: mapping.select.defaultValue };
+    }
+
+    /** Whether some settings pick the plugin, a choice never saved included while a plugin serves the events. */
     function pickedIn(config: Record<string, unknown>): boolean {
-      return String(readValue(config.CALENDAR_SOURCE, sourceDefault)).toLowerCase() === PLUGIN_VALUE;
+      return readSourceChoice(choiceView(config), 'CALENDAR_SOURCE', sourceDefault, () => choice.serves()) === PLUGIN_VALUE;
     }
 
     /** Turns an update into the events the agenda shows as of now, so an event that ended since is left off. */
@@ -139,6 +154,8 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
       only,
       pickedIn,
       shutOut: controls.shutOut,
+      // a choice never saved that loses its plugin downloads the iCal link straight away
+      onLeft: () => controls.fetch(false),
       // an empty list still goes, since that is how the watch hears every event was deleted
       onUpdate: (envelope) => controls.send(eventsFrom(envelope)),
       // an error sends nothing. the watch has no status line for the calendar, so it keeps its agenda
@@ -203,6 +220,7 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
       configOpened() {
         feedSetting.opened();
         sourceSetting.opened();
+        choice.opened();
 
         // a wearer opening the settings may be setting up a plugin right now, so the quick retry gets
         // its whole window again while the plugin waits on one
@@ -218,14 +236,15 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
         endAsk();
         held = false;
 
-        // each watch is read so its snapshot is let go, whichever one decides. a plugin only face has
-        // no source choice, so whatever a save holds for it switches nothing
-        const sourceMoved = sourceSetting.changed() && !only;
-        const feedMoved = feedSetting.changed();
-
         // a save onto the plugin starts it unless something already has, such as the seed, and starts
         // one the phone ended again. a save off it stops a started one
         const picked = choice.follow({ retry: true });
+
+        // each watch is read so its snapshot is let go, whichever one decides. a plugin only face has
+        // no source choice, so whatever a save holds for it switches nothing. a choice never saved can
+        // move off the plugin with the saved source still reading as the default, so that move counts
+        const sourceMoved = (sourceSetting.changed() || choice.pickMoved(picked)) && !only;
+        const feedMoved = feedSetting.changed();
 
         // a save while the plugin is picked calls retrySoon, since the wearer may be
         // setting one up right now
@@ -270,7 +289,9 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
      * `AGENDA_HOLD_MS`, whichever comes first. So a wearer on iCal with no link still gets the empty
      * agenda, and a new watch learns its agenda is empty rather than never synced. A phone whose plugin
      * list has nothing serving the events can never bring the plugin back, so it sends the empty agenda
-     * at once, as a face without the define does, and so does a face with no settings request key.
+     * at once, as a face without the define does, and so does a face with no settings request key. A
+     * phone whose list serves the events reads a source never saved as the plugin already, so it runs
+     * no iCal round to hold. The hold is left for a list the phone will not give.
      */
     function holdsEmptyAgenda(): boolean {
       const holds = askOut && Object.keys(getConfig()).length === 0 && choice.couldAnswer();
@@ -280,9 +301,9 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
       return holds;
     }
 
-    // the note and the supported plugins panel the page hook's rows are drawn with, which the app
+    // the note, the supported plugins panel, and the plugin kinds row the page hook's rows are drawn with, which the app
     // registers only for a page holding them
-    hooks.components = [noteComponent, panelComponent];
+    hooks.components = [noteComponent, panelComponent, kindsComponent];
 
     // a plugin only face has no select for the page hook to add, so the page gets the notes alone,
     // and keeps no choice on the watch for the seed to bring back
@@ -313,16 +334,21 @@ export function createCalendarDriver(mapping: CalendarMapping): CalendarPlugins[
       insert: { select: mapping.select, anchorKey: 'CALENDAR_ICS_URL' },
       panel: true,
       saved: readValue(getConfig().CALENDAR_SOURCE, undefined),
+      pluginByDefault: freshPlugin(choiceView(getConfig()), 'CALENDAR_SOURCE', () => choice.serves()),
     });
 
     /**
      * Checks a plugin choice the watch brought back after a reset.
      *
      * The page has no Calendar Source row of its own, so the seed's own copy skips the key, and only
-     * this hook can put the choice back. It does so on any phone with the plugin calls, even one that
-     * lists nothing, since plugins switched off read the same as a plugin removed, and the page keeps a
-     * saved plugin with plugins off too. The agenda then keeps what it holds, as the page says. A
-     * Pebble app from before plugins can never answer, so there the choice comes out, including one the
+     * this hook can put the choice back. Only a plugin choice is put back. The watch keeps iCal, its
+     * default, for a choice nobody ever made, so an echoed iCal reads as never saved, and a plugin on the
+     * phone takes it, as on a fresh install. A wearer who picked iCal on purpose while a plugin was on
+     * offer moves onto the plugin after a reset, which costs less than every wearer who never chose
+     * being pinned to iCal by every reset. A plugin choice goes back on any phone with the plugin calls,
+     * even one that lists nothing, since plugins switched off read the same as a plugin removed, and the page keeps a saved
+     * plugin with plugins off too. The agenda then keeps what it holds, as the page says. A Pebble app
+     * from before plugins can never answer, so there the plugin choice comes out, including one the
      * seed copied for a face that placed the select itself. The phone's own saved choice, from before
      * this seed, stands as it would on any other face. getConfig still reads the settings from before
      * the seed, since the seed saves after its hooks.

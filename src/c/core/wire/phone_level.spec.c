@@ -4,7 +4,8 @@
  *
  * The level comes off a phone, so the edges are what matter. A level read as is past either end
  * draws a battery bar past full or below empty, and a no reading taken as a level shows -1% on a
- * face that only checks for the marker.
+ * face that only checks for the marker. The no plugin marker has to survive the read, or a face can
+ * never say plugins are off.
  */
 #include "unity.h"
 
@@ -37,6 +38,22 @@ void test_a_negative_reads_as_no_reading(void)
     TEST_ASSERT_EQUAL_INT(PHONE_NO_LEVEL, result);
 }
 
+/** @brief The no plugin marker stays the marker, so the store can tell no plugin from no reading yet. */
+void test_the_no_plugin_marker_reads_as_no_plugin(void)
+{
+    int result = phone_level_read(-2);
+
+    TEST_ASSERT_EQUAL_INT(WIRE_NO_PLUGIN, result);
+}
+
+/** @brief A negative past the no plugin marker is plain no reading, so only the one value says no plugin. */
+void test_a_negative_past_the_marker_reads_as_no_reading(void)
+{
+    int result = phone_level_read(-3);
+
+    TEST_ASSERT_EQUAL_INT(PHONE_NO_LEVEL, result);
+}
+
 /** @brief A level past 100 reads as full, so a bar never runs past its end. */
 void test_a_level_past_full_reads_as_full(void)
 {
@@ -59,6 +76,8 @@ int main(void)
     RUN_TEST(test_a_level_in_range_reads_as_sent);
     RUN_TEST(test_the_no_reading_marker_reads_as_no_reading);
     RUN_TEST(test_a_negative_reads_as_no_reading);
+    RUN_TEST(test_the_no_plugin_marker_reads_as_no_plugin);
+    RUN_TEST(test_a_negative_past_the_marker_reads_as_no_reading);
     RUN_TEST(test_a_level_past_full_reads_as_full);
     RUN_TEST(test_zero_is_a_real_level);
     return UNITY_END();

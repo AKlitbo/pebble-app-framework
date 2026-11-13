@@ -29,6 +29,7 @@ import noteComponent from '../plugin-sources/note-component';
 import { ASK_GAP_MS } from './asks';
 import buildConfig from './config-builder';
 import { select } from './config-rows';
+import kindsComponent from '../plugin-sources/kinds-component';
 import { pluginSourcePage } from '../plugin-sources/page';
 import { WEATHER_STANDARD } from '../plugin-sources/standard';
 import { SETTINGS_ASK_RETRIES, SETTINGS_ASK_RETRY_MS } from './settings-ask';
@@ -1783,7 +1784,7 @@ describe('startPebbleApp stock and calendar', () => {
   /** With the define, a wearer who saved an empty link still has to see the agenda clear, as on any other face. */
   test('sends an empty agenda when the saved feed is empty on a face built with PLUGIN_CALENDAR', () => {
     pebble.plugins = [{ uuid: 'calendar-uuid', name: 'Calendar', sources: [{ category: 'calendar', items: ['event'] }] }];
-    start({ CALENDAR_ICS_URL: '' });
+    start({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: '' });
 
     pebble.fire('ready');
 
@@ -1791,16 +1792,17 @@ describe('startPebbleApp stock and calendar', () => {
   });
 
   /**
-   * With the define and a calendar plugin on the phone, a fresh install of the Pebble app may still
-   * get the plugin back from the watch. An empty agenda before that would clear what the plugin filled.
+   * With the define and a calendar plugin on the phone, a source never saved reads as the plugin. An
+   * empty agenda from an iCal round with no link would clear what the plugin fills.
    */
-  test('holds the empty agenda with nothing saved on a face built with PLUGIN_CALENDAR while a plugin serves the events', () => {
+  test('subscribes and sends no empty agenda with nothing saved on a face built with PLUGIN_CALENDAR while a plugin serves the events', () => {
     pebble.plugins = [{ uuid: 'calendar-uuid', name: 'Calendar', sources: [{ category: 'calendar', items: ['event'] }] }];
     start({});
 
     pebble.fire('ready');
 
     expect(sendsOf('CALENDAR_STRIP')).toEqual([]);
+    expect(pebble.live()).toHaveLength(1);
   });
 
   /**
@@ -3040,7 +3042,9 @@ describe('startPebbleApp settings page hooks', () => {
 
   /** A feature with only a page hook. */
   function pageFeature(page: (config: ClayConfigItem[]) => ClayConfigItem[]): Feature {
-    return () => ({ page });
+    // a plugin page hook puts the plugin kinds row on the page, so the feature brings its component,
+    // as the plugin drivers do
+    return () => ({ page, components: [kindsComponent] });
   }
 
   /** Starts the app and opens the settings page, as the phone does when the wearer taps settings. */

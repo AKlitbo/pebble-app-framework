@@ -30,6 +30,8 @@
  *   - a supported plugins panel that is missing or there twice, that opens by itself or will not open
  *     and close, that lists the wrong kinds or plugins, or whose store links open the wrong listing or
  *     load it inside the page
+ *   - a plugin kinds store that is missing, is not the first row Clay builds, or holds another state
+ *     for a kind than the scenario expects
  *   - a save whose pebblejs://close# payload lacks a value or holds the wrong one
  *   - a custom function whose text holds a pattern Clay's string replace would read, checked on the
  *     tsc output the phone runs, or that the page does not carry whole
@@ -181,6 +183,12 @@ export interface Scenario {
   /** What the supported plugins panel lists, checked once on load by opening and closing it. */
   panel?: PanelExpectation;
   /**
+   * Each kind's state in the plugin kinds store, read the way a face's component reads it, such as
+   * `{ music: 'off', phone: 'off' }`. The store also has to be the first row Clay builds. Left out,
+   * the store is not checked.
+   */
+  pluginKinds?: Record<string, string>;
+  /**
    * Whether the page opens laid out the way the Pebble Android app leaves it while plugins are on,
    * with a head of its own ahead of the page's, so every component's style lands ahead of Clay's base
    * sheet. The phone's plugins list has nothing to do with it, since the app does this on any face.
@@ -282,6 +290,10 @@ const PANEL_CALENDAR_OFF = { label: 'Calendar', plugins: [{ name: 'Calendar', ta
 // what marks the supported plugins panel on the page
 const PANEL_SELECTOR = '.pf-plugins';
 
+// the class of the plugin kinds row holding each kind's state, from PLUGIN_KINDS_CLASS in
+// ts/plugin-sources/kinds-component.ts, copied for the same reason as the words below and checked by the same spec
+export const PLUGIN_KINDS_CLASS = 'pf-plugin-kinds';
+
 // the mark the custom-clay fixture face's own customClay leaves on the page once Clay has built it,
 // saying the framework's show and hide had already hidden the weather key row when it ran
 export const FACE_CODE_MARK = 'body[data-face-page-code="after"]';
@@ -381,19 +393,21 @@ export const SCENARIOS: Scenario[] = [
     name: 'built-in-weather',
     defines: { PLUGIN_WEATHER: 1 },
     plugins: 'built-in.json',
-    // the location section moves below the weather one, so picking the plugin folds rows away under
-    // the select rather than above it
+    // a fresh install opens on the plugin, since the feature reads a provider never saved as a plugin
+    // that serves the weather. the location section moves below the weather one, so picking the plugin
+    // folds rows away under the select rather than above it
     load: {
-      ...OPEN_METEO_ROWS,
-      textsVisible: ['Location Settings', LEAD_LINE],
-      notesHidden: [SOURCE_TEXT],
+      visible: ALWAYS_SHOWN,
+      hidden: WEATHER_MARKED,
+      textsVisible: [LEAD_LINE],
+      textsHidden: ['Location Settings'],
+      notesVisible: [SOURCE_TEXT],
       options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'owm', 'weatherapi', 'plugin'] }],
       order: SELECT_FIRST,
     },
     // the key row's own condition for the keyed providers and the plugin's both have to hold, so it
     // shows for OpenWeatherMap and hides again for the plugin
     changes: [
-      { key: 'WEATHER_PROVIDER', value: 'plugin', visible: ALWAYS_SHOWN, hidden: WEATHER_MARKED, textsVisible: [LEAD_LINE], textsHidden: ['Location Settings'], notesVisible: [SOURCE_TEXT] },
       { key: 'WEATHER_PROVIDER', value: 'openmeteo', ...OPEN_METEO_ROWS, textsVisible: ['Location Settings', LEAD_LINE], notesHidden: [SOURCE_TEXT] },
       { key: 'WEATHER_PROVIDER', value: 'owm', visible: [...ALWAYS_SHOWN, ...WEATHER_MARKED], notesHidden: [SOURCE_TEXT] },
       { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: WEATHER_MARKED, notesVisible: [SOURCE_TEXT] },
@@ -405,10 +419,12 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_WEATHER: 1 },
     plugins: 'html-name.json',
     load: {
-      notesHidden: [NOT_STANDARD_TEXT],
+      notesVisible: [NOT_STANDARD_TEXT],
+      badged: [NOT_STANDARD_TEXT],
       options: [{ key: 'WEATHER_PROVIDER', has: ['plugin'] }],
     },
     changes: [
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', notesHidden: [NOT_STANDARD_TEXT] },
       { key: 'WEATHER_PROVIDER', value: 'plugin', notesVisible: [NOT_STANDARD_TEXT], badged: [NOT_STANDARD_TEXT] },
     ],
     // the panel lists the plugin by its own name, as text. the phone lists no built-in plugin, so the
@@ -427,10 +443,12 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_WEATHER: 1 },
     plugins: 'dollar-name.json',
     load: {
-      notesHidden: [DOLLAR_NOT_STANDARD_TEXT],
+      notesVisible: [DOLLAR_NOT_STANDARD_TEXT],
+      badged: [DOLLAR_NOT_STANDARD_TEXT],
       options: [{ key: 'WEATHER_PROVIDER', has: ['plugin'] }],
     },
     changes: [
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', notesHidden: [DOLLAR_NOT_STANDARD_TEXT] },
       { key: 'WEATHER_PROVIDER', value: 'plugin', notesVisible: [DOLLAR_NOT_STANDARD_TEXT], badged: [DOLLAR_NOT_STANDARD_TEXT] },
     ],
     panel: {
@@ -457,11 +475,12 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_WEATHER: 1 },
     plugins: 'permission-denied.json',
     load: {
-      notesHidden: [PERMISSION_TEXT],
+      notesVisible: [PERMISSION_TEXT],
+      badged: [PERMISSION_TEXT],
     },
     changes: [
-      { key: 'WEATHER_PROVIDER', value: 'plugin', notesVisible: [PERMISSION_TEXT], badged: [PERMISSION_TEXT] },
       { key: 'WEATHER_PROVIDER', value: 'openmeteo', notesHidden: [PERMISSION_TEXT] },
+      { key: 'WEATHER_PROVIDER', value: 'plugin', notesVisible: [PERMISSION_TEXT], badged: [PERMISSION_TEXT] },
     ],
   },
   {
@@ -509,15 +528,18 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_WEATHER: 1 },
     plugins: 'built-in.json',
     // the select comes up to sit under its heading, ahead of the two unit selects, and the core's
-    // unmarked key row, which sat under it, stays next to it
+    // unmarked key row, which sat under it, stays next to it. a fresh install opens on the plugin, and
+    // the core's key row carries no mark, so it stays as the face wrote it
     load: {
-      visible: ['WEATHER_PROVIDER', 'WEATHER_API_KEY', ...WEATHER_MARKED],
+      visible: ['WEATHER_PROVIDER', 'WEATHER_API_KEY'],
+      hidden: LOCATION_MARKED,
+      notesVisible: [SOURCE_TEXT],
       options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'owm', 'weatherapi', 'plugin'] }],
       order: ['WEATHER_PROVIDER', 'WEATHER_API_KEY', 'WEATHER_TEMPERATURE_UNIT', 'WEATHER_WIND_UNIT', 'LOCATION_USE_GPS'],
     },
     changes: [
-      // the core's key row carries no mark, so it stays as the face wrote it
-      { key: 'WEATHER_PROVIDER', value: 'plugin', visible: ['WEATHER_API_KEY'], hidden: ['LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'], notesVisible: [SOURCE_TEXT] },
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', visible: ['WEATHER_PROVIDER', 'WEATHER_API_KEY', ...WEATHER_MARKED], notesHidden: [SOURCE_TEXT] },
+      { key: 'WEATHER_PROVIDER', value: 'plugin', visible: ['WEATHER_API_KEY'], hidden: LOCATION_MARKED, notesVisible: [SOURCE_TEXT] },
     ],
     save: { WEATHER_PROVIDER: 'plugin' },
   },
@@ -548,18 +570,20 @@ export const SCENARIOS: Scenario[] = [
     },
   },
   {
-    // the same face with a plugin on the phone keeps its select, and its own key row hides by its
-    // own condition once the plugin is picked
+    // the same face with a plugin on the phone keeps its select and opens on the plugin, and its own
+    // key row hides by its own condition while the plugin is picked
     name: 'one-source-with-plugin',
     face: 'one-source-face',
     defines: { PLUGIN_WEATHER: 1 },
     plugins: 'built-in.json',
     load: {
-      visible: ['WEATHER_PROVIDER', 'WEATHER_API_KEY'],
+      visible: ['WEATHER_PROVIDER'],
+      hidden: ['WEATHER_API_KEY'],
       textsHidden: [OPEN_METEO_LINE],
       options: [{ key: 'WEATHER_PROVIDER', has: ['owm', 'plugin'] }],
     },
     changes: [
+      { key: 'WEATHER_PROVIDER', value: 'owm', visible: ['WEATHER_PROVIDER', 'WEATHER_API_KEY'], textsHidden: [OPEN_METEO_LINE] },
       { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: ['WEATHER_API_KEY'], textsHidden: [OPEN_METEO_LINE] },
     ],
     save: { WEATHER_PROVIDER: 'plugin' },
@@ -636,20 +660,22 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     // the fixture's own calendar section, laid out as a face with calendar controls of its own builds
-    // it. the calendar hook adds its select under the heading and the unmarked lead line, and picking
-    // the plugin hides the iCal sentence, the link, and the refresh interval under it
+    // it. the calendar hook adds its select under the heading and the unmarked lead line. a fresh
+    // install opens on the plugin, which hides the iCal sentence, the link, and the refresh interval
+    // under it
     name: 'built-in-calendar',
     defines: { PLUGIN_CALENDAR: 1 },
     plugins: 'built-in.json',
     load: {
       ...SELECT_PLACE,
-      visible: ['CALENDAR_SOURCE', ...CALENDAR_MARKED],
-      textsVisible: [CALENDAR_LEAD, ICAL_LINE],
-      notesHidden: [CALENDAR_SOURCE_TEXT],
+      visible: ['CALENDAR_SOURCE'],
+      hidden: CALENDAR_MARKED,
+      textsVisible: [CALENDAR_LEAD],
+      textsHidden: [ICAL_LINE],
+      unbadged: [CALENDAR_SOURCE_TEXT],
       options: [{ key: 'CALENDAR_SOURCE', has: ['ical', 'plugin'] }, { key: 'WEATHER_PROVIDER', lacks: ['plugin'] }],
     },
     changes: [
-      { key: 'CALENDAR_SOURCE', value: 'plugin', visible: ['CALENDAR_SOURCE'], hidden: CALENDAR_MARKED, textsVisible: [CALENDAR_LEAD], textsHidden: [ICAL_LINE], unbadged: [CALENDAR_SOURCE_TEXT] },
       { key: 'CALENDAR_SOURCE', value: 'ical', visible: CALENDAR_MARKED, textsVisible: [CALENDAR_LEAD, ICAL_LINE], notesHidden: [CALENDAR_SOURCE_TEXT] },
       { key: 'CALENDAR_SOURCE', value: 'plugin', hidden: CALENDAR_MARKED, notesVisible: [CALENDAR_SOURCE_TEXT] },
     ],
@@ -661,10 +687,12 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_CALENDAR: 1 },
     plugins: 'calendar-not-standard.json',
     load: {
-      notesHidden: [CALENDAR_NOT_STANDARD_TEXT],
+      notesVisible: [CALENDAR_NOT_STANDARD_TEXT],
+      badged: [CALENDAR_NOT_STANDARD_TEXT],
       options: [{ key: 'CALENDAR_SOURCE', has: ['ical', 'plugin'] }],
     },
     changes: [
+      { key: 'CALENDAR_SOURCE', value: 'ical', notesHidden: [CALENDAR_NOT_STANDARD_TEXT] },
       { key: 'CALENDAR_SOURCE', value: 'plugin', notesVisible: [CALENDAR_NOT_STANDARD_TEXT], badged: [CALENDAR_NOT_STANDARD_TEXT] },
     ],
   },
@@ -674,11 +702,12 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_CALENDAR: 1 },
     plugins: 'calendar-permission-denied.json',
     load: {
-      notesHidden: [CALENDAR_PERMISSION_TEXT],
+      notesVisible: [CALENDAR_PERMISSION_TEXT],
+      badged: [CALENDAR_PERMISSION_TEXT],
     },
     changes: [
-      { key: 'CALENDAR_SOURCE', value: 'plugin', notesVisible: [CALENDAR_PERMISSION_TEXT], badged: [CALENDAR_PERMISSION_TEXT] },
       { key: 'CALENDAR_SOURCE', value: 'ical', notesHidden: [CALENDAR_PERMISSION_TEXT] },
+      { key: 'CALENDAR_SOURCE', value: 'plugin', notesVisible: [CALENDAR_PERMISSION_TEXT], badged: [CALENDAR_PERMISSION_TEXT] },
     ],
   },
   {
@@ -688,9 +717,10 @@ export const SCENARIOS: Scenario[] = [
     defines: { PLUGIN_CALENDAR: 1 },
     plugins: 'calendar-empty.json',
     load: {
-      notesHidden: [CALENDAR_EMPTY_TEXT],
+      unbadged: [CALENDAR_EMPTY_TEXT, CALENDAR_SOURCE_TEXT],
     },
     changes: [
+      { key: 'CALENDAR_SOURCE', value: 'ical', notesHidden: [CALENDAR_EMPTY_TEXT] },
       { key: 'CALENDAR_SOURCE', value: 'plugin', unbadged: [CALENDAR_EMPTY_TEXT, CALENDAR_SOURCE_TEXT] },
     ],
   },
@@ -749,21 +779,23 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     // both kinds on, so the weather and calendar hooks fold one page between them and neither undoes
-    // the other's rows
+    // the other's rows. a fresh install opens both on the plugin
     name: 'built-in-weather-and-calendar',
     defines: { PLUGIN_WEATHER: 1, PLUGIN_CALENDAR: 1 },
     plugins: 'built-in.json',
     load: {
       ...SELECT_PLACE,
-      visible: ['WEATHER_PROVIDER', 'CALENDAR_SOURCE', ...LOCATION_MARKED, ...CALENDAR_MARKED],
-      hidden: ['WEATHER_API_KEY'],
+      visible: ['WEATHER_PROVIDER', 'CALENDAR_SOURCE'],
+      hidden: [...WEATHER_MARKED, ...CALENDAR_MARKED],
+      notesVisible: [SOURCE_TEXT, CALENDAR_SOURCE_TEXT],
       options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'plugin'] }, { key: 'CALENDAR_SOURCE', has: ['ical', 'plugin'] }],
     },
     changes: [
-      { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: WEATHER_MARKED, visible: CALENDAR_MARKED, notesVisible: [SOURCE_TEXT], notesHidden: [CALENDAR_SOURCE_TEXT] },
-      { key: 'CALENDAR_SOURCE', value: 'plugin', hidden: [...WEATHER_MARKED, ...CALENDAR_MARKED], notesVisible: [SOURCE_TEXT, CALENDAR_SOURCE_TEXT] },
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', visible: LOCATION_MARKED, hidden: ['WEATHER_API_KEY', ...CALENDAR_MARKED], notesVisible: [CALENDAR_SOURCE_TEXT], notesHidden: [SOURCE_TEXT] },
+      { key: 'CALENDAR_SOURCE', value: 'ical', visible: [...LOCATION_MARKED, ...CALENDAR_MARKED], notesHidden: [SOURCE_TEXT, CALENDAR_SOURCE_TEXT] },
     ],
-    save: { WEATHER_PROVIDER: 'plugin', CALENDAR_SOURCE: 'plugin' },
+    pluginKinds: { weather: 'served', calendar: 'served' },
+    save: { WEATHER_PROVIDER: 'openmeteo', CALENDAR_SOURCE: 'ical' },
   },
   {
     // a face listing the plugin alone for the calendar runs its events from it whatever is saved, and
@@ -861,18 +893,20 @@ export const SCENARIOS: Scenario[] = [
   },
   {
     // a face offering Open-Meteo and the Pebble app's weather. the select offers the two, with no key
-    // row, since Open-Meteo needs none, and picking the plugin hides the location rows
+    // row, since Open-Meteo needs none. a fresh install opens on the plugin, which hides the location rows
     name: 'mixed-weather',
     defines: { PLUGIN_WEATHER: 1 },
     providers: { weather: ['plugin', 'openmeteo'] },
     plugins: 'built-in.json',
     load: {
-      visible: ['WEATHER_PROVIDER', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'],
-      hidden: ['WEATHER_API_KEY'],
+      visible: ['WEATHER_PROVIDER'],
+      hidden: ['WEATHER_API_KEY', ...LOCATION_MARKED],
+      notesVisible: [SOURCE_TEXT],
       options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'plugin'], lacks: ['owm', 'weatherapi'] }],
     },
     changes: [
-      { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: ['LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'], notesVisible: [SOURCE_TEXT] },
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', visible: ['WEATHER_PROVIDER', ...LOCATION_MARKED], hidden: ['WEATHER_API_KEY'], notesHidden: [SOURCE_TEXT] },
+      { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: LOCATION_MARKED, notesVisible: [SOURCE_TEXT] },
     ],
     save: { WEATHER_PROVIDER: 'plugin' },
   },
@@ -885,11 +919,14 @@ export const SCENARIOS: Scenario[] = [
     providers: { weather: ['plugin', 'openmeteo'] },
     plugins: 'built-in.json',
     load: {
-      visible: ['WEATHER_PROVIDER', 'LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'],
+      visible: ['WEATHER_PROVIDER'],
+      hidden: LOCATION_MARKED,
+      notesVisible: [`${SOURCE_TEXT} ${COORDS_TEXT}`],
       options: [{ key: 'WEATHER_PROVIDER', has: ['openmeteo', 'plugin'], lacks: ['owm', 'weatherapi'] }],
     },
     changes: [
-      { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: ['LOCATION_USE_GPS', 'LOCATION_GPS_FALLBACK', 'LOCATION_NAME'], notesVisible: [`${SOURCE_TEXT} ${COORDS_TEXT}`] },
+      { key: 'WEATHER_PROVIDER', value: 'openmeteo', visible: ['WEATHER_PROVIDER', ...LOCATION_MARKED], notesHidden: [`${SOURCE_TEXT} ${COORDS_TEXT}`] },
+      { key: 'WEATHER_PROVIDER', value: 'plugin', hidden: LOCATION_MARKED, notesVisible: [`${SOURCE_TEXT} ${COORDS_TEXT}`] },
     ],
     save: { WEATHER_PROVIDER: 'plugin' },
   },
@@ -1044,9 +1081,9 @@ export const SCENARIOS: Scenario[] = [
     },
   },
   {
-    // the stock fixture built with PLUGIN_STOCKS on a phone with a stock plugin. its own section
-    // carries no marks, so picking the plugin hides nothing of its own and adds the note on where the
-    // quotes come from under the select
+    // the stock fixture built with PLUGIN_STOCKS on a phone with a stock plugin. a fresh install opens
+    // on the plugin. its own section carries no marks, so the plugin hides nothing of its own and adds
+    // the note on where the quotes come from under the select
     name: 'stock-plugin-choice',
     face: 'stock-face',
     defines: { PLUGIN_STOCKS: 1 },
@@ -1054,9 +1091,11 @@ export const SCENARIOS: Scenario[] = [
     load: {
       visible: ['STOCK_PROVIDER', 'STOCK_SYMBOLS'],
       options: [{ key: 'STOCK_PROVIDER', has: ['finnhub', 'yahoo', 'twelvedata', 'alphavantage', 'plugin'] }],
-      notesHidden: [STOCK_SOURCE_TEXT],
+      notesVisible: [STOCK_SOURCE_TEXT],
+      unbadged: [STOCK_SOURCE_TEXT],
     },
     changes: [
+      { key: 'STOCK_PROVIDER', value: 'finnhub', notesHidden: [STOCK_SOURCE_TEXT] },
       { key: 'STOCK_PROVIDER', value: 'plugin', notesVisible: [STOCK_SOURCE_TEXT], unbadged: [STOCK_SOURCE_TEXT] },
     ],
     panel: { kinds: [PANEL_STOCKS], off: false },
@@ -1078,6 +1117,7 @@ export const SCENARIOS: Scenario[] = [
       notesHidden: [PLUGINS_OFF_TEXT],
     },
     panel: { kinds: [{ label: 'Stocks', plugins: [{ name: 'Stocks', listing: PEBBLE_STOCKS_LISTING }, { name: 'Stocks + Crypto', listing: STOCKS_CRYPTO_LISTING }] }], off: false },
+    pluginKinds: { stocks: 'missing' },
   },
   {
     // a face whose quotes come from a plugin alone. the Data Source, the key, and the tickers come
@@ -1259,6 +1299,7 @@ export const SCENARIOS: Scenario[] = [
     plugins: 'music-phone.json',
     load: musicPhoneNotes([]),
     panel: { kinds: [PANEL_MUSIC, PANEL_PHONE], off: false },
+    pluginKinds: { music: 'served', phone: 'served' },
   },
   {
     // with plugins off the panel opens on its line to turn them on, so neither kind adds its own note
@@ -1269,6 +1310,7 @@ export const SCENARIOS: Scenario[] = [
     plugins: 'plugins-off.json',
     load: musicPhoneNotes([]),
     panel: { kinds: [PANEL_MUSIC_OFF, PANEL_PHONE_OFF], off: true },
+    pluginKinds: { music: 'off', phone: 'off' },
   },
   {
     // an iPhone, where the Phone plugin serves and no music plugin does. the panel has no line about
@@ -1279,6 +1321,7 @@ export const SCENARIOS: Scenario[] = [
     plugins: 'phone-only.json',
     load: musicPhoneNotes([MUSIC_NO_PLUGIN_TEXT]),
     panel: { kinds: [PANEL_MUSIC_OFF, PANEL_PHONE], off: false },
+    pluginKinds: { music: 'missing', phone: 'served' },
   },
   {
     // a wearer who has not allowed Music for the face, where the note says to
@@ -1318,6 +1361,35 @@ export interface Observed {
   order: string[];
   /** Each control asked about for its value, with the value Clay reads off it, or null when it is not on the page. */
   values?: Record<string, string | null>;
+}
+
+/** The plugin kinds store as the browser read it. */
+export interface ObservedKinds {
+  /** Whether the store is the first row Clay built, so a component anywhere on the page finds it. */
+  first: boolean;
+  /** The states the store holds, as a component parses them, or null when the page has no store or it does not parse. */
+  states: Record<string, unknown> | null;
+}
+
+/**
+ * Compares the plugin kinds store with what the scenario expects, and says what is wrong.
+ *
+ * @param observed What the browser read off the store.
+ * @param expected Each kind's state.
+ * @return One line per problem, empty when the store is right.
+ */
+export function pluginKindsProblems(observed: ObservedKinds, expected: Record<string, string>): string[] {
+  if (!observed.states) {
+    return ['the page holds no plugin kinds store a component can read'];
+  }
+
+  const problems = observed.first ? [] : ['the plugin kinds store is not the first row Clay builds, so a component above it cannot read it'];
+
+  if (JSON.stringify(observed.states) !== JSON.stringify(expected)) {
+    problems.push(`the plugin kinds store holds ${JSON.stringify(observed.states)}, not ${JSON.stringify(expected)}`);
+  }
+
+  return problems;
 }
 
 /**
@@ -1933,6 +2005,25 @@ async function observe(page: Page, expected: Expectation): Promise<Observed> {
   }, askedAbout(expected));
 }
 
+/** Reads the plugin kinds store the way a face's component does, and whether Clay built it first. */
+async function observeKinds(page: Page): Promise<ObservedKinds> {
+  return page.evaluate((storeClass) => {
+    const clay = (window as unknown as { __pageCheckClay: { getAllItems(): Array<{ $element?: HTMLElement[] }> } }).__pageCheckClay;
+    const store = document.querySelector(`.${storeClass}`) as HTMLInputElement | null;
+    const firstItem = clay.getAllItems()[0];
+    const first = Boolean(store) && Boolean(firstItem && firstItem.$element && firstItem.$element[0] === store);
+    let states: Record<string, unknown> | null;
+
+    try {
+      states = store ? JSON.parse(store.value) : null;
+    } catch {
+      states = null;
+    }
+
+    return { first, states };
+  }, PLUGIN_KINDS_CLASS);
+}
+
 /**
  * Every row of the page that Clay left undrawn, by message key.
  *
@@ -2258,6 +2349,10 @@ async function checkPage(browser: Browser, scenario: Scenario, html: string): Pr
 
     if (scenario.panel) {
       problems.push(...(await checkPanel(page, scenario.panel, Boolean(scenario.openUrl))));
+    }
+
+    if (scenario.pluginKinds) {
+      problems.push(...pluginKindsProblems(await observeKinds(page), scenario.pluginKinds));
     }
 
     for (const change of scenario.changes || []) {

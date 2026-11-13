@@ -9,6 +9,10 @@
  * The text is ASCII, since the phone folds each line to it before sending. A line in a script with
  * no ASCII form arrives empty.
  *
+ * The phone also says when no plugin on it serves now playing, such as with plugins off in the
+ * Pebble app or on an iPhone. The store then reads as nothing playing, and music_store_no_plugin()
+ * says why, so a face can show its own words in place of its empty state.
+ *
  * It is built only for a face that declares MUSIC_TITLE, MUSIC_ARTIST, MUSIC_PLAYING, and
  * MUSIC_REQUEST, which the build allows only with `PLUGIN_MUSIC` in the appinfo's defines. On any
  * other face it does nothing and reads as nothing playing.
@@ -71,5 +75,15 @@ bool music_store_playing(void);
  *   built without the music keys.
  */
 bool music_store_has_track(void);
+
+/**
+ * @brief Whether the phone said no plugin on it serves now playing.
+ *
+ * It holds from the phone's word until a track or a clear arrives or the phone drops.
+ *
+ * @return True while the phone reports no plugin. False otherwise, and on a face built without the
+ *   music keys.
+ */
+bool music_store_no_plugin(void);
 
 /** @} */

@@ -25,6 +25,8 @@
 #define MUSIC_FIRST_ASK_MS 1300
 
 static MusicTrack s_track;    ///< What the phone is playing, zeroed for nothing
+static bool s_no_plugin;      ///< True while the phone reports no plugin serving now playing
+static bool s_no_plugin_next; ///< What the phone said about no plugin for the music message on its way
 static void (*s_cb)(void);    ///< Called whenever the track changes, so the face can redraw
 static AppTimer *s_ask_timer; ///< The first ask or release after launch, while it waits
 
@@ -34,17 +36,36 @@ static AppTimer *s_ask_timer; ///< The first ask or release after launch, while 
  * @param title The title, or NULL for none.
  * @param artist The artist, or NULL for none.
  * @param playing True while it plays.
+ * @param no_plugin True while no plugin on the phone serves now playing.
  */
-static void set_track(const char *title, const char *artist, bool playing)
+static void set_track(const char *title, const char *artist, bool playing, bool no_plugin)
 {
-    if (music_track_set(&s_track, title, artist, playing) && s_cb)
+    bool changed = music_track_set(&s_track, title, artist, playing);
+
+    changed = changed || s_no_plugin != no_plugin;
+    s_no_plugin = no_plugin;
+
+    if (changed && s_cb)
     {
         s_cb();
     }
 }
 
 /**
- * @brief Now playing channel. The text lives only for this call, so the track copies it.
+ * @brief The no plugin word for the music message on its way, which the transport hands over just
+ * before the message itself.
+ *
+ * @param no_plugin True while no plugin on the phone serves now playing.
+ */
+static void on_music_no_plugin(bool no_plugin)
+{
+    s_no_plugin_next = no_plugin;
+}
+
+/**
+ * @brief Now playing channel. The text lives only for this call, so the track copies it. It takes the
+ * no plugin word that came with the same message, and lets it go, so a later message without one
+ * reads as a plugin serving.
  *
  * @param title The title, empty for none.
  * @param artist The artist, empty for none.
@@ -52,7 +73,10 @@ static void set_track(const char *title, const char *artist, bool playing)
  */
 static void on_music(const char *title, const char *artist, bool playing)
 {
-    set_track(title, artist, playing);
+    bool no_plugin = s_no_plugin_next;
+
+    s_no_plugin_next = false;
+    set_track(title, artist, playing, no_plugin);
 }
 
 /**
@@ -90,7 +114,7 @@ static void on_link(void)
     }
     else
     {
-        set_track(NULL, NULL, false);
+        set_track(NULL, NULL, false, false);
     }
 }
 
@@ -111,6 +135,8 @@ void music_store_init(MusicConfig cfg, const MusicSeed *seed)
 {
 #if defined(APPMESSAGE_HAS_MUSIC)
     s_track = (MusicTrack){0};
+    s_no_plugin = false;
+    s_no_plugin_next = false;
 
     if (seed)
     {
@@ -121,6 +147,7 @@ void music_store_init(MusicConfig cfg, const MusicSeed *seed)
     if (!cfg.live)
     {
         appmessage_on_music(NULL);
+        appmessage_on_music_no_plugin(NULL);
         system_store_remove_link_listener(on_link);
         // a first ask still waiting is called off, so the store never asks. it tells the phone the
         // face no longer shows this instead, once appmessage is open, since a phone that subscribed
@@ -133,6 +160,7 @@ void music_store_init(MusicConfig cfg, const MusicSeed *seed)
         return;
     }
 
+    appmessage_on_music_no_plugin(on_music_no_plugin);
     appmessage_on_music(on_music);
     system_store_add_link_listener(on_link);
 
@@ -179,6 +207,15 @@ bool music_store_has_track(void)
 {
 #if defined(APPMESSAGE_HAS_MUSIC)
     return music_track_has(&s_track);
+#else
+    return false;
+#endif
+}
+
+bool music_store_no_plugin(void)
+{
+#if defined(APPMESSAGE_HAS_MUSIC)
+    return s_no_plugin;
 #else
     return false;
 #endif

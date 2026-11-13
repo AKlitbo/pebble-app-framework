@@ -25,6 +25,7 @@
 import { declaresStandard, servesItem } from './standard';
 import { escapeHtml, shownName, uuidKey } from './escape';
 import { addPluginsPanel, PANEL_TYPE } from './panel';
+import { PLUGIN_KINDS_CLASS, PLUGIN_KINDS_TYPE } from './kinds-component';
 import { allItems, conditionsOf, dropRow, dropRows, findRow, footIndex, listHolding, settleConditions } from '../clay/rows';
 import type { StandardReadings } from './standard';
 import type { PluginSummary, SourceState } from './types';
@@ -41,6 +42,69 @@ export const PLUGINS_OFF_LABEL = 'Pebble App: Preferred Source (Plugins Off)';
 
 /** The row under the select while the saved plugin choice has no plugin on the phone to serve it. */
 export const PLUGINS_OFF_TEXT = 'The Pebble app is not offering this source right now. Turn on plugins in the Pebble app under Settings, Plugins, or update the Pebble app.';
+
+/**
+ * Where a kind's plugins stand as the settings page opens.
+ *
+ * - `off`: the phone lists no plugins at all, which is plugins off in the Pebble app, or a Pebble
+ *   app from before plugins.
+ * - `missing`: the phone lists plugins, and none of them serves the kind.
+ * - `served`: a plugin on the phone serves the kind. A list the phone will not give reads as served
+ *   too, since the phone may still route to a plugin it does not list, and the page offers the
+ *   choice then as well.
+ */
+export type PluginKindState = 'off' | 'missing' | 'served';
+
+// the plugin kinds row and the class a face's component reads it by, from kinds-component.ts, so a
+// page hook's code and the component agree on both
+export { PLUGIN_KINDS_CLASS, PLUGIN_KINDS_TYPE };
+
+/**
+ * Where a kind's plugins stand, from the plugin list.
+ *
+ * @param plugins The plugin list, or null when the phone's list cannot be read.
+ * @param category The category the kind subscribes to, such as `finance`.
+ * @param item The item inside it, such as `stock`.
+ * @return The kind's state.
+ */
+export function pluginKindState(plugins: PluginSummary[] | null, category: string, item: string): PluginKindState {
+  if (plugins === null) {
+    return 'served';
+  }
+
+  if (plugins.length === 0) {
+    return 'off';
+  }
+
+  return servesItem(plugins, category, item) ? 'served' : 'missing';
+}
+
+/** Reads a store's states back, starting afresh from anything that is not an object of them. */
+function readKindStates(value: unknown): Record<string, PluginKindState> {
+  try {
+    const parsed: unknown = JSON.parse(String(value));
+
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as Record<string, PluginKindState> : {};
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Writes a kind's state into the page's plugin kinds store, adding the store as the page's first row
+ * when no kind has put it there yet. Each kind's page hook runs on the page the hooks before it made,
+ * so the one store gathers every kind.
+ */
+function recordKindState(page: ClayConfigItem[], kind: string, state: PluginKindState): void {
+  let store = page.find((item) => item.type === PLUGIN_KINDS_TYPE);
+
+  if (!store) {
+    store = { type: PLUGIN_KINDS_TYPE, defaultValue: '{}' };
+    page.unshift(store);
+  }
+
+  store.defaultValue = JSON.stringify({ ...readKindStates(store.defaultValue), [kind]: state });
+}
 
 /** The warning rows a feature shows under its select while a plugin is picked. A text left out gets no row. */
 export interface PluginSourceTexts {
@@ -91,8 +155,9 @@ export interface PluginSourceInputs {
   /** The category the feature subscribes to, such as `weather`. */
   category: string;
   /**
-   * The kind as a face's `pluginSourceRows` mark names it, which is its name in the providers list,
-   * such as `stocks`. Left out, the category, which is the same name for every other kind.
+   * The kind as a face's `pluginSourceRows` mark and the plugin kinds store name it, which is its name
+   * in the providers list, such as `stocks`. Left out, the category, which is the same name for every
+   * other kind.
    */
   rowKind?: string;
   /** The item inside it, such as `location`. */
@@ -114,6 +179,12 @@ export interface PluginSourceInputs {
   insert?: PluginSourceInsert;
   /** The select's saved value. A saved plugin choice keeps its option while no plugin serves the item. */
   saved?: unknown;
+  /**
+   * Whether the page opens on the plugin, for a choice the wearer has never saved while a plugin on
+   * the phone serves the item. The feature reads such a choice as the plugin too, so the page shows
+   * the source the watch is getting, and its first save keeps it.
+   */
+  pluginByDefault?: boolean;
   /**
    * The messageKey of a row whose section only feeds the other sources, such as `LOCATION_USE_GPS`.
    * While a plugin choice is on offer, that section moves to sit straight after the select's own, so
@@ -403,6 +474,12 @@ function placeChoice(page: ClayConfigItem[], select: ClayConfigItem, inputs: Plu
     return;
   }
 
+  // the page hook gets its own copy of the page, so the face's default stays as it was for the
+  // defaults and the settings restore
+  if (inputs.pluginByDefault && offersPlugin) {
+    select.defaultValue = PLUGIN_VALUE;
+  }
+
   putSelectFirst(page, select, selectKey);
 
   if (inputs.movesBelow) {
@@ -483,7 +560,8 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  *    the feature brings one and the page has none.
  * 2. It drops the select when the face declares no message key for it, and logs why. Clay would
  *    otherwise put a setting the watch cannot map into the save.
- * 3. It adds the Preferred Source option when a plugin on the phone serves the item. When none does
+ * 3. It adds the Preferred Source option when a plugin on the phone serves the item, and opens the
+ *    select on it when the feature says the choice was never saved. When none does
  *    and the plugin is the saved choice, the option stays as Preferred Source (Plugins Off), so a save
  *    keeps the choice and the plugin answers again once the wearer turns plugins back on. A kind with
  *    a `notInstalledLabel` takes that label instead while the phone lists other plugins, and offers
@@ -508,6 +586,9 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  * Once the select has passed step 2, a feature that asks for it also gets the supported plugins
  * panel at the foot of the page, whatever steps 3 to 7 made of the select.
  *
+ * Before any of that, every kind records where its plugins stand in the plugin kinds store at the top
+ * of the page, as `PLUGIN_KINDS_CLASS` describes, so a face's own components can read it.
+ *
  * A kind with no source choice passes no select key, and none of the steps above apply. It gets its
  * notes alone, always shown: where its data comes from, then the one saying to turn plugins on while
  * nothing on the phone serves the kind, or else the warnings the saved state calls for. A panel
@@ -520,6 +601,8 @@ function placeNotes(page: ClayConfigItem[], inputs: PluginSourceInputs): void {
  */
 export function pluginSourcePage(page: ClayConfigItem[], inputs: PluginSourceInputs): ClayConfigItem[] {
   const { selectKey } = inputs;
+
+  recordKindState(page, inputs.rowKind || inputs.category, pluginKindState(inputs.plugins, inputs.category, inputs.item));
 
   if (selectKey === undefined) {
     placeNotes(page, inputs);
@@ -556,4 +639,4 @@ export function pluginSourcePage(page: ClayConfigItem[], inputs: PluginSourceInp
   return page;
 }
 
-export default { pluginSourcePage, PLUGIN_LABEL, PLUGINS_OFF_LABEL, PLUGINS_OFF_TEXT, PLUGIN_VALUE };
+export default { pluginKindState, pluginSourcePage, PLUGIN_KINDS_CLASS, PLUGIN_KINDS_TYPE, PLUGIN_LABEL, PLUGINS_OFF_LABEL, PLUGINS_OFF_TEXT, PLUGIN_VALUE };

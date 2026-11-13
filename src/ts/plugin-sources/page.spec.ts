@@ -19,7 +19,7 @@
  */
 
 import { describe, test, expect, vi } from 'vitest';
-import { pluginSourcePage, PLUGIN_LABEL, PLUGINS_OFF_LABEL, PLUGINS_OFF_TEXT, PLUGIN_VALUE } from './page';
+import { pluginKindState, pluginSourcePage, PLUGIN_KINDS_TYPE, PLUGIN_LABEL, PLUGINS_OFF_LABEL, PLUGINS_OFF_TEXT, PLUGIN_VALUE } from './page';
 import type { PluginSourceInputs } from './page';
 import { CALENDAR_STANDARD, WEATHER_STANDARD } from './standard';
 import { escapeHtml } from './escape';
@@ -108,6 +108,11 @@ function calendarInputs(overrides: Partial<PluginSourceInputs> = {}): PluginSour
 /** Every row on the page, sections and their rows included. */
 function allRows(page: ClayConfigItem[]): ClayConfigItem[] {
   return page.flatMap((item) => [item, ...allRows(item.items || [])]);
+}
+
+/** The page without the plugin kinds store every kind's page hook puts first, so a spec reads the face's own rows. */
+function faceRows(page: ClayConfigItem[]): ClayConfigItem[] {
+  return page.filter((item) => item.type !== PLUGIN_KINDS_TYPE);
 }
 
 /** The row saving under a message key, at any depth. */
@@ -367,7 +372,7 @@ describe('pluginSourcePage finding the select by its key', () => {
       { type: 'section', items: [marked] },
     ];
 
-    const result = pluginSourcePage(page, weatherInputs());
+    const result = faceRows(pluginSourcePage(page, weatherInputs()));
 
     expect(result.map((section) => section.items?.[0]?.options?.map((option) => option.value))).toEqual([['owm', 'weatherapi'], ['openmeteo', PLUGIN_VALUE]]);
   });
@@ -447,7 +452,7 @@ describe('pluginSourcePage settling conditions on a dropped select', () => {
       ],
     }];
 
-    const result = pluginSourcePage(page, weatherInputs({ plugins: [] }));
+    const result = faceRows(pluginSourcePage(page, weatherInputs({ plugins: [] })));
 
     expect(result[0].items?.map((row) => row.messageKey ?? row.defaultValue)).toEqual(['Weather', 'WEATHER_TEMPERATURE_UNIT']);
   });
@@ -552,7 +557,7 @@ describe('pluginSourcePage moving the rows the select hides', () => {
 
   /** With no plugin choice nothing hides, so a page that moved anyway would differ from a face's without plugin sources for no reason. */
   test('leaves the order alone when no plugin choice is on offer', () => {
-    const result = pluginSourcePage(weatherPage(), weatherInputs({ plugins: [], movesBelow: 'LOCATION_USE_GPS' }));
+    const result = faceRows(pluginSourcePage(weatherPage(), weatherInputs({ plugins: [], movesBelow: 'LOCATION_USE_GPS' })));
 
     expect(result.map((item) => item.type)).toEqual(weatherPage().map((item) => item.type));
     expect(placeOf(result, 'LOCATION_USE_GPS')).toBeLessThan(placeOf(result, 'WEATHER_PROVIDER'));
@@ -913,7 +918,7 @@ function noteTexts(rows: ClayConfigItem[]): unknown[] {
 describe('pluginSourcePage with no select', () => {
   /** A note hidden behind a select's value would never show on a page that has no select to read. */
   test('puts its notes straight after the row marked for the kind, with no visibleWhen', () => {
-    const result = pluginSourcePage(musicPage(), musicInputs({ plugins: [WEATHER_PLUGIN] }));
+    const result = faceRows(pluginSourcePage(musicPage(), musicInputs({ plugins: [WEATHER_PLUGIN] })));
 
     expect(result[0].items?.[2]).toEqual({ type: 'pluginNote', tone: 'warning', defaultValue: NO_MUSIC_PLUGIN });
   });
@@ -970,7 +975,7 @@ describe('pluginSourcePage with no select', () => {
     const page: ClayConfigItem[] = [{ type: 'heading', defaultValue: 'A Face' }, { type: 'submit', defaultValue: 'Save' }];
     const inputs = weatherInputs({ selectKey: undefined, plugins: [CALENDAR_PLUGIN], texts: { noPlugin: PLUGINS_OFF_TEXT }, panel: true });
 
-    const result = pluginSourcePage(page, inputs);
+    const result = faceRows(pluginSourcePage(page, inputs));
 
     expect(result[1].items?.map((row) => row.type)).toEqual(['pluginNote', 'pluginPanel']);
     expect(result[2].type).toBe('submit');
@@ -982,7 +987,7 @@ describe('pluginSourcePage with no select', () => {
     const weather = pluginSourcePage(page, weatherInputs({ selectKey: undefined, plugins: [CALENDAR_PLUGIN], texts: { noPlugin: 'No weather plugin.' }, panel: true }));
     const calendar = calendarInputs({ selectKey: undefined, insert: undefined, plugins: [WEATHER_PLUGIN], texts: { noPlugin: 'No calendar plugin.' }, panel: true });
 
-    const result = pluginSourcePage(weather, calendar);
+    const result = faceRows(pluginSourcePage(weather, calendar));
 
     expect(result[0].items?.map((row) => (row.type === 'pluginNote' ? row.defaultValue : row.type))).toEqual(['No weather plugin.', 'No calendar plugin.', 'pluginPanel']);
   });
@@ -991,7 +996,7 @@ describe('pluginSourcePage with no select', () => {
   test('puts its notes in a card of their own at the foot with no panel', () => {
     const page: ClayConfigItem[] = [{ type: 'submit', defaultValue: 'Save' }];
 
-    const result = pluginSourcePage(page, musicInputs({ plugins: [], panel: false }));
+    const result = faceRows(pluginSourcePage(page, musicInputs({ plugins: [], panel: false })));
 
     expect(result).toEqual([{ type: 'section', items: [{ type: 'pluginNote', tone: 'warning', defaultValue: NO_MUSIC_PLUGIN }] }, { type: 'submit', defaultValue: 'Save' }]);
   });
@@ -1004,7 +1009,7 @@ describe('pluginSourcePage with no select', () => {
     const line: ClayConfigItem = { type: 'text', defaultValue: 'Weather comes from the Pebble app.', pluginSourceRows: 'weather' };
     const inputs = weatherInputs({ selectKey: undefined, plugins: [], texts: { noPlugin: PLUGINS_OFF_TEXT } });
 
-    const result = pluginSourcePage([{ type: 'section', items: [line] }], inputs);
+    const result = faceRows(pluginSourcePage([{ type: 'section', items: [line] }], inputs));
 
     expect(result[0].items).toEqual([line, { type: 'pluginNote', tone: 'warning', defaultValue: PLUGINS_OFF_TEXT }]);
   });
@@ -1014,7 +1019,7 @@ describe('pluginSourcePage with no select', () => {
     const line: ClayConfigItem = { type: 'text', defaultValue: 'Events come from the Pebble app.', pluginSourceRows: 'calendar' };
     const inputs = calendarInputs({ selectKey: undefined, insert: undefined, plugins: [], texts: { noPlugin: PLUGINS_OFF_TEXT } });
 
-    const result = pluginSourcePage([{ type: 'section', items: [line] }], inputs);
+    const result = faceRows(pluginSourcePage([{ type: 'section', items: [line] }], inputs));
 
     expect(result[0].items).toEqual([line, { type: 'pluginNote', tone: 'warning', defaultValue: PLUGINS_OFF_TEXT }]);
   });
@@ -1026,7 +1031,7 @@ describe('pluginSourcePage with no select', () => {
 
     line.pluginSourceRows = 'phone';
 
-    const result = pluginSourcePage(page, musicInputs({ plugins: [WEATHER_PLUGIN] }));
+    const result = faceRows(pluginSourcePage(page, musicInputs({ plugins: [WEATHER_PLUGIN] })));
 
     expect(noteTexts(result[0].items as ClayConfigItem[])).toEqual([]);
     expect(noteTexts(allRows(result))).toEqual([NO_MUSIC_PLUGIN]);
@@ -1050,7 +1055,7 @@ describe('pluginSourcePage the notes with no select', () => {
   test('leads with the note saying where the data comes from', () => {
     const inputs = weatherInputs({ selectKey: undefined, plugins: [WEATHER_PLUGIN], texts: { source: SOURCE, noPlugin: PLUGINS_OFF_TEXT } });
 
-    const result = pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], inputs);
+    const result = faceRows(pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], inputs));
 
     expect(result[0].items?.[0]).toEqual({ type: 'pluginNote', tone: 'info', defaultValue: escapeHtml(SOURCE) });
   });
@@ -1113,5 +1118,58 @@ describe('pluginSourcePage the notes with no select', () => {
     const result = pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], inputs);
 
     expect(noteTexts(allRows(result))).toEqual(['Odd Weather in the Pebble app.']);
+  });
+});
+
+describe('pluginKindState', () => {
+  /** A face's layout builder warns from this, so plugins off read as missing would send a wearer to the store for a switch. */
+  test.each([
+    ['an empty list as off', [], 'off'],
+    ['a list with nothing serving the kind as missing', [CALENDAR_PLUGIN], 'missing'],
+    ['a list serving the kind as served', [WEATHER_PLUGIN], 'served'],
+    ['a list the phone will not give as served', null, 'served'],
+  ])('reads %s', (_label, plugins, expected) => {
+    const result = pluginKindState(plugins, 'weather', 'location');
+
+    expect(result).toBe(expected);
+  });
+});
+
+describe('pluginSourcePage the plugin kinds store', () => {
+  /** A face's components read where each kind stands from here, so a page without it gives them nothing to warn from. */
+  test('puts the store first on the page holding the kind\'s state', () => {
+    const result = pluginSourcePage(weatherPage(), weatherInputs({ plugins: [] }));
+
+    expect(result[0]).toEqual({ type: PLUGIN_KINDS_TYPE, defaultValue: JSON.stringify({ weather: 'off' }) });
+  });
+
+  /**
+   * Clay builds rows in the order they are declared, so a store anywhere but first is not there yet
+   * for a component above it. Every kind's hook adds to the one store rather than a second one.
+   */
+  test('gathers every kind into the one store at the top of the page', () => {
+    const weather = pluginSourcePage(weatherPage(), weatherInputs());
+    const music = musicInputs({ plugins: [WEATHER_PLUGIN] });
+
+    const result = pluginSourcePage(weather, music);
+
+    expect(result.filter((item) => item.type === PLUGIN_KINDS_TYPE)).toHaveLength(1);
+    expect(JSON.parse(String(result[0].defaultValue))).toEqual({ weather: 'served', music: 'missing' });
+  });
+
+  /** Clay saves every row with a message key, and the watch has no key to map this one to. */
+  test('gives the store no message key, so the save leaves it out', () => {
+    const result = pluginSourcePage(weatherPage(), weatherInputs());
+
+    expect(result[0].messageKey).toBeUndefined();
+  });
+
+  /** A face's builder matches its panels against the kind's name in the providers list, not the category the phone subscribes to. */
+  test('names the kind as the providers list does', () => {
+    const inputs = weatherInputs({ selectKey: undefined, category: 'finance', item: 'stock', rowKind: 'stocks', plugins: [] });
+
+    const result = pluginSourcePage([{ type: 'submit', defaultValue: 'Save' }], inputs);
+
+    expect(JSON.parse(String(result[0].defaultValue))).toEqual({ stocks: 'off' });
   });
 });

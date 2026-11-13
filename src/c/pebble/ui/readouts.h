@@ -123,7 +123,9 @@ void readout_lon(char *out, size_t n);
 /**
  * @brief Format the phone's battery as a percent, such as "84%", or "--" when there is no reading.
  *
- * A face built without the phone battery keys always gets "--".
+ * A face built without the phone battery keys always gets "--", and so does one whose phone reports
+ * no plugin serving the battery. A face that wants to say so checks phone_store_no_plugin() and
+ * writes its own words, such as "PLUGINS OFF".
  *
  * @param[out] out Output buffer.
  * @param n Buffer size.

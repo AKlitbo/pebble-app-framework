@@ -16,12 +16,16 @@ import type { PluginSourceTexts } from './page';
 import { PHONE_STANDARD } from './standard';
 import { createReadingDriver } from './reading-driver';
 import type { PhonePlugins, SourceEnvelope } from './types';
+import { WIRE_CAPS } from '../pkjs/wire';
 
 /** The properties the phone subscription asks for, the battery alone. */
 export const PHONE_PROPERTIES = ['battery_level'];
 
-/** The level the watch takes for no reading. */
-export const NO_LEVEL = -1;
+/** The level the watch takes for no reading, `PHONE_NO_LEVEL` on the watch. */
+export const NO_LEVEL: number = WIRE_CAPS.PHONE_NO_LEVEL;
+
+/** The level the watch takes while no plugin on the phone serves the battery, `WIRE_NO_PLUGIN` on the watch. */
+export const NO_PLUGIN_LEVEL: number = WIRE_CAPS.NO_PLUGIN_MARKER;
 
 /**
  * Turns one phone plugin update into the battery level the watch shows.
@@ -62,9 +66,10 @@ export const phonePlugins: PhonePlugins = {
     requestKey: 'PHONE_REQUEST',
     fromUpdate: batteryFromUpdate,
     empty: NO_LEVEL,
+    noPlugin: NO_PLUGIN_LEVEL,
     standard: PHONE_STANDARD,
     texts: PHONE_TEXTS,
   }),
 };
 
-export default { batteryFromUpdate, PHONE_PROPERTIES, PHONE_TEXTS, NO_LEVEL };
+export default { batteryFromUpdate, PHONE_PROPERTIES, PHONE_TEXTS, NO_LEVEL, NO_PLUGIN_LEVEL };

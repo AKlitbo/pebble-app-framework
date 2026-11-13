@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { ANDROID_ONLY, BUILT_IN_TAG, OFF_TAG, CALENDAR_EMPTY_TEXT, CALENDAR_NOT_STANDARD_TEXT, CALENDAR_PERMISSION_TEXT, CALENDAR_SOURCE_TEXT, DOLLAR_NAME, DOLLAR_NOT_STANDARD_TEXT, INSTALLED_TAG, COORDS_TEXT, MET_NORWAY_LISTING, STOCKS_CRYPTO_LISTING, PEBBLE_STOCKS_LISTING, WEATHER_PLUS_LISTING, WEATHER_ENHANCED_LISTING, MUSIC_NO_PLUGIN_TEXT, MUSIC_NOT_STANDARD_TEXT, MUSIC_PERMISSION_TEXT, NOT_STANDARD_TEXT, STOCK_NO_PLUGIN_TEXT, STOCK_SOURCE_TEXT, PANEL_OFF_TEXT, PANEL_TITLE, PERMISSION_TEXT, PHONE_NO_PLUGIN_TEXT, PLUGINS_OFF_TEXT, PLUGIN_FILES, SCENARIOS, SETTINGS_FILES, SOURCE_TEXT, customFnProblems, expectationProblems, locationFieldProblems, paddingProblems, themePickerProblems, panelProblems, pickScenarios, saveProblems, savedPayload, scenarioFace, withAndroidHead, type LocationField, type Observed, type ThemePicker, type ObservedPadding, type ObservedPanel, type PaddingRow, type PanelExpectation, type Scenario } from './page-check.ts';
+import { ANDROID_ONLY, BUILT_IN_TAG, OFF_TAG, CALENDAR_EMPTY_TEXT, CALENDAR_NOT_STANDARD_TEXT, CALENDAR_PERMISSION_TEXT, CALENDAR_SOURCE_TEXT, DOLLAR_NAME, DOLLAR_NOT_STANDARD_TEXT, INSTALLED_TAG, COORDS_TEXT, MET_NORWAY_LISTING, STOCKS_CRYPTO_LISTING, PEBBLE_STOCKS_LISTING, WEATHER_PLUS_LISTING, WEATHER_ENHANCED_LISTING, MUSIC_NO_PLUGIN_TEXT, MUSIC_NOT_STANDARD_TEXT, MUSIC_PERMISSION_TEXT, NOT_STANDARD_TEXT, STOCK_NO_PLUGIN_TEXT, STOCK_SOURCE_TEXT, PANEL_OFF_TEXT, PANEL_TITLE, PERMISSION_TEXT, PHONE_NO_PLUGIN_TEXT, PLUGINS_OFF_TEXT, PLUGIN_FILES, PLUGIN_KINDS_CLASS, pluginKindsProblems, SCENARIOS, SETTINGS_FILES, SOURCE_TEXT, customFnProblems, expectationProblems, locationFieldProblems, paddingProblems, themePickerProblems, panelProblems, pickScenarios, saveProblems, savedPayload, scenarioFace, withAndroidHead, type LocationField, type Observed, type ThemePicker, type ObservedPadding, type ObservedPanel, type PaddingRow, type PanelExpectation, type Scenario } from './page-check.ts';
 import { COORDS_TEXT as WEATHER_COORDS_TEXT, WEATHER_TEXTS } from '../../ts/plugin-sources/weather.ts';
 import { CALENDAR_TEXTS } from '../../ts/plugin-sources/calendar.ts';
 import { CALENDAR_ICAL_LISTING } from './page-check.ts';
@@ -17,7 +17,7 @@ import { MUSIC_TEXTS } from '../../ts/plugin-sources/music.ts';
 import { PHONE_TEXTS } from '../../ts/plugin-sources/phone.ts';
 import { STOCK_TEXTS } from '../../ts/plugin-sources/stocks.ts';
 import { PAGE_KEYS_FIELD } from '../../ts/pkjs/provider-keys.ts';
-import { PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sources/page.ts';
+import { PLUGIN_KINDS_CLASS as PAGE_PLUGIN_KINDS_CLASS, PLUGINS_OFF_TEXT as PAGE_PLUGINS_OFF_TEXT } from '../../ts/plugin-sources/page.ts';
 import panel from '../../ts/plugin-sources/panel.ts';
 import { KNOWN_PLUGINS, storeListing } from '../../ts/plugin-sources/directory.ts';
 import { readPluginsFile } from './clay-preview.ts';
@@ -143,6 +143,29 @@ describe('expectationProblems', () => {
     const result = expectationProblems(observed, { options: [{ key: 'CALENDAR_SOURCE', has: ['plugin'] }] }, 'on load');
 
     expect(result).toEqual(['on load, the CALENDAR_SOURCE select is not on the page']);
+  });
+});
+
+describe('pluginKindsProblems', () => {
+  /** A store built after the face's builder is one the builder never finds, so its panels would never warn. */
+  test('names a store that is not the first row Clay builds', () => {
+    const result = pluginKindsProblems({ first: false, states: { music: 'off' } }, { music: 'off' });
+
+    expect(result).toEqual(['the plugin kinds store is not the first row Clay builds, so a component above it cannot read it']);
+  });
+
+  /** A kind read as served on a phone with plugins off is a warning the wearer never gets. */
+  test('names a kind holding another state', () => {
+    const result = pluginKindsProblems({ first: true, states: { music: 'served' } }, { music: 'off' });
+
+    expect(result).toEqual(['the plugin kinds store holds {"music":"served"}, not {"music":"off"}']);
+  });
+
+  /** A page with no store gives a face's components nothing to read. */
+  test('names a page with no store', () => {
+    const result = pluginKindsProblems({ first: false, states: null }, { music: 'off' });
+
+    expect(result).toEqual(['the page holds no plugin kinds store a component can read']);
   });
 });
 
@@ -280,6 +303,15 @@ describe('the words the scenarios look for', () => {
     const result = [MUSIC_NO_PLUGIN_TEXT, MUSIC_PERMISSION_TEXT, MUSIC_NOT_STANDARD_TEXT, PHONE_NO_PLUGIN_TEXT];
 
     expect(result).toEqual([MUSIC_TEXTS.noPlugin, MUSIC_TEXTS.permissionDenied, MUSIC_TEXTS.notStandard?.('Odd Music'), PHONE_TEXTS.noPlugin]);
+  });
+});
+
+describe('the plugin kinds store the scenarios look for', () => {
+  /** A class that drifted from the page code's would read every page as having no store. */
+  test('matches the page code\'s class', () => {
+    const result = PLUGIN_KINDS_CLASS;
+
+    expect(result).toBe(PAGE_PLUGIN_KINDS_CLASS);
   });
 });
 

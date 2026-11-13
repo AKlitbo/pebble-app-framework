@@ -263,6 +263,9 @@ export function buildWireCaps(caps: typeof WIRE_CAPS, nightBit: number): string 
   lines.push('');
   entry('MUSIC_TEXT_LEN', caps.MUSIC_TEXT_MAX + 1, `A now playing title or artist, ${caps.MUSIC_TEXT_MAX} characters plus its terminator`);
   lines.push('');
+  entry('PHONE_NO_LEVEL', caps.PHONE_NO_LEVEL, 'The phone\'s battery level for no reading');
+  entry('WIRE_NO_PLUGIN', caps.NO_PLUGIN_MARKER, 'Sent in place of a plugin reading while nothing on the phone serves it');
+  lines.push('');
   entry('WEATHER_FORECAST_COLS', caps.FORECAST_COLS_MAX, 'How many columns a forecast strip carries');
   entry('WEATHER_NO_TEMP', caps.FORECAST_NO_TEMP, 'A column with no reading, so the watch draws a placeholder');
   lines.push('');

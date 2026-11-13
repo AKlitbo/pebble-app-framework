@@ -73,7 +73,8 @@ typedef void (*CalendarStripHandler)(const uint8_t *buf, uint16_t len);
 /**
  * @brief Called with the phone's battery level.
  *
- * @param level The level from 0 to 100, or -1 when the phone has no reading.
+ * @param level The level from 0 to 100, PHONE_NO_LEVEL when the phone has no reading yet, or
+ *   WIRE_NO_PLUGIN while no plugin on the phone serves it.
  */
 typedef void (*PhoneBatteryHandler)(int level);
 
@@ -87,6 +88,17 @@ typedef void (*PhoneBatteryHandler)(int level);
  * @param playing True while it plays.
  */
 typedef void (*MusicHandler)(const char *title, const char *artist, bool playing);
+
+/**
+ * @brief Called with whether the phone says no plugin on it serves now playing, which it sends as
+ * WIRE_NO_PLUGIN in place of playing.
+ *
+ * It is called for every now playing message, just before the music handler for the same message, so
+ * a store can take both in together.
+ *
+ * @param no_plugin True while no plugin on the phone serves now playing.
+ */
+typedef void (*MusicNoPluginHandler)(bool no_plugin);
 
 // the custom-colours string can be too big for one persist key, so it rides its own handler
 // instead of the settings table. inbound the face splits it and stores it. outbound the
@@ -130,6 +142,7 @@ void appmessage_on_stock_strip(StockStripHandler cb);            /**< @brief Pac
 void appmessage_on_calendar_strip(CalendarStripHandler cb);      /**< @brief Packed agenda strip */
 void appmessage_on_phone_battery(PhoneBatteryHandler cb);        /**< @brief The phone's battery. Does nothing on a face without the phone keys */
 void appmessage_on_music(MusicHandler cb);                       /**< @brief What the phone is playing. Does nothing on a face without the music keys */
+void appmessage_on_music_no_plugin(MusicNoPluginHandler cb);     /**< @brief Whether no plugin serves now playing, just before each music message. Does nothing on a face without the music keys */
 void appmessage_on_custom_colors(CustomColorsHandler cb);        /**< @brief Inbound: splits and stores the combined string */
 void appmessage_set_custom_colors_provider(CustomColorsProvider cb); /**< @brief Outbound: rebuilds the combined string */
 /**

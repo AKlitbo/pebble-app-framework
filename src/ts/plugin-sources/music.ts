@@ -31,6 +31,9 @@ export const MUSIC_PROPERTIES = ['title', 'artist', 'playing'];
 /** The track the watch clears its panel to, with nothing playing. */
 export const NO_TRACK: MusicTrack = { title: '', artist: '', playing: false };
 
+/** The track the watch clears its panel to while no plugin on the phone serves now playing. */
+export const NO_PLUGIN_TRACK: MusicTrack = { ...NO_TRACK, noPlugin: true };
+
 /** The Pebble app's own music plugin, which sends a lone question mark for a line the phone does not know. */
 const BUILT_IN_MUSIC_UUID = '00000000-0000-0000-0001-000000000003';
 
@@ -100,9 +103,10 @@ export const musicPlugins: MusicPlugins = {
     requestKey: 'MUSIC_REQUEST',
     fromUpdate: trackFromUpdate,
     empty: NO_TRACK,
+    noPlugin: NO_PLUGIN_TRACK,
     standard: MUSIC_STANDARD,
     texts: MUSIC_TEXTS,
   }),
 };
 
-export default { trackFromUpdate, MUSIC_PROPERTIES, MUSIC_TEXTS, NO_TRACK };
+export default { trackFromUpdate, MUSIC_PROPERTIES, MUSIC_TEXTS, NO_PLUGIN_TRACK, NO_TRACK };

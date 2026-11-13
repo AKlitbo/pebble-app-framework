@@ -19,7 +19,7 @@
  * face without the define nothing ever sets it.
  */
 
-import { followPluginChoice, pluginOnly } from './driver';
+import { followPluginChoice, freshPlugin, pluginOnly, readSourceChoice } from './driver';
 import { createSourceSubscription } from './subscription';
 import type { FollowOptions } from './driver';
 import { pluginSourcePage, PLUGIN_VALUE } from './page';
@@ -27,6 +27,7 @@ import type { PluginSourceTexts } from './page';
 import { WEATHER_STANDARD } from './standard';
 import noteComponent from './note-component';
 import panelComponent from './panel-component';
+import kindsComponent from './kinds-component';
 import type { SourceEnvelope, WeatherPlugins } from './types';
 import type { WeatherMappingOptions } from './weather';
 import { getConfig, readFahrenheit, readText, readValue, watchSettings } from '../pkjs/settings-store';
@@ -154,9 +155,9 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       }
     }
 
-    /** Whether some settings pick the plugin. */
+    /** Whether some settings pick the plugin, a choice never saved included while a plugin serves the weather. */
     function pickedIn(config: Record<string, unknown>): boolean {
-      return String(readValue(config.WEATHER_PROVIDER, defaults.WEATHER_PROVIDER || WEATHER_FALLBACK)).toLowerCase() === PLUGIN_VALUE;
+      return readSourceChoice(config, 'WEATHER_PROVIDER', String(defaults.WEATHER_PROVIDER || WEATHER_FALLBACK), () => choice.serves()) === PLUGIN_VALUE;
     }
 
     const choice = followPluginChoice({
@@ -166,6 +167,8 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       only,
       pickedIn,
       shutOut: controls.shutOut,
+      // a choice never saved that loses its plugin fetches from the face's default straight away
+      onLeft: () => controls.fetch(false),
       onUpdate: (envelope) => controls.send(readingFrom(envelope)),
       onError(error) {
         // the unit keeps the last update while its reading still stands, and lets it go when the phone
@@ -303,6 +306,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
         providerSettings.opened();
         unitSettings.opened();
         fetchSettings.opened();
+        choice.opened();
 
         // a wearer opening the settings may be setting up a plugin right now, so the quick retry gets
         // its whole window again while the plugin waits on one, and the units get one try
@@ -311,15 +315,17 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       },
 
       configSaved() {
-        // each watch is read so its snapshot is let go, whichever one decides. a plugin only face has
-        // no provider choice, so whatever a save holds for it switches nothing
-        const providerMoved = providerSettings.changed() && !only;
-        const unitMoved = unitSettings.changed();
-        const fetchMoved = fetchSettings.changed();
-
         // a save onto the plugin starts it unless something already has, such as the seed, and starts
         // one the phone ended again. a save off it stops a started one
         const picked = follow({ retry: true });
+
+        // each watch is read so its snapshot is let go, whichever one decides. a plugin only face has
+        // no provider choice, so whatever a save holds for it switches nothing. a choice never saved can
+        // move off the plugin with the saved provider still reading as the default, so that move counts
+        const pickMoved = choice.pickMoved(picked);
+        const providerMoved = (providerSettings.changed() || pickMoved) && !only;
+        const unitMoved = unitSettings.changed();
+        const fetchMoved = fetchSettings.changed();
 
         if (picked) {
           // a save while the plugin is picked calls retrySoon, since the wearer may be
@@ -327,10 +333,12 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
           subscription.retrySoon();
 
           // the watch converts what it holds when the unit changes, so the kept update goes again in
-          // the new unit. the location and the key only feed a fetch, so they change nothing here
+          // the new unit. the location and the key only feed a fetch, so they change nothing here. a
+          // first save of the plugin a fresh install already reads from keeps the same subscription,
+          // so it is no move
           const latest = subscription.latest();
 
-          if (unitMoved && !providerMoved && latest) {
+          if (unitMoved && !pickMoved && latest) {
             controls.send(readingFrom(latest));
           }
 
@@ -349,9 +357,9 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       },
     };
 
-    // the note and the supported plugins panel the page hook's rows are drawn with, which the app
+    // the note, the supported plugins panel, and the plugin kinds row the page hook's rows are drawn with, which the app
     // registers only for a page holding them
-    hooks.components = [noteComponent, panelComponent];
+    hooks.components = [noteComponent, panelComponent, kindsComponent];
 
     // a plugin only face has no select for the page hook to add the plugin to, so the page gets the
     // notes alone, and keeps no choice on the watch for the seed to check
@@ -381,6 +389,7 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
       texts,
       panel: true,
       saved: readValue(getConfig().WEATHER_PROVIDER, undefined),
+      pluginByDefault: freshPlugin(getConfig(), 'WEATHER_PROVIDER', () => choice.serves()),
       movesBelow: 'LOCATION_USE_GPS',
     });
 
@@ -398,11 +407,21 @@ export function createWeatherDriver(mapping: WeatherMapping): WeatherPlugins['dr
 
       const restored = String(readValue(config.WEATHER_PROVIDER, '')).toLowerCase();
 
+      // the watch keeps the face's default for a choice nobody ever made, so a restored default reads
+      // as never saved and a plugin on the phone takes it, as on a fresh install. a wearer who saved the
+      // default on purpose while a plugin was on offer moves onto the plugin after a reset, which costs
+      // less than every wearer who never chose being pinned to the default by every reset
+      if (restored === String(defaults.WEATHER_PROVIDER || WEATHER_FALLBACK).toLowerCase()) {
+        delete config.WEATHER_PROVIDER;
+        return;
+      }
+
       // a phone with the plugin calls keeps a restored plugin even when it lists nothing, since plugins
       // switched off read the same as one removed, and the page keeps a saved plugin with plugins off
       // too. the face then shows No Plugin, as the page says. a Pebble app from before plugins can
       // never answer, and a keyed provider with no key on the phone would show No API Key where the
-      // face would otherwise show Open-Meteo weather, so either comes out and the page default reads
+      // face would otherwise show Open-Meteo weather, so either comes out and the choice reads as
+      // never saved
       if (restored === PLUGIN_VALUE && !choice.hasPluginCalls()) {
         delete config.WEATHER_PROVIDER;
       } else if (KEYED_WEATHER_PROVIDERS.includes(restored) && readText(config.WEATHER_API_KEY, '').trim() === '') {

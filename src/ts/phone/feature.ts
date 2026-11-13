@@ -2,7 +2,8 @@
  * The phone's battery, as a feature a face opts into.
  *
  * It reads the level from the Pebble app's Phone plugin and sends it to the watch as
- * `PHONE_BATTERY`, a whole percent, or -1 when there is none. The watch asks again with
+ * `PHONE_BATTERY`, a whole percent, -1 when there is no reading yet, or -2 while no plugin on the
+ * phone serves it. The watch asks again with
  * `PHONE_REQUEST`. A face turns it on with `PLUGIN_PHONE` in its appinfo's defines and lists the
  * feature in startPebbleApp. All of the plugin code lives behind plugin-sources/index, so a face
  * built without the define reads null there and carries none of it. Listed without the define, the

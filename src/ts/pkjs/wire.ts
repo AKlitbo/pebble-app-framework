@@ -38,6 +38,14 @@ export const WIRE_CAPS = {
   MUSIC_TEXT_MAX: 32,
   /** A forecast column with no reading ships this marker so the watch draws a placeholder. */
   FORECAST_NO_TEMP: -1000,
+  /** The phone's battery level for no reading, such as before the plugin's first update. */
+  PHONE_NO_LEVEL: -1,
+  /**
+   * Sent in place of a plugin reading while nothing on the phone serves it, so the watch can tell a
+   * missing plugin from a reading still to come. The phone's battery carries it as its level, and now
+   * playing as its playing flag.
+   */
+  NO_PLUGIN_MARKER: -2,
   /** A settings request for the watch's whole snapshot, to seed the settings page from. */
   SETTINGS_REQUEST_FULL: 1,
   /** A settings request for only whether the watch booted with nothing saved. */

@@ -35,6 +35,7 @@ static struct
 #endif
 #if defined(APPMESSAGE_HAS_MUSIC)
     MusicHandler                on_music;               ///< What the phone is playing arrived
+    MusicNoPluginHandler        on_music_no_plugin;     ///< Whether no plugin serves now playing, ahead of each music message
 #endif
     CustomColorsHandler         on_custom_colors;       ///< Custom colours arrived from the settings page
     CustomColorsProvider        custom_colors_provider; ///< Supplies the face's custom colours for the settings reply
@@ -67,6 +68,15 @@ void appmessage_on_music(MusicHandler cb)
 {
 #if defined(APPMESSAGE_HAS_MUSIC)
     s_handlers.on_music = cb;
+#else
+    (void)cb;
+#endif
+}
+
+void appmessage_on_music_no_plugin(MusicNoPluginHandler cb)
+{
+#if defined(APPMESSAGE_HAS_MUSIC)
+    s_handlers.on_music_no_plugin = cb;
 #else
     (void)cb;
 #endif
@@ -645,14 +655,26 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     // the phone sends the title, the artist, and playing together. playing is always a number, so a
     // message holding it is a whole track. a bridge can drop a tuple holding an empty string, so the
     // title and the artist are not what marks one, and a line left out, or one that is not text,
-    // reads as empty. that is how a clear for nothing playing still lands
+    // reads as empty. that is how a clear for nothing playing still lands. playing carries the no
+    // plugin marker in place of 1 or 0 while nothing on the phone serves now playing, and that goes to
+    // its own handler just before the music handler
 #if defined(APPMESSAGE_HAS_MUSIC)
     Tuple *music_playing_t = dict_find(iterator, MESSAGE_KEY_MUSIC_PLAYING);
-    if (music_playing_t && s_handlers.on_music)
+    if (music_playing_t)
     {
-        const char *music_title = tuple_str_or(dict_find(iterator, MESSAGE_KEY_MUSIC_TITLE), "");
-        const char *music_artist = tuple_str_or(dict_find(iterator, MESSAGE_KEY_MUSIC_ARTIST), "");
-        s_handlers.on_music(music_title, music_artist, tuple_int_or(music_playing_t, 0) == 1);
+        int32_t music_playing = tuple_int_or(music_playing_t, 0);
+
+        if (s_handlers.on_music_no_plugin)
+        {
+            s_handlers.on_music_no_plugin(music_playing == WIRE_NO_PLUGIN);
+        }
+
+        if (s_handlers.on_music)
+        {
+            const char *music_title = tuple_str_or(dict_find(iterator, MESSAGE_KEY_MUSIC_TITLE), "");
+            const char *music_artist = tuple_str_or(dict_find(iterator, MESSAGE_KEY_MUSIC_ARTIST), "");
+            s_handlers.on_music(music_title, music_artist, music_playing == 1);
+        }
     }
 #endif
 

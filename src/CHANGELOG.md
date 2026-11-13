@@ -11,10 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 #### Added
 
 - Added `appmessage_release_phone` and `appmessage_release_music`, which a phone or music store started not live calls to tell the phone the face no longer shows that reading.
+- Added a plugin kinds store to the settings page of a face built with a plugin define. It is a hidden `pluginKinds` row with the class `pf-plugin-kinds`, first on the page and never saved, whose value maps each plugin kind the face reads to `off`, `missing`, or `served`, so a face's own components can warn about a panel whose plugin the phone lacks.
+- Added `phone_store_no_plugin` and `music_store_no_plugin`, which say the phone reported no plugin serving that reading, such as with plugins off. The phone sends -2 for it, `WIRE_NO_PLUGIN` in `wire_caps.g.h`, as the battery level or as `MUSIC_PLAYING`. The battery still reads -1, `readout_phone_battery` still writes `--`, and the track reads as nothing playing, so a face that wants to say why checks the new call. A face that registers its own now playing handler hears it through the new `appmessage_on_music_no_plugin`, just before each music message.
 
 #### Changed
 
-- The phone battery and now playing features subscribe only once the watch asks, and end the subscription when a store started not live sends `PHONE_REQUEST` or `MUSIC_REQUEST` as 0. The phone keeps the last answer under a `pf-wanted-` key, which a face leaves alone. Start each store live only while a panel shows its reading.
+- The phone battery and now playing features end the subscription when a store started not live sends `PHONE_REQUEST` or `MUSIC_REQUEST` as 0, and subscribe again when it sends 1. The phone keeps the last answer under a `pf-wanted-` key, which a face leaves alone, and subscribes at ready unless that answer was 0. Start each store live only while a panel shows its reading.
 
 ### Wearer-Visible Changes
 
@@ -22,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - The supported plugins panel now lists Pebble's own Stocks plugin beside Stocks + Crypto.
 - The stock Data Source now offers a stock plugin while plugins are on and none is installed, as Preferred Source (No Stock Plugin), with a note saying where to get one. It showed only for a choice saved before.
+
+#### Changed
+
+- A weather, stock, or calendar source the wearer has never saved now starts on a Pebble app plugin when one on the phone serves it, and the settings page opens with Preferred Source picked. A saved choice always stands, and a saved iCal link counts as choosing iCal. A choice never saved goes back to the face's default once nothing serves it.
 
 #### Fixed
 

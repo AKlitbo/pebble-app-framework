@@ -4,7 +4,8 @@
  *
  * It drives the feature's hooks straight against the fake Pebble. What is worth pinning is what
  * reaches the watch and when: one whole percent per real change and nothing for an update that only
- * moved the Wi-Fi, -1 whenever there is no plugin to read, an answer to every ask from the watch even
+ * moved the Wi-Fi, -2 whenever there is no plugin to read and -1 only for a reading still to come, an
+ * answer to every ask from the watch even
  * when the sender thinks the watch holds it, and a face built without the define running none of it.
  * localStorage comes from jsdom, since the subscription saves its state there.
  */
@@ -14,6 +15,7 @@ import phone from './feature';
 import { withFakePebble } from '../testing/pebble';
 import type { FakePebble } from '../testing/pebble';
 import type { FeatureContext } from '../pkjs/feature';
+import { PLUGIN_KINDS_TYPE } from '../plugin-sources/page';
 import type { ClayConfigItem } from '../clay/types';
 import { wantedKey } from '../plugin-sources/reading-driver';
 
@@ -52,12 +54,12 @@ function update(level: number, wifi = true) {
 
 /**
  * A face with the phone keys, its sends recorded. Each send is acked unless `failNext` says to refuse
- * the next one, as a busy watch does. Unless `shown` says otherwise, the watch has already said it
- * shows the battery, so the feature subscribes on ready.
+ * the next one, as a busy watch does. `shown` is what the watch last said, true for a watch that
+ * shows the battery, false for one that does not, and null to leave what the phone keeps as it is.
  */
-function startFace(ready = true, shown = true) {
-  if (shown) {
-    localStorage.setItem(wantedKey('phone', 'phone_state'), '1');
+function startFace(ready = true, shown: boolean | null = true) {
+  if (shown !== null) {
+    localStorage.setItem(wantedKey('phone', 'phone_state'), shown ? '1' : '0');
   }
 
   const sends: Record<string, unknown>[] = [];
@@ -90,6 +92,11 @@ function startFace(ready = true, shown = true) {
 /** The levels the watch was sent, in order. */
 function levels(sends: Record<string, unknown>[]): unknown[] {
   return sends.map((dict) => dict.PHONE_BATTERY);
+}
+
+/** The page without the plugin kinds store every kind's page hook puts first, so a spec reads the face's own rows. */
+function faceRows(page: ClayConfigItem[]): ClayConfigItem[] {
+  return page.filter((item) => item.type !== PLUGIN_KINDS_TYPE);
 }
 
 describe('phone battery feature', () => {
@@ -127,13 +134,35 @@ describe('phone battery feature', () => {
     expect(levels(sends)).toEqual([84]);
   });
 
-  /** With plugins off the watch would keep a level from before, so it is told there is none. */
-  test('sends -1 when no plugin serves the phone', () => {
+  /**
+   * With plugins off the watch would keep a level from before, so it is told there is none. It hears
+   * -2 rather than -1, so a face can say plugins are off rather than show a reading still to come.
+   */
+  test('sends -2 for a plugin list with nothing serving the phone', () => {
     pebble.plugins = [];
 
     const { sends } = startFace();
 
-    expect(levels(sends)).toEqual([-1]);
+    expect(levels(sends)).toEqual([-2]);
+  });
+
+  /** A watch asking with nothing serving the phone has to hear why, or it shows a reading still to come forever. */
+  test('answers a PHONE_REQUEST with -2 when nothing serves the phone', () => {
+    pebble.plugins = [];
+    const { hooks, sends } = startFace(false, false);
+
+    hooks.message?.({ PHONE_REQUEST: 1 });
+
+    expect(levels(sends)).toEqual([-2]);
+  });
+
+  /** The subscription reports no plugin on its own, and the watch has to hear it as no plugin, not as no reading. */
+  test('sends -2 for a no plugin error from the subscription', () => {
+    const { sends } = startFace();
+
+    pebble.live()[0].fail({ code: 'noPlugin', message: 'nothing serves it' });
+
+    expect(levels(sends)).toEqual([-2]);
   });
 
   /** A watch that rebooted holds nothing, so its ask has to be answered even though the sender has sent that level. */
@@ -169,14 +198,14 @@ describe('phone battery feature', () => {
   });
 
   /** The phone ends the subscription when the plugin goes away, and the level it last sent is no longer true. */
-  test('sends -1 when the phone ends the subscription', () => {
+  test('sends -2 when the phone ends the subscription', () => {
     const { sends } = startFace();
 
     pebble.live()[0].push(update(84));
 
     pebble.live()[0].fail({ code: 'PLUGIN_UNAVAILABLE', message: 'gone' });
 
-    expect(levels(sends)).toEqual([84, -1]);
+    expect(levels(sends)).toEqual([84, -2]);
   });
 
   /** A second ready that left the first subscription running would send every update twice. */
@@ -189,7 +218,7 @@ describe('phone battery feature', () => {
   });
 
   /** Every change in the battery wakes the watch, so a face with no panel showing it must not subscribe. */
-  test('subscribes nothing on ready before the watch asks', () => {
+  test('subscribes nothing on ready while the watch last said it shows no battery', () => {
     startFace(true, false);
 
     const result = pebble.live();
@@ -197,12 +226,24 @@ describe('phone battery feature', () => {
     expect(result).toHaveLength(0);
   });
 
+  /**
+   * After an install or an upgrade the phone has never heard an answer, and the watch's ask can run
+   * out of tries while the phone code starts, which would leave the panel empty until the face restarts.
+   */
+  test('subscribes on ready when the watch has never said', () => {
+    startFace(true, null);
+
+    const result = pebble.live();
+
+    expect(result).toHaveLength(1);
+  });
+
   /** The phone code restarts on its own, and a watch showing the battery must not lose its updates until it next asks. */
   test('subscribes again on the next ready once the watch has asked', () => {
     const { hooks } = startFace(true, false);
 
     hooks.message?.({ PHONE_REQUEST: 1 });
-    startFace(true, false);
+    startFace(true, null);
 
     const result = pebble.subscriptions.length;
 
@@ -215,7 +256,7 @@ describe('phone battery feature', () => {
 
     hooks.message?.({ PHONE_REQUEST: 0 });
     pebble.live()[0]?.push(update(84));
-    startFace(true, false);
+    startFace(true, null);
 
     const result = [pebble.live().length, levels(sends)];
 
@@ -245,7 +286,7 @@ describe('phone battery feature', () => {
     pebble.plugins = [{ uuid: 'other-uuid', name: 'Other', sources: [{ category: 'music', items: ['track'] }] }];
     const { hooks } = startFace(false);
 
-    const result = hooks.page?.([{ type: 'submit', defaultValue: 'Save' }]) as ClayConfigItem[];
+    const result = faceRows(hooks.page?.([{ type: 'submit', defaultValue: 'Save' }]) || []);
 
     expect(result[0].items?.map((row) => row.type)).toEqual(['pluginNote', 'pluginPanel']);
     expect(result[1].type).toBe('submit');

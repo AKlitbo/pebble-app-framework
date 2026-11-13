@@ -24,7 +24,7 @@ import type { FakeXhr } from '../testing/xhr';
 import type { FeatureContext, FeatureHooks, ProviderLists } from '../pkjs/feature';
 import { AGENDA_HOLD_MS } from '../plugin-sources/calendar-driver';
 import type { ClayConfigItem } from '../clay/types';
-import { PLUGINS_OFF_TEXT } from '../plugin-sources/page';
+import { PLUGIN_KINDS_TYPE, PLUGINS_OFF_TEXT } from '../plugin-sources/page';
 import { escapeHtml } from '../plugin-sources/escape';
 import { CALENDAR_TEXTS } from '../plugin-sources/calendar';
 
@@ -135,6 +135,11 @@ function saveFromPage(hooks: FeatureHooks, settings: Record<string, unknown>): v
   hooks.configOpened?.();
   saveSettings(settings);
   hooks.configSaved?.();
+}
+
+/** The page without the plugin kinds store every kind's page hook puts first, so a spec reads the face's own rows. */
+function faceRows(page: ClayConfigItem[]): ClayConfigItem[] {
+  return page.filter((item) => item.type !== PLUGIN_KINDS_TYPE);
 }
 
 /** Every row on a page, sections and their rows included. */
@@ -317,7 +322,7 @@ describe('calendar plugin mode', () => {
    * tick has to start it, or the agenda never fills until the next ready.
    */
   test('starts the subscription on a slow tick when the plugin was picked with nothing started', () => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
     const { hooks } = startFace({ ready: true });
 
     saveSettings({ CALENDAR_ICS_URL: FEED_URL, CALENDAR_SOURCE: 'plugin' });
@@ -329,7 +334,7 @@ describe('calendar plugin mode', () => {
 
   /** The watch asks on its refresh interval, so its ask is the soonest chance to start a plugin nothing started. */
   test('starts the subscription on a watch ask when the plugin was picked with nothing started', () => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
     const { hooks } = startFace({ ready: true });
 
     saveSettings({ CALENDAR_ICS_URL: FEED_URL, CALENDAR_SOURCE: 'plugin' });
@@ -367,7 +372,7 @@ describe('calendar plugin mode', () => {
 
   /** Every launch downloaded the feed twice, once as the phone came up and again for the watch's ask a moment after. */
   test('answers the ask that follows a launch with the agenda it just downloaded', () => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
     const { hooks, sends } = startFace({ ready: true });
 
     fetches[0].respond(200, EMPTY_FEED);
@@ -380,7 +385,7 @@ describe('calendar plugin mode', () => {
 
   /** The watch's own poll after the gap has to download, or an edited event never reaches the watch. */
   test('downloads for an ask a minute after the last download', () => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
     const { hooks } = startFace({ ready: true });
 
     fetches[0].respond(200, EMPTY_FEED);
@@ -392,11 +397,11 @@ describe('calendar plugin mode', () => {
 
   /** A save with a new link has to download it, however soon after the last download it lands. */
   test('downloads for a save just after a download', () => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
     const { hooks } = startFace({ ready: true });
 
     fetches[0].respond(200, EMPTY_FEED);
-    saveFromPage(hooks, { CALENDAR_ICS_URL: 'https://example.com/other.ics' });
+    saveFromPage(hooks, { CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: 'https://example.com/other.ics' });
     vi.advanceTimersByTime(250);
 
     expect(fetches).toHaveLength(2);
@@ -404,7 +409,7 @@ describe('calendar plugin mode', () => {
 
   /** A download still out for the feed would land after the switch and put the feed's events over the plugin's. */
   test('subscribes for a switch to the plugin and drops the round still out', () => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
     const { hooks, sends } = startFace({ ready: true });
 
     saveFromPage(hooks, { CALENDAR_SOURCE: 'plugin', CALENDAR_ICS_URL: FEED_URL });
@@ -442,9 +447,13 @@ describe('calendar plugin mode', () => {
 
   /**
    * The page has no Calendar Source row of its own, so before the first save nothing is saved for it.
-   * A watch reading that as anything but iCal would count the first save as a switch and fetch again.
+   * With no plugin known to serve the events that reads as iCal, and a watch reading it as anything
+   * else would count the first save as a switch and fetch again.
    */
   test('counts no source change for a first save with the select left on iCal Link', () => {
+    pebble.enumeratePlugins.mockImplementation(() => {
+      throw new Error('bridge broke');
+    });
     saveSettings({ CALENDAR_ICS_URL: FEED_URL });
     const { hooks } = startFace({ ready: true });
 
@@ -455,14 +464,16 @@ describe('calendar plugin mode', () => {
   });
 
   /**
-   * A save from a page without the select drops the saved plugin, since Clay writes the settings whole
-   * from the rows on the page. The source then has to read back as iCal and the feed has to load, or
-   * the face sits on a subscription the page no longer shows.
+   * A save from a page without the select, which a phone with nothing serving the events opens, drops
+   * the saved plugin, since Clay writes the settings whole from the rows on the page. The source then
+   * has to read back as iCal and the feed has to load, or the face sits on a subscription the page no
+   * longer shows.
    */
   test('reads a save without the select as iCal and runs an iCal round', () => {
     saveSettings({ CALENDAR_SOURCE: 'plugin', CALENDAR_ICS_URL: FEED_URL });
     const { hooks } = startFace({ ready: true });
 
+    pebble.plugins = [];
     saveFromPage(hooks, { CALENDAR_ICS_URL: FEED_URL });
     vi.advanceTimersByTime(250);
 
@@ -470,26 +481,45 @@ describe('calendar plugin mode', () => {
     expect(fetches).toHaveLength(1);
   });
 
-  /** A face whose default is the plugin would otherwise start on a feed it never offered. */
+  /**
+   * A face whose default is the plugin would otherwise start on a feed it never offered. A list the
+   * phone will not give does not count as a plugin serving the events, so the default stands.
+   */
   test.each([
-    ['the face\'s default when it sets one', { CALENDAR_SOURCE: 'plugin' }, 1, 0],
-    ['iCal when the face sets none', {}, 0, 1],
-  ])('reads a missing source as %s', (_label, defaults, subscriptions, downloads) => {
-    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    ['the face\'s default when it sets one', { CALENDAR_SOURCE: 'plugin' }, 1],
+    ['iCal when the face sets none', {}, 0],
+  ])('reads a missing source with no link as %s while the plugin list cannot be read', (_label, defaults, subscriptions) => {
+    pebble.enumeratePlugins.mockImplementation(() => {
+      throw new Error('bridge broke');
+    });
+    saveSettings({ CALENDAR_POLL: 1 });
 
     startFace({ defaults, ready: true });
 
     expect(pebble.subscriptions).toHaveLength(subscriptions);
-    expect(fetches).toHaveLength(downloads);
+  });
+
+  /**
+   * A save made with plugins off, or on a face from before plugin sources, holds the link and no
+   * source. A face whose default is the plugin would otherwise drop the wearer's feed.
+   */
+  test('reads a saved link with no source as iCal on a face whose default is the plugin', () => {
+    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+
+    startFace({ defaults: { CALENDAR_SOURCE: 'plugin' }, ready: true });
+
+    expect(pebble.subscriptions).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
   });
 });
 
-describe('calendar plugin mode before any settings are saved', () => {
+describe('calendar plugin mode with the source never saved', () => {
   let pebble: FakePebble;
   let fetches: FakeXhr[];
 
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.setSystemTime(toronto(12) * 1000);
     localStorage.clear();
     pebble = withFakePebble();
     pebble.plugins = [BUILT_IN_CALENDAR];
@@ -503,23 +533,133 @@ describe('calendar plugin mode before any settings are saved', () => {
     vi.useRealTimers();
   });
 
-  /**
-   * On a fresh install of the Pebble app the face's ready runs before the watch's settings reply
-   * lands. An empty strip then would clear the agenda the plugin filled before the seed brings the
-   * plugin back.
-   */
-  test('sends nothing for an iCal round with no link while the settings ask is out and a plugin serves the events', () => {
-    const { sends } = startFace({ ready: true, asks: true });
+  /** A fresh install on a phone that already has a calendar plugin would otherwise ask for an iCal link it does not need. */
+  test('subscribes rather than sending an empty agenda while a plugin serves the events and no link is saved', () => {
+    saveSettings({ CALENDAR_POLL: 1 });
 
+    const { sends } = startFace({ ready: true });
+
+    expect(pebble.live()).toHaveLength(1);
     expect(sends).toEqual([]);
   });
 
-  /** A list the phone will not give says nothing about what is installed, so the seed may still bring the plugin back. */
-  test('sends nothing for an iCal round with no link and nothing saved while the plugin list cannot be read', () => {
+  /**
+   * The source select is on the page only while a plugin is on offer, so a save made with plugins
+   * off holds the link and no source. A calendar plugin turning up later must not drop the wearer's feed.
+   */
+  test('keeps downloading a saved link with no source while a plugin serves the events', () => {
+    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+
+    startFace({ ready: true });
+
+    expect(pebble.subscriptions).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** The page has to open on the source the watch is getting, so a saved link opens it on iCal Link. */
+  test('opens the select on iCal Link for a saved link with no source', () => {
+    saveSettings({ CALENDAR_ICS_URL: FEED_URL });
+    const { hooks } = startFace();
+
+    const result = hooks.page?.(buildConfig({ calendar: {} })) || [];
+
+    expect(allRowsOf(result).find((row) => row.messageKey === 'CALENDAR_SOURCE')?.defaultValue).toBe('ical');
+  });
+
+  /** A wearer who saved iCal while the plugin was on offer has chosen, and the plugin must not take the agenda back. */
+  test('keeps a saved iCal source while a plugin serves the events', () => {
+    saveSettings({ CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
+
+    startFace({ ready: true });
+
+    expect(pebble.subscriptions).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** A wearer who never chose the plugin would otherwise sit on an agenda nothing fills once plugins go off. */
+  test('ends the subscription and runs an iCal round on a slow tick once plugins go off', () => {
+    saveSettings({ CALENDAR_POLL: 1 });
+    const { hooks, sends } = startFace({ ready: true });
+
+    pebble.plugins = [];
+    vi.advanceTimersByTime(60 * 1000);
+    hooks.refresh?.(true);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(pebble.live()).toHaveLength(0);
+    expect(sends).toEqual([{ CALENDAR_STRIP: [0] }]);
+  });
+
+  /**
+   * A page that opened on the plugin for a source never saved, then saved iCal, leaves the saved source
+   * reading the same as the default did. Without counting the move the feed would wait for the slow tick.
+   */
+  test('downloads the feed for a first save onto iCal from a page that opened on the plugin', () => {
+    saveSettings({ CALENDAR_POLL: 1 });
+    const { hooks } = startFace({ ready: true });
+
+    saveFromPage(hooks, { CALENDAR_SOURCE: 'ical', CALENDAR_ICS_URL: FEED_URL });
+    vi.advanceTimersByTime(250);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** A wearer who never chose the plugin would otherwise keep a frozen agenda until the slow tick. */
+  test('runs an iCal round at once when the phone stops serving the events', () => {
+    saveSettings({ CALENDAR_POLL: 1 });
+    const { sends } = startFace({ ready: true });
+
+    pebble.plugins = [];
+    pebble.live()[0].fail({ code: 'PLUGIN_UNAVAILABLE', message: 'plugins turned off' });
+
+    expect(pebble.live()).toHaveLength(0);
+    expect(sends).toEqual([{ CALENDAR_STRIP: [0] }]);
+  });
+
+  /** A first save of the plugin the face already reads from is no switch, so it must not start a second subscription. */
+  test('keeps the one subscription for a first save onto the plugin', () => {
+    saveSettings({ CALENDAR_POLL: 1 });
+    const { hooks } = startFace({ ready: true });
+
+    saveFromPage(hooks, { CALENDAR_SOURCE: 'plugin', CALENDAR_ICS_URL: FEED_URL });
+    vi.advanceTimersByTime(250);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(fetches).toHaveLength(0);
+  });
+});
+
+describe('calendar plugin mode before any settings are saved', () => {
+  let pebble: FakePebble;
+  let fetches: FakeXhr[];
+
+  // a list that serves the events reads a source never saved as the plugin, so only a list the phone
+  // will not give runs an iCal round the seed may still undo
+  beforeEach(() => {
+    vi.useFakeTimers();
+    localStorage.clear();
+    pebble = withFakePebble();
     pebble.enumeratePlugins.mockImplementation(() => {
       throw new Error('bridge broke');
     });
+    fetches = installFakeXhr();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
 
+  afterEach(() => {
+    pebble.restore();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  /**
+   * On a fresh install of the Pebble app the face's ready runs before the watch's settings reply
+   * lands. A list the phone will not give says nothing about what is installed, so the seed may still
+   * bring the plugin back, and an empty strip then would clear the agenda the plugin fills.
+   */
+  test('sends nothing for an iCal round with no link and nothing saved while the plugin list cannot be read', () => {
     const { sends } = startFace({ ready: true, asks: true });
 
     expect(sends).toEqual([]);
@@ -731,13 +871,17 @@ describe('calendar plugin mode after a reset', () => {
     expect(result).toEqual({});
   });
 
-  /** iCal is what a missing source reads as anyway, so writing it would only add a setting the wearer never saved. */
-  test('leaves an echoed ical out', () => {
+  /**
+   * The watch keeps iCal for a choice nobody ever made. Writing it back would pin a wearer who never
+   * chose to the iCal link after every reset, even with a calendar plugin on the phone.
+   */
+  test('leaves an echoed ical out, so a plugin serving the events takes the source', () => {
     const { hooks } = startFace();
 
     const result = seed(hooks, { CALENDAR_SOURCE: 'ical' });
 
     expect(result).toEqual({});
+    expect(pebble.live()).toHaveLength(1);
   });
 
   /** The phone's own saved choice wins over the watch's echo, so the watch must not undo a choice the phone saved. */
@@ -788,6 +932,25 @@ describe('calendar plugin mode on the settings page', () => {
     expect(sectionRows(result, 'CALENDAR_ICS_URL')[1]).toMatchObject({ messageKey: 'CALENDAR_SOURCE', label: 'Calendar Source' });
   });
 
+  /** The face reads a source never saved as a plugin that serves the events, so a page opening on iCal Link would show a source the watch is not getting. */
+  test('opens the select on the plugin with nothing saved while a plugin serves the events', () => {
+    const { hooks } = startFace();
+
+    const result = hooks.page?.(buildConfig({ calendar: {} })) || [];
+
+    expect(allRowsOf(result).find((row) => row.messageKey === 'CALENDAR_SOURCE')?.defaultValue).toBe('plugin');
+  });
+
+  /** A saved choice always stands, and the face's own page must keep its default for the defaults and the restore. */
+  test('opens the select on iCal Link for a saved iCal source', () => {
+    saveSettings({ CALENDAR_SOURCE: 'ical' });
+    const { hooks } = startFace();
+
+    const result = hooks.page?.(buildConfig({ calendar: {} })) || [];
+
+    expect(allRowsOf(result).find((row) => row.messageKey === 'CALENDAR_SOURCE')?.defaultValue).toBe('ical');
+  });
+
   /** A select offering iCal Link alone is no choice, and a wearer with plugins off has to see today's page. */
   test('adds no select with plugins off and nothing saved', () => {
     pebble.plugins = [];
@@ -816,7 +979,7 @@ describe('calendar plugin mode on the settings page', () => {
 
     const result = (hooks.components || []).map((component) => (component as { name: string }).name);
 
-    expect(result).toEqual(['pluginNote', 'pluginPanel']);
+    expect(result).toEqual(['pluginNote', 'pluginPanel', 'pluginKinds']);
   });
 });
 
@@ -885,7 +1048,7 @@ describe('calendar plugin mode for a plugin only face', () => {
     const { hooks } = startFace({ providers: ONLY });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'calendar' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line, { type: 'pluginNote', tone: 'warning', defaultValue: escapeHtml(PLUGINS_OFF_TEXT) }]);
   });
@@ -896,7 +1059,7 @@ describe('calendar plugin mode for a plugin only face', () => {
     const { hooks } = startFace({ providers: ONLY });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'calendar' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line]);
   });
@@ -907,7 +1070,7 @@ describe('calendar plugin mode for a plugin only face', () => {
     const { hooks } = startFace({ providers: ONLY });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'calendar' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line, { type: 'pluginNote', tone: 'info', defaultValue: escapeHtml(CALENDAR_TEXTS.source as string) }]);
   });

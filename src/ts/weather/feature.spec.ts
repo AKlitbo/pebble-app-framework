@@ -35,7 +35,7 @@ import { installFakeXhr } from '../testing/xhr';
 import type { FakeXhr } from '../testing/xhr';
 import type { Feature, FeatureContext, FeatureHooks, ProviderLists } from '../pkjs/feature';
 import type { ClayConfigItem } from '../clay/types';
-import { PLUGINS_OFF_TEXT } from '../plugin-sources/page';
+import { PLUGIN_KINDS_TYPE, PLUGINS_OFF_TEXT } from '../plugin-sources/page';
 import { escapeHtml } from '../plugin-sources/escape';
 import { COORDS_TEXT, WEATHER_TEXTS } from '../plugin-sources/weather';
 
@@ -56,6 +56,11 @@ vi.mock('../plugin-sources/index', async (importOriginal) => {
     },
   };
 });
+
+/** The page without the plugin kinds store every kind's page hook puts first, so a spec reads the face's own rows. */
+function faceRows(page: ClayConfigItem[]): ClayConfigItem[] {
+  return page.filter((item) => item.type !== PLUGIN_KINDS_TYPE);
+}
 
 /** Every row on a page, sections and their rows included. */
 function allRowsOf(page: ClayConfigItem[]): ClayConfigItem[] {
@@ -948,6 +953,144 @@ describe('weather plugin mode', () => {
   });
 });
 
+describe('weather plugin mode with the provider never saved', () => {
+  let pebble: FakePebble;
+  let fetches: FakeXhr[];
+
+  // a saved city with gps off and no provider, as a first launch with only the location set leaves it
+  const CITY = { LOCATION_USE_GPS: false, LOCATION_NAME: JSON.stringify({ lat: 43.7, lon: -79.4, label: 'Toronto' }) };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.UTC(2026, 6, 1, 16, 20));
+    localStorage.clear();
+    pebble = withFakePebble();
+    pebble.plugins = [BUILT_IN_WEATHER];
+    fetches = installFakeXhr();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    pebble.restore();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  /** A fresh install on a phone that already has a weather plugin would otherwise fetch a provider the wearer never chose. */
+  test('subscribes rather than fetching while a plugin serves the weather', () => {
+    saveSettings(CITY);
+
+    startFace({ ready: true });
+
+    expect(pebble.live()).toHaveLength(1);
+    expect(fetches).toHaveLength(0);
+  });
+
+  /** A list the phone will not give says nothing about what is installed, so a fresh install keeps the face's default. */
+  test('fetches the face\'s default while the plugin list cannot be read', () => {
+    pebble.enumeratePlugins.mockImplementation(() => {
+      throw new Error('bridge broke');
+    });
+    saveSettings(CITY);
+
+    startFace({ ready: true });
+
+    expect(pebble.subscriptions).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /** A wearer who never chose the plugin would otherwise sit on old weather once plugins go off. */
+  test('ends the subscription and fetches the face\'s default on a slow tick once plugins go off', () => {
+    saveSettings(CITY);
+    const { hooks } = startFace({ ready: true });
+
+    pebble.plugins = [];
+    vi.advanceTimersByTime(60 * 1000);
+    hooks.refresh?.(true);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /**
+   * A page that opened on the plugin for a provider never saved, then saved the face's default, leaves
+   * the saved provider reading the same as before. Without counting the move the watch would keep the
+   * plugin's weather until the slow tick.
+   */
+  test('fetches for a first save onto the face\'s default from a page that opened on the plugin', () => {
+    saveSettings(CITY);
+    const { hooks } = startFace({ ready: true });
+
+    saveFromPage(hooks, { ...CITY, WEATHER_PROVIDER: 'openmeteo' });
+    vi.advanceTimersByTime(250);
+
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+  });
+
+  /**
+   * A wearer who never chose the plugin would otherwise be left on the plugin's last reading, with
+   * no status and no fetch, until the slow tick half an hour later.
+   */
+  test('fetches the face\'s default at once when the phone stops serving the weather', () => {
+    saveSettings(CITY);
+    const { sends } = startFace({ ready: true });
+
+    pebble.plugins = [];
+    pebble.live()[0].fail({ code: 'PLUGIN_UNAVAILABLE', message: 'plugins turned off' });
+
+    expect(pebble.live()).toHaveLength(0);
+    expect(fetches).toHaveLength(1);
+    expect(sends.map((dict) => dict.WEATHER_CONDITIONS)).not.toContain('NO PLUGIN');
+  });
+
+  /** A plugin list the phone cannot give once says nothing about the plugin, so the weather it is sending has to keep coming. */
+  test('keeps following its plugin through a list the phone will not give', () => {
+    saveSettings(CITY);
+    const { hooks, sends } = startFace({ ready: true });
+
+    pebble.enumeratePlugins.mockImplementation(() => {
+      throw new Error('bridge broke');
+    });
+    pebble.live()[0].push(update(21));
+    vi.advanceTimersByTime(60 * 1000);
+    hooks.refresh?.(true);
+
+    expect(sends.map((dict) => dict.WEATHER_TEMPERATURE)).toEqual([21]);
+    expect(pebble.live()).toHaveLength(1);
+    expect(fetches).toHaveLength(0);
+  });
+
+  /** A plugin can send many updates, and reading the phone's plugin list for each would be a call into the phone every time. */
+  test('reads the plugin list no more for each update', () => {
+    saveSettings(CITY);
+    startFace({ ready: true });
+    const before = pebble.enumeratePlugins.mock.calls.length;
+
+    pebble.live()[0].push(update(21));
+    pebble.live()[0].push(update(22));
+    pebble.live()[0].push(update(23));
+
+    expect(pebble.enumeratePlugins.mock.calls.length).toBe(before);
+  });
+
+  /** A first save of the plugin the face already reads is no switch, so a unit change in it has to convert the kept update. */
+  test('converts the kept update again for a first save onto the plugin that changes the unit', () => {
+    saveSettings(CITY);
+    const { hooks, sends } = startFace({ ready: true });
+
+    pebble.live()[0].push(update(21));
+    saveFromPage(hooks, { ...CITY, WEATHER_PROVIDER: 'plugin', WEATHER_TEMPERATURE_UNIT: 1 });
+    vi.advanceTimersByTime(1000);
+
+    expect(sends.map((dict) => dict.WEATHER_TEMPERATURE)).toEqual([21, 70]);
+    expect(pebble.subscriptions).toHaveLength(1);
+    expect(fetches).toHaveLength(0);
+  });
+});
+
 describe('weather plugin mode for a plugin only face', () => {
   let pebble: FakePebble;
   let fetches: FakeXhr[];
@@ -1015,7 +1158,7 @@ describe('weather plugin mode for a plugin only face', () => {
     const { hooks } = startFace({ providers: { weather: ['plugin'] } });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'weather' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line, { type: 'pluginNote', tone: 'warning', defaultValue: escapeHtml(PLUGINS_OFF_TEXT) }]);
   });
@@ -1026,7 +1169,7 @@ describe('weather plugin mode for a plugin only face', () => {
     const { hooks } = startFace({ providers: { weather: ['plugin'] } });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'weather' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line]);
   });
@@ -1037,7 +1180,7 @@ describe('weather plugin mode for a plugin only face', () => {
     const { hooks } = startFace({ providers: { weather: ['plugin'] } });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'weather' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line, { type: 'pluginNote', tone: 'info', defaultValue: escapeHtml(WEATHER_TEXTS.source as string) }]);
   });
@@ -1364,7 +1507,7 @@ describe('weather plugin mode for a face showing coordinates', () => {
     const { hooks } = startFace({ feature: coords, providers: { weather: ['plugin'] } });
     const line: ClayConfigItem = { type: 'heading', defaultValue: 'Plugin Only', pluginSourceRows: 'weather' };
 
-    const result = hooks.page?.([{ type: 'section', items: [line] }])[0].items;
+    const result = faceRows(hooks.page?.([{ type: 'section', items: [line] }]) || [])[0].items;
 
     expect(result).toEqual([line, { type: 'pluginNote', tone: 'info', defaultValue: escapeHtml(`${WEATHER_TEXTS.source} ${COORDS_TEXT}`) }]);
   });
@@ -1393,13 +1536,42 @@ describe('weather plugin mode on the settings page', () => {
     expect(allRowsOf(result).find((row) => row.messageKey === 'WEATHER_PROVIDER')?.options?.map((option) => option.value)).toEqual(['openmeteo', 'owm', 'weatherapi', 'plugin']);
   });
 
+  /** The face reads a provider never saved as a plugin that serves the weather, so a page opening on Open-Meteo would show a source the watch is not getting. */
+  test('opens the Data Source select on the plugin with nothing saved while a plugin serves the weather', () => {
+    const { hooks } = startFace();
+
+    const result = hooks.page?.(buildConfig({ location: {}, weather: {} })) || [];
+
+    expect(allRowsOf(result).find((row) => row.messageKey === 'WEATHER_PROVIDER')?.defaultValue).toBe('plugin');
+  });
+
+  /** A saved choice always stands, and the page has to keep the face's default under it. */
+  test('keeps the face\'s default on the Data Source select for a saved provider', () => {
+    saveSettings({ WEATHER_PROVIDER: 'owm' });
+    const { hooks } = startFace();
+
+    const result = hooks.page?.(buildConfig({ location: {}, weather: {} })) || [];
+
+    expect(allRowsOf(result).find((row) => row.messageKey === 'WEATHER_PROVIDER')?.defaultValue).toBe('openmeteo');
+  });
+
+  /** With plugins off a fresh page has to open on the face's default, which is what the watch fetches. */
+  test('keeps the face\'s default on the Data Source select with nothing saved and plugins off', () => {
+    pebble.plugins = [];
+    const { hooks } = startFace();
+
+    const result = hooks.page?.(buildConfig({ location: {}, weather: {} })) || [];
+
+    expect(allRowsOf(result).find((row) => row.messageKey === 'WEATHER_PROVIDER')?.defaultValue).toBe('openmeteo');
+  });
+
   /** The note on where the weather comes from and the supported plugins panel are drawn by components the app has to register, and a face without the define must never be handed them. */
   test('hands the app the note and panel components along with the page hook', () => {
     const { hooks } = startFace();
 
     const result = (hooks.components || []).map((component) => (component as { name: string }).name);
 
-    expect(result).toEqual(['pluginNote', 'pluginPanel']);
+    expect(result).toEqual(['pluginNote', 'pluginPanel', 'pluginKinds']);
   });
 
   /** Plugins off is when the wearer most needs to hear what to turn on, so the panel must not go with the plugin option. */
@@ -1448,11 +1620,21 @@ describe('weather plugin mode after a reset', () => {
     return config;
   }
 
-  /** Open-Meteo needs nothing on the phone, so the restored choice is the right one as it stands. */
-  test('keeps a restored openmeteo', () => {
+  /**
+   * The watch keeps the face's default for a choice nobody ever made. Writing it back would pin a
+   * wearer who never chose to the default after every reset, even with a weather plugin on the phone.
+   */
+  test('leaves out a restored default, so the choice reads as never saved', () => {
     const result = seed({ WEATHER_PROVIDER: 'openmeteo' });
 
-    expect(result).toEqual({ WEATHER_PROVIDER: 'openmeteo' });
+    expect(result).toEqual({});
+  });
+
+  /** A provider other than the default was a real choice, and one that needs no key works as it stands. */
+  test('keeps a restored provider other than the default', () => {
+    const result = seed({ WEATHER_PROVIDER: 'owm', WEATHER_API_KEY: 'abc' });
+
+    expect(result).toEqual({ WEATHER_PROVIDER: 'owm', WEATHER_API_KEY: 'abc' });
   });
 
   /** A wearer who picked the Pebble app has to keep it through a reset while a plugin can answer. */
